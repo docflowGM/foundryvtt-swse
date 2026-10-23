@@ -18,9 +18,10 @@ export class GMStoreOperationsService {
    * Approve, counteroffer, or deny a pending player sale request.
    */
   static async resolvePendingSaleRequest(requestId, options = {}, context = {}) {
-    // TI4-C0/G24: a request is identified ONLY by its stable id. A blank id never matches an id-less request, a duplicated id is ambiguous (neither
-    // request is resolved), and a request already being resolved is not resolved a second time concurrently. There is no positional fallback.
-    const id = (typeof requestId === 'string' || typeof requestId === 'number') ? String(requestId) : '';
+    // TI4-C0/G24: a request is identified ONLY by its stable STRING id. A number never matches (a numeric position must not resolve a request whose id merely
+    // looks numeric), a blank id never matches an id-less request, a duplicated id is ambiguous (neither request is resolved), and a request already being
+    // resolved is not resolved a second time concurrently. There is no positional fallback.
+    const id = typeof requestId === 'string' ? requestId : '';
     if (!id.trim()) {
       ui?.notifications?.error?.('Pending sale request could not be identified; nothing was changed.');
       return { success: false, error: 'pending-sale-invalid-id' };
@@ -39,36 +40,79 @@ export class GMStoreOperationsService {
 
   static _pendingSalesInFlight = new Set();
 
+  /**
+   * Same-client serialization of read-modify-write updates to the `pendingSales` queue. The queue is only ever modified from FRESH state, by request
+   * id, inside this lock — never from a snapshot read before an `await` (a sale that is still executing must not overwrite what other resolutions,
+   * newly queued requests or a reorder did meanwhile). The lock is NOT held while a sale executes, so distinct requests are not blocked by each other.
+   * This is single-client serialization only: there is no cross-client compare-and-swap on the world setting.
+   */
+  static _pendingSalesQueueTail = Promise.resolve();
+
+  static _withPendingSalesQueueLock(task) {
+    const run = this._pendingSalesQueueTail.then(() => task());
+    this._pendingSalesQueueTail = run.then(() => undefined, () => undefined);
+    return run;
+  }
+
+  /** Positions of the requests carrying exactly this id in a queue. */
+  static _pendingSalePositions(queue, id) {
+    const positions = [];
+    (Array.isArray(queue) ? queue : []).forEach((request, position) => {
+      if (request?.id !== undefined && request?.id !== null && String(request.id) === id) positions.push(position);
+    });
+    return positions;
+  }
+
+  /**
+   * Remove one request from the queue by id, from fresh state, under the queue lock.
+   * @returns {Promise<{removed:boolean, matches:number, request:Object|null}>}
+   */
+  static _removePendingSaleFromQueue(id) {
+    return this._withPendingSalesQueueLock(async () => {
+      const queue = SettingsHelper.getArray('pendingSales', []);
+      const positions = this._pendingSalePositions(queue, id);
+      if (positions.length !== 1) return { removed: false, matches: positions.length, request: null };
+      const [request] = queue.splice(positions[0], 1);
+      await SettingsHelper.set('pendingSales', queue);
+      return { removed: true, matches: 1, request };
+    });
+  }
+
   static async _resolvePendingSaleRequestById(requestId, options = {}, context = {}) {
     const { decision = 'approve', amount = null, reason = '' } = options;
-    const pendingSales = SettingsHelper.getArray('pendingSales', []);
-    const matches = [];
-    pendingSales.forEach((request, position) => { if (request?.id !== undefined && request?.id !== null && String(request.id) === requestId) matches.push(position); });
+    const positions = this._pendingSalePositions(SettingsHelper.getArray('pendingSales', []), requestId);
 
-    if (matches.length > 1) {
+    if (positions.length > 1) {
       ui?.notifications?.error?.('More than one pending sale shares this request id; nothing was changed.');
       return { success: false, error: 'pending-sale-ambiguous-id' };
     }
-    const index = matches.length === 1 ? matches[0] : -1;
-
-    if (index < 0) {
+    if (positions.length < 1) {
       ui?.notifications?.error?.('Pending sale request not found.');
       return { success: false, error: 'pending-sale-not-found' };
     }
 
-    const request = pendingSales[index];
+    const request = SettingsHelper.getArray('pendingSales', [])[positions[0]];
     const actor = game.actors.get(request.actorId);
 
     if (decision === 'deny') {
-      pendingSales.splice(index, 1);
-      await SettingsHelper.set('pendingSales', pendingSales);
+      let removal;
+      try {
+        removal = await this._removePendingSaleFromQueue(requestId);
+      } catch (err) {
+        ui?.notifications?.error?.('Could not update the pending sale queue; the sale was not denied.');
+        return { success: false, error: 'pending-sale-queue-write-failed', detail: err?.message ?? String(err) };
+      }
+      if (!removal.removed) {
+        ui?.notifications?.error?.(removal.matches > 1 ? 'More than one pending sale shares this request id; nothing was changed.' : 'Pending sale request not found.');
+        return { success: false, error: removal.matches > 1 ? 'pending-sale-ambiguous-id' : 'pending-sale-not-found' };
+      }
       Hooks.callAll?.('swseStoreSaleDenied', {
-        request,
+        request: removal.request,
         actor,
         decidedBy: game.user?.name ?? 'GM',
         reason
       });
-      ui?.notifications?.info?.(`Denied sale request: ${request.item || 'item'}${reason ? ` — ${reason}` : ''}`);
+      ui?.notifications?.info?.(`Denied sale request: ${removal.request.item || 'item'}${reason ? ` — ${reason}` : ''}`);
       await context.render?.();
       return { success: true, decision: 'deny', requestId };
     }
@@ -123,8 +167,21 @@ export class GMStoreOperationsService {
       return result;
     }
 
-    pendingSales.splice(index, 1);
-    await SettingsHelper.set('pendingSales', pendingSales);
+    // The sale is COMMITTED. Reconcile the queue from fresh state, by id. Whatever happens here, the sale outcome is reported truthfully as a success
+    // (never as an ordinary failure that invites a second approval); an unverified queue update is flagged on the result and to the GM.
+    let queueReconciliation = 'removed';
+    try {
+      const removal = await this._removePendingSaleFromQueue(requestId);
+      if (!removal.removed) queueReconciliation = removal.matches > 1 ? 'ambiguous-id' : 'request-absent';
+    } catch (err) {
+      queueReconciliation = 'queue-write-failed';
+      SWSELogger.error('[GMStoreOperationsService] sale committed but the pending-sale queue could not be updated', err);
+    }
+    if (queueReconciliation !== 'removed') {
+      ui?.notifications?.warn?.(queueReconciliation === 'request-absent'
+        ? `The sale of ${request.item || item.name} completed, but its request was already gone from the pending queue.`
+        : `The sale of ${request.item || item.name} COMPLETED, but the pending queue could not be updated (${queueReconciliation}); the request may still be listed. Do not approve it again.`);
+    }
 
     Hooks.callAll?.('swseStoreSaleApproved', {
       request,
@@ -139,7 +196,8 @@ export class GMStoreOperationsService {
 
     ui?.notifications?.info?.(`Approved sale: ${request.item || item.name} for ${salePrice.toLocaleString()} credits.`);
     await context.render?.();
-    return { ...result, success: true, decision, requestId, salePrice };
+    return { ...result, success: true, decision, requestId, salePrice,
+      ...(queueReconciliation === 'removed' ? {} : { queueReconciled: false, queueReconciliation }) };
   }
 
   /**

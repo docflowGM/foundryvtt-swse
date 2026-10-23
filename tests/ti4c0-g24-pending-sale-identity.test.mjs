@@ -38,7 +38,7 @@ const clone = (v) => JSON.parse(JSON.stringify(v));
 const store = { pendingSales: [] };
 const savedGetArray = SettingsHelper.getArray; const savedSet = SettingsHelper.set;
 const savedSale = TransactionEngine.executeSaleTransaction; const savedGame = globalThis.game;
-const probe = { saleCalls: [], gate: null, failSale: false };
+const probe = { saleCalls: [], gate: null, gates: {}, failSale: false, setDelay: 0, failSet: false, shared: false };
 let actors = {};
 
 const mkActor = (id, itemIds) => ({ id, name: `Actor ${id}`, system: { credits: 1000 },
@@ -46,17 +46,22 @@ const mkActor = (id, itemIds) => ({ id, name: `Actor ${id}`, system: { credits: 
 const sale = (id, over = {}) => ({ id, actorId: 'A', actor: 'Actor A', itemId: `item_${id}`, item: `Item ${id}`, value: 100, requestedPrice: 100, suggestedPrice: 100, status: 'Pending', timestamp: 1000, ...over });
 
 function install(requests, { owners = {} } = {}) {
-  Object.assign(probe, { saleCalls: [], gate: null, failSale: false });
+  Object.assign(probe, { saleCalls: [], gate: null, gates: {}, failSale: false, setDelay: 0, failSet: false, shared: false });
   notes.info.length = 0; notes.warn.length = 0; notes.error.length = 0; hookCalls.length = 0;
   store.pendingSales = clone(requests);
-  SettingsHelper.getArray = (key, def = []) => clone(store[key] ?? def);
-  SettingsHelper.set = async (key, value) => { store[key] = clone(value); };
+  SettingsHelper.getArray = (key, def = []) => (probe.shared && store[key] ? store[key] : clone(store[key] ?? def));   // `shared`: the live array, as a settings getter may return
+  SettingsHelper.set = async (key, value) => {
+    if (probe.setDelay) await new Promise((res) => setTimeout(res, probe.setDelay));   // a world-setting write is not instantaneous
+    if (probe.failSet) throw new Error('settings write refused');
+    store[key] = clone(value);
+  };
   actors = { A: mkActor('A', requests.map((r) => r?.itemId ?? `item_${r?.id}`)) };
   for (const [id, items] of Object.entries(owners)) actors[id] = mkActor(id, items);
   globalThis.game = { ...(savedGame ?? {}), user: { id: 'gm', name: 'GM', isGM: true }, actors: { get: (id) => actors[id] ?? null } };
   TransactionEngine.executeSaleTransaction = async (ctx) => {
     probe.saleCalls.push({ itemId: ctx.itemId, salePrice: ctx.salePrice, context: ctx.transactionContext, requestId: ctx.audit?.requestId, source: ctx.audit?.source });
     if (probe.gate) await probe.gate;
+    if (probe.gates[ctx.itemId]) await probe.gates[ctx.itemId];
     if (probe.failSale) return { success: false, error: 'sale refused' };
     const a = ctx.actor; const idx = a.items.findIndex((i) => i.id === ctx.itemId);
     if (idx < 0) return { success: false, error: 'item missing' };
@@ -288,6 +293,175 @@ await check('14. the pending-sale buttons and the click handlers are addressed b
     const block = js.slice(js.indexOf(`[data-action="${action}"]`), js.indexOf(`[data-action="${action}"]`) + 500);
     assert.ok(/dataset\.requestId/.test(block) && !/dataset\.index/.test(block), `${action} handler reads dataset.requestId`);
   }
+});
+
+/* ---------------------------------------------------------------------------------------------- */
+/* correction 1 — R1: the queue is updated from FRESH state by request id; R2: ids are strings only     */
+/* ---------------------------------------------------------------------------------------------- */
+const suspend = () => { let release; const gate = new Promise((res) => { release = res; }); return { gate, release }; };
+const tick = () => new Promise((res) => setTimeout(res, 5));
+
+await check('R1a. denying B while the approval of A is suspended: B stays denied and cannot reappear when A completes', async () => {
+  const dash = install([sale('A'), sale('B'), sale('C')]);
+  const s = suspend(); probe.gates.item_A = s.gate;
+  const approveA = dash._resolvePendingSale('A', 'accept');
+  await tick();
+  const denyB = await dash._resolvePendingSale('B', 'deny');
+  assert.equal(denyB.success, true);
+  assert.deepEqual(queueIds(), ['A', 'C']);
+  s.release(); const a = await approveA;
+  assert.equal(a.success, true);
+  assert.deepEqual(queueIds(), ['C'], 'B (denied meanwhile) did not reappear; A was removed; C is untouched');
+  assert.equal(hookCalls.filter((h) => h.name === 'swseStoreSaleDenied').length, 1);
+});
+
+await check('R1b. a NEW request arriving while the approval is suspended is preserved when the approval completes', async () => {
+  const dash = install([sale('A'), sale('B')]);
+  const s = suspend(); probe.gates.item_A = s.gate;
+  const approveA = dash._resolvePendingSale('A', 'accept');
+  await tick();
+  store.pendingSales = [...store.pendingSales, sale('NEW')];
+  s.release(); await approveA;
+  assert.deepEqual(queueIds(), ['B', 'NEW'], 'the newly queued request was not overwritten away');
+});
+
+await check('R1c. the queue being REORDERED while the approval is suspended removes the right request (not whatever now sits at the old position)', async () => {
+  const dash = install([sale('A'), sale('B')]);
+  const s = suspend(); probe.gates.item_A = s.gate;
+  const approveA = dash._resolvePendingSale('A', 'accept');
+  await tick();
+  store.pendingSales = [sale('B'), sale('A')];                  // A was index 0 when the approval began; it is index 1 now
+  s.release(); const a = await approveA;
+  assert.equal(a.success, true);
+  assert.deepEqual(queueIds(), ['B'], 'A was removed by id; B (now at A\'s old index) was not');
+});
+
+await check('R1c2. the same with a settings getter that returns the LIVE array and an in-place reorder: still the right request is removed', async () => {
+  const dash = install([sale('A'), sale('B')]);
+  probe.shared = true;
+  const s = suspend(); probe.gates.item_A = s.gate;
+  const approveA = dash._resolvePendingSale('A', 'accept');
+  await tick();
+  store.pendingSales.reverse();                                 // in place: A is now at index 1, B at index 0
+  s.release(); const a = await approveA;
+  assert.equal(a.success, true);
+  assert.deepEqual(queueIds(), ['B'], 'A removed by id, not B at the old index');
+});
+
+await check('R1d. two DISTINCT requests approved concurrently are both removed (neither completion restores the other)', async () => {
+  const dash = install([sale('A'), sale('B'), sale('C')]);
+  const sa = suspend(); const sb = suspend(); probe.gates.item_A = sa.gate; probe.gates.item_B = sb.gate; probe.setDelay = 5;
+  const pa = dash._resolvePendingSale('A', 'accept'); const pb = dash._resolvePendingSale('B', 'accept');
+  await tick();
+  sa.release(); sb.release();
+  const [ra, rb] = await Promise.all([pa, pb]);
+  assert.equal(ra.success, true); assert.equal(rb.success, true);
+  assert.equal(probe.saleCalls.length, 2);
+  assert.deepEqual(queueIds(), ['C']);
+  assert.equal(actors.A.system.credits, 1200);
+});
+
+await check('R1e. concurrent DENIALS of distinct requests (slow settings writes) both persist: queue writes are serialized', async () => {
+  const dash = install([sale('A'), sale('B'), sale('C')]);
+  probe.setDelay = 10;
+  const results2 = await Promise.all([dash._resolvePendingSale('A', 'deny'), dash._resolvePendingSale('B', 'deny')]);
+  assert.ok(results2.every((r) => r.success === true));
+  assert.deepEqual(queueIds(), ['C'], 'neither denied request reappeared');
+  assert.equal(hookCalls.filter((h) => h.name === 'swseStoreSaleDenied').length, 2);
+});
+
+await check('R1f. the same request is still refused while in flight, and distinct requests are NOT blocked by it', async () => {
+  const dash = install([sale('A'), sale('B')]);
+  const s = suspend(); probe.gates.item_A = s.gate;
+  const pa = dash._resolvePendingSale('A', 'accept');
+  await tick();
+  const again = await dash._resolvePendingSale('A', 'deny');
+  assert.equal(again.error, 'pending-sale-in-progress');
+  const b = await dash._resolvePendingSale('B', 'accept');
+  assert.equal(b.success, true, 'a different request resolves while A is suspended');
+  s.release(); assert.equal((await pa).success, true);
+  assert.deepEqual(queueIds(), []); assert.equal(probe.saleCalls.length, 2);
+});
+
+await check('R1g. sale succeeded but the request is already gone from the queue: truthful success, no queue write, hook fires, GM warned', async () => {
+  const dash = install([sale('A'), sale('B')]);
+  const s = suspend(); probe.gates.item_A = s.gate;
+  const pa = dash._resolvePendingSale('A', 'accept');
+  await tick();
+  store.pendingSales = [sale('B')];                             // resolved elsewhere (e.g. another client) meanwhile
+  s.release(); const r = await pa;
+  assert.equal(r.success, true, 'the sale really happened');
+  assert.equal(r.queueReconciled, false); assert.equal(r.queueReconciliation, 'request-absent');
+  assert.deepEqual(queueIds(), ['B']);
+  assert.equal(actors.A.system.credits, 1100);
+  assert.equal(hookCalls.filter((h) => h.name === 'swseStoreSaleApproved').length, 1);
+  assert.ok(notes.warn.length >= 1);
+});
+
+await check('R1h. sale succeeded but the id became ambiguous (duplicate queued meanwhile): no queue entry is guessed, truthful success with reconciliation flagged', async () => {
+  const dash = install([sale('A')]);
+  const s = suspend(); probe.gates.item_A = s.gate;
+  const pa = dash._resolvePendingSale('A', 'accept');
+  await tick();
+  store.pendingSales = [sale('A'), sale('A', { itemId: 'item_other' })];
+  s.release(); const r = await pa;
+  assert.equal(r.success, true); assert.equal(r.queueReconciled, false); assert.equal(r.queueReconciliation, 'ambiguous-id');
+  assert.equal(store.pendingSales.length, 2, 'neither duplicate was removed');
+});
+
+await check('R1i. sale succeeded but the queue write FAILS: not reported as an ordinary failure, GM told not to re-approve, and a retry cannot sell twice', async () => {
+  const dash = install([sale('A')]);
+  probe.failSet = true;
+  const r = await dash._resolvePendingSale('A', 'accept');
+  assert.equal(r.success, true, 'the sale was executed and committed');
+  assert.equal(r.queueReconciled, false); assert.equal(r.queueReconciliation, 'queue-write-failed');
+  assert.equal(actors.A.system.credits, 1100); assert.equal(probe.saleCalls.length, 1);
+  assert.ok(notes.error.concat(notes.warn).some((m) => /already (completed|sold)|do not approve|not.*again|still be listed/i.test(m)), 'the GM is warned the request may still be listed');
+  assert.ok(!notes.error.some((m) => /Failed to approve/i.test(m)), 'not reported as a failed approval');
+  probe.failSet = false;
+  const retry = await dash._resolvePendingSale('A', 'accept');
+  assert.notEqual(retry?.success, true, 'the item is gone: a retry cannot sell it again');
+  assert.equal(probe.saleCalls.length, 1);
+});
+
+await check('R1k. a DENIAL whose queue write fails is reported as not denied: no denial hook, no success notice, the request stays listed', async () => {
+  const dash = install([sale('A'), sale('B')]);
+  probe.failSet = true;
+  const r = await dash._resolvePendingSale('A', 'deny');
+  assert.equal(r.success, false); assert.equal(r.error, 'pending-sale-queue-write-failed');
+  assert.deepEqual(queueIds(), ['A', 'B']);
+  assert.equal(hookCalls.filter((h) => h.name === 'swseStoreSaleDenied').length, 0);
+  assert.equal(notes.info.length, 0); assert.ok(notes.error.length >= 1);
+  probe.failSet = false;
+  assert.equal((await dash._resolvePendingSale('A', 'deny')).success, true, 'the lock was released: a retry works');
+  assert.deepEqual(queueIds(), ['B']);
+});
+
+await check('R1j. a FAILED sale still leaves the queue untouched even if other requests changed meanwhile', async () => {
+  const dash = install([sale('A'), sale('B')]);
+  const s = suspend(); probe.gates.item_A = s.gate; probe.failSale = true;
+  const pa = dash._resolvePendingSale('A', 'accept');
+  await tick();
+  store.pendingSales = [sale('B'), sale('A'), sale('NEW')];
+  s.release(); const r = await pa;
+  assert.notEqual(r?.success, true);
+  assert.deepEqual(queueIds(), ['B', 'A', 'NEW']);
+});
+
+await check('R2. the canonical service requires a STRING request id: a number cannot resolve a stored request with a matching numeric-looking id', async () => {
+  install([sale('0', { itemId: 'item_zero' }), sale('5', { itemId: 'item_five' }), sale('sale_abc123')]);
+  actors.A = mkActor('A', ['item_zero', 'item_five', 'item_sale_abc123']);
+  for (const bad of [0, 5, 5.0, 1, NaN]) {
+    for (const decision of ['approve', 'deny', 'counteroffer']) {
+      const r = await GMStoreOperationsService.resolvePendingSaleRequest(bad, { decision, amount: 50 }, {});
+      assert.notEqual(r?.success, true, `${bad} / ${decision}`); assert.equal(r.error, 'pending-sale-invalid-id');
+    }
+  }
+  assert.equal(probe.saleCalls.length, 0); assert.equal(store.pendingSales.length, 3); assert.equal(hookCalls.length, 0);
+  const ok = await GMStoreOperationsService.resolvePendingSaleRequest('sale_abc123', { decision: 'approve' }, {});
+  assert.equal(ok.success, true, 'a generated string id still resolves');
+  const strZero = await GMStoreOperationsService.resolvePendingSaleRequest('0', { decision: 'deny' }, {});
+  assert.equal(strZero.success, true, 'the string "0" resolves exactly the request whose id is "0"');
 });
 
 const failed = results.filter((r) => !r.ok);
