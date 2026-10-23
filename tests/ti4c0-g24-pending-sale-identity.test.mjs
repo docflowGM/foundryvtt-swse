@@ -437,6 +437,47 @@ await check('R1k. a DENIAL whose queue write fails is reported as not denied: no
   assert.deepEqual(queueIds(), ['B']);
 });
 
+await check('R3a. with a settings getter that returns the LIVE array, a DENIAL whose write fails does not mutate the in-memory queue', async () => {
+  const dash = install([sale('A'), sale('B')]);
+  probe.shared = true; probe.failSet = true;
+  const live = store.pendingSales;
+  const r = await dash._resolvePendingSale('A', 'deny');
+  assert.equal(r.success, false); assert.equal(r.error, 'pending-sale-queue-write-failed');
+  assert.deepEqual(queueIds(), ['A', 'B'], 'the stored queue still lists A: nothing was removed without a successful write');
+  assert.equal(store.pendingSales, live, 'the live setting value itself was not replaced');
+  assert.equal(hookCalls.filter((h) => h.name === 'swseStoreSaleDenied').length, 0);
+  probe.failSet = false;
+  assert.equal((await dash._resolvePendingSale('A', 'deny')).success, true, 'a retry after the failed write still finds A and succeeds');
+  assert.deepEqual(queueIds(), ['B']);
+});
+
+await check('R3b. with a LIVE-array getter, an approval whose post-sale queue write fails leaves the in-memory queue untouched (still reported as a committed sale)', async () => {
+  const dash = install([sale('A'), sale('B')]);
+  probe.shared = true; probe.failSet = true;
+  const r = await dash._resolvePendingSale('A', 'accept');
+  assert.equal(r.success, true); assert.equal(r.queueReconciliation, 'queue-write-failed');
+  assert.equal(actors.A.system.credits, 1100);
+  assert.deepEqual(queueIds(), ['A', 'B'], 'the unreconciled queue is exactly what was last persisted, not a half-edited live array');
+});
+
+await check('R3c. a stale or ambiguous id with a LIVE-array getter never mutates the live queue', async () => {
+  const dash = install([sale('dup', { itemId: 'item_a' }), sale('dup', { itemId: 'item_b' }), sale('C')]);
+  probe.shared = true; actors.A = mkActor('A', ['item_a', 'item_b', 'item_C']);
+  const live = store.pendingSales; const before = JSON.stringify(live);
+  await GMStoreOperationsService._removePendingSaleFromQueue('dup');
+  await GMStoreOperationsService._removePendingSaleFromQueue('ghost');
+  assert.equal(JSON.stringify(store.pendingSales), before); assert.equal(store.pendingSales, live);
+});
+
+await check('R3d. with a LIVE-array getter the normal paths still persist correctly (deny, approve, concurrent distinct resolutions)', async () => {
+  const dash = install([sale('A'), sale('B'), sale('C'), sale('D')]);
+  probe.shared = true; probe.setDelay = 5;
+  const out = await Promise.all([dash._resolvePendingSale('A', 'deny'), dash._resolvePendingSale('B', 'accept'), dash._resolvePendingSale('C', 'deny')]);
+  assert.ok(out.every((r) => r.success === true));
+  assert.deepEqual(queueIds(), ['D']);
+  assert.equal(probe.saleCalls.length, 1);
+});
+
 await check('R1j. a FAILED sale still leaves the queue untouched even if other requests changed meanwhile', async () => {
   const dash = install([sale('A'), sale('B')]);
   const s = suspend(); probe.gates.item_A = s.gate; probe.failSale = true;

@@ -69,7 +69,9 @@ export class GMStoreOperationsService {
    */
   static _removePendingSaleFromQueue(id) {
     return this._withPendingSalesQueueLock(async () => {
-      const queue = SettingsHelper.getArray('pendingSales', []);
+      // A fresh shallow copy BEFORE any edit: the settings getter may return the live stored array, and a write that fails must not leave that
+      // in-memory value half-edited. Only the copy is spliced; the setting changes only if the write succeeds.
+      const queue = [...SettingsHelper.getArray('pendingSales', [])];
       const positions = this._pendingSalePositions(queue, id);
       if (positions.length !== 1) return { removed: false, matches: positions.length, request: null };
       const [request] = queue.splice(positions[0], 1);
