@@ -578,6 +578,7 @@ export class TransactionEngine {
     this._mutationLocks.add(lockKey);
 
     let snapshotId = null;
+    let mutationStarted = false;
     try {
       const creditsBefore = LedgerService.getCurrentCredits(freshActor);
       const creditsAfter = normalizeCredits(creditsBefore + normalizedAmount);
@@ -618,6 +619,9 @@ export class TransactionEngine {
         }
       };
 
+      // TI4-C0 (credit-adjustment safety): the rollback snapshot is a PRECONDITION, not best effort. If it cannot be established, the adjustment is refused
+      // BEFORE any credit mutation begins, so a later failure can always be compensated (or honestly reported as unverified) instead of silently
+      // leaving moved credits behind an ordinary `success:false`.
       try {
         const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
         snapshotId = await SnapshotManager.createSnapshot(
@@ -625,13 +629,19 @@ export class TransactionEngine {
           `${transactionContext} credit adjustment (${normalizedAmount} credits)`
         );
       } catch (snapshotError) {
-        swseLogger.warn('TransactionEngine: Credit adjustment snapshot failed; continuing without rollback snapshot', {
+        swseLogger.error('TransactionEngine: Credit adjustment refused; rollback snapshot could not be created', {
           transactionId,
           context: transactionContext,
-          error: snapshotError.message
+          error: snapshotError?.message
         });
+        return { success: false, transactionId, error: `Credit adjustment refused: the rollback snapshot could not be created (${snapshotError?.message ?? snapshotError}); no credits were changed.` };
+      }
+      if (!snapshotId) {
+        swseLogger.error('TransactionEngine: Credit adjustment refused; rollback snapshot was not produced', { transactionId, context: transactionContext });
+        return { success: false, transactionId, error: 'Credit adjustment refused: no rollback snapshot was produced; no credits were changed.' };
       }
 
+      mutationStarted = true;
       await ActorEngine.applyMutationPlan(freshActor, transactionAudit, {
         validate,
         rederive,
@@ -662,14 +672,19 @@ export class TransactionEngine {
         error: error.message
       });
 
-      if (snapshotId) {
-        const restore = await this.#restoreVerified(freshActor, snapshotId);
-        if (!restore.restored) {
-          swseLogger.error('TransactionEngine: Credit adjustment rollback failed', { transactionId, snapshotId, error: restore.error?.message });
-          return { success: false, transactionId, rollbackFailed: true, error: `Credit adjustment failed and rollback failed: ${error.message}` };
-        }
-        swseLogger.info('TransactionEngine: Credit adjustment rollback successful', { transactionId, snapshotId });
+      // Failed before the credit mutation began: nothing was written, so this is a definitive failure.
+      if (!mutationStarted) return { success: false, transactionId, error: error.message };
+
+      // The mutation was attempted. A failure is only reported as definitive when the pre-adjustment state is VERIFIED restored; otherwise the
+      // credits may have moved and the outcome is `indeterminate` (never an ordinary failure a caller could safely retry).
+      const restore = snapshotId
+        ? await this.#restoreVerified(freshActor, snapshotId)
+        : { restored: false, error: new Error('no rollback snapshot exists') };
+      if (!restore.restored) {
+        swseLogger.error('TransactionEngine: Credit adjustment rollback failed', { transactionId, snapshotId: Boolean(snapshotId), error: restore.error?.message });
+        return { success: false, transactionId, rollbackFailed: true, indeterminate: true, partialMutationPossible: true, error: `Credit adjustment failed and rollback failed: ${error.message}` };
       }
+      swseLogger.info('TransactionEngine: Credit adjustment rollback successful', { transactionId });
 
       return { success: false, transactionId, error: error.message };
     } finally {

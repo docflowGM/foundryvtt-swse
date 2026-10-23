@@ -295,8 +295,9 @@ const worldFor = (...as) => { const m = new Map(as.map((x) => [x.id, x])); globa
   // (4b) the REFUND itself is unresolved (its own restore returned false): no further whole-actor restore is attempted over an actor whose state is unknown
   setupT(); model.failWriteN = { b: [1], a: [2] }; snapMode.restoreBy = { a: 'false' }; const before = snapMode.restores; r = await transfer();
   assert.equal(r.success, false); assert.equal(r.rollbackFailed, true); assert.equal(r.indeterminate, true, 'unresolved refund'); assert.deepEqual(r.evidence.restores, [], 'no transfer-level restore attempted'); assert.equal(A.system.credits, 900);
-  // (5) no snapshots could be taken and the refund fails: compensating refund was the only recovery, and it failed
-  setupT(); model.failWriteN = { b: [1], a: [2] }; snapMode.create = 'throw'; r = await transfer(); assert.equal(r.rollbackFailed, true); assert.equal(A.system.credits, 900);
+  // (5) no snapshots can be taken. TI4-C0 (credit-adjustment safety): the debit leg is now REFUSED up front (the rollback snapshot is a precondition), so no credits move and
+  //     the failure is definitive; previously the debit proceeded unprotected, the refund failed, and the sender stayed charged (rollbackFailed).
+  setupT(); model.failWriteN = { b: [1], a: [2] }; snapMode.create = 'throw'; r = await transfer(); assert.equal(r.success, false); assert.notEqual(r.rollbackFailed, true); assert.notEqual(r.indeterminate, true); assert.match(r.error, /snapshot/i); assert.equal(A.system.credits, 1000, 'nothing was debited'); assert.equal(B.system.credits, 100);
   // (6) the credit leg is ITSELF unresolved (its own restore failed: the recipient may hold the credits): the debit is NOT refunded automatically
   setupT(); adjustCalls.length = 0; model.failWriteN = { b: [1] }; snapMode.restoreBy = { b: 'false' }; r = await transfer();
   assert.equal(r.success, false); assert.equal(r.indeterminate, true, 'unknown whether the recipient was credited'); assert.equal(adjustCalls.filter((c) => c === 'holonet-credit-transfer-refund').length, 0, 'no automatic refund (it could duplicate the credits)'); assert.equal(A.system.credits, 900);
