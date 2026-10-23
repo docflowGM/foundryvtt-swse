@@ -639,6 +639,75 @@ await check('C4-g. history written by refundSession itself stays consistent with
   assert.equal(engine.credits.A, 1000); assert.equal(engine.credits.B, 1000);
 });
 
+/* ---- correction 5: all attributable history is reconciled (R9); a session already marked refunded does not bypass the checks (R10) ---- */
+await check('C5-R9a. two DIFFERENT successful refund transactions for the same debit are conflicting evidence ⇒ review (never certified refunded); a duplicate record of the SAME refund is harmless', async () => {
+  for (const withLedger of [false, true]) {
+    const s = setupC4(withLedger ? ledgerA('refunded', { refundTransactionId: 'R1' }) : null, [histA({ transactionId: 'R1' }), histA({ transactionId: 'R2' })]);
+    const r = await Svc.refundSession(s, 'retry');
+    assert.equal(engine.calls.length, 0, `ledger=${withLedger}`); assert.equal(r.ok, false, `ledger=${withLedger}`);
+    assert.notEqual(stored().escrow.credits.status, 'refunded', `ledger=${withLedger}`);
+    assert.deepEqual((r.unresolvedEntries ?? []).map((u) => u.status), ['review'], `ledger=${withLedger}`);
+  }
+  const same = setupC4(null, [histA({ transactionId: 'R1' }), histA({ transactionId: 'R1' })]);
+  const ok = await Svc.refundSession(same, 'retry');
+  assert.equal(engine.calls.length, 0); assert.equal(ok.ok, true); assert.equal(stored().escrow.credits.status, 'refunded');
+});
+
+await check('C5-R9b. a matching success does not conceal an unresolved or malformed record for the same debit ⇒ review', async () => {
+  for (const [label, other] of [
+    ['rollbackFailed', histA({ success: false, rollbackFailed: true, transactionId: 'R0' })],
+    ['indeterminate', histA({ success: false, indeterminate: true, transactionId: 'R0' })],
+    ['success without a transaction id', histA({ transactionId: undefined })],
+    ['no success flag', histA({ success: undefined, transactionId: 'R0' })]
+  ]) {
+    const s = setupC4(null, [histA({ transactionId: 'R1' }), other]);
+    const r = await Svc.refundSession(s, 'retry');
+    assert.equal(engine.calls.length, 0, label); assert.equal(r.ok, false, label);
+    assert.notEqual(stored().escrow.credits.status, 'refunded', label);
+  }
+});
+
+await check('C5-R9c. an earlier DEFINITIVE failure followed by one success is the normal retry history ⇒ still refunded', async () => {
+  const s = setupC4(null, [histA({ success: false, transactionId: 'F1', error: 'refused' }), histA({ transactionId: 'R1' })]);
+  const r = await Svc.refundSession(s, 'retry');
+  assert.equal(engine.calls.length, 0); assert.equal(r.ok, true); assert.equal(stored().escrow.credits.status, 'refunded');
+});
+
+await check('C5-R10a. a session ALREADY marked refunded does not return success when its refund records contradict one another', async () => {
+  for (const [label, led, hist] of [
+    ['two different successes', null, [histA({ transactionId: 'R1' }), histA({ transactionId: 'R2' })]],
+    ['ledger failed + history success', ledgerA('failed'), [histA()]],
+    ['success + unresolved record', null, [histA({ transactionId: 'R1' }), histA({ success: false, rollbackFailed: true, transactionId: 'R0' })]],
+    ['unattributable history', null, [histA(), { success: true, transactionId: 'x', actorId: 'A', amount: 100 }]]
+  ]) {
+    const s = setupC4(led, hist);
+    patchStored((c) => { c.status = 'refunded'; });
+    const r = await Svc.refundSession(s, 'again');
+    assert.equal(engine.calls.length, 0, label);
+    assert.equal(r.ok, false, `${label}: must not report success`);
+    assert.equal(r.skipped, undefined, label);
+    assert.equal(r.indeterminate, true, label);
+    assert.equal(stored().escrow.credits.status, 'refunded', `${label}: the stored session is not rewritten`);
+  }
+});
+
+await check('C5-R10b. a session marked refunded with NO verifiable refund evidence is not reported as a verified success and no credits move', async () => {
+  const s = install({ status: 'refunded' });
+  const r = await Svc.refundSession(s, 'again');
+  assert.equal(engine.calls.length, 0); assert.equal(r.ok, false); assert.equal(r.indeterminate, true);
+});
+
+await check('C5-R10c. a session marked refunded whose evidence is consistent keeps its harmless skipped success (also for a stale caller copy)', async () => {
+  const s = install();
+  await Svc.refundSession(s, 'first');
+  const calls = engine.calls.length;
+  for (const copy of [stored(), s]) {
+    const r = await Svc.refundSession(copy, 'again');
+    assert.equal(r.ok, true); assert.equal(r.skipped, true);
+  }
+  assert.equal(engine.calls.length, calls);
+});
+
 await check('C1-R1d. a legacy record whose amount differs from the debit is not proof of that debit\'s refund (review)', async () => {
   const s = install({ status: 'refund-failed', escrowExtra: { refunds: [{ success: true, transactionId: 'old_A', actorId: 'A', seatId: 'seat_A', amount: 40 }] } });
   patchStored((c) => { c.entries = [c.entries[0]]; });

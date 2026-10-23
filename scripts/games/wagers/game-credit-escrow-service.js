@@ -245,7 +245,13 @@ function deriveRefundStates(credits = {}) {
     const successes = attributed.filter((_record, index) => classes[index] === 'refunded');
     let history;                                    // { status, refundTransactionId?, duplicateRefunds?, reason? }
     if (historyConflict) history = { status: 'review', reason: historyConflict };
-    else if (successes.length) history = { status: 'refunded', refundTransactionId: successes[0].transactionId, duplicateRefunds: successes.length > 1 ? successes.length : 0 };
+    else if (successes.length) {
+      // A success certifies the debit only if ALL attributable evidence agrees with it: two different successful refunds, or a success next to an
+      // unresolved / malformed record for the same debit, is a contradiction (a duplicate record of the SAME refund transaction is harmless).
+      if (new Set(successes.map(record => String(record.transactionId))).size > 1) history = { status: 'review', reason: 'conflicting-refund-successes' };
+      else if (classes.includes('indeterminate') || classes.includes('review')) history = { status: 'review', reason: 'refund-success-alongside-unresolved-record' };
+      else history = { status: 'refunded', refundTransactionId: successes[0].transactionId, duplicateRefunds: successes.length > 1 ? successes.length : 0 };
+    }
     else if (classes.includes('indeterminate')) history = { status: 'indeterminate', reason: 'unresolved-refund-outcome' };
     else if (classes.includes('review')) history = { status: 'review', reason: 'missing-or-malformed-refund-evidence' };
     else history = { status: attributed.length ? 'failed' : 'pending' };
@@ -488,7 +494,14 @@ async function approveTableCreditBalanceSettlement(session = {}, escrow = {}, { 
 async function refundSessionAuthoritative(sessionId, reason) {
   const first = GameSessionStore.getSession(sessionId);
   const escrow0 = ensureEscrow(first);
-  if (escrow0.credits.status === 'refunded') return { ok: true, skipped: true, session: first };
+  if (escrow0.credits.status === 'refunded') {
+    // A `refunded` marker is a claim, not evidence: it is honoured only while every entry's refund evidence still agrees. No credits move either way.
+    const unverified = deriveRefundStates(escrow0.credits).filter(state => state.status !== 'refunded');
+    if (!unverified.length) return { ok: true, skipped: true, session: first };
+    return { ok: false, indeterminate: true, session: first,
+      error: `This game escrow is marked refunded, but its refund records do not verify (${unverified.map(state => `${state.entry.seatLabel || state.seatId}: ${state.reason ?? state.status}`).join('; ')}). It was not refunded again; a GM must review it.`,
+      unresolvedEntries: unverified.map(state => ({ seatId: state.seatId, status: state.status, reason: state.reason ?? null })) };
+  }
   if (!['escrowed', 'payout-failed', 'refund-failed'].includes(escrow0.credits.status)) return { ok: false, error: 'Credit escrow is not refundable in its current state.', session: first };
   const blockers = payoutRefundBlockers(escrow0.credits);
   if (blockers.length) {
