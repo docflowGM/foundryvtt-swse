@@ -32,7 +32,8 @@ globalThis.Hooks ??= { on() {}, once() {}, call() {}, callAll() {} };
 const { HolonetMessengerService: Svc } = await import('/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js');
 const { TransactionEngine } = await import('/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js');
 const { swseLogger, SWSELogger } = await import('/systems/foundryvtt-swse/scripts/utils/logger.js');
-for (const lg of [swseLogger, SWSELogger]) for (const level of ['log', 'info', 'warn', 'error', 'debug']) if (lg?.[level]) lg[level] = () => {};
+const logged = [];
+for (const lg of [swseLogger, SWSELogger]) for (const level of ['log', 'info', 'warn', 'error', 'debug']) if (lg?.[level]) lg[level] = (...a) => { if (level === 'error') logged.push(a.map(String).join(' ')); };
 
 const clone = (v) => JSON.parse(JSON.stringify(v));
 const saved = { adjust: TransactionEngine.executeCreditAdjustment, sys: Svc._publishSystemMessage, recip: Svc._recipientFromStableId, game: globalThis.game };
@@ -49,7 +50,7 @@ function install({ script = [] } = {}) {
   world.settings = { holonetPartyFundEnabled: true, holonetPartyFundBalance: FUND_START, holonetPartyFundLedger: [] };
   Object.assign(world, { writes: [], failBalance: null, failLedger: false, persistOnFail: false });
   engine.calls = []; engine.script = [...script];
-  out.system.length = 0;
+  out.system.length = 0; logged.length = 0;
   player = { id: 'P', name: 'Player', system: { credits: PLAYER_START } };
   recipient = { id: 'R', name: 'Recipient', system: { credits: RECIPIENT_START } };
   const actors = { P: player, R: recipient };
@@ -80,6 +81,9 @@ function install({ script = [] } = {}) {
       case 'rollbackFailed': apply(); return { success: false, transactionId, rollbackFailed: true, error: 'Credit adjustment failed and rollback failed' };
       case 'indeterminate-notmoved': return { success: false, transactionId, indeterminate: true, error: 'outcome unknown' };
       case 'partial': apply(); return { success: false, transactionId, partialMutationPossible: true, error: 'partial mutation possible' };
+      case 'ok+indeterminate': apply(); return { success: true, transactionId, indeterminate: true, error: null };
+      case 'ok+rollbackFailed': apply(); return { success: true, transactionId, rollbackFailed: true, error: null };
+      case 'ok+partial': apply(); return { success: true, transactionId, partialMutationPossible: true, error: null };
       case 'throw': throw new Error('engine exploded');
       case 'malformed': return undefined;
       default: throw new Error(`unknown scripted outcome ${outcome}`);
@@ -297,6 +301,87 @@ await check('P9. a payout that is never attempted (non-GM, disabled fund, bad am
   world.settings.holonetPartyFundEnabled = true; assert.equal(await pay(0), false); assert.equal(await pay(-5), false);
   Svc._recipientFromStableId = () => null; assert.equal(await pay(100), false);
   assert.equal(engine.calls.length, 0); assert.equal(fund(), FUND_START);
+});
+
+/* ============================================================================================== */
+/* correction 1 — R1: contradictory success + unresolved flags fail closed; R2: unresolved-outcome reporting never throws                 */
+/* ============================================================================================== */
+const CONTRADICTORY = ['ok+indeterminate', 'ok+rollbackFailed', 'ok+partial'];
+
+for (const outcome of CONTRADICTORY) {
+  await check(`R1a. a DEBIT reporting success:true WITH unresolved evidence (${outcome}) is not trusted: the fund is not credited, nothing is refunded or retried, the GM is told`, async () => {
+    install({ script: [outcome] });
+    assert.equal(await contribute(100), false);
+    assert.equal(fund(), FUND_START, 'the fund is not credited on a contradictory debit result');
+    assert.deepEqual(engine.calls.map((c) => c.kind), ['debit'], 'no refund / retry');
+    assert.equal(events().at(-1), 'party-fund-contribution-indeterminate');
+    assert.doesNotMatch(bodies(), /contributed|revert/i);
+  });
+
+  await check(`R1b. a REFUND reporting success:true WITH unresolved evidence (${outcome}) is not announced as a verified reversal`, async () => {
+    install({ script: ['ok', outcome] }); world.failBalance = (value) => value === FUND_START + 100;
+    assert.equal(await contribute(100), false);
+    assert.doesNotMatch(bodies(), /reverted/i);
+    assert.equal(events().at(-1), 'party-fund-refund-indeterminate');
+    assert.equal(callsOf('refund').length, 1, 'no automatic second refund');
+  });
+
+  await check(`R1c. a PAYOUT reporting success:true WITH unresolved evidence (${outcome}) is not announced as completed: unresolved, fund not restored, uncertainty ledgered`, async () => {
+    install({ script: [outcome] });
+    assert.equal(await pay(100), false);
+    assert.equal(fund(), FUND_START - 100, 'the fund is not restored');
+    assert.equal(economy(), START);
+    assert.equal(events().at(-1), 'party-fund-payout-indeterminate');
+    assert.doesNotMatch(bodies(), /paid|revert/i);
+    assert.ok(ledger().some((l) => l.type === 'payout-indeterminate'), 'recorded as unresolved'); assert.ok(!ledger().some((l) => l.type === 'payout'), 'not recorded as a completed payout');
+    assert.equal(callsOf('payout').length, 1);
+  });
+}
+
+await check('R1d. a clean success:true (no unresolved flags, including explicit false flags) is still committed', async () => {
+  install(); engine.script = ['ok'];
+  assert.equal(await contribute(100), true); assert.equal(fund(), 600);
+  install({ script: ['ok'] });
+  const realAdjust = TransactionEngine.executeCreditAdjustment;
+  TransactionEngine.executeCreditAdjustment = async (ctx) => ({ ...(await realAdjust(ctx)), indeterminate: false, rollbackFailed: false, partialMutationPossible: false });
+  assert.equal(await pay(100), true); assert.equal(fund(), 400); assert.equal(recipient.system.credits, 1100);
+});
+
+await check('R2a. an UNRESOLVED debit whose review message cannot be published: still returns false (no exception), no fund credit, no refund, the failure is logged', async () => {
+  install({ script: ['indeterminate'] }); out.failPublish = () => true;
+  assert.equal(await contribute(100), false);
+  assert.equal(fund(), FUND_START); assert.deepEqual(engine.calls.map((c) => c.kind), ['debit']);
+  assert.ok(logged.some((l) => /could not be published/i.test(l)), 'the publication failure is logged');
+});
+
+await check('R2b. an UNRESOLVED payout whose review message cannot be published: returns false (no exception), the fund is NOT restored, the uncertainty is still ledgered, no retry', async () => {
+  install({ script: ['indeterminate'] }); out.failPublish = () => true;
+  assert.equal(await pay(100), false);
+  assert.equal(fund(), FUND_START - 100); assert.equal(economy(), START);
+  assert.ok(ledger().some((l) => l.type === 'payout-indeterminate'));
+  assert.equal(callsOf('payout').length, 1);
+  assert.ok(logged.some((l) => /could not be published/i.test(l)));
+});
+
+await check('R2c. an UNRESOLVED refund whose review message cannot be published: returns false (no exception), no second refund', async () => {
+  install({ script: ['ok', 'indeterminate'] }); world.failBalance = (value) => value === FUND_START + 100; out.failPublish = () => true;
+  assert.equal(await contribute(100), false);
+  assert.equal(callsOf('refund').length, 1);
+  assert.ok(logged.some((l) => /could not be published/i.test(l)));
+});
+
+await check('R2d. the other failure notices (restore failed, refund failed, definitive payout failure/restore failure, "reverted") never turn into a thrown failure when publication fails', async () => {
+  const scenarios = [
+    ['contribution: fund restore failed', () => { install(); world.persistOnFail = true; world.failBalance = () => true; }, () => contribute(100)],
+    ['contribution: refund failed', () => { install({ script: ['ok', 'fail'] }); world.failBalance = (v) => v === FUND_START + 100; }, () => contribute(100)],
+    ['contribution: reverted', () => { install(); world.failBalance = (v) => v === FUND_START + 100; }, () => contribute(100)],
+    ['payout: definitive failure reverted', () => { install({ script: ['fail'] }); }, () => pay(100)],
+    ['payout: definitive failure, restore failed', () => { install({ script: ['fail'] }); world.failBalance = (v) => v === FUND_START; }, () => pay(100)]
+  ];
+  for (const [label, setup, run] of scenarios) {
+    setup(); out.failPublish = () => true;
+    assert.equal(await run(), false, label);
+  }
 });
 
 const failed = results.filter((r) => !r.ok);

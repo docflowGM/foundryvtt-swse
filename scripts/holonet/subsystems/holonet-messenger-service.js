@@ -1418,8 +1418,10 @@ function creditMovementEvidence(result = {}) {
  */
 function partyFundCreditOutcome(result) {
   if (!result || typeof result !== 'object' || typeof result.success !== 'boolean') return 'indeterminate';
-  if (result.success === true) return 'success';
-  return (result.indeterminate === true || result.rollbackFailed === true || result.partialMutationPossible === true) ? 'indeterminate' : 'failed';
+  // Unresolved evidence takes priority over `success`: a contradictory result (success:true WITH indeterminate / rollbackFailed / partialMutationPossible)
+  // cannot be trusted as committed. Fail closed.
+  if (result.indeterminate === true || result.rollbackFailed === true || result.partialMutationPossible === true) return 'indeterminate';
+  return result.success === true ? 'success' : 'failed';
 }
 
 async function partyFundCreditAdjustment(context, options) {
@@ -5757,6 +5759,19 @@ export class HolonetMessengerService {
     }
   }
 
+  /**
+   * TI4-C0/G26 — publish a Party Fund notice without letting a publication failure change the credit outcome. The notice is best-effort: if it cannot be
+   * published the failure is logged and the (already decided) boolean outcome is still returned — an unresolved or committed credit movement must never
+   * surface as a thrown ordinary failure.
+   */
+  static async _notifyPartyFund(thread, body, meta) {
+    try {
+      await this._publishSystemMessage(thread, body, meta);
+    } catch (publishErr) {
+      SWSELogger.error(`[Holonet] Party Fund notice could not be published (${meta?.eventType ?? 'notice'}): ${body}`, publishErr);
+    }
+  }
+
   static async _gmContributeToPartyFund({ actorId, thread, amount, requesterId = null, senderRecipientId = null } = {}) {
     if (!isPartyFundEnabled()) return false;
     const value = parsePositiveCredits(amount);
@@ -5782,7 +5797,7 @@ export class HolonetMessengerService {
         // TI4-C0/G26: an unresolved debit is NOT proof that no credits moved. The fund is not credited, the debit is not retried and nothing is refunded
         // automatically; the GM reconciles.
         SWSELogger.error('[Holonet] Party Fund contribution debit outcome is unresolved; GM review required', debit);
-        await this._publishSystemMessage(thread, `${actor.name}'s ${formatCredits(value)} Party Fund contribution could not be reconciled and needs GM review (the contribution may have been charged without reaching the fund): ${debit?.error ?? 'outcome unknown'}`, { eventType: 'party-fund-contribution-indeterminate', amount: value, fromActorId: actor.id, transactionId: debit?.transactionId ?? null });
+        await this._notifyPartyFund(thread, `${actor.name}'s ${formatCredits(value)} Party Fund contribution could not be reconciled and needs GM review (the contribution may have been charged without reaching the fund): ${debit?.error ?? 'outcome unknown'}`, { eventType: 'party-fund-contribution-indeterminate', amount: value, fromActorId: actor.id, transactionId: debit?.transactionId ?? null });
         return false;
       }
       if (debitOutcome !== 'success') return false;
@@ -5821,11 +5836,11 @@ export class HolonetMessengerService {
       await setPartyFundBalance(before);
     } catch (restoreErr) {
       SWSELogger.error('[Holonet] Party Fund balance restore FAILED after a failed contribution; no refund attempted', restoreErr);
-      await this._publishSystemMessage(thread, `${who}'s ${formatCredits(value)} Party Fund contribution failed and the Party Fund balance could NOT be restored, so no automatic refund was attempted (it could create credits). The fund and ${actor?.name ? `${actor.name}'s credits` : 'the ledger'} need GM review.`, { eventType: 'party-fund-contribution-indeterminate', amount: value, fromActorId: actor?.id ?? null });
+      await this._notifyPartyFund(thread, `${who}'s ${formatCredits(value)} Party Fund contribution failed and the Party Fund balance could NOT be restored, so no automatic refund was attempted (it could create credits). The fund and ${actor?.name ? `${actor.name}'s credits` : 'the ledger'} need GM review.`, { eventType: 'party-fund-contribution-indeterminate', amount: value, fromActorId: actor?.id ?? null });
       return false;
     }
     if (requesterIsGm || !actor) {
-      await this._publishSystemMessage(thread, `${who}'s ${formatCredits(value)} Party Fund contribution failed and was reverted.`, { eventType: 'party-fund-failed' });
+      await this._notifyPartyFund(thread, `${who}'s ${formatCredits(value)} Party Fund contribution failed and was reverted.`, { eventType: 'party-fund-failed' });
       return false;
     }
     const refund = await partyFundCreditAdjustment({
@@ -5837,13 +5852,13 @@ export class HolonetMessengerService {
     }, { source: 'HolonetMessengerService.partyFundContributionRollback', validate: true, rederive: true });
     const refundOutcome = partyFundCreditOutcome(refund);
     if (refundOutcome === 'success') {
-      await this._publishSystemMessage(thread, `${who}'s ${formatCredits(value)} Party Fund contribution failed and was reverted.`, { eventType: 'party-fund-failed' });
+      await this._notifyPartyFund(thread, `${who}'s ${formatCredits(value)} Party Fund contribution failed and was reverted.`, { eventType: 'party-fund-failed' });
     } else if (refundOutcome === 'failed') {
       SWSELogger.error('[Holonet] Party Fund contribution refund FAILED; actor remains charged', refund);
-      await this._publishSystemMessage(thread, `${who}'s ${formatCredits(value)} Party Fund contribution failed and its refund ALSO failed (${refund?.error ?? 'refused'}); ${actor.name} remains charged and the contribution needs GM review. It was not retried automatically.`, { eventType: 'party-fund-refund-failed', amount: value, fromActorId: actor.id, transactionId: refund?.transactionId ?? null });
+      await this._notifyPartyFund(thread, `${who}'s ${formatCredits(value)} Party Fund contribution failed and its refund ALSO failed (${refund?.error ?? 'refused'}); ${actor.name} remains charged and the contribution needs GM review. It was not retried automatically.`, { eventType: 'party-fund-refund-failed', amount: value, fromActorId: actor.id, transactionId: refund?.transactionId ?? null });
     } else {
       SWSELogger.error('[Holonet] Party Fund contribution refund outcome is unresolved; GM review required', refund);
-      await this._publishSystemMessage(thread, `${who}'s ${formatCredits(value)} Party Fund contribution failed and the refund could not be reconciled; ${actor.name} may or may not have been refunded and the contribution needs GM review. It was not retried automatically: ${refund?.error ?? 'outcome unknown'}`, { eventType: 'party-fund-refund-indeterminate', amount: value, fromActorId: actor.id, transactionId: refund?.transactionId ?? null });
+      await this._notifyPartyFund(thread, `${who}'s ${formatCredits(value)} Party Fund contribution failed and the refund could not be reconciled; ${actor.name} may or may not have been refunded and the contribution needs GM review. It was not retried automatically: ${refund?.error ?? 'outcome unknown'}`, { eventType: 'party-fund-refund-indeterminate', amount: value, fromActorId: actor.id, transactionId: refund?.transactionId ?? null });
     }
     return false;
   }
@@ -5896,7 +5911,7 @@ export class HolonetMessengerService {
       } catch (ledgerErr) {
         SWSELogger.error('[Holonet] Party Fund unresolved-payout ledger entry could not be written', ledgerErr);
       }
-      await this._publishSystemMessage(thread, `Party Fund payout of ${formatCredits(value)} to ${targetActor.name} could not be reconciled and needs GM review: ${targetActor.name} may already have received the credits, so the Party Fund balance was NOT restored automatically and the payout was not retried. ${payout?.error ?? ''}`.trim(), { eventType: 'party-fund-payout-indeterminate', amount: value, toActorId: targetActor.id, transactionId: payout?.transactionId ?? null });
+      await this._notifyPartyFund(thread, `Party Fund payout of ${formatCredits(value)} to ${targetActor.name} could not be reconciled and needs GM review: ${targetActor.name} may already have received the credits, so the Party Fund balance was NOT restored automatically and the payout was not retried. ${payout?.error ?? ''}`.trim(), { eventType: 'party-fund-payout-indeterminate', amount: value, toActorId: targetActor.id, transactionId: payout?.transactionId ?? null });
       return false;
     }
 
@@ -5906,10 +5921,10 @@ export class HolonetMessengerService {
         await setPartyFundBalance(before);
       } catch (restoreErr) {
         SWSELogger.error('[Holonet] Party Fund payout rollback FAILED; fund balance is short', restoreErr);
-        await this._publishSystemMessage(thread, `Party Fund payout to ${targetActor.name} failed, but the Party Fund balance could NOT be restored: the fund is short by ${formatCredits(value)} and needs GM review.`, { eventType: 'party-fund-payout-restore-failed', amount: value, toActorId: targetActor.id });
+        await this._notifyPartyFund(thread, `Party Fund payout to ${targetActor.name} failed, but the Party Fund balance could NOT be restored: the fund is short by ${formatCredits(value)} and needs GM review.`, { eventType: 'party-fund-payout-restore-failed', amount: value, toActorId: targetActor.id });
         return false;
       }
-      await this._publishSystemMessage(thread, `Party Fund payout to ${targetActor.name} failed and was reverted.`, { eventType: 'party-fund-payout-failed' });
+      await this._notifyPartyFund(thread, `Party Fund payout to ${targetActor.name} failed and was reverted.`, { eventType: 'party-fund-payout-failed' });
       return false;
     }
 
