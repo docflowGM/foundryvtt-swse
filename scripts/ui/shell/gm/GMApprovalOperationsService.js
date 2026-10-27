@@ -387,8 +387,20 @@ export class GMApprovalOperationsService {
       return false;
     }
 
+    // G35: the owner is optional; resolve it through the same authority approveDroid uses.
+    const ownerActor = this.resolveDroidOwnerActor(actor);
+
     try {
       await ActorEngine.updateActor(actor, { 'system.droidSystems.stateMode': 'REJECTED' });
+    } catch (err) {
+      SWSELogger.error('[GMApprovalOperationsService] Error rejecting droid:', err);
+      ui?.notifications?.error?.(`Failed to reject droid: ${err.message}`);
+      return false;
+    }
+
+    // Commit boundary: the rejection is committed. Everything below is post-commit bookkeeping.
+    const failures = [];
+    await this._afterCommit(failures, 'build history', async () => {
       const buildHistory = Array.isArray(droidData.buildHistory) ? [...droidData.buildHistory] : [];
       buildHistory.push({
         timestamp: Date.now(),
@@ -397,7 +409,9 @@ export class GMApprovalOperationsService {
         reason
       });
       await ActorEngine.updateActor(actor, { 'system.droidSystems.buildHistory': buildHistory });
+    }, 'rejection');
 
+    await this._afterCommit(failures, 'resolved hook', async () => {
       Hooks.call('swseApprovalResolved', {
         approval: {
           id: `droid-${actor.id}`,
@@ -416,15 +430,17 @@ export class GMApprovalOperationsService {
         decidedBy: game.user?.name ?? 'GM',
         reason
       });
+    }, 'rejection');
 
-      await this._resetApprovalState(host);
-      ui?.notifications?.info?.(`Droid "${actor.name}" rejected${reason ? ` — ${reason}` : ''}`);
-      return true;
+    await this._afterCommit(failures, 'refresh', () => this._resetApprovalState(host), 'rejection');
+
+    // The notification is post-commit too: a throwing notifier must not turn the committed rejection into a rejected promise.
+    try {
+      this._reportCommitted(failures, `Droid "${actor.name}" rejected${reason ? ` — ${reason}` : ''}`, 'rejection');
     } catch (err) {
-      SWSELogger.error('[GMApprovalOperationsService] Error rejecting droid:', err);
-      ui?.notifications?.error?.(`Failed to reject droid: ${err.message}`);
-      return false;
+      SWSELogger.warn('[GMApprovalOperationsService] Droid rejection is committed, but its notification failed', err);
     }
+    return true;
   }
 
   static async approveGameSettlement(host, sessionId, { payoutAmount = null, reason = '', decision = 'recommended' } = {}) {
@@ -967,17 +983,18 @@ export class GMApprovalOperationsService {
    * TI-3: approval follow-ups (history mirror, queue removal, hooks, refresh, notification) are bookkeeping AFTER a transaction that already committed.
    * A failure in one is recorded and reported as a warning; it never turns a committed approval into a "Failed to approve" (which invites a second charge).
    */
-  static async _afterCommit(failures, label, step) {
+  static async _afterCommit(failures, label, step, noun = 'approval') {
     try {
       await step();
     } catch (err) {
-      SWSELogger.warn(`[GMApprovalOperationsService] Post-commit step "${label}" failed; the approval itself is committed`, err);
+      SWSELogger.warn(`[GMApprovalOperationsService] Post-commit step "${label}" failed; the ${noun} itself is committed`, err);
       failures.push(`${label}: ${err?.message ?? err}`);
     }
   }
 
-  static _reportCommitted(failures, message) {
-    if (failures.length) ui?.notifications?.warn?.(`${message} — but some follow-up steps failed (${failures.join('; ')}). The approval itself is committed; do not approve it again.`);
+  static _reportCommitted(failures, message, noun = 'approval') {
+    const verb = noun === 'approval' ? 'approve' : 'reject';
+    if (failures.length) ui?.notifications?.warn?.(`${message} — but some follow-up steps failed (${failures.join('; ')}). The ${noun} itself is committed; do not ${verb} it again.`);
     else ui?.notifications?.info?.(message);
   }
 
