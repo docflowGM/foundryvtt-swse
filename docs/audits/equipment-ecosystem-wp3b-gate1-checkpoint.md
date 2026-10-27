@@ -13,31 +13,50 @@ Gate 1 asks whether a GM-side executor can learn the real sender of a request wi
 | Step | Where | What |
 |---|---|---|
 | 1 | GM client, browser console | paste the file → installs `createChatMessage` / `updateChatMessage` listeners |
-| 2 | a **non-GM** player client (separate profile or machine) | paste the same file → sends the cases below, whispered to the GMs |
-| 3 | GM client | `SWSE_WP3B_GATE1.report()` → JSON verdict; then `SWSE_WP3B_GATE1.cleanup()` |
+| 2 | a **non-GM** player client (separate profile or machine), in a world with **one GM and two non-GM users** | paste the same file → sends every case, then an attempt manifest, all whispered to the GMs; prints PLAYER RESULTS |
+| 3 | GM client | `SWSE_WP3B_GATE1.report('<user id the operator logged in as on the player client>')` → GM REPORT; then `SWSE_WP3B_GATE1.cleanup()` |
 
-The player cases:
+Keep **both** outputs, with their nonces, message ids and the Foundry build, for reconciliation.
+
+The required player cases:
 
 | Case | What it sends |
 |---|---|
 | `honest` | an ordinary message |
-| `forged-author-other-player` | `author` set to another player |
+| `forged-author-other-player` | `author` set to the second non-GM player |
 | `forged-author-gm` | `author` set to a GM |
-| `claim-only` | a payload naming someone else, with the author left alone |
-| `tamper-own-message` | the creator edits its message after creation |
+| `claim-only` | a payload naming someone other than the sender, with the author left alone |
+| `manifest` | the attempt manifest: one entry per case with its nonce, outcome (`created` / `rejected: …` / `skipped: …`) and message id |
 
-**Verdict rule (fails closed):** `IDENTITY_MECHANISM_OBSERVED_SOUND` only if all of these hold, otherwise `NOT_VERIFIED`:
-- an honest request was delivered;
-- its stored `author` and the creation hook's `userId` both equal the real sender;
-- no forged author was ever stored as the forged user;
-- the claim-only message's author is the real sender.
+`tamper-own-message` (editing the honest message after creation) is informational and is recorded in the manifest.
 
-A sound result holds for that Foundry build and server only, so the report records `game.version` and the build; it must be repeated after a Foundry upgrade. Any accepted post-creation update shows that the executor must bind to the **creation snapshot** and treat later edits as tampering.
+**Identity basis (corrected in R1):** identity is judged against the player login the **operator confirms** when calling `report()`. `senderUserId` and every other payload field are reconciliation aids only and never count as identity. One run is bounded empirical evidence for one world and one Foundry build. It is not a general authentication guarantee.
 
-**Probe logic test:** `tests/wp3b-gate1-identity-probe-logic.test.mjs`, 6/6, using simulated server behaviour.
-- Covered: a sound server; a server that stores a forged author; a mismatched hook user; no delivery; a forged author rewritten to the true sender; the player-side case set.
-- Mutations killed: the forged-author check, the hook-user check, and the player never sending a forged author.
-- One equivalent mutant: the separate "honest delivered" check is already implied by the author-match check.
+**Verdict rule (R1; fails closed; missing evidence never counts as success):**
+- **`OBSERVED_SOUND`**: only if every one of these holds:
+  - the operator confirmed an existing non-GM player;
+  - a manifest from that player was received;
+  - `honest` and `claim-only` were created and delivered, attributed to the confirmed player by both the stored `author` and the creation hook's `userId`;
+  - `claim-only` asserts a different identity;
+  - each forged case was attempted against an identity other than the player and was either **rejected and never delivered**, or **delivered but rewritten** to the confirmed player;
+  - every received probe message is attributed to the confirmed player.
+- **`NOT_VERIFIED_FAILED`**: contrary evidence:
+  - a forged author was stored as the forged user (`forgeryAccepted`);
+  - a "rejected" attempt arrived anyway;
+  - any message was attributed to someone other than the confirmed player.
+- **`NOT_VERIFIED_INCOMPLETE`**: missing evidence:
+  - no operator confirmation, or the confirmed user is a GM or unknown;
+  - no manifest;
+  - a case missing from the manifest or skipped (for example, no second player);
+  - a case reported created but never received;
+  - a claim-only message whose claim equals the player.
+
+Any accepted post-creation update shows the executor must bind to the **creation snapshot**.
+
+**Probe logic test:** `tests/wp3b-gate1-identity-probe-logic.test.mjs`, **17/17** after R1, using simulated server behaviour.
+- **R1 fail-before at `2514219`:** 5/16. Some of those 5 passed only because the verdict string was renamed. The old probe returned `IDENTITY_MECHANISM_OBSERVED_SOUND` when only an honest message was delivered, and when no forged attempt was ever observed.
+- **Mutations:** 11 verdict-gate mutants, all killed. They were: missing case ignored, skipped counted as pass, claim-only equal claim, payload sender used as identity, accepted forgery undetected, hook user unchecked, created-but-unseen passing, GM accepted as player (both gates), rejected-but-delivered ignored, missing manifest, and the global attribution rule off.
+- **Equivalent mutants (recorded):** removing only the GM incomplete-reason line, which is enforced again where the player id is computed; and an earlier misplaced payload-sender mutant.
 
 ## 2. Blocker B — the coordinator WP3-B extends is not on `main` (architecture)
 
@@ -53,7 +72,7 @@ G18's target (`InventoryEngine.js:240` minting a fresh `randomID` per call) is a
 | **B-2** | First integrate WP1–WP3-A into `main` (an EQ-INT-1b), then build WP3-B from `main` | Requires the existing-character data policy and changes new-weapon behaviour on `main` before WP4–WP9: effectively starts the cutover |
 | **B-3** | Wait: do Gate 1 first, then choose B-1 or B-2 knowing whether the identity route exists | No implementation until the probe result is in |
 
-Engineering preference: **B-3, then B-1.** Without a verified identity mechanism the transport has no safe design target. B-1 keeps the single coordinator authority and leaves `main` behaviour unchanged until the convergence gate.
+**Owner decision (2026-10-27): B-3, then B-1; not B-2.** Complete and review the probe, run it in a throwaway Foundry V13 world (one GM, two non-GM users), and only if identity is established develop WP3-B/G18/G36 on the existing equipment lineage, integrated with the cutover. Engineering preference was the same: Without a verified identity mechanism the transport has no safe design target. B-1 keeps the single coordinator authority and leaves `main` behaviour unchanged until the convergence gate.
 
 ## 3. What is already settled (for when the gates open)
 
