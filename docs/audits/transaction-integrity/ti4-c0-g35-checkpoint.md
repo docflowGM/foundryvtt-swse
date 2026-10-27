@@ -1,6 +1,6 @@
 # TI4-C0 G35 — Droid Rejection Post-Commit Integrity (checkpoint)
 
-**Status:** implemented, awaiting independent L1 review. Not self-certified. Not merged.
+**Status:** independently L1-certified at `b97f107` and merged to `main` by #1077 (`57107d4`; post-merge CI run 40521747976 green). *(Status line updated by the TI4-C0 closure report; the original text read "implemented, awaiting independent L1 review. Not self-certified. Not merged.")*
 **Scope:** `scripts/ui/shell/gm/GMApprovalOperationsService.js` — `rejectDroid()` only (plus a backward-compatible optional `noun` parameter on the existing `_afterCommit()` / `_reportCommitted()` helpers).
 **Certification level claimed:** none. Evidence is offline, same-client (L1 shape) only. No L2, L3, exactly-once or live-Foundry claim.
 
