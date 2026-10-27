@@ -16,6 +16,9 @@
  *     These are retired one at a time as their publication is hydrated as a
  *     complete snapshot.
  *
+ * Optional canonical `anatomy` (E2B-I1, schema v1): preserved ONLY from the selected variant itself (validated, independent frozen copy).
+ * A complete snapshot never inherits base anatomy, and a legacy overlay no longer inherits it through the base spread.
+ *
  * Pure module: no Foundry globals, safe to unit test under plain Node.
  */
 
@@ -26,6 +29,8 @@ export class SpeciesVariantSnapshotError extends Error {
     this.code = code;
   }
 }
+
+import { readOptionalSpeciesAnatomy } from './species-anatomy-schema-v1.js';
 
 const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 
@@ -101,6 +106,8 @@ function applyCompleteSnapshot(base, variant) {
     throw new SpeciesVariantSnapshotError('INCOMPLETE_SNAPSHOT_VARIANT', `${base?.name}:${variant?.id}: missing ${missing.join(', ')}`);
   }
   const abilityScores = normalizeAbilityMods(variant.abilityMods);
+  // Optional canonical anatomy comes from the selected variant alone (malformed declarations throw; absence is valid).
+  const anatomy = readOptionalSpeciesAnatomy(variant, `${base?.name}:${variant?.id}.anatomy`);
   return {
     // Identity only; nothing rules-bearing is read from the base entry below.
     id: base.id,
@@ -140,11 +147,15 @@ function applyCompleteSnapshot(base, variant) {
     variantFallbackFields: [],
     selectedVariantId: variant.id,
     selectedVariant: selectedVariantSummary(variant),
+    ...(anatomy ? { anatomy } : {}),
   };
 }
 
 function applyLegacyOverlay(base, variant) {
   const fallbackFields = [];
+  // The historical `...base` spread must not carry base anatomy into an overlay profile; only anatomy declared on the variant itself counts.
+  const { anatomy: _baseAnatomy, ...baseWithoutAnatomy } = base;
+  const ownAnatomy = readOptionalSpeciesAnatomy(variant, `${base?.name}:${variant?.id}.anatomy`);
   const pickArray = (field, mine, theirs) => {
     if (Array.isArray(mine) && mine.length) return mine;
     // Only a non-empty base value is actually inherited; an empty one changes nothing and is not reported.
@@ -161,7 +172,7 @@ function applyLegacyOverlay(base, variant) {
   const hasSpeed = Number.isFinite(Number(variant.speed)) && variant.speed !== null && variant.speed !== '';
   if (!hasSpeed) fallbackFields.push('speed');
   return {
-    ...base,
+    ...baseWithoutAnatomy,
     source: variant.source || base.source,
     size: variant.size || base.size,
     speed: hasSpeed ? Number(variant.speed) : base.speed,
@@ -178,6 +189,7 @@ function applyLegacyOverlay(base, variant) {
     variantFallbackFields: fallbackFields,
     selectedVariantId: variant.id,
     selectedVariant: selectedVariantSummary(variant),
+    ...(ownAnatomy ? { anatomy: ownAnatomy } : {}),
   };
 }
 
