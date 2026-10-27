@@ -26,6 +26,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { buildSpeciesMetadataProfile } from "/systems/foundryvtt-swse/scripts/engine/species/species-tag-profile-utils.js";
+import { readOptionalSpeciesAnatomy } from "/systems/foundryvtt-swse/scripts/species/species-anatomy-schema-v1.js";
 
 /**
  * Internal normalized species entry
@@ -292,6 +293,9 @@ export class SpeciesRegistry {
               }))
           : [];
 
+        // Optional canonical anatomy (schema v1) declared on THIS variant only; malformed declarations throw (never silently dropped).
+        const anatomy = readOptionalSpeciesAnatomy(variant, `variant "${id}".anatomy`);
+
         return {
           id,
           label,
@@ -310,6 +314,7 @@ export class SpeciesRegistry {
           // Legacy variant provenance (tools/data/species-legacy-variant-provenance.json): superseded by a verified profile.
           ...(variant.supersededBy ? { supersededBy: String(variant.supersededBy) } : {}),
           ...(variant.legacyProvenance && typeof variant.legacyProvenance === 'object' ? { legacyProvenance: variant.legacyProvenance } : {}),
+          ...(anatomy ? { anatomy } : {}),
           // Complete-snapshot (single published profile) fields. See species-variant-profile.js.
           ...(variant.completeSnapshot === true ? {
             completeSnapshot: true,
@@ -341,6 +346,8 @@ export class SpeciesRegistry {
       languages: entry?.languages ?? [],
       description: entry?.description ?? '',
       traits: [],
+      // A separately declared anatomy on the converted entry travels with its own variant (never copied from the base).
+      ...(entry?.anatomy ? { anatomy: entry.anatomy } : {}),
     };
   }
 
@@ -535,6 +542,9 @@ export class SpeciesRegistry {
       SWSELogger.log('[SpeciesRegistry._normalizeEntry] Created entry for "' + doc.name + '" with id=' + (stableId || 'NULL'));
     }
 
+    // Optional canonical anatomy (schema v1) declared on the species system block; malformed declarations throw (never silently dropped).
+    const anatomy = readOptionalSpeciesAnatomy(system, `species "${doc.name}".anatomy`);
+
     const baseEntry = {
       id: stableId,
       uuid: doc.uuid || null,
@@ -565,7 +575,8 @@ export class SpeciesRegistry {
       canonicalName: system.canonicalName || doc.name,
       description: system.description?.value || system.description || system.shortDescription || '',
       source: system.source || null,
-      pack: doc.pack || 'unknown'
+      pack: doc.pack || 'unknown',
+      ...(anatomy ? { anatomy } : {})
     };
 
     const metadataProfile = buildSpeciesMetadataProfile(baseEntry);

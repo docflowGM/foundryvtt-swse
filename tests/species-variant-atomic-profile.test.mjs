@@ -114,4 +114,21 @@ assert.ok(snapshots >= 1);
   assert.ok(rec.variants.some(v => v.id === 'neimoidian-alternate'), 'existing variant id preserved for actor compatibility');
 }
 
+// E2B-I1: optional canonical anatomy follows the same atomic-snapshot rule (schema validation is covered in species-anatomy-schema-v1.test.mjs).
+{
+  const decl = { schemaVersion: 1, topologyStatus: 'complete', appendages: [{ id: 'arm-1', kind: 'arm', capabilities: { canHold: true, canWield: true, canManipulate: true } }] };
+  const baseWithAnatomy = { ...base, anatomy: { schemaVersion: 1, topologyStatus: 'complete', appendages: [] } };
+  // a complete snapshot never inherits base anatomy, and a snapshot's own anatomy is carried
+  assert.equal('anatomy' in applySpeciesVariantProfile(baseWithAnatomy, snapshot()), false);
+  assert.deepEqual(applySpeciesVariantProfile(baseWithAnatomy, snapshot({ anatomy: decl })).anatomy, decl);
+  // a legacy overlay no longer carries base anatomy through the ...base spread (all other fallback behaviour is unchanged)
+  const overlay = applySpeciesVariantProfile(baseWithAnatomy, { id: 'legacy', label: 'L', abilityMods: { dex: 2 }, special: [], traits: [], languages: [] });
+  assert.equal('anatomy' in overlay, false);
+  assert.deepEqual(overlay.canonicalTraits, base.canonicalTraits);
+  // anatomy is globally optional for snapshots and survives the registry normalizer
+  assert.deepEqual(listMissingSnapshotFields(snapshot()), []);
+  assert.deepEqual(SpeciesRegistry._normalizeVariants([snapshot({ anatomy: decl })])[0].anatomy, decl);
+  assert.equal('anatomy' in SpeciesRegistry._normalizeVariants([snapshot()])[0], false);
+}
+
 console.log('PASS: species atomic variant profile');
