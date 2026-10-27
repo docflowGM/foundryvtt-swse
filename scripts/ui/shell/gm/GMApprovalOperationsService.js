@@ -434,7 +434,12 @@ export class GMApprovalOperationsService {
 
     await this._afterCommit(failures, 'refresh', () => this._resetApprovalState(host), 'rejection');
 
-    this._reportCommitted(failures, `Droid "${actor.name}" rejected${reason ? ` — ${reason}` : ''}`, 'rejection');
+    // The notification is post-commit too: a throwing notifier must not turn the committed rejection into a rejected promise.
+    try {
+      this._reportCommitted(failures, `Droid "${actor.name}" rejected${reason ? ` — ${reason}` : ''}`, 'rejection');
+    } catch (err) {
+      SWSELogger.warn('[GMApprovalOperationsService] Droid rejection is committed, but its notification failed', err);
+    }
     return true;
   }
 

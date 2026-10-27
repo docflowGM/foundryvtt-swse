@@ -32,10 +32,12 @@ globalThis.ui = { notifications: { warn: (m) => notes.warn.push(String(m)), info
 const { GMApprovalOperationsService: Svc } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMApprovalOperationsService.js');
 const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
 const { SWSELogger } = await import('/systems/foundryvtt-swse/scripts/utils/logger.js');
-for (const level of ['log', 'info', 'warn', 'error', 'debug']) if (SWSELogger?.[level]) SWSELogger[level] = () => {};
+const logs = [];
+for (const level of ['log', 'info', 'warn', 'error', 'debug']) if (SWSELogger?.[level]) SWSELogger[level] = (...args) => logs.push({ level, args });
 
 const clone = (v) => JSON.parse(JSON.stringify(v));
 const setPath = (o, p, v) => { const parts = p.split('.'); let t = o; for (let i = 0; i < parts.length - 1; i++) t = (t[parts[i]] ??= {}); t[parts.at(-1)] = clone(v); };
+const realNotifications = globalThis.ui.notifications;
 const saved = { update: ActorEngine.updateActor, reset: Svc._resetApprovalState, hookCall: globalThis.Hooks, game: globalThis.game };
 
 const probe = { updates: [], hooks: [], resets: 0, failKeys: new Set(), failHook: false, failReset: false };
@@ -45,7 +47,8 @@ function mkDroid(over = {}) {
 }
 function install({ withOwner = true, droidOver = {} } = {}) {
   Object.assign(probe, { updates: [], hooks: [], resets: 0, failHook: false, failReset: false }); probe.failKeys = new Set();
-  notes.error.length = 0; notes.warn.length = 0; notes.info.length = 0;
+  notes.error.length = 0; notes.warn.length = 0; notes.info.length = 0; logs.length = 0;
+  globalThis.ui.notifications = realNotifications;
   owner = { id: 'own1', name: 'Owner One', type: 'character', system: { credits: 1000 } };
   droid = mkDroid(droidOver);
   if (!withOwner) droid.system.droidSystems.ownerActorId = undefined;
@@ -60,7 +63,7 @@ function install({ withOwner = true, droidOver = {} } = {}) {
   globalThis.Hooks = { call: (name, payload) => { probe.hooks.push({ name, payload }); if (probe.failHook) throw new Error('listener exploded'); return true; }, callAll() {}, on() {}, once() {} };
   Svc._resetApprovalState = async () => { probe.resets++; if (probe.failReset) throw new Error('render exploded'); };
 }
-function restoreAll() { ActorEngine.updateActor = saved.update; Svc._resetApprovalState = saved.reset; globalThis.Hooks = saved.hookCall; globalThis.game = saved.game; }
+function restoreAll() { globalThis.ui.notifications = realNotifications; ActorEngine.updateActor = saved.update; Svc._resetApprovalState = saved.reset; globalThis.Hooks = saved.hookCall; globalThis.game = saved.game; }
 const host = { selectedApprovalKey: 'droid:dr1' };
 const state = () => droid.system.droidSystems.stateMode;
 const history = () => droid.system.droidSystems.buildHistory;
@@ -185,6 +188,37 @@ await check('12. the shared commit helpers keep their existing (approval) wordin
   assert.match(notes.warn[0], /Approved: thing — but some follow-up steps failed \(refresh: boom\)\. The approval itself is committed; do not approve it again\./);
   const failures = []; await Svc._afterCommit(failures, 'x', async () => { throw new Error('bad'); });
   assert.deepEqual(failures, ['x: bad']);
+});
+
+// R1: the final notification is post-commit too. A notification method that throws must not turn a committed rejection into a rejected promise.
+const throwing = (kind) => { globalThis.ui.notifications = { ...realNotifications, [kind]: () => { throw new Error(`${kind} notification exploded`); } }; };
+const notificationLogged = (kind) => logs.some((l) => (l.level === 'warn' || l.level === 'error') && l.args.some((a) => String(a?.message ?? a).includes(`${kind} notification exploded`)));
+
+await check('13. the clean-success info notification throwing after the commit: still REJECTED, true returned (direct and via denyRequest), no retry or reversal, failure logged', async () => {
+  for (const call of [() => Svc.rejectDroid(host, 'dr1', 'x'), () => Svc.denyRequest(host, 'droid:dr1', 'x')]) {
+    install(); throwing('info');
+    let r; let threw = null;
+    try { r = await call(); } catch (e) { threw = e; }
+    assert.equal(threw, null, `the committed rejection must not reject its promise (got: ${threw?.message})`);
+    assert.equal(r, true); assert.equal(state(), 'REJECTED');
+    assert.equal(probe.updates.length, 2, 'exactly the state write and the history write; no retry, no reversal');
+    assert.ok(probe.updates.every((u) => u['system.droidSystems.stateMode'] === undefined || u['system.droidSystems.stateMode'] === 'REJECTED'), 'state never written back to PENDING');
+    assert.equal(resolved().length, 1); assert.equal(notes.error.length, 0);
+    assert.ok(notificationLogged('info'), 'the notification failure is logged');
+  }
+});
+
+await check('14. the follow-up-failure warn notification throwing after the commit: still REJECTED, true returned (direct and via denyRequest), no retry or reversal, failure logged', async () => {
+  for (const call of [() => Svc.rejectDroid(host, 'dr1', 'x'), () => Svc.denyRequest(host, 'droid:dr1', 'x')]) {
+    install(); probe.failHook = true; throwing('warn');
+    let r; let threw = null;
+    try { r = await call(); } catch (e) { threw = e; }
+    assert.equal(threw, null, `the committed rejection must not reject its promise (got: ${threw?.message})`);
+    assert.equal(r, true); assert.equal(state(), 'REJECTED');
+    assert.equal(probe.updates.length, 2, 'exactly the state write and the history write; no retry, no reversal');
+    assert.equal(resolved().length, 1, 'the hook was attempted once'); assert.equal(probe.resets, 1); assert.equal(notes.error.length, 0);
+    assert.ok(notificationLogged('warn'), 'the notification failure is logged');
+  }
 });
 
 const failed = results.filter((r) => !r.ok);

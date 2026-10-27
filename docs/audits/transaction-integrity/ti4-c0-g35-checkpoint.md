@@ -46,3 +46,15 @@ TransactionEngine; G21/G22/G24/G26/G34 implementations; approval lifecycle, vali
 ## Limitations
 
 L1 offline only. Hook listeners (e.g. the Holonet approvals emitter) and the Shell UI refresh are stubbed, not exercised in a live Foundry runtime.
+
+## Correction 1 (independent review R1)
+
+**Finding (reproduced):** after the commit, `rejectDroid()` called `_reportCommitted()` unguarded. If `ui.notifications.info` (clean path) or `ui.notifications.warn` (follow-up-failure path) threw, the committed rejection surfaced as a rejected promise, both directly and through `denyRequest('droid:<id>')`.
+
+**Fix:** the final `_reportCommitted()` call in `rejectDroid()` is wrapped in a callsite `try/catch` that logs the notification failure (`SWSELogger.warn`) and still returns `true`. No change to `_reportCommitted()`, `_afterCommit()`, `approveDroid()` or any other caller; the failed-initial-state path still returns `false`.
+
+**Tests:** two new checks. 13 has the info notification throw; 14 has a hook failure plus a throwing warn notification. Each runs directly and through `denyRequest`, and asserts: no rejected promise, return `true`, droid `REJECTED`, exactly two writes (state and history, so no retry or reversal), and the failure logged. Fail-before at `6514678`: **12/14** (13 and 14 fail). After: **14/14**.
+
+**Mutations (all killed by 13 and 14):** guard removed entirely; catch swallows without logging; catch returns `false`; catch rethrows. (A first attempt that removed only half of the `try/catch` produced a syntax error and was discarded.) The earlier nine mutants target code this correction does not change and were not re-run.
+
+**Residual (unchanged, out of R1 scope):** on the failed-initial-state path, a throwing `ui.notifications.error` still propagates. Nothing is committed on that path, so no committed outcome is misreported.
