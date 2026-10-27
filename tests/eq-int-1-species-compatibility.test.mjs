@@ -139,6 +139,51 @@ check('F. anatomy appears only at the seven approved (species, variant) location
   assert.deepEqual(unexpected, [], `anatomy outside the approved locations: ${unexpected.join(', ')}`);
 });
 
+// ---- Post-integration checks (added with the merge of c63d798; they describe the integrated state) ----
+const { readOptionalSpeciesAnatomy, SpeciesAnatomySchemaError } = await import('/systems/foundryvtt-swse/scripts/species/species-anatomy-schema-v1.js');
+const { readdirSync, statSync } = await import('node:fs');
+
+check('G. exactly the seven approved variants carry anatomy, and every shipped declaration validates (no malformed-anatomy exception)', () => {
+  const present = [];
+  for (const r of records) for (const v of r.system?.variants ?? []) if ('anatomy' in v) present.push(`${r._id}:${v.id}`);
+  assert.deepEqual(present.sort(), [...APPROVED_ANATOMY].sort());
+  for (const r of records) {
+    assert.doesNotThrow(() => readOptionalSpeciesAnatomy(r.system ?? {}, `${r._id}.anatomy`));
+    for (const v of r.system?.variants ?? []) {
+      const parsed = readOptionalSpeciesAnatomy(v, `${r._id}:${v.id}.anatomy`);
+      assert.equal(parsed !== null && parsed !== undefined, APPROVED_ANATOMY.includes(`${r._id}:${v.id}`));
+    }
+  }
+  // the validator still rejects a malformed declaration (the registry relies on that to fail closed)
+  assert.throws(() => readOptionalSpeciesAnatomy({ anatomy: { schemaVersion: 2 } }, 't'), SpeciesAnatomySchemaError);
+});
+
+check('H. registry and profile carry the shipped anatomy only for the approved variants; chargen would persist it there and nowhere else', () => {
+  for (const e of entries) {
+    for (const v of e.variants ?? []) {
+      const key = `${e.id}:${v.id}`;
+      const profile = applySpeciesVariantProfile(e, v);
+      assert.equal('anatomy' in v, APPROVED_ANATOMY.includes(key), `normalized variant ${key}`);
+      assert.equal('anatomy' in profile, APPROVED_ANATOMY.includes(key), `resolved profile ${key}`);
+    }
+  }
+});
+
+check('I. no unauthorized runtime consumer: the seven new equipment modules are imported by nothing outside scripts/engine/equipment/, and only the species registry and variant profile use the anatomy schema', () => {
+  const NEW = ['anatomy-resolver', 'droid-appendage-projection', 'effective-equipment-posture', 'equipment-capability-resolver', 'equipment-grip-resolver', 'equipment-posture', 'species-equipment-permissions'];
+  const SCHEMA_USERS = new Set(['scripts/engine/registries/species-registry.js', 'scripts/species/species-variant-profile.js', 'scripts/engine/equipment/anatomy-resolver.js']);
+  const files = [];
+  const walk = (rel) => { for (const n of readdirSync(new URL(rel, ROOT))) { const p = `${rel}/${n}`; if (statSync(new URL(p, ROOT)).isDirectory()) walk(p); else if (/\.(m?js)$/.test(n)) files.push(p); } };
+  walk('scripts'); files.push('index.js');
+  const offenders = [];
+  for (const f of files) {
+    const src = readFileSync(new URL(f, ROOT), 'utf8');
+    if (!f.startsWith('scripts/engine/equipment/')) for (const m of NEW) if (src.includes(`engine/equipment/${m}.js`)) offenders.push(`${f} -> ${m}`);
+    if (src.includes('species-anatomy-schema-v1.js') && !SCHEMA_USERS.has(f) && f !== 'scripts/species/species-anatomy-schema-v1.js') offenders.push(`${f} -> species-anatomy-schema-v1`);
+  }
+  assert.deepEqual(offenders, []);
+});
+
 const failed = results.filter((r) => !r.ok);
 console.log(`\nEQ-INT-1 species compatibility (baseline ${base.capturedFrom}): ${results.length - failed.length}/${results.length} passed`);
 if (failed.length) process.exit(1);
