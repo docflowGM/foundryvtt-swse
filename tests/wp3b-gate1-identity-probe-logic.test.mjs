@@ -91,7 +91,8 @@ await check('3d. a missing claim-only delivery is NOT positive (incomplete)', ()
 });
 await check('3e. an absent second player (forged-other-player skipped) is NOT positive (incomplete)', () => {
   const gm = runAs('gm1');
-  soundRun(gm, { manifestEntries: [entry('honest', 'created', { claimedUserId: 'p1' }), entry('forged-author-other-player', 'skipped: no second player user exists in this world'), entry('forged-author-gm', 'rejected', { claimedUserId: 'gm1' }), entry('claim-only', 'created', { claimedUserId: 'gm1' })] });
+  // (fixture consistent since R2: the delivered claim-only claims the same identity its manifest entry lists)
+  soundRun(gm, { claimClaimed: 'gm1', manifestEntries: [entry('honest', 'created', { claimedUserId: 'p1' }), entry('forged-author-other-player', 'skipped: no second player user exists in this world'), entry('forged-author-gm', 'rejected', { claimedUserId: 'gm1' }), entry('claim-only', 'created', { claimedUserId: 'gm1' })] });
   assert.equal(gm.ctx.SWSE_WP3B_GATE1.report('p1').verdict, 'NOT_VERIFIED_INCOMPLETE');
 });
 await check('3f. a forged author stored as the forged user is FAILED (spoofed identity accepted by the server)', () => {
@@ -147,6 +148,68 @@ await check('11b. a run whose every message comes from a GM, confirmed as that G
     entry('forged-author-gm', 'rejected', { claimedUserId: 'p1' }), entry('claim-only', 'created', { claimedUserId: 'p2' })] } });
   assert.doesNotMatch(gm.ctx.SWSE_WP3B_GATE1.report('gm1').verdict, SOUND);
 });
+// ---- R2: every receipt must bind one-to-one to its manifest entry (case + nonce + messageId + claimed identity) ----
+const okEntries = () => [
+  entry('honest', 'created', { claimedUserId: 'p1' }), entry('forged-author-other-player', 'rejected', { claimedUserId: 'p2' }),
+  entry('forged-author-gm', 'rejected', { claimedUserId: 'gm1' }), entry('claim-only', 'created', { claimedUserId: 'p2' }),
+];
+await check('R2a. the reviewer\'s substitution: honest and claim-only share one nonce and only a claim-only message arrived — never positive', () => {
+  const gm = runAs('gm1');
+  soundRun(gm, { skipHonest: true, manifestEntries: [
+    { case: 'honest', nonce: 'n-claim-only', outcome: 'created', messageId: 'm-n-claim-only', claimedUserId: 'p1' },
+    entry('forged-author-other-player', 'rejected', { claimedUserId: 'p2' }), entry('forged-author-gm', 'rejected', { claimedUserId: 'gm1' }),
+    entry('claim-only', 'created', { claimedUserId: 'p2' })] });
+  assert.doesNotMatch(gm.ctx.SWSE_WP3B_GATE1.report('p1').verdict, SOUND);
+});
+await check('R2b. a receipt whose message id differs from the manifest entry is never positive', () => {
+  const gm = runAs('gm1'); const e = okEntries(); e[0].messageId = 'm-something-else';
+  soundRun(gm, { manifestEntries: e });
+  assert.doesNotMatch(gm.ctx.SWSE_WP3B_GATE1.report('p1').verdict, SOUND);
+});
+await check('R2c. claimed-identity cross-wiring (manifest says p2, the received claim-only says gm1) is never positive', () => {
+  const gm = runAs('gm1'); soundRun(gm, { claimClaimed: 'gm1' });
+  assert.doesNotMatch(gm.ctx.SWSE_WP3B_GATE1.report('p1').verdict, SOUND);
+});
+await check('R2d. two receipts for one created case are a duplicate, never counted once', () => {
+  const gm = runAs('gm1');
+  soundRun(gm, { extraDeliveries: [{ caseName: 'honest', nonce: 'n-honest', author: 'p1', hookUser: 'p1', claimed: 'p1' }] });
+  assert.doesNotMatch(gm.ctx.SWSE_WP3B_GATE1.report('p1').verdict, SOUND);
+});
+await check('R2e. a manifest whose playerUserId differs from the confirmed player is inconsistent (never positive)', () => {
+  const gm = runAs('gm1'); soundRun(gm);
+  gm.ctx.SWSE_WP3B_GATE1.store.created.find((r) => r.case === 'manifest').manifest.playerUserId = 'p2';
+  assert.doesNotMatch(gm.ctx.SWSE_WP3B_GATE1.report('p1').verdict, SOUND);
+});
+await check('R2f. a case listed twice in the manifest is inconsistent (never positive)', () => {
+  const gm = runAs('gm1'); soundRun(gm, { manifestEntries: [...okEntries(), entry('forged-author-gm', 'rejected', { claimedUserId: 'gm1' })] });
+  assert.doesNotMatch(gm.ctx.SWSE_WP3B_GATE1.report('p1').verdict, SOUND);
+});
+await check('R2g. a received probe message whose nonce is not in the manifest is unaccounted evidence (never positive)', () => {
+  const gm = runAs('gm1');
+  soundRun(gm, { extraDeliveries: [{ caseName: 'forged-author-gm', nonce: 'n-unlisted', author: 'p1', hookUser: 'p1', claimed: 'gm1' }] });
+  assert.doesNotMatch(gm.ctx.SWSE_WP3B_GATE1.report('p1').verdict, SOUND);
+});
+await check('R2h. a receipt whose case differs from the manifest entry with that nonce is never positive', () => {
+  const gm = runAs('gm1');
+  soundRun(gm, { skipHonest: true, extraDeliveries: [{ caseName: 'claim-only', nonce: 'n-honest', author: 'p1', hookUser: 'p1', claimed: 'p1' }] });
+  assert.doesNotMatch(gm.ctx.SWSE_WP3B_GATE1.report('p1').verdict, SOUND);
+});
+await check('R2i. a rewritten forgery must have exactly one receipt bound by message id', () => {
+  const gm = runAs('gm1'); const e = okEntries(); e[1] = entry('forged-author-other-player', 'created', { claimedUserId: 'p2', messageId: 'm-wrong' });
+  soundRun(gm, { manifestEntries: e, extraDeliveries: [{ caseName: 'forged-author-other-player', nonce: 'n-forged-author-other-player', author: 'p1', hookUser: 'p1', claimed: 'p2' }] });
+  assert.doesNotMatch(gm.ctx.SWSE_WP3B_GATE1.report('p1').verdict, SOUND);
+});
+
+await check('R2f2. a case listed twice with different nonces is inconsistent (isolates the duplicate-case gate)', () => {
+  const gm = runAs('gm1'); soundRun(gm, { manifestEntries: [...okEntries(), { case: 'forged-author-gm', nonce: 'n-second', outcome: 'rejected', messageId: null, claimedUserId: 'gm1' }] });
+  assert.doesNotMatch(gm.ctx.SWSE_WP3B_GATE1.report('p1').verdict, SOUND);
+});
+await check('R2a2. two rejected forgeries sharing one nonce are inconsistent (isolates the unique-nonce gate)', () => {
+  const gm = runAs('gm1'); const e = okEntries(); e[2] = { ...e[2], nonce: e[1].nonce };
+  soundRun(gm, { manifestEntries: e });
+  assert.doesNotMatch(gm.ctx.SWSE_WP3B_GATE1.report('p1').verdict, SOUND);
+});
+
 await check('12. the player side sends all four cases, then a manifest whose nonces match what it sent, all whispered to the GMs', async () => {
   const sent = [];
   const create = async (data) => {

@@ -53,10 +53,40 @@ The required player cases:
 
 Any accepted post-creation update shows the executor must bind to the **creation snapshot**.
 
-**Probe logic test:** `tests/wp3b-gate1-identity-probe-logic.test.mjs`, **17/17** after R1, using simulated server behaviour.
+**Probe logic test:** `tests/wp3b-gate1-identity-probe-logic.test.mjs`, **17/17** after R1 (**28/28** after R2, below), using simulated server behaviour.
 - **R1 fail-before at `2514219`:** 5/16. Some of those 5 passed only because the verdict string was renamed. The old probe returned `IDENTITY_MECHANISM_OBSERVED_SOUND` when only an honest message was delivered, and when no forged attempt was ever observed.
 - **Mutations:** 11 verdict-gate mutants, all killed. They were: missing case ignored, skipped counted as pass, claim-only equal claim, payload sender used as identity, accepted forgery undetected, hook user unchecked, created-but-unseen passing, GM accepted as player (both gates), rejected-but-delivered ignored, missing manifest, and the global attribution rule off.
 - **Equivalent mutants (recorded):** removing only the GM incomplete-reason line, which is enforced again where the player id is computed; and an earlier misplaced payload-sender mutant.
+
+### Correction R2 — receipt binding (independent re-review of `62ae068`)
+
+**Finding (reproduced):** receipts were matched to manifest entries by nonce alone. A manifest listing `honest` and `claim-only` with the **same** nonce let one delivered claim-only message satisfy both, so the probe returned `OBSERVED_SOUND` with no honest message received.
+
+**Fix:** receipts now bind one-to-one.
+- **Created cases:** a created case (honest, claim-only, or a rewritten forgery) needs **exactly one** receipt. Its `case`, `nonce`, `messageId` and claimed identity must all equal the manifest entry's, and it must be attributed to the confirmed player.
+- **Rejected forgeries:** a rejected forgery needs **no** receipt.
+- **NOT_VERIFIED_FAILED:** any of these:
+  - duplicate receipts;
+  - a case listed twice;
+  - a nonce shared by two entries;
+  - a receipt whose nonce is not in the manifest;
+  - a case, message id or claim mismatch;
+  - a manifest `playerUserId` different from the confirmed player. This is a consistency check only; authentication remains the operator's confirmation.
+
+**Tests:** fail-before at `62ae068`: **17/26**. All 9 new R2 cases failed:
+- the reviewer's shared-nonce substitution;
+- a message-id mismatch;
+- claimed-identity cross-wiring;
+- a duplicate receipt;
+- a manifest `playerUserId` mismatch;
+- a duplicate case entry;
+- an unmanifested receipt;
+- a receipt case mismatch;
+- a rewritten forgery with the wrong message id.
+
+After the fix: **28/28**. Two isolating tests (R2f2, R2a2) were added when the duplicate-case and unique-nonce mutants first survived, each masked by another gate.
+
+**Mutations:** 9 binding mutants, all killed. The 9 R1 gate mutants were re-run on the restructured code and are all still killed. Test 3e's fixture was cross-wired (its delivered claim differed from its manifest), which R2 now correctly detects; the fixture was made consistent so the test still isolates "absent second player".
 
 ## 2. Blocker B — the coordinator WP3-B extends is not on `main` (architecture)
 

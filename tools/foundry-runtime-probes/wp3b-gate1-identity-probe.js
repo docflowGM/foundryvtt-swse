@@ -80,13 +80,38 @@
       const manifest = manifests.at(-1)?.manifest ?? null;
       const entries = Array.isArray(manifest?.entries) ? manifest.entries : [];
 
-      const delivered = (nonce) => store.created.filter((r) => r.nonce === nonce && r.case !== 'manifest');
+      // R2: receipts bind one-to-one to manifest entries. A receipt counts for a case only if its case, nonce, message id and
+      // claimed identity all equal that entry's; nonces and cases must be unique in the manifest; every receipt must be manifested.
+      const receipts = store.created.filter((r) => r.case !== 'manifest');
+      const receiptsFor = (nonce) => receipts.filter((r) => r.nonce === nonce);
+      if (manifest && P) {
+        // consistency check only: the manifest's self-reported player is never authentication (that is the operator's confirmation)
+        if (manifest.playerUserId !== P) failed.push(`manifest playerUserId ${manifest.playerUserId ?? '(none)'} differs from the confirmed player ${P}`);
+        for (const c of REQUIRED_CASES) {
+          const n = entries.filter((x) => x.case === c).length;
+          if (n > 1) failed.push(`${c}: listed ${n} times in the manifest`);
+        }
+        const nonces = entries.map((x) => x.nonce).filter(Boolean);
+        const dupNonces = [...new Set(nonces.filter((x, i) => nonces.indexOf(x) !== i))];
+        for (const x of dupNonces) failed.push(`manifest nonce ${x} is used by more than one entry`);
+        for (const r of receipts) if (!entries.some((x) => x.nonce && x.nonce === r.nonce)) failed.push(`${r.case}: received message ${r.messageId} has a nonce that is not in the manifest`);
+      }
+      /** The single receipt bound to a created entry, or a reason it cannot be bound. */
+      const bindCreated = (c, e, recs) => {
+        if (!recs.length) { incomplete.push(`${c}: reported created but never received by the GM`); return null; }
+        if (recs.length > 1) { failed.push(`${c}: ${recs.length} receipts share nonce ${e.nonce} (duplicate evidence is never counted once)`); return null; }
+        const r = recs[0];
+        if (r.case !== c) { failed.push(`${c}: the receipt with nonce ${e.nonce} is a "${r.case}" message`); return null; }
+        if (!e.messageId || r.messageId !== e.messageId) { failed.push(`${c}: receipt message id ${r.messageId} differs from the manifest's ${e.messageId ?? '(none)'}`); return null; }
+        if ((r.claimedUserId ?? null) !== (e.claimedUserId ?? null)) { failed.push(`${c}: receipt claims ${r.claimedUserId ?? '(none)'} but the manifest says ${e.claimedUserId ?? '(none)'}`); return null; }
+        if (!isFromPlayer(r)) { failed.push(`${c}: author or creation-hook user differs from the confirmed player`); return null; }
+        return r;
+      };
       checks.cases = {};
       for (const c of REQUIRED_CASES) {
         const e = entries.find((x) => x.case === c) ?? null;
-        const recs = e?.nonce ? delivered(e.nonce) : [];
-        const note = { attempted: !!e, outcome: e?.outcome ?? null, deliveredCount: recs.length };
-        checks.cases[c] = note;
+        const recs = e?.nonce ? receiptsFor(e.nonce) : [];
+        checks.cases[c] = { attempted: !!e, outcome: e?.outcome ?? null, receiptCount: recs.length };
         if (!manifest) continue;
         if (!e) { incomplete.push(`${c}: not in the attempt manifest`); continue; }
         if (!e.nonce) { incomplete.push(`${c}: manifest entry has no nonce`); continue; }
@@ -96,25 +121,18 @@
           if (!e.claimedUserId || e.claimedUserId === P) { incomplete.push(`${c}: forged identity is missing or equals the confirmed player`); continue; }
           if (recs.some((r) => r.authorId === e.claimedUserId)) { failed.push(`${c}: server stored the forged author ${e.claimedUserId}`); checks.forgeryAccepted = true; continue; }
           if (outcome.startsWith('rejected')) {
+            // rejected-with-no-receipt is the only rejection evidence that counts
             if (recs.length) failed.push(`${c}: manifest says rejected but the GM received ${recs.length} message(s) with that nonce`);
-            continue; // rejected and not delivered: the forgery was refused
+            continue;
           }
-          if (outcome === 'created') {
-            if (!recs.length) { incomplete.push(`${c}: reported created but never received by the GM`); continue; }
-            if (!recs.every(isFromPlayer)) failed.push(`${c}: delivered with author/hook user other than the confirmed player`);
-            continue; // created and rewritten to the real player
-          }
+          if (outcome === 'created') { bindCreated(c, e, recs); continue; } // created-with-exactly-one-receipt, rewritten to the player
           incomplete.push(`${c}: unrecognised outcome "${outcome}"`);
           continue;
         }
-        // honest and claim-only must be delivered and attributed to the confirmed player
+        // honest and claim-only: created with exactly one bound receipt attributed to the confirmed player
         if (outcome !== 'created') { incomplete.push(`${c}: not created (${outcome || 'no outcome'})`); continue; }
-        if (!recs.length) { incomplete.push(`${c}: reported created but never received by the GM`); continue; }
-        if (!recs.every(isFromPlayer)) failed.push(`${c}: author or creation-hook user differs from the confirmed player`);
-        if (c === 'claim-only') {
-          const claim = recs[0].claimedUserId;
-          if (!claim || claim === P) incomplete.push('claim-only: the asserted identity must differ from the confirmed player');
-        }
+        const r = bindCreated(c, e, recs);
+        if (r && c === 'claim-only' && (!e.claimedUserId || e.claimedUserId === P)) incomplete.push('claim-only: the asserted identity must differ from the confirmed player');
       }
       // Every received probe message (any case, manifest included) must be attributed to the confirmed player by BOTH the stored
       // author and the creation-hook user; anything else is contrary evidence (or a mis-confirmed login). Run one player per session.
