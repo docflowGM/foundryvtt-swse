@@ -8,6 +8,7 @@
  * - Business logic (ALL delegated to StoreEngine)
  */
 
+import { storeItemDocumentData } from "/systems/foundryvtt-swse/scripts/engine/store/normalizer.js";
 import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
 import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store-engine.js";
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
@@ -859,15 +860,17 @@ function revalidateCartItems(store) {
  * @param {Array} cartItems - Items from cart
  * @returns {Array<Object>} MutationPlans
  */
-function createItemPlans(cartItems) {
+export function createItemPlans(cartItems) {
   if (!cartItems || cartItems.length === 0) return [];
 
   const itemsToCreate = cartItems.map(cartItem => {
     if (cartItem.stagedCustomization?.itemData) {
       return foundry.utils.deepClone(cartItem.stagedCustomization.itemData);
     }
-    const item = cartItem.item;
-    return item.toObject ? item.toObject() : item;
+    // the compendium record itself (canonical identity, effects, full system data) -- never the normalized store listing
+    const data = storeItemDocumentData(cartItem.item);
+    if (!data) throw new Error(`Store item "${cartItem.name ?? cartItem.id}" has no source document; purchase refused.`);
+    return data;
   });
 
   if (itemsToCreate.length === 0) return [];

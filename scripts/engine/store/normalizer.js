@@ -251,6 +251,28 @@ export function normalizeStoreItem(raw) {
 }
 
 /**
+ * The Item data a Store purchase creates: the SOURCE document (the compendium record the listing came from), never the normalized
+ * StoreItem view. The view keeps only id/name/img/type/system and pricing fields; creating an Item from it silently drops `flags`
+ * (the canonical weapon identity, flags.swse.canonicalWeapon) and `effects`, so a bought blaster would not resolve through the canonical
+ * weapon runtime. Returns a detached copy, or null when no source document is available (the caller must refuse the purchase).
+ * @param {object} item a StoreItem (with .doc), a Foundry document, or plain document data
+ * @returns {object|null}
+ */
+export function storeItemDocumentData(item) {
+  const src = item?.doc ?? item;
+  if (!src || typeof src !== 'object') return null;
+  let data;
+  if (typeof src.toObject === 'function') data = src.toObject();
+  else if (src !== item || 'flags' in src || '_stats' in src) data = JSON.parse(JSON.stringify(src));
+  else return null; // a normalized StoreItem without its source document
+  if (!data || typeof data !== 'object' || typeof data.type !== 'string' || !data.name) return null;
+  for (const key of Object.keys(data)) if (key.startsWith('__store')) delete data[key]; // loader/cache annotations, not Item data
+  const sourceUuid = item?.sourceUuid ?? src.uuid ?? null;
+  if (sourceUuid) data._stats = { ...(data._stats ?? {}), compendiumSource: data._stats?.compendiumSource ?? sourceUuid };
+  return data;
+}
+
+/**
  * Normalize an array of raw items into store items.
  *
  * @param {Array} rawItems - Array of raw Foundry items
