@@ -281,7 +281,9 @@ const install = (item, extra = {}, d = deps()) => silent(() => P.installProvisio
   A().flags.swse = { customizationStructural: { sizeIncreaseApplied: true, strippedAreas: [] } };
   const review = meshOf();
   assert.equal(review.availability, 'development', JSON.stringify(review.hard)); assert.equal(review.price, 2500); assert.equal(review.dc, 30);
-  assert.ok(!P.listDomainModifications({ data, item: A(), armor: P.armorAttestation({ ...armorReq, gmId: 'gm1' }) }).some((m) => m.typedDefinitionId === 'kotor-accessory-armor-reinforcement::armor' && m.availability !== 'blocked'), 'Armor Reinforcement stays blocked (D-016)');
+  const reinforcement = P.listDomainModifications({ data, item: A(), armor: P.armorAttestation({ ...armorReq, gmId: 'gm1' }) }).find((m) => m.typedDefinitionId === 'kotor-accessory-armor-reinforcement::armor');
+  assert.equal(reinforcement?.availability, 'development', 'Armor Reinforcement: development workflow (its piercing match is covered by d016-physical-damage-type-flow)');
+  assert.equal(reinforcement.price, 3000);
   assert.equal(await dt('stun'), 15);
   const inst = await silent(() => P.installProvisionalUpgrade(actor, A(), { typedDefinitionId: MESH, attemptId: 'mesh-1', priceConfirmed: 2500, armor: armorReq, hostRuling: { compatible: true, note: 'underlay fits the vest (GM ruling)' }, check: { mode: 'gm-entered', total: 30 } }, deps({ developmentMode: true })));
   assert.equal(inst.status, 'INSTALLED', JSON.stringify(inst.reason ?? inst.hard)); assert.equal(actor.system.credits, 2500);
@@ -315,7 +317,7 @@ const install = (item, extra = {}, d = deps()) => silent(() => P.installProvisio
   assert.equal(failed.status, 'DEACTIVATED', JSON.stringify(failed)); assert.equal(await dt('stun'), 15, 'deactivated: no bonus (the slot stays used, Q-023)');
   r = await hit(18); assert.deepEqual([r.thresholdTotal, r.thresholdExceeded], [15, true], 'resolver: deactivated Mesh Underlay, 18 stun exceeds DT 15');
   assert.equal(actor.system.credits, 2500, 'removal attempts move no credits');
-  ok('10: Mesh Underlay lifecycle (GM development policy): size increase -> install 2500 cr (DC 30) -> stun DT +5 on worn armor only -> unworn / setting off / deactivation restore it with no write; the real damage resolver adjudicates 18 stun against the effective DT (20 worn, 15 removed/deactivated); implant + Mesh Underlay do not stack (D-017); Armor Reinforcement stays blocked (D-016)');
+  ok('10: Mesh Underlay lifecycle (GM development policy): size increase -> install 2500 cr (DC 30) -> stun DT +5 on worn armor only -> unworn / setting off / deactivation restore it with no write; the real damage resolver adjudicates 18 stun against the effective DT (20 worn, 15 removed/deactivated); implant + Mesh Underlay do not stack (D-017); Armor Reinforcement is a development candidate (3000 cr; D-016 type flow tested separately)');
   globalThis.game.settings = { get: () => undefined };
 }
 console.log(`modification-v2-convergence: ${n} checks ok`);

@@ -35,6 +35,7 @@ import { DamageReductionResolver } from "/systems/foundryvtt-swse/scripts/engine
 import { TempHPResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/resolvers/temp-hp-resolver.js";
 import { resolveComponentMitigation } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-component-mitigation.js";
 import { DamageTypeRules } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
+import { physicalTypeReductionFor } from "/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-effects.js";
 
 export class DamageMitigationManager {
   /**
@@ -187,10 +188,16 @@ export class DamageMitigationManager {
     let resistanceApplied = 0;
     let resistanceSource = '';
     let resistedType = null;
-    if (currentDamage > 0 && Array.isArray(resistances?.sources) && resistances.sources.length) {
+    // D-016: worn-armor reduction against a physical subtype (Armor Reinforcement) joins this applies-to stage (project decision D4), matched
+    // ONLY against the subtypes the attack recorded (an "or" weapon's chosen type); highest-only with the typed resistances
+    const physicalMatch = currentDamage > 0
+      ? physicalTypeReductionFor(actor, DamageTypeRules.eventPhysicalDamageTypes(options))
+      : { amount: 0 };
+    if (currentDamage > 0 && ((Array.isArray(resistances?.sources) && resistances.sources.length) || physicalMatch.amount > 0)) {
       const canonical = options?.damageComponents?.[0] ?? options?.canonicalPacket?.components?.[0] ?? {};
       const declared = [canonical.type ?? damageType, ...(context.damageTypes || []), ...(canonical.damageTypes || [])].filter(Boolean);
-      const match = DamageTypeRules.resistanceForComponentTypes(declared, resistances);
+      const typed = DamageTypeRules.resistanceForComponentTypes(declared, resistances);
+      const match = physicalMatch.amount > typed.amount ? physicalMatch : typed;
       if (match.amount > 0) {
         const after = Math.max(0, currentDamage - match.amount);
         resistanceApplied = currentDamage - after;

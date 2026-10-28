@@ -11,6 +11,7 @@ import { ShieldMitigationResolver } from "/systems/foundryvtt-swse/scripts/engin
 import { DamageReductionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/resolvers/damage-reduction-resolver.js";
 import { TempHPResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/resolvers/temp-hp-resolver.js";
 import { expandDamageTypeAliases, uniqueDamageTypes, DamageTypeRules } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
+import { physicalTypeReductionFor } from "/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-effects.js";
 
 function asArray(value) {
   if (Array.isArray(value)) return value;
@@ -360,12 +361,17 @@ export function resolveComponentMitigation({ damage, actor, damageType = 'normal
     ?? DamageTypeRules.collectDamageTypeResistances(actor);
   const resistedTypesHit = new Set();
   let resistanceAppliedTotal = 0;
-  if (Array.isArray(resistances?.sources) && resistances.sources.length) {
+  // D-016: worn-armor reduction against a physical subtype (Armor Reinforcement), matched only against the subtypes this attack recorded;
+  // it can only concern a component that carries kinetic damage (where the physical subtypes fold), highest-only with typed resistance
+  const physicalMatch = physicalTypeReductionFor(actor, DamageTypeRules.eventPhysicalDamageTypes(options));
+  if ((Array.isArray(resistances?.sources) && resistances.sources.length) || physicalMatch.amount > 0) {
     staged = staged.map(component => {
       const before = Math.max(0, asNumber(component.afterDR, 0));
       if (before <= 0) return component;
       const declared = [component.type, ...(component.damageTypes || []), ...(component.originalDamageTypes || [])].filter(Boolean);
-      const match = DamageTypeRules.resistanceForComponentTypes(declared, resistances);
+      const typed = DamageTypeRules.resistanceForComponentTypes(declared, resistances);
+      const physical = physicalMatch.amount > 0 && expandDamageTypeAliases(declared).includes('kinetic') ? physicalMatch : { amount: 0 };
+      const match = physical.amount > typed.amount ? physical : typed;
       if (match.amount <= 0) return component;
       const after = Math.max(0, before - match.amount);
       const applied = before - after;

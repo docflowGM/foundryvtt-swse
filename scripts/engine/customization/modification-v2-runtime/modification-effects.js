@@ -16,6 +16,7 @@ import { isArmorItemEquipped, isEnergyShieldItem } from '/systems/foundryvtt-sws
 const TARGETS = Object.freeze({
   SHOTS_PER_POWER_PACK: 'weapon.reload.shotsPerPowerPack',
   STUN_DT_EQUIPMENT_BONUS: 'armor.protection.stunDamageThresholdEquipmentBonus',
+  DAMAGE_TYPE_REDUCTION: 'armor.protection.damageTypeReduction',
 });
 
 /** Certified operations of the active instances on an Item, optionally for one target. */
@@ -63,5 +64,34 @@ export function wornArmorStunThresholdBonus(actor, options = {}) {
   return { value, source };
 }
 
+/**
+ * Damage reduction the WORN armor grants against one named damage type (Armor Reinforcement: DR 2 against piercing), from certified
+ * "grant" operations. Highest per type. Matching an event against these needs the subtype the attack actually dealt (D-016).
+ * @returns {Array<{damageType:string, amount:number, source:string|null}>}
+ */
+export function wornArmorDamageTypeReductions(actor, options = {}) {
+  const best = new Map();
+  for (const item of Array.from(actor?.items ?? [])) {
+    if (item?.type !== 'armor' || !isArmorItemEquipped(item) || isEnergyShieldItem(item)) continue;
+    for (const op of activeEffectOperations(item, TARGETS.DAMAGE_TYPE_REDUCTION, options)) {
+      const type = typeof op.value?.damageType === 'string' ? op.value.damageType.toLowerCase() : null;
+      const amount = Number(op.value?.dr);
+      if (op.operation !== 'grant' || !type || !Number.isFinite(amount) || amount <= 0) continue;
+      if (amount > (best.get(type)?.amount ?? 0)) best.set(type, { damageType: type, amount, source: item.name ?? null });
+    }
+  }
+  return [...best.values()];
+}
+
+/** Highest worn-armor reduction matching the event's recorded physical subtypes; none when the event recorded no subtype. */
+export function physicalTypeReductionFor(actor, physicalTypes, options = {}) {
+  if (!Array.isArray(physicalTypes) || !physicalTypes.length) return { amount: 0, source: '', type: null };
+  let out = { amount: 0, source: '', type: null };
+  for (const entry of wornArmorDamageTypeReductions(actor, options)) {
+    if (physicalTypes.includes(entry.damageType) && entry.amount > out.amount) out = { amount: entry.amount, source: `${entry.source ?? 'Armor'} (DR ${entry.amount} vs ${entry.damageType})`, type: entry.damageType };
+  }
+  return out;
+}
+
 export { TARGETS as EFFECT_TARGETS };
-export default { activeEffectOperations, effectiveShotCapacity, wornArmorStunThresholdBonus, EFFECT_TARGETS: TARGETS };
+export default { activeEffectOperations, effectiveShotCapacity, wornArmorStunThresholdBonus, wornArmorDamageTypeReductions, physicalTypeReductionFor, EFFECT_TARGETS: TARGETS };

@@ -216,6 +216,36 @@ export function isDamageType(type) {
   return expandDamageTypeAliases([key]).some(t => DAMAGE_TYPE_KEYS.has(t));
 }
 
+// D-016: the physical damage subtypes. The damage-type normalizer folds them into 'kinetic' (correct for kinetic matching), so a protection
+// that names one of them (Armor Reinforcement: DR 2 against piercing) needs the subtype the ATTACK actually dealt, recorded before the fold.
+export const PHYSICAL_DAMAGE_TYPES = Object.freeze(['piercing', 'slashing', 'bludgeoning']);
+const physicalKey = (t) => { const k = String(t ?? '').trim().toLowerCase(); return PHYSICAL_DAMAGE_TYPES.includes(k) ? k : null; };
+
+/**
+ * The physical subtypes one damage event deals, from the canonical damage-type structure of the selected attack form (Core Rulebook p.120,
+ * Weapon Qualities, Damage Type): "single" -> its type; "and" -> every listed type at once; "or" -> only the type chosen before the attack
+ * roll (the selected one, or an explicit caller type that is one of the options). An "or" weapon with no recorded choice is UNRESOLVED:
+ * no subtype is assumed. Other modes (none / varies / unspecified) carry no physical subtype evidence.
+ * @returns {{types: string[], resolved: boolean}}
+ */
+export function physicalDamageTypesOf({ damageTypeMode = 'none', damageTypes = [], selectedDamageType = null } = {}, explicitType = null) {
+  const listed = asArray(damageTypes).map(String);
+  if (damageTypeMode === 'single') return { types: [physicalKey(listed[0])].filter(Boolean), resolved: true };
+  if (damageTypeMode === 'and') return { types: [...new Set(listed.map(physicalKey).filter(Boolean))], resolved: true };
+  if (damageTypeMode === 'or') {
+    const chosen = selectedDamageType ?? (explicitType && listed.includes(String(explicitType)) ? String(explicitType) : null);
+    return chosen ? { types: [physicalKey(chosen)].filter(Boolean), resolved: true } : { types: [], resolved: false };
+  }
+  return { types: [], resolved: damageTypeMode === 'none' };
+}
+
+/** The physical subtypes recorded for this damage event (options or its workflow context), or null when none were recorded. */
+export function eventPhysicalDamageTypes(options = {}) {
+  const ctx = options?.workflowContext ?? options?.combatContext ?? null;
+  const list = options?.physicalDamageTypes ?? ctx?.damage?.physicalDamageTypes ?? null;
+  return Array.isArray(list) ? list.map(physicalKey).filter(Boolean) : null;
+}
+
 export function hasDamageType(types = [], wanted = '') {
   const normalizedWanted = normalizeDamageTypeKey(wanted);
   if (!normalizedWanted) return false;
@@ -673,6 +703,9 @@ export const DamageTypeRules = {
   expand: (componentTypes = []) => expandDamageTypeAliases(asArray(componentTypes)),
   matches: (componentTypes, ruleType) => hasDamageType(asArray(componentTypes), ruleType),
   isDamageType,
+  physicalDamageTypesOf,
+  eventPhysicalDamageTypes,
+  PHYSICAL_DAMAGE_TYPES,
   collectDamageTypeImmunities,
   collectDamageTypeResistances,
   resistanceForComponentTypes,
