@@ -37,6 +37,7 @@
   {{#if entry.weaponConfiguration}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--configuration" data-action="change-weapon-configuration" data-item-id="{{entry.id}}">Configure</button>{{/if}}
   {{#if entry.weaponPowerSource}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--power is-{{entry.weaponPowerSource.state}}" data-action="set-power-source" data-item-id="{{entry.id}}" title="{{entry.weaponPowerSource.title}}">Power: {{entry.weaponPowerSource.stateLabel}}</button>{{/if}}
   {{#if entry.weaponReadiness.canDrawStow}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--readiness {{#if entry.weaponReadiness.drawn}}is-ready{{else}}is-inactive{{/if}}" data-action="toggle-weapon-readiness" data-item-id="{{entry.id}}"{{#if entry.weaponReadiness.stowBlocked}} disabled title="Deactivate the lightsaber before stowing it."{{/if}}>{{entry.weaponReadiness.drawStowLabel}}</button>{{/if}}
+  {{#if entry.weaponReadiness.canReconcile}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--reconcile" data-action="reconcile-weapon-transaction" data-item-id="{{entry.id}}" title="An equipment change on this weapon did not finish. Review the evidence and decide how to close it (GM only).">Resolve</button>{{/if}}
 {{else}}
     {{#if entry.isLightsaber}}
       <button type="button" class="swse-concept-btn" data-action="toggle-activated" data-item-id="{{entry.id}}">{{entry.activationLabel}}</button>

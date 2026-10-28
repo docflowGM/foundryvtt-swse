@@ -61,6 +61,7 @@
 .swse-sheet--concept .swse-weapon-control--readiness.is-inactive { --weapon-control-accent: var(--swse-weapon-muted); }
 .swse-sheet--concept .swse-weapon-control--activation { --weapon-control-accent: var(--swse-weapon-activation); }
 .swse-sheet--concept .swse-weapon-control--activation.is-active { text-shadow: 0 0 8px color-mix(in srgb, var(--swse-weapon-activation) 38%, transparent); }
+.swse-sheet--concept .swse-weapon-control--reconcile { --weapon-control-accent: #ffb347; font-weight: 700; }
 .swse-sheet--concept .swse-weapon-control--configuration,
 .swse-sheet--concept .swse-weapon-control--stock { --weapon-control-accent: var(--swse-weapon-config); }
 .swse-sheet--concept .swse-weapon-control--mode,

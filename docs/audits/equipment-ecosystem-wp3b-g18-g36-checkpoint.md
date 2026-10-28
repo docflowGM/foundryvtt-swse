@@ -39,7 +39,7 @@ Players therefore still cannot draw/stow in a GM-authoritative way; only a GM-lo
 1. Gate 1 (PR #1080 probe) in a live V13 world: is a forged ChatMessage author refused? Only then add `chat-message-author-v13` to the verified list and wire install behind a setting.
 2. Live check of the dialog in the V2 sheet (layout, checkbox/radio submission through `SWSEDialogV2`).
 3. Live draw → attack → ammo → reload → stow in combat with real `ActionEconomyConsumption` markers.
-4. G36: a GM-facing launcher (none yet; callable as `InventoryEngine.reconcileWeaponRequest`).
+4. G36: live check of the GM "Resolve" control (added in the stacked G36 GM-control PR).
 5. Lease hand-over between two GM clients (expected overlap window; observe the epoch in the journal).
 
 Not touched: EQ-001..EQ-004, Modification V2, migrations, transaction/credit authorities, `main`.

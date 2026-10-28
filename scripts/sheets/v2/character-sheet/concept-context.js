@@ -1,5 +1,6 @@
 import { isItemEquipped, isAlwaysReadiedWeapon, isNaturalWeaponOnly } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
+import { readJournal, unresolvedItemIds, JOURNAL_STATUS } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-transaction-journal.js";
 import { resolveActionCost } from "/systems/foundryvtt-swse/scripts/engine/feats/action-speed-runtime-patches.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
 import { FireStateStore } from "/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js";
@@ -344,6 +345,15 @@ function buildCombatStatusStrip(context, combat) {
 }
 
 /** Weapon readiness (drawn / stowed, blade state) read from the live owned Item; presentation only. */
+/** Request ids of unresolved equipment transactions covering this Item (read-only; a malformed journal yields none here). */
+function unresolvedEquipmentRequestIds(actor, itemId) {
+  try {
+    const journal = readJournal(actor?.flags?.swse?.equipmentTxn);
+    if (journal.status !== JOURNAL_STATUS.VALID) return [];
+    return (unresolvedItemIds(journal.entries).get(itemId) ?? []).map((t) => t.requestId);
+  } catch (_err) { return []; }
+}
+
 function buildWeaponReadinessView(item, actor) {
   if (!item) return null;
   if (!['weapon', 'lightsaber'].includes(String(item.type ?? '').toLowerCase())) return null;
@@ -358,9 +368,13 @@ function buildWeaponReadinessView(item, actor) {
     const mutation = resolveActionCost(actor, 'drawOrHolsterWeapon', { workflowValidated: true, weaponId: item.id, direction: drawn ? 'holster' : 'draw' });
     combinedEffects = Array.isArray(mutation?.combinedEffects) ? mutation.combinedEffects : [];
   } catch (_err) { combinedEffects = []; }
+  // G36: an unresolved equipment transaction withholds this weapon; only a GM may open the reconciliation review for it
+  const unresolvedRequestIds = unresolvedEquipmentRequestIds(actor, item.id);
   return {
     drawn, activated, isLightsaber,
     alwaysReadied,
+    unresolved: unresolvedRequestIds.length > 0,
+    canReconcile: unresolvedRequestIds.length > 0 && globalThis.game?.user?.isGM === true,
     stateLabel: alwaysReadied ? (isNaturalWeaponOnly(item) ? 'Natural' : 'Integrated') : drawn ? 'Drawn' : 'Stowed',
     bladeStateLabel: isLightsaber ? (activated ? 'Active' : 'Inactive') : '',
     canDrawStow: !alwaysReadied,
