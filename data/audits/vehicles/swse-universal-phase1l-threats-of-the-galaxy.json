@@ -107,7 +107,8 @@
       },
       "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
       "existingCanonicalShip": true,
-      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD",
+      "printedTypeLine": "Colossal space transport"
     }
   ],
   "newVehicleEntries": [

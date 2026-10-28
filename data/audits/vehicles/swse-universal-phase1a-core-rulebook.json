@@ -194,7 +194,8 @@
       },
       "reviewStatus": "INHERITED_PHASE1_AND_PHASE2B_SOURCE_REVIEW",
       "existingCanonicalShip": true,
-      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD",
+      "printedTypeLine": "Gargantuan starfighter"
     },
     {
       "sourceEntryKey": "core-corellian-yt-1300-transport",
@@ -212,7 +213,8 @@
       },
       "reviewStatus": "INHERITED_PHASE1_AND_PHASE2B_SOURCE_REVIEW",
       "existingCanonicalShip": true,
-      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD",
+      "printedTypeLine": "Colossal space transport"
     },
     {
       "sourceEntryKey": "core-droid-tri-fighter",
@@ -230,7 +232,8 @@
       },
       "reviewStatus": "INHERITED_PHASE1_AND_PHASE2B_SOURCE_REVIEW",
       "existingCanonicalShip": true,
-      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD",
+      "printedTypeLine": "Huge starfighter"
     },
     {
       "sourceEntryKey": "core-eta-2-actis-interceptor",
@@ -248,7 +251,8 @@
       },
       "reviewStatus": "INHERITED_PHASE1_AND_PHASE2B_SOURCE_REVIEW",
       "existingCanonicalShip": true,
-      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD",
+      "printedTypeLine": "Huge starfighter"
     },
     {
       "sourceEntryKey": "core-imperial-i-class-star-destroyer",
@@ -266,7 +270,8 @@
       },
       "reviewStatus": "INHERITED_PHASE1_AND_PHASE2B_SOURCE_REVIEW",
       "existingCanonicalShip": true,
-      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD",
+      "printedTypeLine": "Colossal (cruiser) capital ship"
     },
     {
       "sourceEntryKey": "core-incom-t-65b-x-wing-starfighter",
@@ -284,7 +289,8 @@
       },
       "reviewStatus": "INHERITED_PHASE1_AND_PHASE2B_SOURCE_REVIEW",
       "existingCanonicalShip": true,
-      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD",
+      "printedTypeLine": "Gargantuan starfighter"
     },
     {
       "sourceEntryKey": "core-koensayr-y-wing-starfighter",
@@ -302,7 +308,8 @@
       },
       "reviewStatus": "INHERITED_PHASE1_AND_PHASE2B_SOURCE_REVIEW",
       "existingCanonicalShip": true,
-      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD",
+      "printedTypeLine": "Gargantuan starfighter"
     },
     {
       "sourceEntryKey": "core-tie-fighter",
@@ -320,7 +327,8 @@
       },
       "reviewStatus": "INHERITED_PHASE1_AND_PHASE2B_SOURCE_REVIEW",
       "existingCanonicalShip": true,
-      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD",
+      "printedTypeLine": "Huge starfighter"
     },
     {
       "sourceEntryKey": "core-tie-interceptor",
@@ -338,7 +346,8 @@
       },
       "reviewStatus": "INHERITED_PHASE1_AND_PHASE2B_SOURCE_REVIEW",
       "existingCanonicalShip": true,
-      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD",
+      "printedTypeLine": "Huge starfighter"
     },
     {
       "sourceEntryKey": "core-vulture-class-droid-starfighter",
@@ -356,7 +365,8 @@
       },
       "reviewStatus": "INHERITED_PHASE1_AND_PHASE2B_SOURCE_REVIEW",
       "existingCanonicalShip": true,
-      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD",
+      "printedTypeLine": "Huge starfighter/ground vehicle (walker)"
     }
   ],
   "identityPolicy": {
