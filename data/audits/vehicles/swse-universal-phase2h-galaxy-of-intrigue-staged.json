@@ -1,0 +1,1200 @@
+{
+  "schema": "swse.vehicle.universal.phase2h.galaxy-of-intrigue.staged.v1",
+  "status": "SOURCE_STAGED_STRICT_MECHANICAL_CERTIFICATION_PENDING",
+  "sourceBook": "Galaxy of Intrigue",
+  "sourcePdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+  "phase1Ledger": "data/audits/vehicles/swse-universal-phase1h-galaxy-of-intrigue.json",
+  "historicalCanonicalSource": "data/canonical/vehicles/ships.json",
+  "sourceSearchLayer": "reference/sourcebooks/Galaxy of Intrigue_djvu.txt",
+  "summary": {
+    "book": "Galaxy of Intrigue",
+    "phase": "h",
+    "total": 8,
+    "inherited": 6,
+    "new": 2,
+    "groups": 10,
+    "missingHP": [
+      "goi-republic-engineering-corporation-ferret-class-reconnaissance-vessel",
+      "goi-republic-engineering-corporation-prowler-class-reconnaissance-vessel"
+    ],
+    "missingRef": [
+      "goi-republic-engineering-corporation-ferret-class-reconnaissance-vessel",
+      "goi-republic-engineering-corporation-prowler-class-reconnaissance-vessel"
+    ],
+    "newIssues": [],
+    "patchStatus": "Source exception corrections and census reconciled"
+  },
+  "records": [
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "goi-modified-incom-a-24-sleuth",
+        "name": "Modified Incom A-24 Sleuth"
+      },
+      "publication": {
+        "book": "Galaxy of Intrigue",
+        "page": 69,
+        "printedTitle": "Modified Incom A-24 Sleuth",
+        "printedTypeLine": "Gargantuan starfighter",
+        "entryNotes": "Primary source SHA256 c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21, physical PDF p70",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "printedSize": "Gargantuan",
+        "size": "gargantuan"
+      },
+      "challenge": {
+        "cl": 10
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 4,
+        "characterScaleLengthSquares": 4,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "total (crew),"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 16,
+            "maxVelocityKmh": 1000
+          }
+        ],
+        "maxVelocityKmh": 1000
+      },
+      "hyperspace": {
+        "raw": "x1 (backup x10), navicomputer, 10-jump memory (astromech",
+        "capability": "equipped",
+        "primaryMultiplier": 1,
+        "navComputer": "installed"
+      },
+      "defenses": {
+        "reflex": 16,
+        "reflexFlatFooted": 12,
+        "fortitude": 25,
+        "armorBonus": 7,
+        "damageReduction": 10,
+        "shieldRating": 15
+      },
+      "durability": {
+        "hitPoints": 110,
+        "damageThreshold": 45
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 5,
+            "raw": "Initiative +5"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 5,
+            "raw": "Pilot +5"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
+          }
+        ],
+        "initiativePrinted": 5,
+        "perceptionPrinted": 6,
+        "str": 40,
+        "dex": 18,
+        "int": 16,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 32,
+        "rangedAttackLine": "laser cannons +7 (see below)"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "goi-modified-incom-a-24-sleuth-source-attack-1",
+            "label": "laser cannons",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 7,
+            "specialNotes": "Published operator pilot, damage 4d10x2. Physical mounts and firing arcs NOT certified."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "1 plus astromech droid (skilled)",
+        "crewCount": 1
+      },
+      "capacity": {
+        "passengerCount": 1,
+        "cargo": {
+          "value": 3,
+          "unit": "tons",
+          "raw": "3 tons"
+        },
+        "consumables": {
+          "value": 3,
+          "unit": "months",
+          "raw": "3 months"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Military",
+        "priceNew": {
+          "status": "ambiguous",
+          "raw": "not available for sale"
+        }
+      },
+      "text": {
+        "sourceNotes": "Source text excerpt anchored at 268550; original PDF audit ledger confirms publication identity. No executable mount certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "goi-modified-sienar-fleet-systems-lambda-class-shuttle",
+        "name": "Modified Sienar Fleet Systems Lambda-class Shuttle"
+      },
+      "publication": {
+        "book": "Galaxy of Intrigue",
+        "page": 186,
+        "printedTitle": "Modified Sienar Fleet Systems Lambda-class Shuttle",
+        "printedTypeLine": "Colossal space transport",
+        "entryNotes": "Primary source SHA256 c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21, physical PDF p187",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "printedSize": "Colossal",
+        "size": "colossal"
+      },
+      "challenge": {
+        "cl": 13
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 4,
+        "characterScaleLengthSquares": 4,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "total"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 920
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 4
+          }
+        ],
+        "maxVelocityKmh": 920
+      },
+      "hyperspace": {
+        "raw": "line. In case this was an accident, I've"
+      },
+      "defenses": {
+        "reflex": 15,
+        "reflexFlatFooted": 12,
+        "fortitude": 26,
+        "armorBonus": 12,
+        "damageReduction": 15,
+        "shieldRating": 35
+      },
+      "durability": {
+        "hitPoints": 120,
+        "damageThreshold": 76
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -1,
+            "raw": "Initiative -1"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -1,
+            "raw": "Pilot -1"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
+          }
+        ],
+        "initiativePrinted": -1,
+        "perceptionPrinted": 6,
+        "str": 42,
+        "dex": 16,
+        "int": 16,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 38,
+        "rangedAttackLine": "blaster cannon battery +6 (see below) and blaster cannon +4 (see below) and twin laser cannons +6 (see below)"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "goi-modified-sienar-fleet-systems-lambda-class-shuttle-source-attack-1",
+            "label": "blaster cannon battery",
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "mountKeys": [],
+            "attackBonusPrinted": 6,
+            "specialNotes": "Published operator 2 gunners, damage 5d10x2. Physical mounts and firing arcs NOT certified."
+          },
+          {
+            "groupKey": "goi-modified-sienar-fleet-systems-lambda-class-shuttle-source-attack-2",
+            "label": "blaster cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 4,
+            "specialNotes": "Published operator copilot, damage 5d10x2. Physical mounts and firing arcs NOT certified."
+          },
+          {
+            "groupKey": "goi-modified-sienar-fleet-systems-lambda-class-shuttle-source-attack-3",
+            "label": "twin laser cannons",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 6,
+            "specialNotes": "Published operator pilot, damage 2d10x2. Physical mounts and firing arcs NOT certified."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "6 (skilled)",
+        "crewCount": 6
+      },
+      "capacity": {
+        "passengerCount": 20,
+        "cargo": {
+          "value": 80,
+          "unit": "tons",
+          "raw": "80 tons"
+        },
+        "consumables": {
+          "value": 2,
+          "unit": "months",
+          "raw": "2 months"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Unique",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 300000,
+          "raw": "300,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "Source text excerpt anchored at 772093; original PDF audit ledger confirms publication identity. No executable mount certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "goi-ptv-2100-incarcerator",
+        "name": "PTV-2100 Incarcerator"
+      },
+      "publication": {
+        "book": "Galaxy of Intrigue",
+        "page": 68,
+        "printedTitle": "PTV-2100 Incarcerator",
+        "printedTypeLine": "Colossal (frigate) space transport",
+        "entryNotes": "Primary source SHA256 c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21, physical PDF p69",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedSize": "Colossal (frigate)",
+        "size": "colossal"
+      },
+      "challenge": {
+        "cl": 16
+      },
+      "geometry": {
+        "notes": "1 square (starship scale)",
+        "coverCrew": "total"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 1
+          }
+        ]
+      },
+      "hyperspace": {
+        "raw": "x3 (x12 backup), navicomputer",
+        "capability": "equipped",
+        "primaryMultiplier": 3,
+        "navComputer": "installed"
+      },
+      "defenses": {
+        "reflex": 13,
+        "reflexFlatFooted": 13,
+        "fortitude": 40,
+        "armorBonus": 13,
+        "damageReduction": 15,
+        "shieldRating": 15
+      },
+      "durability": {
+        "hitPoints": 1600,
+        "damageThreshold": 140
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -4,
+            "raw": "Initiative -4"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -4,
+            "raw": "Pilot -4"
+          }
+        ],
+        "initiativePrinted": -4,
+        "perceptionPrinted": 6,
+        "str": 71,
+        "dex": 10,
+        "int": 18,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 52,
+        "rangedAttackLine": "2 turbolaser batteries +12* (see below)"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "goi-ptv-2100-incarcerator-source-attack-1",
+            "label": "turbolaser battery",
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "mountKeys": [],
+            "attackBonusPrinted": 12,
+            "specialNotes": "Published operator 4 gunners, damage 5d10x5 (-8 versus targets smaller than Colossal). Physical mounts and firing arcs NOT certified."
+          },
+          {
+            "groupKey": "goi-ptv-2100-incarcerator-source-attack-2",
+            "label": "point-defense laser battery",
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "mountKeys": [],
+            "attackBonusPrinted": 8,
+            "specialNotes": "Published operator 2 gunners, damage 2d10x2. Physical mounts and firing arcs NOT certified."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "250 (skilled)",
+        "crewCount": 250
+      },
+      "capacity": {
+        "passengerCount": 1500,
+        "cargo": {
+          "value": 5500,
+          "unit": "tons",
+          "raw": "5,500 tons"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "year",
+          "raw": "1 year"
+        },
+        "storageNotes": "Printed Carried Craft 2 shuttles"
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Military",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 4,
+          "raw": "4"
+        }
+      },
+      "text": {
+        "sourceNotes": "Source text excerpt anchored at 266898; original PDF audit ledger confirms publication identity. No executable mount certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "goi-republic-engineering-corporation-ferret-class-reconnaissance-vessel",
+        "name": "Republic Engineering Corporation Ferret-class Reconnaissance Vessel"
+      },
+      "publication": {
+        "book": "Galaxy of Intrigue",
+        "page": 69,
+        "printedTitle": "Republic Engineering Corporation Ferret-class Reconnaissance Vessel",
+        "printedTypeLine": "Gargantuan starfighter",
+        "entryNotes": "Primary source SHA256 c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21, physical PDF p70",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "printedSize": "Gargantuan",
+        "size": "gargantuan"
+      },
+      "challenge": {
+        "cl": 12
+      },
+      "geometry": {},
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 16,
+            "maxVelocityKmh": 1050
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 4
+          }
+        ],
+        "maxVelocityKmh": 1050
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 15,
+        "reflexFlatFooted": 12,
+        "fortitude": 26,
+        "armorBonus": 7,
+        "damageReduction": 10
+      },
+      "durability": {
+        "hitPoints": 120,
+        "damageThreshold": 46
+      },
+      "abilities": {
+        "skills": [],
+        "initiativePrinted": 6,
+        "perceptionPrinted": 8
+      },
+      "combat": {},
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "goi-republic-engineering-corporation-ferret-class-reconnaissance-vessel-source-attack-1",
+            "label": "medium concussion missiles",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 11,
+            "specialNotes": "Published operator pilot, damage 9d10x2. Physical mounts and firing arcs NOT certified."
+          }
+        ]
+      },
+      "crew": {},
+      "capacity": {},
+      "systems": {},
+      "modifications": {},
+      "economics": {},
+      "text": {
+        "sourceNotes": "Source text excerpt anchored at not located; original PDF audit ledger confirms publication identity. No executable mount certification. Historical PDF-reviewed printed source values confirmed in indexed sourcebook statblock; no mount certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/hyperspace/capability": "not-stated",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "goi-republic-engineering-corporation-prowler-class-reconnaissance-vessel",
+        "name": "Republic Engineering Corporation Prowler-class Reconnaissance Vessel"
+      },
+      "publication": {
+        "book": "Galaxy of Intrigue",
+        "page": 70,
+        "printedTitle": "Republic Engineering Corporation Prowler-class Reconnaissance Vessel",
+        "printedTypeLine": "Gargantuan starfighter",
+        "entryNotes": "Primary source SHA256 c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21, physical PDF p71",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "printedSize": "Gargantuan",
+        "size": "gargantuan"
+      },
+      "challenge": {
+        "cl": 12
+      },
+      "geometry": {},
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 650
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 3
+          }
+        ],
+        "maxVelocityKmh": 650
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 16,
+        "reflexFlatFooted": 13,
+        "fortitude": 28,
+        "armorBonus": 8,
+        "damageReduction": 10
+      },
+      "durability": {
+        "hitPoints": 150,
+        "damageThreshold": 48
+      },
+      "abilities": {
+        "skills": [],
+        "initiativePrinted": 6,
+        "perceptionPrinted": 8
+      },
+      "combat": {},
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "goi-republic-engineering-corporation-prowler-class-reconnaissance-vessel-source-attack-1",
+            "label": "medium concussion missiles",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 10,
+            "specialNotes": "Published operator pilot, damage 9d10x2. Physical mounts and firing arcs NOT certified."
+          }
+        ]
+      },
+      "crew": {},
+      "capacity": {},
+      "systems": {},
+      "modifications": {},
+      "economics": {},
+      "text": {
+        "sourceNotes": "Source text excerpt anchored at not located; original PDF audit ledger confirms publication identity. No executable mount certification. Historical PDF-reviewed printed source values confirmed in indexed sourcebook statblock; no mount certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/hyperspace/capability": "not-stated",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "goi-sabaoth-frigate-spy-ship",
+        "name": "Sabaoth Frigate Spy Ship"
+      },
+      "publication": {
+        "book": "Galaxy of Intrigue",
+        "page": 71,
+        "printedTitle": "Sabaoth Frigate Spy Ship",
+        "printedTypeLine": "Colossal (frigate) capital ship",
+        "entryNotes": "Primary source SHA256 c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21, physical PDF p72",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedSize": "Colossal (frigate)",
+        "size": "colossal"
+      },
+      "challenge": {
+        "cl": 11
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 2,
+        "characterScaleLengthSquares": 2,
+        "coverCrew": "total"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 3
+          }
+        ]
+      },
+      "hyperspace": {
+        "raw": "x3 (x18 backup), navicomputer",
+        "capability": "equipped",
+        "primaryMultiplier": 3,
+        "navComputer": "installed"
+      },
+      "defenses": {
+        "reflex": 14,
+        "reflexFlatFooted": 11,
+        "fortitude": 34,
+        "armorBonus": 11,
+        "damageReduction": 15,
+        "shieldRating": 105
+      },
+      "durability": {
+        "hitPoints": 650,
+        "damageThreshold": 134
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 1,
+            "raw": "Initiative +1"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 8,
+            "raw": "Mechanics +8"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 8,
+            "raw": "Perception +8"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 1,
+            "raw": "Pilot +1"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 8,
+            "raw": "Use Computer +8"
+          }
+        ],
+        "initiativePrinted": 1,
+        "perceptionPrinted": 8,
+        "str": 58,
+        "dex": 16,
+        "int": 18,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 5,
+        "grappleBonusPrinted": 49,
+        "rangedAttackLine": "4 heavy laser cannons +9 (see below)"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "goi-sabaoth-frigate-spy-ship-source-attack-1",
+            "label": "heavy laser cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 9,
+            "specialNotes": "Published operator gunner, damage 6d10x2. Physical mounts and firing arcs NOT certified."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "100 (expert)",
+        "crewCount": 100
+      },
+      "capacity": {
+        "passengerCount": 450,
+        "cargo": {
+          "value": 1200,
+          "unit": "tons",
+          "raw": "1,200 tons"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "year",
+          "raw": "1 year"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Military",
+        "priceNew": {
+          "status": "ambiguous",
+          "raw": "not available for sale"
+        }
+      },
+      "text": {
+        "sourceNotes": "Source text excerpt anchored at 274257; original PDF audit ledger confirms publication identity. No executable mount certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "goi-corona-limited-luxury-groundspeeder",
+        "name": "Corona Limited Luxury Groundspeeder"
+      },
+      "publication": {
+        "book": "Galaxy of Intrigue",
+        "page": 71,
+        "printedTitle": "Corona Limited Luxury Groundspeeder",
+        "printedTypeLine": "Huge ground vehicle (speeder)",
+        "entryNotes": "Primary source SHA256 c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21, physical PDF p72",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "landspeeder",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedSize": "Huge",
+        "size": "huge"
+      },
+      "challenge": {
+        "cl": 4
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 2,
+        "characterScaleLengthSquares": 2,
+        "coverCrew": "total"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 3
+          }
+        ]
+      },
+      "hyperspace": {
+        "raw": "x3 (x18 backup), navicomputer",
+        "capability": "equipped",
+        "primaryMultiplier": 3,
+        "navComputer": "installed"
+      },
+      "defenses": {
+        "reflex": 14,
+        "reflexFlatFooted": 11,
+        "fortitude": 24,
+        "armorBonus": 3,
+        "damageReduction": 5
+      },
+      "durability": {
+        "hitPoints": 90,
+        "damageThreshold": 34
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 1,
+            "raw": "Initiative +1"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 8,
+            "raw": "Mechanics +8"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 8,
+            "raw": "Perception +8"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 1,
+            "raw": "Pilot +1"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 8,
+            "raw": "Use Computer +8"
+          }
+        ],
+        "initiativePrinted": 7,
+        "perceptionPrinted": 6,
+        "str": 58,
+        "dex": 16,
+        "int": 18,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 5,
+        "grappleBonusPrinted": 49,
+        "rangedAttackLine": "4 heavy laser cannons +9 (see below)"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "goi-corona-limited-luxury-groundspeeder-source-attack-1",
+            "label": "Heavy laser cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 9,
+            "specialNotes": "Printed operator gunner, damage 6d10x2 . Physical mounts and firing arcs NOT certified."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "100 (expert)",
+        "crewCount": 100
+      },
+      "capacity": {
+        "passengerCount": 450,
+        "cargo": {
+          "value": 1200,
+          "unit": "tons",
+          "raw": "1,200 tons"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "year",
+          "raw": "1 year"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Military",
+        "priceNew": {
+          "status": "ambiguous",
+          "raw": "not available for sale"
+        }
+      },
+      "text": {
+        "sourceNotes": "Source text excerpt anchored at 274475; original PDF audit ledger confirms publication identity. No executable mount certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "goi-sorosuub-jg-8-luxury-landspeeder",
+        "name": "SoroSuub JG-8 Luxury Landspeeder"
+      },
+      "publication": {
+        "book": "Galaxy of Intrigue",
+        "page": 71,
+        "printedTitle": "SoroSuub JG-8 Luxury Landspeeder",
+        "printedTypeLine": "Large ground vehicle (speeder)",
+        "entryNotes": "Primary source SHA256 c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21, physical PDF p72",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "landspeeder",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedSize": "Large",
+        "size": "large"
+      },
+      "challenge": {
+        "cl": 2
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 2,
+        "characterScaleLengthSquares": 2,
+        "coverCrew": "+5"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 450
+          }
+        ],
+        "maxVelocityKmh": 450
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 14,
+        "reflexFlatFooted": 11,
+        "fortitude": 15,
+        "armorBonus": 2,
+        "damageReduction": 5
+      },
+      "durability": {
+        "hitPoints": 55,
+        "damageThreshold": 20
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 8,
+            "raw": "Initiative +8"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 8,
+            "raw": "Pilot +8"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
+          }
+        ],
+        "initiativePrinted": 8,
+        "perceptionPrinted": 6,
+        "str": 21,
+        "dex": 16,
+        "int": 14,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 12
+      },
+      "armament": {
+        "firingGroups": []
+      },
+      "crew": {
+        "raw": "1 (skilled)",
+        "crewCount": 1
+      },
+      "capacity": {
+        "passengerCount": 1,
+        "cargo": {
+          "value": 50,
+          "unit": "kg",
+          "raw": "50 kg"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "day",
+          "raw": "1 day"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 45000,
+          "raw": "45,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 12500,
+          "raw": "12,500"
+        }
+      },
+      "text": {
+        "sourceNotes": "Source text excerpt anchored at 277126; original PDF audit ledger confirms publication identity. No executable mount certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/hyperspace/capability": "not-stated",
+        "/armament/weaponMounts": "not-stated",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    }
+  ],
+  "productionPacksChanged": false,
+  "generatedActorsChanged": false
+}
