@@ -86,6 +86,10 @@ const ok = (m) => console.log(`  [${++n}] ${m} OK`);
 {
   assert.ok(!S.PACKAGE_INCLUDE.some((e) => /^(docs|tools|packs|tests|reference)\b/.test(e)), 'docs, tools, tests, references and pack sources never ship');
   assert.ok(S.PACKAGE_INCLUDE.includes('data'), 'runtime data ships');
+  assert.ok(S.PACKAGE_INCLUDE.includes('LICENSE'), 'the license ships');
+  const license = fs.readFileSync(path.join(ROOT, 'LICENSE'), 'utf8');
+  assert.equal(manifest.license, 'MIT');
+  assert.match(license, /^MIT License\n\nCopyright \(c\) 2026 Doc Flow\n/, 'MIT text with the owner-approved attribution');
   assert.deepEqual([...S.PACKAGE_EXCLUDE_DIRS], ['data/audits', 'data/audit'], 'audit evidence under data/ never ships');
   const packager = fs.readFileSync(path.join(ROOT, 'scripts/build/package-system.js'), 'utf8');
   for (const use of ['PACKAGE_INCLUDE', 'PACKAGE_EXCLUDE_DIRS', 'buildPacks', 'manifestCoverage']) assert.ok(packager.includes(use), `the packager uses ${use}`);

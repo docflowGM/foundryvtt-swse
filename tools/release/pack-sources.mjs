@@ -106,7 +106,7 @@ export function expectedReadBack(prepared, collection) {
  * `data/audits` and `data/audit` are review evidence that no runtime module loads; everything else under data/ ships because several
  * loaders build data paths at runtime.
  */
-export const PACKAGE_INCLUDE = Object.freeze(['system.json', 'template.json', 'index.js', 'templates', 'scripts', 'helpers', 'styles', 'assets', 'lang', 'data']);
+export const PACKAGE_INCLUDE = Object.freeze(['system.json', 'template.json', 'index.js', 'LICENSE', 'templates', 'scripts', 'helpers', 'styles', 'assets', 'lang', 'data']);
 export const PACKAGE_EXCLUDE_DIRS = Object.freeze(['data/audits', 'data/audit']);
 
 /**
