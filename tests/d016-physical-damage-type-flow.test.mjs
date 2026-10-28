@@ -114,5 +114,31 @@ try {
   assert.equal(await viaPacket(wf.slug), 32, 'packet path: piercing DR 2');
   assert.equal(await viaPacket(wf.vibroS), 30, 'packet path: slashing, no DR');
   ok('the real damage resolver applies Armor Reinforcement DR 2 only to recorded piercing damage from worn armor (not slashing, not unrecorded, not energy; not when unworn, deactivated or the setting is off)');
+  // Core Rulebook p.158 (owner ruling, D-016): with several DR values the applicable one that most benefits applies -- Armor Reinforcement
+  // competes with generic / qualified DR, it never adds to it
+  const withDR = async (dr, workflowContext, damageType = 'kinetic', extra = {}) => {
+    target.system.damageReduction = dr;
+    try { return 20 - (await silent(() => DamageResolutionEngine.resolveDamage({ actor: target, damage: 20, damageType, source: null, options: { workflowContext, ...extra } }))).damageToHP; }
+    finally { target.system.damageReduction = 0; }
+  };
+  assert.equal(await withDR(5, wf.slug), 5, 'piercing, generic DR 5 + Armor Reinforcement 2: 5 reduced, not 7');
+  assert.equal(await withDR(1, wf.slug), 2, 'piercing, generic DR 1 + Armor Reinforcement 2: 2 reduced, not 3');
+  assert.equal(await withDR(0, wf.slug), 2, 'piercing, no other DR: 2');
+  assert.equal(await withDR(0, wf.vibroS), 0, 'slashing only: nothing from Armor Reinforcement');
+  assert.equal(await withDR(1, wf.vibroS), 1, 'slashing with generic DR 1: just the generic DR');
+  assert.equal(await withDR(0, wf.vibroP), 2, '"or" form selected as piercing: 2');
+  assert.equal(await withDR({ value: 5, exceptions: ['energy'] }, wf.slug), 5, 'a higher qualified DR (5/energy) applies to piercing and beats the 2');
+  assert.equal(await withDR({ value: 5, exceptions: ['kinetic'] }, wf.slug), 2, 'DR 5/kinetic is bypassed by this kinetic damage; Armor Reinforcement 2 remains');
+  assert.equal(await withDR(5, wf.slug, 'kinetic', { damageTags: ['bypass-dr'] }), 0, 'bypassed DR stays bypassed (bypass-dr tag), Armor Reinforcement included');
+  // multi-component event: one selection for the event; the "against piercing" entry reaches only the kinetic component
+  const multi = async (dr) => {
+    target.system.damageReduction = dr;
+    const comps = [{ key: 'base-damage', type: 'kinetic', damageTypes: ['kinetic'], amount: 6, rawAmount: 6 }, { key: 'rider', type: 'energy', damageTypes: ['energy'], amount: 6, rawAmount: 6 }];
+    try { return 12 - (await silent(() => DamageResolutionEngine.resolveDamage({ actor: target, damage: 12, damageType: 'kinetic', source: null, options: { workflowContext: wf.slug, damageComponents: comps } }))).damageToHP; }
+    finally { target.system.damageReduction = 0; }
+  };
+  assert.equal(await multi(0), 2, 'multi-component: DR 2 against piercing from the kinetic component only');
+  assert.equal(await multi(5), 5, 'multi-component: generic DR 5 wins, not 7');
+  ok('Core p.158: Armor Reinforcement competes with generic and qualified DR (highest applicable, never added), respects "or" selection and bypass, single- and multi-component');
 }
 console.log(`d016-physical-damage-type-flow: ${n} checks ok`);

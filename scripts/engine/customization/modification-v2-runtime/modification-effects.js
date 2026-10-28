@@ -66,7 +66,8 @@ export function wornArmorStunThresholdBonus(actor, options = {}) {
 
 /**
  * Damage reduction the WORN armor grants against one named damage type (Armor Reinforcement: DR 2 against piercing), from certified
- * "grant" operations. Highest per type. Matching an event against these needs the subtype the attack actually dealt (D-016).
+ * "grant" operations. Highest per type. DamageReductionResolver matches these against the subtype the attack actually dealt and lets them
+ * compete with every other applicable DR, highest only (D-016; Core Rulebook p.158).
  * @returns {Array<{damageType:string, amount:number, source:string|null}>}
  */
 export function wornArmorDamageTypeReductions(actor, options = {}) {
@@ -83,15 +84,5 @@ export function wornArmorDamageTypeReductions(actor, options = {}) {
   return [...best.values()];
 }
 
-/** Highest worn-armor reduction matching the event's recorded physical subtypes; none when the event recorded no subtype. */
-export function physicalTypeReductionFor(actor, physicalTypes, options = {}) {
-  if (!Array.isArray(physicalTypes) || !physicalTypes.length) return { amount: 0, source: '', type: null };
-  let out = { amount: 0, source: '', type: null };
-  for (const entry of wornArmorDamageTypeReductions(actor, options)) {
-    if (physicalTypes.includes(entry.damageType) && entry.amount > out.amount) out = { amount: entry.amount, source: `${entry.source ?? 'Armor'} (DR ${entry.amount} vs ${entry.damageType})`, type: entry.damageType };
-  }
-  return out;
-}
-
 export { TARGETS as EFFECT_TARGETS };
-export default { activeEffectOperations, effectiveShotCapacity, wornArmorStunThresholdBonus, wornArmorDamageTypeReductions, physicalTypeReductionFor, EFFECT_TARGETS: TARGETS };
+export default { activeEffectOperations, effectiveShotCapacity, wornArmorStunThresholdBonus, wornArmorDamageTypeReductions, EFFECT_TARGETS: TARGETS };
