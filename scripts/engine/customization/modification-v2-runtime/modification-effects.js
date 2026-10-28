@@ -18,6 +18,7 @@ const TARGETS = Object.freeze({
   STUN_DT_EQUIPMENT_BONUS: 'armor.protection.stunDamageThresholdEquipmentBonus',
   DAMAGE_TYPE_REDUCTION: 'armor.protection.damageTypeReduction',
   CRITICAL_DAMAGE_ADDITION: 'weapon.critical.critical_damage_addition',
+  REROLL_NATURAL_ATTACK_1: 'weapon.capabilities.rerollNaturalAttack1',
 });
 
 /** Certified operations of the active instances on an Item, optionally for one target. */
@@ -32,7 +33,7 @@ export function activeEffectOperations(item, target = null, { data = getVerified
     const canonical = found.typed.runtimeSelectable === true && inst.provisional !== true;
     const development = inst.basis === DEVELOPMENT_BASIS && developmentMode === true;
     if (!canonical && !development) continue;
-    for (const op of found.typed.effects?.operations ?? []) if (op && (!target || op.target === target)) ops.push({ ...op, instanceId: inst.instanceId });
+    for (const op of found.typed.effects?.operations ?? []) if (op && (!target || op.target === target)) ops.push({ ...op, instanceId: inst.instanceId, typedDefinitionId: inst.typedDefinitionId });
   }
   return ops;
 }
@@ -103,5 +104,26 @@ export function criticalPostMultiplierDice(weapon, rolledFormula, options = {}) 
   return { terms, unresolved };
 }
 
+/**
+ * Attack rerolls a certified weapon modification grants for this attack roll (Enhanced Energy Projector, KotOR p.75: once per encounter,
+ * reroll an attack whose die shows a natural 1 and keep the second result). Shaped as MetaResourceFeatResolver attack-reroll rules; the
+ * once-per-encounter limit is spent through EncounterUseTracker when the reroll is made. Returns [] unless the die shows a natural 1.
+ */
+export function modificationAttackRerollRules(weapon, naturalD20, options = {}) {
+  if (Number(naturalD20) !== 1 || !weapon) return [];
+  const data = options.data ?? getVerifiedModificationData();
+  const rules = [];
+  for (const op of activeEffectOperations(weapon, TARGETS.REROLL_NATURAL_ATTACK_1, options)) {
+    if (op.operation !== 'action-grant' || op.value?.trigger !== 'attack_die_natural_1' || op.value?.mustKeep !== 'second_roll' || Number(op.value?.oncePerEncounter) !== 1) continue;
+    const name = data?.catalog?.getTyped?.(op.typedDefinitionId)?.parent?.name ?? 'Weapon modification';
+    rules.push({
+      id: `mod-${op.instanceId}`, sourceId: weapon.id ?? '', sourceName: name, label: name, cost: 'none', outcome: 'keepSecond',
+      description: `${name}: reroll an attack roll whose die shows a natural 1; the second result must be kept. Once per encounter.`,
+      rule: { type: 'ATTACK_REROLL', trigger: 'natural1', oncePer: 'encounter', source: 'modification-v2' },
+    });
+  }
+  return rules;
+}
+
 export { TARGETS as EFFECT_TARGETS };
-export default { activeEffectOperations, effectiveShotCapacity, wornArmorStunThresholdBonus, wornArmorDamageTypeReductions, criticalPostMultiplierDice, EFFECT_TARGETS: TARGETS };
+export default { activeEffectOperations, effectiveShotCapacity, wornArmorStunThresholdBonus, wornArmorDamageTypeReductions, criticalPostMultiplierDice, modificationAttackRerollRules, EFFECT_TARGETS: TARGETS };

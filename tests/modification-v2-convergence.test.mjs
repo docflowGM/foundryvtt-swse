@@ -387,4 +387,41 @@ const install = (item, extra = {}, d = deps()) => silent(() => P.installProvisio
   globalThis.game.settings = { get: () => undefined };
   ok('12: Durasteel Bonding (GM development policy): critical hit adds 1 die of the current weapon damage die after the multiplier (3d6 pistol: (..)*2 + 1d6); not on ordinary hits, deactivated or with the setting off; mixed dice -> not applied with the reason; 2000 cr, DC 20');
 }
+{
+  // Enhanced Energy Projector (KotOR p.75, GM development policy): once per encounter, reroll an attack whose die shows a natural 1 and keep
+  // the second result -- offered through the existing attack-reroll authority, its use spent through EncounterUseTracker when the reroll is made
+  const store = await import('/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-data-store.js');
+  store.setVerifiedModificationData(data);
+  const { MetaResourceFeatResolver } = await import('/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js');
+  let devOn = true;
+  const flags = {};
+  globalThis.game.settings = { get: (ns, key) => (key === 'modificationV2DevelopmentMode' ? devOn : undefined) };
+  globalThis.game.combat = { id: 'c1', started: true };
+  const projector = { id: 'wp', name: 'Rifle', type: 'weapon', system: {}, flags: { 'foundryvtt-swse': { customization: { installedUpgrades: [
+    { instanceId: 'eep1', typedDefinitionId: 'kotor-accessory-enhanced-energy-projector::weapon', domain: 'weapon', state: 'installed', basis: 'DEVELOPMENT_GM_POLICY', provisional: true }] } } } };
+  const gunner = { id: 'g1', name: 'Gunner', items: Object.assign([projector], { get: (id) => (id === 'wp' ? projector : null) }), system: { forcePoints: { value: 0 } },
+    getFlag: (sc, k) => flags[`${sc}.${k}`], setFlag: async (sc, k, v) => { flags[`${sc}.${k}`] = JSON.parse(JSON.stringify(v)); } };
+  const roll = (nat) => ({ total: nat + 7, formula: '1d20 + 7', dice: [{ results: [{ result: nat }] }] });
+  const opts = (nat) => MetaResourceFeatResolver.buildAttackRerollChatOptions(gunner, projector, roll(nat), { isHit: false });
+  const o = opts(1);
+  assert.equal(o.length, 1, JSON.stringify(o)); assert.equal(o[0].ruleId, 'mod-eep1'); assert.equal(o[0].sourceName, 'Enhanced Energy Projector');
+  assert.deepEqual([o[0].cost, o[0].outcome, o[0].oncePer, o[0].canUse], ['none', 'keepSecond', 'encounter', true]);
+  assert.equal(opts(2).length, 0, 'only on a natural 1');
+  devOn = false; assert.equal(opts(1).length, 0, 'setting off: not offered'); devOn = true;
+  const claim = () => MetaResourceFeatResolver.claimAttackReroll(gunner, projector, { ruleId: 'mod-eep1', sourceId: 'wp', oncePer: 'encounter', naturalD20: 1 });
+  assert.deepEqual(await claim(), { ok: true });
+  assert.deepEqual(await claim(), { ok: false, reason: 'used-this-encounter' }, 'once per encounter');
+  assert.equal(opts(1).length, 0, 'no longer offered this encounter');
+  globalThis.game.combat = { id: 'c2', started: true };
+  assert.equal(opts(1).length, 1, 'a new encounter restores it');
+  assert.deepEqual(await MetaResourceFeatResolver.claimAttackReroll(gunner, projector, { ruleId: 'mod-eep1', sourceId: 'wp', oncePer: 'encounter', naturalD20: 4 }), { ok: false, reason: 'no-longer-available' }, 'a forged button on a non-1 die is refused');
+  // the same execution-time spend now applies to a feat's once-per-encounter attack reroll (it was checked at render time only)
+  const feat = { id: 'f1', type: 'feat', name: 'Lucky Shot', system: { abilityMeta: { attackRerolls: [{ id: 'lucky', type: 'ATTACK_REROLL', cost: 'none', oncePer: 'encounter', outcome: 'keepBetter' }] } } };
+  gunner.items.push(feat);
+  const featClaim = () => MetaResourceFeatResolver.claimAttackReroll(gunner, null, { ruleId: 'lucky', sourceId: 'f1', oncePer: 'encounter' });
+  const first = await featClaim(); const second = await featClaim();
+  assert.deepEqual([first, second], [{ ok: true }, { ok: false, reason: 'used-this-encounter' }], JSON.stringify([first, second]));
+  delete globalThis.game.combat; globalThis.game.settings = { get: () => undefined };
+  ok('13: Enhanced Energy Projector (GM development policy): natural 1 -> reroll offered (no cost, keep second), once per encounter spent at execution, restored next encounter; feat once-per-encounter rerolls are now spent too');
+}
 console.log(`modification-v2-convergence: ${n} checks ok`);
