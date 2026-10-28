@@ -15,7 +15,9 @@ import { isEnergyShieldItem, isArmorItemEquipped, resolveArmorData } from "/syst
 import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
 import { resolveActionCost } from "/systems/foundryvtt-swse/scripts/engine/feats/action-speed-runtime-patches.js";
 import { ActionEconomyConsumption } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js";
-import { planEquipmentIntent, executeEquipmentIntent, GM_LOCAL_CONTEXT, OUTCOME as EQUIPMENT_OUTCOME, EquipmentIntentError } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-state-coordinator.js";
+import { planEquipmentIntent, executeEquipmentIntent, reconcileEquipmentTransaction, RECONCILE_STATUS, GM_LOCAL_CONTEXT, OUTCOME as EQUIPMENT_OUTCOME, EquipmentIntentError } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-state-coordinator.js";
+import { acquireRequestId, settleRequestId } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-request-identity.js";
+import { logEquipmentEvent } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-diagnostics.js";
 import { readCombatReadiness, isWeaponHeld } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 
 const STACKABLE_TYPES = ["consumable", "equipment", "misc", "ammo"];
@@ -227,20 +229,55 @@ export class InventoryEngine {
    * @returns {Promise<{ok:boolean, changed:boolean, status:string, reason:string, message:string|null, plan?:object, outcome?:object, choices?:object[]}>}
    */
   static async requestWeaponPosture(actor, intent, { requestId = null, deps = undefined } = {}) {
+    // G18: the request id belongs to the logical action and is fixed at the intent, BEFORE planning, so every retry of the same action (a second
+    // click, a retry after an unknown or unresolved outcome, the choice dialog's follow-up) carries the same id into the coordinator.
+    let identity;
+    try {
+      identity = acquireRequestId(actor, intent, { requestId });
+    } catch (err) {
+      if (!(err instanceof EquipmentIntentError)) throw err;
+      return { ok: false, changed: false, status: "REJECTED_INVALID", reason: "invalid-intent", message: err.message, requestId: requestId ?? null };
+    }
+    const id = identity.requestId;
     let plan;
     try {
       plan = await planEquipmentIntent(actor, intent, deps);
     } catch (err) {
+      settleRequestId(identity.key, id, "REJECTED_INVALID");
       if (!(err instanceof EquipmentIntentError)) throw err;
-      return { ok: false, changed: false, status: "REJECTED_INVALID", reason: "invalid-intent", message: err.message };
+      return { ok: false, changed: false, status: "REJECTED_INVALID", reason: "invalid-intent", message: err.message, requestId: id };
     }
-    const done = (status, extra = {}) => ({ changed: false, status, reason: reasonOfStatus(status, plan, extra.outcome), message: messageOfStatus(status, plan, extra.outcome), plan, ...extra });
-    if (plan.status === EQUIPMENT_OUTCOME.NO_CHANGE) return { ok: true, ...done(plan.status) };
-    if (plan.status !== EQUIPMENT_OUTCOME.PLANNED) return { ok: false, ...done(plan.status, { choices: plan.choices, conflicts: plan.conflicts }) };
-    const id = requestId ?? globalThis.foundry?.utils?.randomID?.(24) ?? `req-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const done = (status, extra = {}) => ({ changed: false, status, reason: reasonOfStatus(status, plan, extra.outcome), message: messageOfStatus(status, plan, extra.outcome), plan, requestId: id, ...extra });
+    logEquipmentEvent("plan", { actorId: actor?.id, itemId: intent?.itemId, requestId: id, reused: identity.reused, intent: intent?.type, status: plan.status, planDigest: plan.planDigest ?? null });
+    if (plan.status !== EQUIPMENT_OUTCOME.PLANNED) {
+      // CHOICE_REQUIRED keeps the id: the follow-up with the chosen appendages/grip is a new intent (new digest) that the caller sends with this id
+      settleRequestId(identity.key, id, plan.status);
+      if (plan.status === EQUIPMENT_OUTCOME.NO_CHANGE) return { ok: true, ...done(plan.status) };
+      return { ok: false, ...done(plan.status, { choices: plan.choices, conflicts: plan.conflicts }) };
+    }
     const outcome = await executeEquipmentIntent(actor, { requestId: id, intent, planDigest: plan.planDigest }, { context: GM_LOCAL_CONTEXT }, deps);
+    settleRequestId(identity.key, id, outcome.status);
     const ok = outcome.status === EQUIPMENT_OUTCOME.COMMITTED;
+    logEquipmentEvent("execute", { actorId: actor?.id, itemId: intent?.itemId, requestId: id, intent: intent?.type, status: outcome.status, phase: outcome.phase ?? null, verified: outcome.verified === true, finalized: outcome.finalized === true, spend: outcome.spend ?? null, issues: (outcome.issues ?? []).map((i) => i.code) });
     return { ok, ...done(outcome.status, { outcome, changed: ok }) };
+  }
+
+  /**
+   * G36: GM-only reconciliation of an unresolved equipment request. Without `resolution` it returns the fresh evidence and the decisions it
+   * admits (writes nothing); with one it applies that GM decision through the coordinator (never a replay, never an action spend or undo). When the
+   * request is resolved, its id is released so the next click on the same action starts a new logical action.
+   * @param {Actor} actor
+   * @param {string} requestId
+   * @param {{resolution?:'close-not-applied'|'finalize'|'finalize-without-spend'|'compensate', note?:string, deps?:object}} [options]
+   */
+  static async reconcileWeaponRequest(actor, requestId, { resolution = undefined, note = undefined, deps = undefined } = {}) {
+    const result = await reconcileEquipmentTransaction(actor, requestId, { context: GM_LOCAL_CONTEXT, ...(resolution ? { resolution } : {}), ...(note ? { note } : {}) }, deps);
+    if ((result.status === RECONCILE_STATUS.RECONCILED && result.resolved) || result.status === RECONCILE_STATUS.ALREADY_RESOLVED) {
+      const digest = result.evidence?.intentDigest ?? result.intentDigest ?? null;
+      if (digest) settleRequestId(`${actor?.id ?? ""}:${digest}`, requestId, "RECONCILED");
+    }
+    logEquipmentEvent("reconcile", { actorId: actor?.id, requestId, resolution: resolution ?? null, status: result.status, phaseBefore: result.phaseBefore ?? result.evidence?.phase ?? null, phaseAfter: result.phaseAfter ?? null, classification: result.evidence?.classification ?? null, spend: result.evidence?.spend ?? null });
+    return result;
   }
 
   /** Whether a weapon is VERIFIED held (effective EQUIPPED or READIED) by the equipment-state reader. Declared posture alone is never enough. */

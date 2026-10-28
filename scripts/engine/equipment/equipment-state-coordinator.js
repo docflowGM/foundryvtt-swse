@@ -23,7 +23,7 @@ import { readActorEquipmentState } from '/systems/foundryvtt-swse/scripts/engine
 import { loadActorSpeciesProfile } from '/systems/foundryvtt-swse/scripts/engine/equipment/species-evidence-adapter.js';
 import { fingerprintIntent, canonicalize } from '/systems/foundryvtt-swse/scripts/engine/equipment/intent-fingerprint.js';
 import {
-  readJournal, toStored, addPreparedEntry, transitionEntry, classifyTransaction, findEntry, isUnresolved, JournalError, JOURNAL_STATUS, TXN_PHASE,
+  readJournal, toStored, addPreparedEntry, transitionEntry, annotateEntry, classifyTransaction, findEntry, isUnresolved, JournalError, JOURNAL_STATUS, TXN_PHASE,
 } from '/systems/foundryvtt-swse/scripts/engine/equipment/equipment-transaction-journal.js';
 import { validateWeaponRecord, validateWeaponRecordTransition, WEAPON_RECORD_STATUS, WEAPON_OCCUPANCY_SCHEMA_VERSION } from '/systems/foundryvtt-swse/scripts/engine/equipment/weapon-record-invariants.js';
 import { EQUIPMENT_POSTURE } from '/systems/foundryvtt-swse/scripts/engine/equipment/equipment-posture.js';
@@ -68,6 +68,8 @@ export const OUTCOME = Object.freeze({
   UNRESOLVED_JOURNAL: 'UNRESOLVED_JOURNAL',
   UNRESOLVED_FINALIZE: 'UNRESOLVED_FINALIZE',
   INDETERMINATE: 'INDETERMINATE',
+  // WP3-B: the executor's fence (lease/epoch) failed before a mutation step; it stopped and wrote nothing further (the journal may stay unresolved)
+  EXECUTOR_FENCED: 'EXECUTOR_FENCED',
 });
 
 /** Decision register id for the unspecified EQUIPPED <-> READIED action cost (docs/audits/swse-rules-decisions-pending.md). */
@@ -182,11 +184,13 @@ async function defaultIsLightsaber(item) {
 function readDeps(deps) {
   if (deps === undefined || deps === null) return {};
   if (!isPlain(deps)) throw new EquipmentIntentError('INVALID_DEPS', 'deps must be an object');
-  for (const k of ['writeItems', 'writeJournal', 'resolveActionCost', 'spendAction', 'spendMarkerPresent', 'isLightsaber', 'resolveCombinedDrawIgnite', 'resolveBladeColor', 'isGm', 'loadSpecies', 'readOwnedPaths', 'now']) {
+  for (const k of ['writeItems', 'writeJournal', 'resolveActionCost', 'spendAction', 'spendMarkerPresent', 'isLightsaber', 'resolveCombinedDrawIgnite', 'resolveBladeColor', 'isGm', 'loadSpecies', 'readOwnedPaths', 'now', 'currentUserId']) {
     if (deps[k] !== undefined && typeof deps[k] !== 'function') throw new EquipmentIntentError('INVALID_DEPS', `deps.${k} must be a function`);
   }
   if (deps.ledger !== undefined && !(deps.ledger instanceof Map)) throw new EquipmentIntentError('INVALID_DEPS', 'deps.ledger must be a Map');
   if (deps.reader !== undefined && !isPlain(deps.reader)) throw new EquipmentIntentError('INVALID_DEPS', 'deps.reader must be an object of reader deps');
+  if (deps.fence !== undefined && typeof deps.fence !== 'function') throw new EquipmentIntentError('INVALID_DEPS', 'deps.fence must be a function');
+  if (deps.executor !== undefined && !(isPlain(deps.executor) && nonEmpty(deps.executor.userId) && Number.isInteger(deps.executor.epoch))) throw new EquipmentIntentError('INVALID_DEPS', 'deps.executor must be { userId, epoch }');
   return deps;
 }
 
@@ -471,7 +475,9 @@ async function runExecution(actor, request, intent, ctx, ledger, deps) {
   if (journal.status === JOURNAL_STATUS.INVALID) return finish(outcomeOf(OUTCOME.REJECTED_PRECONDITION, ctx, { issues: [issue('equipment-journal-unreadable', 'blocking', 'The equipment transaction journal is malformed.')] }));
   const at = d_now(deps);
   const journalEntry = { requestId: ctx.requestId, intentDigest: ctx.intentDigest, planDigest: plan.planDigest, at, items: [{ id: write.id, before: write.before, target: write.set, beforeAbsent: write.beforeAbsent }], spend: { state: spendRequired ? 'pending' : 'not-required', actionType: plan.action.actionType } };
+  if (deps.executor) journalEntry.executor = clone(deps.executor);
   const persist = async (next) => { await (deps.writeJournal ?? defaultWriteJournal)(actor, toStored(next)); entries = next; };
+  if (!(await fenceHolds(deps))) return finish(fencedOutcome(ctx, 'journal-prepared'));
   try { await persist(addPreparedEntry(entries, journalEntry)); } catch (err) {
     return finish(outcomeOf(OUTCOME.JOURNAL_WRITE_FAILED, ctx, { phase: null, issues: [issue(err instanceof JournalError ? err.code : 'journal-write-failed', 'blocking', 'The PREPARED journal entry could not be written; no Item was modified.')] }));
   }
@@ -481,6 +487,7 @@ async function runExecution(actor, request, intent, ctx, ledger, deps) {
 
   // ---- field-scoped Item update, then verify persisted values ----
   let writeError = null;
+  if (!(await fenceHolds(deps))) return finish(fencedOutcome(ctx, 'item-write'));
   try { await (deps.writeItems ?? defaultWriteItems)(actor, [{ _id: write.id, ...write.set }]); } catch (err) { writeError = err; }
   const classified = classifyTransaction(current(), await observe(actor, current(), deps), { spendMarkerPresent: null });
   if (classified.classification === 'NOT_APPLIED') {
@@ -500,6 +507,7 @@ async function runExecution(actor, request, intent, ctx, ledger, deps) {
     return finish(outcomeOf(OUTCOME.UNRESOLVED_JOURNAL, ctx, { verified: true, issues: [issue('journal-applied-not-recorded', 'blocking', 'The Items are verified but the journal still reads PREPARED; readiness stays withheld and the transaction is unresolved.')] }));
   }
   let spendState = 'not-required';
+  if (!(await fenceHolds(deps))) return finish(fencedOutcome(ctx, 'action-spend'));
   if (spendRequired) {
     let spendOk = false; let ambiguous = false; let spendError = null;
     try {
@@ -520,6 +528,7 @@ async function runExecution(actor, request, intent, ctx, ledger, deps) {
     }
     if (!spendOk) return finish(await failWithCompensation(actor, ctx, current(), deps, phaseTo, 'action-spend-failed', spendError));
   }
+  if (!(await fenceHolds(deps))) return finish(fencedOutcome(ctx, 'journal-finalize'));
   const finalized = await phaseTo(TXN_PHASE.FINALIZED, { spend: { state: spendState, actionType: plan.action.actionType }, outcome: { status: OUTCOME.COMMITTED } });
   if (!finalized) {
     return finish(outcomeOf(OUTCOME.UNRESOLVED_FINALIZE, ctx, { verified: true, phase: TXN_PHASE.APPLIED, spend: spendState, issues: [issue('journal-finalize-failed', 'blocking', 'The Items are verified and the action is settled, but the journal could not be finalized. The transaction stays unresolved and readiness stays withheld.')] }));
@@ -528,6 +537,16 @@ async function runExecution(actor, request, intent, ctx, ledger, deps) {
 }
 
 const d_now = (deps) => { try { const v = deps.now ? deps.now() : null; return typeof v === 'number' ? v : null; } catch { return null; } };
+
+/**
+ * WP3-B executor fence: re-checked before every mutation step when a remote-request executor supplies one. It is advisory (a world-setting lease
+ * has no compare-and-swap): it narrows the window in which a superseded executor could act, it does not close it. A fence that throws fails closed.
+ */
+async function fenceHolds(deps) {
+  if (!deps.fence) return true;
+  try { return (await deps.fence()) === true; } catch { return false; }
+}
+const fencedOutcome = (ctx, step) => outcomeOf(OUTCOME.EXECUTOR_FENCED, ctx, { issues: [issue('executor-fenced', 'blocking', `The executor lost its lease before "${step}"; it stopped and wrote nothing further. Any unresolved journal entry is left for GM reconciliation.`, { step })] });
 
 async function failWithCompensation(actor, ctx, entry, deps, phaseTo, code, error) {
   const result = await compensate(actor, entry, deps);
@@ -557,4 +576,111 @@ export async function inspectEquipmentTransaction(actor, requestId, deps) {
   return deepFreeze({ found: true, journalStatus: journal.status, phase: entry.phase, unresolved: isUnresolved(entry), classification: c.classification, spend: c.spend, reasons: [...c.reasons], perItem: c.perItem.map((p) => ({ ...p })) });
 }
 
-export default { IGNITE_PATHS, planEquipmentIntent, executeEquipmentIntent, inspectEquipmentTransaction, validateIntent, GM_LOCAL_CONTEXT, OUTCOME, OWNED_PATHS, INTENT_TYPES, GRIPS, EquipmentIntentError, DEFERRED_DECISION_ID };
+// ------------------------------------------------------------------------------------------------------------------ G36 reconciliation
+export const RECONCILE_STATUS = Object.freeze({
+  REVIEW: 'REVIEW', RECONCILED: 'RECONCILED', RESOLUTION_NOT_ALLOWED: 'RESOLUTION_NOT_ALLOWED', NOT_FOUND: 'NOT_FOUND', ALREADY_RESOLVED: 'ALREADY_RESOLVED',
+  JOURNAL_UNREADABLE: 'JOURNAL_UNREADABLE', NO_AUTHORITATIVE_EXECUTOR: 'NO_AUTHORITATIVE_EXECUTOR', REJECTED_NOT_GM: 'REJECTED_NOT_GM',
+  RECONCILE_WRITE_FAILED: 'RECONCILE_WRITE_FAILED', EXECUTOR_FENCED: 'EXECUTOR_FENCED',
+});
+export const RECONCILE_RESOLUTIONS = Object.freeze(['close-not-applied', 'finalize', 'finalize-without-spend', 'compensate']);
+
+/**
+ * Which GM decisions a freshly observed entry admits. Nothing here replays the intent or spends/refunds an action:
+ *   NOT_APPLIED                         -> close-not-applied (a recorded spend stays recorded; it is reported, never undone)
+ *   APPLIED + spend present/not needed  -> finalize
+ *   APPLIED + spend absent (required)   -> compensate | finalize-without-spend (spend 'waived': the GM's explicit call, nothing is paid)
+ *   APPLIED + spend unknown, PARTIAL, INDETERMINATE -> compensate (conditional, field-scoped restore of paths still at their planned value)
+ */
+function allowedResolutions(entry, c) {
+  const spendNeeded = entry.spend.state !== 'not-required';
+  if (c.classification === 'NOT_APPLIED') return ['close-not-applied'];
+  if (c.classification === 'APPLIED') {
+    const canFinalize = [TXN_PHASE.PREPARED, TXN_PHASE.APPLIED, TXN_PHASE.INDETERMINATE].includes(entry.phase);
+    if (!spendNeeded || c.spend === 'present') return canFinalize ? ['finalize'] : [];
+    if (c.spend === 'absent') return canFinalize ? ['compensate', 'finalize-without-spend'] : ['compensate'];
+    return ['compensate'];
+  }
+  return ['compensate'];
+}
+
+/** Legal path from the entry's phase to `target` through APPLIED when needed (PREPARED/INDETERMINATE -> APPLIED -> FINALIZED). */
+function transitionChain(entries, requestId, from, target, patch) {
+  if (target === TXN_PHASE.FINALIZED && from !== TXN_PHASE.APPLIED) return transitionEntry(transitionEntry(entries, requestId, TXN_PHASE.APPLIED, {}), requestId, target, patch);
+  return transitionEntry(entries, requestId, target, patch);
+}
+
+/**
+ * GM-only reconciliation of one unresolved journal entry (TI4-B G36).
+ *
+ * Without `resolution` it is a REVIEW: it re-reads the journal, the Items' owned fields and the action-economy marker, classifies the entry
+ * (NOT_APPLIED / APPLIED / PARTIAL / INDETERMINATE) and returns the evidence plus the decisions it admits. It writes nothing.
+ * With a `resolution` the GM chose, it re-observes under the actor's serialization, refuses a decision the fresh evidence does not admit, and
+ * records the decision as a forensic note on the entry (the original phases, digests and before/target values are kept). It never re-runs the
+ * intent, never calls the action spend and never uses undoLast; compensation is the same conditional, field-scoped restore the executor uses.
+ *
+ * @param {object} actor
+ * @param {string} requestId
+ * @param {{context?:object, resolution?:string, note?:string}} [options] `context` must be GM_LOCAL_CONTEXT
+ * @param {object} [deps] coordinator deps (+ `currentUserId()`, optional `fence`)
+ */
+export async function reconcileEquipmentTransaction(actor, requestId, options = {}, deps) {
+  if (!actor || typeof actor !== 'object') throw new EquipmentIntentError('INVALID_ACTOR', 'actor must be an Actor-like object');
+  if (!nonEmpty(requestId)) throw new EquipmentIntentError('INVALID_REQUEST', 'requestId must be a non-empty string');
+  if (!isPlain(options)) throw new EquipmentIntentError('INVALID_REQUEST', 'options must be an object');
+  if (options.resolution !== undefined && !RECONCILE_RESOLUTIONS.includes(options.resolution)) throw new EquipmentIntentError('INVALID_REQUEST', `resolution must be one of ${RECONCILE_RESOLUTIONS.join(', ')}`);
+  if (options.note !== undefined && typeof options.note !== 'string') throw new EquipmentIntentError('INVALID_REQUEST', 'note must be a string');
+  const d = readDeps(deps);
+  const base = { requestId, resolution: options.resolution ?? null };
+  if (options.context !== GM_LOCAL_CONTEXT) return deepFreeze({ ...base, status: RECONCILE_STATUS.NO_AUTHORITATIVE_EXECUTOR });
+  const isGm = d.isGm ? d.isGm() : globalThis.game?.user?.isGM === true;
+  if (!isGm) return deepFreeze({ ...base, status: RECONCILE_STATUS.REJECTED_NOT_GM });
+  return enqueue(actor.id, () => runReconcile(actor, requestId, options, d, base));
+}
+
+async function runReconcile(actor, requestId, options, deps, base) {
+  const journal = readJournal(actor.flags?.swse?.equipmentTxn);
+  if (journal.status === JOURNAL_STATUS.INVALID) return deepFreeze({ ...base, status: RECONCILE_STATUS.JOURNAL_UNREADABLE, issues: journal.issues });
+  const entry = findEntry(journal.entries, requestId);
+  if (!entry) return deepFreeze({ ...base, status: RECONCILE_STATUS.NOT_FOUND });
+  if (!isUnresolved(entry)) return deepFreeze({ ...base, status: RECONCILE_STATUS.ALREADY_RESOLVED, phase: entry.phase, intentDigest: entry.intentDigest });
+
+  const c = classifyTransaction(entry, await observe(actor, entry, deps), { spendMarkerPresent: await markerPresent(actor, requestId, deps) });
+  const allowed = allowedResolutions(entry, c);
+  const evidence = { phase: entry.phase, intentDigest: entry.intentDigest, planDigest: entry.planDigest, executor: entry.executor ?? null, journaledSpend: entry.spend, classification: c.classification, spend: c.spend, perItem: c.perItem.map((p) => ({ ...p })), reasons: [...c.reasons], items: clone(entry.items), notes: clone(entry.notes ?? []) };
+  if (!options.resolution) return deepFreeze({ ...base, status: RECONCILE_STATUS.REVIEW, evidence, allowedResolutions: allowed });
+  if (!allowed.includes(options.resolution)) return deepFreeze({ ...base, status: RECONCILE_STATUS.RESOLUTION_NOT_ALLOWED, evidence, allowedResolutions: allowed });
+  if (!(await fenceHolds(deps))) return deepFreeze({ ...base, status: RECONCILE_STATUS.EXECUTOR_FENCED, evidence });
+
+  const note = { kind: 'gm-reconcile', by: (() => { try { return deps.currentUserId ? deps.currentUserId() : globalThis.game?.user?.id ?? null; } catch { return null; } })(), at: d_now(deps) ?? Date.now(), phaseBefore: entry.phase, classification: c.classification, spend: c.spend, resolution: options.resolution, perItem: evidence.perItem, reasons: evidence.reasons, ...(options.note ? { gmNote: options.note } : {}) };
+  let entries = clone(journal.entries);
+  let compensation = null;
+  let phaseAfter;
+  try {
+    if (options.resolution === 'close-not-applied') {
+      phaseAfter = TXN_PHASE.NOT_APPLIED;
+      entries = transitionEntry(entries, requestId, phaseAfter, { notes: [...(entry.notes ?? []), note] });
+    } else if (options.resolution === 'finalize' || options.resolution === 'finalize-without-spend') {
+      phaseAfter = TXN_PHASE.FINALIZED;
+      const spend = options.resolution === 'finalize-without-spend' ? { state: 'waived', actionType: entry.spend.actionType ?? null }
+        : { state: entry.spend.state === 'not-required' ? 'not-required' : 'committed', actionType: entry.spend.actionType ?? null };
+      entries = transitionChain(entries, requestId, entry.phase, phaseAfter, { spend, outcome: { status: OUTCOME.COMMITTED, reconciled: true }, notes: [...(entry.notes ?? []), note] });
+    } else {
+      compensation = await compensate(actor, entry, deps);
+      note.compensation = { restoredPaths: compensation.restoredPaths, skippedConcurrentPaths: compensation.skippedConcurrentPaths, unrestoredPaths: compensation.unrestoredPaths };
+      if (c.spend === 'present') note.spendLeftInPlace = true; // never refunded or undone here
+      const target = compensation.clean ? TXN_PHASE.NOT_APPLIED : TXN_PHASE.PARTIAL;
+      const notes = [...(entry.notes ?? []), note];
+      if (target === entry.phase) { phaseAfter = entry.phase; entries = annotateEntry(entries, requestId, note); }
+      else {
+        try { entries = transitionEntry(entries, requestId, target, { notes }); phaseAfter = target; }
+        catch { phaseAfter = entry.phase; entries = annotateEntry(entries, requestId, note); }
+      }
+    }
+    await (deps.writeJournal ?? defaultWriteJournal)(actor, toStored(entries));
+  } catch (err) {
+    return deepFreeze({ ...base, status: RECONCILE_STATUS.RECONCILE_WRITE_FAILED, evidence, ...(compensation ? { compensation: note.compensation } : {}), message: err?.message ?? String(err) });
+  }
+  return deepFreeze({ ...base, status: RECONCILE_STATUS.RECONCILED, phaseBefore: entry.phase, phaseAfter, resolved: phaseAfter === TXN_PHASE.FINALIZED || phaseAfter === TXN_PHASE.NOT_APPLIED, evidence, ...(compensation ? { compensation: note.compensation } : {}) });
+}
+
+export default { IGNITE_PATHS, planEquipmentIntent, executeEquipmentIntent, inspectEquipmentTransaction, reconcileEquipmentTransaction, RECONCILE_STATUS, RECONCILE_RESOLUTIONS, validateIntent, GM_LOCAL_CONTEXT, OUTCOME, OWNED_PATHS, INTENT_TYPES, GRIPS, EquipmentIntentError, DEFERRED_DECISION_ID };

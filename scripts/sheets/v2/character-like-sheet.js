@@ -15,6 +15,7 @@ import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interact
 import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/background-registry.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { requestWithPostureChoices } from "/systems/foundryvtt-swse/scripts/sheets/v2/weapon-posture-choice-dialog.js";
 import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js";
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
@@ -3880,8 +3881,10 @@ const forcePoints = [];
             break;
           }
           case "toggle-weapon-readiness": {
-            const result = await InventoryEngine.toggleWeaponReadied(this.actor, itemId);
+            // a draw that needs hands/grip asks for them and retries with the same request id; the coordinator re-validates the choice
+            const result = await requestWithPostureChoices(item, () => InventoryEngine.toggleWeaponReadied(this.actor, itemId), (choice) => InventoryEngine.setWeaponReadied(this.actor, itemId, true, choice));
             if (!result?.ok) {
+              if (result?.cancelled) break;
               if (result?.reason === "deactivate-before-stowing") ui?.notifications?.warn?.(`${item.name}: deactivate the lightsaber before stowing it.`);
               else if (result?.message) ui?.notifications?.warn?.(`${item.name}: ${result.message}`);
               break;
@@ -3890,8 +3893,9 @@ const forcePoints = [];
             break;
           }
           case "draw-and-ignite-lightsaber": {
-            const result = await InventoryEngine.drawAndActivateLightsaber(this.actor, itemId);
+            const result = await requestWithPostureChoices(item, () => InventoryEngine.drawAndActivateLightsaber(this.actor, itemId), (choice) => InventoryEngine.drawAndActivateLightsaber(this.actor, itemId, choice));
             if (!result?.ok) {
+              if (result?.cancelled) break;
               ui?.notifications?.warn?.(`${item.name}: ${result?.message ?? "unable to draw and ignite."}`);
               break;
             }
