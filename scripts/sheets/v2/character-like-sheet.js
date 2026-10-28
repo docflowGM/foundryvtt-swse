@@ -16,6 +16,7 @@ import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { requestWithPostureChoices } from "/systems/foundryvtt-swse/scripts/sheets/v2/weapon-posture-choice-dialog.js";
+import { reconcileItemTransactions } from "/systems/foundryvtt-swse/scripts/sheets/v2/equipment-reconcile-dialog.js";
 import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js";
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
@@ -3857,7 +3858,7 @@ const forcePoints = [];
     });
 
     // Delete/Remove item
-    html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="toggle-activated"], [data-action="toggle-weapon-readiness"], [data-action="draw-and-ignite-lightsaber"], [data-action="change-weapon-configuration"], [data-action="set-power-source"], [data-action="edit"], [data-action="configure"], [data-action="toggle-implant-tag"], [data-action="toggle-implant-installed"], [data-action="toggle-implant-active"], [data-action="sell-item"], [data-action="force-alchemy"]').forEach(button => {
+    html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="toggle-activated"], [data-action="toggle-weapon-readiness"], [data-action="draw-and-ignite-lightsaber"], [data-action="reconcile-weapon-transaction"], [data-action="change-weapon-configuration"], [data-action="set-power-source"], [data-action="edit"], [data-action="configure"], [data-action="toggle-implant-tag"], [data-action="toggle-implant-installed"], [data-action="toggle-implant-active"], [data-action="sell-item"], [data-action="force-alchemy"]').forEach(button => {
       button.addEventListener("click", async (event) => {
         event.preventDefault();
         const action = button.dataset.action;
@@ -3900,6 +3901,11 @@ const forcePoints = [];
               break;
             }
             await this.requestSurfaceRender({ reason: "weapon-draw-and-ignite" });
+            break;
+          }
+          case "reconcile-weapon-transaction": {
+            const results = await reconcileItemTransactions(this.actor, item);
+            if (results.some((r) => r?.status === "RECONCILED")) await this.requestSurfaceRender({ reason: "equipment-reconciled" });
             break;
           }
           case "change-weapon-configuration":
