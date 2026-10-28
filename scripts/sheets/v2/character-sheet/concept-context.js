@@ -2,6 +2,7 @@ import { isAlwaysReadiedWeapon, isNaturalWeaponOnly } from "/systems/foundryvtt-
 import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
 import { readJournal, unresolvedItemIds, JOURNAL_STATUS } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-transaction-journal.js";
 import { getWeaponReadiness } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
+import { effectiveShotCapacity } from "/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-effects.js";
 import { resolveActionCost } from "/systems/foundryvtt-swse/scripts/engine/feats/action-speed-runtime-patches.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
 import { FireStateStore } from "/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js";
@@ -1815,7 +1816,8 @@ export function buildConceptSheetViewModel(context = {}) {
     const railHex = visualProfile?.primaryHex || attack?.visualColorHex || attack?.colorHex || '';
     const rangeLabel = normalizeText(attack?.range || attack?.rangeLabel || item?.system?.rangeFormatted || item?.system?.range?.label || item?.system?.range?.value || 'Melee');
     const ammoCurrent = item?.system?.ammo?.current ?? item?.system?.ammunition?.current ?? item?.system?.charges?.value ?? item?.system?.charges?.current ?? attack?.ammoCurrent;
-    const ammoMax = item?.system?.ammo?.max ?? item?.system?.ammunition?.max ?? item?.system?.charges?.max ?? attack?.ammoMax;
+    // the tracked pool shows its EFFECTIVE capacity (Modification V2 effects are derived, never written into the Item)
+    const ammoMax = item?.system?.ammo?.max ?? (item?.system?.ammunition?.max !== undefined && item?.system?.ammunition?.max !== null ? effectiveShotCapacity(item, item.system.ammunition.max) : undefined) ?? item?.system?.charges?.max ?? attack?.ammoMax;
     const ammoLabel = ammoCurrent !== undefined && ammoCurrent !== null && ammoCurrent !== ''
       ? `${ammoCurrent}${ammoMax !== undefined && ammoMax !== null && ammoMax !== '' ? ` / ${ammoMax}` : ''}`
       : '';

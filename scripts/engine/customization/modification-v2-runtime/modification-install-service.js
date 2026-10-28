@@ -31,6 +31,8 @@ import { planModification, inspectInstances } from '/systems/foundryvtt-swse/scr
 import { resolveSlotState } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-slot-authority.js';
 import { sha256Hex, utf8Bytes } from '/systems/foundryvtt-swse/scripts/engine/equipment/intent-fingerprint.js';
 import { PROVISIONAL_SET } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-provisional-set.js';
+import { setVerifiedModificationData, getVerifiedModificationData } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-data-store.js';
+import { DEVELOPMENT_SET, DEVELOPMENT_BASIS, DEVELOPMENT_POLICY, isDevelopmentModeEnabled } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-development-mode.js';
 import { MODIFICATION_DATA_PINS } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-data-pins.js';
 
 export const RUNTIME_PATH = 'data/modifications/runtime-definitions-v1.5.json';
@@ -95,12 +97,12 @@ export async function loadModificationData({ fetchText = null, refresh = false }
     if (m) rows.set(r.typedDefinitionId, m[1]);
   }
   const out = Object.freeze({ ok: true, catalog: made.catalog, rows, recordsSha256: recordsHash });
-  if (!fetchText) cached = out;
+  if (!fetchText) { cached = out; setVerifiedModificationData(out); }
   return out;
 }
 
 /** The verified data most recently loaded through the production path (null before the first load). Synchronous consumers read this. */
-export function getLoadedModificationData() { return cached; }
+export function getLoadedModificationData() { return getVerifiedModificationData(); }
 
 // ------------------------------------------------------------------------------------------------ slot-authority inputs
 /** Weapon class for Phase 1a from the canonical weapon registry (weaponGroup), never from names. */
@@ -139,28 +141,49 @@ function classify(blockers, acceptable) {
  * Read-only review of a provisional install: DC/time/price/slots, the certification blockers a GM would be accepting and any hard blocker.
  * @param {{data:object, item:object, typedDefinitionId:string, weaponLookup?:Function, armor?:object|null}} input
  */
-export function reviewProvisionalInstall({ data, item, typedDefinitionId, weaponLookup = null, armor = null }) {
-  const base = { typedDefinitionId, provisional: true, basis: PROVISIONAL_BASIS };
+const DEVELOPMENT_ACCEPTABLE = Object.freeze({
+  ...ACCEPTABLE,
+  COMPONENT_UNVERIFIED: (d) => d === 'description' || d === 'hostPrerequisites' || d === 'installProcedure',
+  OPEN_REGISTER_ENTRY: (d) => d === 'D-013:installProcedure',
+});
+const tableRowForPoints = (points) => (Number.isInteger(points) && points >= 0 ? (points >= 2 ? '2 or more' : String(points)) : null);
+
+export function reviewProvisionalInstall({ data, item, typedDefinitionId, weaponLookup = null, armor = null, developmentMode = false }) {
+  const development = DEVELOPMENT_SET.includes(typedDefinitionId);
+  const base = { typedDefinitionId, provisional: true, basis: development ? DEVELOPMENT_BASIS : PROVISIONAL_BASIS };
   if (!data?.ok) return Object.freeze({ ...base, ok: false, hard: [{ code: 'DATA_UNAVAILABLE', detail: data?.problems ?? null }], accepted: [] });
-  if (!PROVISIONAL_SET.includes(typedDefinitionId)) return Object.freeze({ ...base, ok: false, hard: [{ code: 'NOT_IN_PROVISIONAL_SET', detail: typedDefinitionId }], accepted: [] });
+  if (!PROVISIONAL_SET.includes(typedDefinitionId) && !development) return Object.freeze({ ...base, ok: false, hard: [{ code: 'NOT_IN_PROVISIONAL_SET', detail: typedDefinitionId }], accepted: [] });
   const plan = planModification({
     catalog: data.catalog, operation: 'install', typedDefinitionId, item,
     slotAuthority: { resolveSlotState },
     slotContext: { ...(weaponLookup ? { canonicalWeaponLookup: weaponLookup } : {}), ...(armor ? { trustedClassification: armor } : {}) },
   });
-  const { accepted, hard } = classify(plan.blockers, ACCEPTABLE);
-  const row = data.rows.get(typedDefinitionId) ?? null;
+  let { accepted, hard } = classify(plan.blockers, development ? DEVELOPMENT_ACCEPTABLE : ACCEPTABLE);
+  // with the development workflow off, nothing is accepted: every certification blocker (D-013 included) is reported as blocking
+  if (development && developmentMode !== true) { hard = [...accepted, ...hard]; accepted = []; }
+  const found = data.catalog.getTyped(typedDefinitionId);
+  const parent = found?.parent ?? null;
+  let row; let rowBasis;
+  if (development) {
+    if (developmentMode !== true) hard.unshift({ code: 'DEVELOPMENT_MODE_OFF', detail: 'enable the Modification V2 development workflow setting (GM) to install this definition' });
+    if (parent?.provenance?.mechanicalCertification !== 'EFFECTS_CERTIFIED') hard.push({ code: 'EFFECTS_NOT_CERTIFIED', detail: typedDefinitionId });
+    const slots = found?.typed?.slotCost?.registry?.type === 'fixed' && found.typed.slotCost.certification?.certified === true ? found.typed.slotCost.registry.slots : null;
+    row = tableRowForPoints(slots); rowBasis = DEVELOPMENT_POLICY;
+  } else {
+    row = data.rows.get(typedDefinitionId) ?? null; rowBasis = TABLE_2_2.source;
+  }
   const table = row ? TABLE_2_2.commercial[row] : null;
   if (!table) hard.push({ code: 'TABLE_2_2_ROW_UNKNOWN', detail: typedDefinitionId });
   const price = plan.price?.computable === true && plan.price.kind === 'credits' && Number.isFinite(plan.price.amount) && plan.price.amount >= 0 ? plan.price.amount : null;
   if (price === null && !hard.some((h) => h.code.startsWith('PRICE_'))) hard.push({ code: 'PRICE_NOT_ESTABLISHED', detail: plan.price?.kind ?? null });
-  const parent = data.catalog.getTyped(typedDefinitionId)?.parent ?? null;
   return Object.freeze({
-    ...base, ok: hard.length === 0,
+    ...base, ok: hard.length === 0, development,
     name: parent?.name ?? typedDefinitionId, summary: parent?.display?.summary ?? '', domain: plan.domain,
     row, dc: table?.dc ?? null, time: table?.time ?? null, price, slotImpact: plan.slotImpact,
     hostNeedsGmRuling: accepted.some((a) => a.code === 'HOST_NOT_ESTABLISHED'),
-    accepted, hard, source: TABLE_2_2.source, trainedRequired: 'Mechanics (trained)',
+    hostPrerequisites: parent?.eligibility?.prerequisites ?? [],
+    effectsSummary: development ? parent?.display?.summary ?? '' : null,
+    accepted, hard, source: rowBasis, trainedRequired: 'Mechanics (trained)',
   });
 }
 
@@ -168,12 +191,12 @@ export function reviewProvisionalInstall({ data, item, typedDefinitionId, weapon
  * Every typed definition of the Item's domain with its status for the workbench (read-only): installable now (provisional set, no hard
  * blocker) or blocked, with the exact planner blockers -- never hidden.
  */
-export function listDomainModifications({ data, item, weaponLookup = null, armor = null }) {
+export function listDomainModifications({ data, item, weaponLookup = null, armor = null, developmentMode = isDevelopmentModeEnabled() }) {
   if (!data?.ok || !['weapon', 'armor', 'equipment'].includes(item?.type)) return [];
   return data.catalog.listTyped({ domain: item.type }).map((typedDefinitionId) => {
-    if (PROVISIONAL_SET.includes(typedDefinitionId)) {
-      const review = reviewProvisionalInstall({ data, item, typedDefinitionId, weaponLookup, armor });
-      return { ...review, availability: review.ok ? 'provisional' : 'blocked' };
+    if (PROVISIONAL_SET.includes(typedDefinitionId) || DEVELOPMENT_SET.includes(typedDefinitionId)) {
+      const review = reviewProvisionalInstall({ data, item, typedDefinitionId, weaponLookup, armor, developmentMode });
+      return { ...review, availability: review.ok ? (review.development ? 'development' : 'provisional') : 'blocked' };
     }
     const found = data.catalog.getTyped(typedDefinitionId);
     const plan = planModification({ catalog: data.catalog, operation: 'install', typedDefinitionId, item });
@@ -262,7 +285,8 @@ async function runInstall(actor, item0, request, deps) {
   const armor = item.type === 'armor' ? armorAttestation({ ...(request.armor ?? {}), gmId }) : null;
   if (item.type === 'armor' && !armor) return outcome('REFUSED', { reason: 'armor-classification-attestation-required' });
   const weaponLookup = item.type === 'weapon' ? (deps.weaponLookup ?? await productionWeaponLookup()) : null;
-  const review = reviewProvisionalInstall({ data, item, typedDefinitionId: request.typedDefinitionId, weaponLookup, armor });
+  const developmentMode = deps.developmentMode ?? isDevelopmentModeEnabled();
+  const review = reviewProvisionalInstall({ data, item, typedDefinitionId: request.typedDefinitionId, weaponLookup, armor, developmentMode });
   if (!review.ok) return outcome('REFUSED', { reason: 'hard-blockers', hard: review.hard, review });
   if (review.hostNeedsGmRuling && request.hostRuling?.compatible !== true) return outcome('REFUSED', { reason: 'host-ruling-required', review });
   // H7 boundary: only an explicitly confirmed, established price is charged
@@ -274,18 +298,21 @@ async function runInstall(actor, item0, request, deps) {
 
   if (!check.success) {
     // Q-024: the failed attempt is recorded; no instance, no slot. Q-021: its cost is pending GM adjudication (not charged automatically, not zero).
-    const entry = { attemptId: request.attemptId, kind: 'install', typedDefinitionId: request.typedDefinitionId, result: 'failed', check, at: Date.now(), by: gmId, basis: PROVISIONAL_BASIS, note: request.note ?? null, cost: { state: 'GM_ADJUDICATION_PENDING', amount: null, charged: false, basis: 'Q-021: the cost of a failed attempt is not defined by the published rule and is left to GM adjudication; nothing is charged automatically and no amount (zero included) is implied' } };
+    const entry = { attemptId: request.attemptId, kind: 'install', typedDefinitionId: request.typedDefinitionId, result: 'failed', check, at: Date.now(), by: gmId, basis: review.basis, note: request.note ?? null, cost: { state: 'GM_ADJUDICATION_PENDING', amount: null, charged: false, basis: 'Q-021: the cost of a failed attempt is not defined by the published rule and is left to GM adjudication; nothing is charged automatically and no amount (zero included) is implied' } };
     try { await writeItem(actor, { _id: item.id, [ATTEMPT_FLAG_PATH]: [...clone(readAttempts(item)), entry] }); } catch (err) { return outcome('WRITE_FAILED', { reason: 'attempt-log-not-written', error: err?.message ?? String(err), check }); }
     return outcome('INSTALL_FAILED_CHECK', { check, review, attempt: entry });
   }
 
   const instance = {
     instanceId: `mv2-${request.attemptId}`, typedDefinitionId: request.typedDefinitionId, domain: review.domain, name: review.name, state: 'installed',
-    provisional: true, basis: PROVISIONAL_BASIS,
+    provisional: true, basis: review.basis,
     acceptedBlockers: clone(review.accepted),
     hostRuling: review.hostNeedsGmRuling ? { compatible: true, by: gmId, note: request.hostRuling?.note ?? null, classification: 'GM_ADJUDICATED_NOT_PUBLISHED_RULE' } : null,
     armorAttestation: armor,
-    effects: { certified: false, automation: 'none', basis: 'Q-029: effects are a GM-adjudicated record; nothing is applied automatically' },
+    effects: review.development
+      ? { source: 'catalog', automation: 'while-development-mode-is-on', basis: 'source-certified effects resolved from the pinned catalog; installation under a GM development policy (D-013 pending)' }
+      : { certified: false, automation: 'none', basis: 'Q-029: effects are a GM-adjudicated record; nothing is applied automatically' },
+    ...(review.development ? { developmentPolicy: review.source } : {}),
     install: { attemptId: request.attemptId, row: review.row, dc: review.dc, time: review.time, check, price: review.price, quality: 'commercial', at: Date.now(), by: gmId, note: request.note ?? null },
   };
   const next = [...clone(inspectInstances(item).records), instance];
@@ -327,7 +354,8 @@ async function runRemove(actor, item0, request, deps) {
   const data = deps.data ?? await loadModificationData();
   if (!data?.ok) return outcome('REFUSED', { reason: 'data-unavailable', problems: data?.problems ?? null });
   const plan = planModification({ catalog: data.catalog, operation: 'remove', typedDefinitionId: target.typedDefinitionId, item, instanceId: request.instanceId });
-  const { hard } = classify(plan.blockers, REMOVAL_ACCEPTABLE);
+  const developmentInstance = target.basis === DEVELOPMENT_BASIS && DEVELOPMENT_SET.includes(target.typedDefinitionId);
+  const { hard } = classify(plan.blockers, developmentInstance ? DEVELOPMENT_ACCEPTABLE : REMOVAL_ACCEPTABLE);
   if (hard.length) return outcome('REFUSED', { reason: 'hard-blockers', hard });
   const table = TABLE_2_2.commercial[target.install.row];
   if (!table) return outcome('REFUSED', { reason: 'table-2-2-row-unknown' });
@@ -342,7 +370,7 @@ async function runRemove(actor, item0, request, deps) {
   const nextInstances = result === 'deactivated'
     ? records.map((r) => (r.instanceId === target.instanceId ? { ...clone(r), state: 'deactivated' } : clone(r)))
     : records.filter((r) => r.instanceId !== target.instanceId).map(clone);
-  const entry = { attemptId: request.attemptId, kind: expedited ? 'remove-expedited' : 'remove', instanceId: target.instanceId, typedDefinitionId: target.typedDefinitionId, result, check, dc, time, at: Date.now(), by: gmId, basis: PROVISIONAL_BASIS, note: request.note ?? null };
+  const entry = { attemptId: request.attemptId, kind: expedited ? 'remove-expedited' : 'remove', instanceId: target.instanceId, typedDefinitionId: target.typedDefinitionId, result, check, dc, time, at: Date.now(), by: gmId, basis: target.basis ?? PROVISIONAL_BASIS, note: request.note ?? null };
   try {
     await (deps.writeItem ?? defaultWriteItem)(actor, { _id: item.id, [INSTANCE_FLAG_PATH]: nextInstances, [ATTEMPT_FLAG_PATH]: [...clone(readAttempts(item)), entry] });
   } catch (err) { return outcome('WRITE_FAILED', { reason: 'removal-not-written', error: err?.message ?? String(err), check }); }

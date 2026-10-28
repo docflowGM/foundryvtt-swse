@@ -200,21 +200,63 @@ const install = (item, extra = {}, d = deps()) => silent(() => P.installProvisio
   ok('7: the existing workbench lists V2 definitions (installable / blocked with reasons), installs through the service with the charge, and its Apply never drops V2 instances');
 }
 {
-  // effects are derived from canonical installed instances, never baked: Improved Energy Cell's certified "shots per power pack x2"
-  const blaster = { id: 'b', type: 'weapon', name: 'Blaster', system: { ammunition: { current: 10, max: 10 } }, flags: {} };
-  assert.equal(AmmoSystem.maxAmmo(blaster), 10);
-  const iec = { instanceId: 'i1', typedDefinitionId: 'kotor-accessory-improved-energy-cell::weapon', domain: 'weapon', state: 'installed', effects: { certified: true, operations: [{ target: 'weapon.reload.shotsPerPowerPack', operation: 'multiply', value: 2 }] } };
-  const withInst = (inst) => ({ ...blaster, flags: { 'foundryvtt-swse': { customization: { installedUpgrades: [inst] } } } });
-  assert.equal(AmmoSystem.maxAmmo(withInst(iec)), 20, 'a canonical installed instance doubles the tracked capacity');
-  assert.equal(AmmoSystem.maxAmmo(withInst({ ...iec, provisional: true })), 10, 'a provisional install never automates an effect (Q-029)');
-  assert.equal(AmmoSystem.maxAmmo(withInst({ ...iec, state: 'deactivated' })), 10, 'a deactivated upgrade contributes nothing');
-  assert.equal(AmmoSystem.maxAmmo(withInst({ ...iec, effects: { certified: false, operations: iec.effects.operations } })), 10, 'uncertified operations are ignored');
-  assert.equal(blaster.system.ammunition.max, 10, 'the Item value is never rewritten');
-  const owned = withInst(iec); owned.actor = { id: 'x' };
-  let wrote = null; const realUpd = ActorEngine.updateOwnedItems;
-  ActorEngine.updateOwnedItems = async (a, ups) => { wrote = ups[0]['system.ammunition.current']; return ups; };
-  try { await silent(() => AmmoSystem.reloadWeapon({ id: 'x' }, owned)); } finally { ActorEngine.updateOwnedItems = realUpd; }
-  assert.equal(wrote, 20, 'reload fills to the effective capacity');
-  ok('8: Improved Energy Cell effect consumer: capacity is derived (x2) only from canonical, installed, certified instances; removal or deactivation restores it with no write');
+  // effects come from the verified catalog, never from Item flags: a forged "certified" instance or a definition without certified effects does nothing
+  const store = await import('/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-data-store.js');
+  store.setVerifiedModificationData(data);
+  const E = await import('/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-effects.js');
+  const rifle = (instances = []) => ({ id: 'r', type: 'weapon', name: 'Rifle', system: { ammunition: { current: 10, max: 10 } }, flags: { 'foundryvtt-swse': { customization: { installedUpgrades: instances } } } });
+  const iec = (extra = {}) => ({ instanceId: 'i1', typedDefinitionId: 'kotor-accessory-improved-energy-cell::weapon', domain: 'weapon', state: 'installed', basis: 'DEVELOPMENT_GM_POLICY', provisional: true, ...extra });
+  assert.equal(E.effectiveShotCapacity(rifle([iec()]), 10, { developmentMode: true }), 20, 'development install + setting on: the certified x2 applies');
+  assert.equal(E.effectiveShotCapacity(rifle([iec()]), 10, { developmentMode: false }), 10, 'setting off: no effect');
+  assert.equal(E.effectiveShotCapacity(rifle([iec({ state: 'deactivated' })]), 10, { developmentMode: true }), 10, 'deactivated: no effect');
+  assert.equal(E.effectiveShotCapacity(rifle([iec({ basis: 'CANONICAL', provisional: false, effects: { certified: true } })]), 10, { developmentMode: false }), 10, 'a forged canonical/certified flag does nothing: the definition is not runtime-selectable');
+  assert.equal(E.effectiveShotCapacity(rifle([iec({ typedDefinitionId: 'sv-ion-charger::weapon' })]), 10, { developmentMode: true }), 10, 'a definition whose effects are not certified contributes nothing');
+  assert.equal(E.effectiveShotCapacity(rifle([iec()]), 10, { developmentMode: true, data: null }), 10, 'no verified catalog: fail closed');
+  ok('8: effects resolve from the verified catalog (certified definitions only); flags cannot claim certification; setting off / deactivated / no catalog = no effect');
+}
+{
+  // Improved Energy Cell lifecycle on a blaster rifle (GM development workflow): strip for a slot -> install (2 slots, 4000 cr) -> capacity x2 for
+  // reload / fire / validation -> setting off restores -> removal restores; the base value is never written
+  const store = await import('/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-data-store.js');
+  store.setVerifiedModificationData(data);
+  reset(5000);
+  const rifle = { id: 'r1', name: 'Blaster Rifle', type: 'weapon', system: { ammunition: { current: 10, max: 10 } }, flags: { swse: { canonicalWeapon: { identityKey: 'weapon-blaster-rifle' } } } };
+  rifle.actor = actor; actor.items.push(rifle);
+  const R = () => actor.items.get('r1');
+  let devOn = false;
+  globalThis.game.settings = { get: (ns, key) => (key === 'modificationV2DevelopmentMode' ? devOn : undefined) };
+  const wl = await P.productionWeaponLookup();
+  const iecOf = () => P.listDomainModifications({ data, item: R(), weaponLookup: wl }).find((m) => m.typedDefinitionId === 'kotor-accessory-improved-energy-cell::weapon');
+  assert.ok(iecOf().hard.some((h) => h.code === 'DEVELOPMENT_MODE_OFF'), 'off by default: listed as blocked with the reason');
+  devOn = true;
+  assert.ok(iecOf().hard.some((h) => h.code === 'SLOT_OVERFLOW'), 'a plain rifle has 1 slot; Improved Energy Cell needs 2');
+  // a recorded strip never grants capacity (Phase 1a D16, host feature evidence unestablished), so it does not help:
+  R().flags['foundryvtt-swse'] = { customization: { structural: { sizeIncreaseApplied: false, strippedAreas: ['design'] } } };
+  R().flags.swse.customizationStructural = { sizeIncreaseApplied: false, strippedAreas: ['design'] };
+  assert.ok(iecOf().hard.some((h) => h.code === 'SLOT_STATE_UNRESOLVED'), 'D16: a strip leaves capacity unresolved');
+  // the workbench "Increase Size / Bulk" structural change is a verified +1 slot (recorded canonically and mirrored, as the workbench Apply writes it)
+  R().flags['foundryvtt-swse'] = { customization: { structural: { sizeIncreaseApplied: true, strippedAreas: [] } } };
+  R().flags.swse.customizationStructural = { sizeIncreaseApplied: true, strippedAreas: [] };
+  const review = iecOf();
+  assert.equal(review.availability, 'development', JSON.stringify(review.hard)); assert.equal(review.dc, 30); assert.equal(review.time, '1 day (8 hours)'); assert.equal(review.price, 4000);
+  assert.match(review.source, /D-013 pending/); assert.equal(review.slotImpact.free, 2);
+  const inst = await silent(() => P.installProvisionalUpgrade(actor, R(), { typedDefinitionId: 'kotor-accessory-improved-energy-cell::weapon', attemptId: 'iec-1', priceConfirmed: 4000, hostRuling: { compatible: true, note: 'rifle uses a power pack (GM ruling)' }, check: { mode: 'gm-entered', total: 31 } }, deps({ weaponLookup: wl, developmentMode: true })));
+  assert.equal(inst.status, 'INSTALLED', JSON.stringify(inst.reason ?? inst.hard)); assert.equal(actor.system.credits, 1000);
+  assert.equal(inst.instance.basis, 'DEVELOPMENT_GM_POLICY'); assert.match(inst.instance.developmentPolicy, /D-013 pending/);
+  assert.equal(AmmoSystem.maxAmmo(R()), 20, 'installed: tracked capacity doubles');
+  assert.equal(R().system.ammunition.max, 10, 'the base value is not rewritten');
+  const realUpd = ActorEngine.updateOwnedItems; const realTrack = AmmoSystem.isTrackingEnabled;
+  ActorEngine.updateOwnedItems = async (a, ups) => { for (const u of ups) { const it = a.items.get(u._id); for (const [k, v] of Object.entries(u)) if (k !== '_id') setPath(it, k, v); } return ups.map((u) => a.items.get(u._id)); };
+  try {
+    assert.equal((await silent(() => AmmoSystem.reloadWeapon(actor, R()))).success, true); assert.equal(R().system.ammunition.current, 20, 'reload fills to 20');
+    assert.deepEqual(AmmoSystem.validateAmmoConfig(R()).issues ?? [], [], '20/20 is valid against the effective capacity');
+    assert.equal((await silent(() => AmmoSystem.consumeAmmunition(actor, R(), 15))).success, true); assert.equal(R().system.ammunition.current, 5, 'firing draws from the larger pool');
+    devOn = false; assert.equal(AmmoSystem.maxAmmo(R()), 10, 'development setting off: original capacity'); devOn = true;
+    const rem = await silent(() => P.removeProvisionalUpgrade(actor, R(), { instanceId: inst.instance.instanceId, attemptId: 'iec-rm', check: { mode: 'gm-entered', total: 25 } }, deps()));
+    assert.equal(rem.status, 'REMOVED'); assert.equal(rem.dc, 25); assert.equal(rem.time, '1 day (8 hours)');
+    assert.equal(AmmoSystem.maxAmmo(R()), 10, 'removed: original capacity restored'); assert.equal(R().system.ammunition.max, 10);
+    assert.equal(actor.system.credits, 1000, 'removal moves no credits');
+  } finally { ActorEngine.updateOwnedItems = realUpd; AmmoSystem.isTrackingEnabled = realTrack; globalThis.game.settings = { get: () => undefined }; }
+  ok('9: Improved Energy Cell lifecycle (GM development policy): size increase (+1 verified slot; a strip never counts, D16) -> install 4000 cr (DC 30) -> capacity 10->20 for reload, validation and firing -> setting off / removal restore 10 with no write to the base value');
 }
 console.log(`modification-v2-convergence: ${n} checks ok`);

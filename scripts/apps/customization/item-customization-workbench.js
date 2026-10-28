@@ -959,7 +959,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     const isGM = game?.user?.isGM === true;
     const installed = inspectInstances(item).records.map((r) => ({
       instanceId: r.instanceId, name: r.name ?? r.typedDefinitionId, state: r.state ?? 'installed', provisional: r.provisional === true,
-      basisLabel: r.provisional === true ? 'Provisional · GM-adjudicated · effects not automated' : 'Canonical',
+      basisLabel: r.basis === 'DEVELOPMENT_GM_POLICY' ? 'Development (GM policy) · source-certified effect while the development setting is on' : r.provisional === true ? 'Provisional · GM-adjudicated · effects not automated' : 'Canonical',
       dc: r.install?.dc ?? null, canRemove: isGM && r.provisional === true
     }));
     if (!data?.ok) return { enabled: true, dataOk: false, problems: data?.problems ?? [], installed, available: [], blocked: [], isGM };
@@ -971,13 +971,14 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       typedDefinitionId: m.typedDefinitionId, name: m.name, summary: m.summary, price: m.price, dc: m.dc ?? null, time: m.time ?? null,
       slotCost: m.slotImpact?.cost ?? m.slotCost ?? null, freeAfter: m.slotImpact?.freeAfter ?? null,
       acceptedCount: (m.accepted ?? []).length, reasons: (m.hard ?? []).map((h) => (h.detail ? `${h.code} (${typeof h.detail === 'string' ? h.detail : JSON.stringify(h.detail)})` : h.code)),
-      canInstall: isGM && m.availability === 'provisional'
+      canInstall: isGM && (m.availability === 'provisional' || m.availability === 'development'),
+      development: m.availability === 'development', basisLabel: m.availability === 'development' ? `Development (GM policy): source-certified effect applies while the development setting is on — ${m.source}` : 'Provisional · GM-adjudicated · effects not automated'
     });
     const capacity = all.find((m) => m.slotImpact?.status === 'certified')?.slotImpact ?? null;
     return {
       enabled: true, dataOk: true, isGM, installed,
-      available: all.filter((m) => m.availability === 'provisional').map(card),
-      blocked: all.filter((m) => m.availability !== 'provisional').map(card),
+      available: all.filter((m) => m.availability === 'provisional' || m.availability === 'development').map(card),
+      blocked: all.filter((m) => m.availability === 'blocked').map(card),
       capacity: capacity ? { total: capacity.total, used: capacity.used, free: capacity.free } : null
     };
   }
@@ -989,7 +990,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     const weaponLookup = item.type === 'weapon' ? await productionWeaponLookup() : null;
     const armor = item.type === 'armor' ? armorAttestation({ stockClass: item.system?.armorType, powered: false, gmId: game?.user?.id ?? 'gm' }) : null;
     const review = listDomainModifications({ data, item, weaponLookup, armor }).find((m) => m.typedDefinitionId === typedDefinitionId);
-    if (!review || review.availability !== 'provisional') { ui.notifications.warn(`${item.name}: that modification cannot be installed (${(review?.hard ?? []).map((h) => h.code).join(', ') || 'unknown'}).`); return; }
+    if (!review || !['provisional', 'development'].includes(review.availability)) { ui.notifications.warn(`${item.name}: that modification cannot be installed (${(review?.hard ?? []).map((h) => h.code).join(', ') || 'unknown'}).`); return; }
     const form = await promptInstall(review, item);
     if (!form) return;
     const result = await installProvisionalUpgrade(this.actor, item, { typedDefinitionId, attemptId: foundry.utils.randomID(16), ...form, hostRuling: form.hostRuling ?? undefined, armor: form.armor ?? undefined }, { data, ...(weaponLookup ? { weaponLookup } : {}) });

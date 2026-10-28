@@ -428,12 +428,12 @@
                 </article>
                 {{/each}}
                 {{/if}}
-                <h4 class="wcb-v2-heading">Available (provisional, GM-adjudicated)</h4>
+                <h4 class="wcb-v2-heading">Available (GM-adjudicated; not canonical)</h4>
                 {{#each modificationV2.available}}
-                <article class="config-card is-provisional">
+                <article class="config-card is-provisional {{#if development}}is-development{{/if}}">
                   <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{price}} cr</span></span>
                   <span class="card-desc">{{summary}}</span>
-                  <span class="card-tags"><span class="tag">DC {{dc}} · {{time}}</span><span class="tag">{{slotCost}} slot</span><span class="tag">accepts {{acceptedCount}} uncertified item(s)</span>{{#each reasons}}<span class="tag state negative">{{this}}</span>{{/each}}</span>
+                  <span class="card-tags"><span class="tag">DC {{dc}} · {{time}}</span><span class="tag">{{slotCost}} slot</span><span class="tag">accepts {{acceptedCount}} uncertified item(s)</span><span class="tag">{{basisLabel}}</span>{{#each reasons}}<span class="tag state negative">{{this}}</span>{{/each}}</span>
                   {{#if canInstall}}<button type="button" class="config-card__action" data-action="install-v2-modification" data-typed-id="{{typedDefinitionId}}">Install…</button>{{else}}{{#unless ../modificationV2.isGM}}<span class="tag">GM installs</span>{{/unless}}{{/if}}
                 </article>
                 {{else}}
