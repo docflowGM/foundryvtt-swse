@@ -47,7 +47,7 @@ function gearEntries(actor) {
 }
 
 { // 1. hydration: stowed AND drawn rows both receive readiness views
-  const a = mkActor([saber({}, 's1'), blaster({ equipped: true }, 'b1')]);
+  const a = mkActor([saber({}, 's1'), blaster({ weaponPosture: 'EQUIPPED', weaponOccupancy: { schemaVersion: 1, purpose: 'hold', appendageIds: ['natural-arm-1'] } }, 'b1'), blaster({ equipped: true }, 'b2')]);
   const rows = gearEntries(a);
   assert.ok(rows.get('s1')?.weaponReadiness, 'stowed saber row hydrated');
   assert.equal(rows.get('s1').weaponReadiness.drawn, false);
@@ -55,6 +55,8 @@ function gearEntries(actor) {
   assert.ok(rows.get('b1')?.weaponReadiness, 'drawn blaster row hydrated');
   assert.equal(rows.get('b1').weaponReadiness.drawn, true);
   assert.equal(rows.get('b1').weaponReadiness.drawStowLabel, 'Stow');
+  // a weapon with no posture record is not presented as drawn from its legacy marker: it needs an explicit set-up
+  assert.equal(rows.get('b2').weaponReadiness.drawn, false); assert.equal(rows.get('b2').weaponReadiness.needsSetup, true); assert.equal(rows.get('b2').weaponReadiness.drawStowLabel, 'Set up');
 }
 ok('production Gear ledger hydrates readiness for stowed and drawn weapons');
 
@@ -152,8 +154,11 @@ ok('Quick Draw makes Draw/Stow a Swift via the existing action-speed metadata');
   assert.equal(r.ok, false); assert.equal(spent.length, 0);
   assert.equal(gearEntries(plain).get('s1').weaponReadiness.canDrawAndIgnite, false);
 
+  const recorded = mkActor([saber(REC('STOWED', null, [])), quickDrawFeat(), lightsaberProf()]);
+  assert.equal(gearEntries(recorded).get('s1').weaponReadiness.canDrawAndIgnite, true, 'a STOWED saber with the combined effect offers Draw & Ignite');
   const s2 = saber(); const a = mkActor([s2, quickDrawFeat(), lightsaberProf()]);
-  assert.equal(gearEntries(a).get('s1').weaponReadiness.canDrawAndIgnite, true);
+  // a saber with no posture record is shown as needing set-up, not as a Draw & Ignite candidate
+  assert.equal(gearEntries(a).get('s1').weaponReadiness.canDrawAndIgnite, false); assert.equal(gearEntries(a).get('s1').weaponReadiness.needsSetup, true);
   // E4-C1 WP5: the combined action is a coordinator intent over a STOWED record. This saber has no record at all (no posture is assumed), so the plan
   // is refused and nothing is written or spent.
   r = await InventoryEngine.drawAndActivateLightsaber(a, 's1', opts);

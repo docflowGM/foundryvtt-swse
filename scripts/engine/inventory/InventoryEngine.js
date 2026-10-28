@@ -19,9 +19,24 @@ import { planEquipmentIntent, executeEquipmentIntent, reconcileEquipmentTransact
 import { acquireRequestId, settleRequestId } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-request-identity.js";
 import { logEquipmentEvent } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-diagnostics.js";
 import { readCombatReadiness, isWeaponHeld } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
+import { readJournal, unresolvedItemIds, JOURNAL_STATUS } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-transaction-journal.js";
 
 const STACKABLE_TYPES = ["consumable", "equipment", "misc", "ammo"];
+
 const NON_STACKABLE_TYPES = ["weapon", "armor", "shield", "lightsaber"];
+
+/**
+ * Equipment-journal evidence for one Item (read-only): { readable, requestIds }. An unreadable journal is reported as such, never as "nothing
+ * pending": deleting a weapon then could destroy the evidence G36 compares.
+ */
+function equipmentEvidenceFor(actor, itemId) {
+  try {
+    const journal = readJournal(actor?.flags?.swse?.equipmentTxn);
+    if (journal.status === JOURNAL_STATUS.INVALID) return { readable: false, requestIds: [] };
+    if (journal.status !== JOURNAL_STATUS.VALID) return { readable: true, requestIds: [] };
+    return { readable: true, requestIds: (unresolvedItemIds(journal.entries).get(itemId) ?? []).map((t) => t.requestId) };
+  } catch { return { readable: false, requestIds: [] }; }
+}
 
 function isTruthyState(value) {
   if (value === true || Number(value) === 1) return true;
@@ -462,6 +477,20 @@ export class InventoryEngine {
   static async removeItem(actor, itemId) {
     const item = actor?.items?.get?.(itemId);
     if (!actor || !item) return;
+    // an unresolved equipment transaction on this Item must be reconciled first, and a weapon is not removed while the journal is unreadable:
+    // deleting the Item would destroy the evidence G36 compares. (This guards this route only, not direct ActorEngine deletions.)
+    const evidence = equipmentEvidenceFor(actor, itemId);
+    if (isWeaponItem(item) && !evidence.readable) {
+      globalThis.ui?.notifications?.warn?.(`${item.name}: the actor's equipment transaction journal is unreadable, so weapons are not removed until a GM has inspected it.`);
+      logEquipmentEvent("remove-refused", { actorId: actor.id, itemId, reason: "equipment-journal-unreadable" });
+      return { ok: false, reason: "equipment-journal-unreadable" };
+    }
+    const pending = evidence.requestIds;
+    if (pending.length) {
+      globalThis.ui?.notifications?.warn?.(`${item.name}: an equipment change on this item did not finish. A GM must resolve it before the item can be removed.`);
+      logEquipmentEvent("remove-refused", { actorId: actor.id, itemId, requestIds: pending });
+      return { ok: false, reason: "unresolved-equipment-transaction", requestIds: pending };
+    }
 
     await ActorEngine.deleteEmbeddedDocuments(actor, "Item", [itemId], {
       source: "InventoryEngine.removeItem"

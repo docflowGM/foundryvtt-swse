@@ -1,6 +1,7 @@
 import { isItemEquipped, isAlwaysReadiedWeapon, isNaturalWeaponOnly } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
 import { readJournal, unresolvedItemIds, JOURNAL_STATUS } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-transaction-journal.js";
+import { getWeaponReadiness } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 import { resolveActionCost } from "/systems/foundryvtt-swse/scripts/engine/feats/action-speed-runtime-patches.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
 import { FireStateStore } from "/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js";
@@ -358,9 +359,17 @@ function buildWeaponReadinessView(item, actor) {
   if (!item) return null;
   if (!['weapon', 'lightsaber'].includes(String(item.type ?? '').toLowerCase())) return null;
   const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor });
-  const drawn = isItemEquipped(item, actor);
   // Canonical authority: natural (auto-equipped) and integrated droid weapons are always readied -> no Draw/Stow.
   const alwaysReadied = isAlwaysReadiedWeapon(item, actor);
+  // Drawn/Stowed follows the equipment-state authority's declared record (the same fact the Draw/Stow toggle acts on), so the label and the click
+  // agree after a coordinator draw. Only a malformed record still falls back to the legacy equipped markers (display only).
+  let readiness = null;
+  try { readiness = getWeaponReadiness(actor, item); } catch (_err) { readiness = null; }
+  const declared = readiness?.recordStatus === 'valid' ? readiness.declaredPosture : null;
+  // an ordinary weapon with NO posture record (created before the WP1 default) is shown as not set up, never as drawn or stowed: its only action
+  // is an explicit, user-confirmed "record as stowed" through the coordinator. Legacy markers are not read as a position.
+  const needsSetup = !alwaysReadied && readiness?.recordStatus === 'absent';
+  const drawn = declared ? declared !== 'STOWED' : needsSetup ? false : isItemEquipped(item, actor);
   const activated = isItemActivated(item);
   const isLightsaber = visualProfile?.isLightsaber === true;
   let combinedEffects = [];
@@ -373,16 +382,18 @@ function buildWeaponReadinessView(item, actor) {
   return {
     drawn, activated, isLightsaber,
     alwaysReadied,
+    ready: readiness?.ready === true,
     unresolved: unresolvedRequestIds.length > 0,
     canReconcile: unresolvedRequestIds.length > 0 && globalThis.game?.user?.isGM === true,
-    stateLabel: alwaysReadied ? (isNaturalWeaponOnly(item) ? 'Natural' : 'Integrated') : drawn ? 'Drawn' : 'Stowed',
+    needsSetup,
+    stateLabel: alwaysReadied ? (isNaturalWeaponOnly(item) ? 'Natural' : 'Integrated') : needsSetup ? 'Not set up' : drawn ? 'Drawn' : 'Stowed',
     bladeStateLabel: isLightsaber ? (activated ? 'Active' : 'Inactive') : '',
     canDrawStow: !alwaysReadied,
-    drawStowLabel: drawn ? 'Stow' : 'Draw',
+    drawStowLabel: needsSetup ? 'Set up' : drawn ? 'Stow' : 'Draw',
     stowBlocked: drawn && isLightsaber && activated,
     canToggleActivated: isLightsaber && drawn,
     activationLabel: activated ? 'Deactivate' : 'Activate',
-    canDrawAndIgnite: isLightsaber && !drawn && !activated && combinedEffects.some((effect) => effect?.actionId === 'drawAndIgniteLightsaber')
+    canDrawAndIgnite: isLightsaber && !needsSetup && !drawn && !activated && combinedEffects.some((effect) => effect?.actionId === 'drawAndIgniteLightsaber')
   };
 }
 

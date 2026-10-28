@@ -74,6 +74,23 @@ export async function promptWeaponPostureChoice(item, choices) {
   return picked;
 }
 
+/** True when the coordinator refused because the weapon has no posture record yet. */
+export function isUnrecordedWeapon(result) {
+  if (result?.status !== "REJECTED_PRECONDITION") return false;
+  return (result.plan?.issues ?? []).some((i) => i?.code === "weapon-record-absent" || (i?.code === "combined-action-requires-stowed-weapon" && (i.details?.posture ?? null) === null));
+}
+
+/** Ask the user to record an unrecorded weapon as stowed. */
+export async function confirmRecordAsStowed(item) {
+  const yes = await SWSEDialogV2.prompt({
+    title: `${item?.name ?? "Weapon"} - Set up`,
+    content: `<form class="swse-dialog"><p>${escapeHtml(item?.name ?? "This weapon")} has no recorded position (it predates the posture record). Record it as <strong>stowed</strong>? This costs no action; draw it afterwards as usual.</p></form>`,
+    label: "Record as stowed",
+    callback: () => true
+  });
+  return yes === true;
+}
+
 /**
  * Run a posture request; when the coordinator needs choices, ask for them and send the follow-up with the SAME request id.
  * @param {object} item
@@ -81,12 +98,19 @@ export async function promptWeaponPostureChoice(item, choices) {
  * @param {(options:object) => Promise<object>} followUp called with { appendageIds?, grip?, purpose?, requestId }
  * @param {{prompt?:Function}} [deps] test seam for the dialog
  */
-export async function requestWithPostureChoices(item, first, followUp, { prompt = promptWeaponPostureChoice } = {}) {
+export async function requestWithPostureChoices(item, first, followUp, { prompt = promptWeaponPostureChoice, initialize = null, confirmInitialize = confirmRecordAsStowed } = {}) {
   const result = await first();
+  if (initialize && isUnrecordedWeapon(result)) {
+    // no posture is assumed for a weapon without a record (one created before the WP1 STOWED default): the sheet shows "Set up", and the only
+    // action is recording it as stowed (the coordinator's explicit stow initialization, which it prices at no action). Nothing is drawn here.
+    if (!(await confirmInitialize(item))) return { ...result, ok: false, cancelled: true, message: null };
+    const init = await initialize();
+    return init?.status === "COMMITTED" || init?.status === "NO_CHANGE" ? { ...init, setUp: true } : init;
+  }
   if (result?.status !== "CHOICE_REQUIRED") return result;
   const picked = await prompt(item, result.choices ?? []);
   if (!picked) return { ...result, ok: false, cancelled: true, message: null };
   return followUp({ ...picked, requestId: result.requestId ?? null });
 }
 
-export default { buildPostureChoiceContent, readPostureChoice, promptWeaponPostureChoice, requestWithPostureChoices };
+export default { buildPostureChoiceContent, readPostureChoice, promptWeaponPostureChoice, requestWithPostureChoices, isUnrecordedWeapon, confirmRecordAsStowed };
