@@ -555,6 +555,15 @@ export function registerHouseruleSettings() {
     default: false
   });
 
+  register('modificationV2DevelopmentMode', {
+    name: 'Modification V2: Development Workflow (GM)',
+    hint: 'Lets a GM install selected modifications whose effects are source-certified but whose installation procedure is still an open rules question (for example Improved Energy Cell, D-013), under a labeled GM development policy. Their certified effects apply only while this is on. Not canonical; off by default.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   /* -------------------------------------------------------------------------- */
   /*                                SECOND WIND                                  */
   /* -------------------------------------------------------------------------- */

@@ -49,3 +49,5 @@ packs/** binary
 # data/audits/modification-rolling-authority-v1.5.manifest.json.
 data/audits/modification-rolling-authority-v1.5.json -text
 docs/audits/modification-rolling-authority-v1.5.md -text
+data/modifications/runtime-definitions-v1.5.json -text
+data/modifications/specification-records-v1.json -text

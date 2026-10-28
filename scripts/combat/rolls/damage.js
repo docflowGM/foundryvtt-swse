@@ -26,7 +26,7 @@ import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { mergeCombatWorkflowContextIntoRollOptions, summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
 import { buildDamagePacket, resolveDamagePacketType } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
-import { damageTypesFromContext } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
+import { damageTypesFromContext, physicalDamageTypesOf } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 import { resolveDamageComposition, buildDamageFormula } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
 import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-effect-engine.js";
 import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
@@ -134,6 +134,9 @@ export async function rollDamage(actor, weapon, context = {}) {
       damageType: explicitType ?? canonicalDamage.selectedDamageType ?? (canonicalDamage.requiresDamageTypeSelection ? rollContext.damageType : (types[0] ?? rollContext.damageType)),
       damageTypes: Array.isArray(context.damageTypes) && context.damageTypes.length ? context.damageTypes : (types.length ? [...types] : rollContext.damageTypes)
     };
+    // D-016: record the physical subtype(s) this attack form deals ("and": all; "or": the chosen one only) for type-specific protections
+    const physical = physicalDamageTypesOf(canonicalDamage, explicitType);
+    workflowContext = summarizeCombatWorkflowContext(workflowContext, { physicalDamageTypes: physical.types, physicalDamageTypeResolved: physical.resolved });
   }
   const compositionContext = { ...rollContext, weapon, canonicalDamage, forceTwoHanded: rollContext.twoHanded || false };
   const composition = resolveDamageComposition(actor, weapon, compositionContext);

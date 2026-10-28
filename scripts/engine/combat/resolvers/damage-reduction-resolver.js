@@ -21,6 +21,7 @@
 
 import { isLightsaberWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { DamageTypeRules } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
+import { wornArmorDamageTypeReductions } from "/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-effects.js";
 import { isNaturalOrUnarmedWeapon as canonicalIsNaturalOrUnarmedWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 
 
@@ -204,6 +205,14 @@ export class DamageReductionResolver {
           drSource = entry.source || `DR ${entry.value}`;
         }
       }
+      // D-016: DR that applies only against a damage type this event deals (Armor Reinforcement: DR 2 against piercing) competes in the
+      // same highest-applicable selection (Core Rulebook p.158) -- never added on top of another DR
+      for (const entry of this.getEventDamageReductionEntries(actor, context)) {
+        if (entry.value > drValue) {
+          drValue = entry.value;
+          drSource = entry.source;
+        }
+      }
     }
 
     // D4: typed applies-to item DR (resistance-style, `DAMAGE_REDUCTION` with
@@ -337,6 +346,28 @@ export class DamageReductionResolver {
     }
 
     return entries;
+  }
+
+  /**
+   * D-016: DR entries that apply only AGAINST a damage type ("DR 2 against piercing" -- not "DR 2/piercing", which piercing bypasses), from
+   * the worn armor's certified Modification V2 grants, kept only when this event recorded that type (the attack form's single / "and" types
+   * or its chosen "or" type, carried in the workflow context). They join the ordinary highest-applicable DR selection.
+   * @returns {Array<{value:number, exceptions:string[], appliesTo:string, source:string}>}
+   */
+  static getEventDamageReductionEntries(actor, context = {}) {
+    const eventTypes = DamageTypeRules.eventPhysicalDamageTypes(context);
+    if (!actor || !Array.isArray(eventTypes) || !eventTypes.length) return [];
+    return wornArmorDamageTypeReductions(actor)
+      .filter((e) => eventTypes.includes(e.damageType))
+      .map((e) => ({ value: e.amount, exceptions: [], appliesTo: e.damageType, source: `${e.source ?? 'Armor'} (DR ${e.amount} against ${e.damageType})` }));
+  }
+
+  /** D-016: an "against <type>" entry reaches only components that can carry that physical damage (the kinetic family) and are not bypass-tagged. */
+  static componentOutsideAppliesTo(component, entry) {
+    if (!entry?.appliesTo) return false;
+    if (this.componentBypassesDamageReduction(component, { exceptions: [] })) return true;
+    const declared = [component?.type, ...(component?.damageTypes || []), ...(component?.originalDamageTypes || [])].filter(Boolean);
+    return !DamageTypeRules.matches(declared, 'kinetic');
   }
 
   /** Public: does the weapon bypass DR (lightsaber / bypassDR)? */

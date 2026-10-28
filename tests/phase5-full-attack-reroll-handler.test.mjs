@@ -50,7 +50,8 @@ assert.match(executor, /attackRerollOptions: res\.attackRerollOptions/);
 // actor, any oncePer encounter limit must not be exhausted, and Force
 // Points must still be available — all three checked before any roll or
 // spend happens.
-assert.match(fnBody, /const currentRules = this\.getAttackRerollRules\(actor\);/);
+// the weapon and natural die are passed too so a weapon modification's reroll (Modification V2) is re-validated the same way
+assert.match(fnBody, /const currentRules = this\.getAttackRerollRules\(actor(, rerollWeapon, \{ naturalD20: rerollNatural \})?\);/);
 assert.match(fnBody, /const stillEligible = currentRules\.some\(/);
 assert.match(fnBody, /if \(!stillEligible\) \{/);
 assert.match(fnBody, /EncounterUseTracker\.canUse\(actor, featureKey, \{ oncePer: button\.dataset\.oncePer \}\)/);
@@ -60,6 +61,9 @@ assert.match(fnBody, /if \(cost === 'forcePoint' && actorForcePoints\(actor\) <=
 // revision is read and compared to the button's expectedRevision BEFORE
 // any resource is spent or any die is rolled.
 const staleCheckIndex = fnBody.indexOf("entry.activeRevision !== expectedRevision");
+// the once-per-encounter use is SPENT (EncounterUseTracker.checkAndMarkUsed) only after the stale-card check, so a refused stale click costs nothing
+const encounterSpendIndex = fnBody.indexOf("EncounterUseTracker.checkAndMarkUsed(");
+assert.ok(encounterSpendIndex > staleCheckIndex && staleCheckIndex >= 0, "encounter use spent after the stale-revision check");
 const rollIndex = fnBody.indexOf('RollEngine?.safeRoll');
 const spendIndex = fnBody.indexOf('ActorEngine.spendForcePoints');
 assert.ok(staleCheckIndex >= 0 && staleCheckIndex < rollIndex && staleCheckIndex < spendIndex, 'Stale-revision check must precede both rolling and spending.');

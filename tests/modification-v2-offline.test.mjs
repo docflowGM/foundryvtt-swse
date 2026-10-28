@@ -318,7 +318,9 @@ check('static: G3 modules are pure, import only each other, and nothing else imp
   const importers = [];
   const walk = (d) => { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const full = path.join(d, e.name); if (e.isDirectory()) { if (full !== dir) walk(full); } else if (/\.(m?js)$/.test(e.name) && fs.readFileSync(full, 'utf8').includes('modification-v2/')) importers.push(path.relative(ROOT, full)); } };
   walk(path.join(ROOT, 'scripts'));
-  assert.deepEqual(importers, [], 'no runtime consumer exists before G6/G8');
+  // Modification V2 convergence (owner directive 2026-10-28): the install service is the one runtime layer over the pure G3 modules; the
+  // workbench reads instance records through the planner's reader. Any other consumer must be added here deliberately.
+  assert.deepEqual(importers.sort(), ['scripts/apps/customization/item-customization-workbench.js', 'scripts/engine/customization/modification-v2-runtime/modification-install-service.js'].sort(), 'only the convergence consumers import the G3 modules');
 });
 
 console.log(`modification-v2-offline: ${checks} checks OK`);

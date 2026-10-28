@@ -6933,7 +6933,7 @@ const forcePoints = [];
     }
 
     const currentAmmo = Number(weapon.system?.ammunition?.current ?? 0) || 0;
-    const maxAmmo = Number(weapon.system?.ammunition?.max ?? 0) || 0;
+    const maxAmmo = AmmoSystem.maxAmmo(weapon);
     if (!awaitingReload && (maxAmmo <= 0 || currentAmmo >= maxAmmo)) {
       ui?.notifications?.info?.(`${weapon.name} is already fully loaded.`);
       return { skipped: true, reason: 'already-full', weaponId: weapon.id };

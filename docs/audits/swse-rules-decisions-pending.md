@@ -990,6 +990,67 @@ All three are `SOURCE_VERIFIED` from the supplied sourcebook text extractions (n
 | Decision authority | Project owner |
 | Resolution | |
 
+## D-016 — Armor Reinforcement: matching "DR 2 versus piercing" to incoming damage
+
+| Field | Content |
+|---|---|
+| Rules domain | Modification effects (armor accessory) / damage mitigation |
+| Feature | Armor Reinforcement (`kotor-accessory-armor-reinforcement::armor`) |
+| Source | *Knights of the Old Republic Campaign Guide* printed page 75 (Table 5-6, Weapon and Armor Accessories), as certified in the runtime catalog (`EFFECTS_CERTIFIED`; summary "Wearer DR 2 versus piercing") |
+| Evidence | The certified effect is a grant of damage reduction 2 against the piercing damage type to the wearer |
+| Confirmed behavior | DR 2 applies to piercing damage dealt to the wearer of armor carrying the accessory |
+| Unresolved question | The damage pipeline cannot tell piercing damage apart: `normalizeDamageTypeKey` maps `piercing` (and `slashing`, `bludgeoning`) to `kinetic`, and the canonical weapon records carry `damageType` values `energy`, `kinetic`, `stun`, `sonic` and `fire` only; "piercing" appears only in description prose (for example the vibrolance, "piercing or slashing"). Wiring the grant through the existing typed-resistance stage would therefore reduce all kinetic damage, which is broader than the printed rule. Classifying weapons as piercing (and deciding how a "piercing or slashing" weapon is treated on a given attack) would be new rules data. Separately, the project's D4 decision routes typed applies-to DR to the typed-resistance stage (highest-only per type); whether a "DR versus a type" grant belongs there or in the DR resolver is part of the same question |
+| Options | (a) Add a source-backed piercing/slashing/bludgeoning classification to weapon records and match on it. (b) Treat the grant as kinetic (broader than printed; not source-supported). No option is recommended |
+| Recommended ruling | None |
+| Implementation impact | Armor Reinforcement is NOT in the development set; it stays blocked in the workbench and contributes no mitigation. No weapon data or damage-type aliases were changed |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Review classification (rev. 2) | `DEFERRED_RULES_REVIEW` — The printed effect is clear; the open point is how the system decides that damage is piercing, which needs new rules data or an owner ruling |
+| Decision authority | Project owner |
+| Resolution | |
+| Source examination log | 2026-10-28: project owner's independent review (PR #1086 comment) visually checked *Saga Edition Core Rulebook* printed p. 120, Weapon Qualities, Damage Type: "and" means both damage types at once; "or" means the wielder chooses one immediately before the attack roll; a double weapon can have a different type per end. *KotOR Campaign Guide* p. 75: Armor Reinforcement grants DR 2 against piercing damage; p. 72, Mixed Damage Types: one of several simultaneously dealt types can trigger a type-dependent ability |
+| Direction (owner, 2026-10-28) | Do not broaden piercing to kinetic. Add source-backed physical damage subtype evidence (piercing / slashing / bludgeoning) to appropriate canonical weapon attack profiles, starting with one or two documented weapons; keep "and" versus "or" with the attack-time choice; thread the selected type through the damage-mitigation authority and apply DR 2 only when the selected or simultaneous types include piercing. Armor Reinforcement stays blocked until type evidence flows from attack to damage |
+| Implementation (2026-10-28) | No weapon data added: the canonical weapon registry already carries source-backed subtypes on attack profiles (`damageType.mode` single / and / or with `types`), e.g. slugthrower pistol piercing, bowcaster energy and piercing, vibroblade slashing or piercing. `rollDamage` records the subtypes the selected form deals (`physicalDamageTypesOf`: single = its type, and = all, or = only the chosen type; an unrecorded "or" choice assumes none) in the workflow context, which survives the chat card to the apply step. The mitigation authority matches Armor Reinforcement's grant only against those recorded subtypes, in the applies-to (typed resistance) stage where project decision D4 places typed applies-to DR (highest-only there); kinetic is never broadened. Armor Reinforcement joins the GM development set. Tests: `tests/d016-physical-damage-type-flow.test.mjs` |
+| Owner ruling (2026-10-28, PR #1086 comment) | Source-backed: *Saga Edition Core Rulebook* printed p. 158, Damage Reduction -- with several DR values a character uses the applicable one that most benefits it (by damage type); *KotOR* p. 75 grants Armor Reinforcement DR 2 **against** piercing (applies only to piercing; not "DR 2/piercing", which piercing bypasses). Armor Reinforcement therefore competes with generic and qualified DR in one highest-applicable selection per damage event (bypass and exceptions respected) and is never subtracted on top of another DR. This narrow correction supersedes the earlier implementation row's placement in the D4 typed-resistance stage for this source only; genuine typed resistances keep stacking with DR as before |
+| Implementation (2026-10-28, ruling applied) | `DamageReductionResolver.getEventDamageReductionEntries` adds the worn armor's "against <type>" entries the event qualifies for (recorded physical types) to the single-total highest-only DR selection; the per-component path adds the same candidates to its one-per-event selection, reaching only kinetic-bearing, non-bypass-tagged components. The typed-resistance stage no longer sees them. Tests: `tests/d016-physical-damage-type-flow.test.mjs` (generic DR 5 + AR -> 5; DR 1 + AR -> 2; AR alone -> 2; slashing -> 0; or-selected piercing -> 2; DR 5/energy beats 2; DR 5/kinetic bypassed leaves 2; bypass-dr -> 0; multi-component 2 / 5) |
+
+## D-017 — Mesh Underlay and the Nerve Reinforcement Implant: stacking against stun
+
+| Field | Content |
+|---|---|
+| Rules domain | Modification effects (armor accessory) / damage threshold / bonus stacking |
+| Feature | Mesh Underlay (`kotor-accessory-mesh-underlay::armor`) together with the Nerve Reinforcement Implant |
+| Source | *Knights of the Old Republic Campaign Guide* printed page 76 (Mesh Underlay, Table 5-6 on page 75; certified in the runtime catalog as "+5 equipment bonus to wearer damage threshold against stun damage"). Nerve Reinforcement Implant: *Knights of the Old Republic Campaign Guide*, page not recorded in the repository records (`packs/equipment*.db` have `page: null`); the system implements it as an untyped "+5 damage threshold against stun damage" (`ImplantEffectRules`) |
+| Evidence | Mesh Underlay's bonus is typed (equipment). The implant's bonus type is not recorded in the repository |
+| Confirmed behavior | Mesh Underlay alone: +5 equipment bonus to the wearer's damage threshold against stun damage (implemented under the GM development workflow; worn armor only; equipment bonuses do not stack with each other) |
+| Unresolved question | Whether the two bonuses stack. That depends on the implant's published bonus type, which has not been verified against the page |
+| Options | If the implant's bonus is untyped or of another type, they stack (+10). If it is an equipment bonus, only the higher applies (+5). Requires source verification of the implant's printed text |
+| Recommended ruling | None |
+| Implementation impact | With both active, `ThresholdEngine.getDamageThreshold` applies only the implant (the pre-existing behavior) and the breakdown names this entry. Mesh Underlay alone applies normally |
+| Status | `PENDING_SOURCE_VERIFICATION` |
+| Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — Read the Nerve Reinforcement Implant entry in the KotOR Campaign Guide and record its bonus type verbatim, with printed page. Becomes `DEFERRED_RULES_REVIEW` only if the text is ambiguous |
+| Decision authority | Project owner |
+| Resolution | |
+| Source examination log | 2026-10-28: project owner's independent review (PR #1086 comment, RICR review of `9885fba`) visually checked the uploaded *Knights of the Old Republic Campaign Guide* printed pp. 75-76. Nerve Reinforcement Implant (p. 75): **+5 equipment bonus** to Damage Threshold against stun damage. Mesh Underlay (p. 76): **+5 equipment bonus** to the same statistic against stun damage while the armor is worn |
+| Resolution (source) | Same bonus type: the normal non-stacking rule for bonuses of one type applies, so together they give +5, not +10. No owner rule or house rule was needed. Implemented in `ThresholdEngine.getDamageThreshold` (highest stun equipment bonus; the breakdown names the one that does not stack) and threaded into `evaluateThreshold` through `eventThresholdBonus`, so the damage resolver adjudicates the threshold with the same value it reports |
+
+## D-018 — Tremor Cell: the stun setting it adds
+
+| Field | Content |
+|---|---|
+| Rules domain | Modification effects (weapon accessory) / stun setting |
+| Feature | Tremor Cell (`kotor-accessory-tremor-cell::weapon`) |
+| Source | *Knights of the Old Republic Campaign Guide* printed page 76 (Table 5-6 on page 75), as certified in the runtime catalog (`EFFECTS_CERTIFIED`; "Adds swift-action stun setting dealing normal weapon damage as stun") |
+| Evidence | Certified operation `weapon.capabilities.stunSetting` action-grant `{ action: swift, damage_dice: equal_normal, effect: stun }` |
+| Confirmed behavior | The weapon gains a stun setting; switching to it is a swift action; it deals the weapon's normal damage dice as stun damage |
+| Unresolved question | (1) Whether the standard stun-setting range limit that the canonical registry records for ranged weapons (6 squares) applies to a stun setting added by the cell. (2) What happens on a host that already has a stun setting with its own stun dice (e.g. a blaster pistol, 2d6 stun versus 3d6 normal): does the cell's "normal weapon damage as stun" replace it, and does its swift switch replace the host's switch cost? (3) Whether switching back from stun also costs an action (the existing persistent-setting model charges only the switch to stun). The certified data does not say; the page was not re-examined for this entry |
+| Options | None recorded from source text yet. The existing runtime can express a persistent stun setting with a swift switch (as for Shockboxing Gloves) once (1)-(3) are settled |
+| Recommended ruling | None |
+| Implementation impact | Tremor Cell is NOT in the GM development set and is not automated; it stays listed as blocked in the workbench. No weapon stun data was changed |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Review classification (rev. 2) | `DEFERRED_RULES_REVIEW` — the printed effect is clear on the switch cost and damage; its interaction with the Core stun-setting rules and with hosts that already have one needs a ruling or the page's exact text |
+| Decision authority | Project owner |
+| Resolution | |
+
 ---
 
 ## Revision log
@@ -1003,3 +1064,8 @@ All three are `SOURCE_VERIFIED` from the supplied sourcebook text extractions (n
 - **Revision 5 (2026-10-19, E4-C1 WP5):** appended EQ-002 (held-together groups of identical weapons are not representable in the occupancy model; fail-closed) and EQ-003 (worn weapons and weapons without a wielding class cannot be READIED; fail-closed). No existing entry was changed; no recommended ruling was added.
 - **Revision 6 (2026-10-19, E4-C1 WP5-C1):** appended source-verification addenda to EQ-002 and EQ-003 (published mechanics SOURCE_VERIFIED from sourcebook text extractions; model/implementation unresolved; fail-closed handling unchanged; acceptance debt tracked). EQ-001 untouched. No recommended ruling was added.
 - **Revision 7 (2026-10-19, E4-C1 WP5-C2):** appended EQ-004 (operator authorization and crew eligibility for vehicle weapon attacks are not established at the attack boundary; routing-only evidence is reported as such; no enforcement and no flag added). No existing entry was changed; no recommended ruling was added.
+- **Revision 8 (2026-10-28, Modification V2 #1086):** appended D-016 (Armor Reinforcement "DR 2 versus piercing" cannot be matched: the pipeline has no piercing classification; blocked) and D-017 (Mesh Underlay with the Nerve Reinforcement Implant: stacking depends on the implant's unverified bonus type; only the implant applies when both are active). No existing entry was changed; no recommended ruling was added.
+- **Revision 9 (2026-10-28, #1086 review):** appended to D-017 the owner's source examination (KotOR pp. 75-76: both bonuses are equipment bonuses) and its source resolution (non-stacking); appended to D-016 the owner's source examination (Core p. 120, KotOR pp. 72 and 75) and implementation direction. No existing row changed; no recommended ruling was added.
+- **Revision 10 (2026-10-28, #1086):** appended an implementation row to D-016 (subtype recorded at damage-roll time, matched in the D4 applies-to stage; no weapon data or alias changed). No existing row changed; no recommended ruling was added.
+- **Revision 11 (2026-10-28, #1086):** appended to D-016 the owner's source-backed stacking ruling (Core p. 158: highest applicable DR; Armor Reinforcement competes, never adds) and its implementation. No existing row changed; no recommended ruling was added.
+- **Revision 12 (2026-10-28, #1086):** appended D-018 (Tremor Cell stun setting: range cap, hosts with an existing stun setting, switch-back cost). No existing entry was changed; no recommended ruling was added.

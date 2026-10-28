@@ -17,6 +17,7 @@
  * - Routes updates through ActorEngine for owned items
  */
 
+import { effectiveShotCapacity } from "/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-effects.js";
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { isRangedWeapon as canonicalIsRangedWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 
@@ -69,8 +70,16 @@ export class AmmoSystem {
   /**
    * Return true when this weapon has a configured ammunition pool.
    */
+  /**
+   * Effective tracked shot capacity: the weapon's own pool, adjusted by certified effects of installed Modification V2 instances
+   * (derived on every read, never written into the Item, so removing the modification restores the original capacity).
+   */
+  static maxAmmo(weapon) {
+    return effectiveShotCapacity(weapon, asNumber(weapon?.system?.ammunition?.max, 0));
+  }
+
   static weaponUsesAmmunition(weapon) {
-    return asNumber(weapon?.system?.ammunition?.max, 0) > 0;
+    return this.maxAmmo(weapon) > 0;
   }
 
   /**
@@ -119,7 +128,7 @@ export class AmmoSystem {
       tracked: true,
       amount: required,
       current: status.current,
-      max: asNumber(weapon?.system?.ammunition?.max, 0),
+      max: this.maxAmmo(weapon),
       deficit: status.deficit,
       message: status.message,
       options
@@ -159,7 +168,7 @@ export class AmmoSystem {
   static async rollbackSpend(actor, weapon, spendResult = {}) {
     if (!spendResult?.spent || !weapon) return { success: true, skipped: true };
     const current = asNumber(weapon.system?.ammunition?.current, 0);
-    const max = asNumber(weapon.system?.ammunition?.max, 0);
+    const max = this.maxAmmo(weapon);
     const restoreTo = Math.min(max || Number.POSITIVE_INFINITY, asNumber(spendResult.previousAmmo, current + asNumber(spendResult.amount, 0)));
     return this.setAmmunition(actor ?? weapon.actor, weapon, restoreTo);
   }
@@ -232,7 +241,7 @@ export class AmmoSystem {
       return { success: false, message: 'Invalid actor or weapon' };
     }
 
-    const maxAmmo = weapon.system?.ammunition?.max ?? 0;
+    const maxAmmo = this.maxAmmo(weapon);
     const currentAmmo = weapon.system?.ammunition?.current ?? 0;
 
     if (maxAmmo === 0) {
@@ -338,7 +347,7 @@ export class AmmoSystem {
       required,
       deficit,
       message: hasAmmo
-        ? `${weapon.name} has sufficient ammo (${current}/${weapon.system.ammunition.max})`
+        ? `${weapon.name} has sufficient ammo (${current}/${this.maxAmmo(weapon)})`
         : `${weapon.name} needs ${deficit} more rounds (${current}/${required})`
     };
   }
@@ -404,7 +413,7 @@ export class AmmoSystem {
       return { success: false, message: 'Invalid actor or weapon' };
     }
 
-    const max = weapon.system?.ammunition?.max ?? 0;
+    const max = this.maxAmmo(weapon);
     if (max === 0) {
       return { success: false, message: `${weapon.name} does not use ammunition` };
     }
@@ -452,7 +461,7 @@ export class AmmoSystem {
 
     return actor.items.filter(item =>
       item.type === 'weapon' &&
-      item.system?.ammunition?.max > 0
+      this.maxAmmo(item) > 0
     );
   }
 
@@ -496,8 +505,8 @@ export class AmmoSystem {
     }
 
     // Check if current > max
-    if (weapon.system?.ammunition?.current > weapon.system?.ammunition?.max) {
-      issues.push(`Current ammo (${weapon.system.ammunition.current}) exceeds max (${weapon.system.ammunition.max})`);
+    if (weapon.system?.ammunition?.current > this.maxAmmo(weapon)) {
+      issues.push(`Current ammo (${weapon.system.ammunition.current}) exceeds max (${this.maxAmmo(weapon)})`);
     }
 
     return {

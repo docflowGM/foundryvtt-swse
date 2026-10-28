@@ -418,10 +418,10 @@ check('generator input is read-only: no source file other than the runtime outpu
   const after = ['data/audits/modification-rolling-authority-v1.5.json', 'data/audits/modification-rolling-authority-v1.5.manifest.json', LEDGER_PATH, SPECS_PATH, 'docs/audits/swse-rules-decisions-pending.md'].map((p) => sha256(fs.readFileSync(path.join(ROOT, p))));
   assert.deepEqual(after, before);
 });
-check('register parsing: D-001..D-015 classified; D-006 and D-014 deferred; only D-001 and D-015 lifted; one D-013 partial lift', () => {
+check('register parsing: D-001..D-018 classified; D-006, D-014, D-016 and D-018 deferred; only D-001 and D-015 lifted; one D-013 partial lift', () => {
   const reg = parseRegister(readText('docs/audits/swse-rules-decisions-pending.md'));
-  assert.equal(reg.size, 15);
-  const deferred = new Set(['D-006', 'D-014']);
+  assert.equal(reg.size, 18);
+  const deferred = new Set(['D-006', 'D-014', 'D-016', 'D-018']);
   for (const [id, t] of reg) assert.deepEqual(t.classifications, [deferred.has(id) ? 'DEFERRED_RULES_REVIEW' : 'PENDING_SOURCE_VERIFICATION'], id);
   for (const [id, t] of reg) {
     if (id === 'D-001') { assert.equal(t.liftValid, true); assert.ok(t.lift.source.includes('page 39') && t.lift.evidence.includes('d-001-install-remove-pdf-verification.md')); }
@@ -464,11 +464,14 @@ check('page-39 specification records: exact provenance and governance', () => {
   }
   assert.ok(!parents.has('sv-retractable-stock') && !parents.has('sv-droidification'));
 });
-check('no runtime (scripts/) file references the generated data or generator yet', () => {
+check('only the Modification V2 install service (runtime loader) references the generated data', () => {
   const hits = [];
   const walk = (d) => { for (const e of fs.readdirSync(path.join(ROOT, d), { withFileTypes: true })) { const rel = `${d}/${e.name}`; if (e.isDirectory()) walk(rel); else if (/\.(js|mjs|hbs)$/.test(e.name) && /modifications\/(runtime-definitions|status-ledger|specification-records)|build-modification-runtime|modification-runtime\.mjs/.test(fs.readFileSync(path.join(ROOT, rel), 'utf8'))) hits.push(rel); } };
   walk('scripts');
-  assert.deepEqual(hits, [], 'G8 loader is not authorized');
+  // Modification V2 convergence (owner directive 2026-10-28): the install service is the one runtime loader; it verifies the records
+  // against header.recordsSha256 and the catalog checks before use and never writes the generated data
+  // plus its reviewed SHA-256 pins and the packager's exact allowlist of the two shipped files (R1/R2)
+  assert.deepEqual(hits.sort(), ['scripts/build/package-system.js', 'scripts/engine/customization/modification-v2-runtime/modification-data-pins.js', 'scripts/engine/customization/modification-v2-runtime/modification-install-service.js'], 'only the Modification V2 install service, its pins and the packager reference the generated data');
 });
 
 
