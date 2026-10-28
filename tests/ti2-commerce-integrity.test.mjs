@@ -357,4 +357,18 @@ const worldFor = (...as) => { const m = new Map(as.map((x) => [x.id, x])); globa
   ok('TI2-R4: the compensation decision and write run while the actor is marked as being reconciled (other TransactionEngine credit operations are refused, never interleaved and lost), are skipped as unresolved when another operation is already in flight, are verified against the final balance, and always release the guard');
 }
 
+// ------------------------------------------------------------------------------------------------ H7: a malformed cost is refused, never a free transaction
+{
+  const priorActors = globalThis.game?.actors; if (globalThis.game) globalThis.game.actors = undefined;   // earlier sections register other actors; resolve this one directly
+  for (const bad of [null, '', '   ', 'abc', NaN, Infinity, {}, [], true, -1]) {
+    reset(); const r = await silent(() => TransactionEngine.executeMutationTransaction({ actor, mutationPlan: plan(), cost: bad, transactionContext: 'owned-customization', audit: { itemName: 'x' } }, { source: 'ti2', validate: true, rederive: false }));
+    assert.equal(r.success, false, `cost ${String(bad)} is refused`); assert.match(r.error, /Invalid transaction cost/); assert.equal(model.applyCalls, 0, 'nothing was written'); assert.equal(actor.system.credits, 1000);
+  }
+  reset(); let r = await run('250'); assert.equal(r.success, true); assert.equal(actor.system.credits, 750, 'a numeric string is the stated amount');
+  reset(); r = await TransactionEngine.executeMutationTransaction({ actor, mutationPlan: plan(), transactionContext: 'owned-customization', audit: { itemName: 'x' } }, { source: 'ti2', validate: true, rederive: false });
+  assert.equal(r.success, true); assert.equal(actor.system.credits, 1000, 'an omitted cost is the documented default of 0');
+  if (globalThis.game) globalThis.game.actors = priorActors;
+  ok('H7: null, empty, non-numeric, non-finite, object, boolean and negative costs are refused with nothing written; numeric strings charge their amount; only an omitted cost is 0');
+}
+
 console.log(`\nTI-2 commerce integrity: ${n} checks passed.`);
