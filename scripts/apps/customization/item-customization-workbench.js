@@ -25,6 +25,7 @@ import { isEnergyShieldItem as isCanonicalEnergyShieldItem, resolveArmorData } f
 import { buildStoreSuggestionContext } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/store-suggestion-context.js";
 import { applyWorkbenchModificationSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/workbench-modification-suggestions.js";
 import { loadModificationData, listDomainModifications, installProvisionalUpgrade, removeProvisionalUpgrade, productionWeaponLookup, armorAttestation } from "/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-install-service.js";
+import { isDevelopmentModeEnabled } from "/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-development-mode.js";
 import { inspectInstances } from "/systems/foundryvtt-swse/scripts/engine/customization/modification-v2/modification-planner.js";
 import { promptInstall, promptRemove, describeOutcome } from "/systems/foundryvtt-swse/scripts/apps/customization/modification-v2-prompts.js";
 import {
@@ -959,7 +960,9 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     const isGM = game?.user?.isGM === true;
     const installed = inspectInstances(item).records.map((r) => ({
       instanceId: r.instanceId, name: r.name ?? r.typedDefinitionId, state: r.state ?? 'installed', provisional: r.provisional === true,
-      basisLabel: r.basis === 'DEVELOPMENT_GM_POLICY' ? 'Development (GM policy) · source-certified effect while the development setting is on' : r.provisional === true ? 'Provisional · GM-adjudicated · effects not automated' : 'Canonical',
+      basisLabel: r.basis === 'DEVELOPMENT_GM_POLICY'
+        ? (r.effects?.automation === 'none' ? 'Development (GM policy) · GM host ruling · effects not automated' : 'Development (GM policy) · source-certified effect while the development setting is on')
+        : r.provisional === true ? 'Provisional · GM-adjudicated · effects not automated' : 'Canonical',
       dc: r.install?.dc ?? null, canRemove: isGM && r.provisional === true
     }));
     if (!data?.ok) return { enabled: true, dataOk: false, problems: data?.problems ?? [], installed, available: [], blocked: [], isGM };
@@ -972,7 +975,10 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       slotCost: m.slotImpact?.cost ?? m.slotCost ?? null, freeAfter: m.slotImpact?.freeAfter ?? null,
       acceptedCount: (m.accepted ?? []).length, reasons: (m.hard ?? []).map((h) => (h.detail ? `${h.code} (${typeof h.detail === 'string' ? h.detail : JSON.stringify(h.detail)})` : h.code)),
       canInstall: isGM && (m.availability === 'provisional' || m.availability === 'development'),
-      development: m.availability === 'development', basisLabel: m.availability === 'development' ? `Development (GM policy): source-certified effect applies while the development setting is on — ${m.source}` : 'Provisional · GM-adjudicated · effects not automated'
+      development: m.availability === 'development',
+      basisLabel: m.availability !== 'development' ? 'Provisional · GM-adjudicated · effects not automated'
+        : m.gear ? `Development (GM policy): needs your host ruling; effects not automated — ${m.source}`
+        : `Development (GM policy): source-certified effect applies while the development setting is on — ${m.source}`
     });
     const capacity = all.find((m) => m.slotImpact?.status === 'certified')?.slotImpact ?? null;
     return {
@@ -1578,7 +1584,8 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         };
       });
 
-    const modificationV2 = this._usesModificationV2(item) ? await this._getModificationV2Context(item) : null;
+    // gear keeps its legacy list; the V2 universal-upgrade slice is shown alongside it only under the GM development workflow (D-005 pending)
+    const modificationV2 = (this._usesModificationV2(item) || (item?.type === 'equipment' && isDevelopmentModeEnabled())) ? await this._getModificationV2Context(item) : null;
     let upgrades = energyShieldItem ? [] : this._getUpgradeCatalog(item, draft);
     let templates = this._getTemplateCards(item, draft);
     const workbenchSuggestionContext = await this._getWorkbenchSuggestionContext();

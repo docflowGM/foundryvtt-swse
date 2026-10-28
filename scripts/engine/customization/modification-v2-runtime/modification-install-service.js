@@ -28,11 +28,12 @@
  */
 import { createModificationCatalog } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-v2/modification-catalog.js';
 import { planModification, inspectInstances } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-v2/modification-planner.js';
+import { createCertifiedDefinitionLookup } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-v2/modification-slot-closure.js';
 import { resolveSlotState } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-slot-authority.js';
 import { sha256Hex, utf8Bytes } from '/systems/foundryvtt-swse/scripts/engine/equipment/intent-fingerprint.js';
 import { PROVISIONAL_SET } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-provisional-set.js';
 import { setVerifiedModificationData, getVerifiedModificationData } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-data-store.js';
-import { DEVELOPMENT_SET, DEVELOPMENT_BASIS, DEVELOPMENT_POLICY, isDevelopmentModeEnabled } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-development-mode.js';
+import { DEVELOPMENT_SET, DEVELOPMENT_BASIS, DEVELOPMENT_POLICY, DEVELOPMENT_EQUIPMENT_SET, DEVELOPMENT_EQUIPMENT_POLICY, isDevelopmentModeEnabled } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-development-mode.js';
 import { MODIFICATION_DATA_PINS } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-data-pins.js';
 
 export const RUNTIME_PATH = 'data/modifications/runtime-definitions-v1.5.json';
@@ -146,10 +147,30 @@ const DEVELOPMENT_ACCEPTABLE = Object.freeze({
   COMPONENT_UNVERIFIED: (d) => d === 'description' || d === 'hostPrerequisites' || d === 'installProcedure',
   OPEN_REGISTER_ENTRY: (d) => d === 'D-013:installProcedure',
 });
+// Gear tier (GM development policy): everything the provisional path accepts, plus the open D-005 host question -- answered per install by
+// an explicit GM host ruling (HOST_NOT_ESTABLISHED requires one) -- and slot accounting from the table-verified fixed slot cost
+const DEVELOPMENT_EQUIPMENT_ACCEPTABLE = Object.freeze({
+  ...ACCEPTABLE,
+  OPEN_REGISTER_ENTRY: (d) => d === 'D-014:installProcedure' || d === 'D-015:installProcedure' || d === 'D-005:hostPrerequisites',
+});
+/** Slot-cost lookup for the gear tier: certified costs as usual, and the table-verified fixed cost of a DEVELOPMENT_EQUIPMENT_SET definition. */
+function developmentEquipmentLookup(catalog) {
+  const certified = createCertifiedDefinitionLookup(catalog);
+  return (key) => {
+    const hit = certified(key);
+    if (hit || !DEVELOPMENT_EQUIPMENT_SET.includes(key)) return hit;
+    const found = catalog.getTyped(key);
+    const reg = found?.typed?.slotCost;
+    if (reg?.registry?.type !== 'fixed' || reg.certification?.certified !== true || !Number.isInteger(reg.registry.slots) || reg.registry.slots < 0) return null;
+    const src = found.parent?.provenance?.source ?? {};
+    return { definitionId: key, upgradeKey: key, certifiedCost: reg.registry.slots, source: { ref: `${src.bookId ?? 'unknown'}:p${src.printedTablePage ?? src.rulesPage ?? '?'}${src.tableId ? ` table ${src.tableId}` : ''}`, certification: `table-verified slot cost; accounting eligibility pending D-005 (GM development policy)` } };
+  };
+}
 const tableRowForPoints = (points) => (Number.isInteger(points) && points >= 0 ? (points >= 2 ? '2 or more' : String(points)) : null);
 
 export function reviewProvisionalInstall({ data, item, typedDefinitionId, weaponLookup = null, armor = null, developmentMode = false }) {
-  const development = DEVELOPMENT_SET.includes(typedDefinitionId);
+  const gear = DEVELOPMENT_EQUIPMENT_SET.includes(typedDefinitionId);
+  const development = DEVELOPMENT_SET.includes(typedDefinitionId) || gear;
   const base = { typedDefinitionId, provisional: true, basis: development ? DEVELOPMENT_BASIS : PROVISIONAL_BASIS };
   if (!data?.ok) return Object.freeze({ ...base, ok: false, hard: [{ code: 'DATA_UNAVAILABLE', detail: data?.problems ?? null }], accepted: [] });
   if (!PROVISIONAL_SET.includes(typedDefinitionId) && !development) return Object.freeze({ ...base, ok: false, hard: [{ code: 'NOT_IN_PROVISIONAL_SET', detail: typedDefinitionId }], accepted: [] });
@@ -157,14 +178,19 @@ export function reviewProvisionalInstall({ data, item, typedDefinitionId, weapon
     catalog: data.catalog, operation: 'install', typedDefinitionId, item,
     slotAuthority: { resolveSlotState },
     slotContext: { ...(weaponLookup ? { canonicalWeaponLookup: weaponLookup } : {}), ...(armor ? { trustedClassification: armor } : {}) },
+    ...(gear ? { definitionLookup: developmentEquipmentLookup(data.catalog) } : {}),
   });
-  let { accepted, hard } = classify(plan.blockers, development ? DEVELOPMENT_ACCEPTABLE : ACCEPTABLE);
+  let { accepted, hard } = classify(plan.blockers, gear ? DEVELOPMENT_EQUIPMENT_ACCEPTABLE : development ? DEVELOPMENT_ACCEPTABLE : ACCEPTABLE);
   // with the development workflow off, nothing is accepted: every certification blocker (D-013 included) is reported as blocking
   if (development && developmentMode !== true) { hard = [...accepted, ...hard]; accepted = []; }
   const found = data.catalog.getTyped(typedDefinitionId);
   const parent = found?.parent ?? null;
   let row; let rowBasis;
-  if (development) {
+  if (gear) {
+    // published Scum and Villainy Table 2-2 row (page 39 governs these definitions); no effects are automated
+    if (developmentMode !== true) hard.unshift({ code: 'DEVELOPMENT_MODE_OFF', detail: 'enable the Modification V2 development workflow setting (GM) to install this definition' });
+    row = data.rows.get(typedDefinitionId) ?? null; rowBasis = `${TABLE_2_2.source}; ${DEVELOPMENT_EQUIPMENT_POLICY}`;
+  } else if (development) {
     if (developmentMode !== true) hard.unshift({ code: 'DEVELOPMENT_MODE_OFF', detail: 'enable the Modification V2 development workflow setting (GM) to install this definition' });
     if (parent?.provenance?.mechanicalCertification !== 'EFFECTS_CERTIFIED') hard.push({ code: 'EFFECTS_NOT_CERTIFIED', detail: typedDefinitionId });
     const slots = found?.typed?.slotCost?.registry?.type === 'fixed' && found.typed.slotCost.certification?.certified === true ? found.typed.slotCost.registry.slots : null;
@@ -177,12 +203,12 @@ export function reviewProvisionalInstall({ data, item, typedDefinitionId, weapon
   const price = plan.price?.computable === true && plan.price.kind === 'credits' && Number.isFinite(plan.price.amount) && plan.price.amount >= 0 ? plan.price.amount : null;
   if (price === null && !hard.some((h) => h.code.startsWith('PRICE_'))) hard.push({ code: 'PRICE_NOT_ESTABLISHED', detail: plan.price?.kind ?? null });
   return Object.freeze({
-    ...base, ok: hard.length === 0, development,
+    ...base, ok: hard.length === 0, development, gear,
     name: parent?.name ?? typedDefinitionId, summary: parent?.display?.summary ?? '', domain: plan.domain,
     row, dc: table?.dc ?? null, time: table?.time ?? null, price, slotImpact: plan.slotImpact,
     hostNeedsGmRuling: accepted.some((a) => a.code === 'HOST_NOT_ESTABLISHED'),
     hostPrerequisites: parent?.eligibility?.prerequisites ?? [],
-    effectsSummary: development ? parent?.display?.summary ?? '' : null,
+    effectsSummary: development && !gear ? parent?.display?.summary ?? '' : null,
     accepted, hard, source: rowBasis, trainedRequired: 'Mechanics (trained)',
   });
 }
@@ -194,7 +220,7 @@ export function reviewProvisionalInstall({ data, item, typedDefinitionId, weapon
 export function listDomainModifications({ data, item, weaponLookup = null, armor = null, developmentMode = isDevelopmentModeEnabled() }) {
   if (!data?.ok || !['weapon', 'armor', 'equipment'].includes(item?.type)) return [];
   return data.catalog.listTyped({ domain: item.type }).map((typedDefinitionId) => {
-    if (PROVISIONAL_SET.includes(typedDefinitionId) || DEVELOPMENT_SET.includes(typedDefinitionId)) {
+    if (PROVISIONAL_SET.includes(typedDefinitionId) || DEVELOPMENT_SET.includes(typedDefinitionId) || DEVELOPMENT_EQUIPMENT_SET.includes(typedDefinitionId)) {
       const review = reviewProvisionalInstall({ data, item, typedDefinitionId, weaponLookup, armor, developmentMode });
       return { ...review, availability: review.ok ? (review.development ? 'development' : 'provisional') : 'blocked' };
     }
@@ -309,7 +335,9 @@ async function runInstall(actor, item0, request, deps) {
     acceptedBlockers: clone(review.accepted),
     hostRuling: review.hostNeedsGmRuling ? { compatible: true, by: gmId, note: request.hostRuling?.note ?? null, classification: 'GM_ADJUDICATED_NOT_PUBLISHED_RULE' } : null,
     armorAttestation: armor,
-    effects: review.development
+    effects: review.gear
+      ? { certified: false, automation: 'none', basis: 'effects not certified: a GM-adjudicated record; nothing is applied automatically' }
+      : review.development
       ? { source: 'catalog', automation: 'while-development-mode-is-on', basis: 'source-certified effects resolved from the pinned catalog; installation under a GM development policy (D-013 pending)' }
       : { certified: false, automation: 'none', basis: 'Q-029: effects are a GM-adjudicated record; nothing is applied automatically' },
     ...(review.development ? { developmentPolicy: review.source } : {}),
@@ -355,7 +383,8 @@ async function runRemove(actor, item0, request, deps) {
   if (!data?.ok) return outcome('REFUSED', { reason: 'data-unavailable', problems: data?.problems ?? null });
   const plan = planModification({ catalog: data.catalog, operation: 'remove', typedDefinitionId: target.typedDefinitionId, item, instanceId: request.instanceId });
   const developmentInstance = target.basis === DEVELOPMENT_BASIS && DEVELOPMENT_SET.includes(target.typedDefinitionId);
-  const { hard } = classify(plan.blockers, developmentInstance ? DEVELOPMENT_ACCEPTABLE : REMOVAL_ACCEPTABLE);
+  const gearInstance = target.basis === DEVELOPMENT_BASIS && DEVELOPMENT_EQUIPMENT_SET.includes(target.typedDefinitionId);
+  const { hard } = classify(plan.blockers, gearInstance ? DEVELOPMENT_EQUIPMENT_ACCEPTABLE : developmentInstance ? DEVELOPMENT_ACCEPTABLE : REMOVAL_ACCEPTABLE);
   if (hard.length) return outcome('REFUSED', { reason: 'hard-blockers', hard });
   const table = TABLE_2_2.commercial[target.install.row];
   if (!table) return outcome('REFUSED', { reason: 'table-2-2-row-unknown' });

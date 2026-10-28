@@ -320,4 +320,41 @@ const install = (item, extra = {}, d = deps()) => silent(() => P.installProvisio
   ok('10: Mesh Underlay lifecycle (GM development policy): size increase -> install 2500 cr (DC 30) -> stun DT +5 on worn armor only -> unworn / setting off / deactivation restore it with no write; the real damage resolver adjudicates 18 stun against the effective DT (20 worn, 15 removed/deactivated); implant + Mesh Underlay do not stack (D-017); Armor Reinforcement is a development candidate (3000 cr; D-016 type flow tested separately)');
   globalThis.game.settings = { get: () => undefined };
 }
+{
+  // Gear (equipment domain), GM development slice (D-005 pending): the Scum and Villainy universal upgrades with their published price, slots
+  // and Table 2-2 row, an explicit GM host ruling per install, no automated effects; the legacy gear list (GEAR_MODS) stays
+  const store = await import('/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-data-store.js');
+  const E = await import('/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-effects.js');
+  store.setVerifiedModificationData(data);
+  reset(2000);
+  const comlink = { id: 'g1', name: 'Comlink', type: 'equipment', system: {}, flags: {} };
+  comlink.actor = actor; actor.items.push(comlink);
+  const G = () => actor.items.get('g1');
+  let devOn = false;
+  globalThis.game.settings = { get: (ns, key) => (key === 'modificationV2DevelopmentMode' ? devOn : undefined) };
+  const SC = 'sv-secret-compartment::equipment';
+  const of = (id) => P.listDomainModifications({ data, item: G() }).find((m) => m.typedDefinitionId === id);
+  assert.ok(of(SC).hard.some((h) => h.code === 'DEVELOPMENT_MODE_OFF'), 'off by default');
+  devOn = true;
+  const review = of(SC);
+  assert.equal(review.availability, 'development', JSON.stringify(review.hard));
+  assert.equal(review.price, 600); assert.equal(review.row, '1'); assert.equal(review.dc, 20); assert.equal(review.time, '1 hour');
+  assert.ok(review.hostNeedsGmRuling, 'host is a GM ruling (D-005)');
+  assert.ok(review.accepted.some((a) => a.code === 'OPEN_REGISTER_ENTRY' && a.detail === 'D-005:hostPrerequisites'));
+  assert.equal(review.slotImpact.cost, 1, 'table-verified slot cost');
+  const req = (extra = {}) => ({ typedDefinitionId: SC, attemptId: 'g-1', priceConfirmed: 600, check: { mode: 'gm-entered', total: 21 }, ...extra });
+  assert.equal((await silent(() => P.installProvisionalUpgrade(actor, G(), req(), deps({ developmentMode: true })))).reason, 'host-ruling-required');
+  const inst = await silent(() => P.installProvisionalUpgrade(actor, G(), req({ hostRuling: { compatible: true, note: 'a comlink can hide a compartment (GM ruling)' } }), deps({ developmentMode: true })));
+  assert.equal(inst.status, 'INSTALLED', JSON.stringify(inst.reason ?? inst.hard)); assert.equal(actor.system.credits, 1400);
+  assert.equal(inst.instance.basis, 'DEVELOPMENT_GM_POLICY'); assert.equal(inst.instance.effects.automation, 'none'); assert.equal(inst.instance.hostRuling.classification, 'GM_ADJUDICATED_NOT_PUBLISHED_RULE');
+  assert.deepEqual(E.activeEffectOperations(G(), null, { developmentMode: true }), [], 'no automated effect');
+  assert.ok(of('sv-recognition-system::equipment').hard.some((h) => h.code === 'SLOT_OVERFLOW'), 'the installed upgrade uses the one slot');
+  assert.equal(of('sv-storage-capacity::equipment').availability, 'development', 'a published 0-slot upgrade still fits');
+  const rem = await silent(() => P.removeProvisionalUpgrade(actor, G(), { instanceId: inst.instance.instanceId, attemptId: 'g-rm', check: { mode: 'gm-entered', total: 15 } }, deps()));
+  assert.equal(rem.status, 'REMOVED', JSON.stringify(rem)); assert.equal(rem.dc, 15);
+  assert.equal(of('sv-recognition-system::equipment').availability, 'development', 'slot free again');
+  assert.equal(ItemCustomizationWorkbench.prototype._usesModificationV2.call({}, G()), false, 'gear keeps its legacy upgrade list');
+  globalThis.game.settings = { get: () => undefined };
+  ok('11: gear development slice (D-005 pending): universal upgrade with published price/slots/Table 2-2 row, explicit GM host ruling required, charge, slot counted, no automated effect, removal; legacy gear list kept');
+}
 console.log(`modification-v2-convergence: ${n} checks ok`);

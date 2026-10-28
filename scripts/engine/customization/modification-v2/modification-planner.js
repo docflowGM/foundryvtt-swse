@@ -75,7 +75,7 @@ function sortedBlockers(list) {
  * @param {object} [input.slotContext] extra trusted context for Phase 1a (baseline classification etc.)
  * @param {{evaluate: Function}} [input.legality]  legality framework
  */
-export function planModification({ catalog, operation, typedDefinitionId, item, instanceId = null, slotAuthority = null, slotContext = {}, legality = null } = {}) {
+export function planModification({ catalog, operation, typedDefinitionId, item, instanceId = null, slotAuthority = null, slotContext = {}, legality = null, definitionLookup = null } = {}) {
   const blockers = [];
   const block = (code, detail = null) => blockers.push({ code, detail });
   const plan = {
@@ -148,7 +148,8 @@ export function planModification({ catalog, operation, typedDefinitionId, item, 
   if (plan.operation === 'install') {
     if (!plan.price.computable) block(plan.price.kind === 'unknown' ? 'PRICE_UNKNOWN' : 'PRICE_NOT_COMPUTABLE', plan.price.kind);
     // Slot impact through the injected Phase 1a authority and the certified-cost closure.
-    const lookup = createCertifiedDefinitionLookup(catalog);
+    // a caller may inject a lookup (the GM development tier's published-cost lookup); default: the certified-cost closure
+    const lookup = typeof definitionLookup === 'function' ? definitionLookup : createCertifiedDefinitionLookup(catalog);
     const certified = lookup(plan.typedDefinitionId);
     if (certified === null) block('SLOT_COST_UNCERTIFIED');
     if (!slotAuthority || typeof slotAuthority.resolveSlotState !== 'function') {
