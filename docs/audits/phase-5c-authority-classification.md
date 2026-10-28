@@ -11,7 +11,7 @@ Every feat/weapon data file under `data/` and `packs/` is classified exactly onc
 | MIGRATION_ALIAS_ONLY | 2 |
 | HISTORICAL_AUDIT_EVIDENCE | 240 |
 | DEAD_REMOVE | 0 |
-| OTHER_DOMAIN_DATA | 11 |
+| OTHER_DOMAIN_DATA | 13 |
 | REFERENCE_BEARING_DOMAIN_DATA | 14 |
 
 Dependency direction: audits (evidence) → canonical corpus → deterministic generators → Foundry packs, runtime registries, compatibility outputs. Nothing flows back.
@@ -28,6 +28,8 @@ Guardrail (enforced by `tools/verify-canonical-production.mjs`): neither class m
 | Path | Class | Source / note |
 |---|---|---|
 | `data/actor-weapon-ranges.json` | OTHER_DOMAIN_DATA | Vehicle / upgrade / range / class-feature data; not the personal weapon or feat corpus. |
+| `data/canonical/armor.json` | OTHER_DOMAIN_DATA | Canonical armor / equipment Item documents (tools/build-canonical-item-packs.mjs); not the feat or weapon corpus. |
+| `data/canonical/equipment.json` | OTHER_DOMAIN_DATA | Canonical armor / equipment Item documents (tools/build-canonical-item-packs.mjs); not the feat or weapon corpus. |
 | `data/canonical/feats.json` | CANONICAL_SSOT | The one operational authority for its domain. |
 | `data/canonical/talents.json` | CANONICAL_SSOT | The one operational authority for its domain. |
 | `data/canonical/weapons.json` | CANONICAL_SSOT | The one operational authority for its domain. |
