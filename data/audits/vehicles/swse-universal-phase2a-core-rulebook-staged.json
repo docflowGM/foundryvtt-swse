@@ -1,0 +1,307 @@
+{
+  "schema": "swse.vehicle.universal.phase2a.core-staged.v1",
+  "status": "PARTIAL_2_OF_17",
+  "sourceBook": "Core Rulebook",
+  "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+  "phase1Ledger": "data/audits/vehicles/swse-universal-phase1a-core-rulebook.json",
+  "printedPageRange": [
+    175,
+    175
+  ],
+  "records": [
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "core-at-at",
+        "name": "All-Terrain Armored Transport (AT-AT)"
+      },
+      "publication": {
+        "book": "Core Rulebook",
+        "page": 175,
+        "printedTitle": "All-Terrain Armored Transport (AT-AT)",
+        "printedTypeLine": "Colossal ground vehicle (walker)"
+      },
+      "classification": {
+        "primaryCategory": "walker",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedSize": "Colossal"
+      },
+      "challenge": {
+        "cl": 14
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 6,
+        "characterScaleLengthSquares": 6,
+        "coverCrew": "total"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "walking",
+            "scale": "character",
+            "squaresPerMove": 4,
+            "maxVelocityKmh": 60
+          }
+        ],
+        "maxVelocityKmh": 60
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 16,
+        "reflexFlatFooted": 16,
+        "fortitude": 29,
+        "armorBonus": 16,
+        "damageReduction": 20
+      },
+      "durability": {
+        "hitPoints": 300,
+        "damageThreshold": 79
+      },
+      "abilities": {
+        "str": 48,
+        "dex": 10,
+        "int": 14,
+        "initiativePrinted": -2,
+        "perceptionPrinted": 8,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -2
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 8
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 8
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -2
+          }
+        ]
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 5,
+        "grappleBonusPrinted": 42,
+        "rangedAttackLine": "heavy laser cannons +7 AND blaster cannons +7",
+        "attackOptions": [
+          "autofire (medium blaster cannons)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "core-at-at-attack-1",
+            "label": "Heavy laser cannons (gunner): Atk +7, Dmg 6d10x2, 2-square splash",
+            "mountKeys": [],
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated"
+          },
+          {
+            "groupKey": "core-at-at-attack-2",
+            "label": "Blaster cannons (gunner): Atk +7 (+2 autofire), Dmg 3d10x2",
+            "mountKeys": [],
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated"
+          }
+        ],
+        "notes": "Printed attack summaries are not certified physical weapon mounts; operators and numeric modifiers retained in labels pending fully structured armament review."
+      },
+      "crew": {
+        "crewCount": 5,
+        "crewQuality": "expert"
+      },
+      "capacity": {
+        "passengerCount": 40,
+        "cargo": {
+          "value": 1,
+          "unit": "ton"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "week"
+        },
+        "storageNotes": "Carried craft: 5 speeder bikes or 2 AT-STs"
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Military",
+        "priceNew": {
+          "status": "not-for-sale",
+          "raw": "not available for sale"
+        }
+      },
+      "text": {},
+      "exceptions": {
+        "unmappedFacts": [
+          "Physical mount identity, count, and firing arcs not printed or not independently certified",
+          "Weapon attack bonus/damage captured as printed lines; separate executable weapon profiles and operator bindings require further review"
+        ]
+      },
+      "fieldStates": {
+        "armament.weaponMounts": "not-yet-reviewed",
+        "armament.firingArcs": "not-stated",
+        "rules.strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "source-reviewed-partial-weapon-mapping"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "core-at-st",
+        "name": "All-Terrain Scout Transport (AT-ST)"
+      },
+      "publication": {
+        "book": "Core Rulebook",
+        "page": 175,
+        "printedTitle": "All-Terrain Scout Transport (AT-ST)",
+        "printedTypeLine": "Huge ground vehicle (walker)"
+      },
+      "classification": {
+        "primaryCategory": "walker",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedSize": "Huge"
+      },
+      "challenge": {
+        "cl": 8
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 3,
+        "characterScaleLengthSquares": 3,
+        "coverCrew": "total"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "walking",
+            "scale": "character",
+            "squaresPerMove": 6,
+            "maxVelocityKmh": 90
+          }
+        ],
+        "maxVelocityKmh": 90
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 14,
+        "reflexFlatFooted": 12,
+        "fortitude": 20,
+        "armorBonus": 4,
+        "damageReduction": 10
+      },
+      "durability": {
+        "hitPoints": 120,
+        "damageThreshold": 30
+      },
+      "abilities": {
+        "str": 30,
+        "dex": 14,
+        "int": 12,
+        "initiativePrinted": 8,
+        "perceptionPrinted": 8,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 8
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 8
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 8
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 8
+          }
+        ]
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 5,
+        "grappleBonusPrinted": 25,
+        "rangedAttackLine": "twin blaster cannons +6 AND twin light blaster cannon +6 OR twin blaster cannons +6 AND grenade launcher +6",
+        "attackOptions": [
+          "autofire (twin light blaster cannon)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "core-at-st-attack-1",
+            "label": "Twin blaster cannons (pilot): Atk +6, Dmg 4d10x2",
+            "mountKeys": [],
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated"
+          },
+          {
+            "groupKey": "core-at-st-attack-2",
+            "label": "Twin light blaster cannon (copilot): Atk +6 (+1 autofire), Dmg 3d10x2",
+            "mountKeys": [],
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated"
+          },
+          {
+            "groupKey": "core-at-st-attack-3",
+            "label": "Grenade launcher (copilot): Atk +6, Dmg 4d6, 2-square burst",
+            "mountKeys": [],
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated"
+          }
+        ],
+        "notes": "Printed attack summaries are not certified physical weapon mounts; operators and numeric modifiers retained in labels pending fully structured armament review."
+      },
+      "crew": {
+        "crewCount": 2,
+        "crewQuality": "expert"
+      },
+      "capacity": {
+        "passengerCount": 0,
+        "cargo": null,
+        "consumables": {
+          "value": 2,
+          "unit": "days"
+        },
+        "storageNotes": "Carried craft: none; payload: 12 frag grenades"
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Military",
+        "priceNew": {
+          "status": "not-for-sale",
+          "raw": "not available for sale"
+        }
+      },
+      "text": {},
+      "exceptions": {
+        "unmappedFacts": [
+          "Physical mount identity, count, and firing arcs not printed or not independently certified",
+          "Weapon attack bonus/damage captured as printed lines; separate executable weapon profiles and operator bindings require further review"
+        ]
+      },
+      "fieldStates": {
+        "armament.weaponMounts": "not-yet-reviewed",
+        "armament.firingArcs": "not-stated",
+        "rules.strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "source-reviewed-partial-weapon-mapping"
+      }
+    }
+  ],
+  "remaining": 15,
+  "sourceReviewNote": "Primary scanned PDF physical page 176 visually checked. The two walkers' complete visible statblock lines are represented; armament is attack-group advisory, not physical mount certification. The other 15 entries remain unhydrated."
+}
