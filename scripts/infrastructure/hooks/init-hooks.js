@@ -48,6 +48,12 @@ export function registerInitHooks() {
      * This registration is valid since ready hasn't fired yet
      */
     Hooks.once('ready', async function() {
+        // Modification V2: load and verify (pinned) the runtime definitions so synchronous effect consumers (AmmoSystem) can read them;
+        // a failed load leaves every modification effect off (fail closed)
+        import('/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-install-service.js')
+            .then((m) => m.loadModificationData())
+            .then((d) => { if (!d?.ok) SWSELogger.warn('Modification V2 data not loaded; modification effects are off', d?.problems); })
+            .catch((err) => SWSELogger.warn('Modification V2 data not loaded; modification effects are off', err));
         // Initialize mobile mode system
         if (MobileMode?.init) {
             MobileMode.init();

@@ -68,12 +68,7 @@
     </div>
 
     <div class="swse-entity-dialog__toggle-grid">
-      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.equipped" {{#if entityDialog.weapon.equipped}}checked{{/if}} /> Equipped</label>
       <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.integrated" {{#if entityDialog.weapon.integrated}}checked{{/if}} /> Integrated</label>
-      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.dualWielded" {{#if entityDialog.weapon.dualWielded}}checked{{/if}} /> Dual Wielded</label>
-      {{#if entityDialog.weapon.isMelee}}
-      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.wieldedTwoHanded" {{#if entityDialog.weapon.wieldedTwoHanded}}checked{{/if}} /> Wielded Two-Handed</label>
-      {{/if}}
     </div>
   </section>
 </div>

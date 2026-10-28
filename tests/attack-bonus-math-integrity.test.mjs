@@ -68,6 +68,8 @@ import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 globalThis.window = globalThis.window || {};
 registerFoundryPathLoader();
 installFoundryShimGlobals();
+const { installReadinessEnvironment, readiedWeapon, weaponItem, REC, SABER_KEY, ownAndReady } = await import('./helpers/ready-weapon-fixture.mjs');
+await installReadinessEnvironment();
 globalThis.foundry = globalThis.foundry ?? {};
 globalThis.foundry.applications = globalThis.foundry.applications ?? {};
 globalThis.foundry.applications.api = globalThis.foundry.applications.api ?? {
@@ -1121,7 +1123,9 @@ ok('multiattack dialog/roll sequence-penalty parity: step.finalPenalty now reach
 
   try {
     const baseline = makeLiveAttacker('Baseline');
-    const weapon = { id: 'w-live', name: 'Blaster Rifle', type: 'weapon', system: { weaponCategory: 'ranged', proficiency: 'rifles', proficient: true, damage: '3d8' } };
+    // E4-C1 WP5-C1: the attack gate needs an owned, verified READIED weapon; the attacker draws a canonical blaster rifle (the math under test is weapon-independent)
+    const weapon = weaponItem('w-live', { key: 'weapon-blaster-rifle', name: 'Blaster Rifle' }); weapon.system = { ...weapon.system, weaponCategory: 'ranged', proficiency: 'rifles', proficient: true, damage: '3d8' };
+    ownAndReady(baseline, weapon);
 
     const plain = await rollAttack(baseline, weapon, { suppressChat: true, targetContext: { mode: 'none' } });
     const withExtras = await rollAttack(baseline, weapon, {
@@ -1349,7 +1353,7 @@ ok('ModifierType.FORCE restored with an explicit STACKING_RULES.force = highestO
       flags: { swse: { builtBy: 'test-actor', attunedBy: attuned ? 'test-actor' : null } }
     };
   }
-  function targetActorWith(items) { return { id: 'target-actor', items: makeItemsCollection(items) }; }
+  function targetActorWith(items) { return { id: 'target-actor', type: 'character', system: { species: 'Human', size: 'Medium' }, flags: {}, items: makeItemsCollection(items) }; }
   // "vs-armored" fixtures: SWSE's real Hurikane condition is a target with
   // an ARMOR BONUS TO REFLEX DEFENSE, not merely "wears an armor-typed
   // item" -- resolveArmorData()'s reflexBonus (system.defenseBonus, the
@@ -1363,11 +1367,12 @@ ok('ModifierType.FORCE restored with an explicit STACKING_RULES.force = highestO
   function equippedEnergyShieldItem() { return { id: 'shield-1', name: 'Deflector Shield Generator', type: 'armor', system: { equipped: true, armorType: 'shield', defenseBonus: 5 } }; }
   // "vs-lightsaber-wielders" fixtures: wielded (equipped) AND activated
   // (blade ignited) are independent predicates.
+  // E4-C1 WP5: "wielded" is the verified READIED posture (canonical record on certified appendages), never a legacy equipped flag.
   function targetLightsaberItem(overrides = {}) {
-    return {
-      id: overrides.id ?? 'target-saber', name: overrides.name ?? 'Target Saber', type: 'weapon',
-      system: { subtype: 'lightsaber', equipped: overrides.equipped !== false, activated: overrides.activated !== false }
-    };
+    const wielded = overrides.equipped !== false;
+    const w = wielded ? readiedWeapon(overrides.id ?? 'target-saber', { key: SABER_KEY, name: overrides.name ?? 'Target Saber' }) : weaponItem(overrides.id ?? 'target-saber', { key: SABER_KEY, name: overrides.name ?? 'Target Saber' });
+    w.system.subtype = 'lightsaber'; w.system.activated = overrides.activated !== false;
+    return w;
   }
 
   const attacker = makeActor({ bab: 7, str: 2 });
@@ -1406,7 +1411,7 @@ ok('ModifierType.FORCE restored with an explicit STACKING_RULES.force = highestO
   assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: targetActorWith([targetLightsaberItem({ equipped: false, activated: true })]) }).total, plainBaseline, '3. Heart: active but not wielded => +0');
   const wieldingActiveTarget = targetActorWith([targetLightsaberItem({ equipped: true, activated: true })]);
   assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: wieldingActiveTarget }).total, plainBaseline + 2, '4. Heart: wielded + active => +2');
-  const nonSaberActiveTarget = targetActorWith([{ id: 'target-blaster', name: 'Blaster', type: 'weapon', system: { equipped: true, activated: true } }]);
+  const nonSaberActiveTarget = targetActorWith([Object.assign(readiedWeapon('target-blaster'), { name: 'Blaster' }, { system: { ...readiedWeapon('target-blaster').system, activated: true } })]);
   assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: nonSaberActiveTarget }).total, plainBaseline, '5. Heart: wielded + active non-lightsaber => +0');
   const mutatingActivation = targetLightsaberItem({ id: 'mutating-activation-saber', equipped: true, activated: true });
   const mutatingActivationTarget = targetActorWith([mutatingActivation]);
@@ -1416,10 +1421,10 @@ ok('ModifierType.FORCE restored with an explicit STACKING_RULES.force = highestO
   const mutatingWield = targetLightsaberItem({ id: 'mutating-wield-saber', equipped: true, activated: true });
   const mutatingWieldTarget = targetActorWith([mutatingWield]);
   assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: mutatingWieldTarget }).total, plainBaseline + 2, '7. Heart: initially wielded + active => +2');
-  mutatingWield.system.equipped = false;
+  Object.assign(mutatingWield.system, REC('STOWED', null, []));
   assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: mutatingWieldTarget }).total, plainBaseline, '7. Heart: mutation -- unequipping while still active loses the +2 on the very next resolution');
   const altEquipActiveSaber = { id: 'target-saber-alt', name: 'Alt Saber', type: 'weapon', system: { subtype: 'lightsaber', readied: true, activated: true } };
-  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: targetActorWith([altEquipActiveSaber]) }).total, plainBaseline + 2, '8. Heart: alternate certified wield field (system.readied) + activated => +2');
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: targetActorWith([altEquipActiveSaber]) }).total, plainBaseline, '8. Heart: a legacy wield alias (system.readied) + activated is NOT a wielding posture => +0 (E4-C1 WP5: legacy aliases cannot grant readiness)');
   const wieldingTargetA = targetActorWith([targetLightsaberItem({ id: 'saber-a', equipped: true, activated: true })]);
   const unarmedTargetB = targetActorWith([]);
   assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: wieldingTargetA }).total, plainBaseline + 2, '9. Heart: target A (wielding + active) => +2');
@@ -1444,9 +1449,9 @@ ok('Hurikane (vs-armored) and Heart of the Guardian (vs-lightsaber-wielders) CON
       flags: overrides.flags ?? { swse: { builtBy: 'test-actor', attunedBy: 'test-actor' } }
     };
   }
-  function targetActorWith(items) { return { id: 'target-actor', items: makeItemsCollection(items) }; }
+  function targetActorWith(items) { return { id: 'target-actor', type: 'character', system: { species: 'Human', size: 'Medium' }, flags: {}, items: makeItemsCollection(items) }; }
   function equippedBodyArmorItem() { return { id: 'armor-1', name: 'Battle Armor', type: 'armor', system: { equipped: true, armorType: 'medium', defenseBonus: 3 } }; }
-  function equippedLightsaberItem() { return { id: 'target-saber', name: 'Target Saber', type: 'weapon', system: { subtype: 'lightsaber', equipped: true, activated: true } }; }
+  function equippedLightsaberItem() { const w = readiedWeapon('target-saber', { key: SABER_KEY, name: 'Target Saber' }); w.system.subtype = 'lightsaber'; w.system.activated = true; return w; }
 
   const attacker = makeActor({ bab: 7, str: 2 });
   // Baseline is deliberately UNATTUNED (no generic self-built +1 of its own)
@@ -1559,7 +1564,7 @@ ok('Force stacking + conditional-crystal cross-type matrix (A-H): Heart/Hurikane
   }
 
   try {
-    const weapon = { id: 'w-narration', name: 'Blaster Rifle', type: 'weapon', system: { weaponCategory: 'ranged', proficiency: 'rifles', proficient: true, damage: '3d8' } };
+    const weapon = weaponItem('w-narration', { key: 'weapon-blaster-rifle', name: 'Blaster Rifle' }); weapon.system = { ...weapon.system, weaponCategory: 'ranged', proficiency: 'rifles', proficient: true, damage: '3d8' };
 
     const cases = [
       ['plain', {}],
@@ -1572,7 +1577,7 @@ ok('Force stacking + conditional-crystal cross-type matrix (A-H): Heart/Hurikane
     ];
 
     for (const [label, extraOptions] of cases) {
-      const attacker = makeLiveAttacker(`Narration-${label}`);
+      const attacker = makeLiveAttacker(`Narration-${label}`); ownAndReady(attacker, weapon);
       const rollOptions = { suppressChat: true, targetContext: { mode: 'none' }, ...extraOptions };
 
       capturedAttackFormula = null;
@@ -1602,7 +1607,7 @@ ok('Force stacking + conditional-crystal cross-type matrix (A-H): Heart/Hurikane
     // Grapple-state attack penalty case, separately (needs an actor with a
     // grapple-state effect, not an extraOptions field).
     const grabbedEffect = { flags: { swse: { grappleState: { state: 'grabbed', sourceId: 'attacker-x' } } } };
-    const grabbedAttacker = makeLiveAttacker('Narration-Grappled', [grabbedEffect]);
+    const grabbedAttacker = makeLiveAttacker('Narration-Grappled', [grabbedEffect]); ownAndReady(grabbedAttacker, weapon);
     const grabbedRollOptions = { suppressChat: true, targetContext: { mode: 'none' } };
     capturedAttackFormula = null;
     await rollAttackAndDamageWithNarration(grabbedAttacker, weapon, grabbedRollOptions);

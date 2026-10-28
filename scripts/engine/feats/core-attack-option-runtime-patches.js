@@ -1,3 +1,4 @@
+import { getReadiedWeapons } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
 import {
   isLightWeaponForActor as canonicalIsLightWeaponForActor,
@@ -97,7 +98,7 @@ function isObjectOrVehicleTarget(context = {}) {
 function isTwoHandedWeapon(weapon, context = {}) {
   if (context.twoHanded === true || context.wieldedTwoHanded === true) return true;
   const system = weapon?.system ?? {};
-  if (system.twoHanded === true || system.isTwoHanded === true || system.wieldedTwoHanded === true) return true;
+  if (system.twoHanded === true || system.isTwoHanded === true) return true;
   const hands = Number(system.hands ?? system.handedness ?? system.weaponHands);
   if (Number.isFinite(hands) && hands >= 2) return true;
   const text = weaponText(weapon);
@@ -113,8 +114,8 @@ function isLightOrLightsaberWeapon(weapon, actor = null) {
   return canonicalIsLightWeaponForActor(weapon, actor ?? {});
 }
 
-function equippedWeapons(actor) {
-  return actorItems(actor).filter(item => item?.type === 'weapon' && item?.system?.equipped === true);
+function equippedWeapons(actor) { // READY weapons (E4-C1 WP5)
+  return getReadiedWeapons(actor);
 }
 
 function allEquippedWeaponsAllowFlurry(actor, weapon) {

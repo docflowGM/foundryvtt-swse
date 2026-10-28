@@ -26,6 +26,8 @@ import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 
 registerFoundryPathLoader();
 installFoundryShimGlobals();
+const { installReadinessEnvironment, readiedWeapon } = await import('./helpers/ready-weapon-fixture.mjs');
+await installReadinessEnvironment();
 
 const { computeCharacterDerived } = await import(
   '/systems/foundryvtt-swse/scripts/actors/v2/character-actor.js'
@@ -131,14 +133,19 @@ function baseCharacterSystem(overrides = {}) {
 // ── character actors: attacks/actions are still computed normally (unaffected by the vehicle skip) (Test 4) ──
 
 {
-  const weapon1 = { id: 'w1', type: 'weapon', name: 'Blaster', system: { equipped: true, damage: '3d6' } };
+  // E4-C1 WP5: the attack list is the actor's READIED weapons (verified through the shared readiness interface), not `equipped` flags.
+  const weapon1 = readiedWeapon('w1'); weapon1.name = 'Blaster'; weapon1.system.damage = '3d6';
   const actor = {
     id: 'char-skip-check',
     type: 'character',
     name: 'Attack Check Character',
     items: [weapon1],
-    system: baseCharacterSystem()
+    system: { ...baseCharacterSystem(), species: 'Human', size: 'Medium' }
   };
+  const legacyOnly = { id: 'w2', type: 'weapon', name: 'Flag Only', system: { equipped: true, damage: '3d6' } };
+  const flagActor = { id: 'char-flag', type: 'character', name: 'Flag', items: [legacyOnly], system: { ...baseCharacterSystem(), species: 'Human', size: 'Medium' } };
+  computeCharacterDerived(flagActor, flagActor.system);
+  assert.equal(flagActor.system.derived.attacks.list.length, 0, 'a legacy equipped flag is not a ready weapon');
   computeCharacterDerived(actor, actor.system);
   assert.equal(actor.system.derived.attacks.list.length, 1, 'character actors must still compute mirrored attacks');
   assert.ok(actor.system.derived.actions.list.length > 0, 'character actors must still compute mirrored actions');
@@ -148,16 +155,19 @@ function baseCharacterSystem(overrides = {}) {
 
 {
   for (const type of ['npc', 'droid']) {
-    const weapon1 = { id: 'w1', type: 'weapon', name: 'Blaster', system: { equipped: true, damage: '3d6' } };
+    const weapon1 = readiedWeapon('w1'); weapon1.name = 'Blaster'; weapon1.system.damage = '3d6';
     const actor = {
       id: `${type}-skip-check`,
       type,
       name: `${type} Attack Check`,
       items: [weapon1],
-      system: baseCharacterSystem()
+      system: { ...baseCharacterSystem(), species: 'Human', size: 'Medium' }
     };
     computeCharacterDerived(actor, actor.system);
-    assert.equal(actor.system.derived.attacks.list.length, 1, `${type} actors must still compute mirrored attacks`);
+    // E4-C1 WP5: droid anatomy comes from installed appendage components, which the droid refactor has not certified yet, so a droid has no
+    // verifiable READIED weapon and its attack list is empty (fail closed). The list is still computed (not skipped) for every non-vehicle type.
+    assert.equal(actor.system.derived.attacks.list.length, type === 'droid' ? 0 : 1, `${type} actors must still compute mirrored attacks`);
+    assert.ok(Array.isArray(actor.system.derived.attacks.list));
     assert.ok(actor.system.derived.actions.list.length > 0, `${type} actors must still compute mirrored actions`);
   }
 }

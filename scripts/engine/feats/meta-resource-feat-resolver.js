@@ -9,6 +9,7 @@
  */
 
 import { EncounterUseTracker } from "/systems/foundryvtt-swse/scripts/engine/feats/encounter-use-tracker.js";
+import { modificationAttackRerollRules } from "/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-effects.js";
 import { isForcePowerItem } from "/systems/foundryvtt-swse/scripts/utils/item-classification.js";
 import { AttackOutcomeResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-outcome-resolver.js";
 import { AttackRollDiagnostics } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-roll-diagnostics.js";
@@ -378,7 +379,7 @@ export class MetaResourceFeatResolver {
     return rules;
   }
 
-  static getAttackRerollRules(actor) {
+  static getAttackRerollRules(actor, weapon = null, { naturalD20 = null } = {}) {
     const rules = [];
     for (const item of getActorFeatItems(actor)) {
       const itemRules = item?.system?.abilityMeta?.attackRerolls;
@@ -409,11 +410,21 @@ export class MetaResourceFeatResolver {
         description: 'Spend a Force Point to reroll an attack and take the better result.'
       });
     }
+    // Modification V2: rerolls granted by the attacking weapon's certified modifications (e.g. Enhanced Energy Projector on a natural 1)
+    rules.push(...modificationAttackRerollRules(weapon, naturalD20));
     return rules;
   }
 
+  /** Execution-time check: is this rule still offered, and is its once-per limit unspent? Spends the limit when it is. */
+  static async claimAttackReroll(actor, weapon, { ruleId, sourceId, oncePer, naturalD20 } = {}) {
+    const stillEligible = this.getAttackRerollRules(actor, weapon, { naturalD20 }).some((rule) => rule.id === ruleId || (!String(ruleId ?? '').startsWith('mod-') && rule.sourceId === sourceId));
+    if (!stillEligible) return { ok: false, reason: 'no-longer-available' };
+    if (oncePer && (await EncounterUseTracker.checkAndMarkUsed(actor, `reroll-attack-${ruleId}`, { oncePer }))?.allowed !== true) return { ok: false, reason: 'used-this-encounter' };
+    return { ok: true };
+  }
+
   static buildAttackRerollChatOptions(actor, weapon, roll, context = {}) {
-    const rules = this.getAttackRerollRules(actor);
+    const rules = this.getAttackRerollRules(actor, weapon, { naturalD20: roll?.dice?.[0]?.results?.[0]?.result ?? null });
     if (!rules.length || !roll) return [];
     const formula = roll.formula ?? context.formula ?? '1d20';
     const isHit = context.isHit;
@@ -484,6 +495,15 @@ export class MetaResourceFeatResolver {
     if (cost === 'forcePoint' && actorForcePoints(actor) <= 0) {
       ui?.notifications?.warn?.(`${sourceName} requires a Force Point.`);
       return null;
+    }
+
+    // a once-per-encounter reroll is re-validated and its use spent here (it was only displayed as available when the card rendered)
+    if (button.dataset.oncePer || String(button.dataset.ruleId ?? '').startsWith('mod-')) {
+      const claim = await this.claimAttackReroll(actor, actor.items?.get?.(button.dataset.weaponId) ?? null, { ruleId: button.dataset.ruleId || '', sourceId: button.dataset.sourceId, oncePer: button.dataset.oncePer || null, naturalD20: Number(button.dataset.originalNaturalD20) });
+      if (!claim.ok) {
+        ui?.notifications?.warn?.(claim.reason === 'used-this-encounter' ? `${sourceName} has already been used this encounter.` : `${sourceName} is no longer available for this actor.`);
+        return null;
+      }
     }
 
     const formula = button.dataset.formula || '1d20';
@@ -702,8 +722,10 @@ export class MetaResourceFeatResolver {
     // encounter-use limit must not have been consumed since the card was
     // rendered (e.g. by a different attack's reroll in the same sequence
     // using the same limited feature).
-    const currentRules = this.getAttackRerollRules(actor);
-    const stillEligible = currentRules.some(rule => rule.id === ruleId || rule.sourceId === button.dataset.sourceId);
+    const rerollWeapon = actor.items?.get?.(button.dataset.weaponId) ?? null;
+    const rerollNatural = Number(button.dataset.originalNaturalD20);
+    const currentRules = this.getAttackRerollRules(actor, rerollWeapon, { naturalD20: rerollNatural });
+    const stillEligible = currentRules.some(rule => rule.id === ruleId || (!ruleId.startsWith('mod-') && rule.sourceId === button.dataset.sourceId));
     if (!stillEligible) {
       ui?.notifications?.warn?.(`${sourceName} is no longer available for this actor.`);
       return null;
@@ -748,6 +770,12 @@ export class MetaResourceFeatResolver {
       // damage.
       ui?.notifications?.warn?.('Damage has already been applied for this attack; it cannot be rerolled.');
       return { ok: false, conflict: 'damage-already-applied' };
+    }
+
+    // the once-per-encounter use is spent only once the reroll is going to happen (the stale-card / applied-damage checks above passed)
+    if (button.dataset.oncePer && (await EncounterUseTracker.checkAndMarkUsed(actor, `reroll-attack-${ruleId}`, { oncePer: button.dataset.oncePer }))?.allowed !== true) {
+      ui?.notifications?.warn?.(`${sourceName} has already been used this encounter.`);
+      return null;
     }
 
     const formula = button.dataset.formula || activeRevision?.rollResult?.formula || '1d20';

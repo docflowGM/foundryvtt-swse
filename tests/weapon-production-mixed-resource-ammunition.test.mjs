@@ -23,7 +23,9 @@ const rt = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/i
 const { FireStateStore: FireStateStoreRef } = await import('/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js');
 const { CombatOptionResolver } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js');
 const { resolveDamageComposition, buildDamageFormula } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js');
-const { rollAttack, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { rollAttack: rollAttackRaw, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { ownAndReady, installReadinessEnvironment: installRE } = await import('./helpers/ready-weapon-fixture.mjs'); await installRE();
+const rollAttack = (a, w, o) => rollAttackRaw(a, ownAndReady(a, w), o); // WP5-C1: the attacker draws (owns and READIES) the weapon it attacks with
 const { rollDamage } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/damage.js');
 const { SWSERoll } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js');
 const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
@@ -75,7 +77,7 @@ function installHarness({ econAllowed = true } = {}) {
   RollEngine.safeRoll = async (f) => { spent.rolls += 1; return { total: 15, formula: f, dice: [{ results: [{ result: 12 }] }] }; };
   SWSEChat.postRoll = async (p) => { posted.push(p); return {}; };
   AmmoSystem.spendForWorkflow = async () => { spent.ammo += 1; return { success: true, spent: false }; };
-  ActorEngine.updateOwnedItems = async (actor, updates) => { for (const u of updates) { const item = actor.items.get(u._id); for (const [k, v] of Object.entries(u)) if (k !== '_id') setPath(item, k, v); } };
+  ActorEngine.updateOwnedItems = async (actor, updates) => { for (const u of updates) { const item = actor.items.get(u._id); for (const [k, v] of Object.entries(u)) if (k !== '_id') setPath(item, k, v); } return updates.map((u) => actor.items.get(u._id)).filter(Boolean); };   // resolves with the documents it changed, as Foundry does
   ActionEconomyConsumption.spend = async (actor, type) => { if (!econAllowed) return { allowed: false, permitted: false, rollback: async () => {} }; spent.actions.push(type); return { allowed: true, committed: true, rollback: async () => { spent.actions.pop(); } }; };
 }
 const restoreHarness = () => { RollEngine.safeRoll = origs.RE; SWSEChat.postRoll = origs.post; AmmoSystem.spendForWorkflow = origs.spendAmmo; ActorEngine.updateOwnedItems = origs.upd; ActionEconomyConsumption.spend = origs.econ; AmmoSystem.consumeAmmunition = origs.consume; AmmoSystem.isTrackingEnabled = origs.track; globalThis.game = undefined; };

@@ -11,8 +11,9 @@
  */
 
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { LightsaberLightSync } from "/systems/foundryvtt-swse/scripts/utils/lightsaber-light-sync.js";
+import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js";
+import { getReadiedWeapons } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 
 export class Phase3CrystalSystem {
   /**
@@ -55,13 +56,8 @@ export class Phase3CrystalSystem {
     if (!unstableFound) return;
 
     try {
-      // Deactivate weapon
-      await ActorEngine.updateEmbeddedDocuments(actor, "Item", [
-        {
-          _id: weapon.id,
-          "system.equippable.equipped": false
-        }
-      ]);
+      // Deactivate weapon: the blade goes out (activation authority). The weapon stays drawn -- posture is never changed here.
+      await InventoryEngine.setActivated(actor, weapon.id, false, { free: true });
 
       // Optional: Cinematic flicker before light turns off
       if (weapon.flags?.swse?.emitLight === true) {
@@ -155,7 +151,11 @@ export class Phase3CrystalSystem {
       i => i.type === "weapon" && i.system?.subtype === "lightsaber"
     ) ?? [];
 
-    return weapons.find(w => w.system?.equippable?.equipped === true) || null;
+    // The lightsaber whose READIED posture is verified (shared combat-readiness interface). Activation and installed crystals are separate facts.
+    let ready = [];
+    try { ready = getReadiedWeapons(actor); } catch { ready = []; }
+    const readyIds = new Set(ready.map(w => w.id));
+    return weapons.find(w => readyIds.has(w.id)) || null;
   }
 
   /**

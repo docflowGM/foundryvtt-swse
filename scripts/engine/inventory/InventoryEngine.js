@@ -11,14 +11,32 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { LightsaberLightSync } from "/systems/foundryvtt-swse/scripts/utils/lightsaber-light-sync.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
-import { isEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
-import { isItemEquipped, isAlwaysReadiedWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { isEnergyShieldItem, isArmorItemEquipped, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
 import { resolveActionCost } from "/systems/foundryvtt-swse/scripts/engine/feats/action-speed-runtime-patches.js";
 import { ActionEconomyConsumption } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js";
+import { planEquipmentIntent, executeEquipmentIntent, reconcileEquipmentTransaction, RECONCILE_STATUS, GM_LOCAL_CONTEXT, OUTCOME as EQUIPMENT_OUTCOME, EquipmentIntentError } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-state-coordinator.js";
+import { acquireRequestId, settleRequestId } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-request-identity.js";
+import { logEquipmentEvent } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-diagnostics.js";
+import { readCombatReadiness, isWeaponHeld } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
+import { readJournal, unresolvedItemIds, JOURNAL_STATUS } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-transaction-journal.js";
 
 const STACKABLE_TYPES = ["consumable", "equipment", "misc", "ammo"];
+
 const NON_STACKABLE_TYPES = ["weapon", "armor", "shield", "lightsaber"];
+
+/**
+ * Equipment-journal evidence for one Item (read-only): { readable, requestIds }. An unreadable journal is reported as such, never as "nothing
+ * pending": deleting a weapon then could destroy the evidence G36 compares.
+ */
+function equipmentEvidenceFor(actor, itemId) {
+  try {
+    const journal = readJournal(actor?.flags?.swse?.equipmentTxn);
+    if (journal.status === JOURNAL_STATUS.INVALID) return { readable: false, requestIds: [] };
+    if (journal.status !== JOURNAL_STATUS.VALID) return { readable: true, requestIds: [] };
+    return { readable: true, requestIds: (unresolvedItemIds(journal.entries).get(itemId) ?? []).map((t) => t.requestId) };
+  } catch { return { readable: false, requestIds: [] }; }
+}
 
 function isTruthyState(value) {
   if (value === true || Number(value) === 1) return true;
@@ -36,22 +54,31 @@ async function spendItemAction(actor, actionType, item, reason) {
 
 const isWeaponItem = (item) => ["weapon", "lightsaber"].includes(String(item?.type ?? "").toLowerCase());
 
-function equipMirrors(item, update, next) {
-  update["system.equipped"] = next;
-  if (item.system?.isEquipped !== undefined) update["system.isEquipped"] = next;
-  if (item.system?.equippable && typeof item.system.equippable === "object") update["system.equippable.equipped"] = next;
-  if (item.flags?.swse?.equipped !== undefined) update["flags.swse.equipped"] = next;
-  // Legacy shapes that isItemEquipped() also reads: keep them in step so a stowed weapon cannot still read as drawn.
-  // Pure equip aliases mirror both ways; the activation-flavored ones (active) are only ever cleared on stow.
-  const system = item.system ?? {};
-  if (system.readied !== undefined) update["system.readied"] = next;
-  if (system.equippable && typeof system.equippable === "object" && system.equippable.active !== undefined) update["system.equippable.active"] = next;
-  if (!next) {
-    if (system.active !== undefined) update["system.active"] = false;
-    if (system.activation && typeof system.activation === "object" && system.activation.active !== undefined) update["system.activation.active"] = false;
-  }
-  return update;
+async function readWeaponEntry(actor, itemId, deps = {}) {
+  const readiness = readCombatReadiness(actor, deps);
+  const entry = readiness.state?.weapons.find((w) => w.itemId === itemId) ?? null;
+  return entry ? { ...entry, speciesEvidence: readiness.speciesEvidence.status } : null;
 }
+
+function reasonOfStatus(status, plan, outcome) {
+  if (status === EQUIPMENT_OUTCOME.REJECTED_PRECONDITION) return plan?.issues?.[0]?.code ?? "rejected";
+  if (status === EQUIPMENT_OUTCOME.NOT_ESTABLISHED) return "target-posture-not-established";
+  return String(status).toLowerCase().replace(/_/g, "-");
+}
+
+function messageOfStatus(status, plan, outcome) {
+  switch (status) {
+    case EQUIPMENT_OUTCOME.CHOICE_REQUIRED: return "Choose the appendages (and grip) to use; nothing is selected automatically.";
+    case EQUIPMENT_OUTCOME.NO_AUTHORITATIVE_EXECUTOR: return "Equipment changes need an authorized GM execution context; nothing was changed.";
+    case EQUIPMENT_OUTCOME.REJECTED_NOT_GM: return "Only a GM client can change equipment state right now; nothing was changed.";
+    case EQUIPMENT_OUTCOME.DEFERRED_RULES_REVIEW: return "That change has no established rule yet (deferred for rules review); nothing was changed.";
+    case EQUIPMENT_OUTCOME.CONFLICT_UNRESOLVED: return "That would collide with another weapon; stow or move it first. Nothing was changed.";
+    case EQUIPMENT_OUTCOME.UNRESOLVED_TRANSACTION: return "An earlier equipment change for this weapon is unresolved.";
+    case EQUIPMENT_OUTCOME.COMMITTED: return null;
+    default: return (outcome?.issues ?? plan?.issues ?? [])[0]?.message ?? null;
+  }
+}
+
 
 function isEnergyShield(item) {
   return isEnergyShieldItem(item);
@@ -62,16 +89,14 @@ export class InventoryEngine {
   /**
    * Toggle equip status for an item.
    * For armor: unequip all other armor first (single equipped rule).
+   * Weapons are NOT handled here: their posture is owned by the equipment-state coordinator (see requestWeaponPosture).
    */
   static async toggleEquip(actor, itemId) {
     const item = actor?.items?.get(itemId);
     if (!actor || !item) return;
 
-    // Ordinary weapons: equipped state IS drawn state, so Draw/Stow (Move / Quick Draw Swift) owns it; never a free toggle.
-    if (isWeaponItem(item)) {
-      if (isAlwaysReadiedWeapon(item, actor)) return { ok: false, reason: "always-readied" };
-      return this.toggleWeaponReadied(actor, itemId);
-    }
+    // Weapons: posture is owned by the equipment-state coordinator (Draw/Stow cost, explicit appendages and grip); never a free toggle.
+    if (isWeaponItem(item)) return this.toggleWeaponReadied(actor, itemId);
 
     const currentEquipped = isTruthyState(item.system?.equipped)
       || isTruthyState(item.system?.isEquipped)
@@ -151,7 +176,7 @@ export class InventoryEngine {
    * Set an item's active state. A player-requested change is a Swift Action through the existing action economy;
    * `free: true` is for future automatic state changes. A failed spend mutates nothing.
    */
-  static async setActivated(actor, itemId, activated, { free = false } = {}) {
+  static async setActivated(actor, itemId, activated, { free = false, deps = {} } = {}) {
     const item = actor?.items?.get?.(itemId);
     if (!actor || !item) return { ok: false, reason: "missing-item" };
     const next = activated === true;
@@ -163,8 +188,8 @@ export class InventoryEngine {
     const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor });
     const shield = isEnergyShield(item);
 
-    if (next && visualProfile.isLightsaber && !isItemEquipped(item, actor)) return { ok: false, reason: "draw-before-activating" };
-    if (next && shield && !isItemEquipped(item, actor)) return { ok: false, reason: "equip-before-activating" };
+    if (next && visualProfile.isLightsaber && !(await this.isWeaponDrawn(actor, item, { deps }))) return { ok: false, reason: "draw-before-activating" };
+    if (next && shield && !isArmorItemEquipped(item)) return { ok: false, reason: "equip-before-activating" };
 
     if (visualProfile.isLightsaber && next) {
       update["flags.foundryvtt-swse.emitLight"] = true;
@@ -208,62 +233,121 @@ export class InventoryEngine {
     return { ok: true, changed: true, activated: next };
   }
 
-  /** Draw / stow a weapon (the owned Item's equipped state is the drawn state). Move Action, Swift with Quick Draw (existing feat metadata). */
-  static async setWeaponReadied(actor, itemId, readied) {
+  /**
+   * Weapon posture: the ONLY entry point the inventory layer uses to change a weapon's posture. It builds nothing itself: the explicit intent goes
+   * to the equipment-state coordinator (plan -> confirm -> journal -> field-scoped write -> verify -> spend -> finalize), which prices Draw/Stow and
+   * Quick Draw through the existing action authority. No appendage or grip is ever chosen here; a missing choice comes back as
+   * `{ ok:false, status:'CHOICE_REQUIRED', choices }`. Execution is GM-local only (the coordinator refuses otherwise and writes nothing).
+   * @param {Actor} actor
+   * @param {{type:'stow'|'equip'|'ready', itemId:string, appendageIds?:string[], purpose?:string, grip?:string}} intent
+   * @param {{requestId?:string, deps?:object}} [options]
+   * @returns {Promise<{ok:boolean, changed:boolean, status:string, reason:string, message:string|null, plan?:object, outcome?:object, choices?:object[]}>}
+   */
+  static async requestWeaponPosture(actor, intent, { requestId = null, deps = undefined } = {}) {
+    // G18: the request id belongs to the logical action and is fixed at the intent, BEFORE planning, so every retry of the same action (a second
+    // click, a retry after an unknown or unresolved outcome, the choice dialog's follow-up) carries the same id into the coordinator.
+    let identity;
+    try {
+      identity = acquireRequestId(actor, intent, { requestId });
+    } catch (err) {
+      if (!(err instanceof EquipmentIntentError)) throw err;
+      return { ok: false, changed: false, status: "REJECTED_INVALID", reason: "invalid-intent", message: err.message, requestId: requestId ?? null };
+    }
+    const id = identity.requestId;
+    let plan;
+    try {
+      plan = await planEquipmentIntent(actor, intent, deps);
+    } catch (err) {
+      settleRequestId(identity.key, id, "REJECTED_INVALID");
+      if (!(err instanceof EquipmentIntentError)) throw err;
+      return { ok: false, changed: false, status: "REJECTED_INVALID", reason: "invalid-intent", message: err.message, requestId: id };
+    }
+    const done = (status, extra = {}) => ({ changed: false, status, reason: reasonOfStatus(status, plan, extra.outcome), message: messageOfStatus(status, plan, extra.outcome), plan, requestId: id, ...extra });
+    logEquipmentEvent("plan", { actorId: actor?.id, itemId: intent?.itemId, requestId: id, reused: identity.reused, intent: intent?.type, status: plan.status, planDigest: plan.planDigest ?? null });
+    if (plan.status !== EQUIPMENT_OUTCOME.PLANNED) {
+      // CHOICE_REQUIRED keeps the id: the follow-up with the chosen appendages/grip is a new intent (new digest) that the caller sends with this id
+      settleRequestId(identity.key, id, plan.status);
+      if (plan.status === EQUIPMENT_OUTCOME.NO_CHANGE) return { ok: true, ...done(plan.status) };
+      return { ok: false, ...done(plan.status, { choices: plan.choices, conflicts: plan.conflicts }) };
+    }
+    const outcome = await executeEquipmentIntent(actor, { requestId: id, intent, planDigest: plan.planDigest }, { context: GM_LOCAL_CONTEXT }, deps);
+    settleRequestId(identity.key, id, outcome.status);
+    const ok = outcome.status === EQUIPMENT_OUTCOME.COMMITTED;
+    logEquipmentEvent("execute", { actorId: actor?.id, itemId: intent?.itemId, requestId: id, intent: intent?.type, status: outcome.status, phase: outcome.phase ?? null, verified: outcome.verified === true, finalized: outcome.finalized === true, spend: outcome.spend ?? null, issues: (outcome.issues ?? []).map((i) => i.code) });
+    return { ok, ...done(outcome.status, { outcome, changed: ok }) };
+  }
+
+  /**
+   * G36: GM-only reconciliation of an unresolved equipment request. Without `resolution` it returns the fresh evidence and the decisions it
+   * admits (writes nothing); with one it applies that GM decision through the coordinator (never a replay, never an action spend or undo). When the
+   * request is resolved, its id is released so the next click on the same action starts a new logical action.
+   * @param {Actor} actor
+   * @param {string} requestId
+   * @param {{resolution?:'close-not-applied'|'finalize'|'finalize-without-spend'|'compensate', note?:string, deps?:object}} [options]
+   */
+  static async reconcileWeaponRequest(actor, requestId, { resolution = undefined, note = undefined, deps = undefined } = {}) {
+    const result = await reconcileEquipmentTransaction(actor, requestId, { context: GM_LOCAL_CONTEXT, ...(resolution ? { resolution } : {}), ...(note ? { note } : {}) }, deps);
+    if ((result.status === RECONCILE_STATUS.RECONCILED && result.resolved) || result.status === RECONCILE_STATUS.ALREADY_RESOLVED) {
+      const digest = result.evidence?.intentDigest ?? result.intentDigest ?? null;
+      if (digest) settleRequestId(`${actor?.id ?? ""}:${digest}`, requestId, "RECONCILED");
+    }
+    logEquipmentEvent("reconcile", { actorId: actor?.id, requestId, resolution: resolution ?? null, status: result.status, phaseBefore: result.phaseBefore ?? result.evidence?.phase ?? null, phaseAfter: result.phaseAfter ?? null, classification: result.evidence?.classification ?? null, spend: result.evidence?.spend ?? null });
+    return result;
+  }
+
+  /** Whether a weapon is VERIFIED held (effective EQUIPPED or READIED) by the equipment-state reader. Declared posture alone is never enough. */
+  static async isWeaponDrawn(actor, item, { deps = {} } = {}) {
+    // the shared interface fails closed without authoritative species evidence, an unresolved transaction or uncertified identity
+    return isWeaponHeld(actor, item, deps);
+  }
+
+  /**
+   * Draw / stow a weapon. Stowing is a complete intent and goes to the coordinator. Drawing needs explicit appendages (and a grip for READIED) in
+   * `options`; without them this returns CHOICE_REQUIRED and changes nothing. Move Action, Swift with Quick Draw: priced by the coordinator
+   * through the existing action authority.
+   */
+  static async setWeaponReadied(actor, itemId, readied, options = {}) {
     const item = actor?.items?.get?.(itemId);
     if (!actor || !item) return { ok: false, reason: "missing-item" };
     if (!isWeaponItem(item)) return { ok: false, reason: "not-weapon" };
-    if (isAlwaysReadiedWeapon(item, actor)) return { ok: false, reason: "always-readied" };
-    const next = readied === true;
-    const current = isItemEquipped(item, actor);
-    if (current === next) return { ok: true, changed: false, readied: current };
-
-    const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor });
-    if (!next && visualProfile?.isLightsaber === true && isItemActivated(item)) return { ok: false, reason: "deactivate-before-stowing" };
-
-    const mutation = resolveActionCost(actor, "drawOrHolsterWeapon", { workflowValidated: true, weaponId: item.id, direction: next ? "draw" : "holster" });
-    const actionType = mutation?.mutatedActionCost ?? mutation?.baseActionCost ?? "move";
-    const spend = await spendItemAction(actor, actionType, item, next ? "Draw" : "Stow");
-    if (!spend.ok) return { ok: false, reason: "action-unavailable", actionType };
-
-    try {
-      await ActorEngine.updateOwnedItems(actor, [equipMirrors(item, { _id: item.id }, next)], { source: "InventoryEngine.setWeaponReadied" });
-    } catch (err) {
-      await spend.rollback?.();
-      throw err;
+    const requestOptions = { requestId: options.requestId ?? null, deps: options.deps };
+    if (readied !== true) return this.requestWeaponPosture(actor, { type: "stow", itemId }, requestOptions);
+    const entry = await readWeaponEntry(actor, itemId, options.deps ?? {});
+    // READIED is success only when it is VERIFIED (effective). A stored EQUIPPED weapon is held, not ready; a declared READIED that the canonical
+    // resolvers do not establish is not ready either. A held weapon that still needs the transition falls through to the coordinator, which
+    // returns DEFERRED_RULES_REVIEW (EQ-001) without writing or spending; nothing is inferred here.
+    if (entry?.effectivePosture === "READIED" && !entry.pending && !(entry.gates?.length)) return { ok: true, changed: false, status: "NO_CHANGE", reason: "no-change", readied: true };
+    if (entry?.record?.status === "valid" && entry.record.posture === "READIED") {
+      return { ok: false, changed: false, status: "READINESS_NOT_VERIFIED", reason: "declared-readied-not-verified", readied: false, message: "This weapon is recorded as ready, but its appendages, grip or evidence are not verified, so it is not treated as ready.", gates: entry.gates ?? [], issues: [...(entry.effective?.issues ?? []), ...(entry.issues ?? [])].filter((i) => i.severity !== "info").map((i) => i.code) };
     }
-    if (visualProfile?.isLightsaber === true) await LightsaberLightSync.syncActorTokenLight(actor, item);
-    return { ok: true, changed: true, readied: next, actionType };
+    const intent = { type: "ready", itemId, ...(options.appendageIds ? { appendageIds: options.appendageIds } : {}), ...(options.grip ? { grip: options.grip } : {}) };
+    return this.requestWeaponPosture(actor, intent, requestOptions);
   }
 
-  static async toggleWeaponReadied(actor, itemId) {
+  static async toggleWeaponReadied(actor, itemId, options = {}) {
     const item = actor?.items?.get?.(itemId);
     if (!item) return { ok: false, reason: "missing-item" };
-    return this.setWeaponReadied(actor, itemId, !isItemEquipped(item, actor));
+    if (!isWeaponItem(item)) return { ok: false, reason: "not-weapon" };
+    const entry = await readWeaponEntry(actor, itemId, options.deps ?? {});
+    const held = entry?.record?.status === "valid" && entry.record.posture !== "STOWED";
+    return this.setWeaponReadied(actor, itemId, !held, options);
   }
 
-  /** Quick Draw + Weapon Proficiency (Lightsabers): draw AND ignite as ONE Swift Action, only when the existing feat resolver exposes the combined effect. */
-  static async drawAndActivateLightsaber(actor, itemId) {
+  /**
+   * Draw AND ignite a lightsaber as ONE combined action (Quick Draw + Weapon Proficiency (Lightsabers), Swift). It is a single coordinator
+   * `ready-ignite` intent: one plan, one journaled transaction covering the posture record, the grip and the activation fields, one spend (spend-last),
+   * and usability only after FINALIZED. This layer chooses nothing: appendages and grip come from `options` (otherwise CHOICE_REQUIRED, nothing
+   * written). Eligibility and cost come from the existing combined-feat authority through the coordinator.
+   */
+  static async drawAndActivateLightsaber(actor, itemId, options = {}) {
     const item = actor?.items?.get?.(itemId);
     if (!actor || !item) return { ok: false, reason: "missing-item" };
-    const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor });
-    if (!visualProfile?.isLightsaber) return { ok: false, reason: "not-lightsaber" };
-    if (isItemEquipped(item, actor) || isItemActivated(item)) return { ok: false, reason: "not-stowed-and-inactive" };
-    const mutation = resolveActionCost(actor, "drawOrHolsterWeapon", { workflowValidated: true, weaponId: item.id, direction: "draw" });
-    const combined = mutation?.combinedEffects?.find((effect) => effect?.actionId === "drawAndIgniteLightsaber");
-    if (!combined) return { ok: false, reason: "combined-action-unavailable" };
-    const actionType = combined.actionCost ?? "swift";
-    const spend = await spendItemAction(actor, actionType, item, "Draw & Ignite");
-    if (!spend.ok) return { ok: false, reason: "action-unavailable", actionType };
-    const update = equipMirrors(item, { _id: item.id, "system.activated": true, ...(item.system?.active !== undefined ? { "system.active": true } : {}), "flags.foundryvtt-swse.emitLight": true, "flags.foundryvtt-swse.bladeColor": visualProfile.bladeColor }, true);
-    try {
-      await ActorEngine.updateOwnedItems(actor, [update], { source: "InventoryEngine.drawAndActivateLightsaber" });
-    } catch (err) {
-      await spend.rollback?.();
-      throw err;
-    }
-    await LightsaberLightSync.syncActorTokenLight(actor, item);
-    return { ok: true, changed: true, readied: true, activated: true, actionType };
+    if (!WeaponVisualProfileResolver.isLightsaber(item)) return { ok: false, reason: "not-lightsaber" };
+    const intent = { type: "ready-ignite", itemId, ...(options.appendageIds ? { appendageIds: options.appendageIds } : {}), ...(options.grip ? { grip: options.grip } : {}) };
+    const result = await this.requestWeaponPosture(actor, intent, { requestId: options.requestId ?? null, deps: options.deps });
+    // light sync is a consumer of the finalized state; it never decides readiness
+    if (result.ok && result.changed) await LightsaberLightSync.syncActorTokenLight(actor, item);
+    return result;
   }
 
 
@@ -393,6 +477,20 @@ export class InventoryEngine {
   static async removeItem(actor, itemId) {
     const item = actor?.items?.get?.(itemId);
     if (!actor || !item) return;
+    // an unresolved equipment transaction on this Item must be reconciled first, and a weapon is not removed while the journal is unreadable:
+    // deleting the Item would destroy the evidence G36 compares. (This guards this route only, not direct ActorEngine deletions.)
+    const evidence = equipmentEvidenceFor(actor, itemId);
+    if (isWeaponItem(item) && !evidence.readable) {
+      globalThis.ui?.notifications?.warn?.(`${item.name}: the actor's equipment transaction journal is unreadable, so weapons are not removed until a GM has inspected it.`);
+      logEquipmentEvent("remove-refused", { actorId: actor.id, itemId, reason: "equipment-journal-unreadable" });
+      return { ok: false, reason: "equipment-journal-unreadable" };
+    }
+    const pending = evidence.requestIds;
+    if (pending.length) {
+      globalThis.ui?.notifications?.warn?.(`${item.name}: an equipment change on this item did not finish. A GM must resolve it before the item can be removed.`);
+      logEquipmentEvent("remove-refused", { actorId: actor.id, itemId, requestIds: pending });
+      return { ok: false, reason: "unresolved-equipment-transaction", requestIds: pending };
+    }
 
     await ActorEngine.deleteEmbeddedDocuments(actor, "Item", [itemId], {
       source: "InventoryEngine.removeItem"

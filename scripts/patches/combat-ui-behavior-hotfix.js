@@ -1,6 +1,6 @@
 import { SWSEChat } from '/systems/foundryvtt-swse/scripts/chat/swse-chat.js';
 import { rollAttack } from '/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js';
-import { buildFullAttackSequence, FULL_ATTACK_PACKAGES, getEquippedWeapons, getWeaponGroup } from '/systems/foundryvtt-swse/scripts/combat/multi-attack.js';
+import { buildFullAttackSequence, FULL_ATTACK_PACKAGES, getReadiedWeaponSelection, getWeaponGroup } from '/systems/foundryvtt-swse/scripts/combat/multi-attack.js';
 import { ActionEconomyConsumption } from '/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js';
 import { showRollModifiersDialog } from '/systems/foundryvtt-swse/scripts/rolls/roll-config.js';
 import {
@@ -493,7 +493,7 @@ function fallbackMultiAttackPlan(actor, packageType, weapon) {
     legal: !!weapon,
     packageType,
     actionType: 'full-round',
-    warnings: weapon ? [] : ['No weapon equipped. Equip a weapon before using this attack.'],
+    warnings: weapon ? [] : ['No ready weapon. Ready one weapon (or choose which ready weapon to use) before using this attack.'],
     breakdown: [`${packageType === FULL_ATTACK_PACKAGES.TRIPLE_ATTACK ? 'Triple' : 'Double'} Attack fallback: ${penalty} per attack.`],
     attacks: Array.from({ length: count }, (_, index) => ({
       weapon,
@@ -508,7 +508,7 @@ function fallbackMultiAttackPlan(actor, packageType, weapon) {
 }
 
 function equippedWeaponForSpec(actor, spec = {}) {
-  const equipped = getEquippedWeapons(actor);
+  const equipped = getReadiedWeaponSelection(actor);
   const weapons = [equipped.primary, equipped.offhand]
     .filter(Boolean)
     .filter((weapon, index, list) => list.findIndex(other => other?.id === weapon?.id) === index);
@@ -553,7 +553,7 @@ async function executeMultiAttackFromElement(element, kind) {
     return;
   }
 
-  const equipped = getEquippedWeapons(actor);
+  const equipped = getReadiedWeaponSelection(actor);
   const packageType = kind === 'triple' ? FULL_ATTACK_PACKAGES.TRIPLE_ATTACK : FULL_ATTACK_PACKAGES.DOUBLE_ATTACK;
   let plan = buildFullAttackSequence(actor, { requestedPackage: packageType, primaryWeapon: equipped.primary });
   if (!plan?.legal) plan = fallbackMultiAttackPlan(actor, packageType, equipped.primary);

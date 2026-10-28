@@ -136,7 +136,9 @@ console.log('  [5/6] the penalty is presence-based, not effect-count-based: two 
 //        bearing 'grapple-state-penalty' entry, and atkBonus reflects it.
 
 {
-  const { rollAttack } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+  const { rollAttack: rollAttackRaw } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+  const { ownAndReady, installReadinessEnvironment: installRE } = await import('./helpers/ready-weapon-fixture.mjs'); await installRE();
+  const rollAttack = (a, w, o) => rollAttackRaw(a, ownAndReady(a, w), o); // WP5-C1: the attacker draws (owns and READIES) the weapon it attacks with
   const { buildVirtualUnarmedWeapon } = await import('/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js');
   const { RollEngine } = await import('/systems/foundryvtt-swse/scripts/engine/roll-engine.js');
 
@@ -176,12 +178,11 @@ console.log('  [5/6] the penalty is presence-based, not effect-count-based: two 
     // text-only classifier this test was originally written against) --
     // both must be cleared too, or this fixture is still an unarmed strike
     // wearing a Blaster Rifle's name.
-    const normalNamedWeapon = {
-      ...virtualWeapon,
-      name: 'Blaster Rifle',
-      flags: { swse: { ...virtualWeapon.flags?.swse, unarmed: false, virtual: false } },
-      system: { ...virtualWeapon.system, weaponType: 'rifle', properties: ['military'], isUnarmed: false, naturalWeapon: false, isNaturalWeapon: false }
-    };
+    // E4-C1 WP5-C1: the attack gate requires a weapon the attacker owns and has READIED (a disguised virtual strike no longer qualifies as an
+    // ordinary weapon), so the "normal weapon" is a canonical blaster pistol; the penalty under test is independent of the weapon.
+    const { weaponItem: canonicalWeapon } = await import('./helpers/ready-weapon-fixture.mjs');
+    const normalNamedWeapon = canonicalWeapon('gp-weapon', { name: 'Blaster Pistol' });
+    normalNamedWeapon.system = { ...normalNamedWeapon.system, weaponType: 'pistol', damage: virtualWeapon.system.damage };
 
     const baselineResult = await rollAttack(baselineAttacker, normalNamedWeapon, { suppressChat: true, targetContext: { mode: 'none' } });
     const grabbedResult = await rollAttack(grabbedAttacker, normalNamedWeapon, { suppressChat: true, targetContext: { mode: 'none' } });
@@ -201,7 +202,9 @@ console.log('  [5/6] the penalty is presence-based, not effect-count-based: two 
 
     // Exempt weapon while Grabbed: no penalty, no ledger entry, roll parity
     // with baseline.
-    const grabbedUnarmedResult = await rollAttack(grabbedAttacker, virtualWeapon, { suppressChat: true, targetContext: { mode: 'none' } });
+    // WP5-C2 R2: a virtual unarmed strike is bound to the actor it was built for, so each attacker uses the strike built for them
+    const grabbedVirtualWeapon = buildVirtualUnarmedWeapon(grabbedAttacker, { name: 'Test Strike' });
+    const grabbedUnarmedResult = await rollAttack(grabbedAttacker, grabbedVirtualWeapon, { suppressChat: true, targetContext: { mode: 'none' } });
     const baselineUnarmedResult = await rollAttack(baselineAttacker, virtualWeapon, { suppressChat: true, targetContext: { mode: 'none' } });
     assert.equal(
       grabbedUnarmedResult.roll.swseAttackContext.attackBonus,

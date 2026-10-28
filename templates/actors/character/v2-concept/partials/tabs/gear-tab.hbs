@@ -85,6 +85,7 @@
   {{#if entry.weaponConfiguration}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--configuration" data-action="change-weapon-configuration" data-item-id="{{entry.id}}">Configure</button>{{/if}}
   {{#if entry.weaponPowerSource}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--power is-{{entry.weaponPowerSource.state}}" data-action="set-power-source" data-item-id="{{entry.id}}" title="{{entry.weaponPowerSource.title}}">Power: {{entry.weaponPowerSource.stateLabel}}</button>{{/if}}
   {{#if entry.weaponReadiness.canDrawStow}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--readiness {{#if entry.weaponReadiness.drawn}}is-ready{{else}}is-inactive{{/if}}" data-action="toggle-weapon-readiness" data-item-id="{{entry.id}}"{{#if entry.weaponReadiness.stowBlocked}} disabled title="Deactivate the lightsaber before stowing it."{{/if}}>{{entry.weaponReadiness.drawStowLabel}}</button>{{/if}}
+  {{#if entry.weaponReadiness.canReconcile}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--reconcile" data-action="reconcile-weapon-transaction" data-item-id="{{entry.id}}" title="An equipment change on this weapon did not finish. Review the evidence and decide how to close it (GM only).">Resolve</button>{{/if}}
 {{else}}
                   {{#if entry.canToggleActivated}}
                     <button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--activation {{#if entry.activated}}is-active{{/if}}" data-action="toggle-activated" data-item-id="{{entry.id}}" title="{{entry.activationTitle}}">{{entry.activationLabel}}</button>
@@ -225,6 +226,7 @@
   {{#if entry.weaponConfiguration}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--configuration" data-action="change-weapon-configuration" data-item-id="{{entry.id}}">Configure</button>{{/if}}
   {{#if entry.weaponPowerSource}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--power is-{{entry.weaponPowerSource.state}}" data-action="set-power-source" data-item-id="{{entry.id}}" title="{{entry.weaponPowerSource.title}}">Power: {{entry.weaponPowerSource.stateLabel}}</button>{{/if}}
   {{#if entry.weaponReadiness.canDrawStow}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--readiness {{#if entry.weaponReadiness.drawn}}is-ready{{else}}is-inactive{{/if}}" data-action="toggle-weapon-readiness" data-item-id="{{entry.id}}"{{#if entry.weaponReadiness.stowBlocked}} disabled title="Deactivate the lightsaber before stowing it."{{/if}}>{{entry.weaponReadiness.drawStowLabel}}</button>{{/if}}
+  {{#if entry.weaponReadiness.canReconcile}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--reconcile" data-action="reconcile-weapon-transaction" data-item-id="{{entry.id}}" title="An equipment change on this weapon did not finish. Review the evidence and decide how to close it (GM only).">Resolve</button>{{/if}}
 {{else}}
               {{#if entry.canToggleActivated}}
                 <button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--activation {{#if entry.activated}}is-active{{/if}}" data-action="toggle-activated" data-item-id="{{entry.id}}" title="{{entry.activationTitle}}">{{entry.activationLabel}}</button>
@@ -235,6 +237,7 @@
 {{/if}}
               {{#if entry.canEdit}}
                 <button type="button" class="swse-concept-btn swse-edit-only" data-action="configure" data-item-id="{{entry.id}}">Customize</button>
+                {{#if entry.modificationV2.hasInstalled}}<span class="swse-concept-mods">{{#each entry.modificationV2.installed}}<span class="swse-concept-chip swse-concept-chip--mod{{#if provisional}} is-provisional{{/if}}" title="{{#if provisional}}Provisional GM-adjudicated install; effects are not automated{{/if}}">{{label}}</span>{{/each}}</span>{{/if}}
                 {{#if entry.canOpenForceAlchemy}}<button type="button" class="swse-concept-btn swse-concept-btn--alchemy" data-action="force-alchemy" data-item-id="{{entry.id}}">Alchemy</button>{{/if}}
                 <button type="button" class="swse-concept-btn swse-edit-only" data-action="sell-item" data-item-id="{{entry.id}}">Sell</button>
               {{/if}}

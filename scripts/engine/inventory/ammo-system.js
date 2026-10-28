@@ -17,6 +17,7 @@
  * - Routes updates through ActorEngine for owned items
  */
 
+import { effectiveShotCapacity } from "/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-effects.js";
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { isRangedWeapon as canonicalIsRangedWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 
@@ -69,8 +70,16 @@ export class AmmoSystem {
   /**
    * Return true when this weapon has a configured ammunition pool.
    */
+  /**
+   * Effective tracked shot capacity: the weapon's own pool, adjusted by certified effects of installed Modification V2 instances
+   * (derived on every read, never written into the Item, so removing the modification restores the original capacity).
+   */
+  static maxAmmo(weapon) {
+    return effectiveShotCapacity(weapon, asNumber(weapon?.system?.ammunition?.max, 0));
+  }
+
   static weaponUsesAmmunition(weapon) {
-    return asNumber(weapon?.system?.ammunition?.max, 0) > 0;
+    return this.maxAmmo(weapon) > 0;
   }
 
   /**
@@ -119,7 +128,7 @@ export class AmmoSystem {
       tracked: true,
       amount: required,
       current: status.current,
-      max: asNumber(weapon?.system?.ammunition?.max, 0),
+      max: this.maxAmmo(weapon),
       deficit: status.deficit,
       message: status.message,
       options
@@ -159,7 +168,7 @@ export class AmmoSystem {
   static async rollbackSpend(actor, weapon, spendResult = {}) {
     if (!spendResult?.spent || !weapon) return { success: true, skipped: true };
     const current = asNumber(weapon.system?.ammunition?.current, 0);
-    const max = asNumber(weapon.system?.ammunition?.max, 0);
+    const max = this.maxAmmo(weapon);
     const restoreTo = Math.min(max || Number.POSITIVE_INFINITY, asNumber(spendResult.previousAmmo, current + asNumber(spendResult.amount, 0)));
     return this.setAmmunition(actor ?? weapon.actor, weapon, restoreTo);
   }
@@ -232,7 +241,7 @@ export class AmmoSystem {
       return { success: false, message: 'Invalid actor or weapon' };
     }
 
-    const maxAmmo = weapon.system?.ammunition?.max ?? 0;
+    const maxAmmo = this.maxAmmo(weapon);
     const currentAmmo = weapon.system?.ammunition?.current ?? 0;
 
     if (maxAmmo === 0) {
@@ -240,8 +249,10 @@ export class AmmoSystem {
     }
 
     if (currentAmmo === maxAmmo) {
-      // Phase 5D-G: a reload-after-each-shot weapon is mechanically unloaded even with a full pool -- the reload action still restores it
-      await this.#clearFireStateReload(actor, weapon);
+      // Phase 5D-G: a reload-after-each-shot weapon is mechanically unloaded even with a full pool -- the reload action still restores it.
+      // The pool is already full, so a failed state clear changes no ammunition and can simply be retried without adding any.
+      const cleared = await this.#clearFireStateReload(actor, weapon);
+      if (!cleared.ok) return this.#reloadStateNotPersisted(weapon, { reloadAmount: 0, ammunitionRestored: false });
       return {
         success: true,
         message: `${weapon.name} is already fully loaded`,
@@ -254,18 +265,26 @@ export class AmmoSystem {
     try {
       // Update through ActorEngine if owned
       // PHASE 2B: Update through ActorEngine if owned by any actor
+      let updated;
       if (weapon.actor) {
         const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
-        await ActorEngine.updateOwnedItems(weapon.actor, [{
+        updated = await ActorEngine.updateOwnedItems(weapon.actor, [{
           _id: weapon.id,
           'system.ammunition.current': maxAmmo
         }]);
       } else {
         // Fallback for unowned weapons (compendium, etc)
-        await weapon.update({ 'system.ammunition.current': maxAmmo });
+        updated = await weapon.update({ 'system.ammunition.current': maxAmmo });
+      }
+      // Foundry resolves with the documents it actually changed; an unconfirmed update is a failure unless the pool is demonstrably already full
+      const { confirmsItemUpdate } = await import("/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js");
+      if (!confirmsItemUpdate(updated, weapon.id) && (weapon.system?.ammunition?.current ?? 0) !== maxAmmo) {
+        return { success: false, reason: 'ammunition-not-updated', message: `${weapon.name}: the ammunition update was not applied`, ammunitionRestored: false, reloadStateCleared: false };
       }
 
-      await this.#clearFireStateReload(actor, weapon);
+      // Two distinct facts: the pool is full (above) and the weapon no longer awaits a reload (below). Neither is reported for the other.
+      const cleared = await this.#clearFireStateReload(actor, weapon);
+      if (!cleared.ok) return this.#reloadStateNotPersisted(weapon, { reloadAmount, ammunitionRestored: true });
       return {
         success: true,
         message: `${weapon.name} reloaded: +${reloadAmount} rounds (${currentAmmo} → ${maxAmmo})`,
@@ -280,14 +299,35 @@ export class AmmoSystem {
     }
   }
 
-  /** Phase 5D-G: a reload clears the owned "awaiting reload" fire state (separate from the ammunition counter). Best effort. */
+  /**
+   * Phase 5D-G: a reload clears the owned "awaiting reload" fire state (separate from the ammunition counter).
+   * @returns {Promise<{ok:boolean}>} ok is false when the clear was attempted and not persisted (the weapon STILL records awaiting-reload)
+   */
   static async #clearFireStateReload(actor, weapon) {
     try {
       const { FireStateStore } = await import("/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js");
-      await FireStateStore.clearReload(actor ?? weapon?.actor, weapon);
+      const cleared = await FireStateStore.clearReload(actor ?? weapon?.actor, weapon);
+      if (cleared?.outcome === 'failed') {
+        swseLogger.warn?.('Fire-state reload clear was not persisted; the weapon still records awaiting-reload.');
+        return { ok: false };
+      }
+      return { ok: true };
     } catch (err) {
-      swseLogger.warn?.('Fire-state reload clear failed (ammunition was still reloaded):', err);
+      swseLogger.warn?.('Fire-state reload clear failed; the weapon still records awaiting-reload:', err);
+      return { ok: false };
     }
+  }
+
+  /** A reload whose ammunition may have been restored but whose awaiting-reload state could not be cleared is NOT a successful reload. */
+  static #reloadStateNotPersisted(weapon, { reloadAmount, ammunitionRestored }) {
+    return {
+      success: false,
+      reason: 'reload-state-not-persisted',
+      message: `${weapon.name}: the reload could not be recorded${ammunitionRestored ? ' (the ammunition was restored; use Reload again to finish)' : ''}`,
+      reloadAmount,
+      ammunitionRestored,
+      reloadStateCleared: false
+    };
   }
 
   /**
@@ -307,7 +347,7 @@ export class AmmoSystem {
       required,
       deficit,
       message: hasAmmo
-        ? `${weapon.name} has sufficient ammo (${current}/${weapon.system.ammunition.max})`
+        ? `${weapon.name} has sufficient ammo (${current}/${this.maxAmmo(weapon)})`
         : `${weapon.name} needs ${deficit} more rounds (${current}/${required})`
     };
   }
@@ -373,7 +413,7 @@ export class AmmoSystem {
       return { success: false, message: 'Invalid actor or weapon' };
     }
 
-    const max = weapon.system?.ammunition?.max ?? 0;
+    const max = this.maxAmmo(weapon);
     if (max === 0) {
       return { success: false, message: `${weapon.name} does not use ammunition` };
     }
@@ -421,7 +461,7 @@ export class AmmoSystem {
 
     return actor.items.filter(item =>
       item.type === 'weapon' &&
-      item.system?.ammunition?.max > 0
+      this.maxAmmo(item) > 0
     );
   }
 
@@ -465,8 +505,8 @@ export class AmmoSystem {
     }
 
     // Check if current > max
-    if (weapon.system?.ammunition?.current > weapon.system?.ammunition?.max) {
-      issues.push(`Current ammo (${weapon.system.ammunition.current}) exceeds max (${weapon.system.ammunition.max})`);
+    if (weapon.system?.ammunition?.current > this.maxAmmo(weapon)) {
+      issues.push(`Current ammo (${weapon.system.ammunition.current}) exceeds max (${this.maxAmmo(weapon)})`);
     }
 
     return {

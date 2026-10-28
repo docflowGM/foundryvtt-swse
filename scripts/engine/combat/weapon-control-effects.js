@@ -8,6 +8,7 @@
 //   * exposes the control actions (swift shock, tractor move / hurl, release) and the uniform escape-options query;
 //   * ends controls cleanly when their source weapon, controller or target disappears.
 // Damage is dealt through ActorEngine.applyDamage and condition-track moves through CombatTargetEffectAdapter -- the same engines as every other effect.
+import { getReadiedWeapons, isWeaponReadied } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { GrappleStateEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-engine.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
@@ -346,7 +347,7 @@ function weaponStillWielded(controller, control) {
   if (!id) return true;
   const item = controller?.items?.get?.(id) ?? Array.from(controller?.items ?? []).find((i) => i.id === id);
   if (!item) return false;
-  return item.system?.equipped !== false;
+  return isWeaponReadied(controller, item);
 }
 
 /**

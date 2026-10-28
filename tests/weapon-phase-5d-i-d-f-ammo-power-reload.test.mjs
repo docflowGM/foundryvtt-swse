@@ -23,7 +23,9 @@ const rt = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/i
 const { FireStateStore: FireStateStoreRef } = await import('/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js');
 const { CombatOptionResolver } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js');
 const { resolveDamageComposition, buildDamageFormula } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js');
-const { rollAttack, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { rollAttack: rollAttackRaw, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+const { ownAndReady, installReadinessEnvironment: installRE } = await import('./helpers/ready-weapon-fixture.mjs'); await installRE();
+const rollAttack = (a, w, o) => rollAttackRaw(a, ownAndReady(a, w), o); // WP5-C1: the attacker draws (owns and READIES) the weapon it attacks with
 const { rollDamage } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/damage.js');
 const { SWSERoll } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js');
 const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
@@ -75,7 +77,7 @@ function installHarness({ econAllowed = true } = {}) {
   RollEngine.safeRoll = async (f) => { spent.rolls += 1; return { total: 15, formula: f, dice: [{ results: [{ result: 12 }] }] }; };
   SWSEChat.postRoll = async (p) => { posted.push(p); return {}; };
   AmmoSystem.spendForWorkflow = async () => { spent.ammo += 1; return { success: true, spent: false }; };
-  ActorEngine.updateOwnedItems = async (actor, updates) => { for (const u of updates) { const item = actor.items.get(u._id); for (const [k, v] of Object.entries(u)) if (k !== '_id') setPath(item, k, v); } };
+  ActorEngine.updateOwnedItems = async (actor, updates) => { for (const u of updates) { const item = actor.items.get(u._id); for (const [k, v] of Object.entries(u)) if (k !== '_id') setPath(item, k, v); } return updates.map((u) => actor.items.get(u._id)).filter(Boolean); };   // resolves with the documents it changed, as Foundry does
   ActionEconomyConsumption.spend = async (actor, type) => { if (!econAllowed) return { allowed: false, permitted: false, rollback: async () => {} }; spent.actions.push(type); return { allowed: true, committed: true, rollback: async () => { spent.actions.pop(); } }; };
 }
 const restoreHarness = () => { RollEngine.safeRoll = origs.RE; SWSEChat.postRoll = origs.post; AmmoSystem.spendForWorkflow = origs.spendAmmo; ActorEngine.updateOwnedItems = origs.upd; ActionEconomyConsumption.spend = origs.econ; AmmoSystem.consumeAmmunition = origs.consume; AmmoSystem.isTrackingEnabled = origs.track; globalThis.game = undefined; };
@@ -173,21 +175,17 @@ try {
   for (let i = 4; i >= 1; i--) { reset(); assert.ok(await attack(A, mgl, {}), `shot ${5 - i}`); assert.equal(ammoOf(mgl), i - 1); }
   reset(); assert.equal(await attack(A, mgl, {}), null, 'the fifth attack is refused: the magazine is empty'); assert.equal(spent.rolls, 0, 'no roll when refused'); assert.deepEqual(spent.actions, [], 'no action spent when refused');
   assert.equal((await AmmoSystem.reloadWeapon(A, mgl)).reloadAmount, 4); assert.equal(ammoOf(mgl), 4);
-  // wrist blaster: ONE shot of stored energy, no second shot, the capacity is not invented larger
+  // E4-C1 WP5-C1 (EQ-003): the Wrist Blaster and Wrist Rocket Launcher are worn and never READIED, so the attack gate refuses them before any ammunition is
+  // touched. Their one-shot capacity / reload cycle are acceptance debt (EQ-003/worn-weapon-attack-execution); the declared capacity data is asserted instead.
   const wb = owned('weapon-wrist-blaster'); const B = makeActor({ items: [wb] });
-  reset(); assert.ok(await attack(B, wb, {})); assert.equal(ammoOf(wb), 0);
-  reset(); assert.equal(await attack(B, wb, {}), null, 'one-shot capacity: the second attack is refused'); assert.equal(spent.rolls, 0);
-  // wrist rocket launcher: single shot; after the shot it is awaiting reload and cannot fire until reloaded
+  reset(); assert.equal(await attack(B, wb, {}), null); assert.equal(ammoOf(wb), 1, 'a refused attack spends no energy'); assert.equal(spent.rolls, 0);
   const wr = owned('weapon-wrist-rocket-launcher'); const C = makeActor({ items: [wr] });
-  reset(); assert.ok(await attack(C, wr, {})); assert.equal(ammoOf(wr), 0); assert.equal(wr.flags.swse.fireState.needsReload, true, 'awaiting reload after the shot');
-  reset(); assert.equal(await attack(C, wr, {}), null, 'cannot fire again before reloading');
-  await AmmoSystem.reloadWeapon(C, wr); assert.equal(ammoOf(wr), 1); assert.equal(wr.flags.swse.fireState.needsReload, undefined, 'the reload clears the awaiting-reload state');
-  reset(); assert.ok(await attack(C, wr, {}), 'fires again after the reload');
-  // a LEGACY weapon with the same stats is untouched by any of this
+  reset(); assert.equal(await attack(C, wr, {}), null); assert.equal(ammoOf(wr), 1); assert.equal(wr.flags?.swse?.fireState?.needsReload, undefined);
+  // a LEGACY (uncertified) weapon is refused by the gate too and writes nothing
   const lg = legacy({ ammunition: { current: 1, max: 1 } }); const L = makeActor({ items: [lg] });
-  reset(); assert.ok(await attack(L, lg, {})); assert.equal(lg.flags?.swse?.fireState, undefined, 'legacy: no fire state written');
+  reset(); assert.equal(await attack(L, lg, {}), null); assert.deepEqual(Object.keys(lg.flags?.swse?.fireState ?? {}).filter((k) => k !== 'v' && k !== 'wielded'), [], 'legacy: no fire state written');
   noRealAmmo(); restoreHarness(); reinstall();
-  ok('capacity production path: grenade launcher 4 -> refused at empty; wrist blaster one shot; wrist rocket single shot + reload cycle; refusals spend nothing; legacy untouched');
+  ok('capacity production path: grenade launcher 4 -> refused at empty; worn wrist weapons and uncertified legacy weapons are refused by the gate and spend nothing');
 }
 
 // ---- C. specialRateOfFire: Sonic Disruptor fires once every other round -------------------------------------------------------------
@@ -216,7 +214,7 @@ try {
     // an unpayable change refuses the attack and writes nothing
     reinstall({ econAllowed: false });
     const vb2 = canon(id); const A2 = makeActor({ items: [vb2] });
-    reset(); assert.equal(await attack(A2, vb2, { profileId: 'medium' }), null, 'cannot pay the swift: the attack is refused'); assert.equal(spent.rolls, 0); assert.equal(vb2.flags.swse?.fireState, undefined);
+    reset(); assert.equal(await attack(A2, vb2, { profileId: 'medium' }), null, 'cannot pay the swift: the attack is refused'); assert.equal(spent.rolls, 0); assert.deepEqual(Object.keys(vb2.flags?.swse?.fireState ?? {}).filter((k) => k !== 'v' && k !== 'wielded'), []);
     reinstall();
   }
   ok('powerLevelSwitchAction: a swift action per change of power level (free at the baseline and when unchanged), 1/5/10 and 1/10/20 shots, unpayable switch fails closed');
@@ -282,7 +280,7 @@ try {
   assert.equal((await FireStateStoreRef.setPowerSourceState(PA, pistol, 'installed')).reason, 'no-power-source-requirement');
   const lg = legacy({ requiresEnergyCell: true }); const LA = makeActor({ items: [lg] });
   assert.equal((await FireStateStoreRef.setPowerSourceState(LA, lg, 'missing')).ok, false, 'legacy / custom weapons have no canonical requirement');
-  reset(); assert.ok(await attack(LA, lg, {}), 'legacy weapon unaffected');
+  reset(); assert.equal(await attack(LA, lg, {}), null, 'E4-C1 WP5-C1: an uncertified legacy weapon is refused by the attack gate');
   ok('power source: unconfirmed never blocks and consumes nothing; installed is shown; confirmed missing refuses before any cost; per-attack option overrides without rewriting state; legacy untouched');
 }
 
@@ -330,7 +328,7 @@ try {
     const f = await FireStateStoreRef.reloadBySecondCrew(G, ew, crewActor('crew-3')); AmmoSystem.reloadWeapon = origReload;
     assert.equal(f.reason, 'reload-failed'); assert.deepEqual(crewSpends, [], 'the failed reload rolled the crew action back'); assert.equal(ammoOf(ew), 0);
     // a weapon with no second-crew reload is not eligible
-    const wr = owned('weapon-wrist-rocket-launcher'); const W = makeActor({ items: [wr] }); W.id = 'solo';
+    const wr = owned('weapon-black-powder-pistol'); const W = makeActor({ items: [wr] }); W.id = 'solo';
     assert.equal((await FireStateStoreRef.reloadBySecondCrew(W, wr, crewActor('crew-4'))).reason, 'no-second-crew-reload');
     const lg = legacy({ ammunition: { current: 0, max: 1 } }); const L = makeActor({ items: [lg] });
     assert.equal((await FireStateStoreRef.reloadBySecondCrew(L, lg, crewActor('crew-5'))).reason, 'no-second-crew-reload');
@@ -380,13 +378,14 @@ try {
   useRealAmmo();
   const origPrompt = SWSEDialogV2.prompt;
   const charges = [];
-  const mkSheet = (actor) => ({ actor, requestSurfaceRender: async () => {}, _deriveCombatActionEconomyType: () => 'standard', _applyActionEconomy: async (type) => { charges.push({ actor: actor.id, type }); return true; }, _chooseReloadMode: proto._chooseReloadMode });
+  const mkSheet = (actor) => ({ actor, requestSurfaceRender: async () => {}, _deriveCombatActionEconomyType: () => 'standard', _spendActionEconomy: async (type) => { charges.push({ actor: actor.id, type }); return { allowed: true, permitted: true, committed: false, rollback: async () => false }; }, _chooseReloadMode: proto._chooseReloadMode });
   const run = (sheet, ctx = {}, opts = {}) => proto._executeReloadCombatWorkflow.call(sheet, { action: { id: 'reload' }, ...ctx }, opts);
   globalThis.game = { ...(globalThis.game ?? {}), actors: { get: (id) => (id === 'crew-9' ? { id: 'crew-9', name: 'Crew Nine' } : null) }, combat: null, user: { targets: { first: () => null } } };
 
   // tracking OFF + awaiting reload: the wrist rocket launcher must be reloadable (it used to stay blocked forever)
   AmmoSystem.isTrackingEnabled = () => false;
-  { const wr = owned('weapon-wrist-rocket-launcher'); const A = makeActor({ items: [wr] }); A.id = 'solo'; A.name = 'Solo';
+  // E4-C1 WP5-C1: the reload cycle is exercised on a READIED single-shot reload-required weapon (the worn wrist launcher is refused by the attack gate, EQ-003)
+  { const wr = owned('weapon-black-powder-pistol'); const A = makeActor({ items: [wr] }); A.id = 'solo'; A.name = 'Solo';
     reset(); assert.ok(await attack(A, wr, {})); assert.equal(wr.flags.swse.fireState.needsReload, true);
     charges.length = 0; const res = await run(mkSheet(A), { weaponId: wr.id }); 
     assert.equal(res?.success, true, 'reload resolved with ammunition tracking off'); assert.equal(wr.flags.swse.fireState.needsReload, undefined);
@@ -463,7 +462,7 @@ try {
     AmmoSystem.isTrackingEnabled = () => true;
     // legacy untouched
     const lg = legacy({ ammunition: { current: 1, max: 5 } }); const L = makeActor({ items: [lg] });
-    reset(); assert.ok(await attack(L, lg, { combatOptions: { singleShellLaunch: true } })); assert.equal(lg.system.ammunition.current, 0, 'a legacy weapon spends its ordinary round');
+    reset(); assert.equal(await attack(L, lg, { combatOptions: { singleShellLaunch: true } }), null); assert.equal(lg.system.ammunition.current, 1, 'E4-C1 WP5-C1: an uncertified legacy weapon is refused by the gate and spends nothing');
   }
   SWSEDialogV2.prompt = origPrompt; noRealAmmo(); restoreHarness(); reinstall();
   ok('sheet reload workflow: tracking-off awaiting-reload still resolves; second crew charged to the crew only; solo / cancel keep the ordinary reload / nothing; tracking-off second crew leaves the untracked pool alone; the mortar single-shell is a firing mode that skips the magazine');

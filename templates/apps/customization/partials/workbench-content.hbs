@@ -414,6 +414,40 @@
             </button>
             {{/each}}
             {{else}}
+            {{#if modificationV2}}
+              <div class="wcb-v2-mods" data-modification-v2>
+                {{#unless modificationV2.dataOk}}<div class="empty-state">Modification data unavailable: {{#each modificationV2.problems}}{{this}} {{/each}}</div>{{/unless}}
+                {{#if modificationV2.capacity}}<div class="wcb-v2-capacity">Upgrade slots: {{modificationV2.capacity.used}} used / {{modificationV2.capacity.total}} ({{modificationV2.capacity.free}} free)</div>{{/if}}
+                {{#if modificationV2.installed.length}}
+                <h4 class="wcb-v2-heading">Installed</h4>
+                {{#each modificationV2.installed}}
+                <article class="config-card installed {{#if provisional}}is-provisional{{/if}}">
+                  <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{state}}</span></span>
+                  <span class="card-tags"><span class="tag">{{basisLabel}}</span></span>
+                  {{#if canRemove}}<button type="button" class="config-card__action" data-action="remove-v2-modification" data-instance-id="{{instanceId}}">Remove…</button>{{/if}}
+                </article>
+                {{/each}}
+                {{/if}}
+                <h4 class="wcb-v2-heading">Available (GM-adjudicated; not canonical)</h4>
+                {{#each modificationV2.available}}
+                <article class="config-card is-provisional {{#if development}}is-development{{/if}}">
+                  <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{price}} cr</span></span>
+                  <span class="card-desc">{{summary}}</span>
+                  <span class="card-tags"><span class="tag">DC {{dc}} · {{time}}</span><span class="tag">{{slotCost}} slot</span><span class="tag">accepts {{acceptedCount}} uncertified item(s)</span><span class="tag">{{basisLabel}}</span>{{#each reasons}}<span class="tag state negative">{{this}}</span>{{/each}}</span>
+                  {{#if canInstall}}<button type="button" class="config-card__action" data-action="install-v2-modification" data-typed-id="{{typedDefinitionId}}">Install…</button>{{else}}{{#unless ../modificationV2.isGM}}<span class="tag">GM installs</span>{{/unless}}{{/if}}
+                </article>
+                {{else}}
+                <div class="empty-state">No modification can be installed on this item yet.</div>
+                {{/each}}
+                {{#if modificationV2.blocked.length}}
+                <details class="wcb-v2-blocked"><summary>Not yet available ({{modificationV2.blocked.length}})</summary>
+                  {{#each modificationV2.blocked}}
+                  <article class="config-card disabled"><span class="card-top"><span class="card-name">{{name}}</span>{{#if price}}<span class="card-cost">{{price}} cr</span>{{/if}}</span><span class="card-tags">{{#each reasons}}<span class="tag state negative">{{this}}</span>{{/each}}</span></article>
+                  {{/each}}
+                </details>
+                {{/if}}
+              </div>
+            {{/if}}
             {{#if upgrades.length}}
               {{#each upgrades}}
               <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if removing}}removing{{/if}} {{#if inspected}}inspected{{/if}} {{#if disabled}}disabled{{/if}}" data-action="inspect-upgrade" data-key="{{key}}" data-inspect-kind="upgrade" data-inspect-key="{{key}}" {{#if disabled}}title="No slots available"{{/if}}>
@@ -433,7 +467,7 @@
               </button>
               {{/each}}
             {{else}}
-              <div class="empty-state">No structured modifications available for this item.</div>
+              {{#unless modificationV2}}<div class="empty-state">No structured modifications available for this item.</div>{{/unless}}
             {{/if}}
             {{/if}}
           </div>

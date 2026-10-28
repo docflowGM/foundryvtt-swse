@@ -370,6 +370,9 @@ export class DefenseCalculator {
         item?.name ?? '',
         item?._stats?.modifiedTime ?? item?._source?._stats?.modifiedTime ?? item?.system?._version ?? '',
         item?.system?.equipped ?? item?.system?.isEquipped ?? '',
+        item?.system?.weaponPosture ?? '',
+        JSON.stringify(item?.system?.weaponOccupancy ?? ''),
+        JSON.stringify(item?.flags?.swse?.fireState?.wielded ?? ''),
         item?.system?.activated ?? item?.system?.active ?? '',
         item?.system?.quantity ?? ''
       ].join(':'))

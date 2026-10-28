@@ -18,28 +18,8 @@ import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/co
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 import { SpeciesActivatedAbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/species/species-activated-ability-engine.js";
 import { PoisonEngine } from "/systems/foundryvtt-swse/scripts/engine/poison/poison-engine.js";
-import { isNaturalWeaponOnly as canonicalIsNaturalWeaponOnly } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { getReadiedWeapons } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 
-
-function isTruthyEquipState(value) {
-  if (value === true || Number(value) === 1) return true;
-  if (value && typeof value === 'object') return isTruthyEquipState(value.value ?? value.current ?? value.active ?? value.equipped ?? value.state);
-  return ['true', '1', 'yes', 'equipped', 'worn', 'held', 'readied', 'ready', 'on', 'active', 'activated', 'natural'].includes(String(value || '').toLowerCase());
-}
-
-// Math Integrity Freeze, Batch 2B: delegated to the canonical natural/
-// unarmed authority (scripts/items/weapon-branch-resolver.js). alwaysArmed
-// stays a local, distinct flag (an auto-equip behavior, not a classification).
-function isNaturalWeaponItem(item) {
-  if (item?.flags?.swse?.alwaysArmed === true) return true;
-  return canonicalIsNaturalWeaponOnly(item);
-}
-
-function isAutoEquippedNaturalWeapon(item) {
-  const swseFlags = item?.flags?.swse ?? {};
-  return isNaturalWeaponItem(item)
-    && (isTruthyEquipState(swseFlags.autoEquipped) || swseFlags.alwaysArmed === true);
-}
 
 function hasWeaponDamageProfile(item) {
   const system = item?.system ?? {};
@@ -59,23 +39,13 @@ function isRollableWeaponItem(item) {
   return /weapon|lightsaber|blaster|rifle|pistol|melee|ranged|thrown|grenade|simple|advanced|heavy/.test(text);
 }
 
-function isEquippedWeaponItem(item) {
-  const system = item?.system ?? {};
-  return isRollableWeaponItem(item) && (
-    isTruthyEquipState(system.equipped)
-    || isTruthyEquipState(system.isEquipped)
-    || isTruthyEquipState(system.equipStatus)
-    || isTruthyEquipState(system.status)
-    || isTruthyEquipState(system.state)
-    || isTruthyEquipState(system.active)
-    || isTruthyEquipState(system.activated)
-    || isTruthyEquipState(system.readied)
-    || isTruthyEquipState(system.equippable?.equipped)
-    || isTruthyEquipState(system.equippable?.active)
-    || isTruthyEquipState(system.activation?.active)
-    || isTruthyEquipState(item?.flags?.swse?.equipped)
-    || isAutoEquippedNaturalWeapon(item)
-  );
+/**
+ * The ONE weapon a universal `combat:` action uses: the actor's single READY weapon (effective READIED through the shared combat-readiness
+ * interface). None ready, or more than one ready, yields null -- nothing is guessed from Item order, activation flags or legacy equip markers.
+ */
+function readyWeaponFor(actor) {
+  const ready = getReadiedWeapons(actor).filter((item) => isRollableWeaponItem(item));
+  return ready.length === 1 ? ready[0] : null;
 }
 
 export class CombatEngine {
@@ -453,7 +423,7 @@ export class CombatEngine {
   static _resolveAttackWeapon(actor, actionKey) {
     if (!actor || !actionKey) return null;
     if (String(actionKey).startsWith('combat:')) {
-      return actor.items?.find?.(item => isEquippedWeaponItem(item)) ?? null;
+      return readyWeaponFor(actor);
     }
     const direct = actor.items?.get?.(actionKey) ?? null;
     return isRollableWeaponItem(direct) ? direct : null;
@@ -543,11 +513,11 @@ export class CombatEngine {
       if (actionKey?.startsWith('combat:')) {
         // Universal combat action - resolve to a weapon
         // For now, use the actor's primary equipped weapon
-        weapon = actor.items.find(item => isEquippedWeaponItem(item));
+        weapon = readyWeaponFor(actor);
 
         if (!weapon) {
-          SWSELogger.warn(`[CombatEngine.rollAttack] No equipped weapon found for action ${actionKey}`);
-          ui.notifications.warn('No equipped weapon found. Equip a weapon and try again.');
+          SWSELogger.warn(`[CombatEngine.rollAttack] No single ready weapon found for action ${actionKey}`);
+          ui.notifications.warn('No single ready weapon found. Ready exactly one weapon (or choose a weapon explicitly) and try again.');
           return { success: false, reason: 'No weapon equipped' };
         }
       } else {
@@ -688,9 +658,9 @@ export class CombatEngine {
     }
 
     // Validate equipped weapon
-    const weapon = actor.items.find(i => isEquippedWeaponItem(i));
+    const weapon = readyWeaponFor(actor);
     if (!weapon) {
-      ui.notifications.warn('Equip a weapon to perform Coup de Grace');
+      ui.notifications.warn('Ready a weapon to perform Coup de Grace');
       return;
     }
 

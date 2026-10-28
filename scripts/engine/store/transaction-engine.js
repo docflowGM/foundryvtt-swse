@@ -41,6 +41,13 @@ import { DroidFactory } from "/systems/foundryvtt-swse/scripts/engine/droids/dro
 import { PlacementRouter } from "/systems/foundryvtt-swse/scripts/engine/store/placement-router.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
+
+/** H7: a cost is a finite number or a non-empty numeric string; anything else is NaN (refused by the caller). An omitted cost defaults to 0 upstream. */
+export function parseTransactionCost(value) {
+  if (typeof value === 'number') return value;
+  if (typeof value === 'string' && value.trim() !== '') return Number(value);
+  return NaN;
+}
 import { StoreAcquisitionService } from "/systems/foundryvtt-swse/scripts/engine/store/acquisition-service.js";
 
 export class TransactionEngine {
@@ -341,7 +348,8 @@ export class TransactionEngine {
       return { success: false, transactionId, error: 'Insufficient permissions for transaction' };
     }
 
-    const normalizedCost = Number(cost) || 0;
+    // H7: a malformed cost (null, '', non-numeric, NaN, an object) is refused, never treated as a free transaction. Only an omitted cost means 0.
+    const normalizedCost = parseTransactionCost(cost);
     if (!Number.isFinite(normalizedCost) || normalizedCost < 0) {
       return { success: false, transactionId, error: 'Invalid transaction cost' };
     }
@@ -971,8 +979,10 @@ export class TransactionEngine {
     if (walletActor.isOwner === false) return { success: false, transactionId, error: 'Insufficient wallet actor permissions' };
     if (targetAsset.isOwner === false) return { success: false, transactionId, error: 'Insufficient asset actor permissions' };
 
-    const grossCost = normalizeCredits(cost);
-    const grossResale = normalizeCredits(resaleCredit);
+    // H7: malformed amounts are refused, not floored to 0
+    const strictCredits = (v) => { const n = parseTransactionCost(v); return Number.isFinite(n) ? normalizeCredits(n) : NaN; };
+    const grossCost = strictCredits(cost);
+    const grossResale = strictCredits(resaleCredit);
     if (!Number.isFinite(grossCost) || grossCost < 0) {
       return { success: false, transactionId, error: 'Invalid customization cost' };
     }
@@ -1217,7 +1227,9 @@ export class TransactionEngine {
       return { success: false, transactionId, error: 'Approved asset must be a droid or vehicle actor' };
     }
 
-    const normalizedCost = normalizeCredits(cost);
+    // H7: same strict parse as mutation transactions; a malformed approval cost is refused, not floored to 0
+    const parsedCost = parseTransactionCost(cost);
+    const normalizedCost = Number.isFinite(parsedCost) ? normalizeCredits(parsedCost) : NaN;
     if (!Number.isFinite(normalizedCost) || normalizedCost < 0) {
       return { success: false, transactionId, error: 'Invalid approval cost' };
     }

@@ -7,7 +7,8 @@
 
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
-import { isRangedWeapon as canonicalIsRangedWeapon, isMeleeWeapon as canonicalIsMeleeWeapon, isItemEquipped as canonicalIsItemEquipped } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { isRangedWeapon as canonicalIsRangedWeapon, isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { getReadiedWeapons, isWeaponReadied } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 import { isArmorItemEquipped, isEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 import { ModifierSource, ModifierType, createModifier } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
@@ -287,15 +288,10 @@ export function isVehicleWeapon(weapon) {
   return /vehicle\s+weapon|vehicle-weapon|starship\s+weapon|starship-weapon|weapon\s+system|weapon-system|turbolaser|laser\s+cannon|ion\s+cannon|proton\s+torpedo|concussion\s+missile/.test(candidates);
 }
 
-function isEquippedWeapon(item) {
-  const system = item?.system ?? {};
-  return item?.type === 'weapon'
-    && (system.equipped === true || system.equippable?.equipped === true || String(system.status || '').toLowerCase() === 'equipped');
-}
-
 function actorHasEquippedPistol(actor) {
   try {
-    return Array.from(actor?.items ?? []).some(item => isEquippedWeapon(item) && isPistolWeapon(item));
+    // READY weapons only (effective READIED); the legacy equipped flag / status text decide nothing
+    return getReadiedWeapons(actor).some(item => isPistolWeapon(item));
   } catch (_err) {
     return false;
   }
@@ -747,8 +743,8 @@ function targetActorHasPositiveReflexArmorBonus(targetActor) {
 // "vs-lightsaber-wielders" (Heart of the Guardian): the real rule requires
 // the target to be currently WIELDING an ACTIVE lightsaber -- two
 // independent facts, ownership being neither. Wielding reuses the shared
-// equipped-item-state authority (weapon-branch-resolver.js#isItemEquipped(),
-// promoted from character-actor.js's own prior copy) combined with the
+// ready-weapon authority (combat-readiness.js: effective READIED, E4-C1 WP5)
+// combined with the
 // canonical lightsaber classification (isLightsaberWeapon() above).
 // Activation is deliberately NOT read from
 // WeaponVisualProfileResolver.resolveActiveLightsaber() -- that authority
@@ -760,7 +756,7 @@ function targetActorHasPositiveReflexArmorBonus(targetActor) {
 function targetActorWieldsActiveLightsaber(targetActor) {
   const items = Array.from(targetActor?.items ?? []);
   return items.some((item) => isLightsaberWeapon(item)
-    && canonicalIsItemEquipped(item, targetActor)
+    && isWeaponReadied(targetActor, item)
     && isItemActivated(item));
 }
 
@@ -935,6 +931,6 @@ export function getDamageAbilityContribution(actor, weapon, context = {}) {
   { const sh = shapeOfWeapon(weapon); if (sh.source === 'canonical' && sh.strengthAppliesToDamage === true) return SchemaAdapters.getAbilityMod(actor, 'str'); }
   if (isRangedWeapon(weapon) && !isThrownMeleeWeapon(weapon)) return 0;
   const strMod = SchemaAdapters.getAbilityMod(actor, 'str');
-  if (system.twoHanded === true || system.wieldedTwoHanded === true) return Math.floor(strMod * 1.5);
+  if (system.twoHanded === true) return Math.floor(strMod * 1.5);
   return strMod;
 }

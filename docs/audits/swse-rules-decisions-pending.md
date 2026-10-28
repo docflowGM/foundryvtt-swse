@@ -892,6 +892,165 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Blocker lifted | source=Core Rulebook printed pages 60 and 68-70 (Mechanics) and Scum and Villainy printed pages 37-41 (Installing Upgrades and Table 2-2); evidence=docs/audits/d-015-mechanics-complete-visual-source-reconciliation.md and docs/audits/d-015-source-certification-release-acceptance-checklist.md |
 | Resolution (source) | The D-015 source-verification question is answered for its exactly scoped 76 typed definitions. The installer performing Table 2-2 check is trained in Mechanics. The examined books do not state a universal tool kit or workshop prerequisite for that operation; requirements explicitly attached to other Mechanics uses are not silently transferred. General Core take-10/take-20 conditions remain source rules, distinct from optional GM house-rule overrides. This resolution does not specify a complete installation mechanic, lift D-014, certify prices/hosts/effects, make any definition selectable, or authorize G6. |
 
+## EQ-001 — Action cost of changing a drawn weapon between EQUIPPED, READIED or other appendages
+
+| Field | Content |
+|---|---|
+| Rules domain | Equipment posture (weapon draw / stow / ready) |
+| Feature | Moving a weapon that is already drawn between the EQUIPPED (held) and READIED (wielded, combat-ready) postures, or changing which appendages hold it |
+| Source | Not located. The existing project authority `resolveActionCost('drawOrHolsterWeapon')` prices only drawing from, and holstering to, the stowed state (Move Action; Swift with Quick Draw per existing feat metadata) |
+| Evidence | The legacy single drawn/stowed boolean never distinguished EQUIPPED from READIED, so no existing implementation or cited source prices a change between two drawn states. The clean-break posture model (E3-A4) introduced the distinction |
+| Confirmed behavior | STOWED -> drawn and drawn -> STOWED use the existing draw/holster cost authority |
+| Unresolved question | Whether, and at what action cost, a drawn weapon may be moved between EQUIPPED, READIED or different appendages |
+| Options | None supported by a located source |
+| Recommended ruling | None |
+| Implementation impact | `equipment-state-coordinator.js` returns `DEFERRED_RULES_REVIEW` (decision id EQ-001) for any intent that changes a drawn weapon to another drawn configuration; nothing is written or spent. Stowing first and drawing again is the only supported path |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## EQ-002 — Identical weapons held together in one hand (held-together groups)
+
+| Field | Content |
+|---|---|
+| Rules domain | Equipment posture / occupancy (modeling blocker) |
+| Feature | Holding several identical small weapons (e.g. sticks, as in the existing `heldGroupOf` / `heldTogetherOptions` wielding-size feature) in a single hand |
+| Source | Existing project feature in `scripts/items/weapon-runtime/wielding-size.js` and `fire-state-store.js` (`heldGroupOf`, `heldTogetherOptions`); no printed page was located for the underlying rule in this change |
+| Evidence | The legacy implementation grouped identical weapons by a stored equipped flag and an `isOffhand` marker. The clean-break occupancy model (E3-A2) assigns each weapon its own appendage ids and has no representation of several weapons sharing one appendage |
+| Confirmed behavior | None for the clean-break model. The legacy grouping depended on retired fields (equipped booleans, `isOffhand`) that WP5 forbids as authorities |
+| Unresolved question | Whether and how several identical weapons may share one appendage, and how that is recorded in `system.weaponOccupancy` (a data-shape decision with rules content: group size, which member is the attacking weapon, and the per-member posture) |
+| Options | None supported by a located source |
+| Recommended ruling | None |
+| Implementation impact | WP5 fails closed: `heldGroupOf` treats only the primary weapon as held and returns `member-not-equipped` for others; `heldTogetherOptions` offers no candidates. No grouped-hold bonus or penalty is computed from any inferred group. Held-together tests assert this documented fail-closed behavior |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## EQ-003 — Weapons with no established hand-wielding class cannot be READIED (worn weapons, vehicle-scale weapons)
+
+| Field | Content |
+|---|---|
+| Rules domain | Equipment posture / grip (modeling blocker) |
+| Feature | Worn weapons (Combat Gloves, Shockboxing Gloves, Stunning Gauntlet, wrist weapons) and weapons whose canonical size gives no hand-wielding class for the wielder (e.g. Tactical Tractor Beam) |
+| Source | Canonical weapon registry (`data/weapons/canonical-weapon-registry.json`) declarations for the named identities; no printed page was located that states how these are held, readied or kept "in hand" |
+| Evidence | The grip resolver (E3-A3) leaves these weapons `indeterminate` (`worn-weapon-configuration-uncertified`, or no size classification), so the effective-posture resolver (E3-A5) never establishes READIED. The legacy boolean treated them as simply "equipped" |
+| Confirmed behavior | Worn / unclassified weapons are never verified READIED. Mounted / worn certification was deferred by the project owner |
+| Unresolved question | How a worn weapon or a weapon without a wielding class becomes ready (and therefore which rules keyed to a "wielded" weapon apply to it): categorical disarm protection of gloves and gauntlets, control maintenance for the tractor beam, reaction and effect eligibility |
+| Options | None supported by a located source |
+| Recommended ruling | None |
+| Implementation impact | WP5 fails closed: such weapons are not ready, so effects with `application: 'equipped'`, reactions, weapon-control maintenance and disarm-protection checks keyed to a ready weapon do not apply to them. The declarations themselves (e.g. `cannotBeDisarmed`) are unchanged data. Tests assert the fail-closed behavior |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## EQ-002 — Addendum 1 (2026-10-19, E4-C1 WP5-C1): source verification and reclassification
+
+Append-only. The original EQ-002 entry above is unchanged.
+
+| Field | Content |
+|---|---|
+| Published mechanic | `SOURCE_VERIFIED` — *Galaxy at War*, printed p. 36 (Darkstick): a character proficient with darksticks may hold several in one hand; the group counts as one weapon dealing 2d8 instead of 1d6; more than two add no damage. (Verified from the supplied sourcebook text extraction, not from a rendered PDF page.) |
+| Implemented behavior | Not certified. No group is honoured |
+| Model / design | Unresolved. The gap is a technical representation, not an absent printed rule |
+| Temporary handling | Fail-closed remains in effect: `heldGroupOf` / `heldTogetherOptions` honour no group; the grouped profile is unselectable |
+| Required model properties (not an approved schema) | A source-governed composite wielding group: explicit member Item identities; explicit chosen appendage and grouping; eligibility limited by canonical published equipment identity and proficiency; one effective weapon/attack source for the qualifying group; group-aware occupancy verification instead of arbitrary appendage sharing; no duplicate attack generation or damage/effect stacking; correct behavior when a member is dropped, thrown, transferred or removed. Not every collection of identical weapons may share a hand |
+| Future acceptance tests | Required: `data/audits/equipment-acceptance-debt.json` item `EQ-002/darkstick-group` |
+| Status | `SOURCE_VERIFIED` (mechanic) / `DEFERRED_RULES_REVIEW` → model certification pending |
+
+## EQ-003 — Addendum 1 (2026-10-19, E4-C1 WP5-C1): source reconciliation
+
+Append-only. The original EQ-003 entry above is unchanged. EQ-003 covers distinct published mechanisms, not one universal exemption.
+
+| Item | Source (printed page) | Established behavior |
+|---|---|---|
+| Combat Gloves | *Saga Edition Core Rulebook* p. 121 | Worn; +1 damage on successful unarmed attacks; cannot be disarmed or dropped |
+| Stunning Gauntlet | *Knights of the Old Republic Campaign Guide* p. 202 | Worn; converts the wearer's unarmed melee attacks to stun damage and adds +1 stun damage; cannot be disarmed or dropped |
+| Tactical Tractor Beam | *Galaxy at War* p. 42 | May be mounted on a large droid or vehicle, or operated from a tripod (treated one size smaller for wielding; a Medium character operates that configuration with two hands); requires a power generator; normally a second adjacent crewman spends a standard action regulating power, otherwise attacks take -2 |
+
+All three are `SOURCE_VERIFIED` from the supplied sourcebook text extractions (not rendered PDF pages). Implemented behavior: not certified. Model: unresolved. The earlier wording "no printed page was located" is superseded by this addendum for these three identities only.
+
+**Required model distinctions (not an approved schema):** (1) ordinary handheld weapon posture; (2) verified worn equipment modifying an unarmed attack; (3) verified host-mounted equipment; (4) verified tripod-operated equipment; (5) source-specific operator, power and crew requirements. Worn-weapon protection must come from certified worn equipment state, not from the Item occupying an ordinary weapon grip. Tripod operation must evaluate its published effective-size and two-hand requirement, never receive unconditional ready status. Vehicle/droid mounting must rely on a separately established host/mount authority.
+
+**Temporary handling (remains):** worn weapons are never READIED (no worn-equipment state is certified), so attacks, reactions and disarm/drop protection keyed to a ready weapon do not apply to them. The Tactical Tractor Beam is verified READIED only in its tripod configuration (owned `mounted` state, two hands, via the existing grip resolver); host-mounted operation, the generator and crew regulation are not certified. The fail-closed tests are temporary safety expectations, not assertions that the published mechanics are invalid. **Future acceptance tests (required):** `data/audits/equipment-acceptance-debt.json` items `EQ-003/combat-gloves`, `EQ-003/stunning-gauntlet`, `EQ-003/tactical-tractor-beam`.
+
+## EQ-004 — Operator authorization and crew eligibility for vehicle-mounted weapon attacks
+
+| Field | Content |
+|---|---|
+| Rules domain | Vehicle / starship weapon attacks (operator and crew authorization) |
+| Feature | Whether a weapon owned by a vehicle may be fired by an actor that is not assigned to a crew station that operates it, and what evidence of installation, station assignment or crew eligibility the attack boundary must require |
+| Source | Not located for this question by this checkpoint. The existing project authority is the attack-domain router (`attack-domain-router.js`) and `resolveVehicleAttackBonus`, which require a vehicle-type actor and a non-vehicle gunner actor; the crew-assignment services (`vehicle-crew-assignment-service.js`, `vehicle-weapon-station-service.js`) store station assignments and operator-station mappings but are not consulted at attack execution |
+| Evidence | The WP5-C1 attack gate treated "a vehicle-type actor owns this very Item and the router accepted a vehicle domain" as a verified installation. That proves routing and ownership only. It does not prove physical installation, that the firing actor is assigned to the weapon's station, or crew eligibility |
+| Confirmed behavior | Existing legitimate vehicle attacks route to the vehicle domain and are not subject to hand occupancy. Combat math for the gunner path already refuses a vehicle or missing actor as the gunner |
+| Unresolved question | Whether firing a vehicle weapon requires the firing actor to be assigned to the weapon's operator station (or otherwise authorized), and which stored evidence establishes that. Requiring it would change which actors may attack; not requiring it permits any actor named as the gunner to fire |
+| Options | None supported by a located source |
+| Recommended ruling | None |
+| Implementation impact | WP5-C2 relabels the attack-gate result `vehicle-routed-weapon` with `certification: 'routing-only'`, requires the exact vehicle-owned Item (identity), a distinct non-vehicle gunner (or the vehicle itself for the explicit abstract-crew path), and adds no mount, installation or operator flag. Station-assignment or crew-eligibility enforcement is NOT implemented and is not claimed. Vehicle mounted/worn equipment certification (EQ-003) remains open |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## D-016 — Armor Reinforcement: matching "DR 2 versus piercing" to incoming damage
+
+| Field | Content |
+|---|---|
+| Rules domain | Modification effects (armor accessory) / damage mitigation |
+| Feature | Armor Reinforcement (`kotor-accessory-armor-reinforcement::armor`) |
+| Source | *Knights of the Old Republic Campaign Guide* printed page 75 (Table 5-6, Weapon and Armor Accessories), as certified in the runtime catalog (`EFFECTS_CERTIFIED`; summary "Wearer DR 2 versus piercing") |
+| Evidence | The certified effect is a grant of damage reduction 2 against the piercing damage type to the wearer |
+| Confirmed behavior | DR 2 applies to piercing damage dealt to the wearer of armor carrying the accessory |
+| Unresolved question | The damage pipeline cannot tell piercing damage apart: `normalizeDamageTypeKey` maps `piercing` (and `slashing`, `bludgeoning`) to `kinetic`, and the canonical weapon records carry `damageType` values `energy`, `kinetic`, `stun`, `sonic` and `fire` only; "piercing" appears only in description prose (for example the vibrolance, "piercing or slashing"). Wiring the grant through the existing typed-resistance stage would therefore reduce all kinetic damage, which is broader than the printed rule. Classifying weapons as piercing (and deciding how a "piercing or slashing" weapon is treated on a given attack) would be new rules data. Separately, the project's D4 decision routes typed applies-to DR to the typed-resistance stage (highest-only per type); whether a "DR versus a type" grant belongs there or in the DR resolver is part of the same question |
+| Options | (a) Add a source-backed piercing/slashing/bludgeoning classification to weapon records and match on it. (b) Treat the grant as kinetic (broader than printed; not source-supported). No option is recommended |
+| Recommended ruling | None |
+| Implementation impact | Armor Reinforcement is NOT in the development set; it stays blocked in the workbench and contributes no mitigation. No weapon data or damage-type aliases were changed |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Review classification (rev. 2) | `DEFERRED_RULES_REVIEW` — The printed effect is clear; the open point is how the system decides that damage is piercing, which needs new rules data or an owner ruling |
+| Decision authority | Project owner |
+| Resolution | |
+| Source examination log | 2026-10-28: project owner's independent review (PR #1086 comment) visually checked *Saga Edition Core Rulebook* printed p. 120, Weapon Qualities, Damage Type: "and" means both damage types at once; "or" means the wielder chooses one immediately before the attack roll; a double weapon can have a different type per end. *KotOR Campaign Guide* p. 75: Armor Reinforcement grants DR 2 against piercing damage; p. 72, Mixed Damage Types: one of several simultaneously dealt types can trigger a type-dependent ability |
+| Direction (owner, 2026-10-28) | Do not broaden piercing to kinetic. Add source-backed physical damage subtype evidence (piercing / slashing / bludgeoning) to appropriate canonical weapon attack profiles, starting with one or two documented weapons; keep "and" versus "or" with the attack-time choice; thread the selected type through the damage-mitigation authority and apply DR 2 only when the selected or simultaneous types include piercing. Armor Reinforcement stays blocked until type evidence flows from attack to damage |
+| Implementation (2026-10-28) | No weapon data added: the canonical weapon registry already carries source-backed subtypes on attack profiles (`damageType.mode` single / and / or with `types`), e.g. slugthrower pistol piercing, bowcaster energy and piercing, vibroblade slashing or piercing. `rollDamage` records the subtypes the selected form deals (`physicalDamageTypesOf`: single = its type, and = all, or = only the chosen type; an unrecorded "or" choice assumes none) in the workflow context, which survives the chat card to the apply step. The mitigation authority matches Armor Reinforcement's grant only against those recorded subtypes, in the applies-to (typed resistance) stage where project decision D4 places typed applies-to DR (highest-only there); kinetic is never broadened. Armor Reinforcement joins the GM development set. Tests: `tests/d016-physical-damage-type-flow.test.mjs` |
+| Owner ruling (2026-10-28, PR #1086 comment) | Source-backed: *Saga Edition Core Rulebook* printed p. 158, Damage Reduction -- with several DR values a character uses the applicable one that most benefits it (by damage type); *KotOR* p. 75 grants Armor Reinforcement DR 2 **against** piercing (applies only to piercing; not "DR 2/piercing", which piercing bypasses). Armor Reinforcement therefore competes with generic and qualified DR in one highest-applicable selection per damage event (bypass and exceptions respected) and is never subtracted on top of another DR. This narrow correction supersedes the earlier implementation row's placement in the D4 typed-resistance stage for this source only; genuine typed resistances keep stacking with DR as before |
+| Implementation (2026-10-28, ruling applied) | `DamageReductionResolver.getEventDamageReductionEntries` adds the worn armor's "against <type>" entries the event qualifies for (recorded physical types) to the single-total highest-only DR selection; the per-component path adds the same candidates to its one-per-event selection, reaching only kinetic-bearing, non-bypass-tagged components. The typed-resistance stage no longer sees them. Tests: `tests/d016-physical-damage-type-flow.test.mjs` (generic DR 5 + AR -> 5; DR 1 + AR -> 2; AR alone -> 2; slashing -> 0; or-selected piercing -> 2; DR 5/energy beats 2; DR 5/kinetic bypassed leaves 2; bypass-dr -> 0; multi-component 2 / 5) |
+
+## D-017 — Mesh Underlay and the Nerve Reinforcement Implant: stacking against stun
+
+| Field | Content |
+|---|---|
+| Rules domain | Modification effects (armor accessory) / damage threshold / bonus stacking |
+| Feature | Mesh Underlay (`kotor-accessory-mesh-underlay::armor`) together with the Nerve Reinforcement Implant |
+| Source | *Knights of the Old Republic Campaign Guide* printed page 76 (Mesh Underlay, Table 5-6 on page 75; certified in the runtime catalog as "+5 equipment bonus to wearer damage threshold against stun damage"). Nerve Reinforcement Implant: *Knights of the Old Republic Campaign Guide*, page not recorded in the repository records (`packs/equipment*.db` have `page: null`); the system implements it as an untyped "+5 damage threshold against stun damage" (`ImplantEffectRules`) |
+| Evidence | Mesh Underlay's bonus is typed (equipment). The implant's bonus type is not recorded in the repository |
+| Confirmed behavior | Mesh Underlay alone: +5 equipment bonus to the wearer's damage threshold against stun damage (implemented under the GM development workflow; worn armor only; equipment bonuses do not stack with each other) |
+| Unresolved question | Whether the two bonuses stack. That depends on the implant's published bonus type, which has not been verified against the page |
+| Options | If the implant's bonus is untyped or of another type, they stack (+10). If it is an equipment bonus, only the higher applies (+5). Requires source verification of the implant's printed text |
+| Recommended ruling | None |
+| Implementation impact | With both active, `ThresholdEngine.getDamageThreshold` applies only the implant (the pre-existing behavior) and the breakdown names this entry. Mesh Underlay alone applies normally |
+| Status | `PENDING_SOURCE_VERIFICATION` |
+| Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — Read the Nerve Reinforcement Implant entry in the KotOR Campaign Guide and record its bonus type verbatim, with printed page. Becomes `DEFERRED_RULES_REVIEW` only if the text is ambiguous |
+| Decision authority | Project owner |
+| Resolution | |
+| Source examination log | 2026-10-28: project owner's independent review (PR #1086 comment, RICR review of `9885fba`) visually checked the uploaded *Knights of the Old Republic Campaign Guide* printed pp. 75-76. Nerve Reinforcement Implant (p. 75): **+5 equipment bonus** to Damage Threshold against stun damage. Mesh Underlay (p. 76): **+5 equipment bonus** to the same statistic against stun damage while the armor is worn |
+| Resolution (source) | Same bonus type: the normal non-stacking rule for bonuses of one type applies, so together they give +5, not +10. No owner rule or house rule was needed. Implemented in `ThresholdEngine.getDamageThreshold` (highest stun equipment bonus; the breakdown names the one that does not stack) and threaded into `evaluateThreshold` through `eventThresholdBonus`, so the damage resolver adjudicates the threshold with the same value it reports |
+
+## D-018 — Tremor Cell: the stun setting it adds
+
+| Field | Content |
+|---|---|
+| Rules domain | Modification effects (weapon accessory) / stun setting |
+| Feature | Tremor Cell (`kotor-accessory-tremor-cell::weapon`) |
+| Source | *Knights of the Old Republic Campaign Guide* printed page 76 (Table 5-6 on page 75), as certified in the runtime catalog (`EFFECTS_CERTIFIED`; "Adds swift-action stun setting dealing normal weapon damage as stun") |
+| Evidence | Certified operation `weapon.capabilities.stunSetting` action-grant `{ action: swift, damage_dice: equal_normal, effect: stun }` |
+| Confirmed behavior | The weapon gains a stun setting; switching to it is a swift action; it deals the weapon's normal damage dice as stun damage |
+| Unresolved question | (1) Whether the standard stun-setting range limit that the canonical registry records for ranged weapons (6 squares) applies to a stun setting added by the cell. (2) What happens on a host that already has a stun setting with its own stun dice (e.g. a blaster pistol, 2d6 stun versus 3d6 normal): does the cell's "normal weapon damage as stun" replace it, and does its swift switch replace the host's switch cost? (3) Whether switching back from stun also costs an action (the existing persistent-setting model charges only the switch to stun). The certified data does not say; the page was not re-examined for this entry |
+| Options | None recorded from source text yet. The existing runtime can express a persistent stun setting with a swift switch (as for Shockboxing Gloves) once (1)-(3) are settled |
+| Recommended ruling | None |
+| Implementation impact | Tremor Cell is NOT in the GM development set and is not automated; it stays listed as blocked in the workbench. No weapon stun data was changed |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Review classification (rev. 2) | `DEFERRED_RULES_REVIEW` — the printed effect is clear on the switch cost and damage; its interaction with the Core stun-setting rules and with hosts that already have one needs a ruling or the page's exact text |
+| Decision authority | Project owner |
+| Resolution | |
+
 ---
 
 ## Revision log
@@ -901,3 +1060,12 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 - **Revision 4 (2026-10-14, G2 review corrections):** added a machine-readable **Ledger scope** row to D-001, D-004, D-005, D-006, D-010 and D-011 (which component and which typed definitions each open entry blocks). The generator now requires the ledger to carry the full scope of every open entry and rejects any omission. An entry's blocker is lifted only by an appended **Blocker lifted** row (`source=` and `evidence=` for `PENDING_SOURCE_VERIFICATION`; `owner-ruling=` for `DEFERRED_RULES_REVIEW`); no such row exists for any entry, so every scoped blocker is open. Entries without a Ledger scope row (D-002, D-003, D-007, D-008, D-009, D-012) block no registry definition directly. No ID, original field, ruling or classification changed.
 - **Revision 5 (2026-10-14, D-001 PDF verification):** D-001 resolved from the printed page 39 image (appended source-examination, **Blocker lifted** and source-resolution rows; no existing row changed). New entries D-013 (installation procedure of the 156 typed definitions the page does not demonstrably govern; `PENDING_SOURCE_VERIFICATION`, ledger scope `ALL` except the 56 governed Scum definitions) and D-014 (points the printed procedure leaves undefined; `DEFERRED_RULES_REVIEW`, no ledger scope). No recommended ruling on any entry. D-003 (equipment size) is untouched.
 - **Revision 6 (2026-10-14, PR #1043 review corrections; applied to entries this unmerged PR introduced, plus appended rows):** (a) D-013's base scope is now `ALL` and its 76 governed definitions are released by an appended evidence-bound **Partial lift** row instead of an `except=` list; the generator pins every Ledger scope row by SHA-256, so the scope cannot be altered without a reviewed code change, and a partial lift releases nothing unless it names existing parent definitions inside the scope with `source=` and `evidence=` (and `owner-ruling=` for deferred entries) citing an existing repository file. (b) D-014 now has a Ledger scope on the 76 governed definitions so its unresolved sub-flows are machine-enforced; its former item (5) moved to the new research entry **D-015** (`PENDING_SOURCE_VERIFICATION`, same scope). No recommended ruling on any entry.
+- **Revision 4 (2026-10-17, E4-C1 WP3-A):** appended EQ-001 (action cost of changing a drawn weapon between drawn configurations). No existing entry was changed; no recommended ruling was added.
+- **Revision 5 (2026-10-19, E4-C1 WP5):** appended EQ-002 (held-together groups of identical weapons are not representable in the occupancy model; fail-closed) and EQ-003 (worn weapons and weapons without a wielding class cannot be READIED; fail-closed). No existing entry was changed; no recommended ruling was added.
+- **Revision 6 (2026-10-19, E4-C1 WP5-C1):** appended source-verification addenda to EQ-002 and EQ-003 (published mechanics SOURCE_VERIFIED from sourcebook text extractions; model/implementation unresolved; fail-closed handling unchanged; acceptance debt tracked). EQ-001 untouched. No recommended ruling was added.
+- **Revision 7 (2026-10-19, E4-C1 WP5-C2):** appended EQ-004 (operator authorization and crew eligibility for vehicle weapon attacks are not established at the attack boundary; routing-only evidence is reported as such; no enforcement and no flag added). No existing entry was changed; no recommended ruling was added.
+- **Revision 8 (2026-10-28, Modification V2 #1086):** appended D-016 (Armor Reinforcement "DR 2 versus piercing" cannot be matched: the pipeline has no piercing classification; blocked) and D-017 (Mesh Underlay with the Nerve Reinforcement Implant: stacking depends on the implant's unverified bonus type; only the implant applies when both are active). No existing entry was changed; no recommended ruling was added.
+- **Revision 9 (2026-10-28, #1086 review):** appended to D-017 the owner's source examination (KotOR pp. 75-76: both bonuses are equipment bonuses) and its source resolution (non-stacking); appended to D-016 the owner's source examination (Core p. 120, KotOR pp. 72 and 75) and implementation direction. No existing row changed; no recommended ruling was added.
+- **Revision 10 (2026-10-28, #1086):** appended an implementation row to D-016 (subtype recorded at damage-roll time, matched in the D4 applies-to stage; no weapon data or alias changed). No existing row changed; no recommended ruling was added.
+- **Revision 11 (2026-10-28, #1086):** appended to D-016 the owner's source-backed stacking ruling (Core p. 158: highest applicable DR; Armor Reinforcement competes, never adds) and its implementation. No existing row changed; no recommended ruling was added.
+- **Revision 12 (2026-10-28, #1086):** appended D-018 (Tremor Cell stun setting: range cap, hosts with an existing stun setting, switch-back cost). No existing entry was changed; no recommended ruling was added.

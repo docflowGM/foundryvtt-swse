@@ -289,6 +289,14 @@ export function resolveComponentMitigation({ damage, actor, damageType = 'normal
   // is handled by the typed pass below (D4), not here.
   const drWeaponBypass = DamageReductionResolver.shouldBypassDR(baseContext.weapon);
   const drEntries = drWeaponBypass ? [] : DamageReductionResolver.getCanonicalDamageReductionEntries(actor);
+  // D-016: "DR against <type>" entries this event qualifies for compete in the same highest-only selection (Core p.158), but only when a
+  // component they can reach exists
+  const outside = (component, entry) => DamageReductionResolver.componentBypassesDamageReduction(component, entry) || DamageReductionResolver.componentOutsideAppliesTo(component, entry);
+  if (!drWeaponBypass) {
+    for (const entry of DamageReductionResolver.getEventDamageReductionEntries(actor, baseContext)) {
+      if (staged.some((component) => Math.max(0, asNumber(component.afterDR, 0)) > 0 && !outside(component, entry))) drEntries.push(entry);
+    }
+  }
   let bestEntry = null;
   for (const entry of drEntries) {
     if (!bestEntry || entry.value > bestEntry.value) bestEntry = entry;
@@ -299,7 +307,7 @@ export function resolveComponentMitigation({ damage, actor, damageType = 'normal
     const applicableKeys = new Set(
       staged
         .filter(component => Math.max(0, asNumber(component.afterDR, 0)) > 0)
-        .filter(component => !DamageReductionResolver.componentBypassesDamageReduction(component, bestEntry))
+        .filter(component => !outside(component, bestEntry))
         .map(component => component.key)
     );
     const pool = staged

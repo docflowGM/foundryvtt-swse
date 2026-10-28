@@ -221,6 +221,11 @@ function summarizeDamageContext(context = {}, extra = {}) {
       ...asArray(damage.damageTypes),
       ...asArray(extra.damageType ?? context.damageType ?? damage.damageType)
     ]),
+    // D-016: physical subtypes (piercing/slashing/bludgeoning) the selected attack form deals, recorded at damage-roll time before the
+    // type normalizer folds them into kinetic; null when not recorded
+    physicalDamageTypes: Array.isArray(extra.physicalDamageTypes) ? [...extra.physicalDamageTypes].map(String)
+      : Array.isArray(damage.physicalDamageTypes) ? [...damage.physicalDamageTypes].map(String) : null,
+    physicalDamageTypeResolved: extra.physicalDamageTypeResolved ?? damage.physicalDamageTypeResolved ?? null,
     damageComponents: Array.isArray(extra.damageComponents)
       ? extra.damageComponents
       : Array.isArray(context.damageComponents)

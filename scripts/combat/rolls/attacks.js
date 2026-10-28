@@ -1,3 +1,4 @@
+import { checkAttackSourceReadiness, refuseUnreadyAttack, routedVehicleWeapon, revalidateAttackSource } from "/systems/foundryvtt-swse/scripts/combat/rolls/attack-readiness-gate.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
@@ -265,10 +266,10 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions, actor = wea
   // Phase 5D-I-B: what the OWNED weapon state already says (hands, mount, this round's crew adjudication) -- read once, never rediscovered later
   const shape = resolveAttackShapeFor(runtime, rollOptions);
   const owned = FireStateStore.readFireState(weapon) ?? {};
-  // Phase 5D-I-D-B2: the EFFECTIVE size class (Core Rulebook p.120) joins the hands resolution. Only a VERIFIED vehicle / starship installation keeps its own
+  // Phase 5D-I-D-B2: the EFFECTIVE size class (Core Rulebook p.120) joins the hands resolution. Only a ROUTED vehicle / starship weapon (routing evidence, not an installation certification) keeps its own
   // mounting rules (a caller-supplied flag proves nothing); everything else is personally wielded. All facts that decide the size (the tripod answer, a size the
   // wielder chose, a size-changing preparation) are resolved ONCE here, before the conditional modifiers are evaluated, and carried with the attack.
-  const personallyWielded = !verifiedVehicleInstallation(actor, weapon, rollOptions);
+  const personallyWielded = !routedVehicleWeapon(actor, weapon, rollOptions);
   const wielderSize = actor?.system?.size ?? actor?.system?.details?.size ?? null;
   const beneficialSizeChoice = rollOptions.beneficialSizeChoice ?? owned.sizeTreatment ?? undefined;
   // a preparation that temporarily changes the size (the braced Heavy Blaster Cannon) counts only when the readiness authority says it is done this round or is
@@ -666,24 +667,19 @@ function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) 
  * - Hit/damage resolution is a separate workflow (rollDamage) and is not
  *   gated by this function's cost transaction.
  */
-/** A VERIFIED vehicle / starship installation: the attack routes to a vehicle domain through a real vehicle-type actor that owns this very weapon Item. A flag in the attack options proves nothing. */
-function verifiedVehicleInstallation(actor, weapon, rollOptions = {}) {
-  try {
-    const route = resolveAttackDomain({ actor, item: weapon, vehicle: rollOptions.vehicleActor ?? null, sourceContext: { vehicleActor: rollOptions.vehicleActor ?? null, abstractCrewQuality: rollOptions.abstractCrewQuality ?? null } });
-    if (!route?.ok || route.domain === 'character') return false;
-    const vehicle = route.normalizedContext?.vehicleActor ?? null;
-    if (!vehicle || vehicle.type !== 'vehicle') return false;
-    const held = vehicle.items?.get?.(weapon?.id) ?? Array.from(vehicle.items ?? []).find((i) => i?.id === weapon?.id);
-    return !!held && held === weapon;
-  } catch { return false; }
-}
+export { checkAttackSourceReadiness };
 
 export async function rollAttack(actor, weapon, options = {}) {
-  let rollOptions = prepareCoreAttackOptionRollContext(mergeCombatWorkflowContextIntoRollOptions(options, options?.combatContext ?? options?.workflowContext ?? null));
+  // WP5-C3: an optional Force Point transaction (SWSERoll.beginForcePointUse). It is spent only at this function's commitment point, after the last
+  // readiness check, and is kept out of the roll options so it is never serialized into chat or reroll data.
+  const { forcePointTransaction: fpTx = null, ...plainOptions } = options ?? {};
+  let fpCommitted = false;
+  let rollOptions = prepareCoreAttackOptionRollContext(mergeCombatWorkflowContextIntoRollOptions(plainOptions, plainOptions?.combatContext ?? plainOptions?.workflowContext ?? null));
   if (!actor || !weapon) {
     ui.notifications.error('Missing actor or weapon for attack roll.');
     return null;
   }
+  { const gate = checkAttackSourceReadiness(actor, weapon, rollOptions); if (!gate.ok) return refuseUnreadyAttack(weapon, gate); }
 
   // Phase 5D-A: canonical weapon/profile resolution is pure -- do it BEFORE any action-option or ammunition cost so an
   // unresolvable canonical identity/selection never spends anything (and needs no rollback).
@@ -753,6 +749,9 @@ export async function rollAttack(actor, weapon, options = {}) {
     ui?.notifications?.error?.(ammoPreflight.message || `${weapon.name} does not have enough ammunition.`);
     return null;
   }
+  // WP5-C2 R4: the selection / opportunity / target-side / special-question steps above can await the player. Equipment may have changed meanwhile, so
+  // the attack source is judged again, live, before the first expenditure.
+  if (!revalidateAttackSource(actor, weapon, rollOptions, 'attack preparation')) return null;
   let actionOptionSpend = await spendCoreAttackOptionCosts(actor, weapon, rollOptions);
   if (actionOptionSpend?.allowed === false || actionOptionSpend?.permitted === false) {
     ui?.notifications?.warn?.(actionOptionSpend.reason || 'Selected attack option action cost could not be paid.');
@@ -775,6 +774,8 @@ export async function rollAttack(actor, weapon, options = {}) {
   let ammoSpend = null;
 
   try {
+  // WP5-C2 R4: the action spends above awaited; nothing irreversible beyond them has happened, so refuse and give them back before ammunition is touched.
+  if (!revalidateAttackSource(actor, weapon, rollOptions, 'action payment')) { await actionOptionSpend?.rollback?.(); return null; }
   ammoSpend = await AmmoSystem.spendForWorkflow(actor, weapon, {
     workflowContext,
     options: rollOptions,
@@ -818,6 +819,29 @@ export async function rollAttack(actor, weapon, options = {}) {
   }
   const { atkBonus, attackDomain, isVehicleAttack, attackBonusResolution, attackComponentLedger, sequencePenalty, domainResolution } = composition;
 
+  // WP5-C2 R4: last check before the dice. Ammunition and action payments are given back together if the source is no longer ready.
+  if (!revalidateAttackSource(actor, weapon, rollOptions, 'ammunition payment')) {
+    if (ammoSpend?.spent) await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
+    await actionOptionSpend?.rollback?.();
+    return null;
+  }
+  // WP5-C3: the Force Point is committed at the very last point and the source is checked once more, because committing awaits. A refusal after
+  // the spend restores the exact pre-spend Force Point state together with the other payments.
+  if (fpTx) {
+    if (!(await fpTx.commit())) {
+      if (ammoSpend?.spent) await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
+      await actionOptionSpend?.rollback?.();
+      return null;
+    }
+    fpCommitted = true;
+    if (!revalidateAttackSource(actor, weapon, rollOptions, 'the Force Point payment')) {
+      await fpTx.rollback();
+      fpCommitted = false;
+      if (ammoSpend?.spent) await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
+      await actionOptionSpend?.rollback?.();
+      return null;
+    }
+  }
   const rollFormula = `1d20 + ${atkBonus}`;
   const roll = await RollEngine.safeRoll(rollFormula, actor?.getRollData?.() ?? {}, { actor, domain: 'combat.attack', context: { weaponId: weapon?.id ?? null } });
 
@@ -1073,6 +1097,7 @@ export async function rollAttack(actor, weapon, options = {}) {
       await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
     }
     await actionOptionSpend?.rollback?.();
+    if (fpCommitted) await fpTx.rollback();
     throw err;
   }
 }
@@ -1140,6 +1165,7 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
     ui.notifications.error('Missing actor or weapon for attack roll.');
     return null;
   }
+  { const gate = checkAttackSourceReadiness(actor, weapon, rollOptions); if (!gate.ok) return refuseUnreadyAttack(weapon, gate); }
 
   const targetName = _firstTargetName();
   // Math Integrity Freeze, Attack Bonus round 6: this used to call
@@ -1164,6 +1190,7 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   // optionModifiers still needed for die-formula and effect modifiers below.
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, rollOptions);
   const workflowContext = summarizeCombatWorkflowContext(rollOptions.combatContext ?? rollOptions.workflowContext ?? null, { actor, weapon });
+  if (!revalidateAttackSource(actor, weapon, rollOptions, 'attack composition')) return null;   // WP5-C2 R4: composition awaited
   const actionOptionSpend = await spendCoreAttackOptionCosts(actor, weapon, rollOptions);
   if (actionOptionSpend?.allowed === false || actionOptionSpend?.permitted === false) {
     ui?.notifications?.warn?.(actionOptionSpend.reason || 'Selected attack option action cost could not be paid.');
@@ -1180,6 +1207,11 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   if (ammoSpend?.success === false) {
     await actionOptionSpend?.rollback?.();
     ui?.notifications?.error?.(ammoSpend.message || `${weapon.name} does not have enough ammunition.`);
+    return null;
+  }
+  if (!revalidateAttackSource(actor, weapon, rollOptions, 'ammunition payment')) {   // WP5-C2 R4
+    if (ammoSpend?.spent) await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
+    await actionOptionSpend?.rollback?.();
     return null;
   }
 

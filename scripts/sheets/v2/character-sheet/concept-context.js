@@ -1,5 +1,8 @@
-import { isItemEquipped, isAlwaysReadiedWeapon, isNaturalWeaponOnly } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { isAlwaysReadiedWeapon, isNaturalWeaponOnly } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
+import { readJournal, unresolvedItemIds, JOURNAL_STATUS } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-transaction-journal.js";
+import { getWeaponReadiness } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
+import { effectiveShotCapacity } from "/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-effects.js";
 import { resolveActionCost } from "/systems/foundryvtt-swse/scripts/engine/feats/action-speed-runtime-patches.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
 import { FireStateStore } from "/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js";
@@ -344,13 +347,30 @@ function buildCombatStatusStrip(context, combat) {
 }
 
 /** Weapon readiness (drawn / stowed, blade state) read from the live owned Item; presentation only. */
+/** Request ids of unresolved equipment transactions covering this Item (read-only; a malformed journal yields none here). */
+function unresolvedEquipmentRequestIds(actor, itemId) {
+  try {
+    const journal = readJournal(actor?.flags?.swse?.equipmentTxn);
+    if (journal.status !== JOURNAL_STATUS.VALID) return [];
+    return (unresolvedItemIds(journal.entries).get(itemId) ?? []).map((t) => t.requestId);
+  } catch (_err) { return []; }
+}
+
 function buildWeaponReadinessView(item, actor) {
   if (!item) return null;
   if (!['weapon', 'lightsaber'].includes(String(item.type ?? '').toLowerCase())) return null;
   const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor });
-  const drawn = isItemEquipped(item, actor);
   // Canonical authority: natural (auto-equipped) and integrated droid weapons are always readied -> no Draw/Stow.
   const alwaysReadied = isAlwaysReadiedWeapon(item, actor);
+  // Drawn/Stowed follows the equipment-state authority's declared record (the same fact the Draw/Stow toggle acts on), so the label and the click
+  // agree after a coordinator draw.
+  let readiness = null;
+  try { readiness = getWeaponReadiness(actor, item); } catch (_err) { readiness = null; }
+  const declared = readiness?.recordStatus === 'valid' ? readiness.declaredPosture : null;
+  // an ordinary weapon with NO posture record (created before the WP1 default) is shown as not set up, never as drawn or stowed: its only action
+  // is an explicit, user-confirmed "record as stowed" through the coordinator. Legacy markers are not read as a position.
+  const needsSetup = !alwaysReadied && readiness?.recordStatus === 'absent';
+  const drawn = declared ? declared !== 'STOWED' : false; // clean break: no record (or a malformed one) is never presented as drawn
   const activated = isItemActivated(item);
   const isLightsaber = visualProfile?.isLightsaber === true;
   let combinedEffects = [];
@@ -358,17 +378,23 @@ function buildWeaponReadinessView(item, actor) {
     const mutation = resolveActionCost(actor, 'drawOrHolsterWeapon', { workflowValidated: true, weaponId: item.id, direction: drawn ? 'holster' : 'draw' });
     combinedEffects = Array.isArray(mutation?.combinedEffects) ? mutation.combinedEffects : [];
   } catch (_err) { combinedEffects = []; }
+  // G36: an unresolved equipment transaction withholds this weapon; only a GM may open the reconciliation review for it
+  const unresolvedRequestIds = unresolvedEquipmentRequestIds(actor, item.id);
   return {
     drawn, activated, isLightsaber,
     alwaysReadied,
-    stateLabel: alwaysReadied ? (isNaturalWeaponOnly(item) ? 'Natural' : 'Integrated') : drawn ? 'Drawn' : 'Stowed',
+    ready: readiness?.ready === true,
+    unresolved: unresolvedRequestIds.length > 0,
+    canReconcile: unresolvedRequestIds.length > 0 && globalThis.game?.user?.isGM === true,
+    needsSetup,
+    stateLabel: alwaysReadied ? (isNaturalWeaponOnly(item) ? 'Natural' : 'Integrated') : needsSetup ? 'Not set up' : drawn ? 'Drawn' : 'Stowed',
     bladeStateLabel: isLightsaber ? (activated ? 'Active' : 'Inactive') : '',
     canDrawStow: !alwaysReadied,
-    drawStowLabel: drawn ? 'Stow' : 'Draw',
+    drawStowLabel: needsSetup ? 'Set up' : drawn ? 'Stow' : 'Draw',
     stowBlocked: drawn && isLightsaber && activated,
     canToggleActivated: isLightsaber && drawn,
     activationLabel: activated ? 'Deactivate' : 'Activate',
-    canDrawAndIgnite: isLightsaber && !drawn && !activated && combinedEffects.some((effect) => effect?.actionId === 'drawAndIgniteLightsaber')
+    canDrawAndIgnite: isLightsaber && !needsSetup && !drawn && !activated && combinedEffects.some((effect) => effect?.actionId === 'drawAndIgniteLightsaber')
   };
 }
 
@@ -416,6 +442,20 @@ function buildWeaponPowerSourceView(weapon) {
   } catch (_err) { return null; }
 }
 
+/** Modification V2: installed instances shown on a weapon/armor row (managed in the item customization workbench). */
+function modificationV2View(entry, actor) {
+  const type = String(entry?.type ?? '').toLowerCase();
+  if (!actor || entry?.isVirtual || entry?.virtual || !['weapon', 'armor'].includes(type)) return {};
+  const liveItem = actor.items?.get?.(entry?.id) ?? null;
+  if (!liveItem) return {};
+  const raw = liveItem.flags?.['foundryvtt-swse']?.customization?.installedUpgrades;
+  const installed = (Array.isArray(raw) ? raw : []).filter((r) => r && typeof r.typedDefinitionId === 'string').map((r) => ({
+    instanceId: r.instanceId, name: r.name ?? r.typedDefinitionId, state: r.state ?? 'installed', provisional: r.provisional === true,
+    label: `${r.name ?? r.typedDefinitionId}${r.state === 'deactivated' ? ' (deactivated)' : ''}${r.provisional === true ? ' · provisional' : ''}`,
+  }));
+  return { modificationV2: { installed, hasInstalled: installed.length > 0 } };
+}
+
 /** live-Item weapon readiness + configuration views for one inventory entry (empty for non-weapons / the virtual unarmed entry) */
 function weaponStateViews(entry, isWeaponRow, actor) {
   if (!isWeaponRow || !actor || entry?.isVirtual || entry?.virtual) return {};
@@ -460,7 +500,8 @@ function buildInventoryGroups(inventoryPanel, actor) {
             : (entry?.isEnergyShield ? 'Shield Inactive' : 'Blade Inactive'),
           bladeColor: visualProfile?.bladeColor || null,
           bladeHex: visualProfile?.bladeHex || null,
-          ...weaponStateViews(entry, label === 'Weapons', actor)
+          ...weaponStateViews(entry, label === 'Weapons', actor),
+          ...modificationV2View(entry, actor)
         };
       });
 
@@ -1775,7 +1816,8 @@ export function buildConceptSheetViewModel(context = {}) {
     const railHex = visualProfile?.primaryHex || attack?.visualColorHex || attack?.colorHex || '';
     const rangeLabel = normalizeText(attack?.range || attack?.rangeLabel || item?.system?.rangeFormatted || item?.system?.range?.label || item?.system?.range?.value || 'Melee');
     const ammoCurrent = item?.system?.ammo?.current ?? item?.system?.ammunition?.current ?? item?.system?.charges?.value ?? item?.system?.charges?.current ?? attack?.ammoCurrent;
-    const ammoMax = item?.system?.ammo?.max ?? item?.system?.ammunition?.max ?? item?.system?.charges?.max ?? attack?.ammoMax;
+    // the tracked pool shows its EFFECTIVE capacity (Modification V2 effects are derived, never written into the Item)
+    const ammoMax = item?.system?.ammo?.max ?? (item?.system?.ammunition?.max !== undefined && item?.system?.ammunition?.max !== null ? effectiveShotCapacity(item, item.system.ammunition.max) : undefined) ?? item?.system?.charges?.max ?? attack?.ammoMax;
     const ammoLabel = ammoCurrent !== undefined && ammoCurrent !== null && ammoCurrent !== ''
       ? `${ammoCurrent}${ammoMax !== undefined && ammoMax !== null && ammoMax !== '' ? ` / ${ammoMax}` : ''}`
       : '';

@@ -21,3 +21,6 @@ packs/*.backup
 
 # Distribution packages
 *.zip
+
+# Release staging (scripts/build/package-system.js)
+build/release/

@@ -7,6 +7,7 @@
  */
 
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { getReadiedWeapons, isWeaponReadied } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 import { ModifierSource, ModifierType, createModifier } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 import { isVehicleWeapon, getWeaponAttunementAndUpgradeModifiers } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { isMeleeWeapon as canonicalIsMeleeWeapon, isLightWeaponForActor } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
@@ -95,10 +96,10 @@ export class WeaponsEngine {
     const modifiers = [];
 
     try {
-      const weapons = actor.items?.filter(i => i.type === 'weapon') ?? [];
+      // only READY weapons (effective READIED) contribute weapon modifiers; EQUIPPED, activated or flagged weapons do not
+      const weapons = getReadiedWeapons(actor);
 
       for (const weapon of weapons) {
-        if (!weapon?.system?.equippable?.equipped) continue;
 
         const combat = weapon.system?.combat ?? {};
 
@@ -436,7 +437,7 @@ export class WeaponsEngine {
 
     // Only process lightsabers with upgrades
     if (weapon.system?.subtype !== 'lightsaber') return result;
-    if (!weapon.system?.equippable?.equipped) return result;
+    if (!isWeaponReadied(actor, weapon)) return result;
 
     const installedUpgrades = weapon.system?.installedUpgrades ?? [];
     if (!installedUpgrades.length) return result;

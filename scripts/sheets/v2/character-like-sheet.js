@@ -15,6 +15,9 @@ import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interact
 import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/background-registry.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { requestWithPostureChoices } from "/systems/foundryvtt-swse/scripts/sheets/v2/weapon-posture-choice-dialog.js";
+import { reconcileItemTransactions } from "/systems/foundryvtt-swse/scripts/sheets/v2/equipment-reconcile-dialog.js";
+import { getReadiedWeapons, isWeaponHeld } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js";
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
@@ -1334,12 +1337,17 @@ export class SWSEV2CharacterLikeSheet extends SWSEV2ActorSheetBase {
     const attacksBundle = derived?.attacks;
     let attacksList = Array.isArray(attacksBundle?.list) ? attacksBundle.list : [];
     const actorItems = Array.from(actor?.items ?? []);
+    let readyWeaponIds = new Set();
+    try { readyWeaponIds = new Set(getReadiedWeapons(actor).map((i) => i.id)); } catch (_err) { readyWeaponIds = new Set(); }
     const isEquippedForAttack = (item) => {
       const truthy = (value) => {
         if (value === true || Number(value) === 1) return true;
         if (value && typeof value === 'object') return truthy(value.value ?? value.current ?? value.active ?? value.equipped ?? value.state);
         return ['true', '1', 'yes', 'equipped', 'worn', 'held', 'readied', 'ready', 'on', 'active', 'activated', 'natural'].includes(String(value || '').toLowerCase());
       };
+      // clean break: an ordinary weapon is "equipped for attack" only when the readiness authority says it is READY (natural and integrated weapons
+      // keep their own always-readied authority); legacy equipped/active markers no longer stand in for a weapon's position
+      if (['weapon', 'lightsaber'].includes(item?.type)) return readyWeaponIds.has(item.id) || isAutoEquippedNaturalWeaponForCombat(item, truthy) || isIntegratedDroidAttackItem(item, actor, truthy);
       const system = item?.system ?? {};
       return truthy(system.equipped)
         || truthy(system.isEquipped)
@@ -3856,7 +3864,7 @@ const forcePoints = [];
     });
 
     // Delete/Remove item
-    html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="toggle-activated"], [data-action="toggle-weapon-readiness"], [data-action="draw-and-ignite-lightsaber"], [data-action="change-weapon-configuration"], [data-action="set-power-source"], [data-action="edit"], [data-action="configure"], [data-action="toggle-implant-tag"], [data-action="toggle-implant-installed"], [data-action="toggle-implant-active"], [data-action="sell-item"], [data-action="force-alchemy"]').forEach(button => {
+    html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="toggle-activated"], [data-action="toggle-weapon-readiness"], [data-action="draw-and-ignite-lightsaber"], [data-action="reconcile-weapon-transaction"], [data-action="change-weapon-configuration"], [data-action="set-power-source"], [data-action="edit"], [data-action="configure"], [data-action="toggle-implant-tag"], [data-action="toggle-implant-installed"], [data-action="toggle-implant-active"], [data-action="sell-item"], [data-action="force-alchemy"]').forEach(button => {
       button.addEventListener("click", async (event) => {
         event.preventDefault();
         const action = button.dataset.action;
@@ -3880,21 +3888,30 @@ const forcePoints = [];
             break;
           }
           case "toggle-weapon-readiness": {
-            const result = await InventoryEngine.toggleWeaponReadied(this.actor, itemId);
+            // a draw that needs hands/grip asks for them and retries with the same request id; the coordinator re-validates the choice
+            const result = await requestWithPostureChoices(item, () => InventoryEngine.toggleWeaponReadied(this.actor, itemId), (choice) => InventoryEngine.setWeaponReadied(this.actor, itemId, true, choice), { initialize: () => InventoryEngine.requestWeaponPosture(this.actor, { type: "stow", itemId }) });
             if (!result?.ok) {
+              if (result?.cancelled) break;
               if (result?.reason === "deactivate-before-stowing") ui?.notifications?.warn?.(`${item.name}: deactivate the lightsaber before stowing it.`);
+              else if (result?.message) ui?.notifications?.warn?.(`${item.name}: ${result.message}`);
               break;
             }
             await this.requestSurfaceRender({ reason: "weapon-readiness-change" });
             break;
           }
           case "draw-and-ignite-lightsaber": {
-            const result = await InventoryEngine.drawAndActivateLightsaber(this.actor, itemId);
+            const result = await requestWithPostureChoices(item, () => InventoryEngine.drawAndActivateLightsaber(this.actor, itemId), (choice) => InventoryEngine.drawAndActivateLightsaber(this.actor, itemId, choice), { initialize: () => InventoryEngine.requestWeaponPosture(this.actor, { type: "stow", itemId }) });
             if (!result?.ok) {
-              ui?.notifications?.warn?.(`${item.name}: unable to draw and ignite.`);
+              if (result?.cancelled) break;
+              ui?.notifications?.warn?.(`${item.name}: ${result?.message ?? "unable to draw and ignite."}`);
               break;
             }
             await this.requestSurfaceRender({ reason: "weapon-draw-and-ignite" });
+            break;
+          }
+          case "reconcile-weapon-transaction": {
+            const results = await reconcileItemTransactions(this.actor, item);
+            if (results.some((r) => r?.status === "RECONCILED")) await this.requestSurfaceRender({ reason: "equipment-reconciled" });
             break;
           }
           case "change-weapon-configuration":
@@ -6327,7 +6344,12 @@ const forcePoints = [];
         .toLowerCase();
       return /weapon|lightsaber|blaster|rifle|pistol|melee|ranged|thrown|grenade|simple|advanced|heavy/.test(text);
     };
+    let readyWeaponIds = new Set();
+    try { readyWeaponIds = new Set(getReadiedWeapons(actor).map((i) => i.id)); } catch (_err) { readyWeaponIds = new Set(); }
     const isEquipped = (item) => {
+      // clean break: an ordinary weapon is "equipped for attack" only when the readiness authority says it is READY (natural and integrated weapons
+      // keep their own always-readied authority); legacy equipped/active markers no longer stand in for a weapon's position
+      if (['weapon', 'lightsaber'].includes(item?.type)) return readyWeaponIds.has(item.id) || isAutoEquippedNaturalWeaponForCombat(item, truthy) || isIntegratedDroidAttackItem(item, actor, truthy);
       const system = item?.system ?? {};
       return truthy(system.equipped)
         || truthy(system.isEquipped)
@@ -6886,9 +6908,10 @@ const forcePoints = [];
     const weaponId = actionData?.weaponId ?? actionData?.itemId ?? context?.weaponId ?? null;
     let weapon = weaponId ? (this.actor.items.get(weaponId) ?? null) : null;
     if (!weapon) {
-      weapon = this.actor.items.find(i =>
-        ['weapon', 'lightsaber'].includes(i.type) && i.system?.equipped && (AmmoSystem.weaponUsesAmmunition(i) || FireStateStore.readFireState(i)?.needsReload === true)
-      ) ?? null;
+      // default target: a weapon the equipment-state authority verifies as in hand (clean break: legacy equipped markers are not read)
+      const reloadable = (i) => ['weapon', 'lightsaber'].includes(i.type) && (AmmoSystem.weaponUsesAmmunition(i) || FireStateStore.readFireState(i)?.needsReload === true);
+      const held = (i) => { try { return isWeaponHeld(this.actor, i); } catch (_err) { return false; } };
+      weapon = this.actor.items.find(i => reloadable(i) && held(i)) ?? null;
     }
 
     // Phase 5D-I-D-F: a weapon that is mechanically AWAITING RELOAD (reload after each shot: wrist rocket launcher, E-Web) stays unfireable until
@@ -6910,7 +6933,7 @@ const forcePoints = [];
     }
 
     const currentAmmo = Number(weapon.system?.ammunition?.current ?? 0) || 0;
-    const maxAmmo = Number(weapon.system?.ammunition?.max ?? 0) || 0;
+    const maxAmmo = AmmoSystem.maxAmmo(weapon);
     if (!awaitingReload && (maxAmmo <= 0 || currentAmmo >= maxAmmo)) {
       ui?.notifications?.info?.(`${weapon.name} is already fully loaded.`);
       return { skipped: true, reason: 'already-full', weaponId: weapon.id };
@@ -6938,18 +6961,28 @@ const forcePoints = [];
     }
 
     const actionType = this._deriveCombatActionEconomyType(actionData);
-    const allowed = await this._applyActionEconomy(actionType, {
+    // the action economy's own consumption authority (the one attacks and FireStateStore use) returns a rollback handle, which the sheet's local
+    // _applyActionEconomy does not; a reload that could not be recorded gives its action back
+    const spend = await this._spendActionEconomy(actionType, {
       source: options?.source ?? context?.source?.invocation ?? 'reload',
       actionId,
       actionName: actionData?.name ?? 'Reload',
       combatContext: context
     });
-    if (!allowed) return null;
+    if (spend?.allowed === false || spend?.permitted === false) return null;
 
     let result;
-    if (trackingOn) result = await AmmoSystem.reloadWeapon(this.actor, weapon);
-    else { await FireStateStore.clearReload(this.actor, weapon); result = { success: true, message: `${weapon.name} reloaded` }; }
+    try {
+      if (trackingOn) result = await AmmoSystem.reloadWeapon(this.actor, weapon);
+      else {
+        const cleared = await FireStateStore.clearReload(this.actor, weapon);
+        result = cleared?.outcome === 'failed'
+          ? { success: false, message: `${weapon.name}: the reload could not be recorded.` }   // the awaiting-reload fact is still stored; never report a reload that was not recorded
+          : { success: true, message: `${weapon.name} reloaded` };
+      }
+    } catch (err) { result = { success: false, message: String(err?.message ?? err) }; }
     if (result?.success === false) {
+      await spend?.rollback?.();   // undoes only this reload's own expenditure; if it cannot, the economy authority tells the player (spend.rollbackStatus)
       ui?.notifications?.error?.(result.message || 'Reload failed.');
       return null;
     }
@@ -7189,10 +7222,13 @@ const forcePoints = [];
       // 1. Resolve weapon: direct ID → equipped weapon/lightsaber → virtual unarmed fallback
       let weapon = weaponId ? (this.actor.items.get(weaponId) ?? null) : null;
       if (!weapon) {
-        weapon = this.actor.items.find(i =>
-          ['weapon', 'lightsaber'].includes(i.type)
-          && (i.system?.equipped || isIntegratedDroidAttackItem(i, this.actor))
-        ) ?? null;
+        // a READY weapon per the equipment-state authority (the attack gate's own test), then an integrated droid weapon (its own authority);
+        // clean break: legacy equipped markers are not read
+        let ready = [];
+        try { ready = getReadiedWeapons(this.actor); } catch (_err) { ready = []; }
+        weapon = ready.find(i => ['weapon', 'lightsaber'].includes(i.type))
+          ?? this.actor.items.find(i => ['weapon', 'lightsaber'].includes(i.type) && isIntegratedDroidAttackItem(i, this.actor))
+          ?? null;
       }
       if (!weapon) {
         weapon = buildVirtualUnarmedWeapon(this.actor);

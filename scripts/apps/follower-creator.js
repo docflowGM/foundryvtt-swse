@@ -731,7 +731,6 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 ranged: false,
                 weight: Number(weapon.weight || 0),
                 cost: Number(weapon.cost || 0),
-                equipped: true,
                 proficient: true,
                 description: description.startsWith('<') ? description : `<p>${description}</p>`,
                 properties: this._uniqueList([...this._choiceArray(weapon.properties), 'Natural']),

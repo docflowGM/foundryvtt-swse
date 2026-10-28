@@ -1,0 +1,105 @@
+{
+  "schema": 1,
+  "purpose": "Traceable test debt for SOURCE_VERIFIED mechanics whose equipment model is not yet certified. Each item is currently handled by a temporary fail-closed guard; the positive tests below are REQUIRED before the model can be certified. Nothing here is a passing test.",
+  "decisions": "docs/audits/swse-rules-decisions-pending.md",
+  "items": [
+    {
+      "id": "EQ-002/darkstick-group",
+      "source": "Galaxy at War p. 36",
+      "status": "PENDING_MODEL_CERTIFICATION",
+      "requirement": "A character proficient with darksticks may hold several in one hand; the group counts as one weapon dealing 2d8 instead of 1d6; more than two add no damage.",
+      "failClosedGuard": "FireStateStore.heldGroupOf / heldTogetherOptions (no group is honoured)",
+      "positiveTests": [
+        "proficient wielder with a verified group: one attack source, 2d8",
+        "single stick 1d6; third stick adds nothing",
+        "non-proficient wielder gets no group",
+        "group-aware occupancy verification (no arbitrary appendage sharing); no duplicate attacks or stacked damage/effects",
+        "member dropped, thrown, transferred or removed dissolves or reduces the group"
+      ]
+    },
+    {
+      "id": "EQ-003/combat-gloves",
+      "source": "Core Rulebook p. 121",
+      "status": "PENDING_MODEL_CERTIFICATION",
+      "requirement": "Worn; +1 damage on successful unarmed attacks; cannot be disarmed or dropped.",
+      "failClosedGuard": "worn weapons are never READIED (grip indeterminate)",
+      "positiveTests": [
+        "verified worn state modifies the unarmed attack (+1 damage)",
+        "disarm and drop protection come from certified worn equipment state, not an ordinary weapon grip"
+      ]
+    },
+    {
+      "id": "EQ-003/stunning-gauntlet",
+      "source": "Knights of the Old Republic Campaign Guide p. 202",
+      "status": "PENDING_MODEL_CERTIFICATION",
+      "requirement": "Worn; the wearer's unarmed melee attacks become stun damage with +1 stun damage; cannot be disarmed or dropped.",
+      "failClosedGuard": "worn weapons are never READIED (grip indeterminate)",
+      "positiveTests": [
+        "verified worn state converts unarmed melee to stun and adds +1 stun damage",
+        "disarm and drop protection from certified worn equipment state"
+      ]
+    },
+    {
+      "id": "EQ-003/tactical-tractor-beam",
+      "source": "Galaxy at War p. 42",
+      "status": "PENDING_MODEL_CERTIFICATION",
+      "requirement": "Mountable on a large droid or vehicle, or operated from a tripod (treated one size smaller for wielding; a Medium character operates it with two hands); needs a power generator; normally a second adjacent crewman spends a standard action regulating power, otherwise attacks take -2.",
+      "failClosedGuard": "no wielding class is established, so the beam is never READIED; control maintenance ends fail-closed",
+      "positiveTests": [
+        "tripod operation evaluates the published effective size and two-hand requirement",
+        "host-mounted operation relies on a separately established host/mount authority",
+        "power generator requirement",
+        "crew regulation present/absent (-2)",
+        "tractor control maintenance roll at the controller's turn start"
+      ]
+    },
+    {
+      "id": "EQ-003/worn-weapon-attack-execution",
+      "source": "Core Rulebook p. 121; Knights of the Old Republic Campaign Guide p. 202; Galaxy at War p. 42 (see the EQ-003 addendum)",
+      "status": "PENDING_MODEL_CERTIFICATION",
+      "requirement": "Attacks made with worn or unconventionally operated weapons (wrist weapons, gloves, gauntlets, Sith Lanvarok, Tactical Tractor Beam, Heavy Blaster Cannon for a Medium wielder) must execute with their own published costs once their equipment model is certified.",
+      "failClosedGuard": "checkAttackSourceReadiness refuses them (never READIED)",
+      "positiveTests": [
+        "Wrist Rocket Launcher payload spend and persistence (5D-D)",
+        "Shockboxing Gloves stun-switch swift cost and persistence (5D-I-A)",
+        "Heavy Blaster Cannon Medium-wielder brace = two swift actions (5D-G)",
+        "wrist/dart/blaster attack execution and worn classification (5D-I-D-B2 G)",
+        "Combat Gloves / Stunning Gauntlet unarmed modification and disarm protection"
+      ],
+      "suspendedAssertionFiles": [
+        "tests/weapon-phase-5d-d-range-resource-consumption.test.mjs",
+        "tests/weapon-phase-5d-i-a-core-attack-residuals.test.mjs",
+        "tests/weapon-phase-5d-g-fire-state-area-selectors.test.mjs",
+        "tests/weapon-phase-5d-i-d-b2-wielding-size.test.mjs"
+      ]
+    },
+    {
+      "id": "DATA-GAP/retrosaber-canonical-size",
+      "source": "none located (canonical registry record lightsaber-chassis-retrosaber has baseSize null)",
+      "status": "PENDING_DATA_SOURCE",
+      "requirement": "The Retrosaber needs a source-verified canonical size so its grip can be verified; until then it is never READIED.",
+      "failClosedGuard": "checkAttackSourceReadiness refuses it",
+      "positiveTests": [
+        "Retrosaber state machine live attacks: swift dial-up, overcharge through the next turn, burnout lock, normal (5D-I-B section E)"
+      ],
+      "suspendedAssertionFiles": [
+        "tests/weapon-phase-5d-i-b-wielding-activation-threat.test.mjs"
+      ]
+    },
+    {
+      "id": "DOMAIN/homebrew-weapon-certification",
+      "source": "n/a (design issue)",
+      "status": "PENDING_DOMAIN_DESIGN",
+      "requirement": "Weapons without a certified canonical identity (homebrew/legacy Items) cannot establish a grip and are refused by the attack gate. A certification route is an open domain-design question; no permissive bypass was added.",
+      "failClosedGuard": "checkAttackSourceReadiness refuses uncertified identities",
+      "positiveTests": [
+        "a certified homebrew weapon attacks after its identity/grip is verified (route to be designed)"
+      ],
+      "suspendedAssertionFiles": [
+        "tests/weapon-phase-5d-d-range-resource-consumption.test.mjs",
+        "tests/weapon-phase-5d-i-a-core-attack-residuals.test.mjs",
+        "tests/weapon-phase-5d-f-multiattack-convergence.test.mjs"
+      ]
+    }
+  ]
+}

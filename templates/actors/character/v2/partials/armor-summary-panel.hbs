@@ -6,7 +6,7 @@
 
   RULE: First equipped armor by document storage order (first .find() match)
   RATIONALE: Matches ModifierEngine behavior (ModifierEngine.js)
-  PRECEDENT: No validation in inventory-handlers.js to prevent multi-equip
+  PRECEDENT: No validation prevents multi-equip of body armor outside InventoryEngine.toggleEquip
   WORKAROUND: UI convention (toggle buttons) prevents accidental multi-equip
 
   If multiple armors are accidentally marked equipped, only the first one

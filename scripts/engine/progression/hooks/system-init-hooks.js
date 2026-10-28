@@ -219,6 +219,14 @@ export const SystemInitHooks = {
                 ForceRegistry.initialize?.(),
             ]);
 
+            // Species evidence is read live and synchronously by equipment readiness. Actors prepared before the SpeciesRegistry finished
+            // initializing fail closed (no ready weapons), so re-prepare them now that the evidence exists.
+            try {
+                for (const actor of game.actors?.contents ?? []) actor.prepareData?.();
+            } catch (err) {
+                SWSELogger.warn('[System Init] Actor re-preparation after species registry initialization failed:', err?.message);
+            }
+
             SWSELogger.log(`SSOT registries built: ${TalentTreeDB.count()} trees, ${ClassesDB.count()} classes, ${TalentDB.count()} talents`);
 
             return { ok: true };
