@@ -136,7 +136,10 @@ try {
   // ------------------------------------------------------------------------------------------------ C3-R5 concurrent invocation
   {
     reset(); const a = mk(); const t = tx(a); let release; ctl.gate = new Promise((r) => { release = r; });
-    const p1 = t.commit(); const p2 = t.commit(); await flush();
+    const p1 = t.commit(); const p2 = t.commit();
+    // wait (bounded) until the gated spend is reached: the first commit may first resolve a dynamic import, which can outlast one timer tick
+    for (let i = 0; i < 200 && ctl.spends < 1; i += 1) await flush();
+    for (let i = 0; i < 5; i += 1) await flush();   // and give a second commit every chance to (wrongly) reach it too
     assert.equal(ctl.spends, 1, 'two simultaneous commit() calls reach the spend authority ONCE'); release(); const [r1, r2] = await Promise.all([p1, p2]); ctl.gate = null;
     assert.deepEqual([r1, r2], [true, true], 'both callers get the same truthful outcome'); assert.equal(ctl.spends, 1); assert.equal(a.system.forcePoints.value, 2); assert.equal(t.committed, true);
     // failed concurrent commit: both false, no fabricated success, a later clean retry is possible
