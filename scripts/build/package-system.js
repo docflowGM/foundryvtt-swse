@@ -53,6 +53,12 @@ const stage = path.join(root, 'build', 'release', systemId);
   const problems = sources.manifestCoverage(systemJson, view);
   if (problems.length) throw new Error(`the staged package does not satisfy system.json:\n  ${problems.join('\n  ')}`);
 
+  // system.json declares a license, but the repository has no LICENSE file to ship; the copyright holder and the licensing scope (software
+  // only -- never the third-party Star Wars / SWSE sourcebook content) need the owner's confirmation, so nothing is generated here
+  if (systemJson.license && !fs.existsSync(path.join(root, 'LICENSE'))) {
+    console.warn(`  ⚠️  system.json declares license "${systemJson.license}" but the repository has no LICENSE file; the package ships without one until the owner confirms the copyright holder and scope.`);
+  }
+
   if (fs.existsSync(outputFileName)) fs.unlinkSync(outputFileName);
   execSync(`zip -q -r -X "${outputFileName}" .`, { cwd: stage, stdio: 'inherit' });
   const sizeKB = (fs.statSync(outputFileName).size / 1024).toFixed(2);

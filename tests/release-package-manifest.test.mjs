@@ -61,7 +61,13 @@ const ok = (m) => console.log(`  [${++n}] ${m} OK`);
   assert.deepEqual(back.items[0].effects[1], { _id: 'eff2', name: 'has id' });
   const dup = S.prepareDocuments([{ _id: 'j', pages: [{ _id: 'p' }, { _id: 'p' }] }], 'journal');
   assert.equal(dup.problems.length, 1, 'duplicate embedded key reported');
-  ok('key preparation: Foundry `!sublevel!id` keys at every level, deterministic synthesized ids for id-less embedded documents, source untouched');
+  // a synthesized id can never silently overwrite a real sibling: if it ever equals one, the duplicate key fails the build
+  const clash = S.synthesizedEmbeddedId('!actors.items!act1.it1', 'effects', 0);
+  const collided = S.prepareDocuments([{ _id: 'act1', items: [{ _id: 'it1', effects: [{ name: 'no id' }, { _id: clash, name: 'real' }] }] }], 'actors');
+  assert.deepEqual(collided.problems, [`duplicate key !actors.items.effects!act1.it1.${clash}`], 'collision between a synthesized and a real id is refused');
+  // ids are position-scoped per parent: the same position under different parents never collides
+  assert.notEqual(S.synthesizedEmbeddedId('!actors.items!a.i', 'effects', 0), S.synthesizedEmbeddedId('!actors.items!a.j', 'effects', 0));
+  ok('key preparation: Foundry `!sublevel!id` keys at every level, deterministic synthesized ids for id-less embedded documents (a collision with a real id is refused), source untouched');
 }
 {
   let docs = 0; let synthesized = 0; const synthPacks = new Set();
