@@ -18,7 +18,7 @@
  *   resolution).
  * Owner policies applied to what the page leaves open (2026-10-15, docs/audits/swse-v2-owner-decisions-2026-10-15.md; the registry blockers
  * themselves stay open):
- *   Q-021 attempt/retry cost is not invented: a FAILED attempt charges nothing automatically (GM adjudication);
+ *   Q-021 attempt/retry cost is not invented: a FAILED attempt's cost is recorded as pending GM adjudication (no automatic charge, no implied zero);
  *   Q-022 no expedited removal when the time is already 10 minutes;  Q-023 a deactivated upgrade keeps its slot;
  *   Q-024 a failed installation records an outcome and creates NO instance;  Q-029 effects are a GM-adjudicated record, never automated.
  *
@@ -30,6 +30,7 @@ import { createModificationCatalog } from '/systems/foundryvtt-swse/scripts/engi
 import { planModification, inspectInstances } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-v2/modification-planner.js';
 import { resolveSlotState } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-slot-authority.js';
 import { sha256Hex, utf8Bytes } from '/systems/foundryvtt-swse/scripts/engine/equipment/intent-fingerprint.js';
+import { MODIFICATION_DATA_PINS } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-data-pins.js';
 
 export const RUNTIME_PATH = 'data/modifications/runtime-definitions-v1.5.json';
 export const SPECIFICATION_PATH = 'data/modifications/specification-records-v1.json';
@@ -69,17 +70,25 @@ const clone = (v) => (v === undefined ? undefined : JSON.parse(JSON.stringify(v)
 // ------------------------------------------------------------------------------------------------ data (verified on load)
 let cached = null;
 /**
- * Load the generated runtime definitions (integrity-checked against their own recordsSha256 and the catalog's consistency checks) and the
- * Table 2-2 row of each SOURCE_VERIFIED installProcedure specification record. Fails closed.
- * @param {{fetchJson?: (path:string)=>Promise<object>, refresh?: boolean}} [deps]
+ * Load the generated runtime definitions and the specification records, verified against SHA-256 pins held in reviewed code (not inside
+ * the artifacts), then the runtime header's own record hash and specification binding, then the catalog consistency checks. Fails closed.
+ * The Table 2-2 row of each SOURCE_VERIFIED installProcedure specification record is extracted from the verified specification file.
+ * @param {{fetchText?: (path:string)=>Promise<string>, refresh?: boolean}} [deps]
  */
-export async function loadModificationData({ fetchJson = null, refresh = false } = {}) {
-  if (cached && !refresh && !fetchJson) return cached;
-  const get = fetchJson ?? (async (p) => { const res = await fetch(`systems/foundryvtt-swse/${p}`); if (!res.ok) throw new Error(`${p}: HTTP ${res.status}`); return res.json(); });
+export async function loadModificationData({ fetchText = null, refresh = false } = {}) {
+  if (cached && !refresh && !fetchText) return cached;
+  const get = fetchText ?? (async (p) => { const res = await fetch(`systems/foundryvtt-swse/${p}`); if (!res.ok) throw new Error(`${p}: HTTP ${res.status}`); return res.text(); });
+  let docText; let specText;
+  try { [docText, specText] = await Promise.all([get(RUNTIME_PATH), get(SPECIFICATION_PATH)]); } catch (err) { return { ok: false, problems: [`load-failed: ${err?.message ?? err}`] }; }
+  for (const [path, text] of [[RUNTIME_PATH, docText], [SPECIFICATION_PATH, specText]]) {
+    const actual = typeof text === 'string' ? sha256Hex(utf8Bytes(text)) : null;
+    if (actual !== MODIFICATION_DATA_PINS[path]) return { ok: false, problems: [`PIN_MISMATCH: ${path} does not match its pinned SHA-256`] };
+  }
   let doc; let specs;
-  try { [doc, specs] = await Promise.all([get(RUNTIME_PATH), get(SPECIFICATION_PATH)]); } catch (err) { return { ok: false, problems: [`load-failed: ${err?.message ?? err}`] }; }
+  try { doc = JSON.parse(docText); specs = JSON.parse(specText); } catch (err) { return { ok: false, problems: [`parse-failed: ${err?.message ?? err}`] }; }
   const recordsHash = sha256Hex(utf8Bytes(`${JSON.stringify(doc?.records ?? null, null, 1)}\n`));
   if (!doc?.header || recordsHash !== doc.header.recordsSha256) return { ok: false, problems: ['RECORDS_HASH_MISMATCH: the runtime definitions do not match their recorded hash'] };
+  if (doc.header.inputs?.specificationRecordsSha256 !== MODIFICATION_DATA_PINS[SPECIFICATION_PATH]) return { ok: false, problems: ['SPECIFICATION_BINDING_MISMATCH: the runtime definitions were not generated from the pinned specification records'] };
   const made = createModificationCatalog(doc);
   if (!made.ok) return { ok: false, problems: made.problems ?? ['catalog-invalid'] };
   const rows = new Map();
@@ -89,9 +98,12 @@ export async function loadModificationData({ fetchJson = null, refresh = false }
     if (m) rows.set(r.typedDefinitionId, m[1]);
   }
   const out = Object.freeze({ ok: true, catalog: made.catalog, rows, recordsSha256: recordsHash });
-  if (!fetchJson) cached = out;
+  if (!fetchText) cached = out;
   return out;
 }
+
+/** The verified data most recently loaded through the production path (null before the first load). Synchronous consumers read this. */
+export function getLoadedModificationData() { return cached; }
 
 // ------------------------------------------------------------------------------------------------ slot-authority inputs
 /** Weapon class for Phase 1a from the canonical weapon registry (weaponGroup), never from names. */
@@ -264,8 +276,8 @@ async function runInstall(actor, item0, request, deps) {
   const writeItem = deps.writeItem ?? defaultWriteItem;
 
   if (!check.success) {
-    // Q-024: the failed attempt is recorded; no instance, no slot. Q-021: no automatic charge for the attempt (GM adjudication).
-    const entry = { attemptId: request.attemptId, kind: 'install', typedDefinitionId: request.typedDefinitionId, result: 'failed', check, at: Date.now(), by: gmId, basis: PROVISIONAL_BASIS, note: request.note ?? null, costCharged: 0, costBasis: 'Q-021: attempt cost not automated (GM adjudication)' };
+    // Q-024: the failed attempt is recorded; no instance, no slot. Q-021: its cost is pending GM adjudication (not charged automatically, not zero).
+    const entry = { attemptId: request.attemptId, kind: 'install', typedDefinitionId: request.typedDefinitionId, result: 'failed', check, at: Date.now(), by: gmId, basis: PROVISIONAL_BASIS, note: request.note ?? null, cost: { state: 'GM_ADJUDICATION_PENDING', amount: null, charged: false, basis: 'Q-021: the cost of a failed attempt is not defined by the published rule and is left to GM adjudication; nothing is charged automatically and no amount (zero included) is implied' } };
     try { await writeItem(actor, { _id: item.id, [ATTEMPT_FLAG_PATH]: [...clone(readAttempts(item)), entry] }); } catch (err) { return outcome('WRITE_FAILED', { reason: 'attempt-log-not-written', error: err?.message ?? String(err), check }); }
     return outcome('INSTALL_FAILED_CHECK', { check, review, attempt: entry });
   }

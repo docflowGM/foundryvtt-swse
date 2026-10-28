@@ -470,7 +470,8 @@ check('only the Modification V2 install service (runtime loader) references the 
   walk('scripts');
   // Modification V2 convergence (owner directive 2026-10-28): the install service is the one runtime loader; it verifies the records
   // against header.recordsSha256 and the catalog checks before use and never writes the generated data
-  assert.deepEqual(hits, ['scripts/engine/customization/modification-v2-runtime/modification-install-service.js'], 'only the Modification V2 install service loads the generated data');
+  // plus its reviewed SHA-256 pins and the packager's exact allowlist of the two shipped files (R1/R2)
+  assert.deepEqual(hits.sort(), ['scripts/build/package-system.js', 'scripts/engine/customization/modification-v2-runtime/modification-data-pins.js', 'scripts/engine/customization/modification-v2-runtime/modification-install-service.js'], 'only the Modification V2 install service, its pins and the packager reference the generated data');
 });
 
 

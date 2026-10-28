@@ -39,8 +39,9 @@ let n = 0;
 const ok = (m) => console.log(`  [${++n}] ${m} OK`);
 const setPath = (o, p, v) => { const parts = p.split('.'); let t = o; for (let i = 0; i < parts.length - 1; i++) t = (t[parts[i]] ??= {}); t[parts.at(-1)] = JSON.parse(JSON.stringify(v)); };
 const silent = async (fn) => { const e = console.error; const w = console.warn; console.error = () => {}; console.warn = () => {}; try { return await fn(); } finally { console.error = e; console.warn = w; } };
-const readJson = async (p) => JSON.parse(fs.readFileSync(new URL(`../${p}`, import.meta.url), 'utf8'));
-const data = await P.loadModificationData({ fetchJson: readJson });
+const readText = async (p) => fs.readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
+const readJson = async (p) => JSON.parse(await readText(p));
+const data = await P.loadModificationData({ fetchText: readText });
 
 // ---- models: persistence and snapshots (TransactionEngine itself is real)
 const model = { applyCalls: 0, dropItem: false, itemWrites: 0 };
@@ -81,8 +82,18 @@ const install = (item, extra = {}, d = deps()) => silent(() => P.installProvisio
   assert.equal(rf.ok, true); assert.equal(rf.dc, 20); assert.equal(rf.time, '1 hour'); assert.equal(rf.price, 200); assert.equal(rf.slotImpact.free, 1); assert.equal(rf.hostNeedsGmRuling, true);
   assert.ok(rf.accepted.some((a) => a.code === 'NOT_SELECTABLE') && rf.accepted.some((a) => a.code === 'OPEN_REGISTER_ENTRY' && a.detail === 'D-014:installProcedure'), 'the accepted certification blockers are listed, not hidden');
   const scope = cands.find((c) => c.typedDefinitionId === 'sv-targeting-scope-standard::weapon'); assert.equal(scope.dc, 10); assert.equal(scope.time, '10 minutes');
-  const tampered = await P.loadModificationData({ fetchJson: async (p) => { const j = await readJson(p); if (j.records?.[0]?.price?.registry) j.records[0].price.registry.amount = 1; return j; } });
-  assert.equal(tampered.ok, false); assert.match(tampered.problems[0], /RECORDS_HASH_MISMATCH/);
+  // R2: pins live in reviewed code. A changed file fails even when its own internal hash was recomputed to match
+  const { MODIFICATION_DATA_PINS } = await import('/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-data-pins.js');
+  const crypto = await import('node:crypto');
+  for (const [p, pin] of Object.entries(MODIFICATION_DATA_PINS)) assert.equal(crypto.createHash('sha256').update(fs.readFileSync(new URL(`../${p}`, import.meta.url))).digest('hex'), pin, `${p} matches its pin (regenerated data needs a reviewed pin update)`);
+  const selfConsistent = await P.loadModificationData({ fetchText: async (p) => {
+    const t = await readText(p); if (!p.includes('runtime-definitions')) return t;
+    const j = JSON.parse(t); j.records[0].price.registry.amount = 1; j.header.recordsSha256 = crypto.createHash('sha256').update(`${JSON.stringify(j.records, null, 1)}\n`).digest('hex');
+    return `${JSON.stringify(j, null, 1)}\n`;
+  } });
+  assert.equal(selfConsistent.ok, false); assert.match(selfConsistent.problems[0], /PIN_MISMATCH/, 'a self-consistent but altered runtime file is refused');
+  const specAltered = await P.loadModificationData({ fetchText: async (p) => (p.includes('specification') ? (await readText(p)).replace("row '1' upgrade points", "row '0' upgrade points") : readText(p)) });
+  assert.equal(specAltered.ok, false); assert.match(specAltered.problems[0], /PIN_MISMATCH: data\/modifications\/specification-records/, 'an altered specification (Table 2-2 row) is refused');
   ok('1: data is integrity-checked; Table 2-2 DC/time, certified price and certified slot capacity come from the data; accepted certification blockers are explicit');
 }
 {
@@ -132,8 +143,11 @@ const install = (item, extra = {}, d = deps()) => silent(() => P.installProvisio
 }
 {
   reset(); const r = await install(W(), { check: { mode: 'gm-entered', total: 12 } });
-  assert.equal(r.status, 'INSTALL_FAILED_CHECK'); assert.equal(actor.system.credits, 1000, 'Q-021: a failed attempt charges nothing automatically');
+  assert.equal(r.status, 'INSTALL_FAILED_CHECK'); assert.equal(actor.system.credits, 1000, 'Q-021: no automatic charge for a failed attempt');
   assert.equal(instancesOf(W()).length, 0, 'Q-024: no instance'); assert.equal(attemptsOf(W())[0].result, 'failed');
+  assert.deepEqual([attemptsOf(W())[0].cost.state, attemptsOf(W())[0].cost.amount, attemptsOf(W())[0].cost.charged], ['GM_ADJUDICATION_PENDING', null, false], 'Q-021: the attempt cost is pending GM adjudication, never recorded as zero');
+  assert.ok(!('costCharged' in attemptsOf(W())[0]));
+  assert.match(D.describeOutcome('Blaster Pistol', r).text, /awaits GM adjudication/);
   assert.equal((await install(W(), { check: { mode: 'gm-entered', total: 30 } })).status, 'DUPLICATE', 'a resolved attempt id is not reused');
   reset(1000, false); assert.equal((await install(W(), { check: { mode: 'roll' } })).reason, 'installer-not-trained-in-mechanics');
   reset(); const rolled = await install(W(), { check: { mode: 'roll' } }, deps({ rollMechanics: async (_a, dc) => dc + 3 }));
@@ -163,7 +177,7 @@ const install = (item, extra = {}, d = deps()) => silent(() => P.installProvisio
   assert.equal(D.readInstallForm(fd({ priceConfirmed: '', checkMode: '' })).check, null);
   assert.ok(Number.isNaN(D.readInstallForm(fd({ priceConfirmed: '' })).priceConfirmed), 'an empty price stays NaN (refused), never 0');
   // the workbench loads the data through the production loader (fetch of the system path), here served from the repository
-  const realFetch = globalThis.fetch; globalThis.fetch = async (url) => ({ ok: true, json: async () => readJson(String(url).replace('systems/foundryvtt-swse/', '')) });
+  const realFetch = globalThis.fetch; globalThis.fetch = async (url) => ({ ok: true, text: async () => readText(String(url).replace('systems/foundryvtt-swse/', '')) });
   const proto = ItemCustomizationWorkbench.prototype;
   const rendered = [];
   const wb = Object.create(proto, { actor: { value: actor }, _getCurrentItem: { value: () => W() }, _renderPreservingUi: { value: async () => { rendered.push(1); } } });
