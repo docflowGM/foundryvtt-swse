@@ -1,0 +1,171 @@
+{
+  "schema": "swse.vehicle.universal.phase2f.primary-source-fixtures.v1",
+  "sourceBook": "Scum and Villainy",
+  "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+  "method": "Original scanned PDF printed pages 125 and 130 visually checked, prior source-reviewed ship authority reused.",
+  "entries": [
+    {
+      "sourceEntryKey": "sav-tenloss-corporation-hornet-class-interceptor",
+      "status": "APPROVED_SUPPLEMENT_ALREADY_IN_318_BASELINE",
+      "printedPage": 125,
+      "pdfPhysicalPage": 126,
+      "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+      "printedFacts": {
+        "initiative": 8,
+        "perception": 6,
+        "reflex": 18,
+        "flatFootedReflex": 11,
+        "fortitude": 21,
+        "armorBonus": 6,
+        "hp": 50,
+        "dr": 10,
+        "sr": 35,
+        "dt": 41,
+        "flyCharacterSquares": 16,
+        "flyStarshipSquares": 4,
+        "maxKmh": 1150,
+        "rangedSummary": "advanced heavy laser cannons +6 (see below)",
+        "fightingSpace": "4x4 squares or 1 square (starship scale)",
+        "cover": "total (crew)",
+        "baseAttack": 2,
+        "grapple": 28,
+        "str": 32,
+        "dex": 24,
+        "con": "—",
+        "int": 14,
+        "skills": {
+          "initiative": 8,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": 8,
+          "useComputer": 6
+        },
+        "crew": "1",
+        "passengers": "none",
+        "cargo": "80 kg",
+        "consumables": "5 days",
+        "carriedCraft": "none",
+        "hyperdrive": {
+          "evidenceState": "SOURCE_SILENT_CONFIRMED",
+          "valueSupplied": false
+        },
+        "availability": "Illegal",
+        "newPriceCredits": 75000,
+        "usedPriceCredits": 32000
+      },
+      "attacks": [
+        {
+          "attackGroupKey": "sav-hornet-heavy-laser",
+          "configuration": "default",
+          "sourceGroupCount": 1,
+          "printedWeaponCount": null,
+          "operatorRole": "pilot",
+          "attackBonus": 6,
+          "autofireAttackBonus": 1,
+          "damage": "10d10x2",
+          "arcEvidenceState": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountTopology": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "attackGroupKey": "sav-hornet-medium-laser",
+          "configuration": "alternate",
+          "sourceGroupCount": 1,
+          "printedWeaponCount": null,
+          "operatorRole": "pilot",
+          "attackBonus": 6,
+          "autofireAttackBonus": 1,
+          "damage": "5d10x2",
+          "arcEvidenceState": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountTopology": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "variants": [
+        {
+          "configurationKey": "default",
+          "installedAttackGroupKey": "sav-hornet-heavy-laser",
+          "attackModes": [
+            "autofire",
+            "fire-link"
+          ],
+          "onNaturalOne": {
+            "damageToOwnShip": "6d10x2",
+            "ignoresShieldRating": true,
+            "destroysCannons": true
+          }
+        },
+        {
+          "configurationKey": "alternate",
+          "installedAttackGroupKey": "sav-hornet-medium-laser",
+          "attackModes": [
+            "autofire",
+            "fire-link"
+          ],
+          "onNaturalOne": null
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "sav-starforge-station",
+      "status": "NEW_STATION_PUBLICATION_IDENTITY",
+      "printedPage": 130,
+      "pdfPhysicalPage": 131,
+      "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+      "printedTypeLine": "Colossal (station) space station",
+      "printedFacts": {
+        "challengeLevel": 20,
+        "initiativeHeader": -4,
+        "initiativeSkill": -5,
+        "perceptionHeader": 6,
+        "perceptionSkill": 5,
+        "reflex": 16,
+        "flatFootedReflex": 16,
+        "fortitude": 74,
+        "armorBonus": 16,
+        "hp": 3000,
+        "dr": 20,
+        "sr": 200,
+        "threshold": 574,
+        "starshipSpeed": 1,
+        "starshipSpace": [
+          2,
+          2
+        ],
+        "baseAttack": 0,
+        "grapple": 99,
+        "str": 138,
+        "dex": 10,
+        "int": 18,
+        "crew": 1850,
+        "passengers": 10000,
+        "cargoTons": 25000000,
+        "consumables": "unlimited",
+        "carried": [
+          {
+            "name": "starfighters",
+            "count": 600
+          },
+          {
+            "name": "space transports",
+            "count": 60
+          },
+          {
+            "name": "ships of Colossal frigate size",
+            "count": 12
+          }
+        ],
+        "hyperdrive": 6,
+        "navComputer": true,
+        "attacks": [
+          {
+            "name": "turbolaser battery",
+            "printedBatteryCount": 5,
+            "operator": "5 gunners",
+            "bonus": 12,
+            "bonusSmallTarget": -8,
+            "damage": "7d10x5"
+          }
+        ]
+      }
+    }
+  ]
+}
