@@ -17,6 +17,7 @@ import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { requestWithPostureChoices } from "/systems/foundryvtt-swse/scripts/sheets/v2/weapon-posture-choice-dialog.js";
 import { reconcileItemTransactions } from "/systems/foundryvtt-swse/scripts/sheets/v2/equipment-reconcile-dialog.js";
+import { getReadiedWeapons, isWeaponHeld } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js";
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
@@ -3883,7 +3884,7 @@ const forcePoints = [];
           }
           case "toggle-weapon-readiness": {
             // a draw that needs hands/grip asks for them and retries with the same request id; the coordinator re-validates the choice
-            const result = await requestWithPostureChoices(item, () => InventoryEngine.toggleWeaponReadied(this.actor, itemId), (choice) => InventoryEngine.setWeaponReadied(this.actor, itemId, true, choice));
+            const result = await requestWithPostureChoices(item, () => InventoryEngine.toggleWeaponReadied(this.actor, itemId), (choice) => InventoryEngine.setWeaponReadied(this.actor, itemId, true, choice), { initialize: () => InventoryEngine.requestWeaponPosture(this.actor, { type: "stow", itemId }) });
             if (!result?.ok) {
               if (result?.cancelled) break;
               if (result?.reason === "deactivate-before-stowing") ui?.notifications?.warn?.(`${item.name}: deactivate the lightsaber before stowing it.`);
@@ -3894,7 +3895,7 @@ const forcePoints = [];
             break;
           }
           case "draw-and-ignite-lightsaber": {
-            const result = await requestWithPostureChoices(item, () => InventoryEngine.drawAndActivateLightsaber(this.actor, itemId), (choice) => InventoryEngine.drawAndActivateLightsaber(this.actor, itemId, choice));
+            const result = await requestWithPostureChoices(item, () => InventoryEngine.drawAndActivateLightsaber(this.actor, itemId), (choice) => InventoryEngine.drawAndActivateLightsaber(this.actor, itemId, choice), { initialize: () => InventoryEngine.requestWeaponPosture(this.actor, { type: "stow", itemId }) });
             if (!result?.ok) {
               if (result?.cancelled) break;
               ui?.notifications?.warn?.(`${item.name}: ${result?.message ?? "unable to draw and ignite."}`);
@@ -6897,9 +6898,12 @@ const forcePoints = [];
     const weaponId = actionData?.weaponId ?? actionData?.itemId ?? context?.weaponId ?? null;
     let weapon = weaponId ? (this.actor.items.get(weaponId) ?? null) : null;
     if (!weapon) {
-      weapon = this.actor.items.find(i =>
-        ['weapon', 'lightsaber'].includes(i.type) && i.system?.equipped && (AmmoSystem.weaponUsesAmmunition(i) || FireStateStore.readFireState(i)?.needsReload === true)
-      ) ?? null;
+      // default target: a weapon the equipment-state authority verifies as in hand, then the legacy equipped marker (records not yet migrated)
+      const reloadable = (i) => ['weapon', 'lightsaber'].includes(i.type) && (AmmoSystem.weaponUsesAmmunition(i) || FireStateStore.readFireState(i)?.needsReload === true);
+      const held = (i) => { try { return isWeaponHeld(this.actor, i); } catch (_err) { return false; } };
+      weapon = this.actor.items.find(i => reloadable(i) && held(i))
+        ?? this.actor.items.find(i => reloadable(i) && i.system?.equipped)
+        ?? null;
     }
 
     // Phase 5D-I-D-F: a weapon that is mechanically AWAITING RELOAD (reload after each shot: wrist rocket launcher, E-Web) stays unfireable until
@@ -7210,10 +7214,14 @@ const forcePoints = [];
       // 1. Resolve weapon: direct ID → equipped weapon/lightsaber → virtual unarmed fallback
       let weapon = weaponId ? (this.actor.items.get(weaponId) ?? null) : null;
       if (!weapon) {
-        weapon = this.actor.items.find(i =>
-          ['weapon', 'lightsaber'].includes(i.type)
-          && (i.system?.equipped || isIntegratedDroidAttackItem(i, this.actor))
-        ) ?? null;
+        // a READY weapon per the equipment-state authority (the attack gate's own test) first; then the legacy markers as before
+        let ready = [];
+        try { ready = getReadiedWeapons(this.actor); } catch (_err) { ready = []; }
+        weapon = ready.find(i => ['weapon', 'lightsaber'].includes(i.type))
+          ?? this.actor.items.find(i =>
+            ['weapon', 'lightsaber'].includes(i.type)
+            && (i.system?.equipped || isIntegratedDroidAttackItem(i, this.actor))
+          ) ?? null;
       }
       if (!weapon) {
         weapon = buildVirtualUnarmedWeapon(this.actor);

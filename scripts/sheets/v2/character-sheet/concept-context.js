@@ -1,6 +1,7 @@
 import { isItemEquipped, isAlwaysReadiedWeapon, isNaturalWeaponOnly } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
 import { readJournal, unresolvedItemIds, JOURNAL_STATUS } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-transaction-journal.js";
+import { getWeaponReadiness } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 import { resolveActionCost } from "/systems/foundryvtt-swse/scripts/engine/feats/action-speed-runtime-patches.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
 import { FireStateStore } from "/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js";
@@ -358,7 +359,12 @@ function buildWeaponReadinessView(item, actor) {
   if (!item) return null;
   if (!['weapon', 'lightsaber'].includes(String(item.type ?? '').toLowerCase())) return null;
   const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor });
-  const drawn = isItemEquipped(item, actor);
+  // Drawn/Stowed follows the equipment-state authority's declared record (the same fact the Draw/Stow toggle acts on), so the label and the click
+  // agree after a coordinator draw. Only a weapon without a valid record falls back to the legacy equipped markers.
+  let readiness = null;
+  try { readiness = getWeaponReadiness(actor, item); } catch (_err) { readiness = null; }
+  const declared = readiness?.recordStatus === 'valid' ? readiness.declaredPosture : null;
+  const drawn = declared ? declared !== 'STOWED' : isItemEquipped(item, actor);
   // Canonical authority: natural (auto-equipped) and integrated droid weapons are always readied -> no Draw/Stow.
   const alwaysReadied = isAlwaysReadiedWeapon(item, actor);
   const activated = isItemActivated(item);
@@ -373,6 +379,7 @@ function buildWeaponReadinessView(item, actor) {
   return {
     drawn, activated, isLightsaber,
     alwaysReadied,
+    ready: readiness?.ready === true,
     unresolved: unresolvedRequestIds.length > 0,
     canReconcile: unresolvedRequestIds.length > 0 && globalThis.game?.user?.isGM === true,
     stateLabel: alwaysReadied ? (isNaturalWeaponOnly(item) ? 'Natural' : 'Integrated') : drawn ? 'Drawn' : 'Stowed',

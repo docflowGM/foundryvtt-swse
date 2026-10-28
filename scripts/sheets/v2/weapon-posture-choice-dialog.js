@@ -74,6 +74,23 @@ export async function promptWeaponPostureChoice(item, choices) {
   return picked;
 }
 
+/** True when the coordinator refused because the weapon has no posture record yet. */
+export function isUnrecordedWeapon(result) {
+  if (result?.status !== "REJECTED_PRECONDITION") return false;
+  return (result.plan?.issues ?? []).some((i) => i?.code === "weapon-record-absent" || (i?.code === "combined-action-requires-stowed-weapon" && (i.details?.posture ?? null) === null));
+}
+
+/** Ask the user to record an unrecorded weapon as stowed before drawing it. */
+export async function confirmRecordAsStowed(item) {
+  const yes = await SWSEDialogV2.prompt({
+    title: `${item?.name ?? "Weapon"} - Not set up`,
+    content: `<form class="swse-dialog"><p>${escapeHtml(item?.name ?? "This weapon")} has no recorded position yet. Record it as <strong>stowed</strong> and then draw it? Recording it costs no action; the draw costs its normal action.</p></form>`,
+    label: "Record as stowed and draw",
+    callback: () => true
+  });
+  return yes === true;
+}
+
 /**
  * Run a posture request; when the coordinator needs choices, ask for them and send the follow-up with the SAME request id.
  * @param {object} item
@@ -81,12 +98,20 @@ export async function promptWeaponPostureChoice(item, choices) {
  * @param {(options:object) => Promise<object>} followUp called with { appendageIds?, grip?, purpose?, requestId }
  * @param {{prompt?:Function}} [deps] test seam for the dialog
  */
-export async function requestWithPostureChoices(item, first, followUp, { prompt = promptWeaponPostureChoice } = {}) {
-  const result = await first();
+export async function requestWithPostureChoices(item, first, followUp, { prompt = promptWeaponPostureChoice, initialize = null, confirmInitialize = confirmRecordAsStowed } = {}) {
+  let result = await first();
+  if (initialize && isUnrecordedWeapon(result)) {
+    // no posture is assumed for a weapon without a record: the user states it is stowed (the coordinator's explicit stow initialization, which it
+    // prices at no action), then the requested draw runs as an ordinary draw from STOWED
+    if (!(await confirmInitialize(item))) return { ...result, ok: false, cancelled: true, message: null };
+    const init = await initialize();
+    if (!["COMMITTED", "NO_CHANGE"].includes(init?.status)) return init;
+    result = await first();
+  }
   if (result?.status !== "CHOICE_REQUIRED") return result;
   const picked = await prompt(item, result.choices ?? []);
   if (!picked) return { ...result, ok: false, cancelled: true, message: null };
   return followUp({ ...picked, requestId: result.requestId ?? null });
 }
 
-export default { buildPostureChoiceContent, readPostureChoice, promptWeaponPostureChoice, requestWithPostureChoices };
+export default { buildPostureChoiceContent, readPostureChoice, promptWeaponPostureChoice, requestWithPostureChoices, isUnrecordedWeapon, confirmRecordAsStowed };

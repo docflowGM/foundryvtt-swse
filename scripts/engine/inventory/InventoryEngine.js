@@ -19,8 +19,18 @@ import { planEquipmentIntent, executeEquipmentIntent, reconcileEquipmentTransact
 import { acquireRequestId, settleRequestId } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-request-identity.js";
 import { logEquipmentEvent } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-diagnostics.js";
 import { readCombatReadiness, isWeaponHeld } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
+import { readJournal, unresolvedItemIds, JOURNAL_STATUS } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-transaction-journal.js";
 
 const STACKABLE_TYPES = ["consumable", "equipment", "misc", "ammo"];
+
+/** Request ids of unresolved equipment transactions covering an Item (read-only). */
+function unresolvedEquipmentTransactionsFor(actor, itemId) {
+  try {
+    const journal = readJournal(actor?.flags?.swse?.equipmentTxn);
+    if (journal.status !== JOURNAL_STATUS.VALID) return [];
+    return (unresolvedItemIds(journal.entries).get(itemId) ?? []).map((t) => t.requestId);
+  } catch { return []; }
+}
 const NON_STACKABLE_TYPES = ["weapon", "armor", "shield", "lightsaber"];
 
 function isTruthyState(value) {
@@ -462,6 +472,13 @@ export class InventoryEngine {
   static async removeItem(actor, itemId) {
     const item = actor?.items?.get?.(itemId);
     if (!actor || !item) return;
+    // an unresolved equipment transaction on this Item must be reconciled first: deleting the Item would destroy the evidence G36 compares
+    const pending = unresolvedEquipmentTransactionsFor(actor, itemId);
+    if (pending.length) {
+      globalThis.ui?.notifications?.warn?.(`${item.name}: an equipment change on this item did not finish. A GM must resolve it before the item can be removed.`);
+      logEquipmentEvent("remove-refused", { actorId: actor.id, itemId, requestIds: pending });
+      return { ok: false, reason: "unresolved-equipment-transaction", requestIds: pending };
+    }
 
     await ActorEngine.deleteEmbeddedDocuments(actor, "Item", [itemId], {
       source: "InventoryEngine.removeItem"
