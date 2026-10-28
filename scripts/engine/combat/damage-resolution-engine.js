@@ -295,7 +295,8 @@ export class DamageResolutionEngine {
         isStun: damageType === 'stun',
         isIon: damageType === 'ion',
         attacker: source,
-        thresholdAdjustment: Number.isFinite(thresholdAdjustment) ? thresholdAdjustment : 0
+        thresholdAdjustment: Number.isFinite(thresholdAdjustment) ? thresholdAdjustment : 0,
+        eventThresholdBonus: thresholdData.eventThresholdBonus ?? 0
       });
 
       result.thresholdExceeded = result.thresholdRuleResult?.thresholdExceeded === true;

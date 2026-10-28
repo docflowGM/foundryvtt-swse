@@ -153,20 +153,19 @@ export class ThresholdEngine {
     }
 
     const modifierTotal = modifiers.reduce((sum, m) => sum + Number(m.value || 0), 0);
-    const implantStunBonus = String(context?.damageType ?? '').toLowerCase() === 'stun'
-      ? ImplantEffectRules.getStunDamageThresholdBonus(actor)
-      : 0;
-    const implantBreakdown = implantStunBonus
-      ? [{ label: 'Nerve Reinforcement Implant', value: implantStunBonus }]
-      : [];
-    // Modification V2: worn-armor equipment bonus against stun (Mesh Underlay), derived from the verified catalog, never stored on the actor.
-    // Whether it stacks with the Nerve Reinforcement Implant bonus (untyped in this system) is an open ruling (D-017): with both present only
-    // the implant applies -- the pre-existing behavior -- and the breakdown says why.
-    const armorStun = String(context?.damageType ?? '').toLowerCase() === 'stun' ? wornArmorStunThresholdBonus(actor) : { value: 0, source: null };
-    const armorStunBonus = armorStun.value > 0 && !implantStunBonus ? armorStun.value : 0;
-    const armorStunBreakdown = armorStun.value > 0
-      ? [{ label: `Mesh Underlay${armorStun.source ? ` (${armorStun.source})` : ''}${armorStunBonus ? '' : ': not applied with the Nerve Reinforcement Implant (stacking ruling pending, D-017)'}`, value: armorStunBonus }]
-      : [];
+    // Damage threshold against stun: the Nerve Reinforcement Implant (KotOR p.75) and Mesh Underlay worn armor (KotOR p.76; Modification V2,
+    // derived from the verified catalog, never stored) each grant a +5 EQUIPMENT bonus. Bonuses of the same type do not stack: the higher
+    // applies (D-017, source-verified), and the breakdown names the one that does not.
+    const isStunEvent = String(context?.damageType ?? '').toLowerCase() === 'stun';
+    const implantStun = isStunEvent ? Number(ImplantEffectRules.getStunDamageThresholdBonus(actor)) || 0 : 0;
+    const armorStun = isStunEvent ? wornArmorStunThresholdBonus(actor) : { value: 0, source: null };
+    const stunEquipmentBonus = Math.max(0, implantStun, armorStun.value);
+    const implantApplies = implantStun > 0 && implantStun >= armorStun.value;
+    const notStacking = ': not applied (equipment bonuses do not stack)';
+    const stunBreakdown = [
+      ...(implantStun > 0 ? [{ label: `Nerve Reinforcement Implant${implantApplies ? '' : notStacking}`, value: implantApplies ? implantStun : 0 }] : []),
+      ...(armorStun.value > 0 ? [{ label: `Mesh Underlay${armorStun.source ? ` (${armorStun.source})` : ''}${implantApplies ? notStacking : ''}`, value: implantApplies ? 0 : armorStun.value }] : []),
+    ];
 
     // Phase 5D-I-C-A: an attack-specific adjustment (Disruptor: "as though its damage threshold were 5 lower") shapes the EFFECTIVE threshold of
     // THIS damage event only; the actor's stored / derived Damage Threshold is never modified.
@@ -176,15 +175,16 @@ export class ThresholdEngine {
 
     return {
       base,
-      modifierTotal: modifierTotal + implantStunBonus + armorStunBonus + adjustment,
-      total: Math.max(0, base + modifierTotal + implantStunBonus + armorStunBonus + adjustment),
+      modifierTotal: modifierTotal + stunEquipmentBonus + adjustment,
+      total: Math.max(0, base + modifierTotal + stunEquipmentBonus + adjustment),
+      // the part of this event's threshold that depends on the damage event (not the attack): evaluateThreshold must add it too
+      eventThresholdBonus: stunEquipmentBonus,
       breakdown: [
         ...modifiers.map(m => ({
           label: m.label,
           value: m.value
         })),
-        ...implantBreakdown,
-        ...armorStunBreakdown,
+        ...stunBreakdown,
         ...adjustmentBreakdown
       ]
     };
@@ -305,14 +305,17 @@ export class ThresholdEngine {
    * @param {boolean} [params.isStun=false] - Whether damage is stun
    * @param {boolean} [params.isIon=false] - Whether damage is ion
    * @param {Actor} [params.attacker] - Attacker actor (for logging)
+   * @param {number} [params.eventThresholdBonus=0] - Bonus that applies to this damage event (getDamageThreshold().eventThresholdBonus)
    * @returns {ThresholdResult}
    */
-  static evaluateThreshold({ target, damage, isStun = false, isIon = false, attacker = null, thresholdAdjustment = 0 }) {
+  static evaluateThreshold({ target, damage, isStun = false, isIon = false, attacker = null, thresholdAdjustment = 0, eventThresholdBonus = 0 }) {
     if (!target) return ThresholdResult.empty();
 
-    // Phase 5D-I-C-A: effective threshold of this damage event = stored threshold + the attack's own adjustment (never persisted)
+    // Phase 5D-I-C-A: effective threshold of this damage event = stored threshold + the attack's own adjustment + the bonus that applies to
+    // this kind of damage (getDamageThreshold's eventThresholdBonus, e.g. the equipment bonus against stun); none of it is persisted
     const adjustment = Number(thresholdAdjustment);
-    const dt = Math.max(0, this.calculateDamageThreshold(target) + (Number.isFinite(adjustment) ? adjustment : 0));
+    const eventBonus = Number(eventThresholdBonus);
+    const dt = Math.max(0, this.calculateDamageThreshold(target) + (Number.isFinite(adjustment) ? adjustment : 0) + (Number.isFinite(eventBonus) ? eventBonus : 0));
     const result = new ThresholdResult(target, damage, dt);
 
     // RAW threshold check (always applies)

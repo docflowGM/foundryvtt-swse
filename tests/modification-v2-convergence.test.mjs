@@ -290,17 +290,32 @@ const install = (item, extra = {}, d = deps()) => silent(() => P.installProvisio
   assert.equal(actor.system.derived.damageThreshold, 15, 'the stored threshold is not written');
   A().system.equipped = false; assert.equal(await dt('stun'), 15, 'armor not worn: no bonus'); A().system.equipped = true;
   devOn = false; assert.equal(await dt('stun'), 15, 'development setting off: no bonus'); devOn = true;
+  // the REAL damage resolver adjudicates against the same effective threshold it reports (18 stun vs base 15)
+  const { DamageResolutionEngine } = await import('/systems/foundryvtt-swse/scripts/engine/combat/damage-resolution-engine.js');
+  Object.assign(actor.system, { hp: { value: 40, max: 40 }, conditionTrack: { current: 0 }, size: 'medium' });
+  const hit = (damage, damageType = 'stun') => silent(() => DamageResolutionEngine.resolveDamage({ actor, damage, damageType, source: null, options: {} }));
+  let r = await hit(18);
+  assert.deepEqual([r.thresholdTotal, r.thresholdExceeded, r.conditionDelta], [20, false, 0], 'Mesh Underlay worn: 18 stun does not exceed DT 20, no CT shift');
+  r = await hit(18, 'energy'); assert.deepEqual([r.thresholdTotal, r.thresholdExceeded], [15, true], 'non-stun damage: base threshold');
+  A().system.equipped = false; r = await hit(18); A().system.equipped = true;
+  assert.deepEqual([r.thresholdTotal, r.thresholdExceeded], [15, true], 'armor removed: 18 stun exceeds DT 15');
+  // D-017 (KotOR pp.75-76, source-verified): the implant's +5 and Mesh Underlay's +5 are both equipment bonuses and do not stack
   const realImplant = ImplantEffectRules.getStunDamageThresholdBonus;
   ImplantEffectRules.getStunDamageThresholdBonus = () => 5;
   try {
     const both = await ThresholdEngine.getDamageThreshold(actor, { damageType: 'stun' });
-    assert.equal(both.total, 20, 'implant + Mesh Underlay: only the implant applies until D-017 is ruled');
-    assert.ok(both.breakdown.some((b) => /D-017/.test(b.label) && b.value === 0), 'the breakdown says why Mesh Underlay is not applied');
+    assert.equal(both.total, 20, 'implant + Mesh Underlay: +5, not +10');
+    assert.ok(both.breakdown.some((b) => /Mesh Underlay.*do not stack/.test(b.label) && b.value === 0), 'the breakdown names the bonus that does not stack');
+    r = await hit(19); assert.deepEqual([r.thresholdTotal, r.thresholdExceeded], [20, false], 'resolver: implant + Mesh Underlay = DT 20');
+    r = await hit(20); assert.equal(r.thresholdExceeded, true, '20 stun reaches DT 20 (no +10)');
+    A().system.equipped = false; r = await hit(18); A().system.equipped = true;
+    assert.deepEqual([r.thresholdTotal, r.thresholdExceeded], [20, false], 'implant alone still applies in the resolver (was display-only before)');
   } finally { ImplantEffectRules.getStunDamageThresholdBonus = realImplant; }
   const failed = await silent(() => P.removeProvisionalUpgrade(actor, A(), { instanceId: inst.instance.instanceId, attemptId: 'mesh-rm-1', check: { mode: 'gm-entered', total: 10 } }, deps()));
   assert.equal(failed.status, 'DEACTIVATED', JSON.stringify(failed)); assert.equal(await dt('stun'), 15, 'deactivated: no bonus (the slot stays used, Q-023)');
+  r = await hit(18); assert.deepEqual([r.thresholdTotal, r.thresholdExceeded], [15, true], 'resolver: deactivated Mesh Underlay, 18 stun exceeds DT 15');
   assert.equal(actor.system.credits, 2500, 'removal attempts move no credits');
-  ok('10: Mesh Underlay lifecycle (GM development policy): size increase -> install 2500 cr (DC 30) -> stun DT +5 on worn armor only -> unworn / setting off / deactivation restore it with no write; with the implant only the implant applies (D-017); Armor Reinforcement stays blocked (D-016)');
+  ok('10: Mesh Underlay lifecycle (GM development policy): size increase -> install 2500 cr (DC 30) -> stun DT +5 on worn armor only -> unworn / setting off / deactivation restore it with no write; the real damage resolver adjudicates 18 stun against the effective DT (20 worn, 15 removed/deactivated); implant + Mesh Underlay do not stack (D-017); Armor Reinforcement stays blocked (D-016)');
   globalThis.game.settings = { get: () => undefined };
 }
 console.log(`modification-v2-convergence: ${n} checks ok`);

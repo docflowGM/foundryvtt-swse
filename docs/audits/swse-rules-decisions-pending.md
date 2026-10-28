@@ -1007,6 +1007,8 @@ All three are `SOURCE_VERIFIED` from the supplied sourcebook text extractions (n
 | Review classification (rev. 2) | `DEFERRED_RULES_REVIEW` — The printed effect is clear; the open point is how the system decides that damage is piercing, which needs new rules data or an owner ruling |
 | Decision authority | Project owner |
 | Resolution | |
+| Source examination log | 2026-10-28: project owner's independent review (PR #1086 comment) visually checked *Saga Edition Core Rulebook* printed p. 120, Weapon Qualities, Damage Type: "and" means both damage types at once; "or" means the wielder chooses one immediately before the attack roll; a double weapon can have a different type per end. *KotOR Campaign Guide* p. 75: Armor Reinforcement grants DR 2 against piercing damage; p. 72, Mixed Damage Types: one of several simultaneously dealt types can trigger a type-dependent ability |
+| Direction (owner, 2026-10-28) | Do not broaden piercing to kinetic. Add source-backed physical damage subtype evidence (piercing / slashing / bludgeoning) to appropriate canonical weapon attack profiles, starting with one or two documented weapons; keep "and" versus "or" with the attack-time choice; thread the selected type through the damage-mitigation authority and apply DR 2 only when the selected or simultaneous types include piercing. Armor Reinforcement stays blocked until type evidence flows from attack to damage |
 
 ## D-017 — Mesh Underlay and the Nerve Reinforcement Implant: stacking against stun
 
@@ -1025,6 +1027,8 @@ All three are `SOURCE_VERIFIED` from the supplied sourcebook text extractions (n
 | Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — Read the Nerve Reinforcement Implant entry in the KotOR Campaign Guide and record its bonus type verbatim, with printed page. Becomes `DEFERRED_RULES_REVIEW` only if the text is ambiguous |
 | Decision authority | Project owner |
 | Resolution | |
+| Source examination log | 2026-10-28: project owner's independent review (PR #1086 comment, RICR review of `9885fba`) visually checked the uploaded *Knights of the Old Republic Campaign Guide* printed pp. 75-76. Nerve Reinforcement Implant (p. 75): **+5 equipment bonus** to Damage Threshold against stun damage. Mesh Underlay (p. 76): **+5 equipment bonus** to the same statistic against stun damage while the armor is worn |
+| Resolution (source) | Same bonus type: the normal non-stacking rule for bonuses of one type applies, so together they give +5, not +10. No owner rule or house rule was needed. Implemented in `ThresholdEngine.getDamageThreshold` (highest stun equipment bonus; the breakdown names the one that does not stack) and threaded into `evaluateThreshold` through `eventThresholdBonus`, so the damage resolver adjudicates the threshold with the same value it reports |
 
 ---
 
@@ -1040,3 +1044,4 @@ All three are `SOURCE_VERIFIED` from the supplied sourcebook text extractions (n
 - **Revision 6 (2026-10-19, E4-C1 WP5-C1):** appended source-verification addenda to EQ-002 and EQ-003 (published mechanics SOURCE_VERIFIED from sourcebook text extractions; model/implementation unresolved; fail-closed handling unchanged; acceptance debt tracked). EQ-001 untouched. No recommended ruling was added.
 - **Revision 7 (2026-10-19, E4-C1 WP5-C2):** appended EQ-004 (operator authorization and crew eligibility for vehicle weapon attacks are not established at the attack boundary; routing-only evidence is reported as such; no enforcement and no flag added). No existing entry was changed; no recommended ruling was added.
 - **Revision 8 (2026-10-28, Modification V2 #1086):** appended D-016 (Armor Reinforcement "DR 2 versus piercing" cannot be matched: the pipeline has no piercing classification; blocked) and D-017 (Mesh Underlay with the Nerve Reinforcement Implant: stacking depends on the implant's unverified bonus type; only the implant applies when both are active). No existing entry was changed; no recommended ruling was added.
+- **Revision 9 (2026-10-28, #1086 review):** appended to D-017 the owner's source examination (KotOR pp. 75-76: both bonuses are equipment bonuses) and its source resolution (non-stacking); appended to D-016 the owner's source examination (Core p. 120, KotOR pp. 72 and 75) and implementation direction. No existing row changed; no recommended ruling was added.
