@@ -29,7 +29,7 @@ const filesToInclude = [
   'lang/',
   'index.js',
   'LICENSE',
-  // Modification V2 runtime artifacts read by the workbench's install service (exact files only; their SHA-256 is pinned in
+  // Modification V2 runtime artifacts read by the workbench install service (exact files only; their SHA-256 is pinned in
   // scripts/engine/customization/modification-v2-runtime/modification-data-pins.js and checked by CI). Research data under data/audits is not shipped.
   'data/modifications/runtime-definitions-v1.5.json',
   'data/modifications/specification-records-v1.json'

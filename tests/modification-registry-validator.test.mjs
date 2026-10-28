@@ -581,8 +581,11 @@ check('release packaging does not ship the audit data or docs (package-system.js
   const block = src.match(/const filesToInclude = \[([\s\S]*?)\];/);
   assert.ok(block, 'allowlist found');
   const entries = [...block[1].matchAll(/'([^']+)'/g)].map((m) => m[1]);
-  assert.deepEqual(entries, ['system.json', 'template.json', 'templates/', 'scripts/', 'helpers/', 'styles/', 'assets/', 'lang/', 'index.js', 'LICENSE']);
+  // Modification V2 runtime (R1): exactly the two pinned runtime files ship; audit data, research data and docs never do
+  const RUNTIME = ['data/modifications/runtime-definitions-v1.5.json', 'data/modifications/specification-records-v1.json'];
+  assert.deepEqual(entries, ['system.json', 'template.json', 'templates/', 'scripts/', 'helpers/', 'styles/', 'assets/', 'lang/', 'index.js', 'LICENSE', ...RUNTIME]);
   for (const e of entries) {
+    if (RUNTIME.includes(e)) continue;
     assert.ok(!e.startsWith('data') && !e.startsWith('docs'), e);
   }
 });

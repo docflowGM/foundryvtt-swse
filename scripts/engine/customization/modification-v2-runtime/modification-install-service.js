@@ -30,6 +30,7 @@ import { createModificationCatalog } from '/systems/foundryvtt-swse/scripts/engi
 import { planModification, inspectInstances } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-v2/modification-planner.js';
 import { resolveSlotState } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-slot-authority.js';
 import { sha256Hex, utf8Bytes } from '/systems/foundryvtt-swse/scripts/engine/equipment/intent-fingerprint.js';
+import { PROVISIONAL_SET } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-provisional-set.js';
 import { MODIFICATION_DATA_PINS } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-data-pins.js';
 
 export const RUNTIME_PATH = 'data/modifications/runtime-definitions-v1.5.json';
@@ -38,11 +39,7 @@ export const INSTANCE_FLAG_PATH = 'flags.foundryvtt-swse.customization.installed
 export const ATTEMPT_FLAG_PATH = 'flags.foundryvtt-swse.customization.attemptLog';
 export const PROVISIONAL_BASIS = 'PROVISIONAL_GM_ADJUDICATED';
 
-/** The first, deliberately small set (weapon and armor, 0- and 1-point rows, plain credit prices). Expanded explicitly, never by default. */
-export const PROVISIONAL_SET = Object.freeze([
-  'sv-targeting-scope-standard::weapon', 'sv-rangefinder::weapon', 'sv-ion-charger::weapon',
-  'sv-vacuum-seals::armor', 'sv-climbing-claws::armor', 'sv-diagnostics-system::armor',
-]);
+export { PROVISIONAL_SET };
 
 /** Scum and Villainy printed p. 39, Table 2-2, commercially bought column (scratch-built is not offered here). */
 export const TABLE_2_2 = Object.freeze({
@@ -297,7 +294,7 @@ async function runInstall(actor, item0, request, deps) {
     mutationPlan: { update: { items: [{ _id: item.id, [INSTANCE_FLAG_PATH]: next }] } },
     cost: review.price,
     transactionContext: 'owned-customization',
-    audit: { itemId: item.id, itemName: item.name, modificationV2: { typedDefinitionId: request.typedDefinitionId, attemptId: request.attemptId, provisional: true, row: review.row, dc: review.dc } },
+    audit: { itemId: item.id, modificationV2: { typedDefinitionId: request.typedDefinitionId, attemptId: request.attemptId, provisional: true, row: review.row, dc: review.dc } },
     verify: async (a) => {
       const landed = inspectInstances(a.items?.get?.(item.id) ?? item).records.some((r) => r.instanceId === instance.instanceId);
       return landed ? { ok: true } : { ok: false, reason: `${review.name} is not on the item after the update` };
