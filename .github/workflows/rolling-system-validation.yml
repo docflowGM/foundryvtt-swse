@@ -79,6 +79,8 @@ jobs:
       # node:fs, node:path, node:child_process) or relative source files —
       # confirmed by grepping every test file's imports. There is
       # therefore no dependency-install step to run and nothing to cache.
+      # (Exception: the release pack-build guard below installs its own pinned
+      # tooling from tools/release/package-lock.json; no test depends on it.)
       # Node version pinned to an actively-supported LTS since no
       # engines field exists to read a required version from.
       - name: Set up Node.js
@@ -105,6 +107,16 @@ jobs:
 
       - name: Guard — system manifest and declared packs
         run: node tools/check-system-manifest.mjs
+
+      # system.json declares V13 LevelDB pack directories; the repository versions their NeDB sources (packs/<name>.db). Compile every
+      # declared pack with the pinned Foundry CLI (tools/release/package-lock.json) and read each one back; fails if any source cannot be
+      # built into exactly its documents. Writes only under build/ (not committed); the release ZIP itself is built by
+      # scripts/build/package-system.js.
+      - name: Guard — compendium packs compile to LevelDB (release build)
+        run: |
+          set -e
+          npm ci --prefix tools/release --no-audit --no-fund
+          node tools/release/build-packs.mjs --out build/release/ci-check
 
       # Read-only research-data guard (G1): the immutable v1.5 modification
       # registry snapshot, its manifest, exact counts and exact known

@@ -576,15 +576,12 @@ check('no runtime code, template, style, language file or manifest references th
   assert.equal(manifest.runtimeLoading, 'prohibited');
 });
 
-check('release packaging does not ship the audit data or docs (package-system.js allowlist)', () => {
+const { PACKAGE_INCLUDE, PACKAGE_EXCLUDE_DIRS } = await import(path.join(ROOT, 'tools/release/pack-sources.mjs'));
+check('release packaging does not ship the audit data or docs (tools/release/pack-sources.mjs allowlist)', () => {
+  for (const e of PACKAGE_INCLUDE) assert.ok(!e.startsWith('docs'), e);
+  assert.ok(PACKAGE_EXCLUDE_DIRS.includes('data/audits'), 'the audit snapshot under data/audits never ships');
   const src = read('scripts/build/package-system.js').toString('utf8');
-  const block = src.match(/const filesToInclude = \[([\s\S]*?)\];/);
-  assert.ok(block, 'allowlist found');
-  const entries = [...block[1].matchAll(/'([^']+)'/g)].map((m) => m[1]);
-  assert.deepEqual(entries, ['system.json', 'template.json', 'templates/', 'scripts/', 'helpers/', 'styles/', 'assets/', 'lang/', 'index.js', 'LICENSE']);
-  for (const e of entries) {
-    assert.ok(!e.startsWith('data') && !e.startsWith('docs'), e);
-  }
+  assert.ok(src.includes('PACKAGE_INCLUDE') && src.includes('PACKAGE_EXCLUDE_DIRS'), 'the packager uses that allowlist');
 });
 
 check('the two source files are protected from line-ending conversion', () => {

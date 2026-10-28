@@ -1,0 +1,8 @@
+{
+  "name": "foundryvtt-swse-release-tools",
+  "private": true,
+  "description": "Release-only tooling: compiles the legacy packs/*.db sources into the V13 LevelDB pack directories declared in system.json. Not shipped.",
+  "devDependencies": {
+    "@foundryvtt/foundryvtt-cli": "3.0.5"
+  }
+}

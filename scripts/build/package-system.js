@@ -1,62 +1,64 @@
 #!/usr/bin/env node
 /**
  * Package SWSE System for Distribution
- * Creates a properly-structured ZIP file with system files at root level
- * Prevents double-nesting issues when distributing the system
+ *
+ * Stages the release in build/release/<id>/ and zips it with the system files at the archive root (no wrapper folder):
+ *   1. copies the shipped tree (tools/release/pack-sources.mjs PACKAGE_INCLUDE, minus PACKAGE_EXCLUDE_DIRS -- the audit evidence
+ *      under data/ never ships, nor do docs/ or tools/);
+ *   2. compiles every compendium declared in system.json from its committed legacy source (packs/<name>.db) into the V13 LevelDB
+ *      directory the manifest names (tools/release/build-packs.mjs, which verifies every pack by reading it back);
+ *   3. checks that the staged package satisfies the manifest (every esmodule, style, language file and pack store is present);
+ *   4. zips the staged directory.
+ * Requires the pinned release tooling: `npm ci --prefix tools/release`.
  */
 
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const { pathToFileURL } = require('url');
 
-const systemJson = JSON.parse(fs.readFileSync('./system.json', 'utf8'));
+const root = path.resolve(__dirname, '..', '..');
+const systemJson = JSON.parse(fs.readFileSync(path.join(root, 'system.json'), 'utf8'));
 const version = systemJson.version;
 const systemId = systemJson.id;
+const outputFileName = path.join(root, `${systemId}-${version}.zip`);
+const stage = path.join(root, 'build', 'release', systemId);
 
-const outputFileName = `${systemId}-${version}.zip`;
+(async () => {
+  const sources = await import(pathToFileURL(path.join(root, 'tools/release/pack-sources.mjs')).href);
+  const { buildPacks } = await import(pathToFileURL(path.join(root, 'tools/release/build-packs.mjs')).href);
+  const excluded = new Set(sources.PACKAGE_EXCLUDE_DIRS.map((p) => path.join(root, p)));
 
-console.log(`📦 Packaging ${systemId} v${version}...`);
-
-// Files and directories to include
-const filesToInclude = [
-  'system.json',
-  'template.json',
-  'templates/',
-  'scripts/',
-  'helpers/',
-  'styles/',
-  'assets/',
-  'lang/',
-  'index.js',
-  'LICENSE'
-];
-
-try {
-  // Remove existing zip if present
-  if (fs.existsSync(outputFileName)) {
-    fs.unlinkSync(outputFileName);
-    console.log(`  🗑️  Removed old package: ${outputFileName}`);
+  console.log(`📦 Packaging ${systemId} v${version}...`);
+  fs.rmSync(stage, { recursive: true, force: true });
+  fs.mkdirSync(stage, { recursive: true });
+  for (const entry of sources.PACKAGE_INCLUDE) {
+    const from = path.join(root, entry);
+    if (!fs.existsSync(from)) throw new Error(`missing package entry: ${entry}`);
+    fs.cpSync(from, path.join(stage, entry), {
+      recursive: true,
+      filter: (src) => !excluded.has(src) && !/(\.bak|\.DS_Store)$/.test(src) && !src.split(path.sep).includes('__MACOSX'),
+    });
   }
 
-  // Create ZIP with files at root level (no wrapper folder)
-  const command = `zip -r "${outputFileName}" ${filesToInclude.join(' ')} -x "*.git*" "node_modules/*" "*.bak" ".DS_Store" "__MACOSX/*"`;
+  console.log('  Compiling compendium packs (LevelDB) ...');
+  const report = await buildPacks({ out: stage, log: null });
+  console.log(`  ${report.length} packs, ${report.reduce((s, p) => s + p.documents, 0)} documents verified`);
 
-  console.log(`  Running: zip -r ${outputFileName} [files...]`);
-  execSync(command, { stdio: 'inherit' });
+  const view = {
+    isFile: (p) => { try { return fs.statSync(path.join(stage, p)).isFile(); } catch { return false; } },
+    isDir: (p) => { try { return fs.statSync(path.join(stage, p)).isDirectory(); } catch { return false; } },
+    read: (p) => fs.readFileSync(path.join(stage, p), 'utf8'),
+  };
+  const problems = sources.manifestCoverage(systemJson, view);
+  if (problems.length) throw new Error(`the staged package does not satisfy system.json:\n  ${problems.join('\n  ')}`);
 
-  const stats = fs.statSync(outputFileName);
-  const sizeKB = (stats.size / 1024).toFixed(2);
-
-  console.log(`\n✅ Package created successfully!`);
-  console.log(`📄 File: ${outputFileName}`);
-  console.log(`📊 Size: ${sizeKB} KB`);
-  console.log(`\n📋 Installation:`);
-  console.log(`1. In Foundry VTT, go to Setup > System & Modules`);
-  console.log(`2. Click "Install System"`);
-  console.log(`3. Upload or paste URL to ${outputFileName}`);
-  console.log(`\n✨ Distribution ready!`);
-} catch (err) {
+  if (fs.existsSync(outputFileName)) fs.unlinkSync(outputFileName);
+  execSync(`zip -q -r -X "${outputFileName}" .`, { cwd: stage, stdio: 'inherit' });
+  const sizeKB = (fs.statSync(outputFileName).size / 1024).toFixed(2);
+  console.log(`\n✅ Package created: ${path.basename(outputFileName)} (${sizeKB} KB)`);
+})().catch((err) => {
   console.error('❌ Error creating package:', err.message);
-  console.error('\n⚠️  Make sure you have the "zip" command installed (usually pre-installed on Linux/Mac)');
+  console.error('\n⚠️  Requires `npm ci --prefix tools/release` and the "zip" command.');
   process.exit(1);
-}
+});
