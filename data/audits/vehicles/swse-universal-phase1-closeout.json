@@ -1,0 +1,85 @@
+{
+  "schema": "swse.vehicle.universal.phase1.closeout.v1",
+  "status": "PHASE1_PUBLICATION_IDENTITY_FROZEN",
+  "counts": {
+    "sourcebooks": 14,
+    "claims": 429,
+    "historical": 316,
+    "supplement": 2,
+    "discovery": 111
+  },
+  "books": [
+    {
+      "phase": "1-A",
+      "book": "Core Rulebook",
+      "claims": 17
+    },
+    {
+      "phase": "1-B",
+      "book": "Starships of the Galaxy",
+      "claims": 105
+    },
+    {
+      "phase": "1-C",
+      "book": "Clone Wars Campaign Guide",
+      "claims": 67
+    },
+    {
+      "phase": "1-D",
+      "book": "Knights of the Old Republic Campaign Guide",
+      "claims": 39
+    },
+    {
+      "phase": "1-E",
+      "book": "Force Unleashed Campaign Guide",
+      "claims": 34
+    },
+    {
+      "phase": "1-F",
+      "book": "Scum and Villainy",
+      "claims": 13
+    },
+    {
+      "phase": "1-G",
+      "book": "Galaxy at War",
+      "claims": 11
+    },
+    {
+      "phase": "1-H",
+      "book": "Galaxy of Intrigue",
+      "claims": 8
+    },
+    {
+      "phase": "1-I",
+      "book": "Jedi Academy Training Manual",
+      "claims": 1
+    },
+    {
+      "phase": "1-J",
+      "book": "Legacy Era Campaign Guide",
+      "claims": 49
+    },
+    {
+      "phase": "1-K",
+      "book": "Rebellion Era Campaign Guide",
+      "claims": 53
+    },
+    {
+      "phase": "1-L",
+      "book": "Threats of the Galaxy",
+      "claims": 5
+    },
+    {
+      "phase": "1-M",
+      "book": "Unknown Regions",
+      "claims": 26
+    },
+    {
+      "phase": "1-N",
+      "book": "Scavenger's Guide to Droids",
+      "claims": 1
+    }
+  ],
+  "manifest": "data/audits/vehicles/swse-universal-phase1-publication-census.ndjson",
+  "note": "Source publication identity only; no operational or strict mechanical certification. Core singular mobility copied as a single-element array. Two supplements are not rediscovered claims."
+}
