@@ -1033,6 +1033,24 @@ All three are `SOURCE_VERIFIED` from the supplied sourcebook text extractions (n
 | Source examination log | 2026-10-28: project owner's independent review (PR #1086 comment, RICR review of `9885fba`) visually checked the uploaded *Knights of the Old Republic Campaign Guide* printed pp. 75-76. Nerve Reinforcement Implant (p. 75): **+5 equipment bonus** to Damage Threshold against stun damage. Mesh Underlay (p. 76): **+5 equipment bonus** to the same statistic against stun damage while the armor is worn |
 | Resolution (source) | Same bonus type: the normal non-stacking rule for bonuses of one type applies, so together they give +5, not +10. No owner rule or house rule was needed. Implemented in `ThresholdEngine.getDamageThreshold` (highest stun equipment bonus; the breakdown names the one that does not stack) and threaded into `evaluateThreshold` through `eventThresholdBonus`, so the damage resolver adjudicates the threshold with the same value it reports |
 
+## D-018 — Tremor Cell: the stun setting it adds
+
+| Field | Content |
+|---|---|
+| Rules domain | Modification effects (weapon accessory) / stun setting |
+| Feature | Tremor Cell (`kotor-accessory-tremor-cell::weapon`) |
+| Source | *Knights of the Old Republic Campaign Guide* printed page 76 (Table 5-6 on page 75), as certified in the runtime catalog (`EFFECTS_CERTIFIED`; "Adds swift-action stun setting dealing normal weapon damage as stun") |
+| Evidence | Certified operation `weapon.capabilities.stunSetting` action-grant `{ action: swift, damage_dice: equal_normal, effect: stun }` |
+| Confirmed behavior | The weapon gains a stun setting; switching to it is a swift action; it deals the weapon's normal damage dice as stun damage |
+| Unresolved question | (1) Whether the standard stun-setting range limit that the canonical registry records for ranged weapons (6 squares) applies to a stun setting added by the cell. (2) What happens on a host that already has a stun setting with its own stun dice (e.g. a blaster pistol, 2d6 stun versus 3d6 normal): does the cell's "normal weapon damage as stun" replace it, and does its swift switch replace the host's switch cost? (3) Whether switching back from stun also costs an action (the existing persistent-setting model charges only the switch to stun). The certified data does not say; the page was not re-examined for this entry |
+| Options | None recorded from source text yet. The existing runtime can express a persistent stun setting with a swift switch (as for Shockboxing Gloves) once (1)-(3) are settled |
+| Recommended ruling | None |
+| Implementation impact | Tremor Cell is NOT in the GM development set and is not automated; it stays listed as blocked in the workbench. No weapon stun data was changed |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Review classification (rev. 2) | `DEFERRED_RULES_REVIEW` — the printed effect is clear on the switch cost and damage; its interaction with the Core stun-setting rules and with hosts that already have one needs a ruling or the page's exact text |
+| Decision authority | Project owner |
+| Resolution | |
+
 ---
 
 ## Revision log
@@ -1050,3 +1068,4 @@ All three are `SOURCE_VERIFIED` from the supplied sourcebook text extractions (n
 - **Revision 9 (2026-10-28, #1086 review):** appended to D-017 the owner's source examination (KotOR pp. 75-76: both bonuses are equipment bonuses) and its source resolution (non-stacking); appended to D-016 the owner's source examination (Core p. 120, KotOR pp. 72 and 75) and implementation direction. No existing row changed; no recommended ruling was added.
 - **Revision 10 (2026-10-28, #1086):** appended an implementation row to D-016 (subtype recorded at damage-roll time, matched in the D4 applies-to stage; no weapon data or alias changed). No existing row changed; no recommended ruling was added.
 - **Revision 11 (2026-10-28, #1086):** appended to D-016 the owner's source-backed stacking ruling (Core p. 158: highest applicable DR; Armor Reinforcement competes, never adds) and its implementation. No existing row changed; no recommended ruling was added.
+- **Revision 12 (2026-10-28, #1086):** appended D-018 (Tremor Cell stun setting: range cap, hosts with an existing stun setting, switch-back cost). No existing entry was changed; no recommended ruling was added.
