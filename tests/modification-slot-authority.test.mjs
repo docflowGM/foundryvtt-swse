@@ -898,7 +898,7 @@ check('25 static guard: the module has no mutation, clock, randomness or network
   assert.ok(!/^\s*import\s/m.test(source), 'the module imports nothing');
   assert.ok(!/require\(/.test(source));
 });
-check('26 no-regression guard: no existing file imports the new module', () => {
+check('26 no-regression guard: only the Modification V2 install service imports the slot authority', () => {
   const importers = [];
   const walk = (dir) => {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -908,7 +908,8 @@ check('26 no-regression guard: no existing file imports the new module', () => {
     }
   };
   walk(path.join(repoRoot, 'scripts'));
-  assert.deepEqual(importers, []);
+  // Modification V2 convergence (owner directive 2026-10-28): the install service is the single production consumer of the slot authority
+  assert.deepEqual(importers, ['scripts/engine/customization/modification-v2-runtime/modification-install-service.js']);
 });
 
 /* ======================= NO SECONDARY CAPACITY FROM ANY NON-CERTIFIED RESULT ======================= */

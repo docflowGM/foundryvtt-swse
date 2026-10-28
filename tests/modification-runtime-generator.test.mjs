@@ -464,11 +464,13 @@ check('page-39 specification records: exact provenance and governance', () => {
   }
   assert.ok(!parents.has('sv-retractable-stock') && !parents.has('sv-droidification'));
 });
-check('no runtime (scripts/) file references the generated data or generator yet', () => {
+check('only the Modification V2 install service (runtime loader) references the generated data', () => {
   const hits = [];
   const walk = (d) => { for (const e of fs.readdirSync(path.join(ROOT, d), { withFileTypes: true })) { const rel = `${d}/${e.name}`; if (e.isDirectory()) walk(rel); else if (/\.(js|mjs|hbs)$/.test(e.name) && /modifications\/(runtime-definitions|status-ledger|specification-records)|build-modification-runtime|modification-runtime\.mjs/.test(fs.readFileSync(path.join(ROOT, rel), 'utf8'))) hits.push(rel); } };
   walk('scripts');
-  assert.deepEqual(hits, [], 'G8 loader is not authorized');
+  // Modification V2 convergence (owner directive 2026-10-28): the install service is the one runtime loader; it verifies the records
+  // against header.recordsSha256 and the catalog checks before use and never writes the generated data
+  assert.deepEqual(hits, ['scripts/engine/customization/modification-v2-runtime/modification-install-service.js'], 'only the Modification V2 install service loads the generated data');
 });
 
 

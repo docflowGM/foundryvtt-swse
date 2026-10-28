@@ -441,6 +441,20 @@ function buildWeaponPowerSourceView(weapon) {
   } catch (_err) { return null; }
 }
 
+/** Modification V2: installed instances shown on a weapon/armor row (managed in the item customization workbench). */
+function modificationV2View(entry, actor) {
+  const type = String(entry?.type ?? '').toLowerCase();
+  if (!actor || entry?.isVirtual || entry?.virtual || !['weapon', 'armor'].includes(type)) return {};
+  const liveItem = actor.items?.get?.(entry?.id) ?? null;
+  if (!liveItem) return {};
+  const raw = liveItem.flags?.['foundryvtt-swse']?.customization?.installedUpgrades;
+  const installed = (Array.isArray(raw) ? raw : []).filter((r) => r && typeof r.typedDefinitionId === 'string').map((r) => ({
+    instanceId: r.instanceId, name: r.name ?? r.typedDefinitionId, state: r.state ?? 'installed', provisional: r.provisional === true,
+    label: `${r.name ?? r.typedDefinitionId}${r.state === 'deactivated' ? ' (deactivated)' : ''}${r.provisional === true ? ' · provisional' : ''}`,
+  }));
+  return { modificationV2: { installed, hasInstalled: installed.length > 0 } };
+}
+
 /** live-Item weapon readiness + configuration views for one inventory entry (empty for non-weapons / the virtual unarmed entry) */
 function weaponStateViews(entry, isWeaponRow, actor) {
   if (!isWeaponRow || !actor || entry?.isVirtual || entry?.virtual) return {};
@@ -485,7 +499,8 @@ function buildInventoryGroups(inventoryPanel, actor) {
             : (entry?.isEnergyShield ? 'Shield Inactive' : 'Blade Inactive'),
           bladeColor: visualProfile?.bladeColor || null,
           bladeHex: visualProfile?.bladeHex || null,
-          ...weaponStateViews(entry, label === 'Weapons', actor)
+          ...weaponStateViews(entry, label === 'Weapons', actor),
+          ...modificationV2View(entry, actor)
         };
       });
 

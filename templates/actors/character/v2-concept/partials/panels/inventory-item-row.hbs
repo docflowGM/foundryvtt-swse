@@ -48,6 +48,7 @@
 {{/if}}
     {{#if entry.canEdit}}
       <button type="button" class="swse-concept-btn swse-edit-only" data-action="configure" data-item-id="{{entry.id}}">Customize</button>
+      {{#if entry.modificationV2.hasInstalled}}<span class="swse-concept-mods">{{#each entry.modificationV2.installed}}<span class="swse-concept-chip swse-concept-chip--mod{{#if provisional}} is-provisional{{/if}}" title="{{#if provisional}}Provisional GM-adjudicated install; effects are not automated{{/if}}">{{label}}</span>{{/each}}</span>{{/if}}
       {{#if entry.canOpenForceAlchemy}}<button type="button" class="swse-concept-btn swse-concept-btn--alchemy" data-action="force-alchemy" data-item-id="{{entry.id}}">Alchemy</button>{{/if}}
       <button type="button" class="swse-concept-btn swse-edit-only" data-action="sell-item" data-item-id="{{entry.id}}">Sell</button>
     {{/if}}
