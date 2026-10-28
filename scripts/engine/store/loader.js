@@ -264,12 +264,13 @@ export async function loadRawStoreData({ useCache = true } = {}) {
   /* LOAD PACK ITEMS                              */
   /* ------------------------------------------- */
 
-  const itemPackNames = [...STORE_PACKS.WEAPON_PACKS, ...STORE_PACKS.ARMOR_PACKS, ...(STORE_PACKS.EQUIPMENT_PACKS || []), STORE_PACKS.EQUIPMENT];
+  const itemPackNames = [...STORE_PACKS.WEAPON_PACKS, ...STORE_PACKS.ARMOR_PACKS, ...(STORE_PACKS.EQUIPMENT_PACKS || [])];
   const itemPackResults = await Promise.all(itemPackNames.map(safeGetPackDocuments));
 
   const weaponDocs = itemPackResults.filter(result => (STORE_PACKS.WEAPON_PACKS || []).includes(result.packName)).flatMap(result => result.docs);
   const armorDocs = itemPackResults.filter(result => (STORE_PACKS.ARMOR_PACKS || []).includes(result.packName)).flatMap(result => result.docs);
-  const equipmentDocs = itemPackResults.filter(result => ([...(STORE_PACKS.EQUIPMENT_PACKS || []), STORE_PACKS.EQUIPMENT]).includes(result.packName)).flatMap(result => result.docs);
+  // subtype packs only: the aggregate equipment pack holds the same 142 records (same ids) and is the fallback below, as for weapons/armor
+  const equipmentDocs = itemPackResults.filter(result => (STORE_PACKS.EQUIPMENT_PACKS || []).includes(result.packName)).flatMap(result => result.docs);
 
   let packItemDocs = [...weaponDocs, ...armorDocs, ...equipmentDocs];
 

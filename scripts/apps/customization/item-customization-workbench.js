@@ -1,3 +1,4 @@
+import { storeItemDocumentData } from "/systems/foundryvtt-swse/scripts/engine/store/normalizer.js";
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
@@ -3398,7 +3399,9 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
   }
 
   async _stageCurrentItemToCart(item, draft, preview, itemUpdate) {
-    const base = item.toObject ? item.toObject() : foundry.utils.deepClone(item);
+    // stage from the listing's source document (canonical identity, effects), not the normalized store view
+    const base = storeItemDocumentData(item);
+    if (!base) { ui.notifications.error(`${item?.name ?? 'Item'}: no source record; it cannot be customized for purchase.`); return; }
     const stagedData = foundry.utils.mergeObject(base, { flags: { swse: {} } }, { inplace: false, recursive: true });
     stagedData.flags = stagedData.flags || {};
     stagedData.flags.swse = stagedData.flags.swse || {};

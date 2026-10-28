@@ -73,7 +73,8 @@ export function applyPricing(item) {
 
   // Resolve costs using registry resolver
   const markup = getMarkupPercent();
-  const resolved = resolveStoreCost(costRecord, { markup });
+  const discount = getDiscountPercent();
+  const resolved = resolveStoreCost(costRecord, { markup, discount });
 
   // Assign final costs
   item.finalCost = resolved.cost;

@@ -164,7 +164,7 @@ export function buildStoreCostRecord(rawDoc) {
  * @returns {Object} { cost, costNew, costUsed, usedCondition }
  */
 export function resolveStoreCost(record, options = {}) {
-  const { condition = null, markup = 0 } = options;
+  const { condition = null, markup = 0, discount = 0 } = options;
 
   // Unavailable or missing: no cost
   if (record.costStatus === 'unavailable' || record.costStatus === 'missing') {
@@ -179,7 +179,7 @@ export function resolveStoreCost(record, options = {}) {
   // Scalar pricing
   if (record.pricingMode === 'single') {
     const base = record.baseCost ?? 0;
-    const final = applyMarkup(base, markup);
+    const final = applyMarkup(base, markup, discount);
     return {
       cost: final,
       costNew: null,
@@ -192,8 +192,8 @@ export function resolveStoreCost(record, options = {}) {
   if (record.pricingMode === 'new-used') {
     const newBase = record.baseCostNew ?? 0;
     const usedBase = record.baseCostUsed ?? 0;
-    const finalNew = applyMarkup(newBase, markup);
-    const finalUsed = applyMarkup(usedBase, markup);
+    const finalNew = applyMarkup(newBase, markup, discount);
+    const finalUsed = applyMarkup(usedBase, markup, discount);
 
     // Determine which to return as primary cost
     let primaryCost = null;
@@ -296,11 +296,12 @@ function extractStructuredCost(cost) {
 /**
  * Private: Apply markup/modifier to a base cost
  */
-function applyMarkup(baseCost, markupPercent) {
+function applyMarkup(baseCost, markupPercent, discountPercent = 0) {
   if (baseCost === null || baseCost === 0) {
     return null;
   }
 
-  const modifier = 1 + (markupPercent / 100);
-  return Math.round(baseCost * modifier);
+  // the GM's store markup and discount (house rules storeMarkup / storeDiscount), same arithmetic as pricing.calculateFinalCost
+  const modifier = (1 + (Number(markupPercent) || 0) / 100) * (1 - (Number(discountPercent) || 0) / 100);
+  return Math.max(0, Math.round(baseCost * modifier));
 }
