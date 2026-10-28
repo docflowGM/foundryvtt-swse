@@ -1,0 +1,175 @@
+{
+  "schema": "swse.vehicle.universal.phase2i.jedi-academy-training-manual.staged.v1",
+  "status": "SOURCE_STAGED_STRICT_MECHANICAL_CERTIFICATION_PENDING",
+  "sourceBook": "Jedi Academy Training Manual",
+  "sourcePdfSha256": "c4dce616776949aa0501b8932012b82d6fd1cd1c27e9646f0a772ab596b4cea9",
+  "phase1Ledger": "data/audits/vehicles/swse-universal-phase1i-jedi-academy-training-manual.json",
+  "historicalCanonicalSource": "data/canonical/vehicles/ships.json",
+  "sourceSearchLayer": "reference/sourcebooks/Jedi Academy Training Manual_djvu.txt",
+  "summary": {
+    "book": "Jedi Academy Training Manual",
+    "phase": "i",
+    "total": 1,
+    "inherited": 1,
+    "new": 0,
+    "groups": 1,
+    "missingHP": [],
+    "missingRef": [],
+    "newIssues": [],
+    "patchStatus": "Source exception corrections and census reconciled"
+  },
+  "records": [
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "jatm-chu-unthor",
+        "name": "Chu'unthor"
+      },
+      "publication": {
+        "book": "Jedi Academy Training Manual",
+        "page": 151,
+        "printedTitle": "Chu'unthor",
+        "printedTypeLine": "Colossal (station) capital ship",
+        "entryNotes": "Primary source SHA256 c4dce616776949aa0501b8932012b82d6fd1cd1c27e9646f0a772ab596b4cea9, physical PDF p152",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedSize": "Colossal (station)",
+        "size": "colossal"
+      },
+      "challenge": {
+        "cl": 15
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 2,
+        "characterScaleLengthSquares": 2,
+        "coverCrew": "total"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 1
+          }
+        ]
+      },
+      "hyperspace": {
+        "raw": "x2 (backup x18), navicomputer",
+        "capability": "equipped",
+        "primaryMultiplier": 2,
+        "navComputer": "installed"
+      },
+      "defenses": {
+        "reflex": 18,
+        "fortitude": 195,
+        "armorBonus": 18,
+        "damageReduction": 20,
+        "shieldRating": 300
+      },
+      "durability": {
+        "hitPoints": 2800,
+        "damageThreshold": 695
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -4,
+            "raw": "Initiative -4"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 12,
+            "raw": "Mechanics +12"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 12,
+            "raw": "Perception +12"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -4,
+            "raw": "Pilot -4"
+          }
+        ],
+        "initiativePrinted": -4,
+        "perceptionPrinted": 12,
+        "str": 180,
+        "dex": 10,
+        "int": 22,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 107,
+        "rangedAttackLine": "2 tractor beam batteries\" +8"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "jatm-chu-unthor-source-attack-1",
+            "label": "tractor beam battery",
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "mountKeys": [],
+            "attackBonusPrinted": 8,
+            "specialNotes": "Published operator 5 gunners, damage grapple +107 (-12 versus targets smaller than Colossal). Physical mounts and firing arcs NOT certified."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "4,000 (skilled)",
+        "crewCount": 4000
+      },
+      "capacity": {
+        "passengerCount": 10000,
+        "cargo": {
+          "value": 40000,
+          "unit": "tons",
+          "raw": "40,000 tons"
+        },
+        "consumables": {
+          "value": 5,
+          "unit": "years",
+          "raw": "5 years"
+        },
+        "storageNotes": "Printed Carried Craft various"
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Military",
+        "priceNew": {
+          "status": "ambiguous",
+          "raw": "not available for sale (unique)"
+        }
+      },
+      "text": {
+        "sourceNotes": "Source text excerpt anchored at 553102; original PDF audit ledger confirms publication identity. No executable mount certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    }
+  ],
+  "productionPacksChanged": false,
+  "generatedActorsChanged": false
+}
