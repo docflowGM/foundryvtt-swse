@@ -34,7 +34,8 @@ const TRANSITIONS = Object.freeze({
   PREPARED: ['APPLIED', 'NOT_APPLIED', 'PARTIAL', 'INDETERMINATE'],
   APPLIED: ['FINALIZED', 'NOT_APPLIED', 'PARTIAL', 'INDETERMINATE'],
   PARTIAL: ['NOT_APPLIED', 'INDETERMINATE'],
-  INDETERMINATE: ['NOT_APPLIED', 'PARTIAL'],
+  // INDETERMINATE -> APPLIED exists only for GM reconciliation (G36) after a fresh observation shows every Item at its target values.
+  INDETERMINATE: ['NOT_APPLIED', 'PARTIAL', 'APPLIED'],
   FINALIZED: [],
   NOT_APPLIED: [],
 });
@@ -77,7 +78,9 @@ function checkEntry(e, where) {
     seen.add(it.id);
     for (const p of Object.keys(it.target)) if (!has(it.before, p) && !(it.beforeAbsent ?? []).includes(p)) throw new JournalError('INVALID_ENTRY', `${where}.items[${i}] records no before-value for "${p}"`);
   });
-  if (!isPlain(e.spend) || !['not-required', 'pending', 'committed', 'failed', 'unknown'].includes(e.spend.state)) throw new JournalError('INVALID_ENTRY', `${where}.spend.state is invalid`);
+  // 'waived' is written only by an explicit GM reconciliation decision (G36); the coordinator never writes it
+  if (!isPlain(e.spend) || !['not-required', 'pending', 'committed', 'failed', 'unknown', 'waived'].includes(e.spend.state)) throw new JournalError('INVALID_ENTRY', `${where}.spend.state is invalid`);
+  if (e.executor !== undefined && e.executor !== null && !(isPlain(e.executor) && nonEmpty(e.executor.userId) && Number.isInteger(e.executor.epoch))) throw new JournalError('INVALID_ENTRY', `${where}.executor must be { userId, epoch }`);
   return e;
 }
 
@@ -117,10 +120,10 @@ export function unresolvedItemIds(entries) {
  * Add a PREPARED entry. Unresolved entries are never evicted; only the oldest RESOLVED entries are dropped to respect the bound.
  * @returns {object[]} the new entries (plain, mutable copy)
  */
-export function addPreparedEntry(entries, { requestId, intentDigest, planDigest, items, spend, at = null }) {
+export function addPreparedEntry(entries, { requestId, intentDigest, planDigest, items, spend, at = null, executor = null }) {
   if (findEntry(entries, requestId)) throw new JournalError('DUPLICATE_REQUEST', `request "${requestId}" is already journaled`);
   const sequence = entries.reduce((m, e) => Math.max(m, e.sequence), 0) + 1;
-  const entry = { requestId, intentDigest, planDigest, phase: TXN_PHASE.PREPARED, sequence, at, items: clone(items), spend: clone(spend), outcome: null, notes: [] };
+  const entry = { requestId, intentDigest, planDigest, phase: TXN_PHASE.PREPARED, sequence, at, items: clone(items), spend: clone(spend), outcome: null, notes: [], ...(executor ? { executor: clone(executor) } : {}) };
   checkEntry(entry, 'entry');
   let next = [...clone(entries), entry];
   while (next.length > JOURNAL_MAX_ENTRIES) {
@@ -139,6 +142,13 @@ export function transitionEntry(entries, requestId, phase, patch = {}) {
   const next = clone(entries).map((e) => (e.requestId === requestId ? { ...e, ...clone(patch), phase, requestId: e.requestId, intentDigest: e.intentDigest, planDigest: e.planDigest, items: e.items, sequence: e.sequence } : e));
   checkEntry(next.find((e) => e.requestId === requestId), 'entry');
   return next;
+}
+
+/** Append a note to an entry without changing its phase (forensic records such as a GM reconciliation review). */
+export function annotateEntry(entries, requestId, note) {
+  const entry = findEntry(entries, requestId);
+  if (!entry) throw new JournalError('UNKNOWN_REQUEST', `request "${requestId}" is not journaled`);
+  return clone(entries).map((e) => (e.requestId === requestId ? { ...e, notes: [...(Array.isArray(e.notes) ? e.notes : []), clone(note)] } : e));
 }
 
 /**
@@ -173,4 +183,4 @@ export function classifyTransaction(entry, observed, { spendMarkerPresent = null
   return deepFreeze({ classification, perItem, spend, reasons });
 }
 
-export default { readJournal, toStored, addPreparedEntry, transitionEntry, classifyTransaction, unresolvedItemIds, findEntry, isUnresolved, JournalError, TXN_PHASE, RESOLVED_PHASES, JOURNAL_STATUS, JOURNAL_SCHEMA_VERSION, JOURNAL_MAX_ENTRIES };
+export default { readJournal, toStored, addPreparedEntry, transitionEntry, annotateEntry, classifyTransaction, unresolvedItemIds, findEntry, isUnresolved, JournalError, TXN_PHASE, RESOLVED_PHASES, JOURNAL_STATUS, JOURNAL_SCHEMA_VERSION, JOURNAL_MAX_ENTRIES };
