@@ -1,0 +1,740 @@
+{
+  "schema": "swse.vehicle.universal.phase2l.threats-of-the-galaxy.staged.v1",
+  "status": "SOURCE_STAGED_STRICT_MECHANICAL_CERTIFICATION_PENDING",
+  "sourceBook": "Threats of the Galaxy",
+  "sourcePdfSha256": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
+  "phase1Ledger": "data/audits/vehicles/swse-universal-phase1l-threats-of-the-galaxy.json",
+  "historicalCanonicalSource": "data/canonical/vehicles/ships.json",
+  "sourceSearchLayer": "reference/sourcebooks/Threats of the Galaxy_djvu.txt",
+  "summary": {
+    "book": "Threats of the Galaxy",
+    "phase": "l",
+    "total": 5,
+    "inherited": 1,
+    "new": 4,
+    "groups": 4,
+    "missingHP": [],
+    "missingRef": [],
+    "newIssues": [],
+    "patchStatus": "Source exception corrections and census reconciled"
+  },
+  "records": [
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "tog-cec-vcx-350-light-freighter",
+        "name": "CEC VCX-350 Light Freighter"
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "page": 89,
+        "printedTitle": "CEC VCX-350 Light Freighter",
+        "printedTypeLine": "Colossal space transport",
+        "entryNotes": "Primary source SHA256 63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f, physical PDF p90",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedSize": "Colossal",
+        "size": "colossal"
+      },
+      "challenge": {
+        "cl": 10
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 12,
+        "characterScaleLengthSquares": 12,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "total (crew)"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 980
+          }
+        ],
+        "maxVelocityKmh": 980
+      },
+      "hyperspace": {
+        "raw": "x1 (backup x11)",
+        "capability": "equipped",
+        "primaryMultiplier": 1
+      },
+      "defenses": {
+        "reflex": 15,
+        "reflexFlatFooted": 13,
+        "fortitude": 28,
+        "armorBonus": 13,
+        "damageReduction": 15,
+        "shieldRating": 30
+      },
+      "durability": {
+        "hitPoints": 150,
+        "damageThreshold": 78
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -2,
+            "raw": "Initiative -2"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -2,
+            "raw": "Pilot -2"
+          }
+        ],
+        "initiativePrinted": -2,
+        "perceptionPrinted": 6,
+        "str": 46,
+        "dex": 14,
+        "int": 14,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 40,
+        "rangedAttackLine": "laser cannons +4 (see below)"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "tog-cec-vcx-350-light-freighter-source-attack-1",
+            "label": "laser cannons",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 4,
+            "specialNotes": "Published operator pilot or gunner, damage 4d10x2. Physical mounts and firing arcs NOT certified."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "3 (skilled)",
+        "crewCount": 3
+      },
+      "capacity": {
+        "passengerCount": 8,
+        "cargo": {
+          "value": 250,
+          "unit": "tons",
+          "raw": "250 tons"
+        },
+        "consumables": {
+          "value": 6,
+          "unit": "months",
+          "raw": "6 months"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 300000,
+          "raw": "300,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 175000,
+          "raw": "175,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "Source text excerpt anchored at 312909; original PDF audit ledger confirms publication identity. No executable mount certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "tog-hounds-tooth",
+        "name": "Hound's Tooth"
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "page": 18,
+        "printedTitle": "Hound's Tooth",
+        "printedTypeLine": "Colossal* space transport",
+        "entryNotes": "Primary source SHA256 63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f, physical PDF p19",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "printedSize": "Colossal",
+        "size": "colossal"
+      },
+      "challenge": {
+        "cl": 12
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 12,
+        "characterScaleLengthSquares": 12,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "total"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 16,
+            "maxVelocityKmh": 1190
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 4
+          }
+        ],
+        "maxVelocityKmh": 1190
+      },
+      "hyperspace": {
+        "raw": "x1.5 (backup x6), navicomputer",
+        "capability": "equipped",
+        "primaryMultiplier": 1.5,
+        "navComputer": "installed"
+      },
+      "defenses": {
+        "reflex": 12,
+        "reflexFlatFooted": 12,
+        "fortitude": 30,
+        "armorBonus": 10,
+        "damageReduction": 15,
+        "shieldRating": 60
+      },
+      "durability": {
+        "hitPoints": 180,
+        "damageThreshold": 80
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -1,
+            "raw": "Initiative -1"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 12,
+            "raw": "Mechanics +12"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 12,
+            "raw": "Perception +12"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 4,
+            "raw": "Pilot +4"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 7,
+            "raw": "Use Computer +7"
+          }
+        ],
+        "initiativePrinted": -1,
+        "perceptionPrinted": 12,
+        "str": 50,
+        "dex": 10,
+        "int": 14,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 10,
+        "grappleBonusPrinted": 55,
+        "rangedAttackLine": "quad laser cannon +12 (see below) or"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "tog-hounds-tooth-source-attack-1",
+            "label": "Quad laser cannons",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 12,
+            "specialNotes": "Printed operator pilot, damage 6d10x2 . Physical mounts and firing arcs NOT certified."
+          },
+          {
+            "groupKey": "tog-hounds-tooth-source-attack-2",
+            "label": "Medium concussion missile",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 12,
+            "specialNotes": "Printed operator pilot, damage 8d10x2 . Physical mounts and firing arcs NOT certified."
+          },
+          {
+            "groupKey": "tog-hounds-tooth-source-attack-3",
+            "label": "lon cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 12,
+            "specialNotes": "Printed operator pilot, damage 6d10x?2 ion . Physical mounts and firing arcs NOT certified."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "1 (Bossk)",
+        "crewCount": 1
+      },
+      "capacity": {
+        "passengerCount": 4,
+        "cargo": {
+          "value": 20,
+          "unit": "tons",
+          "raw": "20 tons"
+        },
+        "consumables": {
+          "value": 6,
+          "unit": "months",
+          "raw": "6 months"
+        },
+        "storageNotes": "Printed Carried Craft 1 smail scout ship"
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "ambiguous",
+          "raw": "not for sale"
+        }
+      },
+      "text": {
+        "sourceNotes": "Source text excerpt anchored at 60061; original PDF audit ledger confirms publication identity. No executable mount certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "tog-bloodfin-razalon-fc-20-speeder-bike",
+        "name": "Bloodfin Razalon FC-20 Speeder Bike"
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "page": 81,
+        "printedTitle": "Bloodfin Razalon FC-20 Speeder Bike",
+        "printedTypeLine": "Medium ground vehicle",
+        "entryNotes": "Primary source SHA256 63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f, physical PDF p82",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "speeder-bike",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedSize": "Medium",
+        "size": "medium"
+      },
+      "challenge": {
+        "cl": 15
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 1,
+        "characterScaleLengthSquares": 1,
+        "coverCrew": "total"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 8,
+            "maxVelocityKmh": 180
+          }
+        ],
+        "maxVelocityKmh": 180
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 32,
+        "reflexFlatFooted": 25,
+        "fortitude": 13,
+        "armorBonus": 0,
+        "damageReduction": 5
+      },
+      "durability": {
+        "hitPoints": 36,
+        "damageThreshold": 13
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 23,
+            "raw": "Initiative +23"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 15,
+            "raw": "Mechanics +15"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 9,
+            "raw": "Perception +9"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 18,
+            "raw": "Pilot +18"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 10,
+            "raw": "Use Computer +10"
+          }
+        ],
+        "initiativePrinted": 23,
+        "perceptionPrinted": 9,
+        "str": 17,
+        "dex": 24,
+        "int": 14,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 15,
+        "grappleBonusPrinted": 18
+      },
+      "armament": {
+        "firingGroups": []
+      },
+      "crew": {
+        "raw": "1",
+        "crewCount": 1
+      },
+      "capacity": {
+        "passengerCount": 0,
+        "cargo": {
+          "value": 2,
+          "unit": "kg",
+          "raw": "2 kg"
+        },
+        "consumables": {
+          "value": null,
+          "unit": null,
+          "raw": "—"
+        },
+        "storageNotes": "Printed Carried Craft —"
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 4000,
+          "raw": "4,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "Source text excerpt anchored at 280969; original PDF audit ledger confirms publication identity. No executable mount certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/hyperspace/capability": "not-stated",
+        "/armament/weaponMounts": "not-stated",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "tog-modified-r-2000-raptor-speeder-bike",
+        "name": "Modified R-2000 Raptor Speeder Bike"
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "page": 98,
+        "printedTitle": "Modified R-2000 Raptor Speeder Bike",
+        "printedTypeLine": "Large ground vehicle (speeder)",
+        "entryNotes": "Primary source SHA256 63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f, physical PDF p99",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "speeder-bike",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedSize": "Large",
+        "size": "large"
+      },
+      "challenge": {
+        "cl": 7
+      },
+      "geometry": {
+        "notes": "1 square",
+        "coverCrew": "total!"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 750
+          }
+        ],
+        "maxVelocityKmh": 750
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 23,
+        "reflexFlatFooted": 16,
+        "fortitude": 15,
+        "armorBonus": 0,
+        "damageReduction": 5,
+        "shieldRating": 0
+      },
+      "durability": {
+        "hitPoints": 56,
+        "damageThreshold": 20
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 5,
+            "raw": "Initiative +5"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 10,
+            "raw": "Mechanics +10"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 8,
+            "raw": "Perception +8"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 23,
+            "raw": "Pilot +23"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 10,
+            "raw": "Use Computer +10"
+          }
+        ],
+        "initiativePrinted": 5,
+        "perceptionPrinted": 8,
+        "str": 21,
+        "dex": 24,
+        "int": 16,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 5,
+        "grappleBonusPrinted": 20,
+        "rangedAttackLine": "laser cannon +8 (4d8+3)"
+      },
+      "armament": {
+        "firingGroups": []
+      },
+      "crew": {
+        "raw": "1",
+        "crewCount": 1
+      },
+      "capacity": {
+        "passengerCount": 0,
+        "cargo": {
+          "value": 1,
+          "unit": "kg",
+          "raw": "1 kg"
+        },
+        "consumables": {
+          "value": null,
+          "unit": null,
+          "raw": "—"
+        }
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 10000,
+          "raw": "10,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "Source text excerpt anchored at 347509; original PDF audit ledger confirms publication identity. No executable mount certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/hyperspace/capability": "not-stated",
+        "/armament/weaponMounts": "not-stated",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "tog-nebulon-q-swoop",
+        "name": "Nebulon-Q Swoop"
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "page": 99,
+        "printedTitle": "Nebulon-Q Swoop",
+        "printedTypeLine": "Large ground vehicle (swoop)",
+        "entryNotes": "Primary source SHA256 63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f, physical PDF p100",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "swoop",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedSize": "Large",
+        "size": "large"
+      },
+      "challenge": {
+        "cl": 2
+      },
+      "geometry": {},
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 12
+          }
+        ]
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 18,
+        "reflexFlatFooted": 11,
+        "fortitude": 13,
+        "damageReduction": 5
+      },
+      "durability": {
+        "hitPoints": 20,
+        "damageThreshold": 18
+      },
+      "abilities": {
+        "skills": [],
+        "initiativePrinted": 7,
+        "perceptionPrinted": 2
+      },
+      "combat": {},
+      "armament": {
+        "firingGroups": []
+      },
+      "crew": {},
+      "capacity": {},
+      "systems": {},
+      "modifications": {},
+      "economics": {},
+      "text": {
+        "sourceNotes": "Source text excerpt anchored at 348741; original PDF audit ledger confirms publication identity. No executable mount certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/hyperspace/capability": "not-stated",
+        "/armament/weaponMounts": "not-stated",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    }
+  ],
+  "productionPacksChanged": false,
+  "generatedActorsChanged": false
+}
