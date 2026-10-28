@@ -1,0 +1,4483 @@
+{
+  "schema": "swse.vehicle.universal.phase2m.unknown-regions.staged.v1",
+  "status": "SOURCE_STAGED_TYPED_MECHANICS_AND_STRICT_MOUNT_CERTIFICATION_PENDING",
+  "sourceBook": "Unknown Regions",
+  "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+  "phase1Ledger": "data/audits/vehicles/swse-universal-phase1m-unknown-regions.json",
+  "historicalCanonicalSource": "data/canonical/vehicles/ships.json",
+  "sourceSearchLayer": "reference/sourcebooks/Unknown Regions_djvu.txt",
+  "summary": {
+    "book": "Unknown Regions",
+    "phase": "m",
+    "total": 26,
+    "old": 12,
+    "new": 13,
+    "supplemental": 1,
+    "legacyGroups": 22,
+    "groups": 41,
+    "newIssues": [],
+    "errors": [],
+    "errorCount": 0,
+    "patchStatus": "Source exception corrections and census reconciled"
+  },
+  "records": [
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-hoersch-kessel-vaya-class-scout-ship",
+        "name": "Hoersch-Kessel Vaya-class Scout Ship"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 59,
+        "printedTitle": "Hoersch-Kessel Vaya-class Scout Ship",
+        "printedTypeLine": "Colossal space transport",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p60",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedSize": "Colossal",
+        "size": "colossal"
+      },
+      "challenge": {
+        "cl": 9
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 12,
+        "characterScaleLengthSquares": 12,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 12
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 3
+          }
+        ],
+        "raw": "fly 12 squares (maximum 700 km/h); starship scale fly 3 squares"
+      },
+      "hyperspace": {
+        "raw": "x4 (backup x15), navicomputer",
+        "capability": "equipped",
+        "primaryMultiplier": 4,
+        "backupMultiplier": 15,
+        "navComputer": "installed"
+      },
+      "defenses": {
+        "reflex": 17,
+        "reflexFlatFooted": 11,
+        "fortitude": 24,
+        "armorBonus": 11,
+        "shieldRating": 35,
+        "damageReduction": 15
+      },
+      "durability": {
+        "hitPoints": 90,
+        "damageThreshold": 74
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 1,
+            "raw": "Initiative +1"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 5,
+            "raw": "Mechanics +5"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 5,
+            "raw": "Perception +5"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 1,
+            "raw": "Pilot +1"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 5,
+            "raw": "Use Computer +5"
+          }
+        ],
+        "str": 38,
+        "dex": 22,
+        "int": 16,
+        "con": null,
+        "initiativePrinted": 1,
+        "perceptionPrinted": 5
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 34,
+        "rangedAttackLine": "light laser cannon +3 AND concussion projectiles +3",
+        "attackOptions": [
+          "autofire (light laser cannon)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-hoersch-kessel-vaya-class-scout-ship-published-attack-1",
+            "label": "light laser cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 3,
+            "specialNotes": "Printed operator gunner; damage 3d10x2; source Historical PDF-verified p59. Physical mounts, firing arcs and executable bindings are NOT certified."
+          },
+          {
+            "groupKey": "ur-hoersch-kessel-vaya-class-scout-ship-published-attack-2",
+            "label": "concussion projectiles",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 3,
+            "specialNotes": "Printed operator gunner; damage 5d10x2; source Historical PDF-verified p59. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ],
+        "carriedPayloads": [
+          {
+            "value": 4,
+            "unit": "concussion projectiles",
+            "raw": "4 concussion projectiles"
+          }
+        ]
+      },
+      "crew": {
+        "raw": "3 (normal)",
+        "crewCount": 3,
+        "crewQuality": "normal"
+      },
+      "capacity": {
+        "passengerCount": 4,
+        "cargo": {
+          "value": 60,
+          "unit": "tons",
+          "raw": "60 tons"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "month",
+          "raw": "1 month"
+        },
+        "storageNotes": "Published carried craft none"
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 45000,
+          "raw": "45,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 15000,
+          "raw": "15,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "Inherited canonical source fields mapped; historical source and review ledger remain authoritative. No physical mount, arc, or runtime certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-jumpmaster-5000-scout-ship",
+        "name": "JumpMaster 5000 Scout Ship"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 52,
+        "printedTitle": "JumpMaster 5000 Scout Ship",
+        "printedTypeLine": "Colossal space transport",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p53",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedSize": "Colossal",
+        "size": "colossal"
+      },
+      "challenge": {
+        "cl": 8
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 12,
+        "characterScaleLengthSquares": 12,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 16
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 4
+          }
+        ],
+        "raw": "fly 16 squares (maximum 1,200 km/h); starship scale fly 4 squares"
+      },
+      "hyperspace": {
+        "raw": "x3 (backup x15), navicomputer",
+        "capability": "equipped",
+        "primaryMultiplier": 3,
+        "backupMultiplier": 15,
+        "navComputer": "installed"
+      },
+      "defenses": {
+        "reflex": 15,
+        "reflexFlatFooted": 12,
+        "fortitude": 26,
+        "armorBonus": 12,
+        "shieldRating": 15,
+        "damageReduction": 15
+      },
+      "durability": {
+        "hitPoints": 120,
+        "damageThreshold": 76
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -1,
+            "raw": "Initiative -1"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -1,
+            "raw": "Pilot -1"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
+          }
+        ],
+        "str": 42,
+        "dex": 16,
+        "int": 14,
+        "con": null,
+        "initiativePrinted": -1,
+        "perceptionPrinted": 6
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 38,
+        "rangedAttackLine": "laser cannons +6"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-jumpmaster-5000-scout-ship-published-attack-1",
+            "label": "laser cannons",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 6,
+            "specialNotes": "Printed operator pilot; damage 4d10x2; source Historical PDF-verified p52. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "1 (skilled)",
+        "crewCount": 1,
+        "crewQuality": "skilled"
+      },
+      "capacity": {
+        "passengerCount": 1,
+        "cargo": {
+          "value": 50,
+          "unit": "tons",
+          "raw": "50 tons"
+        },
+        "consumables": {
+          "value": 4,
+          "unit": "months",
+          "raw": "4 months"
+        },
+        "storageNotes": "Published carried craft none"
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Restricted",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 110000,
+          "raw": "110,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 40000,
+          "raw": "40,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "Inherited canonical source fields mapped; historical source and review ledger remain authoritative. No physical mount, arc, or runtime certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-killik-dartship",
+        "name": "Killik Dartship"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 133,
+        "printedTitle": "Killik Dartship",
+        "printedTypeLine": "Huge starfighter",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p134",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedSize": "Huge",
+        "size": "huge"
+      },
+      "challenge": {
+        "cl": 9
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 3,
+        "characterScaleLengthSquares": 3,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 16
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 5
+          }
+        ],
+        "raw": "fly 16 squares (maximum 1,200 km/h); starship scale fly 5 squares"
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 17,
+        "reflexFlatFooted": 12,
+        "fortitude": 24,
+        "armorBonus": 4,
+        "shieldRating": null,
+        "damageReduction": 10
+      },
+      "durability": {
+        "hitPoints": 100,
+        "damageThreshold": 34
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 9,
+            "raw": "Initiative +9"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 9,
+            "raw": "Pilot +9"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
+          }
+        ],
+        "str": 39,
+        "dex": 20,
+        "int": 14,
+        "con": null,
+        "initiativePrinted": 9,
+        "perceptionPrinted": 6
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 26,
+        "rangedAttackLine": "laser cannon +6",
+        "attackOptions": [
+          "autofire (laser cannon)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-killik-dartship-published-attack-1",
+            "label": "laser cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 6,
+            "specialNotes": "Printed operator pilot; damage 4d10x2; source Historical PDF-verified p133. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "1 (skilled)",
+        "crewCount": 1,
+        "crewQuality": "skilled"
+      },
+      "capacity": {
+        "passengerCount": 0,
+        "cargo": {
+          "value": 70,
+          "unit": "kg",
+          "raw": "70 kg"
+        },
+        "consumables": {
+          "value": 2,
+          "unit": "days",
+          "raw": "2 days"
+        },
+        "storageNotes": "Published carried craft none"
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Military",
+        "priceNew": {
+          "status": "not-for-sale",
+          "raw": "not available for sale"
+        }
+      },
+      "text": {
+        "sourceNotes": "Inherited canonical source fields mapped; historical source and review ledger remain authoritative. No physical mount, arc, or runtime certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-kuat-drive-yards-star-seeder-class-colony-ship",
+        "name": "Kuat Drive Yards Star Seeder-class Colony Ship"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 58,
+        "printedTitle": "Kuat Drive Yards Star Seeder-class Colony Ship",
+        "printedTypeLine": "Colossal (frigate) capital ship",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p59",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedSize": "Colossal (frigate)",
+        "size": "colossal",
+        "colossalSubtype": "frigate"
+      },
+      "challenge": {
+        "cl": 9
+      },
+      "geometry": {
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "repulsorlift",
+            "scale": "character",
+            "squaresPerMove": 12
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 2
+          }
+        ],
+        "raw": "fly 12 squares (maximum 800 km/h); starship scale fly 2 squares; atmospheric entry possible per narrative"
+      },
+      "hyperspace": {
+        "raw": "x3 (backup x15), navicomputer",
+        "capability": "equipped",
+        "primaryMultiplier": 3,
+        "backupMultiplier": 15,
+        "navComputer": "installed"
+      },
+      "defenses": {
+        "reflex": 12,
+        "reflexFlatFooted": 10,
+        "fortitude": 32,
+        "armorBonus": 10,
+        "shieldRating": 45,
+        "damageReduction": 15
+      },
+      "durability": {
+        "hitPoints": 400,
+        "damageThreshold": 132
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -3,
+            "raw": "Initiative -3"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 5,
+            "raw": "Mechanics +5"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 5,
+            "raw": "Perception +5"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -3,
+            "raw": "Pilot -3"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 5,
+            "raw": "Use Computer +5"
+          }
+        ],
+        "str": 55,
+        "dex": 14,
+        "int": 12,
+        "con": null,
+        "initiativePrinted": -3,
+        "perceptionPrinted": 5
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 42,
+        "rangedAttackLine": "6 turbolaser batteries +5* AND tractor beam battery +5*"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-kuat-drive-yards-star-seeder-class-colony-ship-published-attack-1",
+            "label": "turbolaser battery",
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "mountKeys": [],
+            "attackBonusPrinted": 5,
+            "specialNotes": "Printed operator 2 gunners; damage 3d10x5; source Historical PDF-verified p58. Physical mounts, firing arcs and executable bindings are NOT certified."
+          },
+          {
+            "groupKey": "ur-kuat-drive-yards-star-seeder-class-colony-ship-published-attack-2",
+            "label": "tractor beam battery",
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "mountKeys": [],
+            "attackBonusPrinted": 5,
+            "specialNotes": "Printed operator 2 gunners; damage — (grapple +42); source Historical PDF-verified p58. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "169 (normal)",
+        "crewCount": 169,
+        "crewQuality": "normal"
+      },
+      "capacity": {
+        "passengerCount": 800,
+        "cargo": {
+          "value": 7500,
+          "unit": "tons",
+          "raw": "7,500 tons"
+        },
+        "consumables": {
+          "value": 5,
+          "unit": "years",
+          "raw": "5 years"
+        },
+        "storageNotes": "Published carried craft 1 shuttle"
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 3000000,
+          "raw": "3 million credits (1 million used)"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 1000000,
+          "raw": "3 million credits (1 million used)"
+        }
+      },
+      "text": {
+        "sourceNotes": "Inherited canonical source fields mapped; historical source and review ledger remain authoritative. No physical mount, arc, or runtime certification."
+      },
+      "exceptions": {
+        "ambiguities": [
+          "{\"status\":\"SOURCE_CONFLICT_PRESERVED\",\"issue\":\"Turbolaser attack modifier / size threshold conflict\",\"sourcePrintedPages\":[58],\"sourceStatements\":{\"footnote\":\"Apply -20 penalty when target is smaller than Colossal\",\"weaponDetail\":\"Atk +5 (-17 against targets smaller than Capital)\"},\"disposition\":\"PRESERVE_BOTH_PRINTED_ALTERNATIVES_NOT_CERTIFIED\"}",
+          "{\"status\":\"SOURCE_CONFLICT_PRESERVED\",\"issue\":\"Tractor beam attack modifier / size threshold conflict\",\"sourcePrintedPages\":[58],\"sourceStatements\":{\"footnote\":\"Apply -20 penalty when target is smaller than Colossal\",\"weaponDetail\":\"Atk +5 (-17 against targets smaller than Capital)\"},\"disposition\":\"PRESERVE_BOTH_PRINTED_ALTERNATIVES_NOT_CERTIFIED\"}"
+        ],
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-loronar-corporation-skyblind-recon-ship",
+        "name": "Loronar Corporation SkyBlind Recon Ship"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 57,
+        "printedTitle": "Loronar Corporation SkyBlind Recon Ship",
+        "printedTypeLine": "Colossal space transport",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p58",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedSize": "Colossal",
+        "size": "colossal"
+      },
+      "challenge": {
+        "cl": 8
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 10,
+        "characterScaleLengthSquares": 10,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 12
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 3
+          }
+        ],
+        "raw": "fly 12 squares (maximum 650 km/h); starship scale fly 3 squares"
+      },
+      "hyperspace": {
+        "raw": "x3 (backup x20); no navicomputer printed",
+        "capability": "equipped",
+        "primaryMultiplier": 3,
+        "backupMultiplier": 20,
+        "navComputer": "installed"
+      },
+      "defenses": {
+        "reflex": 13,
+        "reflexFlatFooted": 13,
+        "fortitude": 30,
+        "armorBonus": 13,
+        "shieldRating": 45,
+        "damageReduction": 15
+      },
+      "durability": {
+        "hitPoints": 180,
+        "damageThreshold": 80
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -5,
+            "raw": "Initiative -5"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 5,
+            "raw": "Mechanics +5"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 5,
+            "raw": "Perception +5"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -5,
+            "raw": "Pilot -5"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 5,
+            "raw": "Use Computer +5"
+          }
+        ],
+        "str": 50,
+        "dex": 10,
+        "int": 10,
+        "con": null,
+        "initiativePrinted": -5,
+        "perceptionPrinted": 5
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 40,
+        "rangedAttackLine": "proton torpedoes +2"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-loronar-corporation-skyblind-recon-ship-published-attack-1",
+            "label": "proton torpedoes",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 2,
+            "specialNotes": "Printed operator pilot; damage 9d10x2, 4-square splash; source Historical PDF-verified p57. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ],
+        "carriedPayloads": [
+          {
+            "value": 6,
+            "unit": "proton torpedoes",
+            "raw": "6 proton torpedoes"
+          }
+        ]
+      },
+      "crew": {
+        "raw": "1 (normal)",
+        "crewCount": 1,
+        "crewQuality": "normal"
+      },
+      "capacity": {
+        "passengerCount": 7,
+        "cargo": {
+          "value": 50,
+          "unit": "tons",
+          "raw": "50 tons"
+        },
+        "consumables": {
+          "value": 6,
+          "unit": "months",
+          "raw": "6 months"
+        },
+        "storageNotes": "Published carried craft 1 landing sphere"
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 650000,
+          "raw": "650,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 400000,
+          "raw": "400,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "Inherited canonical source fields mapped; historical source and review ledger remain authoritative. No physical mount, arc, or runtime certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-mesens-corporation-sct-scout-craft",
+        "name": "Mesens Corporation SCT Scout Craft"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 56,
+        "printedTitle": "Mesens Corporation SCT Scout Craft",
+        "printedTypeLine": "Colossal (frigate) space transport",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p57",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedSize": "Colossal (frigate)",
+        "size": "colossal",
+        "colossalSubtype": "frigate"
+      },
+      "challenge": {
+        "cl": 12
+      },
+      "geometry": {
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 12
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 3
+          }
+        ],
+        "raw": "fly 12 squares (maximum 820 km/h); starship scale fly 3 squares"
+      },
+      "hyperspace": {
+        "raw": "x3 (backup x12)",
+        "capability": "equipped",
+        "primaryMultiplier": 3,
+        "backupMultiplier": 12
+      },
+      "defenses": {
+        "reflex": 11,
+        "reflexFlatFooted": 11,
+        "fortitude": 34,
+        "armorBonus": 11,
+        "shieldRating": 60,
+        "damageReduction": 15
+      },
+      "durability": {
+        "hitPoints": 660,
+        "damageThreshold": 134
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -5,
+            "raw": "Initiative -5"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 5,
+            "raw": "Mechanics +5"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 5,
+            "raw": "Perception +5"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -5,
+            "raw": "Pilot -5"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 5,
+            "raw": "Use Computer +5"
+          }
+        ],
+        "str": 58,
+        "dex": 10,
+        "int": 18,
+        "con": null,
+        "initiativePrinted": -5,
+        "perceptionPrinted": 5
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 44,
+        "rangedAttackLine": "dual turbolaser turret +4* AND point-defense dual laser cannon +4",
+        "attackOptions": [
+          "autofire (dual laser cannon)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-mesens-corporation-sct-scout-craft-published-attack-1",
+            "label": "dual turbolaser turret",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 4,
+            "specialNotes": "Printed operator gunner; damage 6d10x5; source Historical PDF-verified p57. Physical mounts, firing arcs and executable bindings are NOT certified."
+          },
+          {
+            "groupKey": "ur-mesens-corporation-sct-scout-craft-published-attack-2",
+            "label": "point-defense dual laser cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 4,
+            "specialNotes": "Printed operator gunner; damage 5d10x2; source Historical PDF-verified p57. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "2 (normal)",
+        "crewCount": 2,
+        "crewQuality": "normal"
+      },
+      "capacity": {
+        "passengerCount": 8,
+        "cargo": {
+          "value": 275,
+          "unit": "tons",
+          "raw": "275 tons"
+        },
+        "consumables": {
+          "value": 3,
+          "unit": "months",
+          "raw": "3 months"
+        },
+        "storageNotes": "Published carried craft none"
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 1200000,
+          "raw": "1.2 million credits (720,000 used)"
+        }
+      },
+      "text": {
+        "sourceNotes": "Inherited canonical source fields mapped; historical source and review ledger remain authoritative. No physical mount, arc, or runtime certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-mrx-br-pacifier-combat-contact-vessel",
+        "name": "MRX-BR Pacifier Combat/Contact Vessel"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 55,
+        "printedTitle": "MRX-BR Pacifier Combat/Contact Vessel",
+        "printedTypeLine": "Colossal space transport",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p56",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedSize": "Colossal",
+        "size": "colossal"
+      },
+      "challenge": {
+        "cl": 9
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 12,
+        "characterScaleLengthSquares": 12,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 16
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 5
+          }
+        ],
+        "raw": "fly 16 squares (maximum 1,200 km/h); starship scale fly 5 squares"
+      },
+      "hyperspace": {
+        "raw": "x1 (backup x8); no navicomputer printed",
+        "capability": "equipped",
+        "primaryMultiplier": 1,
+        "backupMultiplier": 8,
+        "navComputer": "installed"
+      },
+      "defenses": {
+        "reflex": 13,
+        "reflexFlatFooted": 11,
+        "fortitude": 22,
+        "armorBonus": 11,
+        "shieldRating": 30,
+        "damageReduction": 15
+      },
+      "durability": {
+        "hitPoints": 60,
+        "damageThreshold": 72
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -2,
+            "raw": "Initiative -2"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -2,
+            "raw": "Pilot -2"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
+          }
+        ],
+        "str": 34,
+        "dex": 14,
+        "int": 16,
+        "con": null,
+        "initiativePrinted": -2,
+        "perceptionPrinted": 6
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 34,
+        "rangedAttackLine": "laser cannons +5 OR proton torpedoes +5",
+        "attackOptions": [
+          "autofire (laser cannons)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-mrx-br-pacifier-combat-contact-vessel-published-attack-1",
+            "label": "laser cannons",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 5,
+            "specialNotes": "Printed operator gunner; damage 4d10x2; source Historical PDF-verified p55. Physical mounts, firing arcs and executable bindings are NOT certified."
+          },
+          {
+            "groupKey": "ur-mrx-br-pacifier-combat-contact-vessel-published-attack-2",
+            "label": "proton torpedoes",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 5,
+            "specialNotes": "Printed operator gunner; damage 9d10x2, 4-square splash; source Historical PDF-verified p55. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ],
+        "carriedPayloads": [
+          {
+            "value": 8,
+            "unit": "proton torpedoes",
+            "raw": "8 proton torpedoes"
+          }
+        ]
+      },
+      "crew": {
+        "raw": "2 (skilled)",
+        "crewCount": 2,
+        "crewQuality": "skilled"
+      },
+      "capacity": {
+        "passengerCount": 3,
+        "cargo": {
+          "value": 25,
+          "unit": "tons",
+          "raw": "25 tons"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "year",
+          "raw": "1 year"
+        },
+        "storageNotes": "Published carried craft none"
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 170000,
+          "raw": "170,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 100000,
+          "raw": "100,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "Inherited canonical source fields mapped; historical source and review ledger remain authoritative. No physical mount, arc, or runtime certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-royal-fortune-light-clipper",
+        "name": "Royal Fortune Light Clipper"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 151,
+        "printedTitle": "Royal Fortune Light Clipper",
+        "printedTypeLine": "Colossal (frigate) capital ship",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p152",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedSize": "Colossal (frigate)",
+        "size": "colossal",
+        "colossalSubtype": "frigate"
+      },
+      "challenge": {
+        "cl": 15
+      },
+      "geometry": {
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 3
+          }
+        ],
+        "raw": "fly 3 squares (starship scale); no character-scale or atmospheric speed printed"
+      },
+      "hyperspace": {
+        "raw": "x2 (backup x12), navicomputer",
+        "capability": "equipped",
+        "primaryMultiplier": 2,
+        "backupMultiplier": 12,
+        "navComputer": "installed"
+      },
+      "defenses": {
+        "reflex": 13,
+        "reflexFlatFooted": 11,
+        "fortitude": 28,
+        "armorBonus": 11,
+        "shieldRating": 80,
+        "damageReduction": 15
+      },
+      "durability": {
+        "hitPoints": 700,
+        "damageThreshold": 128
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -2,
+            "raw": "Initiative -2"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -2,
+            "raw": "Pilot -2"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
+          }
+        ],
+        "str": 46,
+        "dex": 14,
+        "int": 14,
+        "con": null,
+        "initiativePrinted": -2,
+        "perceptionPrinted": 6
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 40,
+        "rangedAttackLine": "8 laser cannon batteries +12 AND 2 quad laser cannon batteries +6 AND 1 Fotia's Fire cannon +4",
+        "attackOptions": [
+          "autofire (laser cannons, quad laser cannons)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-royal-fortune-light-clipper-published-attack-1",
+            "label": "laser cannon battery",
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "mountKeys": [],
+            "attackBonusPrinted": 12,
+            "specialNotes": "Printed operator 5 gunners; damage 4d10x2; source Historical PDF-verified p151. Physical mounts, firing arcs and executable bindings are NOT certified."
+          },
+          {
+            "groupKey": "ur-royal-fortune-light-clipper-published-attack-2",
+            "label": "quad laser cannon battery",
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "mountKeys": [],
+            "attackBonusPrinted": 6,
+            "specialNotes": "Printed operator 2 gunners; damage 5d10x2; source Historical PDF-verified p151. Physical mounts, firing arcs and executable bindings are NOT certified."
+          },
+          {
+            "groupKey": "ur-royal-fortune-light-clipper-published-attack-3",
+            "label": "Fotia's Fire cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 4,
+            "specialNotes": "Printed operator gunner; damage 7d10x2, plus 2d10x2 for two subsequent rounds; source Historical PDF-verified p151. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "480 (skilled)",
+        "crewCount": 480,
+        "crewQuality": "skilled"
+      },
+      "capacity": {
+        "passengerCount": 200,
+        "cargo": {
+          "value": 8000,
+          "unit": "tons",
+          "raw": "8,000 tons"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "year",
+          "raw": "1 year"
+        },
+        "storageNotes": "Published carried craft 14 starfighters and 4 longboat shuttles"
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Military",
+        "priceNew": {
+          "status": "not-for-sale",
+          "raw": "not available for sale"
+        }
+      },
+      "text": {
+        "sourceNotes": "Inherited canonical source fields mapped; historical source and review ledger remain authoritative. No physical mount, arc, or runtime certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-sienar-fleet-systems-mu-2-model-2-shuttle",
+        "name": "Sienar Fleet Systems Mu-2 Model 2 Shuttle"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 55,
+        "printedTitle": "Sienar Fleet Systems Mu-2 Model 2 Shuttle",
+        "printedTypeLine": "Colossal space transport",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p56",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedSize": "Colossal",
+        "size": "colossal"
+      },
+      "challenge": {
+        "cl": 8
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 12,
+        "characterScaleLengthSquares": 12,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 12
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 4
+          }
+        ],
+        "raw": "fly 12 squares (maximum 850 km/h); starship scale fly 4 squares"
+      },
+      "hyperspace": {
+        "raw": "x2 (backup x20), navicomputer",
+        "capability": "equipped",
+        "primaryMultiplier": 2,
+        "backupMultiplier": 20,
+        "navComputer": "installed"
+      },
+      "defenses": {
+        "reflex": 14,
+        "reflexFlatFooted": 12,
+        "fortitude": 26,
+        "armorBonus": 12,
+        "shieldRating": 25,
+        "damageReduction": 15
+      },
+      "durability": {
+        "hitPoints": 120,
+        "damageThreshold": 76
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -2,
+            "raw": "Initiative -2"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -2,
+            "raw": "Pilot -2"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
+          }
+        ],
+        "str": 42,
+        "dex": 14,
+        "int": 14,
+        "con": null,
+        "initiativePrinted": -2,
+        "perceptionPrinted": 6
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 38,
+        "rangedAttackLine": "laser cannons +4",
+        "attackOptions": [
+          "autofire (laser cannons)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-sienar-fleet-systems-mu-2-model-2-shuttle-published-attack-1",
+            "label": "laser cannons",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 4,
+            "specialNotes": "Printed operator copilot; damage 5d10x2; source Historical PDF-verified p55. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "2 (skilled)",
+        "crewCount": 2,
+        "crewQuality": "skilled"
+      },
+      "capacity": {
+        "passengerCount": 14,
+        "cargo": {
+          "value": 100,
+          "unit": "tons",
+          "raw": "100 tons"
+        },
+        "consumables": {
+          "value": 6,
+          "unit": "months",
+          "raw": "6 months"
+        },
+        "storageNotes": "Published carried craft none"
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Restricted",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 160000,
+          "raw": "160,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 110000,
+          "raw": "110,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "Inherited canonical source fields mapped; historical source and review ledger remain authoritative. No physical mount, arc, or runtime certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-sorosuub-drexl-class-planetary-defender-starfighter",
+        "name": "SoroSuub Drexl-class \"Planetary Defender\" Starfighter"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 52,
+        "printedTitle": "SoroSuub Drexl-class \"Planetary Defender\" Starfighter",
+        "printedTypeLine": "Gargantuan starfighter",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p53",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedSize": "Gargantuan",
+        "size": "gargantuan"
+      },
+      "challenge": {
+        "cl": 10
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 4,
+        "characterScaleLengthSquares": 4,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 16
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 4
+          }
+        ],
+        "raw": "fly 16 squares (maximum 1,050 km/h); starship scale fly 4 squares"
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 18,
+        "reflexFlatFooted": 13,
+        "fortitude": 28,
+        "armorBonus": 8,
+        "shieldRating": 10,
+        "damageReduction": 10
+      },
+      "durability": {
+        "hitPoints": 150,
+        "damageThreshold": 48
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 6,
+            "raw": "Initiative +6"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 6,
+            "raw": "Pilot +6"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
+          }
+        ],
+        "str": 46,
+        "dex": 20,
+        "int": 14,
+        "con": null,
+        "initiativePrinted": 6,
+        "perceptionPrinted": 6
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 35,
+        "rangedAttackLine": "dual laser cannons +6 OR concussion missiles +6",
+        "attackOptions": [
+          "autofire (dual laser cannons)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-sorosuub-drexl-class-planetary-defender-starfighter-published-attack-1",
+            "label": "dual laser cannons",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 6,
+            "specialNotes": "Printed operator pilot; damage 5d10x2; source Historical PDF-verified p52. Physical mounts, firing arcs and executable bindings are NOT certified."
+          },
+          {
+            "groupKey": "ur-sorosuub-drexl-class-planetary-defender-starfighter-published-attack-2",
+            "label": "concussion missiles",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 6,
+            "specialNotes": "Printed operator pilot; damage 8d10x2, 4-square splash; source Historical PDF-verified p52. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ],
+        "carriedPayloads": [
+          {
+            "value": 12,
+            "unit": "missiles",
+            "raw": "12 missiles"
+          }
+        ]
+      },
+      "crew": {
+        "raw": "2 plus astromech droid (skilled)",
+        "crewCount": 2,
+        "crewQuality": "skilled"
+      },
+      "capacity": {
+        "passengerCount": 0,
+        "cargo": {
+          "value": 70,
+          "unit": "kg",
+          "raw": "70 kg"
+        },
+        "consumables": {
+          "value": 2,
+          "unit": "days",
+          "raw": "2 days"
+        },
+        "storageNotes": "Published carried craft none"
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Military",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 165000,
+          "raw": "165,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 100000,
+          "raw": "100,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "Inherited canonical source fields mapped; historical source and review ledger remain authoritative. No physical mount, arc, or runtime certification."
+      },
+      "exceptions": {
+        "specialRules": [
+          {
+            "key": "printedcoverlineaftercrew",
+            "label": "printedcoverlineaftercrew",
+            "category": "source-specific",
+            "summary": "\"+5 (astromech droid)\" printed near Fighting Space/Cover; do not confuse this +5 cover notation with skill substitutions",
+            "reference": "Unknown Regions p52",
+            "implementationStatus": "requires-consumer",
+            "typedPredicateStatus": "pending"
+          }
+        ],
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-sorosuub-preybird-class-starfighter",
+        "name": "SoroSuub Preybird-class Starfighter"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 56,
+        "printedTitle": "SoroSuub Preybird-class Starfighter",
+        "printedTypeLine": "Gargantuan starfighter",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p57",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedSize": "Gargantuan",
+        "size": "gargantuan"
+      },
+      "challenge": {
+        "cl": 10
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 4,
+        "characterScaleLengthSquares": 4,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 16
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 4
+          }
+        ],
+        "raw": "fly 16 squares (maximum 1,150 km/h); starship scale fly 4 squares"
+      },
+      "hyperspace": {
+        "raw": "x3, navicomputer (5 jumps)",
+        "capability": "equipped",
+        "primaryMultiplier": 3,
+        "navComputer": "installed"
+      },
+      "defenses": {
+        "reflex": 18,
+        "reflexFlatFooted": 11,
+        "fortitude": 23,
+        "armorBonus": 6,
+        "shieldRating": 20,
+        "damageReduction": 10
+      },
+      "durability": {
+        "hitPoints": 75,
+        "damageThreshold": 43
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 8,
+            "raw": "Initiative +8"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 8,
+            "raw": "Pilot +8"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
+          }
+        ],
+        "str": 36,
+        "dex": 24,
+        "int": 18,
+        "con": null,
+        "initiativePrinted": 8,
+        "perceptionPrinted": 6
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 30,
+        "rangedAttackLine": "laser cannons +6 OR concussion missiles +6",
+        "attackOptions": [
+          "autofire (laser cannons)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-sorosuub-preybird-class-starfighter-published-attack-1",
+            "label": "laser cannons",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 6,
+            "specialNotes": "Printed operator gunner; damage 5d10x2; source Historical PDF-verified p56. Physical mounts, firing arcs and executable bindings are NOT certified."
+          },
+          {
+            "groupKey": "ur-sorosuub-preybird-class-starfighter-published-attack-2",
+            "label": "concussion missiles",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 6,
+            "specialNotes": "Printed operator gunner; damage 8d10x2; source Historical PDF-verified p56. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ],
+        "carriedPayloads": [
+          {
+            "value": 10,
+            "unit": "concussion missiles",
+            "raw": "10 concussion missiles"
+          }
+        ]
+      },
+      "crew": {
+        "raw": "2 (skilled)",
+        "crewCount": 2,
+        "crewQuality": "skilled"
+      },
+      "capacity": {
+        "passengerCount": 0,
+        "cargo": {
+          "value": 15,
+          "unit": "kg",
+          "raw": "15 kg"
+        },
+        "consumables": {
+          "value": 4,
+          "unit": "days",
+          "raw": "4 days"
+        },
+        "storageNotes": "Published carried craft none"
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Rare, Military",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 84000,
+          "raw": "84,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 50000,
+          "raw": "50,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "Inherited canonical source fields mapped; historical source and review ledger remain authoritative. No physical mount, arc, or runtime certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-surfeik-cruiser",
+        "name": "Surfeik Cruiser"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 154,
+        "printedTitle": "Surfeik Cruiser",
+        "printedTypeLine": "Colossal (cruiser) capital ship",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p155",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedSize": "Colossal (cruiser)",
+        "size": "colossal",
+        "colossalSubtype": "cruiser"
+      },
+      "challenge": {
+        "cl": 16
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 2,
+        "characterScaleLengthSquares": 2
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 2
+          }
+        ],
+        "raw": "fly 2 squares (starship scale); no character-scale or atmospheric speed printed"
+      },
+      "hyperspace": {
+        "raw": "x2 (backup x15), navicomputer",
+        "capability": "equipped",
+        "primaryMultiplier": 2,
+        "backupMultiplier": 15,
+        "navComputer": "installed"
+      },
+      "defenses": {
+        "reflex": 14,
+        "reflexFlatFooted": 12,
+        "fortitude": 50,
+        "armorBonus": 12,
+        "shieldRating": 110,
+        "damageReduction": 20
+      },
+      "durability": {
+        "hitPoints": 1300,
+        "damageThreshold": 250
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -2,
+            "raw": "Initiative -2"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -2,
+            "raw": "Pilot -2"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
+          }
+        ],
+        "str": 91,
+        "dex": 14,
+        "int": 16,
+        "con": null,
+        "initiativePrinted": -2,
+        "perceptionPrinted": 6
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 62,
+        "rangedAttackLine": "11 laser cannon batteries +9 AND 7 projectile launchers +5 AND pseudograv projector +5"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-surfeik-cruiser-published-attack-1",
+            "label": "laser cannon battery",
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "mountKeys": [],
+            "attackBonusPrinted": 9,
+            "specialNotes": "Printed operator 3 gunners; damage 5d10x2; source Historical PDF-verified p155. Physical mounts, firing arcs and executable bindings are NOT certified."
+          },
+          {
+            "groupKey": "ur-surfeik-cruiser-published-attack-2",
+            "label": "projectile launcher",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 5,
+            "specialNotes": "Printed operator gunner; damage 8d10x5, 1-square splash; source Historical PDF-verified p155. Physical mounts, firing arcs and executable bindings are NOT certified."
+          },
+          {
+            "groupKey": "ur-surfeik-cruiser-published-attack-3",
+            "label": "pseudograv projector",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 5,
+            "specialNotes": "Printed operator gunner; damage special; no damage, 2x2 or 3x3 starship-scale area; source Historical PDF-verified p155. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "500 (skilled)",
+        "crewCount": 500,
+        "crewQuality": "skilled"
+      },
+      "capacity": {
+        "passengerCount": 1500,
+        "passengerGroups": [
+          {
+            "group": "printed passenger qualification",
+            "count": 1500,
+            "raw": "1,500 (prisoners)"
+          }
+        ],
+        "cargo": {
+          "value": 10000,
+          "unit": "tons",
+          "raw": "10,000 tons"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "year",
+          "raw": "1 year"
+        },
+        "storageNotes": "Published carried craft 18 starfighters and 2 shuttles"
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Military",
+        "priceNew": {
+          "status": "not-for-sale",
+          "raw": "not available for sale"
+        }
+      },
+      "text": {
+        "sourceNotes": "Inherited canonical source fields mapped; historical source and review ledger remain authoritative. No physical mount, arc, or runtime certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-uulshos-manufacturing-deep-x-explorer",
+        "name": "Uulshos Manufacturing Deep-X Explorer"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 51,
+        "printedTitle": "Uulshos Manufacturing Deep-X Explorer",
+        "printedTypeLine": "Gargantuan starfighter",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p52",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedSize": "Gargantuan",
+        "size": "gargantuan"
+      },
+      "challenge": {
+        "cl": 5
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 3,
+        "characterScaleLengthSquares": 3,
+        "coverCrew": "total"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 8,
+            "maxVelocityKmh": 275
+          }
+        ],
+        "maxVelocityKmh": 275,
+        "raw": "8 squares (max. velocity 275 km/h)"
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 15,
+        "reflexFlatFooted": 11,
+        "fortitude": 22,
+        "armorBonus": 6,
+        "damageReduction": 10
+      },
+      "durability": {
+        "hitPoints": 60,
+        "damageThreshold": 42
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 6,
+            "raw": "Initiative +6"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 6,
+            "raw": "Pilot +6"
+          }
+        ],
+        "initiativePrinted": 4,
+        "perceptionPrinted": 5,
+        "str": 38,
+        "dex": 14,
+        "int": 12,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 26,
+        "rangedAttackLine": "2 medium blaster cannons +3 (see below)"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-uulshos-manufacturing-deep-x-explorer-published-attack-1",
+            "label": "Medium blaster cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 3,
+            "specialNotes": "Printed operator gunner; damage 4d10; source search-text-derived candidate p51. Physical mounts, firing arcs and executable bindings are NOT certified."
+          },
+          {
+            "groupKey": "ur-uulshos-manufacturing-deep-x-explorer-published-attack-2",
+            "label": "Light blaster cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 3,
+            "specialNotes": "Printed operator gunner; damage 2d10x2; source search-text-derived candidate p51. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ],
+        "notes": "Extracted printed attack headings only; groups not certified mounts."
+      },
+      "crew": {
+        "raw": "3 (skilled)",
+        "crewCount": 3,
+        "crewQuality": "skilled"
+      },
+      "capacity": {
+        "passengerCount": 8,
+        "cargo": {
+          "value": 3,
+          "unit": "tons",
+          "raw": "3 tons"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "week",
+          "raw": "1 week"
+        }
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Restricted",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 7500,
+          "raw": "7,500"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 3000,
+          "raw": "3,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "New Phase 1 identity; source text search at index 190195, candidate score 27. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/hyperspace/capability": "not-stated",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-gallis-tech-48-roller-wheel-bike",
+        "name": "Gallis-Tech 48 Roller Wheel Bike"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 48,
+        "printedTitle": "Gallis-Tech 48 Roller Wheel Bike",
+        "printedTypeLine": "Large ground vehicle (wheeled)",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p49",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "wheeled-vehicle",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedSize": "Large",
+        "size": "large"
+      },
+      "challenge": {
+        "cl": 1
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 2,
+        "characterScaleLengthSquares": 2,
+        "coverCrew": "+5"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "wheeled",
+            "scale": "character",
+            "squaresPerMove": 10,
+            "maxVelocityKmh": 330
+          }
+        ],
+        "maxVelocityKmh": 330,
+        "raw": "10 squares (max. velocity 330 km/h)"
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 15,
+        "reflexFlatFooted": 11,
+        "fortitude": 14,
+        "armorBonus": 2,
+        "damageReduction": 5
+      },
+      "durability": {
+        "hitPoints": 40,
+        "damageThreshold": 19
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 8,
+            "raw": "Initiative +8"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 5,
+            "raw": "Mechanics +5"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 5,
+            "raw": "Perception +5"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 8,
+            "raw": "Pilot +8"
+          }
+        ],
+        "initiativePrinted": 8,
+        "perceptionPrinted": 5,
+        "str": 18,
+        "dex": 18,
+        "int": 12,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 9
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-gallis-tech-48-roller-wheel-bike-published-attack-1",
+            "label": "Laser cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 7,
+            "specialNotes": "Printed operator pilot; damage 4d10; source search-text-derived candidate p48. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ],
+        "notes": "Extracted printed attack headings only; groups not certified mounts."
+      },
+      "crew": {
+        "raw": "1 (normal)",
+        "crewCount": 1,
+        "crewQuality": "normal"
+      },
+      "capacity": {
+        "passengerCount": 1,
+        "cargo": {
+          "value": 20,
+          "unit": "kg",
+          "raw": "20 kg"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "day",
+          "raw": "1 day"
+        }
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 8000,
+          "raw": "8,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 1500,
+          "raw": "1,500"
+        }
+      },
+      "text": {
+        "sourceNotes": "New Phase 1 identity; source text search at index 177990, candidate score 27. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+      },
+      "exceptions": {
+        "manualReviewRequired": true,
+        "ambiguities": [
+          "Source searchable text shows CL4, but the frozen Phase 1 printed challenge level is CL1. Original PDF verification required before gameplay use."
+        ]
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/hyperspace/capability": "not-stated",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-tangan-industries-aerosled-mark-iii",
+        "name": "Tangan Industries Aerosled Mark III"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 48,
+        "printedTitle": "Tangan Industries Aerosled Mark III",
+        "printedTypeLine": "Large air vehicle (airspeeder)",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p49",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "airspeeder",
+        "mobilityDomains": [
+          "air",
+          "repulsorlift"
+        ],
+        "printedSize": "Large",
+        "size": "large"
+      },
+      "challenge": {
+        "cl": 5
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 2,
+        "characterScaleLengthSquares": 2,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "total (crew)"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 780
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 3
+          }
+        ],
+        "maxVelocityKmh": 780,
+        "raw": "fly 12 squares (max. velocity 780 km/h), fly 3 squares (starship scale)"
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 16,
+        "reflexFlatFooted": 10,
+        "fortitude": 14,
+        "armorBonus": 1,
+        "damageReduction": 5
+      },
+      "durability": {
+        "hitPoints": 32,
+        "damageThreshold": 19
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 11,
+            "raw": "Initiative +11"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 11,
+            "raw": "Pilot +11"
+          }
+        ],
+        "initiativePrinted": 11,
+        "perceptionPrinted": 6,
+        "str": 18,
+        "dex": 22,
+        "int": 16,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 13,
+        "rangedAttackLine": "laser cannon +7 (see below)",
+        "attackOptions": [
+          "autofire (laser cannon)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-tangan-industries-aerosled-mark-iii-published-attack-1",
+            "label": "Laser cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 7,
+            "specialNotes": "Printed operator pilot; damage 4d10; source search-text-derived candidate p48. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ],
+        "notes": "Extracted printed attack headings only; groups not certified mounts."
+      },
+      "crew": {
+        "raw": "1 (skilled)",
+        "crewCount": 1,
+        "crewQuality": "skilled"
+      },
+      "capacity": {
+        "passengerCount": 0,
+        "cargo": {
+          "value": 24,
+          "unit": "kg",
+          "raw": "24 kg"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "day",
+          "raw": "1 day"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Military",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 22000,
+          "raw": "22,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 12000,
+          "raw": "12,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "New Phase 1 identity; source text search at index 179375, candidate score 31. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/hyperspace/capability": "not-stated",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-all-terrain-roller",
+        "name": "All-Terrain Roller"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 48,
+        "printedTitle": "All-Terrain Roller",
+        "printedTypeLine": "Medium ground vehicle (wheeled)",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p49",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "wheeled-vehicle",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedSize": "Medium",
+        "size": "medium"
+      },
+      "challenge": {
+        "cl": 1
+      },
+      "geometry": {
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "none"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "wheeled",
+            "scale": "character",
+            "squaresPerMove": 10,
+            "maxVelocityKmh": 120
+          }
+        ],
+        "maxVelocityKmh": 120,
+        "raw": "10 squares (max. velocity 120 km/h)"
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 16,
+        "reflexFlatFooted": 11,
+        "fortitude": 12,
+        "armorBonus": 1,
+        "damageReduction": 5
+      },
+      "durability": {
+        "hitPoints": 20,
+        "damageThreshold": 12
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 10,
+            "raw": "Initiative +10"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 5,
+            "raw": "Mechanics +5"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 5,
+            "raw": "Perception +5"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 10,
+            "raw": "Pilot +10"
+          }
+        ],
+        "initiativePrinted": 10,
+        "perceptionPrinted": 5,
+        "str": 14,
+        "dex": 20,
+        "int": 12,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 5
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-all-terrain-roller-published-attack-1",
+            "label": "Medium blaster cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 9,
+            "specialNotes": "Printed operator pilot; damage 5d10; source search-text-derived candidate p48. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ],
+        "notes": "Extracted printed attack headings only; groups not certified mounts."
+      },
+      "crew": {
+        "raw": "1 (normal)",
+        "crewCount": 1,
+        "crewQuality": "normal"
+      },
+      "capacity": {
+        "passengerCount": 1,
+        "cargo": null,
+        "consumables": {
+          "value": 1,
+          "unit": "day",
+          "raw": "1 day"
+        }
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 3500,
+          "raw": "3,500"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 500,
+          "raw": "500"
+        }
+      },
+      "text": {
+        "sourceNotes": "New Phase 1 identity; source text search at index 180475, candidate score 31. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/capacity/cargo": "explicitly-none",
+        "/hyperspace/capability": "not-stated",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-compact-assault-vehicle-wheeled-px-10",
+        "name": "Compact Assault Vehicle/Wheeled PX-10"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 49,
+        "printedTitle": "Compact Assault Vehicle/Wheeled PX-10",
+        "printedTypeLine": "Large ground vehicle (tracked)",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p50",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "tracked-vehicle",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedSize": "Large",
+        "size": "large"
+      },
+      "challenge": {
+        "cl": 7
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 2,
+        "characterScaleLengthSquares": 2,
+        "coverCrew": "total"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "tracked",
+            "scale": "character",
+            "squaresPerMove": 8,
+            "maxVelocityKmh": 260
+          }
+        ],
+        "maxVelocityKmh": 260,
+        "raw": "8 squares (max. velocity 260 km/h)"
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 16,
+        "reflexFlatFooted": 14,
+        "fortitude": 21,
+        "armorBonus": 5,
+        "damageReduction": 5
+      },
+      "durability": {
+        "hitPoints": 110,
+        "damageThreshold": 26
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 9,
+            "raw": "Initiative +9"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 8,
+            "raw": "Mechanics +8"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 8,
+            "raw": "Perception +8"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 9,
+            "raw": "Pilot +9"
+          }
+        ],
+        "initiativePrinted": 9,
+        "perceptionPrinted": 8,
+        "str": 32,
+        "dex": 14,
+        "int": 14,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 5,
+        "grappleBonusPrinted": 21,
+        "rangedAttackLine": "medium blaster cannon +9 (see below)"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-compact-assault-vehicle-wheeled-px-10-published-attack-1",
+            "label": "Medium blaster cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 9,
+            "specialNotes": "Printed operator pilot; damage 5d10; source search-text-derived candidate p49. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ],
+        "notes": "Extracted printed attack headings only; groups not certified mounts."
+      },
+      "crew": {
+        "raw": "1 (expert)",
+        "crewCount": 1,
+        "crewQuality": "expert"
+      },
+      "capacity": {
+        "passengerCount": 0,
+        "cargo": {
+          "value": 100,
+          "unit": "kg",
+          "raw": "100 kg"
+        },
+        "consumables": {
+          "value": 2,
+          "unit": "weeks",
+          "raw": "2 weeks"
+        }
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Military",
+        "priceNew": {
+          "status": "not-for-sale",
+          "raw": "Not available for sale (25,000 credits on the"
+        }
+      },
+      "text": {
+        "sourceNotes": "New Phase 1 identity; source text search at index 182017, candidate score 31. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/hyperspace/capability": "not-stated",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-groundcar",
+        "name": "Groundcar"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 49,
+        "printedTitle": "Groundcar",
+        "printedTypeLine": "Huge ground vehicle (wheeled)",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p50",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "wheeled-vehicle",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedSize": "Huge",
+        "size": "huge"
+      },
+      "challenge": {
+        "cl": 0
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 3,
+        "characterScaleLengthSquares": 3,
+        "coverCrew": "total"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "wheeled",
+            "scale": "character",
+            "squaresPerMove": 8,
+            "maxVelocityKmh": 160
+          }
+        ],
+        "maxVelocityKmh": 160,
+        "raw": "8 squares (max. velocity 160 km/h)"
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 13,
+        "reflexFlatFooted": 11,
+        "fortitude": 15,
+        "armorBonus": 3,
+        "damageReduction": 5
+      },
+      "durability": {
+        "hitPoints": 50,
+        "damageThreshold": 25
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 5,
+            "raw": "Initiative +5"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 5,
+            "raw": "Mechanics +5"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 5,
+            "raw": "Perception +5"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 5,
+            "raw": "Pilot +5"
+          }
+        ],
+        "initiativePrinted": 5,
+        "perceptionPrinted": 5,
+        "str": 20,
+        "dex": 14,
+        "int": 12,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 15
+      },
+      "armament": {
+        "firingGroups": [],
+        "notes": "No verified printable attack group extracted; do not interpret as proof of unarmed stock vehicle."
+      },
+      "crew": {
+        "raw": "1 (normal)",
+        "crewCount": 1,
+        "crewQuality": "normal"
+      },
+      "capacity": {
+        "passengerCount": 4,
+        "cargo": {
+          "value": 300,
+          "unit": "kg",
+          "raw": "300 kg"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "week",
+          "raw": "1 week"
+        }
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 4000,
+          "raw": "4,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 1000,
+          "raw": "1,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "New Phase 1 identity; source text search at index 182955, candidate score 31. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/hyperspace/capability": "not-stated",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-land-crawler",
+        "name": "Land Crawler"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 49,
+        "printedTitle": "Land Crawler",
+        "printedTypeLine": "Huge ground vehicle (tracked)",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p50",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "tracked-vehicle",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedSize": "Huge",
+        "size": "huge"
+      },
+      "challenge": {
+        "cl": 1
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 3,
+        "characterScaleLengthSquares": 3,
+        "coverCrew": "total"
+      },
+      "movement": {
+        "speedModes": [],
+        "raw": "makes their use for anything beyond hauling cargo highly impractical."
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 12,
+        "reflexFlatFooted": 12,
+        "fortitude": 20,
+        "armorBonus": 4,
+        "damageReduction": 5
+      },
+      "durability": {
+        "hitPoints": 100,
+        "damageThreshold": 30
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 3,
+            "raw": "Initiative +3"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 5,
+            "raw": "Mechanics +5"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 5,
+            "raw": "Perception +5"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 3,
+            "raw": "Pilot +3"
+          }
+        ],
+        "initiativePrinted": 3,
+        "perceptionPrinted": 5,
+        "str": 30,
+        "dex": 10,
+        "int": 12,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 20
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-land-crawler-published-attack-1",
+            "label": "Medium blaster cannons",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 2,
+            "specialNotes": "Printed operator gunner; damage 5d10; source search-text-derived candidate p49. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ],
+        "notes": "Extracted printed attack headings only; groups not certified mounts."
+      },
+      "crew": {
+        "raw": "1 (normal)",
+        "crewCount": 1,
+        "crewQuality": "normal"
+      },
+      "capacity": {
+        "passengerCount": 6,
+        "cargo": {
+          "value": null,
+          "unit": null,
+          "raw": "highly impractical."
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "week",
+          "raw": "1 week"
+        }
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 7500,
+          "raw": "7,500"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 3000,
+          "raw": "3,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "New Phase 1 identity; source text search at index 183998, candidate score 23. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/hyperspace/capability": "not-stated",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-jaffryes-universal-automotive-ark-ii-series-landmaster",
+        "name": "Jaffryes Universal Automotive ARK-II Series Landmaster"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 50,
+        "printedTitle": "Jaffryes Universal Automotive ARK-II Series Landmaster",
+        "printedTypeLine": "Gargantuan ground vehicle (tracked)",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p51",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "tracked-vehicle",
+        "mobilityDomains": [
+          "ground",
+          "water"
+        ],
+        "printedSize": "Gargantuan",
+        "size": "gargantuan"
+      },
+      "challenge": {
+        "cl": 8
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 4,
+        "characterScaleLengthSquares": 4,
+        "coverCrew": "total"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "tracked",
+            "scale": "character",
+            "squaresPerMove": 8,
+            "maxVelocityKmh": 240
+          }
+        ],
+        "maxVelocityKmh": 240,
+        "raw": "8 squares (max. velocity 240 km/h)"
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 16,
+        "reflexFlatFooted": 14,
+        "fortitude": 26,
+        "armorBonus": 9,
+        "damageReduction": 10
+      },
+      "durability": {
+        "hitPoints": 240,
+        "damageThreshold": 46
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 2,
+            "raw": "Initiative +2"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 5,
+            "raw": "Mechanics +5"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 5,
+            "raw": "Perception +5"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 2,
+            "raw": "Pilot +2"
+          }
+        ],
+        "initiativePrinted": 2,
+        "perceptionPrinted": 5,
+        "str": 42,
+        "dex": 14,
+        "int": 14,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 31,
+        "rangedAttackLine": "medium blaster cannons +2 (see below)"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-jaffryes-universal-automotive-ark-ii-series-landmaster-published-attack-1",
+            "label": "Medium blaster cannons",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 2,
+            "specialNotes": "Printed operator gunner; damage 5d10; source search-text-derived candidate p50. Physical mounts, firing arcs and executable bindings are NOT certified."
+          },
+          {
+            "groupKey": "ur-jaffryes-universal-automotive-ark-ii-series-landmaster-published-attack-2",
+            "label": "Light quad blaster cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 5,
+            "specialNotes": "Printed operator gunner; damage 5d10; source search-text-derived candidate p50. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ],
+        "notes": "Extracted printed attack headings only; groups not certified mounts."
+      },
+      "crew": {
+        "raw": "3 (normal)",
+        "crewCount": 3,
+        "crewQuality": "normal"
+      },
+      "capacity": {
+        "passengerCount": 10,
+        "cargo": {
+          "value": 800,
+          "unit": "kg",
+          "raw": "800 kg"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "month",
+          "raw": "1 month"
+        }
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Restricted",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 120000,
+          "raw": "120,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 30000,
+          "raw": "30,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "New Phase 1 identity; source text search at index 185665, candidate score 31. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/hyperspace/capability": "not-stated",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-hyrotii-corporation-mobile-recon-research-vehicle",
+        "name": "Hyrotii Corporation Mobile Recon/Research Vehicle"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 50,
+        "printedTitle": "Hyrotii Corporation Mobile Recon/Research Vehicle",
+        "printedTypeLine": "Colossal ground vehicle (speeder)",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p51",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "ground-speeder",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedSize": "Colossal",
+        "size": "colossal"
+      },
+      "challenge": {
+        "cl": 0
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 12,
+        "characterScaleLengthSquares": 12,
+        "coverCrew": "total"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "repulsorlift",
+            "scale": "character",
+            "squaresPerMove": 8,
+            "maxVelocityKmh": 200
+          }
+        ],
+        "maxVelocityKmh": 200,
+        "raw": "8 squares (max. velocity 200 km/h)"
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 15,
+        "reflexFlatFooted": 13,
+        "fortitude": 24,
+        "armorBonus": 13,
+        "damageReduction": 15
+      },
+      "durability": {
+        "hitPoints": 200,
+        "damageThreshold": 74
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -2,
+            "raw": "Initiative -2"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -2,
+            "raw": "Pilot -2"
+          }
+        ],
+        "initiativePrinted": -2,
+        "perceptionPrinted": 6,
+        "str": 38,
+        "dex": 14,
+        "int": 16,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 36,
+        "rangedAttackLine": "light quad blaster cannon +5 (see below)"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-hyrotii-corporation-mobile-recon-research-vehicle-published-attack-1",
+            "label": "Light quad blaster cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 5,
+            "specialNotes": "Printed operator gunner; damage 5d10; source search-text-derived candidate p50. Physical mounts, firing arcs and executable bindings are NOT certified."
+          },
+          {
+            "groupKey": "ur-hyrotii-corporation-mobile-recon-research-vehicle-published-attack-2",
+            "label": "Laser cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 2,
+            "specialNotes": "Printed operator pilot; damage 4410; source search-text-derived candidate p50. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ],
+        "notes": "Extracted printed attack headings only; groups not certified mounts."
+      },
+      "crew": {
+        "raw": "6 (skilled)",
+        "crewCount": 6,
+        "crewQuality": "skilled"
+      },
+      "capacity": {
+        "passengerCount": 4,
+        "cargo": {
+          "value": 2,
+          "unit": "tons",
+          "raw": "2 tons"
+        },
+        "consumables": {
+          "value": 2,
+          "unit": "months",
+          "raw": "2 months"
+        },
+        "storageNotes": "Carried Craft 2 speeder bikes"
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 220000,
+          "raw": "220,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 90000,
+          "raw": "90,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "New Phase 1 identity; source text search at index 187288, candidate score 31. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/hyperspace/capability": "not-stated",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-ikas-adno-22-b-nightfalcon-speeder-bike",
+        "name": "Ikas-Adno 22-B Nightfalcon Speeder Bike"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 50,
+        "printedTitle": "Ikas-Adno 22-B Nightfalcon Speeder Bike",
+        "printedTypeLine": "Large ground vehicle (speeder)",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p51",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "speeder-bike",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedSize": "Large",
+        "size": "large"
+      },
+      "challenge": {
+        "cl": 2
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 2,
+        "characterScaleLengthSquares": 2,
+        "coverCrew": "none"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "repulsorlift",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 400
+          }
+        ],
+        "maxVelocityKmh": 400,
+        "raw": "12 squares (max. velocity 400 km/h)"
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 16,
+        "reflexFlatFooted": 10,
+        "fortitude": 13,
+        "armorBonus": 1,
+        "damageReduction": 5
+      },
+      "durability": {
+        "hitPoints": 32,
+        "damageThreshold": 18
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 15,
+            "raw": "Initiative +15"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 5,
+            "raw": "Mechanics +5"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 5,
+            "raw": "Perception +5"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 15,
+            "raw": "Pilot +15"
+          }
+        ],
+        "initiativePrinted": 15,
+        "perceptionPrinted": 5,
+        "str": 16,
+        "dex": 23,
+        "int": 14,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 11,
+        "rangedAttackLine": "laser cannon +2 (see below)",
+        "attackOptions": [
+          "autofire (laser cannon)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-ikas-adno-22-b-nightfalcon-speeder-bike-published-attack-1",
+            "label": "Laser cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 2,
+            "specialNotes": "Printed operator pilot; damage 4410; source search-text-derived candidate p50. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ],
+        "notes": "Extracted printed attack headings only; groups not certified mounts."
+      },
+      "crew": {
+        "raw": "1 (normal)",
+        "crewCount": 1,
+        "crewQuality": "normal"
+      },
+      "capacity": {
+        "passengerCount": 1,
+        "cargo": {
+          "value": 4,
+          "unit": "kg",
+          "raw": "4 kg"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "day",
+          "raw": "1 day"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 6250,
+          "raw": "6,250"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 1000,
+          "raw": "1,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "New Phase 1 identity; source text search at index 188534, candidate score 31. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/hyperspace/capability": "not-stated",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-srv-1-scout-and-retrieval-vehicle",
+        "name": "SRV-1 Scout and Retrieval Vehicle"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 51,
+        "printedTitle": "SRV-1 Scout and Retrieval Vehicle",
+        "printedTypeLine": "Huge ground vehicle (tracked)",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p52",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "tracked-vehicle",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedSize": "Huge",
+        "size": "huge"
+      },
+      "challenge": {
+        "cl": 6
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 3,
+        "characterScaleLengthSquares": 3,
+        "coverCrew": "total"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "tracked",
+            "scale": "character",
+            "squaresPerMove": 8,
+            "maxVelocityKmh": 275
+          }
+        ],
+        "maxVelocityKmh": 275,
+        "raw": "8 squares (max. velocity 275 km/h)"
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 14,
+        "reflexFlatFooted": 12,
+        "fortitude": 24,
+        "armorBonus": 4,
+        "damageReduction": 5
+      },
+      "durability": {
+        "hitPoints": 140,
+        "damageThreshold": 34
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 6,
+            "raw": "Initiative +6"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 6,
+            "raw": "Pilot +6"
+          }
+        ],
+        "initiativePrinted": 6,
+        "perceptionPrinted": 6,
+        "str": 38,
+        "dex": 14,
+        "int": 12,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 26,
+        "rangedAttackLine": "2 medium blaster cannons +3 (see below)"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-srv-1-scout-and-retrieval-vehicle-published-attack-1",
+            "label": "Medium blaster cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 3,
+            "specialNotes": "Printed operator gunner; damage 4d10; source search-text-derived candidate p51. Physical mounts, firing arcs and executable bindings are NOT certified."
+          },
+          {
+            "groupKey": "ur-srv-1-scout-and-retrieval-vehicle-published-attack-2",
+            "label": "Light blaster cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 3,
+            "specialNotes": "Printed operator gunner; damage 2d10x2; source search-text-derived candidate p51. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ],
+        "notes": "Extracted printed attack headings only; groups not certified mounts."
+      },
+      "crew": {
+        "raw": "3 (skilled)",
+        "crewCount": 3,
+        "crewQuality": "skilled"
+      },
+      "capacity": {
+        "passengerCount": 8,
+        "cargo": {
+          "value": 3,
+          "unit": "tons",
+          "raw": "3 tons"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "week",
+          "raw": "1 week"
+        }
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Restricted",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 7500,
+          "raw": "7,500"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 3000,
+          "raw": "3,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "New Phase 1 identity; source text search at index 190798, candidate score 23. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/hyperspace/capability": "not-stated",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-landing-sphere",
+        "name": "Landing Sphere"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 58,
+        "printedTitle": "Landing Sphere",
+        "printedTypeLine": "Huge air vehicle (airspeeder)",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p59",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "airspeeder",
+        "mobilityDomains": [
+          "air",
+          "space"
+        ],
+        "printedSize": "Huge",
+        "size": "huge"
+      },
+      "challenge": {
+        "cl": 2
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 3,
+        "characterScaleLengthSquares": 3,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "total (crew)"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 650
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 3
+          }
+        ],
+        "maxVelocityKmh": 650,
+        "raw": "fly 12 squares (max. velocity 650 km/h), fly 3 squares (starship scale)"
+      },
+      "hyperspace": {
+        "raw": "x3 (backup x15), navicomputer",
+        "capability": "equipped",
+        "primaryMultiplier": 3,
+        "backupMultiplier": 15,
+        "navComputer": "installed"
+      },
+      "defenses": {
+        "reflex": 12,
+        "reflexFlatFooted": 12,
+        "fortitude": 20,
+        "armorBonus": 4,
+        "damageReduction": 5,
+        "shieldRating": 45
+      },
+      "durability": {
+        "hitPoints": 100,
+        "damageThreshold": 30
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 3,
+            "raw": "Initiative +3"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 5,
+            "raw": "Mechanics +5"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 5,
+            "raw": "Perception +5"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 3,
+            "raw": "Pilot +3"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 5,
+            "raw": "Use Computer +5"
+          }
+        ],
+        "initiativePrinted": 3,
+        "perceptionPrinted": 5,
+        "str": 30,
+        "dex": 10,
+        "int": 10,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 20,
+        "rangedAttackLine": "6 turbolaser batteries +5* (see below) and tractor beam battery +5* (see below)"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-landing-sphere-published-attack-1",
+            "label": "Turbolaser battery",
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "mountKeys": [],
+            "attackBonusPrinted": 5,
+            "specialNotes": "Printed operator 2 gunners; damage 3d10x5; source search-text-derived candidate p58. Physical mounts, firing arcs and executable bindings are NOT certified."
+          },
+          {
+            "groupKey": "ur-landing-sphere-published-attack-2",
+            "label": "Tractor beam battery",
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "mountKeys": [],
+            "attackBonusPrinted": 5,
+            "specialNotes": "Printed operator 2 gunners; damage — (grapple +42); source search-text-derived candidate p58. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ],
+        "notes": "Extracted printed attack headings only; groups not certified mounts."
+      },
+      "crew": {
+        "raw": "1 (normal)",
+        "crewCount": 1,
+        "crewQuality": "normal"
+      },
+      "capacity": {
+        "passengerCount": 7,
+        "cargo": {
+          "value": 5,
+          "unit": "tons",
+          "raw": "5 tons"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "week",
+          "raw": "1 week"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 3000000,
+          "raw": "3 million credits (1 million used)"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 1000000,
+          "raw": "3 million credits (1 million used)"
+        }
+      },
+      "text": {
+        "sourceNotes": "New Phase 1 identity; source text search at index 206178, candidate score 31. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-wind-skiff",
+        "name": "Wind Skiff"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 189,
+        "printedTitle": "Wind Skiff",
+        "printedTypeLine": "Huge ground vehicle (speeder*)",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p190",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "ground-speeder",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedSize": "Huge",
+        "size": "huge"
+      },
+      "challenge": {
+        "cl": 6
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 3,
+        "characterScaleLengthSquares": 3,
+        "coverCrew": "none"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "repulsorlift",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 300
+          }
+        ],
+        "maxVelocityKmh": 300,
+        "raw": "fly 12 squares (max. velocity 300 km/h)"
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 14,
+        "reflexFlatFooted": 10,
+        "fortitude": 20,
+        "armorBonus": 2,
+        "damageReduction": 5
+      },
+      "durability": {
+        "hitPoints": 40,
+        "damageThreshold": 30
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 7,
+            "raw": "Initiative +7"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 5,
+            "raw": "Mechanics +5"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 5,
+            "raw": "Perception +5"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 7,
+            "raw": "Pilot +7"
+          }
+        ],
+        "initiativePrinted": 7,
+        "perceptionPrinted": 5,
+        "str": 31,
+        "dex": 18,
+        "int": 10,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 20,
+        "rangedAttackLine": "debris clearing laser cannon +0 (see below)"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-wind-skiff-published-attack-1",
+            "label": "Debris Clearing Laser Cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 0,
+            "specialNotes": "Printed operator pilot; damage 3d10; source search-text-derived candidate p189. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ],
+        "notes": "Extracted printed attack headings only; groups not certified mounts."
+      },
+      "crew": {
+        "raw": "1",
+        "crewCount": 1
+      },
+      "capacity": {
+        "passengerCount": 4,
+        "cargo": {
+          "value": 900,
+          "unit": "kg",
+          "raw": "900 kg"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "day",
+          "raw": "1 day"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 13000,
+          "raw": "13,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 3500,
+          "raw": "3,500"
+        }
+      },
+      "text": {
+        "sourceNotes": "New Phase 1 identity; source text search at index 773337, candidate score 31. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/hyperspace/capability": "not-stated",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "ur-eeook-protector-vi-patrol-speeder",
+        "name": "Eeook Protector VI Patrol Speeder"
+      },
+      "publication": {
+        "book": "Unknown Regions",
+        "page": 214,
+        "printedTitle": "Eeook Protector VI Patrol Speeder",
+        "printedTypeLine": "Huge air vehicle (airspeeder)",
+        "entryNotes": "PDF SHA-256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b; physical p215",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "airspeeder",
+        "mobilityDomains": [
+          "air",
+          "repulsorlift"
+        ],
+        "printedSize": "Huge",
+        "size": "huge"
+      },
+      "challenge": {
+        "cl": 7
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 3,
+        "characterScaleLengthSquares": 3,
+        "coverCrew": "total"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 800
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 3
+          }
+        ],
+        "maxVelocityKmh": 800,
+        "raw": "fly 12 squares (max. velocity 800 km/h), fly 3 squares (starship scale)"
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 16,
+        "reflexFlatFooted": 11,
+        "fortitude": 23,
+        "armorBonus": 3,
+        "damageReduction": 5
+      },
+      "durability": {
+        "hitPoints": 75,
+        "damageThreshold": 33
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 9,
+            "raw": "Initiative +9"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 9,
+            "raw": "Pilot +9"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
+          }
+        ],
+        "initiativePrinted": 9,
+        "perceptionPrinted": 6,
+        "str": 36,
+        "dex": 20,
+        "int": 14,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 25,
+        "rangedAttackLine": "light laser cannon +6 (see below) or Ranged rocket launcher +6 (see below)",
+        "attackOptions": [
+          "autofire (light laser cannon)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "ur-eeook-protector-vi-patrol-speeder-published-attack-1",
+            "label": "Light laser cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 6,
+            "specialNotes": "Printed operator pilot; damage 3d10x2; source search-text-derived candidate p214. Physical mounts, firing arcs and executable bindings are NOT certified."
+          },
+          {
+            "groupKey": "ur-eeook-protector-vi-patrol-speeder-published-attack-2",
+            "label": "Rocket launcher",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 6,
+            "specialNotes": "Printed operator pilot; damage 5d10x2 (2-square burst); source search-text-derived candidate p214. Physical mounts, firing arcs and executable bindings are NOT certified."
+          }
+        ],
+        "notes": "Extracted printed attack headings only; groups not certified mounts."
+      },
+      "crew": {
+        "raw": "1 (skilled)",
+        "crewCount": 1,
+        "crewQuality": "skilled"
+      },
+      "capacity": {
+        "passengerCount": 6,
+        "cargo": {
+          "value": 0.5,
+          "unit": "tons",
+          "raw": ".5 tons"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "week",
+          "raw": "1 week"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Military",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 50000,
+          "raw": "50,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 40000,
+          "raw": "40,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "New Phase 1 identity; source text search at index 881846, candidate score 31. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/hyperspace/capability": "not-stated",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    }
+  ],
+  "productionPacksChanged": false,
+  "generatedActorsChanged": false
+}
