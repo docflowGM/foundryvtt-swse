@@ -30,7 +30,7 @@ function* walk(dir) {
   for (const name of readdirSync(dir)) {
     const full = join(dir, name);
     const st = statSync(full);
-    if (st.isDirectory()) { yield* walk(full); continue; }
+    if (st.isDirectory()) { if (name !== "node_modules") yield* walk(full); continue; } // tools/release installs its pinned tooling locally
     if (!ALLOWED_EXT.has(extname(full))) continue;
     if (shouldSkip(full)) continue;
     yield full;

@@ -576,17 +576,15 @@ check('no runtime code, template, style, language file or manifest references th
   assert.equal(manifest.runtimeLoading, 'prohibited');
 });
 
-check('release packaging does not ship the audit data or docs (package-system.js allowlist)', () => {
+const { PACKAGE_INCLUDE, PACKAGE_EXCLUDE_DIRS } = await import(path.join(ROOT, 'tools/release/pack-sources.mjs'));
+check('release packaging does not ship the audit data or docs (tools/release/pack-sources.mjs allowlist)', () => {
+  for (const e of PACKAGE_INCLUDE) assert.ok(!e.startsWith('docs'), e);
+  assert.ok(PACKAGE_EXCLUDE_DIRS.includes('data/audits'), 'the audit snapshot under data/audits never ships');
   const src = read('scripts/build/package-system.js').toString('utf8');
-  const block = src.match(/const filesToInclude = \[([\s\S]*?)\];/);
-  assert.ok(block, 'allowlist found');
-  const entries = [...block[1].matchAll(/'([^']+)'/g)].map((m) => m[1]);
-  // Modification V2 runtime (R1): exactly the two pinned runtime files ship; audit data, research data and docs never do
-  const RUNTIME = ['data/modifications/runtime-definitions-v1.5.json', 'data/modifications/specification-records-v1.json'];
-  assert.deepEqual(entries, ['system.json', 'template.json', 'templates/', 'scripts/', 'helpers/', 'styles/', 'assets/', 'lang/', 'index.js', 'LICENSE', ...RUNTIME]);
-  for (const e of entries) {
-    if (RUNTIME.includes(e)) continue;
-    assert.ok(!e.startsWith('data') && !e.startsWith('docs'), e);
+  assert.ok(src.includes('PACKAGE_INCLUDE') && src.includes('PACKAGE_EXCLUDE_DIRS'), 'the packager uses that allowlist');
+  // Modification V2 runtime (R1): the two pinned runtime files ship (data/ is included, only the audit evidence is excluded)
+  for (const f of ['data/modifications/runtime-definitions-v1.5.json', 'data/modifications/specification-records-v1.json']) {
+    assert.ok(PACKAGE_INCLUDE.includes(f.split('/')[0]) && !PACKAGE_EXCLUDE_DIRS.some((x) => f.startsWith(`${x}/`)), f);
   }
 });
 
