@@ -80,12 +80,12 @@ export function isUnrecordedWeapon(result) {
   return (result.plan?.issues ?? []).some((i) => i?.code === "weapon-record-absent" || (i?.code === "combined-action-requires-stowed-weapon" && (i.details?.posture ?? null) === null));
 }
 
-/** Ask the user to record an unrecorded weapon as stowed before drawing it. */
+/** Ask the user to record an unrecorded weapon as stowed. */
 export async function confirmRecordAsStowed(item) {
   const yes = await SWSEDialogV2.prompt({
-    title: `${item?.name ?? "Weapon"} - Not set up`,
-    content: `<form class="swse-dialog"><p>${escapeHtml(item?.name ?? "This weapon")} has no recorded position yet. Record it as <strong>stowed</strong> and then draw it? Recording it costs no action; the draw costs its normal action.</p></form>`,
-    label: "Record as stowed and draw",
+    title: `${item?.name ?? "Weapon"} - Set up`,
+    content: `<form class="swse-dialog"><p>${escapeHtml(item?.name ?? "This weapon")} has no recorded position (it predates the posture record). Record it as <strong>stowed</strong>? This costs no action; draw it afterwards as usual.</p></form>`,
+    label: "Record as stowed",
     callback: () => true
   });
   return yes === true;
@@ -99,14 +99,13 @@ export async function confirmRecordAsStowed(item) {
  * @param {{prompt?:Function}} [deps] test seam for the dialog
  */
 export async function requestWithPostureChoices(item, first, followUp, { prompt = promptWeaponPostureChoice, initialize = null, confirmInitialize = confirmRecordAsStowed } = {}) {
-  let result = await first();
+  const result = await first();
   if (initialize && isUnrecordedWeapon(result)) {
-    // no posture is assumed for a weapon without a record: the user states it is stowed (the coordinator's explicit stow initialization, which it
-    // prices at no action), then the requested draw runs as an ordinary draw from STOWED
+    // no posture is assumed for a weapon without a record (one created before the WP1 STOWED default): the sheet shows "Set up", and the only
+    // action is recording it as stowed (the coordinator's explicit stow initialization, which it prices at no action). Nothing is drawn here.
     if (!(await confirmInitialize(item))) return { ...result, ok: false, cancelled: true, message: null };
     const init = await initialize();
-    if (!["COMMITTED", "NO_CHANGE"].includes(init?.status)) return init;
-    result = await first();
+    return init?.status === "COMMITTED" || init?.status === "NO_CHANGE" ? { ...init, setUp: true } : init;
   }
   if (result?.status !== "CHOICE_REQUIRED") return result;
   const picked = await prompt(item, result.choices ?? []);

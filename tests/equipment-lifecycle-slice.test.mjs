@@ -36,6 +36,7 @@ const { PanelContextBuilder } = await import('/systems/foundryvtt-swse/scripts/s
 const { buildConceptSheetViewModel } = await import('/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/concept-context.js');
 const { SWSEV2CharacterLikeSheet } = await import('/systems/foundryvtt-swse/scripts/sheets/v2/character-like-sheet.js');
 const { installCoordinatorHarness } = await import('./helpers/equipment-coordinator-harness.mjs');
+const { getDefaultItemSystem } = await import('/systems/foundryvtt-swse/scripts/items/item-defaults.js');
 
 let n = 0;
 const ok = (m) => console.log(`  [${++n}] ${m} OK`);
@@ -48,7 +49,8 @@ RollEngine.safeRoll = async (f) => { c.rolls += 1; return { total: 15, formula: 
 SWSEChat.postRoll = async () => { c.chat += 1; return {}; };
 ActionEconomyConsumption.spend = async (_a, type, meta) => { c.spends.push({ type, source: meta?.source ?? null }); return { allowed: true, committed: true, rollback: async () => {} }; };
 AmmoSystem.isTrackingEnabled = () => true; // the optional ammunition-tracking house rule is ON for this table
-ActorEngine.createEmbeddedDocuments = async (actor, name, data) => { const made = data.map((d, i) => ({ id: d._id ?? `new${i}`, ...JSON.parse(JSON.stringify(d)), actor })); actor.items.push(...made); return made; };
+// creation applies the type's system defaults the way Foundry merges template.json (WP1: an ordinary weapon is created STOWED); `raw: true` skips them
+ActorEngine.createEmbeddedDocuments = async (actor, name, data, { raw = false } = {}) => { const made = data.map((d, i) => { const x = JSON.parse(JSON.stringify(d)); if (!raw) x.system = getDefaultItemSystem(x.type, x.system ?? {}); return { id: d._id ?? `new${i}`, ...x, actor }; }); actor.items.push(...made); return made; };
 ActorEngine.deleteEmbeddedDocuments = async (actor, name, ids) => { for (const id of ids) actor.items.splice(actor.items.findIndex((i) => i.id === id), 1); return ids; };
 
 const ab = (m) => ({ base: 10 + m * 2, racial: 0, enhancement: 0, temp: 0 });
@@ -65,22 +67,13 @@ const ammo = () => actor.items.get('bp').system.ammunition.current;
 const sheet = Object.create(SWSEV2CharacterLikeSheet.prototype, { actor: { value: actor }, requestSurfaceRender: { value: async () => {} } });
 
 {
-  // acquire: the blaster arrives as a new owned Item with no posture record (STOWED until the first coordinator write)
+  // acquire: the blaster arrives with the WP1 creation default (STOWED, empty occupancy); no action is spent
   await ActorEngine.createEmbeddedDocuments(actor, 'Item', [{ _id: 'bp', name: 'Blaster Pistol', type: 'weapon', flags: { swse: { canonicalWeapon: { identityKey: F.PISTOL_KEY } } }, system: { ammunition: { current: 2, max: 2 } } }]);
   const w = actor.items.get('bp');
-  assert.ok(w); assert.equal(isWeaponReadied(actor, 'bp'), false);
+  assert.ok(w); assert.equal(w.system.weaponPosture, 'STOWED'); assert.equal(isWeaponReadied(actor, 'bp'), false);
   const v = view(); assert.equal(v.drawn, false); assert.equal(v.drawStowLabel, 'Draw');
   assert.equal(await attack(w), null, 'a stowed weapon cannot attack'); assert.equal(c.rolls, 0); assert.equal(ammo(), 2, 'nothing spent');
-  ok('1: an acquired weapon has no posture yet: sheet offers Draw, attack is refused with nothing rolled or spent');
-}
-{
-  // declining the set-up changes nothing
-  const r = await requestWithPostureChoices(actor.items.get('bp'), () => InventoryEngine.toggleWeaponReadied(actor, 'bp'), () => assert.fail('no draw'),
-    { initialize: () => assert.fail('no set-up'), confirmInitialize: async () => false });
-  assert.equal(r.cancelled, true); assert.equal(actor.items.get('bp').system.weaponPosture, undefined); assert.equal(c.spends.length, 0);
-  const src = (await import('node:fs')).readFileSync('scripts/sheets/v2/character-like-sheet.js', 'utf8');
-  assert.equal((src.match(/initialize: \(\) => InventoryEngine\.requestWeaponPosture\(this\.actor, \{ type: "stow", itemId \}\)/g) ?? []).length, 2, 'both sheet draw buttons offer the set-up');
-  ok('1b: an unrecorded weapon is never given a posture without the user confirming; declining writes nothing');
+  ok('1: an acquired weapon is created STOWED: sheet offers Draw, attack is refused with nothing rolled or spent');
 }
 {
   // draw from the sheet: CHOICE_REQUIRED -> hands/grip -> committed with the same request id
@@ -90,7 +83,7 @@ const sheet = Object.create(SWSEV2CharacterLikeSheet.prototype, { actor: { value
     (choice) => InventoryEngine.setWeaponReadied(actor, 'bp', true, choice),
     { initialize: () => InventoryEngine.requestWeaponPosture(actor, { type: 'stow', itemId: 'bp' }), confirmInitialize: async () => { confirmed += 1; return true; },
       prompt: async (_i, choices) => { assert.deepEqual(choices.map((x) => x.id), ['appendageIds', 'grip']); return { appendageIds: ['natural-arm-1'], grip: 'one-handed' }; } });
-  assert.equal(confirmed, 1, 'the unrecorded weapon is set up only after the user confirms');
+  assert.equal(confirmed, 0, 'a correctly initialized new weapon is drawn directly (no set-up prompt)');
   assert.equal(r.status, 'COMMITTED', r.message); assert.equal(r.requestId, firstId, 'the choice follow-up keeps the draw request id');
   assert.equal(isWeaponReadied(actor, 'bp'), true);
   const v = view(); assert.equal(v.drawn, true, 'the sheet shows the drawn weapon'); assert.equal(v.ready, true); assert.equal(v.drawStowLabel, 'Stow');
@@ -128,7 +121,6 @@ const sheet = Object.create(SWSEV2CharacterLikeSheet.prototype, { actor: { value
 {
   // a weapon whose draw did not finish cannot be removed until a GM resolves it
   await ActorEngine.createEmbeddedDocuments(actor, 'Item', [{ _id: 'bp2', name: 'Blaster Pistol', type: 'weapon', flags: { swse: { canonicalWeapon: { identityKey: F.PISTOL_KEY } } }, system: { ammunition: { current: 2, max: 2 } } }]);
-  assert.equal((await InventoryEngine.requestWeaponPosture(actor, { type: 'stow', itemId: 'bp2' })).status, 'COMMITTED');
   let calls = 0;
   const fenced = await InventoryEngine.setWeaponReadied(actor, 'bp2', true, { appendageIds: ['natural-arm-1'], grip: 'one-handed', deps: { fence: async () => (++calls < 3) } });
   assert.equal(fenced.status, 'EXECUTOR_FENCED');
@@ -138,12 +130,36 @@ const sheet = Object.create(SWSEV2CharacterLikeSheet.prototype, { actor: { value
   ok('6: an unfinished equipment change blocks removing the item (the evidence stays for G36)');
 }
 {
-  // a legacy weapon (equipped marker, no record) is not treated as drawn by the entry points; the sheet asks before recording it as stowed
-  await ActorEngine.createEmbeddedDocuments(actor, 'Item', [{ _id: 'lg', name: 'Old Blaster', type: 'weapon', flags: { swse: { canonicalWeapon: { identityKey: F.PISTOL_KEY } } }, system: { equipped: true } }]);
-  const before = c.spends.length; let asked = 0;
-  const r = await requestWithPostureChoices(actor.items.get('lg'), () => InventoryEngine.toggleWeaponReadied(actor, 'lg'), () => assert.fail('declined'),
-    { initialize: () => assert.fail('declined'), confirmInitialize: async () => { asked += 1; return false; } });
-  assert.equal(asked, 1); assert.equal(r.cancelled, true); assert.equal(actor.items.get('lg').system.weaponPosture, undefined); assert.equal(c.spends.length, before);
-  ok('7: a legacy unrecorded weapon also needs the explicit set-up; declining writes and spends nothing');
+  // R2: a weapon with NO posture record (created before the WP1 default; legacy equipped marker) is shown as "Not set up / Set up", never as
+  // Stow; its click only records it as stowed after the user confirms (no draw, no action); declining writes nothing
+  await ActorEngine.createEmbeddedDocuments(actor, 'Item', [{ _id: 'lg', name: 'Old Blaster', type: 'weapon', flags: { swse: { canonicalWeapon: { identityKey: F.PISTOL_KEY } } }, system: { equipped: true } }], { raw: true });
+  const rowOf = quietSync((id) => { const vm = buildConceptSheetViewModel({ actor, inventoryPanel: new PanelContextBuilder(actor, { isEditable: true }).buildInventoryPanel() }); for (const g of vm.gear.groups) for (const e of g.entries) if (e.id === id) return e.weaponReadiness; return null; });
+  let v = rowOf('lg');
+  assert.equal(v.needsSetup, true); assert.equal(v.drawn, false); assert.equal(v.stateLabel, 'Not set up'); assert.equal(v.drawStowLabel, 'Set up'); assert.equal(v.canDrawAndIgnite, false);
+  const before = c.spends.length;
+  const click = (confirm) => requestWithPostureChoices(actor.items.get('lg'), () => InventoryEngine.toggleWeaponReadied(actor, 'lg'), () => assert.fail('set-up never draws'),
+    { initialize: () => InventoryEngine.requestWeaponPosture(actor, { type: 'stow', itemId: 'lg' }), confirmInitialize: async () => confirm, prompt: async () => assert.fail('set-up never asks for hands') });
+  const declined = await click(false);
+  assert.equal(declined.cancelled, true); assert.equal(actor.items.get('lg').system.weaponPosture, undefined);
+  const setUp = await click(true);
+  assert.equal(setUp.setUp, true); assert.equal(setUp.status, 'COMMITTED'); assert.equal(actor.items.get('lg').system.weaponPosture, 'STOWED');
+  assert.equal(c.spends.length, before, 'recording the position costs no action');
+  v = rowOf('lg'); assert.equal(v.needsSetup, false); assert.equal(v.drawStowLabel, 'Draw');
+  const src = (await import('node:fs')).readFileSync('scripts/sheets/v2/character-like-sheet.js', 'utf8');
+  assert.equal((src.match(/initialize: \(\) => InventoryEngine\.requestWeaponPosture\(this\.actor, \{ type: "stow", itemId \}\)/g) ?? []).length, 2, 'both sheet draw buttons route set-up through the coordinator');
+  ok('7: an unrecorded weapon shows "Set up"; the click only records it STOWED after confirmation (no draw, no action); then it shows Draw');
+}
+{
+  // R1: a malformed equipment journal blocks weapon removal through InventoryEngine.removeItem; other items are still removable
+  await ActorEngine.createEmbeddedDocuments(actor, 'Item', [{ _id: 'bp3', name: 'Blaster Pistol', type: 'weapon', flags: { swse: { canonicalWeapon: { identityKey: F.PISTOL_KEY } } }, system: {} }, { _id: 'med', name: 'Medpac', type: 'equipment', system: {} }]);
+  const saved = actor.flags.swse.equipmentTxn;
+  actor.flags.swse.equipmentTxn = { schemaVersion: 1, entries: 'garbage' };
+  const refused = await InventoryEngine.removeItem(actor, 'bp3');
+  assert.equal(refused.reason, 'equipment-journal-unreadable'); assert.ok(actor.items.get('bp3'), 'the weapon stays');
+  assert.ok(notes.warn.some((m) => /journal is unreadable/.test(m)));
+  await InventoryEngine.removeItem(actor, 'med'); assert.equal(actor.items.get('med'), undefined, 'a non-weapon item is still removable');
+  actor.flags.swse.equipmentTxn = saved;
+  await InventoryEngine.removeItem(actor, 'bp3'); assert.equal(actor.items.get('bp3'), undefined, 'with a readable journal and nothing pending, removal works');
+  ok('8: an unreadable journal blocks removing weapons (this route only); valid-journal and non-weapon removals still work');
 }
 console.log(`equipment-lifecycle-slice: ${n} checks ok`);
