@@ -162,4 +162,16 @@ const sheet = Object.create(SWSEV2CharacterLikeSheet.prototype, { actor: { value
   await InventoryEngine.removeItem(actor, 'bp3'); assert.equal(actor.items.get('bp3'), undefined, 'with a readable journal and nothing pending, removal works');
   ok('8: an unreadable journal blocks removing weapons (this route only); valid-journal and non-weapon removals still work');
 }
+{
+  // clean break: the attacks-panel rescue lists only READY weapons; an activated-but-stowed saber or a legacy `equipped: true` weapon is not an attack
+  await ActorEngine.createEmbeddedDocuments(actor, 'Item', [
+    { _id: 'sab', name: 'Lightsaber', type: 'weapon', flags: { swse: { canonicalWeapon: { identityKey: F.SABER_KEY } } }, system: { activated: true, active: true, damage: '2d8' } },
+    { _id: 'old', name: 'Old Blaster', type: 'weapon', flags: { swse: { canonicalWeapon: { identityKey: F.PISTOL_KEY } } }, system: { equipped: true, damage: '3d6' } },
+    { _id: 'rdy', name: 'Blaster Pistol', type: 'weapon', flags: { swse: { canonicalWeapon: { identityKey: F.PISTOL_KEY } } }, system: { damage: '3d6' } },
+  ]);
+  assert.equal((await InventoryEngine.setWeaponReadied(actor, 'rdy', true, { appendageIds: ['natural-arm-2'], grip: 'one-handed' })).status, 'COMMITTED');
+  const listed = quietSync(() => SWSEV2CharacterLikeSheet.prototype._buildAttacksFallback.call({}, actor, {}))().map((a) => a.weaponId).filter((id) => ['sab', 'old', 'rdy'].includes(id));
+  assert.deepEqual(listed, ['rdy']);
+  ok('9: attack rows come from the readiness authority only (no rows for stowed-but-activated or legacy-equipped weapons)');
+}
 console.log(`equipment-lifecycle-slice: ${n} checks ok`);

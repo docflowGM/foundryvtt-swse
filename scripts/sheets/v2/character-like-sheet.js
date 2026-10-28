@@ -1337,12 +1337,17 @@ export class SWSEV2CharacterLikeSheet extends SWSEV2ActorSheetBase {
     const attacksBundle = derived?.attacks;
     let attacksList = Array.isArray(attacksBundle?.list) ? attacksBundle.list : [];
     const actorItems = Array.from(actor?.items ?? []);
+    let readyWeaponIds = new Set();
+    try { readyWeaponIds = new Set(getReadiedWeapons(actor).map((i) => i.id)); } catch (_err) { readyWeaponIds = new Set(); }
     const isEquippedForAttack = (item) => {
       const truthy = (value) => {
         if (value === true || Number(value) === 1) return true;
         if (value && typeof value === 'object') return truthy(value.value ?? value.current ?? value.active ?? value.equipped ?? value.state);
         return ['true', '1', 'yes', 'equipped', 'worn', 'held', 'readied', 'ready', 'on', 'active', 'activated', 'natural'].includes(String(value || '').toLowerCase());
       };
+      // clean break: an ordinary weapon is "equipped for attack" only when the readiness authority says it is READY (natural and integrated weapons
+      // keep their own always-readied authority); legacy equipped/active markers no longer stand in for a weapon's position
+      if (['weapon', 'lightsaber'].includes(item?.type)) return readyWeaponIds.has(item.id) || isAutoEquippedNaturalWeaponForCombat(item, truthy) || isIntegratedDroidAttackItem(item, actor, truthy);
       const system = item?.system ?? {};
       return truthy(system.equipped)
         || truthy(system.isEquipped)
@@ -6339,7 +6344,12 @@ const forcePoints = [];
         .toLowerCase();
       return /weapon|lightsaber|blaster|rifle|pistol|melee|ranged|thrown|grenade|simple|advanced|heavy/.test(text);
     };
+    let readyWeaponIds = new Set();
+    try { readyWeaponIds = new Set(getReadiedWeapons(actor).map((i) => i.id)); } catch (_err) { readyWeaponIds = new Set(); }
     const isEquipped = (item) => {
+      // clean break: an ordinary weapon is "equipped for attack" only when the readiness authority says it is READY (natural and integrated weapons
+      // keep their own always-readied authority); legacy equipped/active markers no longer stand in for a weapon's position
+      if (['weapon', 'lightsaber'].includes(item?.type)) return readyWeaponIds.has(item.id) || isAutoEquippedNaturalWeaponForCombat(item, truthy) || isIntegratedDroidAttackItem(item, actor, truthy);
       const system = item?.system ?? {};
       return truthy(system.equipped)
         || truthy(system.isEquipped)
@@ -6898,12 +6908,10 @@ const forcePoints = [];
     const weaponId = actionData?.weaponId ?? actionData?.itemId ?? context?.weaponId ?? null;
     let weapon = weaponId ? (this.actor.items.get(weaponId) ?? null) : null;
     if (!weapon) {
-      // default target: a weapon the equipment-state authority verifies as in hand, then the legacy equipped marker (records not yet migrated)
+      // default target: a weapon the equipment-state authority verifies as in hand (clean break: legacy equipped markers are not read)
       const reloadable = (i) => ['weapon', 'lightsaber'].includes(i.type) && (AmmoSystem.weaponUsesAmmunition(i) || FireStateStore.readFireState(i)?.needsReload === true);
       const held = (i) => { try { return isWeaponHeld(this.actor, i); } catch (_err) { return false; } };
-      weapon = this.actor.items.find(i => reloadable(i) && held(i))
-        ?? this.actor.items.find(i => reloadable(i) && i.system?.equipped)
-        ?? null;
+      weapon = this.actor.items.find(i => reloadable(i) && held(i)) ?? null;
     }
 
     // Phase 5D-I-D-F: a weapon that is mechanically AWAITING RELOAD (reload after each shot: wrist rocket launcher, E-Web) stays unfireable until
@@ -7214,14 +7222,13 @@ const forcePoints = [];
       // 1. Resolve weapon: direct ID → equipped weapon/lightsaber → virtual unarmed fallback
       let weapon = weaponId ? (this.actor.items.get(weaponId) ?? null) : null;
       if (!weapon) {
-        // a READY weapon per the equipment-state authority (the attack gate's own test) first; then the legacy markers as before
+        // a READY weapon per the equipment-state authority (the attack gate's own test), then an integrated droid weapon (its own authority);
+        // clean break: legacy equipped markers are not read
         let ready = [];
         try { ready = getReadiedWeapons(this.actor); } catch (_err) { ready = []; }
         weapon = ready.find(i => ['weapon', 'lightsaber'].includes(i.type))
-          ?? this.actor.items.find(i =>
-            ['weapon', 'lightsaber'].includes(i.type)
-            && (i.system?.equipped || isIntegratedDroidAttackItem(i, this.actor))
-          ) ?? null;
+          ?? this.actor.items.find(i => ['weapon', 'lightsaber'].includes(i.type) && isIntegratedDroidAttackItem(i, this.actor))
+          ?? null;
       }
       if (!weapon) {
         weapon = buildVirtualUnarmedWeapon(this.actor);

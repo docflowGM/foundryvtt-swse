@@ -1,4 +1,4 @@
-import { isItemEquipped, isAlwaysReadiedWeapon, isNaturalWeaponOnly } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { isAlwaysReadiedWeapon, isNaturalWeaponOnly } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
 import { readJournal, unresolvedItemIds, JOURNAL_STATUS } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-transaction-journal.js";
 import { getWeaponReadiness } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
@@ -362,14 +362,14 @@ function buildWeaponReadinessView(item, actor) {
   // Canonical authority: natural (auto-equipped) and integrated droid weapons are always readied -> no Draw/Stow.
   const alwaysReadied = isAlwaysReadiedWeapon(item, actor);
   // Drawn/Stowed follows the equipment-state authority's declared record (the same fact the Draw/Stow toggle acts on), so the label and the click
-  // agree after a coordinator draw. Only a malformed record still falls back to the legacy equipped markers (display only).
+  // agree after a coordinator draw.
   let readiness = null;
   try { readiness = getWeaponReadiness(actor, item); } catch (_err) { readiness = null; }
   const declared = readiness?.recordStatus === 'valid' ? readiness.declaredPosture : null;
   // an ordinary weapon with NO posture record (created before the WP1 default) is shown as not set up, never as drawn or stowed: its only action
   // is an explicit, user-confirmed "record as stowed" through the coordinator. Legacy markers are not read as a position.
   const needsSetup = !alwaysReadied && readiness?.recordStatus === 'absent';
-  const drawn = declared ? declared !== 'STOWED' : needsSetup ? false : isItemEquipped(item, actor);
+  const drawn = declared ? declared !== 'STOWED' : false; // clean break: no record (or a malformed one) is never presented as drawn
   const activated = isItemActivated(item);
   const isLightsaber = visualProfile?.isLightsaber === true;
   let combinedEffects = [];
