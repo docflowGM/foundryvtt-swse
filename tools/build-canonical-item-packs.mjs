@@ -52,7 +52,7 @@ export function buildFamily(family, corpus) {
     aggregate.push(document);
     grouped[pack].push(document);
   }
-  const encode = list => list.map(d => JSON.stringify(d)).join('\\n') + '\\n';
+  const encode = list => list.map(d => JSON.stringify(d)).join('\n') + '\n';
   const files = {[`packs/${family}.db`]: encode(aggregate)};
   for (const pack of packs) files[`packs/${pack}.db`] = encode(grouped[pack]);
   return files;
