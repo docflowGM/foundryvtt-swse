@@ -5,8 +5,13 @@
  * actor.system.progression.classLevels is authoritative when it totals the
  * actor's character level. Owned class Item levels are synchronized to that
  * ledger so class features, audits, and sheet panels agree.
+ *
+ * TI4-C0/G34: Foundry fires the ready and document hooks on EVERY client, so this reconciliation is gated to the authorized GM client (the active GM
+ * when Foundry reports one) and writes class-item levels through ActorEngine — the mutation authority — never with a direct embedded-document write.
+ * Same-client only: it does not coordinate several GM clients (they would compute the same idempotent target).
  */
 
+import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { ProgressionReconciliationReportBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/reconciliation/progression-reconciliation-report-builder.js';
 
 let registered = false;
@@ -153,7 +158,20 @@ function classItemLevel(item = {}) {
   return positiveInteger(item?.system?.level ?? item?.system?.levels ?? item?.system?.classLevel ?? item?.system?.rank);
 }
 
+/**
+ * Only an authorized GM client reconciles: a non-GM client never does, and when Foundry reports an active GM that is another user, this GM client stands
+ * down (the active GM performs the pass). With no election information the GM gate alone applies.
+ */
+function isAuthorizedReconciliationClient() {
+  const user = game?.user;
+  if (user?.isGM !== true) return false;
+  const activeGM = game?.users?.activeGM;
+  if (activeGM && activeGM.id !== undefined && activeGM.id !== user.id) return false;
+  return true;
+}
+
 async function syncActorClassItemsToLedger(actor, { reason = 'progression-ledger-sync' } = {}) {
+  if (!isAuthorizedReconciliationClient()) return false;
   if (!actor || syncingActorIds.has(actor.id)) return false;
   const ledger = buildAuthoritativeLedger(actor);
   if (!ledger.authoritative) return false;
@@ -161,10 +179,12 @@ async function syncActorClassItemsToLedger(actor, { reason = 'progression-ledger
   const classItems = Array.from(actor.items ?? []).filter(item => item?.type === 'class');
   const updates = [];
   for (const item of classItems) {
+    const itemId = item.id || item._id;
+    if (!itemId) continue;                                   // an item without an id cannot be addressed by an update
     const row = findLedgerRowForItem(item, ledger.rows);
     if (!row || classItemLevel(item) === row.level) continue;
     updates.push({
-      _id: item.id || item._id,
+      _id: itemId,
       'system.level': row.level,
       'system.levels': row.level,
       'system.classLevel': row.level,
@@ -178,7 +198,7 @@ async function syncActorClassItemsToLedger(actor, { reason = 'progression-ledger
   if (!updates.length) return false;
   try {
     syncingActorIds.add(actor.id);
-    await actor.updateEmbeddedDocuments('Item', updates);
+    await ActorEngine.updateEmbeddedDocuments(actor, 'Item', updates, { source: 'ProgressionLedgerReconciliationHotfix.syncClassItems', meta: { guardKey: 'progression-ledger-sync' } });
     console.info('[SWSE Progression Hotfix] Synced class item levels to progression ledger', {
       actorId: actor.id,
       actorName: actor.name,
@@ -195,6 +215,7 @@ async function syncActorClassItemsToLedger(actor, { reason = 'progression-ledger
 }
 
 function syncAllActorsToLedger() {
+  if (!isAuthorizedReconciliationClient()) return;
   if (syncingActors) return;
   syncingActors = true;
   queueMicrotask(async () => {

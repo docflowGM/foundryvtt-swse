@@ -595,9 +595,22 @@ export class FollowerShell extends ProgressionShell {
         // prior version of this method ignored it and always reported
         // success, so a failed (and internally rolled-back) update could
         // still close the finalization workflow as if it had succeeded.
-        const updated = await FollowerCreator.updateFollowerFromMutation(followerActor, followerMutation);
+        // TI4-C0/G11: `false` does not mean "unchanged" — the report says whether the
+        // rollback was VERIFIED (FAILED_COMPENSATED) or not (INDETERMINATE).
+        const report = {};
+        const updated = await FollowerCreator.updateFollowerFromMutation(followerActor, followerMutation, { report });
         if (!updated) {
-          return { success: false, error: 'Failed to update follower' };
+          if (report.outcome === 'INDETERMINATE') {
+            return {
+              success: false,
+              indeterminate: true,
+              partialMutationPossible: true,
+              rollbackOutcome: report.outcome,
+              rollback: report.rollback,
+              error: 'Failed to update follower, and the rollback could not be verified, so the follower may be partially updated. Do not apply this update again until the follower has been checked.'
+            };
+          }
+          return { success: false, error: 'Failed to update follower', ...(report.outcome ? { rollbackOutcome: report.outcome } : {}) };
         }
         swseLogger.log('[FollowerShell] Follower updated:', followerId);
         return { success: true, result: { followerId } };

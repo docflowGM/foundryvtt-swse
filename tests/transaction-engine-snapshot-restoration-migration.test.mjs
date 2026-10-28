@@ -43,7 +43,11 @@ const TRANSACTION_ENGINE_SOURCE = await readFile(
 // --- Tier (c): source-inspection of the un-migrated legacy call sites ---
 
 const restoreSnapshotCallSites = [...TRANSACTION_ENGINE_SOURCE.matchAll(/SnapshotManager\.restoreSnapshot\(/g)];
-assert.ok(restoreSnapshotCallSites.length >= 5, 'transaction-engine.js should still have multiple restoreSnapshot() call sites to document (if this count dropped, the legacy-caller migration note below may need updating)');
+// TI-2: the migration this file documented as outstanding is done. Every restore now goes through the single #restoreVerified helper, which branches on
+// the boolean (a restore is reported only when `restoreSnapshot()` returned true) and surfaces a failed restore as `rollbackFailed` to every caller.
+assert.equal(restoreSnapshotCallSites.length, 1, 'TI-2: transaction-engine.js has exactly one restoreSnapshot() call site, inside #restoreVerified');
+assert.match(TRANSACTION_ENGINE_SOURCE, /static async #restoreVerified\([\s\S]{0,700}restored === true/, 'the single call site inspects the boolean result');
+assert.doesNotMatch(TRANSACTION_ENGINE_SOURCE, /rollback successful['"`]?, \{[^}]*\}\);\s*\} catch/i, 'no \"rollback successful\" is logged from inside a try that ignores the restore result');
 
 // None of these calls the OLD, pre-P1-7 shape independently — they all
 // route through the SAME corrected SnapshotManager.restoreSnapshot(), so

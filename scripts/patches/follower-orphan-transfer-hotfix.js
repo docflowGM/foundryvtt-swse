@@ -278,7 +278,11 @@ export async function transferOrphanFollower(follower, newOwner, slot) {
     if (templateType && speciesName) {
       const ownerHeroicLevel = getHeroicLevel(newOwner) || 1;
       const followerState = await deriveFollowerStateForApply(ownerHeroicLevel, speciesName, templateType, persistentChoices);
-      await FollowerCreator.updateFollowerFromMutation(follower, {
+      // TI4-C0/G11: the update's outcome decides whether the transfer may continue. `false` never means "unchanged" (see FollowerCreator).
+      const updateReport = {};
+      let updated = false;
+      try {
+        updated = await FollowerCreator.updateFollowerFromMutation(follower, {
         ownerActorId: newOwner.id,
         speciesName,
         templateType,
@@ -291,7 +295,30 @@ export async function transferOrphanFollower(follower, newOwner, slot) {
         slotTalentName: slot.talentName || null,
         slotTalentItemId: slot.talentItemId || null,
         slotTalentTreeId: slot.talentTreeId || null,
-      });
+        }, { report: updateReport });
+      } catch (updateErr) {
+        updateReport.error ??= updateErr;
+      }
+      if (updated !== true) {
+        // Fail closed: do not link, do not announce a reassignment, do not retry. The registry/ownership writes above were already committed and
+        // are NOT reversed here (no rollback is invented), so the transfer as a whole is never reported compensated — even when the follower's own
+        // update was verifiably rolled back.
+        const followerUncertain = updateReport.outcome === 'INDETERMINATE';
+        const message = `Reassigning ${follower.name} to ${newOwner.name} FAILED and is incomplete: the follower's stat update failed`
+          + (followerUncertain ? ', and its rollback could not be verified, so the follower may be partially modified' : (updateReport.outcome === 'FAILED_COMPENSATED' ? ' (the follower itself was verified rolled back)' : ''))
+          + `. The ownership and slot changes made earlier in the transfer were NOT reversed. A GM should inspect ${follower.name}, ${newOwner.name}`
+          + `${formerOwner ? ` and ${formerOwner.name}` : ''} before reassigning again; the transfer was not retried.`;
+        const transferErr = new Error(message, { cause: updateReport.error });
+        transferErr.transferOutcome = 'INDETERMINATE';
+        transferErr.partialTransferApplied = true;
+        transferErr.partialMutationPossible = true;
+        transferErr.followerUpdate = updateReport;
+        swseLogger.error('[FollowerOrphanTransfer] Transfer aborted: follower update failed; earlier transfer writes were not reversed.', {
+          follower: follower.name, newOwner: newOwner.name, slotId: slot.id, followerUpdateOutcome: updateReport.outcome ?? null
+        });
+        ui?.notifications?.error?.(message);
+        throw transferErr;
+      }
     }
 
     await FollowerCreator._linkFollowerToOwner(newOwner, follower, newTalent);

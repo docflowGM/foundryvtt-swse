@@ -18,28 +18,103 @@ export class GMStoreOperationsService {
    * Approve, counteroffer, or deny a pending player sale request.
    */
   static async resolvePendingSaleRequest(requestId, options = {}, context = {}) {
-    const { decision = 'approve', amount = null, reason = '' } = options;
-    const pendingSales = SettingsHelper.getArray('pendingSales', []);
-    const index = pendingSales.findIndex(request => String(request?.id || '') === String(requestId || ''));
+    // TI4-C0/G24: a request is identified ONLY by its stable STRING id. A number never matches (a numeric position must not resolve a request whose id merely
+    // looks numeric), a blank id never matches an id-less request, a duplicated id is ambiguous (neither request is resolved), and a request already being
+    // resolved is not resolved a second time concurrently. There is no positional fallback.
+    const id = typeof requestId === 'string' ? requestId : '';
+    if (!id.trim()) {
+      ui?.notifications?.error?.('Pending sale request could not be identified; nothing was changed.');
+      return { success: false, error: 'pending-sale-invalid-id' };
+    }
+    if (this._pendingSalesInFlight.has(id)) {
+      ui?.notifications?.warn?.('This pending sale is already being resolved.');
+      return { success: false, error: 'pending-sale-in-progress' };
+    }
+    this._pendingSalesInFlight.add(id);
+    try {
+      return await this._resolvePendingSaleRequestById(id, options, context);
+    } finally {
+      this._pendingSalesInFlight.delete(id);
+    }
+  }
 
-    if (index < 0) {
+  static _pendingSalesInFlight = new Set();
+
+  /**
+   * Same-client serialization of read-modify-write updates to the `pendingSales` queue. The queue is only ever modified from FRESH state, by request
+   * id, inside this lock — never from a snapshot read before an `await` (a sale that is still executing must not overwrite what other resolutions,
+   * newly queued requests or a reorder did meanwhile). The lock is NOT held while a sale executes, so distinct requests are not blocked by each other.
+   * This is single-client serialization only: there is no cross-client compare-and-swap on the world setting.
+   */
+  static _pendingSalesQueueTail = Promise.resolve();
+
+  static _withPendingSalesQueueLock(task) {
+    const run = this._pendingSalesQueueTail.then(() => task());
+    this._pendingSalesQueueTail = run.then(() => undefined, () => undefined);
+    return run;
+  }
+
+  /** Positions of the requests carrying exactly this id in a queue. */
+  static _pendingSalePositions(queue, id) {
+    const positions = [];
+    (Array.isArray(queue) ? queue : []).forEach((request, position) => {
+      if (request?.id !== undefined && request?.id !== null && String(request.id) === id) positions.push(position);
+    });
+    return positions;
+  }
+
+  /**
+   * Remove one request from the queue by id, from fresh state, under the queue lock.
+   * @returns {Promise<{removed:boolean, matches:number, request:Object|null}>}
+   */
+  static _removePendingSaleFromQueue(id) {
+    return this._withPendingSalesQueueLock(async () => {
+      // A fresh shallow copy BEFORE any edit: the settings getter may return the live stored array, and a write that fails must not leave that
+      // in-memory value half-edited. Only the copy is spliced; the setting changes only if the write succeeds.
+      const queue = [...SettingsHelper.getArray('pendingSales', [])];
+      const positions = this._pendingSalePositions(queue, id);
+      if (positions.length !== 1) return { removed: false, matches: positions.length, request: null };
+      const [request] = queue.splice(positions[0], 1);
+      await SettingsHelper.set('pendingSales', queue);
+      return { removed: true, matches: 1, request };
+    });
+  }
+
+  static async _resolvePendingSaleRequestById(requestId, options = {}, context = {}) {
+    const { decision = 'approve', amount = null, reason = '' } = options;
+    const positions = this._pendingSalePositions(SettingsHelper.getArray('pendingSales', []), requestId);
+
+    if (positions.length > 1) {
+      ui?.notifications?.error?.('More than one pending sale shares this request id; nothing was changed.');
+      return { success: false, error: 'pending-sale-ambiguous-id' };
+    }
+    if (positions.length < 1) {
       ui?.notifications?.error?.('Pending sale request not found.');
       return { success: false, error: 'pending-sale-not-found' };
     }
 
-    const request = pendingSales[index];
+    const request = SettingsHelper.getArray('pendingSales', [])[positions[0]];
     const actor = game.actors.get(request.actorId);
 
     if (decision === 'deny') {
-      pendingSales.splice(index, 1);
-      await SettingsHelper.set('pendingSales', pendingSales);
+      let removal;
+      try {
+        removal = await this._removePendingSaleFromQueue(requestId);
+      } catch (err) {
+        ui?.notifications?.error?.('Could not update the pending sale queue; the sale was not denied.');
+        return { success: false, error: 'pending-sale-queue-write-failed', detail: err?.message ?? String(err) };
+      }
+      if (!removal.removed) {
+        ui?.notifications?.error?.(removal.matches > 1 ? 'More than one pending sale shares this request id; nothing was changed.' : 'Pending sale request not found.');
+        return { success: false, error: removal.matches > 1 ? 'pending-sale-ambiguous-id' : 'pending-sale-not-found' };
+      }
       Hooks.callAll?.('swseStoreSaleDenied', {
-        request,
+        request: removal.request,
         actor,
         decidedBy: game.user?.name ?? 'GM',
         reason
       });
-      ui?.notifications?.info?.(`Denied sale request: ${request.item || 'item'}${reason ? ` — ${reason}` : ''}`);
+      ui?.notifications?.info?.(`Denied sale request: ${removal.request.item || 'item'}${reason ? ` — ${reason}` : ''}`);
       await context.render?.();
       return { success: true, decision: 'deny', requestId };
     }
@@ -94,8 +169,21 @@ export class GMStoreOperationsService {
       return result;
     }
 
-    pendingSales.splice(index, 1);
-    await SettingsHelper.set('pendingSales', pendingSales);
+    // The sale is COMMITTED. Reconcile the queue from fresh state, by id. Whatever happens here, the sale outcome is reported truthfully as a success
+    // (never as an ordinary failure that invites a second approval); an unverified queue update is flagged on the result and to the GM.
+    let queueReconciliation = 'removed';
+    try {
+      const removal = await this._removePendingSaleFromQueue(requestId);
+      if (!removal.removed) queueReconciliation = removal.matches > 1 ? 'ambiguous-id' : 'request-absent';
+    } catch (err) {
+      queueReconciliation = 'queue-write-failed';
+      SWSELogger.error('[GMStoreOperationsService] sale committed but the pending-sale queue could not be updated', err);
+    }
+    if (queueReconciliation !== 'removed') {
+      ui?.notifications?.warn?.(queueReconciliation === 'request-absent'
+        ? `The sale of ${request.item || item.name} completed, but its request was already gone from the pending queue.`
+        : `The sale of ${request.item || item.name} COMPLETED, but the pending queue could not be updated (${queueReconciliation}); the request may still be listed. Do not approve it again.`);
+    }
 
     Hooks.callAll?.('swseStoreSaleApproved', {
       request,
@@ -110,7 +198,8 @@ export class GMStoreOperationsService {
 
     ui?.notifications?.info?.(`Approved sale: ${request.item || item.name} for ${salePrice.toLocaleString()} credits.`);
     await context.render?.();
-    return { ...result, success: true, decision, requestId, salePrice };
+    return { ...result, success: true, decision, requestId, salePrice,
+      ...(queueReconciliation === 'removed' ? {} : { queueReconciled: false, queueReconciliation }) };
   }
 
   /**
@@ -222,6 +311,94 @@ export class GMStoreOperationsService {
    * removal is folded into the same actor mutation plan. Inventory quantity
    * restoration happens only after the TransactionEngine rollback succeeds.
    */
+  /**
+   * TI4-C0/G21 — can this AUTHORITATIVE ledger record (as returned by TransactionEngine.getActorTransactions) be rolled back from a GM interface?
+   * Pure. Mirrors the datapad's row rule (a rollback/correction record, an already-rolled-back source and a zero-credit-impact record are not
+   * reversible) and additionally requires a stable transaction id. G20's engine guard remains the final replay defence.
+   *
+   * @param {object} tx - a normalized TransactionEngine ledger record
+   * @returns {{canRollback: boolean, reason: string|null}}
+   */
+  static rollbackability(tx = {}) {
+    const id = String(tx?.transactionId ?? tx?.id ?? '').trim();
+    if (!id) return { canRollback: false, reason: 'no-transaction-id' };
+    const context = String(tx?.context || '');
+    if (context.includes('rollback') || context.includes('correction') || tx?.rollbackOf) return { canRollback: false, reason: 'rollback-record' };
+    if (String(tx?.status ?? '').trim().toLowerCase() === 'rolled back' || tx?.rolledBackByTransactionId) return { canRollback: false, reason: 'already-rolled-back' };
+    if (!Number.isFinite(Number(tx?.amount)) || Number(tx.amount) === 0) return { canRollback: false, reason: 'no-credit-impact' };
+    return { canRollback: true, reason: null };
+  }
+
+  /**
+   * TI4-C0/G21 — stable-id entry point to the canonical rollback (used by the legacy GM Store Dashboard, whose rows are addressed by transaction id
+   * and actor id, never by a rendered array index). Resolves the intended transaction from the CURRENT TransactionEngine ledger of the named actor,
+   * fails closed on a missing, ambiguous, mismatched or non-reversible record, and then runs the unchanged canonical `rollbackTransaction` (its
+   * confirmation/reconciliation preview, Item reconciliation, inventory-policy restore and the G20-guarded engine call).
+   *
+   * `canRollback` on the row handed to the canonical service is DERIVED from the authoritative record by `rollbackability()` — never taken from a
+   * caller or a rendered row.
+   *
+   * @param {string} transactionId
+   * @param {string} actorId
+   * @param {{render?: Function}} [context]
+   */
+  static async rollbackTransactionById(transactionId, actorId, context = {}) {
+    if (!game.user?.isGM) {
+      ui?.notifications?.error?.('Only a GM can roll back store transactions.');
+      return { success: false, error: 'gm-required' };
+    }
+    const id = typeof transactionId === 'string' ? transactionId.trim() : '';
+    const aid = typeof actorId === 'string' ? actorId.trim() : '';
+    if (!id || !aid) {
+      ui?.notifications?.error?.('Cannot roll back: the transaction identity is missing or invalid.');
+      return { success: false, error: 'invalid-transaction-identity' };
+    }
+    const actor = game.actors.get(aid);
+    if (!actor) {
+      ui?.notifications?.error?.('Actor not found');
+      return { success: false, error: 'actor-not-found' };
+    }
+    const matches = TransactionEngine.getActorTransactions(actor, { includeZeroCost: true })
+      .filter(tx => String(tx.transactionId ?? tx.id ?? '').trim() === id);
+    if (matches.length === 0) {
+      ui?.notifications?.error?.('That transaction is no longer in this actor\'s ledger; refresh the dashboard.');
+      return { success: false, error: 'transaction-not-found' };
+    }
+    if (matches.length > 1) {
+      ui?.notifications?.error?.('That transaction id is ambiguous in the ledger; it cannot be rolled back automatically.');
+      return { success: false, error: 'transaction-ambiguous' };
+    }
+    const tx = matches[0];
+    if (tx.actorId && tx.actorId !== actor.id) {
+      ui?.notifications?.error?.('That transaction belongs to a different actor; refresh the dashboard.');
+      return { success: false, error: 'transaction-actor-mismatch' };
+    }
+    const { canRollback, reason } = this.rollbackability(tx);
+    if (!canRollback) {
+      const text = reason === 'already-rolled-back'
+        ? `This transaction was already rolled back${tx.rolledBackByTransactionId ? ` (by ${tx.rolledBackByTransactionId})` : ''}.`
+        : (reason === 'rollback-record' ? 'A rollback/correction record cannot itself be rolled back.'
+          : (reason === 'no-credit-impact' ? 'This transaction has no credit impact to roll back.' : 'This transaction cannot be rolled back.'));
+      ui?.notifications?.warn?.(text);
+      return { success: false, error: reason };
+    }
+    const row = {
+      transactionId: id,
+      timestamp: tx.timestamp,
+      actor: tx.actorName,
+      actorId: actor.id,
+      type: tx.type,
+      item: tx.itemName,
+      amount: tx.amount,
+      context: tx.context,
+      audit: tx.audit || {},
+      status: tx.status,
+      canRollback: true,
+      canReverse: true
+    };
+    return this.rollbackTransaction(0, { ...context, transactions: [row] });
+  }
+
   static async rollbackTransaction(index, context = {}) {
     const transactions = Array.isArray(context.transactions) ? context.transactions : [];
 

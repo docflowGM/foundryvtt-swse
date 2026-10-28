@@ -20,17 +20,32 @@ import { VehicleFactory } from "/systems/foundryvtt-swse/scripts/engine/vehicles
  */
 export class GMApprovalOperationsService {
   static parseApprovalKey(key) {
-    const [kind, rawId] = String(key || '').split(':');
+    const text = String(key || '');
+    const cut = text.indexOf(':');
+    const kind = cut < 0 ? text : text.slice(0, cut);
+    const rawId = cut < 0 ? '' : text.slice(cut + 1);
     if (kind === 'droid' && rawId) return { kind, actorId: rawId };
     if (kind === 'custom') return { kind, index: Number(rawId) };
+    // TI-3 (TX-10): a custom approval addressed by the record's OWN persistent id; the queue index is resolved fresh at the moment of the action.
+    if (kind === 'custom-id' && rawId) return { kind: 'custom', approvalId: rawId, index: -1 };
     if (kind === 'game' && rawId) return { kind, sessionId: rawId };
     return { kind: null, index: -1, actorId: null, sessionId: null };
+  }
+
+  /**
+   * The CURRENT queue index of a parsed custom approval. An id that is no longer in the queue (already approved, denied or removed by another GM/tab) resolves
+   * to -1 — never to whatever record now occupies the old slot. A legacy index key resolves to itself. Read synchronously, immediately before use.
+   */
+  static resolveCustomIndex(parsed) {
+    if (!parsed?.approvalId) return Number.isInteger(parsed?.index) ? parsed.index : -1;
+    const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
+    return approvals.findIndex((entry) => String(entry?.id || '').trim() === String(parsed.approvalId).trim());
   }
 
   static async approveRequest(host, key, options = {}) {
     const parsed = this.parseApprovalKey(key);
     if (parsed.kind === 'droid') return this.approveDroid(host, parsed.actorId);
-    if (parsed.kind === 'custom') return this.approvePendingCustom(host, parsed.index);
+    if (parsed.kind === 'custom') return this.approvePendingCustom(host, this.resolveCustomIndex(parsed), { expectedId: parsed.approvalId ?? null });
     if (parsed.kind === 'game') return this.approveGameSettlement(host, parsed.sessionId, options);
     ui?.notifications?.error?.('Invalid approval request.');
     return false;
@@ -58,7 +73,7 @@ export class GMApprovalOperationsService {
   static async denyRequest(host, key, reason = '') {
     const parsed = this.parseApprovalKey(key);
     if (parsed.kind === 'droid') return this.rejectDroid(host, parsed.actorId, reason);
-    if (parsed.kind === 'custom') return this.denyPendingCustom(host, parsed.index, reason);
+    if (parsed.kind === 'custom') return this.denyPendingCustom(host, this.resolveCustomIndex(parsed), reason, { expectedId: parsed.approvalId ?? null });
     if (parsed.kind === 'game') return this.denyGameSettlement(host, parsed.sessionId, reason);
     ui?.notifications?.error?.('Invalid approval request.');
     return false;
@@ -86,13 +101,81 @@ export class GMApprovalOperationsService {
 
 
 
+  /**
+   * The CURRENT queue index of `approval`. TI-3 (review TI3-R1): a record with an id is found by that id or NOT AT ALL — it never falls back to the old index,
+   * which after another operation removed it names a different request. An id-less legacy record may use the old index only if the entry there is
+   * still byte-identical to the record (the one way its identity can be established); otherwise -1.
+   */
   static _findApprovalIndexById(approvals = [], approval = {}, fallbackIndex = -1) {
     const id = String(approval?.id || '').trim();
-    if (id) {
-      const byId = approvals.findIndex((entry) => String(entry?.id || '').trim() === id);
-      if (byId >= 0) return byId;
+    if (id) return approvals.findIndex((entry) => String(entry?.id || '').trim() === id);
+    if (fallbackIndex >= 0 && fallbackIndex < approvals.length && JSON.stringify(approvals[fallbackIndex]) === JSON.stringify(approval)) return fallbackIndex;
+    return -1;
+  }
+
+  /** Whether `approval` is still in the live pending queue (strict identity, see _findApprovalIndexById). */
+  static isStillPending(approval, hintIndex = -1) {
+    return this._findApprovalIndexById(SettingsHelper.getArray('pendingCustomPurchases', []), approval, hintIndex) >= 0;
+  }
+
+  /**
+   * TI-3 (review TI3-R6): compare a request an approvals surface RENDERED with the live queue. 'ok' = the same request, unchanged; 'gone' = it is no longer
+   * pending; 'changed' = its id is still queued but the live record differs from what the surface showed (cost, payload or notes were edited since), so acting on
+   * the rendered copy would charge or approve something the GM did not see. Only 'ok' may be acted on.
+   */
+  static checkPending(approval, hintIndex = -1) {
+    const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
+    const at = this._findApprovalIndexById(approvals, approval, hintIndex);
+    if (at < 0) return { status: 'gone', live: null };
+    return JSON.stringify(approvals[at]) === JSON.stringify(approval) ? { status: 'ok', live: approvals[at], index: at } : { status: 'changed', live: approvals[at], index: at };
+  }
+
+  /** Evidence that a draft actor has NOT been approved: the markers the store checkout writes and approval clears. */
+  static _looksLikePendingDraft(draft) {
+    const sw = draft?.flags?.['foundryvtt-swse'] ?? {};
+    return sw.draftOnly === true || sw.pendingApproval === true || draft?.system?.storeAcquisition?.pendingApproval === true;
+  }
+
+  static _acquiredTransactionId(draft) {
+    return draft?.system?.storeAcquisition?.transactionId ?? draft?.flags?.['foundryvtt-swse']?.storeAcquisition?.transactionId ?? null;
+  }
+
+  /**
+   * The destructive half of a denial, shared by every approvals surface. TI-3 (review TI3-R2): identity, queue membership, acquisition state and pending
+   * state are all re-read UNDER the (owner, draft) decision lock — the same lock an approval of that asset takes — immediately before the delete; anything
+   * ambiguous refuses to delete an actor. Resolves { outcome, ... }:
+   *   denied | stale-approved (asset kept, stale entry removed) | missing (no longer pending) | ambiguous (an index cannot identify an id-bearing record)
+   *   | busy (an approval of this asset is running) | uncertain (cannot confirm it is still an unapproved draft: nothing deleted).
+   * Same client only (L1): another client, or a direct document write, is not coordinated.
+   */
+  static async decideDenial({ approvalId = null, index = -1, host = null } = {}) {
+    let approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
+    const at = approvalId ? approvals.findIndex((entry) => String(entry?.id || '').trim() === String(approvalId).trim()) : index;
+    const denial = approvals[at];
+    if (!denial) return { outcome: 'missing' };
+    if (!approvalId && String(denial.id || '').trim()) return { outcome: 'ambiguous', denial };
+
+    const release = TransactionEngine.acquireAssetDecisionLock(denial.ownerActorId, denial.draftActorId);
+    if (!release) return { outcome: 'busy', denial };
+    try {
+      approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
+      const now = this._findApprovalIndexById(approvals, denial, at);
+      if (now < 0) return { outcome: 'missing', denial };
+      const draft = game.actors.get(denial.draftActorId) ?? null;
+      if (draft) {
+        const acquired = this._acquiredTransactionId(draft);
+        if (acquired) {
+          await this._removeApprovalFromQueue(denial, now, host);
+          return { outcome: 'stale-approved', denial, draft, transactionId: acquired };
+        }
+        if (!this._looksLikePendingDraft(draft)) return { outcome: 'uncertain', denial, draft };
+        await draft.delete();
+      }
+      await this._removeApprovalFromQueue(denial, now, host);
+      return { outcome: 'denied', denial, deleted: !!draft };
+    } finally {
+      release();
     }
-    return fallbackIndex >= 0 && fallbackIndex < approvals.length ? fallbackIndex : -1;
   }
 
   static _approvalModSummary(approval = {}) {
@@ -209,10 +292,11 @@ export class GMApprovalOperationsService {
 
     try {
       // Credit debit, ownership link, and droid FINALIZE state apply as ONE
-      // atomic transaction (both owner and droid are snapshotted and rolled back
-      // together if any leg fails). Previously credits were deducted first and
-      // the droid finalized in separate updates, so a later failure could leave
-      // the owner charged for a droid that stayed PENDING.
+      // commerce transaction: both owner and droid are snapshotted and restored
+      // together if a leg fails (best effort, outcome verified and reported by
+      // TransactionEngine — NOT multi-document atomic). Previously credits were
+      // deducted first and the droid finalized in separate updates, so a later
+      // failure could leave the owner charged for a droid that stayed PENDING.
       const approvalResult = await TransactionEngine.executeAssetApprovalTransaction({
         actor: ownerActor,
         assetActor: actor,
@@ -246,9 +330,9 @@ export class GMApprovalOperationsService {
       }
       const transactionId = approvalResult.transactionId ?? null;
 
-      // Non-critical: append the build-history audit entry after the atomic
-      // approval. A failure here leaves the droid correctly finalized and paid.
-      try {
+      // The approval is COMMITTED. Everything below is bookkeeping and cannot undo it or report it as failed.
+      const failures = [];
+      await this._afterCommit(failures, 'build history', async () => {
         const buildHistory = Array.isArray(droidData.buildHistory) ? [...droidData.buildHistory] : [];
         buildHistory.push({
           timestamp: Date.now(),
@@ -259,31 +343,29 @@ export class GMApprovalOperationsService {
           transactionId
         });
         await ActorEngine.updateActor(actor, { 'system.droidSystems.buildHistory': buildHistory });
-      } catch (historyErr) {
-        SWSELogger.warn('[GMApprovalOperationsService] Droid approved but build-history append failed', historyErr);
-      }
-
-      Hooks.call('swseApprovalResolved', {
-        approval: {
-          id: `droid-${actor.id}`,
-          type: 'droid',
-          draftActorId: actor.id,
-          ownerActorId: ownerActor.id,
-          ownerActorName: ownerActor.name,
-          costCredits: cost,
-          draftData: { name: actor.name }
-        },
-        actor: ownerActor,
-        ownerActor,
-        ownerActorId: ownerActor.id,
-        targetActor: actor,
-        targetActorId: actor.id,
-        decision: 'approved',
-        decidedBy: game.user?.name ?? 'GM'
       });
-
-      await this._resetApprovalState(host);
-      ui?.notifications?.info?.(`Droid "${actor.name}" approved for ${ownerActor.name}`);
+      await this._afterCommit(failures, 'resolved hook', async () => {
+        Hooks.call('swseApprovalResolved', {
+          approval: {
+            id: `droid-${actor.id}`,
+            type: 'droid',
+            draftActorId: actor.id,
+            ownerActorId: ownerActor.id,
+            ownerActorName: ownerActor.name,
+            costCredits: cost,
+            draftData: { name: actor.name }
+          },
+          actor: ownerActor,
+          ownerActor,
+          ownerActorId: ownerActor.id,
+          targetActor: actor,
+          targetActorId: actor.id,
+          decision: 'approved',
+          decidedBy: game.user?.name ?? 'GM'
+        });
+      });
+      await this._afterCommit(failures, 'refresh', () => this._resetApprovalState(host));
+      this._reportCommitted(failures, `Droid "${actor.name}" approved for ${ownerActor.name}`);
       return true;
     } catch (err) {
       SWSELogger.error('[GMApprovalOperationsService] Error approving droid:', err);
@@ -305,8 +387,20 @@ export class GMApprovalOperationsService {
       return false;
     }
 
+    // G35: the owner is optional; resolve it through the same authority approveDroid uses.
+    const ownerActor = this.resolveDroidOwnerActor(actor);
+
     try {
       await ActorEngine.updateActor(actor, { 'system.droidSystems.stateMode': 'REJECTED' });
+    } catch (err) {
+      SWSELogger.error('[GMApprovalOperationsService] Error rejecting droid:', err);
+      ui?.notifications?.error?.(`Failed to reject droid: ${err.message}`);
+      return false;
+    }
+
+    // Commit boundary: the rejection is committed. Everything below is post-commit bookkeeping.
+    const failures = [];
+    await this._afterCommit(failures, 'build history', async () => {
       const buildHistory = Array.isArray(droidData.buildHistory) ? [...droidData.buildHistory] : [];
       buildHistory.push({
         timestamp: Date.now(),
@@ -315,7 +409,9 @@ export class GMApprovalOperationsService {
         reason
       });
       await ActorEngine.updateActor(actor, { 'system.droidSystems.buildHistory': buildHistory });
+    }, 'rejection');
 
+    await this._afterCommit(failures, 'resolved hook', async () => {
       Hooks.call('swseApprovalResolved', {
         approval: {
           id: `droid-${actor.id}`,
@@ -334,15 +430,17 @@ export class GMApprovalOperationsService {
         decidedBy: game.user?.name ?? 'GM',
         reason
       });
+    }, 'rejection');
 
-      await this._resetApprovalState(host);
-      ui?.notifications?.info?.(`Droid "${actor.name}" rejected${reason ? ` — ${reason}` : ''}`);
-      return true;
+    await this._afterCommit(failures, 'refresh', () => this._resetApprovalState(host), 'rejection');
+
+    // The notification is post-commit too: a throwing notifier must not turn the committed rejection into a rejected promise.
+    try {
+      this._reportCommitted(failures, `Droid "${actor.name}" rejected${reason ? ` — ${reason}` : ''}`, 'rejection');
     } catch (err) {
-      SWSELogger.error('[GMApprovalOperationsService] Error rejecting droid:', err);
-      ui?.notifications?.error?.(`Failed to reject droid: ${err.message}`);
-      return false;
+      SWSELogger.warn('[GMApprovalOperationsService] Droid rejection is committed, but its notification failed', err);
     }
+    return true;
   }
 
   static async approveGameSettlement(host, sessionId, { payoutAmount = null, reason = '', decision = 'recommended' } = {}) {
@@ -435,8 +533,11 @@ export class GMApprovalOperationsService {
 
     if (parsed.kind === 'custom') {
       const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
-      const approval = approvals[parsed.index];
-      if (!approval) throw new Error('Pending approval not found.');
+      const customIndex = this.resolveCustomIndex(parsed);
+      const approval = approvals[customIndex];
+      if (!approval) throw new Error('Pending approval not found (it may already have been approved, denied or removed).');
+      // TI-3 (review TI3-R6): an index cannot say WHICH id-bearing request to edit.
+      if (!parsed.approvalId && String(approval.id || '').trim()) throw new Error('This request was addressed by list position, which cannot identify it. Reload the approvals list and try again.');
 
       for (const [path, value] of Object.entries(edits.approvalUpdates)) this._setNestedValue(approval, path, value);
       for (const [path, value] of Object.entries(edits.metadataUpdates)) this._setNestedValue(approval, path, value);
@@ -450,7 +551,7 @@ export class GMApprovalOperationsService {
       }
       if (draftActor) await this._synchronizeApprovalToDraftActor(draftActor, approval, actorUpdates);
 
-      approvals[parsed.index] = approval;
+      approvals[customIndex] = approval;
       await this._setPendingCustomPurchases(approvals, _host);
       return true;
     }
@@ -458,14 +559,22 @@ export class GMApprovalOperationsService {
     return false;
   }
 
-  static async approvePendingCustom(host, index) {
+  static async approvePendingCustom(host, index, { expectedId = null } = {}) {
     const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
     if (index < 0 || index >= approvals.length) {
-      ui?.notifications?.error?.('Invalid approval index');
+      ui?.notifications?.error?.('That request is no longer pending (it may already have been approved, denied or removed).');
       return false;
     }
 
     const approval = approvals[index];
+    // TI-3 (review TI3-R6): a queue index cannot identify an id-bearing request — after another GM/tab changed the queue it names a different one. Only an
+    // id key (or a legacy record that has no id) may be approved; an id key must still match the record found.
+    if (expectedId ? String(approval?.id || '').trim() !== String(expectedId).trim() : String(approval?.id || '').trim()) {
+      ui?.notifications?.error?.(expectedId
+        ? 'That request is no longer pending. Nothing was charged.'
+        : 'This request was addressed by list position, which cannot identify it. Reload the approvals list and try again. Nothing was charged.');
+      return false;
+    }
     const ownerActor = game.actors.get(approval.ownerActorId);
     const draftActor = game.actors.get(approval.draftActorId);
 
@@ -512,39 +621,41 @@ export class GMApprovalOperationsService {
         return false;
       }
 
-      const history = ownerActor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
-      const purchase = {
-        timestamp: Date.now(),
-        items: [],
-        droids: draftActor.type === 'droid' ? [{ id: draftActor.id, name: assetName, cost }] : [],
-        vehicles: draftActor.type === 'vehicle' ? [{ id: draftActor.id, name: assetName, cost }] : [],
-        total: cost,
-        transactionId: approvalResult.transactionId ?? null,
-        source: `GM Datapad - Custom ${draftActor.type === 'droid' ? 'Droid' : 'Ship/Vehicle'} Approval`,
-        gmNotes: approval.metadata?.gmNotes ?? '',
-        compatibilityMirror: true
-      };
-      history.push(purchase);
-      await ActorEngine.updateActor(ownerActor, {
-        'flags.foundryvtt-swse.purchaseHistory': history
-      }, {
-        source: 'GMApprovalOperationsService.approvePendingCustom.purchaseHistoryMirror',
-        skipValidation: true
+      // The approval is COMMITTED. Everything below is bookkeeping and cannot undo it or report it as failed.
+      const failures = [];
+      await this._afterCommit(failures, 'purchase-history mirror', async () => {
+        const history = ownerActor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
+        history.push({
+          timestamp: Date.now(),
+          items: [],
+          droids: draftActor.type === 'droid' ? [{ id: draftActor.id, name: assetName, cost }] : [],
+          vehicles: draftActor.type === 'vehicle' ? [{ id: draftActor.id, name: assetName, cost }] : [],
+          total: cost,
+          transactionId: approvalResult.transactionId ?? null,
+          source: `GM Datapad - Custom ${draftActor.type === 'droid' ? 'Droid' : 'Ship/Vehicle'} Approval`,
+          gmNotes: approval.metadata?.gmNotes ?? '',
+          compatibilityMirror: true
+        });
+        await ActorEngine.updateActor(ownerActor, {
+          'flags.foundryvtt-swse.purchaseHistory': history
+        }, {
+          source: 'GMApprovalOperationsService.approvePendingCustom.purchaseHistoryMirror',
+          skipValidation: true
+        });
       });
-
-      await this._removeApprovalFromQueue(approval, index, host);
-
-      Hooks.callAll?.('swseCustomPurchaseApproved', {
-        approval,
-        actor: ownerActor,
-        draftActor,
-        transactionId: approvalResult.transactionId,
-        decidedBy: game.user?.name ?? 'GM',
-        edited: !!approval.metadata?.gmNotes
+      await this._afterCommit(failures, 'queue removal', () => this._removeApprovalFromQueue(approval, index, host));
+      await this._afterCommit(failures, 'approved hook', async () => {
+        Hooks.callAll?.('swseCustomPurchaseApproved', {
+          approval,
+          actor: ownerActor,
+          draftActor,
+          transactionId: approvalResult.transactionId,
+          decidedBy: game.user?.name ?? 'GM',
+          edited: !!approval.metadata?.gmNotes
+        });
       });
-
-      await this._resetApprovalState(host);
-      ui?.notifications?.info?.(`Approved: ${assetName}`);
+      await this._afterCommit(failures, 'refresh', () => this._resetApprovalState(host));
+      this._reportCommitted(failures, `Approved: ${assetName}`);
       return true;
     } catch (err) {
       SWSELogger.error('[GMApprovalOperationsService] Error approving custom purchase:', err);
@@ -553,32 +664,47 @@ export class GMApprovalOperationsService {
     }
   }
 
-  static async denyPendingCustom(host, index, reason = '') {
-    const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
-    if (index < 0 || index >= approvals.length) {
-      ui?.notifications?.error?.('Invalid approval index');
-      return false;
-    }
-
+  static async denyPendingCustom(host, index, reason = '', { expectedId = null } = {}) {
     try {
-      const denial = approvals[index];
-      const ownerActor = game.actors.get(denial.ownerActorId);
-      const draftActor = game.actors.get(denial.draftActorId);
-
-      if (draftActor) await draftActor.delete();
-      await this._removeApprovalFromQueue(denial, index, host);
-
-      Hooks.callAll?.('swseCustomPurchaseDenied', {
-        approval: denial,
-        actor: ownerActor,
-        decidedBy: game.user?.name ?? 'GM',
-        reason,
-        noCreditsChanged: true
-      });
-
-      await this._resetApprovalState(host);
-      ui?.notifications?.info?.(`Denied: ${denial.draftData?.name ?? 'Custom asset'}${reason ? ` — ${reason}` : ''}`);
-      return true;
+      // The destructive decision (identity, pending state, delete) is the shared core; this wrapper only reports it.
+      const result = await this.decideDenial({ approvalId: expectedId, index, host });
+      const denial = result.denial ?? null;
+      const name = denial?.draftData?.name ?? 'Custom asset';
+      switch (result.outcome) {
+        case 'missing':
+          ui?.notifications?.error?.('That request is no longer pending (it may already have been approved, denied or removed). Nothing was deleted.');
+          return false;
+        case 'ambiguous':
+          ui?.notifications?.error?.('This request was addressed by list position, which cannot identify it. Reload the approvals list and try again. Nothing was deleted.');
+          return false;
+        case 'busy':
+          ui?.notifications?.warn?.(`An approval for ${name} is in progress; try again in a moment. Nothing was deleted.`);
+          return false;
+        case 'uncertain':
+          ui?.notifications?.warn?.(`${result.draft?.name ?? name} could not be confirmed as an unapproved draft, so it was NOT deleted and the request was left in the queue. Review it manually.`);
+          return false;
+        case 'stale-approved':
+          await this._afterCommit([], 'refresh', () => this._resetApprovalState(host));
+          ui?.notifications?.warn?.(`${result.draft.name} was already approved (transaction ${result.transactionId}); the stale request was removed and the asset was kept.`);
+          return false;
+        case 'denied': {
+          const failures = [];
+          await this._afterCommit(failures, 'denied hook', async () => {
+            Hooks.callAll?.('swseCustomPurchaseDenied', {
+              approval: denial,
+              actor: game.actors.get(denial.ownerActorId),
+              decidedBy: game.user?.name ?? 'GM',
+              reason,
+              noCreditsChanged: true
+            });
+          });
+          await this._afterCommit(failures, 'refresh', () => this._resetApprovalState(host));
+          this._reportCommitted(failures, `Denied: ${name}${reason ? ` — ${reason}` : ''}`);
+          return true;
+        }
+        default:
+          return false;
+      }
     } catch (err) {
       SWSELogger.error('[GMApprovalOperationsService] Error denying custom purchase:', err);
       ui?.notifications?.error?.(`Failed to deny: ${err.message}`);
@@ -623,19 +749,22 @@ export class GMApprovalOperationsService {
       return false;
     }
 
-    await this._removeApprovalFromQueue(approval, index, host);
-
-    Hooks.callAll?.('swseCustomPurchaseApproved', {
-      approval,
-      actor: ownerActor,
-      draftActor: null,
-      transactionId: result.transactionId,
-      decidedBy: game.user?.name ?? 'GM',
-      edited: !!approval.metadata?.gmNotes
+    // The purchase is COMMITTED (StoreEngine keeps it committed even when its own post-commit step fails). The rest is bookkeeping.
+    const failures = [];
+    if (result.presentationError) failures.push(`store notification: ${result.presentationError}`);
+    await this._afterCommit(failures, 'queue removal', () => this._removeApprovalFromQueue(approval, index, host));
+    await this._afterCommit(failures, 'approved hook', async () => {
+      Hooks.callAll?.('swseCustomPurchaseApproved', {
+        approval,
+        actor: ownerActor,
+        draftActor: null,
+        transactionId: result.transactionId,
+        decidedBy: game.user?.name ?? 'GM',
+        edited: !!approval.metadata?.gmNotes
+      });
     });
-
-    await this._resetApprovalState(host);
-    ui?.notifications?.info?.(`Approved: ${approval.draftData?.name ?? 'Store purchase'}`);
+    await this._afterCommit(failures, 'refresh', () => this._resetApprovalState(host));
+    this._reportCommitted(failures, `Approved: ${approval.draftData?.name ?? 'Store purchase'}`);
     return true;
   }
 
@@ -848,6 +977,25 @@ export class GMApprovalOperationsService {
     delete clone._id;
     delete clone.id;
     return clone;
+  }
+
+  /**
+   * TI-3: approval follow-ups (history mirror, queue removal, hooks, refresh, notification) are bookkeeping AFTER a transaction that already committed.
+   * A failure in one is recorded and reported as a warning; it never turns a committed approval into a "Failed to approve" (which invites a second charge).
+   */
+  static async _afterCommit(failures, label, step, noun = 'approval') {
+    try {
+      await step();
+    } catch (err) {
+      SWSELogger.warn(`[GMApprovalOperationsService] Post-commit step "${label}" failed; the ${noun} itself is committed`, err);
+      failures.push(`${label}: ${err?.message ?? err}`);
+    }
+  }
+
+  static _reportCommitted(failures, message, noun = 'approval') {
+    const verb = noun === 'approval' ? 'approve' : 'reject';
+    if (failures.length) ui?.notifications?.warn?.(`${message} — but some follow-up steps failed (${failures.join('; ')}). The ${noun} itself is committed; do not ${verb} it again.`);
+    else ui?.notifications?.info?.(message);
   }
 
   static async _resetApprovalState(host) {

@@ -2898,10 +2898,13 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       modifier,
       rollRaw: mode === 'roll' ? rollRaw : null,
       checkMode: mode,
-      title: success ? 'Lightsaber Forged' : 'Construction Failed',
+      title: success ? 'Lightsaber Forged' : (result.indeterminate ? 'Construction Uncertain' : 'Construction Failed'),
       message: success
         ? `Success — DC ${finalDc} met. Credits were deducted and the lightsaber was created through the construction engine.`
-        : `${this._formatLightsaberEligibilityReason(result.reason || 'roll_failed')} No item was created and credits were not deducted.`,
+        : (result.indeterminate
+          // TI4-C0/G06: an unverified rollback must not be reported as a clean failure. The check result above is preserved; do not roll again.
+          ? 'The construction attempt failed and the rollback could not be verified, so credits and the character may be partially changed. The Use the Force result shown is preserved — do not retry or roll again until a GM has checked the character.'
+          : `${this._formatLightsaberEligibilityReason(result.reason || 'roll_failed')} No item was created and credits were not deducted.`),
       itemId: result.itemId ?? null,
       cost: result.cost ?? null
     };

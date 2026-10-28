@@ -71,6 +71,9 @@ function isActionableMessengerRecord(record = {}) {
   const metadata = record?.metadata || {};
   if (metadata.gameInvite && !['accepted', 'declined', 'cancelled', 'expired'].includes(String(metadata.gameInvite.status || '').toLowerCase())) return true;
   if (metadata.creditTransfer && ['pending', 'offered', 'requested', 'countered'].includes(String(metadata.creditTransfer.status || '').toLowerCase())) return true;
+  // TI4-C0/G16: an unresolved (INDETERMINATE) credit movement keeps the only copy of its reconciliation evidence — never prune it.
+  if (metadata.creditTransfer && (String(metadata.creditTransfer.status || '').toLowerCase() === 'indeterminate'
+    || safeArray(metadata.creditTransfer.entries).some(entry => String(entry?.status || '').toLowerCase() === 'indeterminate'))) return true;
   if (metadata.itemTransfer && ['pending', 'offered', 'requested', 'countered'].includes(String(metadata.itemTransfer.status || '').toLowerCase())) return true;
   if (metadata.assetTransfer && ['pending', 'offered', 'requested', 'countered'].includes(String(metadata.assetTransfer.status || '').toLowerCase())) return true;
   if (metadata.jobCard && !['paid', 'archived', 'failed'].includes(String(metadata.jobCard.status || metadata.job?.status || '').toLowerCase())) return true;

@@ -111,6 +111,7 @@ async function refundDebitEntries(session, entries = [], reason = 'Game escrow r
         seatId: entry.seatId,
         seatLabel: entry.seatLabel,
         amount,
+        debitTransactionId: entry.transactionId ?? null,
         error: `${entry.seatLabel || entry.seatId || 'A seat'} has no actor-backed wallet for refund.`
       });
       continue;
@@ -129,9 +130,207 @@ async function refundDebitEntries(session, entries = [], reason = 'Game escrow r
         })
       }
     }, { source: 'GameCreditEscrowService.refundDebitEntries' });
-    refunds.push({ ...refund, actorId: actor.id, actorName: actor.name, seatId: entry.seatId, amount });
+    refunds.push({ ...refund, actorId: actor.id, actorName: actor.name, seatId: entry.seatId, amount, debitTransactionId: entry.transactionId ?? null });
   }
   return refunds;
+}
+
+/* ------------------------------------------------------------------------------------------------------------------------------------------ *
+ * TI4-C0/G22 — per-entry refund evidence.
+ *
+ * Every escrow debit entry has its own refund state, derived from `escrow.credits.refundLedger` (written by refundSession, keyed by the entry's
+ * debit transaction id) or, for sessions refunded before the ledger existed, from the `escrow.credits.refunds` history (matched by seat). States:
+ *   pending       no refund was ever attempted
+ *   failed        every previous attempt DEFINITIVELY failed (success:false without rollbackFailed/indeterminate): retryable
+ *   refunded      a refund with a transaction id succeeded: never refunded again
+ *   indeterminate an attempt returned rollbackFailed/indeterminate/threw/was interrupted before its result was recorded: credits may have moved
+ *   review        evidence is missing, malformed or ambiguous: fail closed
+ * Only `pending` and `failed` entries are ever refunded. Same-client only (L1): there is no durable receipt and no compare-and-swap.
+ * ------------------------------------------------------------------------------------------------------------------------------------------ */
+const refundsInFlight = new Set();
+
+/** The escrow debit's transaction id, or null when it is missing / null / empty / blank (an entry without one has no identifiable debit). */
+function debitIdOf(entry = {}) {
+  const id = entry?.transactionId;
+  if (id === undefined || id === null) return null;
+  const text = String(id).trim();
+  return text === '' ? null : text;
+}
+
+function refundEntryKey(entry = {}) {
+  return debitIdOf(entry) ?? `seat:${entry.seatId}`;
+}
+
+/** Strict identity: both sides must be present (non-empty) and equal. A missing value never matches. */
+function sameId(a, b) {
+  return a !== undefined && a !== null && a !== '' && b !== undefined && b !== null && b !== '' && String(a) === String(b);
+}
+
+/** Strict amount: the recorded amount must be present, positive and equal. A missing amount never matches. */
+function sameAmount(recorded, expected) {
+  return recorded !== undefined && recorded !== null && recorded !== '' && expected > 0 && safeAmount(recorded) === expected;
+}
+
+function classifyRefundRecord(record) {
+  if (!record || typeof record !== 'object' || Array.isArray(record) || typeof record.success !== 'boolean') return 'review';
+  if (record.success === true) return record.transactionId ? 'refunded' : 'review';
+  if (record.rollbackFailed === true || record.indeterminate === true) return 'indeterminate';
+  return 'failed';
+}
+
+function deriveRefundStates(credits = {}) {
+  const entries = (Array.isArray(credits.entries) ? credits.entries : []).filter(entry => entry && safeAmount(entry.amount) > 0);
+  const history = Array.isArray(credits.refunds) ? credits.refunds : [];
+  const ledger = credits.refundLedger && typeof credits.refundLedger === 'object' ? credits.refundLedger : {};
+  const keyCounts = new Map();
+  for (const entry of entries) {
+    keyCounts.set(refundEntryKey(entry), (keyCounts.get(refundEntryKey(entry)) || 0) + 1);
+  }
+
+  // Legacy refund-history attribution. A seat is NOT an identity, and every identity field must be PRESENT and agree (nothing is manufactured):
+  //   - a record naming a debit id belongs only to the entry with that id, and only if its seat, actor and amount agree with that entry;
+  //     a disagreeing record is conflicting evidence for that entry AND for the seat(s) the record itself claims; a named id matching no entry is
+  //     conflicting evidence for the seat it claims;
+  //   - a record without a debit id is attributable only when its seat has exactly one escrow entry and actor and amount agree;
+  //   - a record with neither a debit id nor a seat cannot be attributed to anything: every entry fails closed.
+  // A conflict sends the affected entries to review: it is never ignored as "no refund attempted", and it applies to failures as well as successes.
+  const legacy = new Map(entries.map(entry => [entry, { attributed: [], conflict: null }]));
+  const flag = (entry, reason) => { const slot = legacy.get(entry); slot.conflict ??= reason; };
+  let globalConflict = null;
+  const hasSeat = (record) => record.seatId !== undefined && record.seatId !== null && String(record.seatId).trim() !== '';
+  for (const record of history) {
+    if (!record || typeof record !== 'object') continue;
+    const named = record.debitTransactionId !== undefined && record.debitTransactionId !== null && String(record.debitTransactionId).trim() !== '' ? String(record.debitTransactionId).trim() : null;
+    const claimedSeat = entries.filter(entry => sameId(record.seatId, entry.seatId));
+    const agrees = (entry) => sameId(record.seatId, entry.seatId) && sameId(record.actorId, entry.actorId) && sameAmount(record.amount, safeAmount(entry.amount));
+    if (named) {
+      const owners = entries.filter(entry => debitIdOf(entry) === named);
+      if (!owners.length) {
+        if (!claimedSeat.length && !hasSeat(record)) globalConflict ??= 'refund-evidence-unattributable';   // unknown debit AND no usable seat: attributable to nothing
+        for (const entry of claimedSeat) flag(entry, 'refund-evidence-for-unknown-debit');
+        continue;
+      }
+      for (const owner of owners) {
+        if (agrees(owner)) legacy.get(owner).attributed.push(record);
+        else {
+          flag(owner, 'refund-evidence-identity-conflict');
+          for (const entry of claimedSeat) if (entry !== owner) flag(entry, 'refund-evidence-names-another-debit');
+        }
+      }
+      continue;
+    }
+    if (!claimedSeat.length) {
+      if (record.seatId === undefined || record.seatId === null || record.seatId === '') globalConflict ??= 'refund-evidence-unattributable';
+      continue;                                    // a record for a seat with no escrow entry here is not this session's debit evidence
+    }
+    if (claimedSeat.length !== 1) { for (const entry of claimedSeat) flag(entry, 'refund-evidence-not-attributable-to-one-debit'); continue; }
+    if (agrees(claimedSeat[0])) legacy.get(claimedSeat[0]).attributed.push(record);
+    else flag(claimedSeat[0], 'refund-evidence-identity-conflict');
+  }
+
+  return entries.map(entry => {
+    const key = refundEntryKey(entry);
+    const amount = safeAmount(entry.amount);
+    const base = { key, entry, seatId: entry.seatId, actorId: entry.actorId ?? null, amount, debitTransactionId: entry.transactionId ?? null };
+    if (keyCounts.get(key) > 1) return { ...base, status: 'review', reason: 'ambiguous-entry-identity' };
+    // An entry with no identifiable debit transaction can neither be refunded automatically nor have a refund ledger / history trusted for it:
+    // the synthetic `seat:` key is a lookup convenience, not an identity.
+    if (!debitIdOf(entry)) return { ...base, status: 'review', reason: 'escrow-entry-without-debit-transaction-id' };
+
+    // Legacy refund-history state for THIS debit (attributed record by record in `legacy` above). Computed whether or not a ledger exists:
+    // a ledger never bypasses conflicting, unattributable or contradictory history.
+    const { attributed, conflict: entryConflict } = legacy.get(entry);
+    const historyConflict = entryConflict ?? globalConflict;
+    const classes = attributed.map(classifyRefundRecord);
+    const successes = attributed.filter((_record, index) => classes[index] === 'refunded');
+    let history;                                    // { status, refundTransactionId?, duplicateRefunds?, reason? }
+    if (historyConflict) history = { status: 'review', reason: historyConflict };
+    else if (successes.length) {
+      // A success certifies the debit only if ALL attributable evidence agrees with it: two different successful refunds, or a success next to an
+      // unresolved / malformed record for the same debit, is a contradiction (a duplicate record of the SAME refund transaction is harmless).
+      if (new Set(successes.map(record => String(record.transactionId))).size > 1) history = { status: 'review', reason: 'conflicting-refund-successes' };
+      else if (classes.includes('indeterminate') || classes.includes('review')) history = { status: 'review', reason: 'refund-success-alongside-unresolved-record' };
+      else history = { status: 'refunded', refundTransactionId: successes[0].transactionId, duplicateRefunds: successes.length > 1 ? successes.length : 0 };
+    }
+    else if (classes.includes('indeterminate')) history = { status: 'indeterminate', reason: 'unresolved-refund-outcome' };
+    else if (classes.includes('review')) history = { status: 'review', reason: 'missing-or-malformed-refund-evidence' };
+    else history = { status: attributed.length ? 'failed' : 'pending' };
+
+    const led = ledger[key];
+    if (!led) return { ...base, ...history };
+
+    // A ledger record is evidence only for the debit it names: debit id, seat, actor and amount must ALL be present and agree with the entry.
+    if (!sameId(led.seatId, entry.seatId)
+      || !sameId(led.actorId, entry.actorId)
+      || !sameId(led.debitTransactionId, debitIdOf(entry))
+      || !sameAmount(led.amount, amount)) return { ...base, status: 'review', reason: 'ledger-identity-mismatch', ledger: led };
+    if (!['refunded', 'failed', 'indeterminate', 'attempting'].includes(led.status)) return { ...base, status: 'review', reason: 'unknown-ledger-status', ledger: led };
+    if (led.status === 'refunded' && !led.refundTransactionId) return { ...base, status: 'review', reason: 'refunded-without-transaction-id', ledger: led };
+
+    // Ledger and history must agree. Any contradiction is `review`: never an automatic retry and never a refunded certification.
+    //   history conflict / malformed           -> review (the history cannot be trusted either way)
+    //   ledger refunded : history must be empty or contain that same refund (a different, or no, success is contradictory)
+    //   ledger failed   : history must be empty or definitively failed (a success or an unresolved attempt means credits may have moved)
+    //   ledger unresolved (indeterminate / attempting): history must not show a success
+    const contradiction = (reason) => ({ ...base, status: 'review', reason, ledger: led });
+    if (history.status === 'review') return contradiction(`ledger-history-conflict:${history.reason}`);
+    if (led.status === 'refunded') {
+      if (history.status === 'refunded' && !successes.some(record => String(record.transactionId) === String(led.refundTransactionId))) return contradiction('ledger-history-refund-transaction-mismatch');
+      if (history.status === 'failed' || history.status === 'indeterminate') return contradiction('ledger-refunded-but-history-has-no-success');
+      return { ...base, status: 'refunded', refundTransactionId: led.refundTransactionId, ledger: led };
+    }
+    if (history.status === 'refunded') return contradiction(`ledger-${led.status}-but-history-shows-refunded`);
+    if (led.status === 'failed') {
+      if (history.status === 'indeterminate') return contradiction('ledger-failed-but-history-unresolved');
+      return { ...base, status: 'failed', ledger: led };
+    }
+    if (led.status === 'indeterminate') return { ...base, status: 'indeterminate', reason: 'unresolved-refund-outcome', ledger: led };
+    return { ...base, status: 'indeterminate', reason: 'interrupted-attempt', ledger: led };
+  });
+}
+
+/** Unresolved payout activity means the buy-in may already have been (partly) paid out: refunding it in full could create credits. */
+function payoutRefundBlockers(credits = {}) {
+  const blockers = [];
+  const payout = credits.payout;
+  if (payout && typeof payout === 'object') {
+    if (payout.success === true) blockers.push('a payout was paid and is not recorded as rolled back');
+    else if (payout.rollbackFailed === true || payout.indeterminate === true) blockers.push('a payout outcome is unresolved');
+  }
+  const payouts = Array.isArray(credits.payouts) ? credits.payouts : [];
+  const rollbacks = Array.isArray(credits.payoutRollbacks) ? credits.payoutRollbacks : [];
+  // A payout counts as reversed only by a SUCCESSFUL rollback that can be matched to THAT payout, each rollback used once:
+  //   - a rollback that names the payout it reverses (`rollbackOfTransactionId`) matches only that payout, and only when seat, actor and amount (-approvedPayout) also agree;
+  //   - an older rollback without it matches only when seat, actor and amount all agree (a missing actor or amount never matches).
+  // A reversal of another payout on the same seat is not proof; anything unmatched blocks the refund.
+  const available = rollbacks.filter(rollback => rollback && rollback.success === true);
+  const paid = payouts.filter(entry => entry?.success === true);
+  const unmatched = [];
+  const take = (predicate) => { const index = available.findIndex(predicate); if (index < 0) return false; available.splice(index, 1); return true; };
+  // Every identity must be present and agree: payout id (explicit) or none (legacy), seat, actor, and the reversal amount (-approvedPayout).
+  const reverses = (rollback, entry) => {
+    const expected = safeAmount(entry.approvedPayout ?? entry.amount);
+    return rollback.seatId !== undefined && rollback.seatId === entry.seatId && sameId(rollback.actorId, entry.actorId) && expected > 0 && Number(rollback.amount) === -expected;
+  };
+  const pending = paid.filter(entry => !take(rollback => rollback.rollbackOfTransactionId && entry.transactionId && String(rollback.rollbackOfTransactionId) === String(entry.transactionId) && reverses(rollback, entry)));
+  for (const entry of pending) {
+    if (!take(rollback => !rollback.rollbackOfTransactionId && reverses(rollback, entry))) unmatched.push(entry);
+  }
+  for (const entry of unmatched) blockers.push(`the payout to ${entry.seatId} is not recorded as rolled back`);
+  for (const entry of payouts) {
+    if (entry?.success !== true && (entry?.rollbackFailed === true || entry?.indeterminate === true)) blockers.push(`the payout to ${entry?.seatId ?? 'a seat'} is unresolved`);
+  }
+  if (rollbacks.some(rollback => rollback && rollback.success !== true)) blockers.push('a payout rollback failed');
+  return blockers;
+}
+
+async function persistRefundProgress(sessionId, key, ledgerEntry, historyRecord = null) {
+  const current = GameSessionStore.getSession(sessionId);
+  if (!current) throw new Error('The game session is no longer in the session store.');
+  const escrow = ensureEscrow(current);
+  escrow.credits.refundLedger = { ...(escrow.credits.refundLedger || {}), [key]: ledgerEntry };
+  if (historyRecord) escrow.credits.refunds = [...escrow.credits.refunds, historyRecord];
+  return GameSessionStore.upsertSession({ ...current, escrow });
 }
 
 function failedCreditResults(results = []) {
@@ -202,7 +401,7 @@ async function rollbackAppliedCreditPayouts(session = {}, payouts = [], reason =
         })
       }
     }, { source });
-    rollbacks.push({ ...rollback, actorId: actor.id, actorName: actor.name, seatId: payout.seatId, amount: -amount });
+    rollbacks.push({ ...rollback, actorId: actor.id, actorName: actor.name, seatId: payout.seatId, amount: -amount, rollbackOfTransactionId: payout.transactionId ?? null });
   }
   return rollbacks;
 }
@@ -290,6 +489,156 @@ async function approveTableCreditBalanceSettlement(session = {}, escrow = {}, { 
     log: [...(session.log ?? []), { id: randomId('log'), at: now(), type: status === 'settled' ? 'credit-table-balances-gm-settled' : 'credit-table-balances-payout-failed', by: by ?? game.user?.id ?? null, requestedBalances, approvedBalances, approvedPayout: approvedTotal, decision, error: status === 'payout-failed' ? message : null }]
   });
   return { ok: status === 'settled', session: updated, payouts, error: status === 'payout-failed' ? message : null };
+}
+
+async function refundSessionAuthoritative(sessionId, reason) {
+  const first = GameSessionStore.getSession(sessionId);
+  const escrow0 = ensureEscrow(first);
+  if (escrow0.credits.status === 'refunded') {
+    // A `refunded` marker is a claim, not evidence: it is honoured only while every entry's refund evidence still agrees. No credits move either way.
+    const unverified = deriveRefundStates(escrow0.credits).filter(state => state.status !== 'refunded');
+    if (!unverified.length) return { ok: true, skipped: true, session: first };
+    return { ok: false, indeterminate: true, session: first,
+      error: `This game escrow is marked refunded, but its refund records do not verify (${unverified.map(state => `${state.entry.seatLabel || state.seatId}: ${state.reason ?? state.status}`).join('; ')}). It was not refunded again; a GM must review it.`,
+      unresolvedEntries: unverified.map(state => ({ seatId: state.seatId, status: state.status, reason: state.reason ?? null })) };
+  }
+  if (!['escrowed', 'payout-failed', 'refund-failed'].includes(escrow0.credits.status)) return { ok: false, error: 'Credit escrow is not refundable in its current state.', session: first };
+  const blockers = payoutRefundBlockers(escrow0.credits);
+  if (blockers.length) {
+    return { ok: false, indeterminate: true, session: first, error: `Refund refused: ${blockers.join('; ')}. A GM must reconcile the payout before the buy-in is refunded.` };
+  }
+
+  const attempts = [];
+  const skippedRefunded = [];
+  const problems = [];
+  let stopped = null;
+
+  const initialStates = deriveRefundStates(escrow0.credits);
+  for (const initial of initialStates) {
+    if (stopped) break;
+    // Re-read the latest authoritative evidence before EVERY entry.
+    const cur = GameSessionStore.getSession(sessionId);
+    if (!cur) { stopped = { error: 'The game session disappeared from the session store during the refund; processing stopped.' }; break; }
+    const state = deriveRefundStates(ensureEscrow(cur).credits).find(candidate => candidate.key === initial.key);
+    if (!state) continue;
+    if (state.status === 'refunded') { skippedRefunded.push({ seatId: state.seatId, refundTransactionId: state.refundTransactionId }); continue; }
+    if (state.status !== 'pending' && state.status !== 'failed') continue;   // indeterminate / review: never refunded automatically
+
+    const entry = state.entry;
+    const label = entry.seatLabel || entry.seatId || 'A seat';
+    const actor = entry.actorId ? game.actors?.get?.(entry.actorId) : null;
+    const prevAttempts = Array.isArray(state.ledger?.attempts) ? state.ledger.attempts : [];
+    const attemptId = randomId('refund');
+    const ledgerBase = { key: state.key, seatId: entry.seatId, seatLabel: entry.seatLabel ?? null, actorId: entry.actorId ?? null, actorName: entry.actorName ?? null,
+      amount: state.amount, debitTransactionId: entry.transactionId ?? null };
+
+    if (!actor) {
+      const record = { success: false, actorId: entry.actorId ?? null, actorName: entry.actorName ?? null, seatId: entry.seatId, seatLabel: entry.seatLabel, amount: state.amount,
+        debitTransactionId: entry.transactionId ?? null, attemptId, attemptedAt: now(), error: `${label} has no actor-backed wallet for refund.` };
+      attempts.push(record);
+      try {
+        await persistRefundProgress(sessionId, state.key, { ...ledgerBase, status: 'failed', attemptId, attempts: [...prevAttempts, { attemptId, at: record.attemptedAt, outcome: 'failed', success: false, error: record.error }], lastError: record.error }, record);
+      } catch (persistErr) {
+        problems.push(record.error);
+        stopped = { error: `Could not record the failed refund for ${label}: ${persistErr?.message ?? persistErr}. No credits were moved for this seat.` };
+      }
+      problems.push(record.error);
+      continue;
+    }
+
+    // Write-ahead intent: if this cannot be saved, NO credit is moved for this entry and processing stops.
+    try {
+      await persistRefundProgress(sessionId, state.key, { ...ledgerBase, status: 'attempting', attemptId, attemptedAt: now(), attempts: prevAttempts });
+    } catch (intentErr) {
+      stopped = { error: `Could not record the refund intent for ${label}; no credits were moved for this seat and processing stopped: ${intentErr?.message ?? intentErr}` };
+      break;
+    }
+
+    let result;
+    let thrown = null;
+    try {
+      result = await TransactionEngine.executeCreditAdjustment({
+        actor,
+        amount: state.amount,
+        reason,
+        transactionContext: 'game-credit-refund',
+        audit: {
+          ...baseAudit(first, { seatId: entry.seatId, displayName: entry.seatLabel }, {
+            escrowId: escrow0.credits.escrowId ?? null,
+            refundOfTransactionId: entry.transactionId,
+            refundReason: reason,
+            refundAttemptId: attemptId,
+            wagerType: 'buy-in'
+          })
+        }
+      }, { source: 'GameCreditEscrowService.refundDebitEntries' });
+    } catch (err) {
+      thrown = err;
+      result = { success: false, indeterminate: true, error: `The refund call threw: ${err?.message ?? err}` };
+    }
+    let outcome = classifyRefundRecord(result);
+    if (outcome === 'review') outcome = 'indeterminate';                         // a malformed live result: the outcome is unknown
+    const record = { ...(result && typeof result === 'object' ? result : {}), success: result?.success === true, actorId: actor.id, actorName: actor.name, seatId: entry.seatId, amount: state.amount,
+      debitTransactionId: entry.transactionId ?? null, attemptId, attemptedAt: now(), ...(outcome === 'indeterminate' && result?.indeterminate !== true && result?.rollbackFailed !== true ? { indeterminate: true } : {}) };
+    attempts.push(record);
+    const ledgerEntry = { ...ledgerBase, status: outcome, attemptId,
+      ...(outcome === 'refunded' ? { refundTransactionId: record.transactionId } : {}),
+      attempts: [...prevAttempts, { attemptId, at: record.attemptedAt, outcome, success: record.success, transactionId: record.transactionId ?? null, error: record.error ?? null, rollbackFailed: record.rollbackFailed === true, indeterminate: record.indeterminate === true }],
+      lastError: record.error ?? null };
+    try {
+      await persistRefundProgress(sessionId, state.key, ledgerEntry, record);
+    } catch (persistErr) {
+      // Credits may have moved and the result could not be saved: the intent marker stays (so a later call sees an unresolved attempt). Do NOT continue.
+      stopped = {
+        indeterminate: true,
+        error: `The refund for ${label} ${outcome === 'refunded' ? `succeeded (transaction ${record.transactionId})` : `finished as ${outcome}${record.transactionId ? ` (transaction ${record.transactionId})` : ''}`}, but its result could not be saved (${persistErr?.message ?? persistErr}). It will not be repeated automatically; a GM must review it.`
+      };
+      break;
+    }
+    if (outcome !== 'refunded') problems.push(`${label}: ${record.error || `refund ${outcome}`}`);
+    if (thrown) problems.push(`${label}: ${thrown.message}`);
+  }
+
+  const latest = GameSessionStore.getSession(sessionId) ?? first;
+  if (stopped) {
+    return { ok: false, indeterminate: stopped.indeterminate === true || undefined, session: latest, refunds: attempts, error: stopped.error, ...(skippedRefunded.length ? { skippedRefunded } : {}) };
+  }
+
+  // Final status reflects the ACTUAL per-entry evidence.
+  const finalEscrow = ensureEscrow(latest);
+  const finalStates = deriveRefundStates(finalEscrow.credits);
+  const unresolved = finalStates.filter(state => state.status !== 'refunded');
+  const unresolvedHard = unresolved.filter(state => state.status === 'indeterminate' || state.status === 'review');
+  const allRefunded = unresolved.length === 0;
+  const messages = [...problems];
+  for (const state of unresolvedHard) messages.push(`${state.entry.seatLabel || state.seatId}: refund ${state.status === 'review' ? 'evidence needs review' : 'outcome is unresolved'} (${state.reason})`);
+  const refundError = allRefunded ? '' : (messages.length ? [...new Set(messages)].join(' ') : 'One or more game escrow refunds are not complete.');
+  const status = allRefunded ? 'refunded' : 'refund-failed';
+  const updated = await GameSessionStore.upsertSession({
+    ...latest,
+    status,
+    escrow: {
+      ...finalEscrow,
+      credits: {
+        ...finalEscrow.credits,
+        status,
+        refundedAt: allRefunded ? now() : null,
+        refundFailedAt: allRefunded ? finalEscrow.credits.refundFailedAt ?? null : now(),
+        refundReason: reason,
+        refundError: refundError || null,
+        refundUnresolved: unresolved.map(state => ({ seatId: state.seatId, key: state.key, status: state.status, reason: state.reason ?? null }))
+      }
+    },
+    log: [...(latest.log ?? []), { id: randomId('log'), at: now(), type: allRefunded ? 'credit-escrow-refunded' : 'credit-escrow-refund-failed', by: game.user?.id ?? null, reason, error: refundError || null }]
+  });
+  return {
+    ok: allRefunded,
+    session: updated,
+    refunds: attempts,
+    error: refundError || null,
+    ...(unresolvedHard.length ? { indeterminate: true, unresolvedEntries: unresolvedHard.map(state => ({ seatId: state.seatId, status: state.status, reason: state.reason ?? null })) } : {}),
+    ...(skippedRefunded.length ? { skippedRefunded } : {})
+  };
 }
 
 export class GameCreditEscrowService {
@@ -776,32 +1125,31 @@ export class GameCreditEscrowService {
     return { ok: status === 'settled', session: updated, payout, error: payout?.error ?? null };
   }
 
+  /**
+   * Refund every escrowed buy-in exactly once (TI4-C0/G22).
+   *
+   * The CURRENT session is read from GameSessionStore by id (the caller's copy is never the authority for status or prior refunds). Each entry is
+   * refunded only if its own refund state is `pending` or `failed` (see deriveRefundStates); an intent marker is persisted BEFORE the credit
+   * adjustment and the outcome AFTER it, one entry at a time, so a failed/interrupted attempt is never silently repeated. If the outcome cannot be
+   * persisted, processing STOPS and the entry stays `indeterminate` (the intent marker remains). Returns `{ ok, session, refunds, error }`
+   * (+ `indeterminate`, `unresolvedEntries`, `skippedRefunded` when relevant); `refunds` lists THIS call's attempts, the cumulative history is
+   * `session.escrow.credits.refunds`. L1 only: single client, no exactly-once or durable-receipt guarantee.
+   */
   static async refundSession(session = {}, reason = 'Game cancelled') {
-    const profile = getCreditProfile(session);
-    if (!profile.enabled) return { ok: true, skipped: true, session };
-    const escrow = ensureEscrow(session);
-    if (escrow.credits.status === 'refunded') return { ok: true, skipped: true, session };
-    if (!['escrowed', 'payout-failed', 'refund-failed'].includes(escrow.credits.status)) return { ok: false, error: 'Credit escrow is not refundable in its current state.', session };
-    const refunds = await refundDebitEntries(session, escrow.credits.entries || [], reason);
-    const refundError = summarizeFailures(refunds, 'One or more game escrow refunds failed.');
-    const status = refundError ? 'refund-failed' : 'refunded';
-    const updated = await GameSessionStore.upsertSession({
-      ...session,
-      status,
-      escrow: {
-        ...escrow,
-        credits: {
-          ...escrow.credits,
-          status,
-          refunds,
-          refundedAt: refundError ? null : now(),
-          refundFailedAt: refundError ? now() : escrow.credits.refundFailedAt ?? null,
-          refundReason: reason,
-          refundError: refundError || null
-        }
-      },
-      log: [...(session.log ?? []), { id: randomId('log'), at: now(), type: refundError ? 'credit-escrow-refund-failed' : 'credit-escrow-refunded', by: game.user?.id ?? null, reason, error: refundError || null }]
-    });
-    return { ok: !refundError, session: updated, refunds, error: refundError || null };
+    const sessionId = String(session?.id || '');
+    // The CURRENT stored session decides whether this is a credit wager at all; the caller's copy is consulted only when nothing is stored.
+    const current0 = sessionId ? GameSessionStore.getSession(sessionId) : null;
+    if (!current0) {
+      if (!getCreditProfile(session).enabled) return { ok: true, skipped: true, session };   // a genuine non-credit game: nothing to refund
+      return { ok: false, error: 'This game session is not in the session store; the refund was refused.', session };
+    }
+    if (!getCreditProfile(current0).enabled) return { ok: true, skipped: true, session: current0 };
+    if (refundsInFlight.has(sessionId)) return { ok: false, error: 'A refund for this game session is already in progress.', session: current0 };
+    refundsInFlight.add(sessionId);
+    try {
+      return await refundSessionAuthoritative(sessionId, reason);
+    } finally {
+      refundsInFlight.delete(sessionId);
+    }
   }
 }

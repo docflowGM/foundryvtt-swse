@@ -2984,9 +2984,15 @@ export const ActorEngine = {
    * Apply a MutationPlan to the actor.
    *
    * Contract:
-   * - Input is a validated MutationPlan: { set?, add?, delete? }
-   * - Operations apply in strict order: DELETE → SET → ADD
-   * - All operations complete or none do (atomic)
+   * - Input is a validated MutationPlan: { create?, set?, update?, add?, delete? }
+   * - Operations apply in strict order: CREATE → DELETE → SET → UPDATE → ADD
+   * - NOT atomic by default: a failure part-way leaves the earlier operations applied.
+   * - `transactional: true` attempts a rollback on failure and REPORTS WHAT IT COULD VERIFY (TI4-C0/G06):
+   *   the thrown error carries `rollback` (machine-readable evidence), `rollbackOutcome`
+   *   (`FAILED_COMPENSATED` only when the target actor AND any CREATE-bucket world actors were verifiably restored;
+   *   otherwise `INDETERMINATE`) and, when not verified, `partialMutationPossible === true`. A restore that resolved
+   *   without `{success:true, exact:true}` is NOT a verified rollback. The in-memory snapshot is the SnapshotService schema-v2
+   *   capture (G06-S1), so a genuine restore can verify exact — see `_rollbackTransactionalPlan`.
    * - Derived data recalculates once after all mutations
    * - Errors throw MutationApplicationError
    *
@@ -3056,7 +3062,13 @@ export const ActorEngine = {
       // so transactional mode now covers both actor-local plans (progression
       // finalization) and plans that create world actors.
       if (transactional) {
-        _txnSnapshot = actor.toObject(true);
+        // TI4-C0/G06-S1: the existing SnapshotService schema-v2 in-memory capture (same representation its restore verifies against; persists nothing),
+        // refused if it cannot support a safe restore. A failure throws here, before any stage runs, so nothing has been applied.
+        try {
+          _txnSnapshot = await this.captureRecoverySnapshot(actor);
+        } catch (captureErr) {
+          throw new Error(`applyMutationPlan: the transactional snapshot is unusable for recovery (${captureErr?.message ?? captureErr}); the plan was not started`);
+        }
       }
 
       // Phase 2: Apply operations in strict order
@@ -3103,50 +3115,231 @@ export const ActorEngine = {
         error: error.message
       });
 
-      // Transactional rollback: restore the target actor to its pre-plan state.
-      // If the restore itself fails, flag the error so callers know the actor
-      // may be in a partial state.
+      // Transactional rollback (TI4-C0/G06): restore the target actor AND remove the CREATE-bucket world actors, then report only what was
+      // VERIFIED. A restore call that merely resolved is not a rollback: the structured result must say `success:true, exact:true`, and a
+      // delete call that merely resolved is not a cleanup: the world-actor registry is checked afterwards. Anything else is INDETERMINATE.
       if (_txnSnapshot) {
+        let rollback;
         try {
-          await this.restoreFromSnapshot(actor, _txnSnapshot, { source: `${source}:rollback` });
-          SWSELogger.warn('ActorEngine.applyMutationPlan: rolled back to pre-plan snapshot after failure', {
-            actor: actor?.id,
-            source
-          });
-        } catch (restoreErr) {
-          error.partialMutationPossible = true;
-          SWSELogger.error('ActorEngine.applyMutationPlan: rollback FAILED; actor may be in a partial state', {
-            actor: actor?.id,
-            source,
-            restoreError: restoreErr?.message
-          });
+          rollback = await this._rollbackTransactionalPlan(actor, _txnSnapshot, tempIdMap, source);
+        } catch (verificationErr) {
+          // Defensive: the helper guards its own reads, but if verification itself fails unexpectedly it must NEVER replace the original error.
+          rollback = { outcome: 'INDETERMINATE', compensation: 'FAILED', level: 'L1', legacySnapshot: !_txnSnapshot?.schemaVersion,
+            reasons: ['rollback-verification-threw'], target: { attempted: null, verdict: null }, created: { ids: Object.values(tempIdMap).filter(Boolean) },
+            verificationError: verificationErr?.message ?? String(verificationErr) };
+          SWSELogger.error('ActorEngine.applyMutationPlan: rollback verification itself failed; outcome INDETERMINATE', { actor: actor?.id, source, verificationError: rollback.verificationError });
         }
-
-        // CREATE-bucket rollback (audit R5): delete any world actors created by
-        // this plan so a mid-plan failure does not orphan them. Only runs in
-        // transactional mode; best-effort, and any failure downgrades the
-        // transactional guarantee via partialMutationPossible rather than masking it.
-        const createdActorIds = Object.values(tempIdMap).filter(Boolean);
-        if (createdActorIds.length > 0) {
-          try {
-            await Actor.deleteDocuments(createdActorIds);
-            SWSELogger.warn('ActorEngine.applyMutationPlan: deleted CREATE-bucket actors during rollback', {
-              source,
-              deletedActorIds: createdActorIds
-            });
-          } catch (createRollbackErr) {
-            error.partialMutationPossible = true;
-            SWSELogger.error('ActorEngine.applyMutationPlan: CREATE-bucket rollback FAILED; created actors may be orphaned', {
-              source,
-              createdActorIds,
-              createRollbackError: createRollbackErr?.message
-            });
-          }
-        }
+        // Evidence is attached to the ORIGINAL error object (identity preserved); only a non-object throw (e.g. a string) is wrapped.
+        const carrier = (error !== null && typeof error === 'object')
+          ? error
+          : Object.assign(new Error(String(error)), { cause: error });
+        carrier.rollback = rollback;
+        carrier.rollbackOutcome = rollback.outcome;
+        if (rollback.outcome !== 'FAILED_COMPENSATED') carrier.partialMutationPossible = true;
+        throw carrier;
       }
 
       throw error;
     }
+  },
+
+  /**
+   * TI4-C0/G06-S1 — is this snapshot complete enough to restore from SAFELY? (pure)
+   *
+   * Requires the `items` / `effects` ARRAYS its scope needs (default scope `full-actor`: both; `embedded-items`: items; `system-and-flags`: neither),
+   * each document carrying a unique, non-empty string `_id` (an `id` alias is not accepted — the service never matches on it).
+   * Used before capture-time commit and before restoration, because SnapshotService treats a missing array as [] (and so deletes existing documents).
+   *
+   * @returns {{complete: boolean, problems: string[]}}
+   */
+  _validateRecoverySnapshot(snapshot) {
+    const problems = [];
+    if (snapshot === null || typeof snapshot !== 'object') return { complete: false, problems: ['snapshot is not an object'] };
+    const scope = snapshot.scope ?? 'full-actor';
+    const needs = { items: scope !== 'system-and-flags', effects: scope === 'full-actor' || scope === 'transaction-rollback' };
+    for (const key of ['items', 'effects']) {
+      const docs = snapshot[key];
+      if (docs === undefined && !needs[key]) continue;
+      if (!Array.isArray(docs)) { problems.push(`${key} is ${docs === undefined ? 'missing' : 'not an array'}`); continue; }
+      const ids = docs.map((d) => d?._id);
+      if (!ids.every((id) => typeof id === 'string' && id !== '')) problems.push(`${key} has a document without a valid _id`);
+      else if (new Set(ids).size !== ids.length) problems.push(`${key} has duplicate _id values`);
+    }
+    return { complete: problems.length === 0, problems };
+  },
+
+  /**
+   * TI4-C0/G11 — restore `actor` from a schema-v2 recovery snapshot and CERTIFY the result (the target leg of `_rollbackTransactionalPlan`, extracted
+   * so other rollback callers reuse the same certification instead of trusting a resolved promise).
+   *
+   * Returns the structured target evidence; `verdict === 'EXACT'` is the ONLY value that establishes a verified restoration of the declared
+   * `full-actor` scope (root, system, flags, ownership, prototypeToken, Items, Effects). Never throws. See `_rollbackTransactionalPlan` for the verdicts.
+   * An incomplete snapshot is rejected BEFORE any restoration call (`INVALID_SNAPSHOT`, `attempted:false`).
+   *
+   * @param {Actor} actor
+   * @param {object} snapshot  from `captureRecoverySnapshot`
+   * @param {string} [source]  mutation source tag passed to the restore
+   * @returns {Promise<object>} target evidence
+   */
+  async restoreSnapshotVerified(actor, snapshot, source = 'ActorEngine.restoreSnapshotVerified') {
+    // Recovery-evidence check BEFORE any restoration: SnapshotService defaults a missing `items`/`effects` array to [] and would DELETE the
+    // actor's existing embedded documents, and skips id-less ones. An incomplete snapshot is therefore never handed to the restore.
+    const recovery = this._validateRecoverySnapshot(snapshot);
+    const identityComplete = recovery.complete;
+
+    const target = { attempted: true, verdict: null, success: null, exact: null, code: null, failedStep: null, partialMutation: null,
+      compensationAttempted: null, compensationSucceeded: null, requiresManualReview: null, contentVerified: null, error: null, restoreError: null };
+    let result;
+    if (!recovery.complete) {
+      target.attempted = false;
+      target.verdict = 'INVALID_SNAPSHOT';
+      target.invalidSnapshot = recovery.problems;
+    } else {
+      try {
+        result = await this.restoreFromSnapshot(actor, snapshot, { source });
+      } catch (restoreErr) {
+        target.verdict = 'THREW';
+        target.restoreError = restoreErr?.message ?? String(restoreErr);
+      }
+    }
+    if (target.verdict === null) {
+      if (result === null || typeof result !== 'object' || Array.isArray(result) || typeof result.success !== 'boolean') {
+        target.verdict = 'MALFORMED';
+      } else {
+        target.success = result.success;
+        target.exact = result.exact === true;
+        target.code = result.code ?? null;
+        target.failedStep = result.failedStep ?? null;
+        target.partialMutation = result.partialMutation ?? null;
+        target.compensationAttempted = result.compensationAttempted ?? null;
+        target.compensationSucceeded = result.compensationSucceeded ?? null;
+        target.requiresManualReview = result.requiresManualReview ?? null;
+        target.error = result.error ?? null;
+        const v = result.verification;
+        // Positive evidence only: root, Items and Effects must each be affirmed `=== true`. A missing, malformed or partial verification object is not verification.
+        target.contentVerified = (v && typeof v === 'object' && !Array.isArray(v)) ? (v.rootMatched === true && v.itemsMatched === true && v.effectsMatched === true) : null;
+        target.verdict = result.success !== true ? 'FAILED' : (result.exact === true ? 'EXACT' : 'INEXACT');
+        if (target.verdict === 'EXACT' && (target.contentVerified !== true || !identityComplete)) {
+          target.verdict = 'INEXACT';
+          target.exactDowngraded = true;
+        }
+      }
+    }
+    return target;
+  },
+
+  /**
+   * TI4-C0/G11 — capture an in-memory schema-v2 recovery snapshot and refuse to proceed if it cannot support a safe restore.
+   * Reuses `SnapshotService.captureExactSnapshot` (no persistence). Throws before anything has been applied.
+   *
+   * @param {Actor} actor
+   * @returns {Promise<object>} schema-v2 snapshot
+   */
+  async captureRecoverySnapshot(actor) {
+    const { SnapshotService } = await import('/systems/foundryvtt-swse/scripts/governance/snapshot/snapshot-service.js');
+    const snapshot = SnapshotService.captureExactSnapshot(actor);
+    const recovery = this._validateRecoverySnapshot(snapshot);
+    if (!recovery.complete) {
+      throw new Error(`the recovery snapshot is unusable (${recovery.problems.join('; ')})`);
+    }
+    return snapshot;
+  },
+
+  /**
+   * TI4-C0/G06 — roll back a failed transactional plan and report ONLY what was verified.
+   *
+   * Scope: the target actor (restored from the pre-plan snapshot) and any CREATE-bucket world actors (deleted). Both are attempted
+   * independently; the verdict covers both. `FAILED_COMPENSATED` requires every part to be verified; anything else is `INDETERMINATE`.
+   *
+   * CREATE cleanup is verified only by OBSERVED absence (world-actor registry, id by id); a returned id list or a resolved call is diagnostic, never proof.
+   *
+   * Target verdicts (from the structured SnapshotService result, never from the promise merely resolving):
+   *   EXACT      success === true && exact === true
+   *   INEXACT    success === true && exact !== true   (data may be restored but identity/content exactness is not established)
+   *   FAILED     success === false
+   *   MALFORMED  not an object with a boolean `success`
+   *   THREW      the restore call threw
+   * The in-memory snapshot is the SnapshotService schema-v2 capture (G06-S1), so a genuinely restored actor can verify exact. A legacy snapshot
+   * (no schemaVersion) still can only report `exact:false`; that is recorded (`legacySnapshot`), never worked around. The service result is not
+   * trusted blindly: an `exact:true` result is downgraded unless its own verification affirms root, Items and Effects (`=== true`), and unless the
+   * snapshot carries `items`/`effects` arrays whose documents each have a unique non-empty `_id` (identity cannot otherwise be verified). Otherwise the verdict becomes INEXACT (identity gaps add reason `snapshot-identity-incomplete`).
+   *
+   * @returns {Promise<object>} rollback evidence: { outcome, compensation, level, legacySnapshot, reasons[], target{}, created{} }
+   */
+  async _rollbackTransactionalPlan(actor, snapshot, tempIdMap = {}, source = 'ActorEngine.applyMutationPlan') {
+    const reasons = [];
+    const legacySnapshot = !snapshot?.schemaVersion;
+
+    /* ---- target actor ---- */
+    const target = await this.restoreSnapshotVerified(actor, snapshot, `${source}:rollback`);
+    const identityComplete = target.verdict !== 'INVALID_SNAPSHOT';
+    if (!identityComplete) reasons.push('snapshot-identity-incomplete');
+    const targetOk = target.verdict === 'EXACT';
+    if (!targetOk) reasons.push(`target-restore-${target.verdict.toLowerCase()}`);
+
+    /* ---- CREATE-bucket world actors ---- */
+    const ids = [...new Set(Object.values(tempIdMap).filter(Boolean))];
+    const created = { ids, attempted: ids.length > 0, deleteCallReturned: null, returnedIds: null, registryAvailable: null,
+      absentIds: [], stillPresent: [], unverifiable: [], registryErrors: [], verifiedAbsent: null, error: null };
+    if (ids.length) {
+      try {
+        const deleted = await Actor.deleteDocuments(ids);
+        created.deleteCallReturned = true;
+        // DIAGNOSTIC evidence only: the ids the delete API returned are NOT proof that the actors are gone.
+        created.returnedIds = Array.isArray(deleted) ? deleted.map((d) => d?.id ?? d?._id).filter(Boolean) : null;
+      } catch (createRollbackErr) {
+        created.deleteCallReturned = false;
+        created.error = createRollbackErr?.message ?? String(createRollbackErr);
+      }
+      // Verification requires an OBSERVATION of the world after the delete, id by id. Neither the resolved call nor the ids it returned
+      // establishes absence. No readable registry ⇒ the cleanup is unverified. A failing registry read is recorded as secondary evidence and
+      // never replaces the original mutation error (each lookup is guarded; nothing is re-run).
+      let getActor = null;
+      try {
+        const registry = globalThis.game?.actors;
+        if (registry && typeof registry.get === 'function') getActor = (id) => registry.get(id);
+      } catch (registryAccessErr) {
+        created.registryErrors.push({ id: null, error: registryAccessErr?.message ?? String(registryAccessErr) });
+      }
+      created.registryAvailable = getActor !== null;
+      if (getActor === null) {
+        created.unverifiable = [...ids];
+      } else {
+        for (const id of ids) {
+          try {
+            if (getActor(id)) created.stillPresent.push(id); else created.absentIds.push(id);
+          } catch (lookupErr) {
+            created.unverifiable.push(id);
+            created.registryErrors.push({ id, error: lookupErr?.message ?? String(lookupErr) });
+          }
+        }
+      }
+      created.verifiedAbsent = created.registryAvailable === true && created.stillPresent.length === 0 && created.unverifiable.length === 0;
+      if (created.verifiedAbsent !== true) reasons.push(created.error ? 'created-cleanup-failed' : 'created-cleanup-unverified');
+    }
+    const createdOk = ids.length === 0 || created.verifiedAbsent === true;
+
+    /* ---- verdict over the WHOLE scope ---- */
+    const outcome = (targetOk && createdOk) ? 'FAILED_COMPENSATED' : 'INDETERMINATE';
+    let compensation;
+    if (outcome === 'FAILED_COMPENSATED') compensation = 'EXACT';
+    else if (reasons.length === 1 && reasons[0] === 'target-restore-inexact' && ids.length === 0) compensation = 'INEXACT';
+    else if ((targetOk && !createdOk) || (!targetOk && ids.length > 0 && createdOk) || target.verdict === 'INEXACT') compensation = 'PARTIAL';
+    else compensation = 'FAILED';
+
+    const rollback = { outcome, compensation, level: 'L1', legacySnapshot, reasons, target, created };
+
+    if (outcome === 'FAILED_COMPENSATED') {
+      SWSELogger.warn('ActorEngine.applyMutationPlan: rolled back to pre-plan snapshot after failure (verified exact; created actors verified removed)', {
+        actor: actor?.id, source, createdActorIds: ids
+      });
+    } else {
+      SWSELogger.error('ActorEngine.applyMutationPlan: rollback NOT verified — outcome INDETERMINATE; the actor and/or created actors may be partially changed', {
+        actor: actor?.id, source, compensation, reasons, targetVerdict: target.verdict, targetCode: target.code, legacySnapshot,
+        createdActorIds: ids, createdStillPresent: created.stillPresent, createdUnverifiable: created.unverifiable, registryErrors: created.registryErrors
+      });
+    }
+    return rollback;
   },
 
   /**

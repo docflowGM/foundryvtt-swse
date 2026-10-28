@@ -1381,6 +1381,7 @@ function transferStatusLabel(status = '') {
     : status === 'declined' ? 'Declined'
     : status === 'cancelled' ? 'Cancelled'
     : status === 'failed' ? 'Failed'
+    : status === 'indeterminate' ? 'Unresolved — GM Review Needed'
     : status === 'pendingGm' ? 'Awaiting GM Approval'
     : status === 'counterOffered' ? 'Counter Offer Pending'
     : status === 'counterPendingGm' ? 'Counter Awaiting GM Approval'
@@ -1389,6 +1390,46 @@ function transferStatusLabel(status = '') {
 
 function formatCredits(amount) {
   return `${Number(amount || 0).toLocaleString()} credits`;
+}
+
+/**
+ * TI4-C0/G16 — classify a TransactionEngine credit-movement failure and keep its evidence.
+ * `INDETERMINATE` when the engine reports `indeterminate` or `rollbackFailed` (the money's final state is not known — never display it as `failed`);
+ * `FAILED_COMPENSATED` when it reports `compensated`; otherwise `FAILED` (a plain refusal/failure with no unresolved flag). L1 evidence only.
+ */
+function creditMovementEvidence(result = {}) {
+  const r = (result && typeof result === 'object') ? result : {};
+  const outcome = (r.indeterminate === true || r.rollbackFailed === true) ? 'INDETERMINATE' : (r.compensated === true ? 'FAILED_COMPENSATED' : 'FAILED');
+  const pick = {};
+  for (const key of ['transactionId', 'debitTransactionId', 'failedCreditTransactionId', 'refundTransactionId', 'recovery', 'compensated', 'rollbackFailed', 'indeterminate', 'error', 'evidence']) {
+    if (r[key] !== undefined && r[key] !== null) pick[key] = r[key];
+  }
+  let evidence;
+  try { evidence = { ...JSON.parse(JSON.stringify(pick)), outcome, level: 'L1', recordedAt: nowIso() }; } catch { evidence = { outcome, level: 'L1', recordedAt: nowIso(), error: String(r.error ?? '') }; }
+  return evidence;
+}
+
+/**
+ * TI4-C0/G26 — classify the result of a Party Fund credit adjustment (or a call that threw) as 'success' | 'failed' | 'indeterminate'.
+ * `success`        the engine returned `success:true`;
+ * `failed`         a DEFINITIVE failure: `success:false` with none of the engine's unresolved flags (no credits moved, or the move was verified undone);
+ * `indeterminate`  `indeterminate`, `rollbackFailed` or `partialMutationPossible` (credits may have moved), a malformed result, or a thrown call.
+ * An indeterminate outcome must never be compensated automatically (that could create credits) and must never be reported as failed or reverted.
+ */
+function partyFundCreditOutcome(result) {
+  if (!result || typeof result !== 'object' || typeof result.success !== 'boolean') return 'indeterminate';
+  // Unresolved evidence takes priority over `success`: a contradictory result (success:true WITH indeterminate / rollbackFailed / partialMutationPossible)
+  // cannot be trusted as committed. Fail closed.
+  if (result.indeterminate === true || result.rollbackFailed === true || result.partialMutationPossible === true) return 'indeterminate';
+  return result.success === true ? 'success' : 'failed';
+}
+
+async function partyFundCreditAdjustment(context, options) {
+  try {
+    return await TransactionEngine.executeCreditAdjustment(context, options);
+  } catch (err) {
+    return { success: false, indeterminate: true, error: `The credit adjustment threw: ${err?.message ?? err}` };
+  }
 }
 
 function parsePositiveCredits(amount) {
@@ -1989,14 +2030,16 @@ export class HolonetMessengerService {
         amountLabel: formatCredits(amount),
         memoPreview: compactMemo(transfer.memo),
         status: complete ? 'complete' : status,
-        statusLabel: complete ? (declined ? 'Partially Resolved' : 'Complete') : transferStatusLabel(status),
+        hasUnresolved: entries.some(entry => entry.status === 'indeterminate'),
+        statusLabel: complete ? (declined ? 'Partially Resolved' : 'Complete')
+          : (entries.some(entry => entry.status === 'indeterminate') ? transferStatusLabel('indeterminate') : transferStatusLabel(status)),
         ownShareAmount: Number(ownEntry?.amount || 0),
         ownShareLabel: ownEntry ? formatCredits(ownEntry.amount) : '',
         paidLabel: formatCredits(paid),
         remainingLabel: formatCredits(Math.max(0, amount - paid)),
         canPay: Boolean(ownEntry && ownEntry.status === 'pendingRecipient' && !isGm),
         canDeclineRequest: Boolean(ownEntry && ownEntry.status === 'pendingRecipient' && !isGm),
-        canCancel: Boolean((transfer.requesterRecipientId === participantId || isGm) && !complete),
+        canCancel: Boolean((transfer.requesterRecipientId === participantId || isGm) && !complete && !entries.some(entry => entry.status === 'indeterminate')),
         isResolved: complete
       };
     }
@@ -2016,7 +2059,7 @@ export class HolonetMessengerService {
       canDecline: isPendingRecipient && (isRecipient || isGm),
       canApprove: isPendingGm && isGm,
       canCancel: (isPendingRecipient || isPendingGm) && (isSender || isGm),
-      isResolved: ['complete', 'declined', 'cancelled', 'failed'].includes(status)
+      isResolved: ['complete', 'declined', 'cancelled', 'failed', 'indeterminate'].includes(status)
     };
   }
 
@@ -4118,7 +4161,9 @@ export class HolonetMessengerService {
     const entry = safeArray(transfer.entries).find(e => e.recipientId === currentId || (actor?.id && e.actorId === actor.id));
     if (!entry && !requesterIsGm) return false;
     if (action === 'decline-credit-request') {
-      if (!entry) return false;
+      // TI4-C0/G16: only a still-pending entry can be declined. An 'indeterminate' (unresolved credit movement), 'failed', 'complete' or already
+      // resolved entry is final here — declining it would rewrite the status and defeat the unresolved-evidence protection.
+      if (!entry || entry.status !== 'pendingRecipient') return false;
       entry.status = 'declined';
       entry.resolvedAt = nowIso();
       entry.resolvedBy = currentId;
@@ -4128,6 +4173,8 @@ export class HolonetMessengerService {
     }
     if (action === 'cancel-credit-request') {
       if (!requesterIsGm && currentId !== transfer.requesterRecipientId) return false;
+      // TI4-C0/G16: fail closed — a request with an unresolved (indeterminate) entry cannot be cancelled; cancelling would present it as resolved.
+      if (safeArray(transfer.entries).some(item => item?.status === 'indeterminate')) return false;
       transfer.status = 'cancelled';
       for (const item of safeArray(transfer.entries)) {
         if (item.status === 'pendingRecipient') item.status = 'cancelled';
@@ -4154,8 +4201,18 @@ export class HolonetMessengerService {
       audit: { source: 'holonet-credit-request', threadId: thread.id, requesterId, transferId: transfer.id, entryId: entry.id }
     }, { source: 'HolonetMessengerService.creditRequest', validate: true, rederive: true });
     if (!moved.success) {
-      entry.status = 'failed';
+      // TI4-C0/G16: an unresolved movement (indeterminate / rollbackFailed) is NOT a failed payment — the payer may still be debited. Keep the
+      // engine's evidence on the entry, use a distinct non-payable status, and never show it as 'failed'.
+      const evidence = creditMovementEvidence(moved);
+      entry.transferEvidence = evidence;
       entry.failureReason = moved.error || 'Credit request payment failed';
+      if (evidence.outcome === 'INDETERMINATE') {
+        entry.status = 'indeterminate';
+        await HolonetStorage.saveRecord(message);
+        await this._publishSystemMessage(thread, `Credit request payment could not be reconciled and needs GM review (the payer may still have been charged): ${entry.failureReason}`, { eventType: 'credit-request-indeterminate', transferId: transfer.id });
+        return false;
+      }
+      entry.status = 'failed';
       await HolonetStorage.saveRecord(message);
       await this._publishSystemMessage(thread, `Credit request payment failed: ${entry.failureReason}`, { eventType: 'credit-request-failed', transferId: transfer.id });
       return false;
@@ -5607,7 +5664,7 @@ export class HolonetMessengerService {
     const requesterIsGm = HolonetMessengerService._isRequesterGm(requesterId);
     const currentId = senderRecipientId || currentRecipientId();
 
-    if (['complete', 'declined', 'cancelled', 'failed'].includes(transfer.status)) return false;
+    if (['complete', 'declined', 'cancelled', 'failed', 'indeterminate'].includes(transfer.status)) return false;
 
     if (action === 'decline-transfer') {
       if (!requesterIsGm && currentId !== transfer.toRecipientId) return false;
@@ -5665,7 +5722,7 @@ export class HolonetMessengerService {
           transactionContext: 'holonet-gm-grant',
           audit: { source: 'holonet-transfer', threadId: thread.id, requesterId, transferId: transfer.id }
         }, { source: 'HolonetMessengerService.creditTransferGrant', validate: true, rederive: true });
-        if (!grant.success) throw new Error(grant.error || 'Credit grant failed');
+        if (!grant.success) throw Object.assign(new Error(grant.error || 'Credit grant failed'), { creditMovement: grant });
       } else {
         const fromActor = transfer.fromActorId ? game.actors?.get(transfer.fromActorId) : null;
         if (!fromActor) throw new Error('Sender actor not found');
@@ -5677,7 +5734,7 @@ export class HolonetMessengerService {
           transactionContext: 'holonet-credit-transfer',
           audit: { source: 'holonet-transfer', threadId: thread.id, requesterId, transferId: transfer.id }
         }, { source: 'HolonetMessengerService.creditTransfer', validate: true, rederive: true });
-        if (!moved.success) throw new Error(moved.error || 'Credit transfer failed');
+        if (!moved.success) throw Object.assign(new Error(moved.error || 'Credit transfer failed'), { creditMovement: moved });
       }
       transfer.status = 'complete';
       transfer.resolvedAt = nowIso();
@@ -5686,11 +5743,32 @@ export class HolonetMessengerService {
       await this._publishReceiptMessage(thread, { title: 'Credit Transfer Receipt', eventType: 'credit-transfer-receipt', amount: value, lines: [`From: ${transfer.fromLabel}`, `To: ${targetActor.name}`] });
       return true;
     } catch (err) {
-      transfer.status = 'failed';
+      // TI4-C0/G16: keep the engine's evidence; an unresolved movement is 'indeterminate' (terminal, GM review), never 'failed'.
+      const evidence = err?.creditMovement ? creditMovementEvidence(err.creditMovement) : null;
+      if (evidence) transfer.transferEvidence = evidence;
       transfer.failureReason = err.message;
       transfer.resolvedAt = nowIso();
+      if (evidence?.outcome === 'INDETERMINATE') {
+        transfer.status = 'indeterminate';
+        await this._publishSystemMessage(thread, `Credit transfer could not be reconciled and needs GM review (credits may have moved or been charged without completing): ${err.message}`, { eventType: 'credit-transfer-indeterminate', transferId: transfer.id });
+        return false;
+      }
+      transfer.status = 'failed';
       await this._publishSystemMessage(thread, `Credit transfer failed: ${err.message}`, { eventType: 'credit-transfer-failed', transferId: transfer.id });
       return false;
+    }
+  }
+
+  /**
+   * TI4-C0/G26 — publish a Party Fund notice without letting a publication failure change the credit outcome. The notice is best-effort: if it cannot be
+   * published the failure is logged and the (already decided) boolean outcome is still returned — an unresolved or committed credit movement must never
+   * surface as a thrown ordinary failure.
+   */
+  static async _notifyPartyFund(thread, body, meta) {
+    try {
+      await this._publishSystemMessage(thread, body, meta);
+    } catch (publishErr) {
+      SWSELogger.error(`[Holonet] Party Fund notice could not be published (${meta?.eventType ?? 'notice'}): ${body}`, publishErr);
     }
   }
 
@@ -5707,43 +5785,82 @@ export class HolonetMessengerService {
         await this._publishSystemMessage(thread, `${actor.name} attempted to contribute ${formatCredits(value)} to the Party Fund, but has insufficient credits.`, { eventType: 'party-fund-failed' });
         return false;
       }
-      const debit = await TransactionEngine.executeCreditAdjustment({
+      const debit = await partyFundCreditAdjustment({
         actor,
         amount: -value,
         reason: 'Holonet party fund contribution',
         transactionContext: 'holonet-party-fund-contribution',
         audit: { source: 'party-fund-contribution', threadId: thread.id, requesterId }
       }, { source: 'HolonetMessengerService.partyFundContribution', validate: true, rederive: true });
-      if (!debit.success) return false;
+      const debitOutcome = partyFundCreditOutcome(debit);
+      if (debitOutcome === 'indeterminate') {
+        // TI4-C0/G26: an unresolved debit is NOT proof that no credits moved. The fund is not credited, the debit is not retried and nothing is refunded
+        // automatically; the GM reconciles.
+        SWSELogger.error('[Holonet] Party Fund contribution debit outcome is unresolved; GM review required', debit);
+        await this._notifyPartyFund(thread, `${actor.name}'s ${formatCredits(value)} Party Fund contribution could not be reconciled and needs GM review (the contribution may have been charged without reaching the fund): ${debit?.error ?? 'outcome unknown'}`, { eventType: 'party-fund-contribution-indeterminate', amount: value, fromActorId: actor.id, transactionId: debit?.transactionId ?? null });
+        return false;
+      }
+      if (debitOutcome !== 'success') return false;
     }
     const before = getPartyFundBalance();
+    let after;
     try {
-      const after = await setPartyFundBalance(before + value);
-      await appendPartyFundLedger({ type: 'contribution', amount: value, fromActorId: actor?.id ?? null, threadId: thread.id, requesterId });
-      await this._publishSystemMessage(thread, `${actor?.name ?? 'GM Ledger'} contributed ${formatCredits(value)} to the Party Fund. New balance: ${formatCredits(after)}.`, { eventType: 'party-fund-contribution', amount: value, fromActorId: actor?.id ?? null });
-      return true;
+      after = await setPartyFundBalance(before + value);
     } catch (fundErr) {
-      // The fund update failed after the actor was already debited. Restore the
-      // fund balance and refund the actor so a contribution can never silently
-      // lose the player's credits.
       SWSELogger.error('[Holonet] Party Fund contribution failed after debit; rolling back', fundErr);
-      try { await setPartyFundBalance(before); } catch (_e) {}
-      if (!requesterIsGm && actor) {
-        try {
-          await TransactionEngine.executeCreditAdjustment({
-            actor,
-            amount: value,
-            reason: 'Holonet party fund contribution rollback',
-            transactionContext: 'holonet-party-fund-contribution',
-            audit: { source: 'party-fund-contribution-rollback', threadId: thread.id, requesterId }
-          }, { source: 'HolonetMessengerService.partyFundContributionRollback', validate: true, rederive: true });
-        } catch (refundErr) {
-          SWSELogger.error('[Holonet] Party Fund contribution refund FAILED; actor may be over-charged', refundErr);
-        }
-      }
-      await this._publishSystemMessage(thread, `${actor?.name ?? 'GM Ledger'}'s ${formatCredits(value)} Party Fund contribution failed and was reverted.`, { eventType: 'party-fund-failed' });
+      return this._rollbackPartyFundContribution({ thread, actor, value, before, requesterId, requesterIsGm });
+    }
+    // The fund now holds the contribution: it is COMMITTED. The ledger entry and the announcement are bookkeeping/presentation after the commit; a
+    // failure there is logged and never rolls back or re-reports a committed contribution as failed.
+    try {
+      await appendPartyFundLedger({ type: 'contribution', amount: value, fromActorId: actor?.id ?? null, threadId: thread.id, requesterId });
+    } catch (ledgerErr) {
+      SWSELogger.error('[Holonet] Party Fund contribution COMMITTED but its ledger entry could not be written', ledgerErr);
+    }
+    try {
+      await this._publishSystemMessage(thread, `${actor?.name ?? 'GM Ledger'} contributed ${formatCredits(value)} to the Party Fund. New balance: ${formatCredits(after)}.`, { eventType: 'party-fund-contribution', amount: value, fromActorId: actor?.id ?? null });
+    } catch (publishErr) {
+      SWSELogger.error('[Holonet] Party Fund contribution COMMITTED but its announcement could not be published', publishErr);
+    }
+    return true;
+  }
+
+  /**
+   * TI4-C0/G26 — the fund update failed after the contributor was debited. Restore the fund, then refund the contributor, and report each step
+   * truthfully: a restore that fails leaves the fund state unknown (a refund could then create credits), and a refund that is not confirmed by its
+   * returned result is never described as a reversal.
+   */
+  static async _rollbackPartyFundContribution({ thread, actor, value, before, requesterId = null, requesterIsGm = false } = {}) {
+    const who = actor?.name ?? 'GM Ledger';
+    try {
+      await setPartyFundBalance(before);
+    } catch (restoreErr) {
+      SWSELogger.error('[Holonet] Party Fund balance restore FAILED after a failed contribution; no refund attempted', restoreErr);
+      await this._notifyPartyFund(thread, `${who}'s ${formatCredits(value)} Party Fund contribution failed and the Party Fund balance could NOT be restored, so no automatic refund was attempted (it could create credits). The fund and ${actor?.name ? `${actor.name}'s credits` : 'the ledger'} need GM review.`, { eventType: 'party-fund-contribution-indeterminate', amount: value, fromActorId: actor?.id ?? null });
       return false;
     }
+    if (requesterIsGm || !actor) {
+      await this._notifyPartyFund(thread, `${who}'s ${formatCredits(value)} Party Fund contribution failed and was reverted.`, { eventType: 'party-fund-failed' });
+      return false;
+    }
+    const refund = await partyFundCreditAdjustment({
+      actor,
+      amount: value,
+      reason: 'Holonet party fund contribution rollback',
+      transactionContext: 'holonet-party-fund-contribution',
+      audit: { source: 'party-fund-contribution-rollback', threadId: thread.id, requesterId }
+    }, { source: 'HolonetMessengerService.partyFundContributionRollback', validate: true, rederive: true });
+    const refundOutcome = partyFundCreditOutcome(refund);
+    if (refundOutcome === 'success') {
+      await this._notifyPartyFund(thread, `${who}'s ${formatCredits(value)} Party Fund contribution failed and was reverted.`, { eventType: 'party-fund-failed' });
+    } else if (refundOutcome === 'failed') {
+      SWSELogger.error('[Holonet] Party Fund contribution refund FAILED; actor remains charged', refund);
+      await this._notifyPartyFund(thread, `${who}'s ${formatCredits(value)} Party Fund contribution failed and its refund ALSO failed (${refund?.error ?? 'refused'}); ${actor.name} remains charged and the contribution needs GM review. It was not retried automatically.`, { eventType: 'party-fund-refund-failed', amount: value, fromActorId: actor.id, transactionId: refund?.transactionId ?? null });
+    } else {
+      SWSELogger.error('[Holonet] Party Fund contribution refund outcome is unresolved; GM review required', refund);
+      await this._notifyPartyFund(thread, `${who}'s ${formatCredits(value)} Party Fund contribution failed and the refund could not be reconciled; ${actor.name} may or may not have been refunded and the contribution needs GM review. It was not retried automatically: ${refund?.error ?? 'outcome unknown'}`, { eventType: 'party-fund-refund-indeterminate', amount: value, fromActorId: actor.id, transactionId: refund?.transactionId ?? null });
+    }
+    return false;
   }
 
   static async _gmChargePartyFund({ thread, amount, requesterId = null } = {}) {
@@ -5776,30 +5893,53 @@ export class HolonetMessengerService {
       return false;
     }
     await setPartyFundBalance(before - value);
-    let payout;
-    try {
-      payout = await TransactionEngine.executeCreditAdjustment({
-        actor: targetActor,
-        amount: value,
-        reason: 'Holonet party fund payout',
-        transactionContext: 'holonet-party-fund-payout',
-        audit: { source: 'party-fund-payout', threadId: thread.id, requesterId }
-      }, { source: 'HolonetMessengerService.partyFundPayout', validate: true, rederive: true });
-    } catch (grantErr) {
-      SWSELogger.error('[Holonet] Party Fund payout grant threw; restoring fund balance', grantErr);
-      payout = { success: false };
-    }
-    if (!payout.success) {
-      // The actor was not paid, so restore the fund balance. Without this the
-      // fund would be reduced while the recipient received nothing.
-      try { await setPartyFundBalance(before); } catch (restoreErr) {
-        SWSELogger.error('[Holonet] Party Fund payout rollback FAILED; fund balance may be short', restoreErr);
+    const payout = await partyFundCreditAdjustment({
+      actor: targetActor,
+      amount: value,
+      reason: 'Holonet party fund payout',
+      transactionContext: 'holonet-party-fund-payout',
+      audit: { source: 'party-fund-payout', threadId: thread.id, requesterId }
+    }, { source: 'HolonetMessengerService.partyFundPayout', validate: true, rederive: true });
+    const outcome = partyFundCreditOutcome(payout);
+
+    if (outcome === 'indeterminate') {
+      // TI4-C0/G26: the recipient may already hold the credits. Restoring the fund here could create them, so the fund is NOT restored, the payout is not
+      // retried, and the uncertainty is recorded in the fund ledger and surfaced for GM review.
+      SWSELogger.error('[Holonet] Party Fund payout outcome is unresolved; fund NOT restored; GM review required', payout);
+      try {
+        await appendPartyFundLedger({ type: 'payout-indeterminate', amount: -value, toActorId: targetActor.id, threadId: thread.id, requesterId, transactionId: payout?.transactionId ?? null });
+      } catch (ledgerErr) {
+        SWSELogger.error('[Holonet] Party Fund unresolved-payout ledger entry could not be written', ledgerErr);
       }
-      await this._publishSystemMessage(thread, `Party Fund payout to ${targetActor.name} failed and was reverted.`, { eventType: 'party-fund-payout-failed' });
+      await this._notifyPartyFund(thread, `Party Fund payout of ${formatCredits(value)} to ${targetActor.name} could not be reconciled and needs GM review: ${targetActor.name} may already have received the credits, so the Party Fund balance was NOT restored automatically and the payout was not retried. ${payout?.error ?? ''}`.trim(), { eventType: 'party-fund-payout-indeterminate', amount: value, toActorId: targetActor.id, transactionId: payout?.transactionId ?? null });
       return false;
     }
-    await appendPartyFundLedger({ type: 'payout', amount: -value, toActorId: targetActor.id, threadId: thread.id, requesterId });
-    await this._publishSystemMessage(thread, `Party Fund paid ${formatCredits(value)} to ${targetActor.name}. New balance: ${formatCredits(before - value)}.`, { eventType: 'party-fund-payout', amount: value, toActorId: targetActor.id });
+
+    if (outcome === 'failed') {
+      // A definitive failure: the actor was not paid, so the fund reduction is reversed — and only reported as reverted if the restore succeeded.
+      try {
+        await setPartyFundBalance(before);
+      } catch (restoreErr) {
+        SWSELogger.error('[Holonet] Party Fund payout rollback FAILED; fund balance is short', restoreErr);
+        await this._notifyPartyFund(thread, `Party Fund payout to ${targetActor.name} failed, but the Party Fund balance could NOT be restored: the fund is short by ${formatCredits(value)} and needs GM review.`, { eventType: 'party-fund-payout-restore-failed', amount: value, toActorId: targetActor.id });
+        return false;
+      }
+      await this._notifyPartyFund(thread, `Party Fund payout to ${targetActor.name} failed and was reverted.`, { eventType: 'party-fund-payout-failed' });
+      return false;
+    }
+
+    // The payout is COMMITTED. The ledger entry and the announcement are bookkeeping/presentation after the commit; a failure there is logged and never
+    // turns a committed payout into a reported failure.
+    try {
+      await appendPartyFundLedger({ type: 'payout', amount: -value, toActorId: targetActor.id, threadId: thread.id, requesterId });
+    } catch (ledgerErr) {
+      SWSELogger.error('[Holonet] Party Fund payout COMMITTED but its ledger entry could not be written', ledgerErr);
+    }
+    try {
+      await this._publishSystemMessage(thread, `Party Fund paid ${formatCredits(value)} to ${targetActor.name}. New balance: ${formatCredits(before - value)}.`, { eventType: 'party-fund-payout', amount: value, toActorId: targetActor.id });
+    } catch (publishErr) {
+      SWSELogger.error('[Holonet] Party Fund payout COMMITTED but its announcement could not be published', publishErr);
+    }
     return true;
   }
 
