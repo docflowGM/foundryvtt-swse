@@ -11,8 +11,12 @@
  */
 import { getVerifiedModificationData } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-data-store.js';
 import { DEVELOPMENT_BASIS, isDevelopmentModeEnabled } from '/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-development-mode.js';
+import { isArmorItemEquipped, isEnergyShieldItem } from '/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js';
 
-const TARGETS = Object.freeze({ SHOTS_PER_POWER_PACK: 'weapon.reload.shotsPerPowerPack' });
+const TARGETS = Object.freeze({
+  SHOTS_PER_POWER_PACK: 'weapon.reload.shotsPerPowerPack',
+  STUN_DT_EQUIPMENT_BONUS: 'armor.protection.stunDamageThresholdEquipmentBonus',
+});
 
 /** Certified operations of the active instances on an Item, optionally for one target. */
 export function activeEffectOperations(item, target = null, { data = getVerifiedModificationData(), developmentMode = isDevelopmentModeEnabled() } = {}) {
@@ -42,5 +46,22 @@ export function effectiveShotCapacity(item, base, options = {}) {
   return Math.floor(n * factor);
 }
 
+/**
+ * Equipment bonus to the wearer's damage threshold against stun damage from the WORN armor's certified operations (Mesh Underlay).
+ * Only equipped armor counts (an energy shield is not worn armor). Equipment bonuses do not stack with each other: the highest applies.
+ * @returns {{value:number, source:string|null}}
+ */
+export function wornArmorStunThresholdBonus(actor, options = {}) {
+  let value = 0; let source = null;
+  for (const item of Array.from(actor?.items ?? [])) {
+    if (item?.type !== 'armor' || !isArmorItemEquipped(item) || isEnergyShieldItem(item)) continue;
+    for (const op of activeEffectOperations(item, TARGETS.STUN_DT_EQUIPMENT_BONUS, options)) {
+      if (op.operation !== 'add' || op.bonusType !== 'equipment' || !Number.isFinite(op.value) || op.value <= value) continue;
+      value = op.value; source = item.name ?? null;
+    }
+  }
+  return { value, source };
+}
+
 export { TARGETS as EFFECT_TARGETS };
-export default { activeEffectOperations, effectiveShotCapacity, EFFECT_TARGETS: TARGETS };
+export default { activeEffectOperations, effectiveShotCapacity, wornArmorStunThresholdBonus, EFFECT_TARGETS: TARGETS };

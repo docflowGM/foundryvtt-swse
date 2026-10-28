@@ -990,6 +990,42 @@ All three are `SOURCE_VERIFIED` from the supplied sourcebook text extractions (n
 | Decision authority | Project owner |
 | Resolution | |
 
+## D-016 — Armor Reinforcement: matching "DR 2 versus piercing" to incoming damage
+
+| Field | Content |
+|---|---|
+| Rules domain | Modification effects (armor accessory) / damage mitigation |
+| Feature | Armor Reinforcement (`kotor-accessory-armor-reinforcement::armor`) |
+| Source | *Knights of the Old Republic Campaign Guide* printed page 75 (Table 5-6, Weapon and Armor Accessories), as certified in the runtime catalog (`EFFECTS_CERTIFIED`; summary "Wearer DR 2 versus piercing") |
+| Evidence | The certified effect is a grant of damage reduction 2 against the piercing damage type to the wearer |
+| Confirmed behavior | DR 2 applies to piercing damage dealt to the wearer of armor carrying the accessory |
+| Unresolved question | The damage pipeline cannot tell piercing damage apart: `normalizeDamageTypeKey` maps `piercing` (and `slashing`, `bludgeoning`) to `kinetic`, and the canonical weapon records carry `damageType` values `energy`, `kinetic`, `stun`, `sonic` and `fire` only; "piercing" appears only in description prose (for example the vibrolance, "piercing or slashing"). Wiring the grant through the existing typed-resistance stage would therefore reduce all kinetic damage, which is broader than the printed rule. Classifying weapons as piercing (and deciding how a "piercing or slashing" weapon is treated on a given attack) would be new rules data. Separately, the project's D4 decision routes typed applies-to DR to the typed-resistance stage (highest-only per type); whether a "DR versus a type" grant belongs there or in the DR resolver is part of the same question |
+| Options | (a) Add a source-backed piercing/slashing/bludgeoning classification to weapon records and match on it. (b) Treat the grant as kinetic (broader than printed; not source-supported). No option is recommended |
+| Recommended ruling | None |
+| Implementation impact | Armor Reinforcement is NOT in the development set; it stays blocked in the workbench and contributes no mitigation. No weapon data or damage-type aliases were changed |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Review classification (rev. 2) | `DEFERRED_RULES_REVIEW` — The printed effect is clear; the open point is how the system decides that damage is piercing, which needs new rules data or an owner ruling |
+| Decision authority | Project owner |
+| Resolution | |
+
+## D-017 — Mesh Underlay and the Nerve Reinforcement Implant: stacking against stun
+
+| Field | Content |
+|---|---|
+| Rules domain | Modification effects (armor accessory) / damage threshold / bonus stacking |
+| Feature | Mesh Underlay (`kotor-accessory-mesh-underlay::armor`) together with the Nerve Reinforcement Implant |
+| Source | *Knights of the Old Republic Campaign Guide* printed page 76 (Mesh Underlay, Table 5-6 on page 75; certified in the runtime catalog as "+5 equipment bonus to wearer damage threshold against stun damage"). Nerve Reinforcement Implant: *Knights of the Old Republic Campaign Guide*, page not recorded in the repository records (`packs/equipment*.db` have `page: null`); the system implements it as an untyped "+5 damage threshold against stun damage" (`ImplantEffectRules`) |
+| Evidence | Mesh Underlay's bonus is typed (equipment). The implant's bonus type is not recorded in the repository |
+| Confirmed behavior | Mesh Underlay alone: +5 equipment bonus to the wearer's damage threshold against stun damage (implemented under the GM development workflow; worn armor only; equipment bonuses do not stack with each other) |
+| Unresolved question | Whether the two bonuses stack. That depends on the implant's published bonus type, which has not been verified against the page |
+| Options | If the implant's bonus is untyped or of another type, they stack (+10). If it is an equipment bonus, only the higher applies (+5). Requires source verification of the implant's printed text |
+| Recommended ruling | None |
+| Implementation impact | With both active, `ThresholdEngine.getDamageThreshold` applies only the implant (the pre-existing behavior) and the breakdown names this entry. Mesh Underlay alone applies normally |
+| Status | `PENDING_SOURCE_VERIFICATION` |
+| Review classification (rev. 2) | `PENDING_SOURCE_VERIFICATION` — Read the Nerve Reinforcement Implant entry in the KotOR Campaign Guide and record its bonus type verbatim, with printed page. Becomes `DEFERRED_RULES_REVIEW` only if the text is ambiguous |
+| Decision authority | Project owner |
+| Resolution | |
+
 ---
 
 ## Revision log
@@ -1003,3 +1039,4 @@ All three are `SOURCE_VERIFIED` from the supplied sourcebook text extractions (n
 - **Revision 5 (2026-10-19, E4-C1 WP5):** appended EQ-002 (held-together groups of identical weapons are not representable in the occupancy model; fail-closed) and EQ-003 (worn weapons and weapons without a wielding class cannot be READIED; fail-closed). No existing entry was changed; no recommended ruling was added.
 - **Revision 6 (2026-10-19, E4-C1 WP5-C1):** appended source-verification addenda to EQ-002 and EQ-003 (published mechanics SOURCE_VERIFIED from sourcebook text extractions; model/implementation unresolved; fail-closed handling unchanged; acceptance debt tracked). EQ-001 untouched. No recommended ruling was added.
 - **Revision 7 (2026-10-19, E4-C1 WP5-C2):** appended EQ-004 (operator authorization and crew eligibility for vehicle weapon attacks are not established at the attack boundary; routing-only evidence is reported as such; no enforcement and no flag added). No existing entry was changed; no recommended ruling was added.
+- **Revision 8 (2026-10-28, Modification V2 #1086):** appended D-016 (Armor Reinforcement "DR 2 versus piercing" cannot be matched: the pipeline has no piercing classification; blocked) and D-017 (Mesh Underlay with the Nerve Reinforcement Implant: stacking depends on the implant's unverified bonus type; only the implant applies when both are active). No existing entry was changed; no recommended ruling was added.

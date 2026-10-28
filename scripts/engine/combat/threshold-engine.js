@@ -38,6 +38,7 @@ import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system
 import { getDamageThresholdSizeBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
 import { ImplantEffectRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js";
+import { wornArmorStunThresholdBonus } from "/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-effects.js";
 
 /* -------------------------------------------------------------------------- */
 /*  COMBAT END HOOKS (Per-encounter feat flags)                              */
@@ -158,6 +159,14 @@ export class ThresholdEngine {
     const implantBreakdown = implantStunBonus
       ? [{ label: 'Nerve Reinforcement Implant', value: implantStunBonus }]
       : [];
+    // Modification V2: worn-armor equipment bonus against stun (Mesh Underlay), derived from the verified catalog, never stored on the actor.
+    // Whether it stacks with the Nerve Reinforcement Implant bonus (untyped in this system) is an open ruling (D-017): with both present only
+    // the implant applies -- the pre-existing behavior -- and the breakdown says why.
+    const armorStun = String(context?.damageType ?? '').toLowerCase() === 'stun' ? wornArmorStunThresholdBonus(actor) : { value: 0, source: null };
+    const armorStunBonus = armorStun.value > 0 && !implantStunBonus ? armorStun.value : 0;
+    const armorStunBreakdown = armorStun.value > 0
+      ? [{ label: `Mesh Underlay${armorStun.source ? ` (${armorStun.source})` : ''}${armorStunBonus ? '' : ': not applied with the Nerve Reinforcement Implant (stacking ruling pending, D-017)'}`, value: armorStunBonus }]
+      : [];
 
     // Phase 5D-I-C-A: an attack-specific adjustment (Disruptor: "as though its damage threshold were 5 lower") shapes the EFFECTIVE threshold of
     // THIS damage event only; the actor's stored / derived Damage Threshold is never modified.
@@ -167,14 +176,15 @@ export class ThresholdEngine {
 
     return {
       base,
-      modifierTotal: modifierTotal + implantStunBonus + adjustment,
-      total: Math.max(0, base + modifierTotal + implantStunBonus + adjustment),
+      modifierTotal: modifierTotal + implantStunBonus + armorStunBonus + adjustment,
+      total: Math.max(0, base + modifierTotal + implantStunBonus + armorStunBonus + adjustment),
       breakdown: [
         ...modifiers.map(m => ({
           label: m.label,
           value: m.value
         })),
         ...implantBreakdown,
+        ...armorStunBreakdown,
         ...adjustmentBreakdown
       ]
     };

@@ -418,10 +418,10 @@ check('generator input is read-only: no source file other than the runtime outpu
   const after = ['data/audits/modification-rolling-authority-v1.5.json', 'data/audits/modification-rolling-authority-v1.5.manifest.json', LEDGER_PATH, SPECS_PATH, 'docs/audits/swse-rules-decisions-pending.md'].map((p) => sha256(fs.readFileSync(path.join(ROOT, p))));
   assert.deepEqual(after, before);
 });
-check('register parsing: D-001..D-015 classified; D-006 and D-014 deferred; only D-001 and D-015 lifted; one D-013 partial lift', () => {
+check('register parsing: D-001..D-017 classified; D-006, D-014 and D-016 deferred; only D-001 and D-015 lifted; one D-013 partial lift', () => {
   const reg = parseRegister(readText('docs/audits/swse-rules-decisions-pending.md'));
-  assert.equal(reg.size, 15);
-  const deferred = new Set(['D-006', 'D-014']);
+  assert.equal(reg.size, 17);
+  const deferred = new Set(['D-006', 'D-014', 'D-016']);
   for (const [id, t] of reg) assert.deepEqual(t.classifications, [deferred.has(id) ? 'DEFERRED_RULES_REVIEW' : 'PENDING_SOURCE_VERIFICATION'], id);
   for (const [id, t] of reg) {
     if (id === 'D-001') { assert.equal(t.liftValid, true); assert.ok(t.lift.source.includes('page 39') && t.lift.evidence.includes('d-001-install-remove-pdf-verification.md')); }

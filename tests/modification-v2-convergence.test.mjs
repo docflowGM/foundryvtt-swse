@@ -259,4 +259,48 @@ const install = (item, extra = {}, d = deps()) => silent(() => P.installProvisio
   } finally { ActorEngine.updateOwnedItems = realUpd; AmmoSystem.isTrackingEnabled = realTrack; globalThis.game.settings = { get: () => undefined }; }
   ok('9: Improved Energy Cell lifecycle (GM development policy): size increase (+1 verified slot; a strip never counts, D16) -> install 4000 cr (DC 30) -> capacity 10->20 for reload, validation and firing -> setting off / removal restore 10 with no write to the base value');
 }
+{
+  // Mesh Underlay lifecycle on worn light armor (GM development workflow): size increase -> install (2 slots, 2500 cr, DC 30) -> +5 equipment
+  // bonus to the damage threshold against stun only, worn armor only -> setting off / deactivation / removal restore it; nothing is written to the
+  // actor. With a Nerve Reinforcement Implant also active, only the implant applies (stacking ruling pending, D-017).
+  const store = await import('/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-data-store.js');
+  store.setVerifiedModificationData(data);
+  const { ThresholdEngine } = await import('/systems/foundryvtt-swse/scripts/engine/combat/threshold-engine.js');
+  const { ImplantEffectRules } = await import('/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js');
+  reset(5000);
+  actor.system.derived = { damageThreshold: 15 };
+  A().system.equipped = true;
+  let devOn = true;
+  globalThis.game.settings = { get: (ns, key) => (key === 'modificationV2DevelopmentMode' ? devOn : undefined) };
+  const dt = async (damageType) => (await ThresholdEngine.getDamageThreshold(actor, { damageType })).total;
+  const MESH = 'kotor-accessory-mesh-underlay::armor';
+  const armorReq = { stockClass: 'light', powered: false };
+  const meshOf = () => P.listDomainModifications({ data, item: A(), armor: P.armorAttestation({ ...armorReq, gmId: 'gm1' }) }).find((m) => m.typedDefinitionId === MESH);
+  assert.ok(meshOf().hard.some((h) => h.code === 'SLOT_OVERFLOW'), 'light armor has 1 slot; Mesh Underlay needs 2');
+  A().flags['foundryvtt-swse'] = { customization: { structural: { sizeIncreaseApplied: true, strippedAreas: [] } } };
+  A().flags.swse = { customizationStructural: { sizeIncreaseApplied: true, strippedAreas: [] } };
+  const review = meshOf();
+  assert.equal(review.availability, 'development', JSON.stringify(review.hard)); assert.equal(review.price, 2500); assert.equal(review.dc, 30);
+  assert.ok(!P.listDomainModifications({ data, item: A(), armor: P.armorAttestation({ ...armorReq, gmId: 'gm1' }) }).some((m) => m.typedDefinitionId === 'kotor-accessory-armor-reinforcement::armor' && m.availability !== 'blocked'), 'Armor Reinforcement stays blocked (D-016)');
+  assert.equal(await dt('stun'), 15);
+  const inst = await silent(() => P.installProvisionalUpgrade(actor, A(), { typedDefinitionId: MESH, attemptId: 'mesh-1', priceConfirmed: 2500, armor: armorReq, hostRuling: { compatible: true, note: 'underlay fits the vest (GM ruling)' }, check: { mode: 'gm-entered', total: 30 } }, deps({ developmentMode: true })));
+  assert.equal(inst.status, 'INSTALLED', JSON.stringify(inst.reason ?? inst.hard)); assert.equal(actor.system.credits, 2500);
+  assert.equal(await dt('stun'), 20, 'installed and worn: +5 against stun');
+  assert.equal(await dt('energy'), 15, 'no bonus against other damage');
+  assert.equal(actor.system.derived.damageThreshold, 15, 'the stored threshold is not written');
+  A().system.equipped = false; assert.equal(await dt('stun'), 15, 'armor not worn: no bonus'); A().system.equipped = true;
+  devOn = false; assert.equal(await dt('stun'), 15, 'development setting off: no bonus'); devOn = true;
+  const realImplant = ImplantEffectRules.getStunDamageThresholdBonus;
+  ImplantEffectRules.getStunDamageThresholdBonus = () => 5;
+  try {
+    const both = await ThresholdEngine.getDamageThreshold(actor, { damageType: 'stun' });
+    assert.equal(both.total, 20, 'implant + Mesh Underlay: only the implant applies until D-017 is ruled');
+    assert.ok(both.breakdown.some((b) => /D-017/.test(b.label) && b.value === 0), 'the breakdown says why Mesh Underlay is not applied');
+  } finally { ImplantEffectRules.getStunDamageThresholdBonus = realImplant; }
+  const failed = await silent(() => P.removeProvisionalUpgrade(actor, A(), { instanceId: inst.instance.instanceId, attemptId: 'mesh-rm-1', check: { mode: 'gm-entered', total: 10 } }, deps()));
+  assert.equal(failed.status, 'DEACTIVATED', JSON.stringify(failed)); assert.equal(await dt('stun'), 15, 'deactivated: no bonus (the slot stays used, Q-023)');
+  assert.equal(actor.system.credits, 2500, 'removal attempts move no credits');
+  ok('10: Mesh Underlay lifecycle (GM development policy): size increase -> install 2500 cr (DC 30) -> stun DT +5 on worn armor only -> unworn / setting off / deactivation restore it with no write; with the implant only the implant applies (D-017); Armor Reinforcement stays blocked (D-016)');
+  globalThis.game.settings = { get: () => undefined };
+}
 console.log(`modification-v2-convergence: ${n} checks ok`);
