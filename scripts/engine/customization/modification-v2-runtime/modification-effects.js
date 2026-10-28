@@ -17,6 +17,7 @@ const TARGETS = Object.freeze({
   SHOTS_PER_POWER_PACK: 'weapon.reload.shotsPerPowerPack',
   STUN_DT_EQUIPMENT_BONUS: 'armor.protection.stunDamageThresholdEquipmentBonus',
   DAMAGE_TYPE_REDUCTION: 'armor.protection.damageTypeReduction',
+  CRITICAL_DAMAGE_ADDITION: 'weapon.critical.critical_damage_addition',
 });
 
 /** Certified operations of the active instances on an Item, optionally for one target. */
@@ -84,5 +85,23 @@ export function wornArmorDamageTypeReductions(actor, options = {}) {
   return [...best.values()];
 }
 
+/**
+ * Dice a certified weapon modification adds AFTER the critical multiplier (Durasteel Bonding, KotOR p.75: one die of the current weapon
+ * damage die). "Current weapon damage die" is read from the formula actually rolled for this attack (die-size steps applied); when that
+ * formula has no die or mixes die sizes there is no single current die, so nothing is added and the reason is returned.
+ * @returns {{terms:string[], unresolved:Array<{instanceId:string, reason:string}>}}
+ */
+export function criticalPostMultiplierDice(weapon, rolledFormula, options = {}) {
+  const terms = []; const unresolved = [];
+  for (const op of activeEffectOperations(weapon, TARGETS.CRITICAL_DAMAGE_ADDITION, options)) {
+    const count = Number(op.value?.diceCount);
+    if (op.operation !== 'critical-post-multiplier-addition' || op.value?.dieType !== 'current_weapon_damage_die' || !Number.isInteger(count) || count <= 0) continue;
+    const sizes = [...new Set([...String(rolledFormula ?? '').matchAll(/\d*d(\d+)/gi)].map((m) => Number(m[1])))];
+    if (sizes.length === 1) terms.push(`${count}d${sizes[0]}`);
+    else unresolved.push({ instanceId: op.instanceId, reason: sizes.length ? 'mixed weapon damage dice' : 'no weapon damage die' });
+  }
+  return { terms, unresolved };
+}
+
 export { TARGETS as EFFECT_TARGETS };
-export default { activeEffectOperations, effectiveShotCapacity, wornArmorStunThresholdBonus, wornArmorDamageTypeReductions, EFFECT_TARGETS: TARGETS };
+export default { activeEffectOperations, effectiveShotCapacity, wornArmorStunThresholdBonus, wornArmorDamageTypeReductions, criticalPostMultiplierDice, EFFECT_TARGETS: TARGETS };

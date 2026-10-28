@@ -50,6 +50,7 @@ import { RULES } from "/systems/foundryvtt-swse/scripts/engine/execution/rules/r
 import { resolveTalentDamageContributions } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-talent-contributions.js";
 import { collectSharedDamageDiceTerms } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-item-dice-contributions.js";
 import { canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
+import { criticalPostMultiplierDice } from "/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-effects.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Internal helpers
@@ -1058,7 +1059,9 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
   // ── Critical state ───────────────────────────────────────────────────
   const multiplier = resolveCriticalMultiplier(actor, weapon, context, optionModifiers);
   const mechanicBonusFormulas = (shape && isCriticalRoll) ? shape.criticalBonusFormulas.map((f) => f.formula) : [];
-  const bonusFormula = isCriticalRoll ? [getCriticalDamageBonusFormula(actor, weapon), ...mechanicBonusFormulas].filter(Boolean).join(' + ') : '';
+  // Modification V2 (Durasteel Bonding): certified dice added after the critical multiplier, sized from this attack's rolled weapon die
+  const modificationCritical = isCriticalRoll ? criticalPostMultiplierDice(weapon, stepDamageDieFormula(base, dieStepIncreases)) : { terms: [], unresolved: [] };
+  const bonusFormula = isCriticalRoll ? [getCriticalDamageBonusFormula(actor, weapon), ...mechanicBonusFormulas, ...modificationCritical.terms].filter(Boolean).join(' + ') : '';
 
   // ── Typed damage-modifier vocabulary unification ────────────────────
   // Damage SSOT correction (independent review of 4d05a80, "Blocker 2"):
@@ -1089,6 +1092,7 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
     ...conditionalDamage.applied.map((a) => ({ id: `conditional-${a.id}`, label: a.kind === 'flat' ? `Weapon ${a.bonusType} bonus` : 'Weapon bonus die', value: a.kind === 'flat' ? a.value : a.formula, category: a.kind === 'flat' ? 'equipmentBonus' : 'additionalDice', applied: true, stage: a.kind === 'flat' ? PRE : POST })),
     ...(isCriticalRoll ? [{ id: 'critical-multiplier', label: 'Critical Multiplier', value: multiplier, category: 'criticalMultiplier', applied: true, stage: DAMAGE_STAGE.CRITICAL }] : []),
     ...(bonusFormula ? [{ id: 'critical-bonus', label: 'Critical Bonus Formula', value: bonusFormula, category: 'criticalAddition', applied: true, stage: DAMAGE_STAGE.CRITICAL }] : []),
+    ...modificationCritical.unresolved.map((u) => ({ id: `modification-critical-${u.instanceId}`, label: `Modification critical die not applied (${u.reason})`, value: null, category: 'criticalAddition', applied: false, stage: DAMAGE_STAGE.CRITICAL })),
     ...typedModifierLedger.map((entry) => ({ stage: PRE, ...entry })),
     ...(shape?.riders ?? []).map((r) => ({ id: `rider-${r.id}`, label: `Rider: ${r.componentId}`, value: r.damage?.formula ?? null, category: 'damageRider', applied: true, stage: DAMAGE_STAGE.SEPARATE_DAMAGE_COMPONENT }))
   ];

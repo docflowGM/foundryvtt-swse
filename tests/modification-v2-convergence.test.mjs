@@ -357,4 +357,34 @@ const install = (item, extra = {}, d = deps()) => silent(() => P.installProvisio
   globalThis.game.settings = { get: () => undefined };
   ok('11: gear development slice (D-005 pending): universal upgrade with published price/slots/Table 2-2 row, explicit GM host ruling required, charge, slot counted, no automated effect, removal; legacy gear list kept');
 }
+{
+  // Durasteel Bonding (KotOR p.75, GM development policy): on a critical hit, +1 die of the current weapon damage die AFTER the critical
+  // multiplier, through the one damage composition; "weapon object DR +5" has no consumer and is not automated
+  const store = await import('/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-data-store.js');
+  store.setVerifiedModificationData(data);
+  const { resolveDamageComposition, buildDamageFormula, stepDamageDieFormula } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js');
+  rt.setSharedWeaponAuthorityRegistry(registry);
+  let devOn = true;
+  globalThis.game.settings = { get: (ns, key) => (key === 'modificationV2DevelopmentMode' ? devOn : undefined) };
+  const ab = (m) => ({ base: 10 + m * 2, racial: 0, enhancement: 0, temp: 0 });
+  const shooter = { id: 's1', name: 'S', type: 'character', flags: { swse: {} }, effects: [], items: Object.assign([], { get: () => null }), getFlag() { return undefined; }, getRollData() { return {}; },
+    system: { bab: 5, level: 6, attributes: { str: ab(0), dex: ab(0), con: ab(0), int: ab(0), wis: ab(0), cha: ab(0) }, abilities: {}, skills: {}, derived: {} } };
+  const bonded = (state = 'installed') => ({ id: 'wp', name: 'Pistol', type: 'weapon', system: {}, flags: { swse: { canonicalWeapon: { identityKey: 'weapon-blaster-pistol' } }, 'foundryvtt-swse': { customization: { installedUpgrades: [
+    { instanceId: 'db1', typedDefinitionId: 'kotor-accessory-durasteel-bonding::weapon', domain: 'weapon', state, basis: 'DEVELOPMENT_GM_POLICY', provisional: true }] } } } });
+  const crit = (w, ctx = {}) => resolveDamageComposition(shooter, w, { isCritical: true, ...ctx });
+  const c = crit(bonded());
+  assert.equal(c.dice.base, '3d6');
+  assert.match(c.critical.bonusFormula, /(^|\+ )1d6$/, c.critical.bonusFormula);
+  assert.match(buildDamageFormula(c), /\) \* 2 \+ \(.*1d6\)$/, 'added after the critical multiplier: ' + buildDamageFormula(c));
+  assert.equal(resolveDamageComposition(shooter, bonded(), {}).critical.bonusFormula, '', 'not on an ordinary hit');
+  assert.ok(!/1d6/.test(crit(bonded('deactivated')).critical.bonusFormula), 'deactivated: nothing');
+  devOn = false; assert.ok(!/1d6/.test(crit(bonded()).critical.bonusFormula), 'setting off: nothing'); devOn = true;
+  const E = await import('/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-effects.js');
+  assert.deepEqual(E.criticalPostMultiplierDice(bonded(), stepDamageDieFormula('3d6', 1), { developmentMode: true }).terms, ['1d8'], 'the current (stepped) die');
+  assert.deepEqual(E.criticalPostMultiplierDice(bonded(), '2d6 + 1d4', { developmentMode: true }), { terms: [], unresolved: [{ instanceId: 'db1', reason: 'mixed weapon damage dice' }] }, 'no single current die: not applied, reason reported');
+  const review = P.listDomainModifications({ data, item: { ...bonded(), flags: { swse: { canonicalWeapon: { identityKey: 'weapon-blaster-pistol' } } } }, weaponLookup: await P.productionWeaponLookup() }).find((m) => m.typedDefinitionId === 'kotor-accessory-durasteel-bonding::weapon');
+  assert.equal(review.availability, 'development', JSON.stringify(review.hard)); assert.equal(review.price, 2000); assert.equal(review.dc, 20);
+  globalThis.game.settings = { get: () => undefined };
+  ok('12: Durasteel Bonding (GM development policy): critical hit adds 1 die of the current weapon damage die after the multiplier (3d6 pistol: (..)*2 + 1d6); not on ordinary hits, deactivated or with the setting off; mixed dice -> not applied with the reason; 2000 cr, DC 20');
+}
 console.log(`modification-v2-convergence: ${n} checks ok`);

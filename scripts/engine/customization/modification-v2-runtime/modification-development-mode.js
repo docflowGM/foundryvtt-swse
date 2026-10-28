@@ -10,7 +10,9 @@ export const DEVELOPMENT_SETTING = 'modificationV2DevelopmentMode';
 export const DEVELOPMENT_BASIS = 'DEVELOPMENT_GM_POLICY';
 // Armor Reinforcement's "DR 2 against piercing" matches only the physical subtype the attack recorded (D-016: the selected form's canonical
 // damage type, "and" = all, "or" = the chosen one), carried from rollDamage to the mitigation authority; never all kinetic damage.
-export const DEVELOPMENT_SET = Object.freeze(['kotor-accessory-improved-energy-cell::weapon', 'kotor-accessory-mesh-underlay::armor', 'kotor-accessory-armor-reinforcement::armor']);
+// Durasteel Bonding: only its critical die is automated (after the critical multiplier); its "weapon object DR +5" has no consumer (no
+// object-damage authority for Items exists) and stays a recorded, non-automated effect.
+export const DEVELOPMENT_SET = Object.freeze(['kotor-accessory-improved-energy-cell::weapon', 'kotor-accessory-mesh-underlay::armor', 'kotor-accessory-armor-reinforcement::armor', 'kotor-accessory-durasteel-bonding::weapon']);
 // Gear (equipment domain): the Scum and Villainy Table 2-3 universal upgrades (D-005 host scope). Their price and slot cost are
 // table-verified; which hosts they attach to is open (D-005), so each install needs an explicit GM host ruling. Their effects are not
 // certified, so nothing is automated -- the instance is a GM-adjudicated record. The legacy gear list (GEAR_MODS) stays alongside.
