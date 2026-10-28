@@ -1,0 +1,197 @@
+{
+  "schema": "swse.vehicle.universal.phase2n.scavengers-guide-to-droids.staged.v1",
+  "status": "SOURCE_STAGED_TYPED_MECHANICS_AND_STRICT_MOUNT_CERTIFICATION_PENDING",
+  "sourceBook": "Scavenger's Guide to Droids",
+  "sourcePdfSha256": "bd72d74278b812dab95a6ee9d0aef730afec4feb9c37daef59bc733842489361",
+  "phase1Ledger": "data/audits/vehicles/swse-universal-phase1n-scavengers-guide-to-droids.json",
+  "historicalCanonicalSource": "data/canonical/vehicles/ships.json",
+  "sourceSearchLayer": "reference/sourcebooks/Scavenger's Guide to Droids_djvu.txt",
+  "summary": {
+    "book": "Scavenger's Guide to Droids",
+    "phase": "n",
+    "total": 1,
+    "old": 0,
+    "new": 1,
+    "supplemental": 0,
+    "legacyGroups": 0,
+    "groups": 0,
+    "newIssues": [],
+    "errors": [],
+    "errorCount": 0,
+    "patchStatus": "Source exception corrections and census reconciled"
+  },
+  "records": [
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "sgtd-dp-2-probe-droid",
+        "name": "DP-2 Probe Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "page": 82,
+        "printedTitle": "DP-2 Probe Droid",
+        "printedTypeLine": "Large starfighter/ground vehicle (speeder)",
+        "entryNotes": "PDF SHA-256 bd72d74278b812dab95a6ee9d0aef730afec4feb9c37daef59bc733842489361; physical p83",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "hybrid-vehicle-droid",
+        "mobilityDomains": [
+          "space",
+          "ground",
+          "repulsorlift"
+        ],
+        "printedSize": "Large",
+        "size": "large",
+        "secondaryCategories": [
+          "starfighter",
+          "ground-speeder",
+          "second-degree-droid"
+        ]
+      },
+      "challenge": {
+        "cl": 6
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 2,
+        "characterScaleLengthSquares": 2,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "none"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 575
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 3
+          }
+        ],
+        "maxVelocityKmh": 575,
+        "raw": "fly 12 squares (max. velocity 575 km/h), fly 3 squares (starship scale)"
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 12,
+        "reflexFlatFooted": 10,
+        "fortitude": 14,
+        "armorBonus": 1,
+        "damageReduction": 5
+      },
+      "durability": {
+        "hitPoints": 40,
+        "damageThreshold": 19
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 6,
+            "raw": "Initiative +6"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 7,
+            "raw": "Mechanics +7"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 7,
+            "raw": "Perception +7"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 6,
+            "raw": "Pilot +6"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 7,
+            "raw": "Use Computer +7"
+          }
+        ],
+        "initiativePrinted": 6,
+        "perceptionPrinted": 7,
+        "str": 18,
+        "dex": 14,
+        "int": 14,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 9,
+        "rangedAttackLine": "blaster cannon +2 (see below) and"
+      },
+      "armament": {
+        "firingGroups": [],
+        "carriedPayloads": [
+          {
+            "value": 16,
+            "unit": "space beacons",
+            "raw": "16 space beacons"
+          }
+        ],
+        "notes": "No verified printable attack group extracted; do not interpret as proof of unarmed stock vehicle."
+      },
+      "crew": {
+        "raw": "0 (normal)",
+        "crewCount": 0,
+        "crewQuality": "normal"
+      },
+      "capacity": {
+        "passengerCount": 0,
+        "cargo": {
+          "value": 15,
+          "unit": "kg",
+          "raw": "15 kg"
+        },
+        "consumables": {
+          "value": 2,
+          "unit": "days",
+          "raw": "2 days"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 36500,
+          "raw": "36,500"
+        }
+      },
+      "text": {
+        "sourceNotes": "New Phase 1 identity; source text search at index 310745, candidate score 31. Original PDF source SHA bd72d74278b812dab95a6ee9d0aef730afec4feb9c37daef59bc733842489361. TXT navigation is provisional; printed source/PDF is final authority."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/hyperspace/capability": "not-stated",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    }
+  ],
+  "productionPacksChanged": false,
+  "generatedActorsChanged": false
+}
