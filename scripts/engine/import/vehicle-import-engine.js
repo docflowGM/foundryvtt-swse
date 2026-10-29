@@ -42,6 +42,50 @@ export class VehicleImportEngine {
     assertCP23C4CNoStagedSourceImport(sourceActor);
     const mode = options.mode || 'replace';
     const preserve = options.preserve || {};
+    // Phase 4B source Actors are generated from the single 429-claim SSOT.
+    // They bypass legacy normalization (numeric Initiative and source silence
+    // are otherwise corrupted). This is shape validation, NOT an authenticated
+    // installation receipt or stock weapon approval.
+    const universal = sourceActor.flags?.swse?.universalVehicleSource;
+    if (universal !== undefined) {
+      const printed = universal?.source;
+      const evidence = sourceActor.flags?.swse?.canonicalPublication;
+      const system = sourceActor.system;
+      const sourceKey = printed?.identity?.sourceEntryKey;
+      const id = sourceActor.id ?? sourceActor._id;
+      const shield = printed?.defenses?.shieldRating;
+      const valid = universal?.schema === 'swse.vehicle.universal.actor-source.v1' &&
+        printed?.recordType === 'vehicle-source-entry' &&
+        typeof sourceKey === 'string' && sourceKey.length > 0 &&
+        /^([0-9a-f]{16})$/.test(id ?? '') &&
+        evidence?.sourceEntryKey === sourceKey &&
+        evidence?.sourceCertification === 'SOURCE_ONLY' &&
+        evidence?.foundryStockAttackTrusted === false &&
+        evidence?.physicalMountCertification === false &&
+        system?.vehicleSourceEntryKey === sourceKey &&
+        system?.initiative === printed?.abilities?.initiativePrinted &&
+        system?.hp?.max === printed?.durability?.hitPoints &&
+        system?.reflexDefense === printed?.defenses?.reflex &&
+        system?.fortitudeDefense === printed?.defenses?.fortitude &&
+        Array.isArray(system?.weapons) && system.weapons.length === 0 &&
+        !Object.hasOwn(printed?.armament ?? {}, 'weaponMounts') &&
+        (printed?.armament?.firingGroups ?? []).every(g => Array.isArray(g.mountKeys) && g.mountKeys.length === 0) &&
+        (typeof shield === 'number'
+          ? system?.shieldRating === shield && system?.shields?.max === shield
+          : !Object.hasOwn(system ?? {}, 'shields') && !Object.hasOwn(system ?? {}, 'shieldRating'));
+      if (!valid) throw new Error('UNIVERSAL_VEHICLE_SOURCE_INVALID_OR_UNTRUSTED');
+      // No backward-compatibility migration or partial merge for new sources:
+      // a deterministic replacement is the only permitted path.
+      if (mode !== 'replace') throw new Error('UNIVERSAL_VEHICLE_SOURCE_REPLACE_ONLY');
+      const update = {
+        name: sourceActor.name,
+        img: sourceActor.img,
+        system: duplicate(system),
+        'flags.swse.canonicalPublication': duplicate(evidence),
+        'flags.swse.universalVehicleSource': duplicate(universal)
+      };
+      return update;
+    }
     const isCanonicalPack = sourceActor.pack === 'foundryvtt-swse.vehicles-canonical-ships';
     if (isCanonicalPack) {
       // Canonical publication Actors bypass the legacy normalizer entirely.
