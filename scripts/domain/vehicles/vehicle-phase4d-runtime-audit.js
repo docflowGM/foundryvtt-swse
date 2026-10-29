@@ -1,3 +1,4 @@
+import { getVehicleCompendiumIndexEntries } from './vehicle-compendium-index.js';
 /**
  * Phase 4D: GM-invoked runtime acceptance audit for native vehicle packs.
  *
@@ -114,7 +115,7 @@ export async function auditUniversalVehicleRuntime({
         'system.vehicleSourcePage','system.vehiclePublishedShieldStatus'
       ]});
     } catch (e) { add('PACK_INDEX_FAILURE',spec.name+': '+e.message); categories.push({pack:spec.name,status:'index-error',count:0}); continue; }
-    const entries=Array.from(index ?? []);
+    const entries=getVehicleCompendiumIndexEntries(index);
     categories.push({pack:spec.name,status:'indexed',count:entries.length});
     indexed+=entries.length;
     for(const entry of entries){
