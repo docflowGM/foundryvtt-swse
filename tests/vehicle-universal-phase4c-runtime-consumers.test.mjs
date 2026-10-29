@@ -5,6 +5,7 @@ import {runInNewContext} from 'node:vm';
 import {UNIVERSAL_VEHICLE_PACKS,UNIVERSAL_VEHICLE_PACK_NAMES,getUniversalVehiclePackForCategory} from '../scripts/domain/vehicles/universal-vehicle-pack-registry.js';
 import {buildUniversalVehiclePackSources} from '../tools/build-universal-vehicle-pack-sources.mjs';
 import {STORE_PACKS} from '../scripts/engine/store/store-constants.js';
+import {getVehicleCompendiumIndexEntries} from '../scripts/domain/vehicles/vehicle-compendium-index.js';
 
 const built=buildUniversalVehiclePackSources(),all=[...built.output.values()].flat();
 const packNames=UNIVERSAL_VEHICLE_PACK_NAMES;
@@ -72,7 +73,7 @@ test('runtime-ready source-backed Actor projection does not synthesize missing g
   assert.equal(unknown,143);assert.equal(zero,5);assert.equal(positive,281);assert.equal(priced,271);
 });
 
-function mockBrowser({missing=null,truncate=false}={}){
+function mockBrowser({missing=null,truncate=false,mapIndex=false}={}){
   const docs=new Map();
   const packs=new Map();
   for(const [name,actors] of built.output){
@@ -81,7 +82,7 @@ function mockBrowser({missing=null,truncate=false}={}){
     const collection={
       documentName:'Actor',
       metadata:{label:UNIVERSAL_VEHICLE_PACKS.find(x=>x.name===name).label},
-      async getIndex(){return entries.map(d=>({_id:d._id,name:d.name,img:d.img,system:d.system}));},
+      async getIndex(){const data=entries.map(d=>({_id:d._id,name:d.name,img:d.img,system:d.system}));return mapIndex?new Map(data.map(x=>[x._id,x])):data;},
       async getDocument(id){return entries.find(d=>d._id===id)??null;}
     };
     docs.set(name,entries);packs.set('foundryvtt-swse.'+name,collection);
@@ -91,6 +92,7 @@ function mockBrowser({missing=null,truncate=false}={}){
   const ctx={
     UNIVERSAL_VEHICLE_PACK_NAMES:packNames,
     getUniversalVehiclePack:name=>UNIVERSAL_VEHICLE_PACKS.find(p=>p.name===name)??null,
+    getVehicleCompendiumIndexEntries,
     game:{system:{id:'foundryvtt-swse'},packs},
     Hooks:{once(){}}
   };
@@ -113,6 +115,12 @@ test('vehicle browser lists all 429 once, preserving same-name publication varia
   const selected=await Browser.loadVehicleDocument(vulture);
   assert.equal(selected.flags.swse.canonicalPublication.sourceEntryKey,vulture.sourceEntryKey);
   assert.equal(await Browser.loadVehicleIndex(),results);
+});
+
+test('Foundry Map/Collection pack indexes return values instead of [id, record] tuples',async()=>{
+  const entries=await mockBrowser({mapIndex:true}).loadVehicleIndex();
+  assert.equal(entries.length,429);
+  assert.ok(entries.every(entry=>typeof entry.sourceEntryKey==='string'));
 });
 
 test('vehicle browser fails closed when required pack or publication identity is missing',async()=>{
