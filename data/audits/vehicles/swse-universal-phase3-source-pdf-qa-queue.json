@@ -1,0 +1,456 @@
+{
+  "schema": "swse.vehicle.universal.phase3.source-pdf-qa-queue.v1",
+  "baselineCommit": "947b9993b6202086b17e8b6ed5b3ef442db1ce3f",
+  "sourceOfIdentity": "data/audits/vehicles/swse-universal-phase1[h-n]-*.json",
+  "scope": "Only 48 new final-seven-book identities; previously reviewed spacecraft and first-seven-book vehicles excluded",
+  "pdfFieldQA": {
+    "total": 48,
+    "verified": 2,
+    "pending": 46
+  },
+  "statusSemantics": {
+    "pdf-field-verified": "Every populated field compared with original rendered source page; not strict mechanical certification",
+    "pending-pdf-field-qa": "Staged from searchable source text; original page requires direct field QA"
+  },
+  "strictWeaponMountAndFoundryCertification": "separate-pending-gates",
+  "records": [
+    {
+      "sourceBook": "Galaxy of Intrigue",
+      "sourceEntryKey": "goi-corona-limited-luxury-groundspeeder",
+      "printedName": "Corona Limited Luxury Groundspeeder",
+      "printedPage": 71,
+      "pdfPhysicalPage": 72,
+      "sourcePdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+      "status": "pdf-field-verified",
+      "evidence": "Galaxy of Intrigue.pdf physical page 72 (printed page 71), original page visually examined; SHA verified",
+      "method": "field-by-field PDF scan comparison",
+      "strictMechanicalCertification": "not-certified"
+    },
+    {
+      "sourceBook": "Galaxy of Intrigue",
+      "sourceEntryKey": "goi-sorosuub-jg-8-luxury-landspeeder",
+      "printedName": "SoroSuub JG-8 Luxury Landspeeder",
+      "printedPage": 71,
+      "pdfPhysicalPage": 72,
+      "sourcePdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+      "status": "pdf-field-verified",
+      "evidence": "Galaxy of Intrigue.pdf physical page 72 (printed page 71), original page visually examined; SHA verified",
+      "method": "field-by-field PDF scan comparison",
+      "strictMechanicalCertification": "not-certified"
+    },
+    {
+      "sourceBook": "Legacy Era Campaign Guide",
+      "sourceEntryKey": "le-model-67-shrieker-speeder-bike",
+      "printedName": "Model 67 Shrieker Speeder Bike",
+      "printedPage": 80,
+      "pdfPhysicalPage": 81,
+      "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Legacy Era Campaign Guide",
+      "sourceEntryKey": "le-quickfire-speeder-bike",
+      "printedName": "QuickFire Speeder Bike",
+      "printedPage": 81,
+      "pdfPhysicalPage": 82,
+      "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Legacy Era Campaign Guide",
+      "sourceEntryKey": "le-gpe-3300-airspeeder",
+      "printedName": "GPE-3300 Airspeeder",
+      "printedPage": 81,
+      "pdfPhysicalPage": 82,
+      "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Legacy Era Campaign Guide",
+      "sourceEntryKey": "le-veltiss-2-airspeeder",
+      "printedName": "Veltiss-2 Airspeeder",
+      "printedPage": 82,
+      "pdfPhysicalPage": 83,
+      "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Legacy Era Campaign Guide",
+      "sourceEntryKey": "le-golan-viii-space-defense-platform",
+      "printedName": "Golan VIII Space Defense Platform",
+      "printedPage": 152,
+      "pdfPhysicalPage": 153,
+      "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Legacy Era Campaign Guide",
+      "sourceEntryKey": "le-rendili-star-drive-mobile-spacedock-220",
+      "printedName": "Rendili Star Drive Mobile Spacedock 220",
+      "printedPage": 153,
+      "pdfPhysicalPage": 154,
+      "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Legacy Era Campaign Guide",
+      "sourceEntryKey": "le-kybuck-speeder-bike",
+      "printedName": "Kybuck Speeder Bike",
+      "printedPage": 184,
+      "pdfPhysicalPage": 185,
+      "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Legacy Era Campaign Guide",
+      "sourceEntryKey": "le-all-terrain-riot-control-transport-at-rct",
+      "printedName": "All Terrain Riot Control Transport (AT-RCT)",
+      "printedPage": 184,
+      "pdfPhysicalPage": 185,
+      "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Legacy Era Campaign Guide",
+      "sourceEntryKey": "le-all-terrain-armored-heavy-transport-at-aht",
+      "printedName": "All Terrain Armored Heavy Transport (AT-AHT)",
+      "printedPage": 185,
+      "pdfPhysicalPage": 186,
+      "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Legacy Era Campaign Guide",
+      "sourceEntryKey": "le-the-wheel",
+      "printedName": "The Wheel",
+      "printedPage": 205,
+      "pdfPhysicalPage": 206,
+      "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "sourceEntryKey": "re-bantha-ii-cargo-skiff",
+      "printedName": "Bantha-II Cargo Skiff",
+      "printedPage": 60,
+      "pdfPhysicalPage": 61,
+      "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "sourceEntryKey": "re-storm-iv-twin-pod-cloud-car",
+      "printedName": "Storm IV Twin-Pod Cloud Car",
+      "printedPage": 61,
+      "pdfPhysicalPage": 62,
+      "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "sourceEntryKey": "re-talon-i-combat-cloud-car",
+      "printedName": "Talon I Combat Cloud Car",
+      "printedPage": 61,
+      "pdfPhysicalPage": 62,
+      "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "sourceEntryKey": "re-9000-z004-landspeeder",
+      "printedName": "9000 Z004 Landspeeder",
+      "printedPage": 62,
+      "pdfPhysicalPage": 63,
+      "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "sourceEntryKey": "re-air-2-swoop",
+      "printedName": "Air-2 Swoop",
+      "printedPage": 62,
+      "pdfPhysicalPage": 63,
+      "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "sourceEntryKey": "re-mptl-2a-mobile-proton-torpedo-launcher",
+      "printedName": "MPTL-2a Mobile Proton Torpedo Launcher",
+      "printedPage": 110,
+      "pdfPhysicalPage": 111,
+      "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "sourceEntryKey": "re-gallofree-htt-26-heavy-troop-transport",
+      "printedName": "Gallofree HTT-26 Heavy Troop Transport",
+      "printedPage": 111,
+      "pdfPhysicalPage": 112,
+      "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "sourceEntryKey": "re-ultra-light-assault-vehicle-ulav",
+      "printedName": "Ultra-Light Assault Vehicle (ULAV)",
+      "printedPage": 111,
+      "pdfPhysicalPage": 112,
+      "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "sourceEntryKey": "re-mekuun-heavy-tracker",
+      "printedName": "Mekuun Heavy Tracker",
+      "printedPage": 112,
+      "pdfPhysicalPage": 113,
+      "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "sourceEntryKey": "re-t2-b-repulsor-tank",
+      "printedName": "T2-B Repulsor Tank",
+      "printedPage": 112,
+      "pdfPhysicalPage": 113,
+      "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "sourceEntryKey": "re-t4-b-heavy-tank",
+      "printedName": "T4-B Heavy Tank",
+      "printedPage": 113,
+      "pdfPhysicalPage": 114,
+      "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "sourceEntryKey": "re-at-aa-anti-aircraft-platform",
+      "printedName": "AT-AA Anti-Aircraft Platform",
+      "printedPage": 131,
+      "pdfPhysicalPage": 132,
+      "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "sourceEntryKey": "re-at-pt-all-terrain-personal-transport",
+      "printedName": "AT-PT All-Terrain Personal Transport",
+      "printedPage": 132,
+      "pdfPhysicalPage": 133,
+      "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "sourceEntryKey": "re-lancet-aerial-artillery",
+      "printedName": "Lancet Aerial Artillery",
+      "printedPage": 133,
+      "pdfPhysicalPage": 134,
+      "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "sourceEntryKey": "re-tie-ap-1-mauler",
+      "printedName": "TIE ap-1 Mauler",
+      "printedPage": 135,
+      "pdfPhysicalPage": 136,
+      "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "sourceEntryKey": "re-tie-crawler",
+      "printedName": "TIE Crawler",
+      "printedPage": 135,
+      "pdfPhysicalPage": 136,
+      "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "sourceEntryKey": "re-canderous-class-assault-tank",
+      "printedName": "Canderous-class Assault Tank",
+      "printedPage": 153,
+      "pdfPhysicalPage": 154,
+      "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "sourceEntryKey": "re-f9-tz-transport",
+      "printedName": "F9-TZ Transport",
+      "printedPage": 154,
+      "pdfPhysicalPage": 155,
+      "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Threats of the Galaxy",
+      "sourceEntryKey": "tog-hounds-tooth",
+      "printedName": "Hound's Tooth",
+      "printedPage": 18,
+      "pdfPhysicalPage": 19,
+      "sourcePdfSha256": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Threats of the Galaxy",
+      "sourceEntryKey": "tog-bloodfin-razalon-fc-20-speeder-bike",
+      "printedName": "Bloodfin Razalon FC-20 Speeder Bike",
+      "printedPage": 81,
+      "pdfPhysicalPage": 82,
+      "sourcePdfSha256": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Threats of the Galaxy",
+      "sourceEntryKey": "tog-modified-r-2000-raptor-speeder-bike",
+      "printedName": "Modified R-2000 Raptor Speeder Bike",
+      "printedPage": 98,
+      "pdfPhysicalPage": 99,
+      "sourcePdfSha256": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Threats of the Galaxy",
+      "sourceEntryKey": "tog-nebulon-q-swoop",
+      "printedName": "Nebulon-Q Swoop",
+      "printedPage": 99,
+      "pdfPhysicalPage": 100,
+      "sourcePdfSha256": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Unknown Regions",
+      "sourceEntryKey": "ur-gallis-tech-48-roller-wheel-bike",
+      "printedName": "Gallis-Tech 48 Roller Wheel Bike",
+      "printedPage": 48,
+      "pdfPhysicalPage": 49,
+      "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Unknown Regions",
+      "sourceEntryKey": "ur-tangan-industries-aerosled-mark-iii",
+      "printedName": "Tangan Industries Aerosled Mark III",
+      "printedPage": 48,
+      "pdfPhysicalPage": 49,
+      "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Unknown Regions",
+      "sourceEntryKey": "ur-all-terrain-roller",
+      "printedName": "All-Terrain Roller",
+      "printedPage": 48,
+      "pdfPhysicalPage": 49,
+      "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Unknown Regions",
+      "sourceEntryKey": "ur-compact-assault-vehicle-wheeled-px-10",
+      "printedName": "Compact Assault Vehicle/Wheeled PX-10",
+      "printedPage": 49,
+      "pdfPhysicalPage": 50,
+      "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Unknown Regions",
+      "sourceEntryKey": "ur-groundcar",
+      "printedName": "Groundcar",
+      "printedPage": 49,
+      "pdfPhysicalPage": 50,
+      "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Unknown Regions",
+      "sourceEntryKey": "ur-land-crawler",
+      "printedName": "Land Crawler",
+      "printedPage": 49,
+      "pdfPhysicalPage": 50,
+      "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Unknown Regions",
+      "sourceEntryKey": "ur-jaffryes-universal-automotive-ark-ii-series-landmaster",
+      "printedName": "Jaffryes Universal Automotive ARK-II Series Landmaster",
+      "printedPage": 50,
+      "pdfPhysicalPage": 51,
+      "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Unknown Regions",
+      "sourceEntryKey": "ur-hyrotii-corporation-mobile-recon-research-vehicle",
+      "printedName": "Hyrotii Corporation Mobile Recon/Research Vehicle",
+      "printedPage": 50,
+      "pdfPhysicalPage": 51,
+      "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Unknown Regions",
+      "sourceEntryKey": "ur-ikas-adno-22-b-nightfalcon-speeder-bike",
+      "printedName": "Ikas-Adno 22-B Nightfalcon Speeder Bike",
+      "printedPage": 50,
+      "pdfPhysicalPage": 51,
+      "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Unknown Regions",
+      "sourceEntryKey": "ur-srv-1-scout-and-retrieval-vehicle",
+      "printedName": "SRV-1 Scout and Retrieval Vehicle",
+      "printedPage": 51,
+      "pdfPhysicalPage": 52,
+      "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Unknown Regions",
+      "sourceEntryKey": "ur-landing-sphere",
+      "printedName": "Landing Sphere",
+      "printedPage": 58,
+      "pdfPhysicalPage": 59,
+      "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Unknown Regions",
+      "sourceEntryKey": "ur-wind-skiff",
+      "printedName": "Wind Skiff",
+      "printedPage": 189,
+      "pdfPhysicalPage": 190,
+      "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Unknown Regions",
+      "sourceEntryKey": "ur-eeook-protector-vi-patrol-speeder",
+      "printedName": "Eeook Protector VI Patrol Speeder",
+      "printedPage": 214,
+      "pdfPhysicalPage": 215,
+      "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "status": "pending-pdf-field-qa"
+    },
+    {
+      "sourceBook": "Scavenger's Guide to Droids",
+      "sourceEntryKey": "sgtd-dp-2-probe-droid",
+      "printedName": "DP-2 Probe Droid",
+      "printedPage": 82,
+      "pdfPhysicalPage": 83,
+      "sourcePdfSha256": "bd72d74278b812dab95a6ee9d0aef730afec4feb9c37daef59bc733842489361",
+      "status": "pending-pdf-field-qa"
+    }
+  ]
+}

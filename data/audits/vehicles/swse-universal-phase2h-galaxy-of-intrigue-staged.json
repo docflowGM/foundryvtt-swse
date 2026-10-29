@@ -12,17 +12,11 @@
     "total": 8,
     "inherited": 6,
     "new": 2,
-    "groups": 10,
-    "missingHP": [
-      "goi-republic-engineering-corporation-ferret-class-reconnaissance-vessel",
-      "goi-republic-engineering-corporation-prowler-class-reconnaissance-vessel"
-    ],
-    "missingRef": [
-      "goi-republic-engineering-corporation-ferret-class-reconnaissance-vessel",
-      "goi-republic-engineering-corporation-prowler-class-reconnaissance-vessel"
-    ],
+    "groups": 9,
+    "missingHP": [],
+    "missingRef": [],
     "newIssues": [],
-    "patchStatus": "Source exception corrections and census reconciled"
+    "patchStatus": "Phase 3H primary-PDF field QA complete for both new groundspeeders; historical ship data preserved; strict mount/runtime certification pending"
   },
   "records": [
     {
@@ -915,25 +909,23 @@
         "cl": 4
       },
       "geometry": {
-        "characterScaleWidthSquares": 2,
-        "characterScaleLengthSquares": 2,
+        "characterScaleWidthSquares": 3,
+        "characterScaleLengthSquares": 3,
         "coverCrew": "total"
       },
       "movement": {
         "speedModes": [
           {
-            "mode": "starship-flight",
-            "scale": "starship",
-            "squaresPerMove": 3
+            "mode": "repulsorlift",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 300,
+            "raw": "Speed 12 squares (max. velocity 300 km/h)"
           }
-        ]
+        ],
+        "maxVelocityKmh": 300
       },
-      "hyperspace": {
-        "raw": "x3 (x18 backup), navicomputer",
-        "capability": "equipped",
-        "primaryMultiplier": 3,
-        "navComputer": "installed"
-      },
+      "hyperspace": {},
       "defenses": {
         "reflex": 14,
         "reflexFlatFooted": 11,
@@ -949,84 +941,79 @@
         "skills": [
           {
             "name": "Initiative",
-            "printedModifier": 1,
-            "raw": "Initiative +1"
+            "printedModifier": 7,
+            "raw": "Initiative +7"
           },
           {
             "name": "Mechanics",
-            "printedModifier": 8,
-            "raw": "Mechanics +8"
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
           },
           {
             "name": "Perception",
-            "printedModifier": 8,
-            "raw": "Perception +8"
+            "printedModifier": 6,
+            "raw": "Perception +6"
           },
           {
             "name": "Pilot",
-            "printedModifier": 1,
-            "raw": "Pilot +1"
+            "printedModifier": 7,
+            "raw": "Pilot +7"
           },
           {
             "name": "Use Computer",
-            "printedModifier": 8,
-            "raw": "Use Computer +8"
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
           }
         ],
         "initiativePrinted": 7,
         "perceptionPrinted": 6,
-        "str": 58,
+        "str": 38,
         "dex": 16,
-        "int": 18,
+        "int": 14,
         "con": null
       },
       "combat": {
-        "baseAttackBonusPrinted": 5,
-        "grappleBonusPrinted": 49,
-        "rangedAttackLine": "4 heavy laser cannons +9 (see below)"
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 26
       },
       "armament": {
-        "firingGroups": [
-          {
-            "groupKey": "goi-corona-limited-luxury-groundspeeder-source-attack-1",
-            "label": "Heavy laser cannon",
-            "groupKind": "unknown",
-            "batteryMembershipStatus": "not-stated",
-            "mountKeys": [],
-            "attackBonusPrinted": 9,
-            "specialNotes": "Printed operator gunner, damage 6d10x2 . Physical mounts and firing arcs NOT certified."
-          }
-        ]
+        "firingGroups": []
       },
       "crew": {
-        "raw": "100 (expert)",
-        "crewCount": 100
+        "raw": "1 (skilled)",
+        "crewCount": 1
       },
       "capacity": {
-        "passengerCount": 450,
+        "passengerCount": 6,
         "cargo": {
-          "value": 1200,
-          "unit": "tons",
-          "raw": "1,200 tons"
+          "value": 300,
+          "unit": "kg",
+          "raw": "300 kg"
         },
         "consumables": {
-          "value": 1,
-          "unit": "year",
-          "raw": "1 year"
+          "value": 2,
+          "unit": "days",
+          "raw": "2 days"
         },
         "carriedCraft": []
       },
       "systems": {},
       "modifications": {},
       "economics": {
-        "availability": "Military",
+        "availability": "Licensed",
         "priceNew": {
-          "status": "ambiguous",
-          "raw": "not available for sale"
+          "status": "priced",
+          "amountCredits": 70000,
+          "raw": "70,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 20000,
+          "raw": "20,000"
         }
       },
       "text": {
-        "sourceNotes": "Source text excerpt anchored at 274475; original PDF audit ledger confirms publication identity. No executable mount certification."
+        "sourceNotes": "Phase 3 direct original-PDF field QA: Galaxy of Intrigue printed p71 / physical PDF p72, SHA256 c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21. Printed groundspeeder type and Speed 12 squares (300 km/h); repulsorlift mode is classified from printed speeder type, not an explicitly labeled speed mode. No printed ranged attack group or hyperdrive line. The adjacent Sabaoth Frigate stats are not Corona source facts. No weapon-mount or Foundry runtime certification."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -1035,9 +1022,10 @@
         "/defenses/shieldRating": "not-stated",
         "/abilities/con": "explicitly-none",
         "/capacity/carriedCraft": "explicitly-none",
-        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/weaponMounts": "not-stated",
         "/armament/firingArcs": "not-stated",
-        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+        "/rules/strictMechanicalCertification": "not-yet-reviewed",
+        "/hyperspace/capability": "not-stated"
       },
       "rules": {
         "reviewStatus": "partial-source-probe"
@@ -1176,7 +1164,7 @@
         }
       },
       "text": {
-        "sourceNotes": "Source text excerpt anchored at 277126; original PDF audit ledger confirms publication identity. No executable mount certification."
+        "sourceNotes": "Phase 3 direct original-PDF field QA: Galaxy of Intrigue printed p71 / physical PDF p72, SHA256 c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21. All populated fields confirmed against the right-column JG-8 statblock. Printed Speed fly 12 squares (450 km/h) belongs to this ground-classified speeder. The gravity-orientation feature is narrative-only without a typed executable rule. No printed attack group and no weapon-mount/Foundry runtime certification."
       },
       "exceptions": {
         "manualReviewRequired": true
