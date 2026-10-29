@@ -120,6 +120,16 @@ test('creation input and Document cannot disagree about canonical provenance', (
   assert.equal(classifyVehicleActorSource(broken, actor).kind, 'invalid-canonical');
 });
 
+test('an empty input Item array cannot conceal Items already on the Document', () => {
+  const source = pick(() => true);
+  const input = clone(source);
+  input.items = [];
+  source.items = [{ name: 'unsanctioned stock weapon', type: 'weapon' }];
+  const result = classifyVehicleActorSource(source, input);
+  assert.equal(result.kind, 'invalid-canonical');
+  assert.ok(result.errors.includes('SOURCE_ATTACKS_NOT_INSTALLABLE'));
+});
+
 test('intentionally blank Phase 4D shell and explicit custom vehicles remain separate', () => {
   const scratch = {
     name: '[SWSE PHASE4D SCRATCH]', type: 'vehicle',
