@@ -24,6 +24,71 @@ const frozen = value => {
 const issue = (errors, code) => { if (!errors.includes(code)) errors.push(code); };
 const itemsCount = value => Array.isArray(value) ? value.length :
   typeof value?.size === 'number' ? value.size : 0;
+/**
+ * Published mirrors are presentation conveniences, never a second editable
+ * rules database. Compare them to the stored source record at creation;
+ * unknown values cannot silently become 0, 6, or a fabricated price.
+ * Mutable HP/SR values and crewPositions are intentionally not constrained
+ * to their initial values here.
+ */
+function validatePublishedMirrors(sys, record, errors) {
+  if (!record || typeof record !== 'object') return;
+  const check = (field, expected, code, { tolerateBlank = false } = {}) => {
+    const actual = sys[field];
+    if (tolerateBlank && expected === undefined &&
+        (actual === undefined || actual === null || actual === '')) return;
+    if (!same(actual, expected)) issue(errors, code);
+  };
+  const rawCrew = typeof record.crew?.raw === 'string'
+    ? record.crew.raw.trim() : '';
+  const count = record.crew?.crewCount;
+  const crew = rawCrew || (finite(count) ? String(count) : undefined);
+  check('crew', crew, 'PUBLISHED_CREW_MIRROR_DRIFT', { tolerateBlank: true });
+  if (count !== null && count !== undefined)
+    check('vehicleCrewCount', count, 'PUBLISHED_CREW_MIRROR_DRIFT');
+  if (rawCrew)
+    check('vehicleCrewLabel', rawCrew, 'PUBLISHED_CREW_MIRROR_DRIFT');
+
+  const passengers = record.capacity?.passengerCount;
+  if (finite(passengers))
+    check('passengers', passengers, 'PUBLISHED_PASSENGERS_MIRROR_DRIFT');
+  if (passengers !== null && passengers !== undefined)
+    check('vehiclePassengers', passengers, 'PUBLISHED_PASSENGERS_MIRROR_DRIFT');
+
+  const quantity = value => {
+    if (!value || typeof value !== 'object') return undefined;
+    if (typeof value.raw === 'string' && value.raw.trim()) return value.raw.trim();
+    return value.value !== undefined && value.value !== null
+      ? String(value.value) + (value.unit ? ' ' + value.unit : '')
+      : undefined;
+  };
+  check('cargo', quantity(record.capacity?.cargo), 'PUBLISHED_CARGO_MIRROR_DRIFT',
+    { tolerateBlank: true });
+  check('consumables', quantity(record.capacity?.consumables), 'PUBLISHED_CONSUMABLES_MIRROR_DRIFT',
+    { tolerateBlank: true });
+  if (record.capacity?.cargo != null)
+    check('vehiclePublishedCargo', record.capacity.cargo, 'PUBLISHED_CARGO_MIRROR_DRIFT');
+  if (record.capacity?.consumables != null)
+    check('vehiclePublishedConsumables', record.capacity.consumables, 'PUBLISHED_CONSUMABLES_MIRROR_DRIFT');
+
+  const price = record.economics?.priceNew;
+  if (price && typeof price === 'object')
+    check('vehiclePublishedPrice', price, 'PUBLISHED_PRICE_MIRROR_DRIFT');
+  if (price?.status === 'priced' && finite(price.amountCredits)) {
+    check('cost', price.amountCredits, 'PUBLISHED_PRICE_MIRROR_DRIFT');
+    check('costNumeric', price.amountCredits, 'PUBLISHED_PRICE_MIRROR_DRIFT');
+  } else if ((finite(sys.cost) && sys.cost > 0) ||
+             (finite(sys.costNumeric) && sys.costNumeric > 0)) {
+    issue(errors, 'UNKNOWN_PRICE_PROMOTED_TO_NUMBER');
+  }
+
+  const hyper = record.hyperspace ?? {};
+  if (Object.keys(hyper).length)
+    check('vehiclePublishedHyperdrive', hyper, 'PUBLISHED_HYPERDRIVE_MIRROR_DRIFT');
+  if (record.classification?.printedSize != null)
+    check('size', record.classification.printedSize, 'PUBLISHED_SIZE_MIRROR_DRIFT');
+}
+
 const fieldsWithClaims = [
   'vehicleSourceEntryKey', 'vehicleSourceBook', 'vehicleSourcePage',
   'vehicleSourcePrimaryCategory', 'vehiclePackName',
@@ -172,6 +237,7 @@ export function classifyVehicleActorSource(document, data = undefined) {
   if (own(sys, 'vehicleSourceFieldStates') &&
       !same(sys.vehicleSourceFieldStates, original?.fieldStates ?? {}))
     issue(errors, 'SOURCE_FIELD_STATES_DRIFT');
+  validatePublishedMirrors(sys, original, errors);
 
   return {
     kind: errors.length ? 'invalid-canonical' : 'canonical',
