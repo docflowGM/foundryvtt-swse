@@ -91,10 +91,56 @@
       "requiresRuntimeConsumer": true,
       "allowExecutableAttacks": false,
       "sourceFieldQAAccepted": true
+    },
+    {
+      "id": "P3R-KOTOR-BASILISK",
+      "sourceEntryKey": "kotor-basilisk-war-droid",
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedPages": [
+        202,
+        203
+      ],
+      "pdfPhysicalPages": [
+        203,
+        204
+      ],
+      "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+      "sourceReconciliation": "verified-single-vehicle-droid-claim",
+      "printedFacts": {
+        "cl": 6,
+        "printedTypeLine": "Huge air vehicle (droid)",
+        "movementCharacterSquares": 12,
+        "starshipScaleSquares": 3,
+        "passengerCount": 1,
+        "droidBrainCrew": 1,
+        "pilotAttackOverridesConditional": true,
+        "meleeClawsBonus": 11,
+        "rangedBonuses": [
+          4,
+          4,
+          4,
+          5
+        ],
+        "missilePayload": 4,
+        "spaceMinePayload": 2,
+        "sourceRangedGroupCount": 4
+      },
+      "identityBoundary": "One published vehicle (droid) with multiple domains; not independent source spacecraft and droid statblocks.",
+      "sourceEvidence": "KOTOR printed narrative p202 plus complete vehicle statblock p203; physical PDF pp203-204, original PDF SHA verified.",
+      "printedPassengerRule": "Authorized passenger may substitute their own attack/skill bonuses for droid brain; this cannot be globally applied as a permanent pilot stat.",
+      "sourceWeaponRule": "Melee claws separate from four Ranged source attack groups; pulse-wave points to printed p69; group names do not establish firing arc or independent mount topology.",
+      "unresolvedOperational": [
+        "droid-brain and passenger override typed consumer",
+        "whether droid actor representation can share a single publication identity without duplicate Actors",
+        "physical mount and arc certification",
+        "melee and pulse-wave rule execution"
+      ],
+      "requiresRuntimeConsumer": true,
+      "allowExecutableAttacks": false,
+      "sourceFieldQAAccepted": true
     }
   ],
   "remainingTargetedCandidates": [
-    "Basilisk vehicle-droid",
     "Vulture hybrid walker/starfighter",
     "SPHA published alternatives",
     "cross-book TX-130 variants",
