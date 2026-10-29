@@ -6,6 +6,7 @@
  * This module has no Foundry globals and can be used in Node tests.
  */
 import { getUniversalVehiclePackForCategory } from './universal-vehicle-pack-registry.js';
+import { digestUniversalVehicleSource } from './vehicle-source-digest.js';
 
 const SOURCE_SCHEMA = 'swse.vehicle.universal.actor-source.v1';
 const finite = value => typeof value === 'number' && Number.isFinite(value);
@@ -106,6 +107,8 @@ export function classifyVehicleActorSource(document, data = undefined) {
       original?.recordType !== 'vehicle-source-entry' ||
       !/^[0-9a-f]{64}$/.test(String(universal?.recordDigest ?? '')))
     issue(errors, 'SOURCE_EVIDENCE_MISSING');
+  else if (digestUniversalVehicleSource(original) !== universal.recordDigest)
+    issue(errors, 'SOURCE_RECORD_DIGEST_DRIFT');
   if (typeof key !== 'string' || !key.trim() ||
       sys.vehicleSourceEntryKey !== key ||
       canonical?.sourceEntryKey !== key)
