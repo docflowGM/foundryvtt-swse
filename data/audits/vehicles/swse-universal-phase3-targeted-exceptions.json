@@ -449,5 +449,27 @@
   "strictPhysicalMountCertificationPromoted": 0,
   "remainingProvenanceBlockers": [
     "Core Vulture printed name and page differ from frozen census: see P3R-CORE-SOTG-VULTURE"
-  ]
+  ],
+  "globalGate": {
+    "sourceFieldPdfQueue": {
+      "reviewed": 48,
+      "total": 48,
+      "status": "closed"
+    },
+    "publicationIdentities": {
+      "total": 429,
+      "preserved": true
+    },
+    "namedTargetedRisksReviewed": 10,
+    "namedTargetedRisksPendingPrimaryPdfReview": 0,
+    "unresolvedCriticalProvenance": [
+      "P3R-CORE-SOTG-VULTURE"
+    ],
+    "phase3SourceAcceptance": "HOLD",
+    "phase4CanonicalSsotAuthorized": false,
+    "migrationRuntimeAuthorized": false,
+    "mechanicalWeaponMountPromotionAuthorized": false,
+    "reason": "Core Vulture original printed title and start page do not agree with frozen Phase1 ledger, global 429 census and Core Phase2 staged metadata. Preserve old files and source keys pending explicit audited provenance repair.",
+    "normalizerBlocker": "CP23-C4C numeric Initiative loss and unknown/default conflation remains a hard Phase4 importer gate."
+  }
 }
