@@ -45,8 +45,8 @@ test('Every document is a Foundry vehicle with stable provenance and no certifie
     assert.equal(doc.system.fortitudeDefense,source.defenses.fortitude);
     assert.deepEqual(doc.system.sourceAttackGroups,source.armament.firingGroups);
     assert.ok(doc.system.sourceAttackGroups.every(g=>g.mountKeys.length===0));
-    assert.ok(PACKS[doc.system.vehicleBucket].includes(source.classification.primaryCategory));
-    assert.deepEqual(projectVehicleActor(source,doc.system.vehicleBucket),doc);
+    assert.ok(PACKS[doc.system.vehiclePackName].includes(source.classification.primaryCategory));
+    assert.deepEqual(projectVehicleActor(source,doc.system.vehiclePackName),doc);
   }
 });
 
@@ -78,7 +78,8 @@ test('Vulture source amendment retained; hybrid/multimode publication creates on
   assert.equal(core.name,'"Vulture" Droid Starfighter');
   assert.ok(find('sotg-baktoid-armor-workshop-vulture-class-starfighter'));
   const hybrid=find('sgtd-dp-2-probe-droid');
-  assert.equal(hybrid.system.vehicleBucket,'vehicles-hybrids');
+  assert.equal(hybrid.system.vehicleBucket,'hybrids');
+  assert.equal(hybrid.system.vehiclePackName,'vehicles-hybrids');
   assert.equal(hybrid.system.vehicleMovementModes.length,2);
   assert.ok(find('sav-tenloss-corporation-hornet-class-interceptor'));
   assert.ok(find('cw-tx-130t-saber-class-fighter-tank'));
