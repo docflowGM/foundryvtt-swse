@@ -302,6 +302,24 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Decision authority | Project owner |
 | Resolution | |
 
+## V-P4-01 — Vehicle size modifier on top of printed Initiative
+
+| Field | Content |
+|---|---|
+| Rules domain | Vehicle Initiative |
+| Feature | `SWSECombatDocument._getVehicleSizeModifier` (Colossal -10, Gargantuan -5, Huge -2, Large -1) added to a vehicle's Initiative formula |
+| Source | Published vehicle records `abilities.initiativePrinted` (all 429); the code table has no cited book/page |
+| Evidence | Every record prints an Initiative modifier (e.g. Incom T-65B X-wing, *Core Rulebook* p. 178: +7). The code adds a size modifier on top of the actor's Initiative skill total; its origin is not cited. |
+| Confirmed behavior | The printed Initiative is the vehicle's Initiative modifier. Implemented in P4-B: source-backed vehicles use it as the base in `SWSEInitiative` and `swse-combat`. |
+| Unresolved question | Whether a size modifier applies in addition to the printed Initiative, and if so which table is authoritative. |
+| Options | None supported by certified evidence. |
+| Recommended ruling | None |
+| Implementation impact | The existing size modifier is left unchanged and still applies to source-backed vehicles on top of the printed value. A ruling may remove or replace it. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Review classification | `PENDING_SOURCE_VERIFICATION` — examine the vehicle Initiative text in the Core Rulebook. |
+| Decision authority | Project owner |
+| Resolution | |
+
 ---
 
 ## Revision log
@@ -309,3 +327,4 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 - **Revision 2 (2026-10-14):** introduced `PENDING_SOURCE_VERIFICATION` versus `DEFERRED_RULES_REVIEW`; added a *Review classification* row to D-001–D-012. Of the twelve entries, eleven are research gaps awaiting source examination; only D-006 (policy for unpriced modifications) is a decision for the owner today. No decision ID, original field, owner ruling or interim position was changed. No recommended ruling is made for any entry. Source examination is the next step for D-001 first, because it blocks the install procedure.
 
 - **Revision 3 (2026-10-29):** appended V-P2-01 to V-P2-04 (vehicle Shipyard EP budget, catalog provenance, refund/effects, mount certification). No existing entry changed.
+- **Revision 4 (2026-10-29):** appended V-P4-01 (vehicle size modifier vs printed Initiative). No existing entry changed.

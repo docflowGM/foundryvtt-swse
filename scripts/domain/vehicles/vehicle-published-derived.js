@@ -36,6 +36,35 @@ export function getPublishedDerivedBase(actor) {
     flatFooted: finite(d.reflexFlatFooted) ? d.reflexFlatFooted : null,
     damageThreshold: finite(r.durability?.damageThreshold) ? r.durability.damageThreshold : null,
     damageReduction: finite(d.damageReduction) ? d.damageReduction : null,
-    hpMax: finite(r.durability?.hitPoints) ? r.durability.hitPoints : null
+    hpMax: finite(r.durability?.hitPoints) ? r.durability.hitPoints : null,
+    initiative: finite(r.abilities?.initiativePrinted) ? r.abilities.initiativePrinted : null,
+    movement: summarizeMovement(r.movement?.speedModes)
+  };
+}
+
+/** Printed Initiative (signed; 0 is a value) or null when the actor has no verified record. */
+export function getPublishedVehicleInitiative(actor) {
+  if (actor?.type !== 'vehicle') return null;
+  return getPublishedDerivedBase(actor)?.initiative ?? null;
+}
+
+/**
+ * Structured published movement. Character-scale and starship-scale squares are kept
+ * apart, every mode is preserved, and a vehicle with no published mode has unknown
+ * (null) movement, never a character default speed.
+ */
+export function summarizeMovement(speedModes) {
+  const modes = (Array.isArray(speedModes) ? speedModes : []).map(m => ({
+    mode: m?.mode ?? null, scale: m?.scale ?? null,
+    squares: finite(m?.squaresPerMove) ? m.squaresPerMove : null,
+    maxVelocityKmh: finite(m?.maxVelocityKmh) ? m.maxVelocityKmh : null
+  }));
+  const character = modes.filter(m => m.scale === 'character');
+  const starship = modes.filter(m => m.scale === 'starship');
+  return {
+    known: modes.length > 0, modes,
+    primaryCharacter: character[0] ?? null,
+    primaryStarship: starship[0] ?? null,
+    walking: character.find(m => m.mode === 'walking') ?? null
   };
 }

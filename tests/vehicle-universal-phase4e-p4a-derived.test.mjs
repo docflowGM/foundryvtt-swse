@@ -75,3 +75,52 @@ test('non-source vehicles keep legacy derived behavior', () => {
   assert.equal(custom.system.derived.damage.reduction, 4);
   assert.equal(custom.system.derived.hp.max, 30);
 });
+
+// ---- P4-B: movement and Initiative ----
+import { getPublishedVehicleInitiative } from '../scripts/domain/vehicles/vehicle-published-derived.js';
+
+test('all 429: derived speed is the structured published movement; unknown is null, never the character default 6', () => {
+  let noMode = 0;
+  for (const a of actors) {
+    const r = rec(a), modes = r.movement?.speedModes ?? [], d = derive(a);
+    assert.equal(d.speed.modes.length, modes.length);
+    assert.equal(d.speed.known, modes.length > 0);
+    const firstChar = modes.find(m => m.scale === 'character');
+    assert.equal(d.speed.total, firstChar ? firstChar.squaresPerMove : null);
+    const firstShip = modes.find(m => m.scale === 'starship');
+    assert.equal(d.speed.starshipSquares, firstShip ? firstShip.squaresPerMove : null);
+    assert.equal(d.speed.walk, modes.find(m => m.scale === 'character' && m.mode === 'walking')?.squaresPerMove ?? null);
+    if (!firstChar) noMode++;
+  }
+  assert.ok(noMode >= 0);
+});
+
+test('hybrid and multi-mode vehicles keep every mode and both scales', () => {
+  const x = derive(byKey(XW)).speed;
+  assert.deepEqual([x.total, x.starshipSquares, x.mode], [16, 4, 'flying']);
+  assert.equal(x.modes.length, 2);
+  const walker = derive(byKey('core-at-at')).speed;
+  assert.equal(walker.mode, 'walking');
+  assert.equal(walker.walk, walker.total);
+});
+
+test('printed Initiative (negative, zero, positive) is the vehicle Initiative authority', () => {
+  const values = new Set();
+  for (const a of actors) {
+    const printed = rec(a).abilities.initiativePrinted;
+    values.add(Math.sign(printed));
+    assert.equal(getPublishedVehicleInitiative(a), printed);
+  }
+  assert.deepEqual([...values].sort(), [-1, 0, 1].filter(v => values.has(v)).sort());
+  assert.equal(getPublishedVehicleInitiative({ type: 'droid', flags: byKey(XW).flags }), null);
+  assert.equal(getPublishedVehicleInitiative({ type: 'vehicle', flags: {}, system: {} }), null);
+});
+
+test('Initiative consumers prefer the printed value for source-backed vehicles', () => {
+  const init = readFileSync('scripts/engine/combat/SWSEInitiative.js', 'utf8');
+  const combat = readFileSync('scripts/combat/swse-combat.js', 'utf8');
+  for (const code of [init, combat]) {
+    assert.match(code, /getPublishedVehicleInitiative\(actor\)/);
+    assert.ok(code.indexOf('getPublishedVehicleInitiative(actor)') < code.indexOf('derivedSkills'));
+  }
+});

@@ -217,6 +217,26 @@ export function buildVehicleDerived(actor, system) {
   system.derived.identity.size = identity.size;
   system.derived.identity.type = identity.type;
 
+  // ════════════════════════════════════════════════════════════════════════════
+  // MOVEMENT: published modes replace the character default speed (6) that
+  // computeCharacterDerived seeds for every actor. Unknown stays null, not 0.
+  // ════════════════════════════════════════════════════════════════════════════
+  if (published) {
+    const mv = published.movement;
+    const primary = mv.primaryCharacter;
+    system.derived.speed = {
+      base: primary?.squares ?? null,
+      total: primary?.squares ?? null,
+      walk: mv.walking?.squares ?? null,
+      adjustment: 0,
+      mode: primary?.mode ?? null,
+      starshipSquares: mv.primaryStarship?.squares ?? null,
+      modes: mv.modes,
+      known: mv.known,
+      published: true
+    };
+  }
+
   // Timestamp for derived computation
   system.derived.meta ??= {};
   system.derived.meta.lastRecalcMs = Date.now();

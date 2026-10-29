@@ -1,4 +1,5 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { getPublishedVehicleInitiative } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-published-derived.js";
 import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 
@@ -8,6 +9,8 @@ function numeric(value, fallback = 0) {
 }
 
 function getInitiativeSkillTotal(actor) {
+  const printed = getPublishedVehicleInitiative(actor);
+  if (printed !== null) return printed;
   const derivedSkills = actor?.system?.derived?.skills;
   const fromList = Array.isArray(derivedSkills?.list)
     ? derivedSkills.list.find(row => row?.key === 'initiative')
