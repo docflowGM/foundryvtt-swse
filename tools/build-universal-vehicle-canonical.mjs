@@ -65,7 +65,6 @@ export function assembleUniversalVehicleCanonical(repoRoot=process.cwd()) {
   const ndjson=records.map(r=>JSON.stringify(r)).join('\n')+'\n';
   const bytes=Buffer.byteLength(ndjson,'utf8');
   const sourceFileGitBlobSha1=createHash('sha1').update('blob '+bytes+'\0').update(ndjson,'utf8').digest('hex');
-  const sourceFileSha256=createHash('sha256').update(ndjson,'utf8').digest('hex');
   const manifest={
     schema:'swse.vehicle.universal.phase4a.source-manifest.v1',
     sourceFile:UNIVERSAL_CANONICAL_PATH,
@@ -80,7 +79,6 @@ export function assembleUniversalVehicleCanonical(repoRoot=process.cwd()) {
     targetedExceptionsReviewed:risks.cases.length,
     categoryCounts:Object.fromEntries(Object.entries(categories).sort(([a],[b])=>compareKey(a,b))),
     sourceFileGitBlobSha1,
-    sourceFileSha256,
     sourceBytes:bytes,
     certification:'SOURCE_ONLY',
     installedMountsPromoted:0,
@@ -113,7 +111,7 @@ if(process.argv[1]&&fileURLToPath(import.meta.url)===path.resolve(process.argv[1
       else {
         writeFileSync(UNIVERSAL_CANONICAL_PATH,ndjson);
         writeFileSync(UNIVERSAL_CANONICAL_MANIFEST_PATH,JSON.stringify(manifest,null,2)+'\n');
-        process.stdout.write('Wrote '+manifest.publicationClaims+' canonical source entries. SHA-256 '+manifest.sourceFileSha256+'\n');
+        process.stdout.write('Wrote '+manifest.publicationClaims+' canonical source entries. SHA-256 '+manifest.sourceFileGitBlobSha1+'\n');
       }
     }
   }catch(error){process.stderr.write(String(error?.stack??error)+'\n');process.exitCode=1;}
