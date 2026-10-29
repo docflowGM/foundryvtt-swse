@@ -273,6 +273,9 @@ export class VehicleImportWizard extends HandlebarsApplicationMixin(ApplicationV
     try {
       this.state.busy = true;
       this.state.error = null;
+      if (Number(this.actor.items?.size ?? 0) > 0) {
+        throw new Error('This vehicle already has embedded items. Use a new empty vehicle Actor for a clean canonical import.');
+      }
 
       if (this.state.mode === 'replace' && VehicleImportEngine.requiresReplaceConfirmation(this.actor)) {
         const confirmed = await Dialog.confirm({
