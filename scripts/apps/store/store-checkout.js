@@ -938,6 +938,7 @@ async function createVehiclePlans(cartVehicles, itemsById) {
   const { VehicleFactory } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-factory.js');
   const { VehiclePackDataLoader } = await import('/systems/foundryvtt-swse/scripts/core/vehicle-pack-data-loader.js');
   const index = await VehiclePackDataLoader.loadVehicleIndex();
+  const { getVehicleRuntimeProjection } = await import('/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js');
 
   const plans = [];
 
@@ -961,6 +962,11 @@ async function createVehiclePlans(cartVehicles, itemsById) {
     const canonicalActor = await VehiclePackDataLoader.loadVehicleDocument(matches[0]);
     if (!canonicalActor)
       throw new Error('UNIVERSAL_VEHICLE_STORE_DOCUMENT_UNAVAILABLE: ' + matches[0].sourceEntryKey);
+    const projection = getVehicleRuntimeProjection(canonicalActor);
+    if (projection.kind !== 'canonical' ||
+        projection.published.price?.status !== 'priced' ||
+        !(projection.published.price.amountCredits > 0))
+      throw new Error('UNIVERSAL_VEHICLE_STORE_NOT_PUBLISHED_PRICED: ' + matches[0].sourceEntryKey);
 
     try {
       const plan = VehicleFactory.buildMutationPlan({
@@ -1197,6 +1203,13 @@ export async function checkout(store, animateNumberCallback) {
             return { success: false, error: cartValidation.error };
         }
 
+        // Compile source-backed vehicle plans before the transactional debit.
+        // A stale cart view, unknown source price, or incomplete canonical
+        // Actor cannot fail only AFTER the character has spent credits.
+        const stagedVehiclePlans = store.cart.vehicles?.length > 0
+            ? await createVehiclePlans(store.cart.vehicles, store.itemsById)
+            : [];
+
         // Execute engine transaction
         const result = await StoreEngine.purchase({
             actor,
@@ -1215,10 +1228,8 @@ export async function checkout(store, animateNumberCallback) {
                     plans.push(...(await createDroidPlans(store.cart.droids)));
                 }
 
-                // Compile vehicle plans
-                if (store.cart.vehicles?.length > 0) {
-                    plans.push(...(await createVehiclePlans(store.cart.vehicles, store.itemsById)));
-                }
+                // Vehicle plans were source-verified before debiting credits.
+                plans.push(...stagedVehiclePlans);
 
                 return plans;
             }
