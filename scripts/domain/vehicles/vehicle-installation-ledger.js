@@ -11,6 +11,7 @@
  * No Foundry globals: Node-testable.
  */
 import { digestUniversalVehicleSource } from './vehicle-source-digest.js';
+import { VEHICLE_FIRING_ARCS } from './vehicle-firing-arc-geometry.js';
 
 export const VEHICLE_INSTALLATION_FLAG = 'vehicleInstallations';
 export const VEHICLE_INSTALLATION_FLAG_PATH = `flags.swse.${VEHICLE_INSTALLATION_FLAG}`;
@@ -138,6 +139,7 @@ export function planVehicleInstallation({ record, flags, catalogEntry, installId
     const ok = mount && nonEmpty(mount.mountKey) && nonEmpty(mount.arc) &&
       nonEmpty(mount.operatorRole) && mount.evidence?.book && mount.evidence?.page != null;
     if (!ok) reasons.push('WEAPON_MOUNT_UNCERTIFIED');
+    else if (!VEHICLE_FIRING_ARCS.has(mount.arc)) reasons.push('WEAPON_MOUNT_ARC_INVALID');
   }
 
   const { entries } = readCertifiedInstallations(flags, key);
@@ -181,4 +183,25 @@ export function planVehicleUninstall({ record, flags, installId, rules = DEFAULT
     refundPolicyDecided: finite(refund),
     nextLedger: raw.filter(e => e !== target)
   };
+}
+
+/**
+ * Ledger write authorization. The seal is unkeyed (tamper evidence), so the ledger flag may
+ * only be changed by VehicleInstallationService: it authorizes the exact ledger it is about
+ * to write for the duration of its transaction, and a preUpdateActor hook rejects any other
+ * change to the flag. Guards against accidental/macro writes, not a hostile console.
+ */
+const pendingLedgerWrites = new Map();
+export function authorizeLedgerWrite(actorId, ledger) { pendingLedgerWrites.set(actorId, JSON.stringify(ledger)); }
+export function clearLedgerWrite(actorId) { pendingLedgerWrites.delete(actorId); }
+
+/** @returns {boolean} true when the update does not touch the ledger or the touch is authorized */
+export function isLedgerUpdateAllowed(actorId, changes) {
+  const flat = changes && Object.prototype.hasOwnProperty.call(changes, VEHICLE_INSTALLATION_FLAG_PATH);
+  const nested = changes?.flags?.swse && Object.prototype.hasOwnProperty.call(changes.flags.swse, VEHICLE_INSTALLATION_FLAG);
+  const removal = changes?.flags?.swse && Object.prototype.hasOwnProperty.call(changes.flags.swse, '-=' + VEHICLE_INSTALLATION_FLAG);
+  if (!flat && !nested && !removal && !(changes && Object.prototype.hasOwnProperty.call(changes, `flags.swse.-=${VEHICLE_INSTALLATION_FLAG}`))) return true;
+  if (removal || changes?.[`flags.swse.-=${VEHICLE_INSTALLATION_FLAG}`] !== undefined) return false;
+  const proposed = flat ? changes[VEHICLE_INSTALLATION_FLAG_PATH] : changes.flags.swse[VEHICLE_INSTALLATION_FLAG];
+  return pendingLedgerWrites.get(actorId) === JSON.stringify(proposed);
 }

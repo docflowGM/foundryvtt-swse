@@ -21,6 +21,8 @@ export function classifyVehicleAttackPreflight({vehicle,weapon,sourceLookup=reso
   if (provenance.kind === 'UNRESOLVED') return block(provenance.reason);
   if (provenance.kind === 'SHIPYARD_MODIFICATION')
     return {ok:true,kind:'CUSTOM_MODIFICATION',provenance,sourceAuthority:'SHIPYARD_INSTALLATION_NOT_PUBLISHED_STOCK'};
+  if (provenance.kind === 'CERTIFIED_INSTALLATION')
+    return {ok:true,kind:'CERTIFIED_INSTALLATION',provenance,sourceAuthority:'P2_CERTIFIED_LEDGER_INSTALLATION'};
   const trusted = sourceLookup(vehicle,weapon);
   if (!trusted || trusted.bindingVerified !== true || trusted.sourceComplete !== true ||
       !nonempty(trusted.weaponGroupKey) || !nonempty(trusted.sourceEntryKey))
@@ -38,6 +40,14 @@ export async function authorizeVehicleAttackBeforeCosts({vehicle,weapon,target,a
   const base = classifyVehicleAttackPreflight({vehicle,weapon});
   if (!base.ok) return base;
   if (base.kind==='CUSTOM_MODIFICATION') return base;
+  if (base.kind==='CERTIFIED_INSTALLATION') {
+    // A certified mount still needs a target, a resolved crew station and a legal arc.
+    if (!target || !nonempty(target.id)) return block('TARGET_UNRESOLVED');
+    if (crewStationResolved !== true) return block('CREW_STATION_UNRESOLVED');
+    if (!nonempty(attackId) || !nonempty(vehicle?.id)) return block('ATTACK_SCOPE_UNRESOLVED');
+    if (!isTargetWithinVehicleArc(vehicle,target,base.provenance.mount.arc)) return block('TARGET_OUTSIDE_CERTIFIED_MOUNT_ARC');
+    return base;
+  }
 
   const source = base.source;
   if (!target || !nonempty(target.id)) return block('TARGET_UNRESOLVED');

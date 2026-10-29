@@ -9,7 +9,7 @@
 import { classifyVehicleActorSource } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
 import {
   DEFAULT_VEHICLE_INSTALLATION_RULES, VEHICLE_INSTALLATION_FLAG_PATH,
-  planVehicleInstallation, planVehicleUninstall
+  planVehicleInstallation, planVehicleUninstall, authorizeLedgerWrite, clearLedgerWrite
 } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-installation-ledger.js";
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
@@ -50,12 +50,14 @@ export class VehicleInstallationService {
       availableCredits: LedgerService.getCurrentCredits(ownerActor), rules: this.rules
     });
     if (!plan.ok) return { success: false, reasons: plan.reasons };
-    const tx = await TransactionEngine.executeAssetCustomizationTransaction({
+    authorizeLedgerWrite(vehicle.id, plan.nextLedger);
+    let tx;
+    try { tx = await TransactionEngine.executeAssetCustomizationTransaction({
       actor: ownerActor, assetActor: vehicle, cost: plan.cost, resaleCredit: 0,
       assetMutationPlan: { set: { [VEHICLE_INSTALLATION_FLAG_PATH]: plan.nextLedger } },
       reason: `Install ${plan.entry.name}`,
       audit: { kind: 'vehicle-install', installId: plan.entry.installId, catalogId, sourceEntryKey: plan.entry.sourceEntryKey }
-    });
+    }); } finally { clearLedgerWrite(vehicle.id); }
     return tx.success ? { success: true, entry: plan.entry, transactionId: tx.transactionId }
       : { success: false, reasons: ['TRANSACTION_FAILED'], error: tx.error };
   }
@@ -65,12 +67,14 @@ export class VehicleInstallationService {
     if (src.error) return { success: false, reasons: [src.error] };
     const plan = planVehicleUninstall({ record: src.record, flags: src.flags, installId, rules: this.rules });
     if (!plan.ok) return { success: false, reasons: plan.reasons };
-    const tx = await TransactionEngine.executeAssetCustomizationTransaction({
+    authorizeLedgerWrite(vehicle.id, plan.nextLedger);
+    let tx;
+    try { tx = await TransactionEngine.executeAssetCustomizationTransaction({
       actor: ownerActor, assetActor: vehicle, cost: 0, resaleCredit: plan.refund,
       assetMutationPlan: { set: { [VEHICLE_INSTALLATION_FLAG_PATH]: plan.nextLedger } },
       reason: `Remove ${plan.entry.name}`,
       audit: { kind: 'vehicle-uninstall', installId, refundPolicyDecided: plan.refundPolicyDecided }
-    });
+    }); } finally { clearLedgerWrite(vehicle.id); }
     return tx.success ? { success: true, refundPolicyDecided: plan.refundPolicyDecided, transactionId: tx.transactionId }
       : { success: false, reasons: ['TRANSACTION_FAILED'], error: tx.error };
   }

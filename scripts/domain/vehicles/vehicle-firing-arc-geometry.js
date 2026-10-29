@@ -4,10 +4,10 @@
  * allowed by GM adjudication; the evidence gate owns that decision.
  * It never guesses a default arc for unknown/missing source data.
  */
-const ARCS=new Set(['forward','aft','port','starboard','turret','omni']);
+export const VEHICLE_FIRING_ARCS=new Set(['forward','aft','port','starboard','turret','omni']);
 
 export function isTargetWithinVehicleArc(attacker, target, arc, tolerance = 75) {
-  if (!ARCS.has(arc) || !Number.isFinite(tolerance) || tolerance < 0 || tolerance > 90) return false;
+  if (!VEHICLE_FIRING_ARCS.has(arc) || !Number.isFinite(tolerance) || tolerance < 0 || tolerance > 90) return false;
   const attackerToken = attacker?.getActiveTokens?.()?.[0];
   const targetToken = target?.getActiveTokens?.()?.[0];
   if (!attackerToken || !targetToken) return false;

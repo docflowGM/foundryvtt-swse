@@ -145,6 +145,7 @@ function service(tx) {
     classifyVehicleActorSource, DEFAULT_VEHICLE_INSTALLATION_RULES: fixtureRules,
     VEHICLE_INSTALLATION_FLAG_PATH: L.VEHICLE_INSTALLATION_FLAG_PATH,
     planVehicleInstallation: L.planVehicleInstallation, planVehicleUninstall: L.planVehicleUninstall,
+    authorizeLedgerWrite: L.authorizeLedgerWrite, clearLedgerWrite: L.clearLedgerWrite,
     LedgerService: { getCurrentCredits: a => a.credits },
     TransactionEngine: { executeAssetCustomizationTransaction: async c => { calls.push(c); return tx(c); } },
     foundry: { utils: { randomID: () => 'id1' } }, fetch: async () => { throw new Error('no network'); }
