@@ -1,5 +1,18 @@
-name: Universal Vehicle Enumeration QA
+name: Universal Vehicles Phase 4A-4D Runtime and Native Pack QA
 on:
+  pull_request:
+    paths:
+      - 'scripts/domain/vehicles/**'
+      - 'scripts/engine/import/vehicle-import-engine.js'
+      - 'scripts/core/vehicle-pack-data-loader.js'
+      - 'tools/build-universal-vehicle-*.mjs'
+      - 'tools/release/**'
+      - 'data/canonical/vehicles/**'
+      - 'tests/vehicle-universal-*.test.mjs'
+      - 'tests/phase2c_cp23c4c_import_boundary.test.mjs'
+      - 'system.json'
+      - 'index.js'
+      - '.github/workflows/vehicle-universal-phase1.yml'
   push:
     branches:
       - audit/universal-vehicles-phase1
@@ -12,6 +25,10 @@ on:
       - 'tools/build-universal-vehicle-native-packs.mjs'
       - 'tools/release/**'
       - 'system.json'
+      - 'index.js'
+      - 'scripts/domain/vehicles/vehicle-phase4d-runtime-audit.js'
+      - 'scripts/domain/vehicles/vehicle-phase4d-scratch-import.js'
+      - 'tests/phase2c_cp23c4c_import_boundary.test.mjs'
       - 'scripts/core/vehicle-pack-data-loader.js'
       - 'scripts/domain/vehicles/universal-vehicle-pack-registry.js'
       - 'scripts/engine/store/**'
@@ -43,6 +60,7 @@ jobs:
           node tools/build-universal-vehicle-phase3-source-preview.mjs --check
           node tools/build-universal-vehicle-canonical.mjs --check
           node --test tests/vehicle-universal-phase*.test.mjs
+          node --test tests/phase2c_cp23c4c_import_boundary.test.mjs
   native-vehicle-packs:
     needs: provenance
     runs-on: ubuntu-latest
