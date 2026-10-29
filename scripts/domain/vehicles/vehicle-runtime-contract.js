@@ -52,8 +52,12 @@ function validatePublishedMirrors(sys, record, errors) {
   const passengers = record.capacity?.passengerCount;
   if (finite(passengers))
     check('passengers', passengers, 'PUBLISHED_PASSENGERS_MIRROR_DRIFT');
+  else if (sys.passengers != null && sys.passengers !== '' && sys.passengers !== 0)
+    issue(errors, 'UNKNOWN_PASSENGER_COUNT_FABRICATED');
   if (passengers !== null && passengers !== undefined)
     check('vehiclePassengers', passengers, 'PUBLISHED_PASSENGERS_MIRROR_DRIFT');
+  else if (sys.vehiclePassengers != null && sys.vehiclePassengers !== 0)
+    issue(errors, 'UNKNOWN_PASSENGER_COUNT_FABRICATED');
 
   const quantity = value => {
     if (!value || typeof value !== 'object') return undefined;
@@ -68,23 +72,35 @@ function validatePublishedMirrors(sys, record, errors) {
     { tolerateBlank: true });
   if (record.capacity?.cargo != null)
     check('vehiclePublishedCargo', record.capacity.cargo, 'PUBLISHED_CARGO_MIRROR_DRIFT');
+  else if (sys.vehiclePublishedCargo != null)
+    issue(errors, 'UNKNOWN_CARGO_FABRICATED');
   if (record.capacity?.consumables != null)
     check('vehiclePublishedConsumables', record.capacity.consumables, 'PUBLISHED_CONSUMABLES_MIRROR_DRIFT');
+  else if (sys.vehiclePublishedConsumables != null)
+    issue(errors, 'UNKNOWN_CONSUMABLES_FABRICATED');
 
   const price = record.economics?.priceNew;
   if (price && typeof price === 'object')
     check('vehiclePublishedPrice', price, 'PUBLISHED_PRICE_MIRROR_DRIFT');
+  else if (sys.vehiclePublishedPrice != null)
+    issue(errors, 'UNKNOWN_PRICE_PROMOTED_TO_NUMBER');
   if (price?.status === 'priced' && finite(price.amountCredits)) {
     check('cost', price.amountCredits, 'PUBLISHED_PRICE_MIRROR_DRIFT');
     check('costNumeric', price.amountCredits, 'PUBLISHED_PRICE_MIRROR_DRIFT');
-  } else if ((finite(sys.cost) && sys.cost > 0) ||
-             (finite(sys.costNumeric) && sys.costNumeric > 0)) {
-    issue(errors, 'UNKNOWN_PRICE_PROMOTED_TO_NUMBER');
+  } else {
+    // Reject numeric strings and cost objects as well as numbers. Legacy
+    // Store clients accept all three shapes and could otherwise promote a
+    // "not for sale" publication into purchasable inventory.
+    const empty = value => value == null || value === '' || value === 0 || value === '0';
+    if (!empty(sys.cost) || !empty(sys.costNumeric))
+      issue(errors, 'UNKNOWN_PRICE_PROMOTED_TO_NUMBER');
   }
 
   const hyper = record.hyperspace ?? {};
   if (Object.keys(hyper).length)
     check('vehiclePublishedHyperdrive', hyper, 'PUBLISHED_HYPERDRIVE_MIRROR_DRIFT');
+  else if (sys.vehiclePublishedHyperdrive != null)
+    issue(errors, 'UNKNOWN_HYPERDRIVE_FABRICATED');
   if (record.classification?.printedSize != null)
     check('size', record.classification.printedSize, 'PUBLISHED_SIZE_MIRROR_DRIFT');
 }
