@@ -30,11 +30,11 @@
       "publicationClaimCount": 46,
       "sourcePdfFilename": "SW Saga - Scavenger's Guide to Droids (optimized).pdf",
       "searchableTxtFilename": "Scavenger's Guide to Droids_djvu.txt",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "certifiedClaimCount": 0,
       "checkpointCommit": null,
       "sourceLedgerPath": "data/canonical/droids/source-books/sgd.json",
-      "notes": null
+      "notes": "Partial checkpoint: 46/46 census identities seeded; PDF-visual mechanical samples for SGD-DROID-001, 008, 009; 0 certified. Draft schema remains unapproved. Source review and independent validation outstanding. See docs/audits/droids/hydration-sgd-checkpoint.md."
     },
     {
       "priority": 2,
