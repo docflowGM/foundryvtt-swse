@@ -111,7 +111,7 @@ if(process.argv[1]&&fileURLToPath(import.meta.url)===path.resolve(process.argv[1
       else {
         writeFileSync(UNIVERSAL_CANONICAL_PATH,ndjson);
         writeFileSync(UNIVERSAL_CANONICAL_MANIFEST_PATH,JSON.stringify(manifest,null,2)+'\n');
-        process.stdout.write('Wrote '+manifest.publicationClaims+' canonical source entries. SHA-256 '+manifest.sourceFileGitBlobSha1+'\n');
+        process.stdout.write('Wrote '+manifest.publicationClaims+' canonical source entries. Git blob SHA-1 '+manifest.sourceFileGitBlobSha1+'\n');
       }
     }
   }catch(error){process.stderr.write(String(error?.stack??error)+'\n');process.exitCode=1;}
