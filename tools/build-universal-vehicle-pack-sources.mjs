@@ -13,19 +13,8 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 
-export const PACKS = Object.freeze({
-  'vehicles-starfighters': ['starfighter'],
-  'vehicles-space-transports': ['space-transport', 'escape-craft', 'drop-pod'],
-  'vehicles-capital-ships': ['capital-ship'],
-  'vehicles-stations': ['space-station'],
-  'vehicles-walkers': ['walker'],
-  'vehicles-airspeeders': ['airspeeder', 'air-speeder-bike', 'medical-airspeeder', 'ornithopter', 'aerial-artillery'],
-  'vehicles-speeders': ['speeder', 'speeder-bike', 'ground-speeder', 'ground-speeder-bike', 'heavy-ground-speeder', 'landspeeder', 'command-speeder', 'swoop', 'water-speeder'],
-  'vehicles-tracked': ['tracked-vehicle'],
-  'vehicles-wheeled': ['wheeled-vehicle', 'wheeled-tank', 'wheeled-groundcar', 'wheeled-utility-vehicle', 'wheeled-assault-vehicle', 'wheel-bike'],
-  'vehicles-ground-armor': ['repulsorlift-tank'],
-  'vehicles-hybrids': ['hybrid-vehicle-droid', 'vehicle-droid']
-});
+import {VEHICLE_PACK_CATEGORIES as PACKS,getUniversalVehiclePackForCategory} from '../scripts/domain/vehicles/universal-vehicle-pack-registry.js';
+export {PACKS};
 
 const OWNERS = new Map();
 for(const [pack,categories] of Object.entries(PACKS)) {
@@ -47,7 +36,7 @@ const sourced=(v)=>typeof v==='string'&&v.trim()?v.trim():null;
 export function projectVehicleActor(record,pack) {
   const sourceKey=record?.identity?.sourceEntryKey,cat=record?.classification?.primaryCategory;
   assert(typeof sourceKey==='string'&&sourceKey.length>0,'source key missing');
-  assert(OWNERS.get(cat)===pack,'category ownership mismatch for '+sourceKey);
+  assert(getUniversalVehiclePackForCategory(cat)?.name===pack && OWNERS.get(cat)===pack,'category ownership mismatch for '+sourceKey);
   assert(typeof record.identity.name==='string'&&record.identity.name.length>0,'source name missing '+sourceKey);
   assert(finite(record.abilities?.initiativePrinted),'printed numeric Initiative missing '+sourceKey);
   assert(finite(record.durability?.hitPoints),'printed HP missing '+sourceKey);
@@ -62,6 +51,7 @@ export function projectVehicleActor(record,pack) {
     vehicleBucket:pack.slice('vehicles-'.length),
     vehiclePackName:pack,
     vehicleSourcePrimaryCategory:cat,
+    vehiclePublishedShieldStatus:finite(record.defenses?.shieldRating)?'published':'unknown',
     vehicleFamily:(record.classification?.mobilityDomains??[]).includes('space')?'starship':'planetary',
     vehicleSourceEntryKey:sourceKey,
     vehicleSourceBook:record.publication.book,
