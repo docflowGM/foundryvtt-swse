@@ -60,8 +60,12 @@ export class VehicleImportEngine {
       (printed?.armament?.firingGroups??[]).every(group=>
         Array.isArray(group.mountKeys)&&group.mountKeys.length===0) &&
       (typeof shield==='number'
-        ?system?.shieldRating===shield&&system?.shields?.max===shield
-        :!Object.hasOwn(system??{},'shields')&&!Object.hasOwn(system??{},'shieldRating'));
+        ?system?.vehiclePublishedShieldStatus==='published' &&
+          system?.shieldRating===shield&&system?.shields?.max===shield
+        :system?.vehiclePublishedShieldStatus==='unknown' &&
+          (!Object.hasOwn(system??{},'shields') ||
+           (system?.shields?.max===0&&system?.shields?.value===0)) &&
+          (!Object.hasOwn(system??{},'shieldRating')||system?.shieldRating===0));
     if(!valid)throw new Error('UNIVERSAL_VEHICLE_SOURCE_INVALID_OR_UNTRUSTED');
 
     // No merge and no preservation of obsolete equipment/fields: no players
