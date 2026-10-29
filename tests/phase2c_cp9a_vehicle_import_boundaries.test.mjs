@@ -74,12 +74,15 @@ test('spoofed source key on row is never an independent authority to fire',async
  assert.match(authority,/TRUSTED_STOCK_WEAPON_GROUP_COUNT = 0/);
  assert.match(authority,/return null;/);
 });
-test('pre-create normalization hooks the Actor lifecycle, not Item lifecycle',()=>{
+test('P0 pre-create hook validates source and cannot auto-install published firing groups',()=>{
  const hooks=readFileSync(new URL('../scripts/actors/vehicle/vehicle-precreate-hooks.js',import.meta.url),'utf8');
- const precreate=hooks.slice(hooks.indexOf('// PRE-CREATE: Normalize vehicle data'));
- assert.match(precreate,/Hooks\.on\('preCreateActor'/);
- assert.doesNotMatch(precreate,/Hooks\.on\('preCreateItem'/);
- assert.match(precreate,/document\.updateSource\(\{ system: normalized \}\)/);
+ assert.match(hooks,/Hooks\.on\('preCreateActor', validateVehicleCreation\)/);
+ assert.match(hooks,/classifyVehicleActorSource\(document, data\)/);
+ assert.match(hooks,/assessment\.kind === 'invalid-canonical'/);
+ assert.match(hooks,/return false;/);
+ assert.doesNotMatch(hooks,/Hooks\.on\('preCreateItem'/);
+ assert.doesNotMatch(hooks,/Hooks\.on\('createActor'/);
+ assert.doesNotMatch(hooks,/normalizeVehicleImportData|normalizeVehicleWeaponImportData|createVehicleWeaponItems/);
 });
 test('new code does not create a second vehicle attack formula or bypass action costs',()=>{
  const importSource=readFileSync(new URL('../scripts/engine/import/vehicle-weapon-import-normalizer.js',import.meta.url),'utf8');
