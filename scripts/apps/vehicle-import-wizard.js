@@ -47,7 +47,7 @@ export class VehicleImportWizard extends HandlebarsApplicationMixin(ApplicationV
       selectedEntry: null,
       selectedDocument: null,
       mode: 'replace',
-      preserve: { name: true, image: true },
+      preserve: { name: false, image: false },
       results: [],
       error: null,
       busy: false
@@ -134,7 +134,7 @@ export class VehicleImportWizard extends HandlebarsApplicationMixin(ApplicationV
     root.querySelectorAll('[data-mode]').forEach((el) => {
       el.addEventListener('click', (event) => {
         event.preventDefault();
-        this.state.mode = el.dataset.mode || 'replace';
+        this.state.mode = 'replace'; // universal sources are replace-only
         this.render();
       });
     });
@@ -150,7 +150,13 @@ export class VehicleImportWizard extends HandlebarsApplicationMixin(ApplicationV
 
   async #ensureResults() {
     if (this.state.results.length) return;
-    this.state.results = await VehiclePackDataLoader.loadVehicleIndex();
+    try {
+      this.state.results = await VehiclePackDataLoader.loadVehicleIndex();
+      this.state.error = null;
+    } catch(error) {
+      this.state.error = error.message || String(error);
+      this.state.results = [];
+    }
   }
 
   #buildSteps() {
@@ -185,7 +191,7 @@ export class VehicleImportWizard extends HandlebarsApplicationMixin(ApplicationV
       if (sort === 'pack') return `${a.packLabel} ${a.name}`.localeCompare(`${b.packLabel} ${b.name}`);
       return a.name.localeCompare(b.name);
     });
-    return rows.slice(0, 250);
+    return rows; // all 429 claims, not a silent 250-result truncation
   }
 
   #findSelectedEntry() {
@@ -204,7 +210,8 @@ export class VehicleImportWizard extends HandlebarsApplicationMixin(ApplicationV
     const system = document?.system || entry.raw?.system || {};
     // Advisory only: exact observed legacy pack ID/name is not certified
     // source provenance and MUST NOT alter the imported Actor.
-    const cp21Advisory = inspectCP21LegacyPackCandidate({
+    const universal = document?.flags?.swse?.universalVehicleSource?.source ?? null;
+    const cp21Advisory = universal ? null : inspectCP21LegacyPackCandidate({
       packName: entry.packName,
       documentId: entry.documentId,
       name: document?.name || entry.name
@@ -218,13 +225,13 @@ export class VehicleImportWizard extends HandlebarsApplicationMixin(ApplicationV
       type: entry.type,
       category: system.category || entry.category || 'Vehicle',
       size: system.size || entry.size || '—',
-      crew: system.crew || entry.crew || '—',
-      cargo: system.cargo || entry.cargo || '—',
+      crew: universal ? (universal.crew?.raw ?? universal.crew?.crewCount ?? '—') : (system.crew || entry.crew || '—'),
+      cargo: universal ? (universal.capacity?.cargo?.raw ?? entry.cargo ?? '—') : (system.cargo || entry.cargo || '—'),
       hyperdrive: system.hyperdrive_class || system.hyperdrive || entry.hyperdrive || '—',
-      sr: system.shields?.max ?? system.shieldRating ?? entry.sr ?? 0,
+      sr: universal ? (typeof universal.defenses?.shieldRating === 'number' ? universal.defenses.shieldRating : 'Unknown') : (entry.sr ?? 'Unknown'),
       cl: system.challengeLevel ?? entry.cl ?? '—',
-      cost: system.cost || entry.cost || '—',
-      speed: system.speed || '—'
+      cost: universal ? (universal.economics?.priceNew?.raw ?? entry.cost ?? '—') : (system.cost || entry.cost || '—'),
+      speed: universal ? (universal.movement?.raw ?? entry.speed ?? '—') : (system.speed || '—')
     };
   }
 
@@ -239,7 +246,7 @@ export class VehicleImportWizard extends HandlebarsApplicationMixin(ApplicationV
   }
 
   #canApply() {
-    return this.state.step === 'confirm' && !!this.state.selectedDocument && !this.state.busy;
+    return this.state.step === 'confirm' && !!this.state.selectedDocument && this.state.mode === 'replace' && !this.state.busy;
   }
 
   async #handleAction(event) {
@@ -286,50 +293,54 @@ export class VehicleImportWizard extends HandlebarsApplicationMixin(ApplicationV
         mode: this.state.mode,
         preserve: this.state.preserve
       });
-      // CP9C: inspect the RESULT of a real controlled import. This is
-      // diagnostics only and MUST NOT create an editable actor stock flag
-      // or register a trusted weapon group. Other import paths remain unbound.
-      try {
-        const proof = await probeControlledVehicleImport({
-          actor: this.actor, sourceDocument: this.state.selectedDocument,
-          mode: this.state.mode
-        });
-        if (!proof.verified) console.info('[SWSE][CP9C] Vehicle stock provenance remains unbound:', proof.reason);
-        else console.info('[SWSE][CP9C] Vehicle source snapshot matched; attack authorization remains blocked:', proof);
-      } catch (proofError) {
-        console.warn('[SWSE][CP9C] Import provenance diagnostic could not complete; stock unbound:', proofError);
-      }
-      // CP23: an authentic native PACK READ is observable, but these legacy
-      // records do not have canonical SotG source binding or mount authority.
-      // Diagnostics never write trust flags or change Actor import plans.
-      try {
-        const observed = await observeCP23ImportedVehicle({
-          actor: this.actor, sourceDocument: this.state.selectedDocument,
-          packName: this.state.selectedEntry?.packName, mode: this.state.mode
-        });
-        if (observed.observedLegacyPack) {
-          console.info('[SWSE][CP23] Native legacy pack snapshot observed; stock attacks remain blocked:', observed);
-        } else if (observed.reason !== 'UNKNOWN_LEGACY_PACK_DOCUMENT') {
-          console.info('[SWSE][CP23] No authenticated canonical SotG source binding:', observed.reason);
+      // Legacy-only diagnostic probes are inapplicable to the new canonical
+      // publication actors. They cannot issue weapon authority or receipts.
+      if (!this.state.selectedDocument.flags?.swse?.universalVehicleSource) {
+        // CP9C: inspect the RESULT of a real controlled import. This is
+        // diagnostics only and MUST NOT create an editable actor stock flag
+        // or register a trusted weapon group. Other import paths remain unbound.
+        try {
+          const proof = await probeControlledVehicleImport({
+            actor: this.actor, sourceDocument: this.state.selectedDocument,
+            mode: this.state.mode
+          });
+          if (!proof.verified) console.info('[SWSE][CP9C] Vehicle stock provenance remains unbound:', proof.reason);
+          else console.info('[SWSE][CP9C] Vehicle source snapshot matched; attack authorization remains blocked:', proof);
+        } catch (proofError) {
+          console.warn('[SWSE][CP9C] Import provenance diagnostic could not complete; stock unbound:', proofError);
         }
-      } catch (error) {
-        console.warn('[SWSE][CP23] Diagnostic failed closed:', error);
-      }
-      // CP23-C4: optional GM WORLD log of a genuinely-read legacy document.
-      // Never an authenticated stock receipt; failure must not grant trust
-      // or roll back an otherwise completed legacy import.
-      try {
-        const observation = await recordCP23C4UnverifiedImport({
-          actor: this.actor,
-          sourceDocument: this.state.selectedDocument,
-          packName: this.state.selectedEntry?.packName,
-          mode: this.state.mode
-        });
-        if (observation.status === 'UNVERIFIED_OBSERVATION_RECORDED') {
-          console.info('[SWSE][CP23-C4] Logged unverified legacy import; stock attacks remain blocked:', observation);
+        // CP23: an authentic native PACK READ is observable, but these legacy
+        // records do not have canonical SotG source binding or mount authority.
+        // Diagnostics never write trust flags or change Actor import plans.
+        try {
+          const observed = await observeCP23ImportedVehicle({
+            actor: this.actor, sourceDocument: this.state.selectedDocument,
+            packName: this.state.selectedEntry?.packName, mode: this.state.mode
+          });
+          if (observed.observedLegacyPack) {
+            console.info('[SWSE][CP23] Native legacy pack snapshot observed; stock attacks remain blocked:', observed);
+          } else if (observed.reason !== 'UNKNOWN_LEGACY_PACK_DOCUMENT') {
+            console.info('[SWSE][CP23] No authenticated canonical SotG source binding:', observed.reason);
+          }
+        } catch (error) {
+          console.warn('[SWSE][CP23] Diagnostic failed closed:', error);
         }
-      } catch (error) {
-        console.warn('[SWSE][CP23-C4] GM audit logging unavailable; no source authority granted:', error);
+        // CP23-C4: optional GM WORLD log of a genuinely-read legacy document.
+        // Never an authenticated stock receipt; failure must not grant trust
+        // or roll back an otherwise completed legacy import.
+        try {
+          const observation = await recordCP23C4UnverifiedImport({
+            actor: this.actor,
+            sourceDocument: this.state.selectedDocument,
+            packName: this.state.selectedEntry?.packName,
+            mode: this.state.mode
+          });
+          if (observation.status === 'UNVERIFIED_OBSERVATION_RECORDED') {
+            console.info('[SWSE][CP23-C4] Logged unverified legacy import; stock attacks remain blocked:', observation);
+          }
+        } catch (error) {
+          console.warn('[SWSE][CP23-C4] GM audit logging unavailable; no source authority granted:', error);
+        }
       }
       ui.notifications.info(`Imported ${this.state.selectedDocument.name} into ${this.actor.name}.`);
       this.callback?.();
