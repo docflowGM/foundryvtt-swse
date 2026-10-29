@@ -221,11 +221,65 @@
       "requiresRuntimeConsumer": true,
       "allowExecutableAttacks": false,
       "sourceFieldQAAccepted": true
+    },
+    {
+      "id": "P3R-FU-TX130-CROSSBOOK",
+      "sourceEntryKey": "fucg-tx-130t-fighter-tank",
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedPages": [
+        203
+      ],
+      "pdfPhysicalPages": [
+        204
+      ],
+      "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+      "relatedSourceEntryKeys": [
+        "cw-tx-130t-saber-class-fighter-tank"
+      ],
+      "sourceReconciliation": "verified-independent-cross-book-publication-claims",
+      "printedFacts": {
+        "cl": 8,
+        "printedTypeLine": "Huge ground vehicle (speeder)",
+        "reflex": 17,
+        "hp": 120,
+        "speedSquares": 8,
+        "maxVelocityKmh": 193,
+        "crew": 2,
+        "passengers": 5,
+        "cargoKg": 100,
+        "payloadMissiles": 8,
+        "summaryWeaponAttackBonus": 1,
+        "detailedWeaponAttackBonus": 2,
+        "sourceAttackGroupCount": 2
+      },
+      "compareCloneWars": {
+        "sourceEntryKey": "cw-tx-130t-saber-class-fighter-tank",
+        "cl": 7,
+        "maxVelocityKmh": 200,
+        "crew": 3,
+        "passengers": 2,
+        "cargoKg": 750,
+        "missilePayload": 16,
+        "sourceAttackGroupCount": 4,
+        "optionalAstromech": true,
+        "optionalCompositeTurret": true
+      },
+      "identityBoundary": "Two separately printed and statted TX-130T publication identities with materially different CL, capacity, speed and armament. Do not deduplicate or transplant statistics.",
+      "knownConflict": "Force Unleashed p203 Ranged summary gives both attacks +1, while detailed weapon subsection gives +2 for both. Preserve both original values without inventing an adjudicated effective value.",
+      "sourceEvidence": "Original Force Unleashed PDF printed p203/physical p204 and original Clone Wars PDF printed p169/physical p170 visually inspected; exact PDF SHA fingerprints verified.",
+      "unresolvedOperational": [
+        "owner adjudication of Force Unleashed +1 vs +2 original attack discrepancy",
+        "Clone Wars second summary +1 vs detail +3 original attack discrepancy",
+        "no shared executable mount or operator trust",
+        "independent source actor import and optional modification policy"
+      ],
+      "requiresRuntimeConsumer": true,
+      "allowExecutableAttacks": false,
+      "sourceFieldQAAccepted": true
     }
   ],
   "remainingTargetedCandidates": [
     "Vulture hybrid walker/starfighter",
-    "cross-book TX-130 variants",
     "Galaxy at War Shock and Awe source attack",
     "YU-410 duplicated DR",
     "WLO-5 ambiguous price"
