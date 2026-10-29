@@ -130,6 +130,17 @@ test('an empty input Item array cannot conceal Items already on the Document', (
   assert.ok(result.errors.includes('SOURCE_ATTACKS_NOT_INSTALLABLE'));
 });
 
+test('uncertified modification claims remain reference-only rather than installed hardware', () => {
+  const actor = pick(() => true);
+  actor.system.vehicleModifications = [{ name: 'spoofed shields', value: 999 }];
+  const projection = getVehicleRuntimeProjection(actor);
+  assert.deepEqual(projection.installed.modifications, []);
+  assert.deepEqual(projection.installed.mounts, []);
+  assert.equal(projection.installed.certification, 'NONE');
+  assert.equal(projection.unverifiedModificationClaims[0].name, 'spoofed shields');
+  assert.ok(Object.isFrozen(projection.unverifiedModificationClaims));
+});
+
 test('intentionally blank Phase 4D shell and explicit custom vehicles remain separate', () => {
   const scratch = {
     name: '[SWSE PHASE4D SCRATCH]', type: 'vehicle',
