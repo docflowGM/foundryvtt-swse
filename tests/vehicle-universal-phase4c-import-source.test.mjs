@@ -42,6 +42,22 @@ test('new actor source import preserves numeric Initiative and missing shields, 
   assert.equal(writes[0].options.source,'vehicle-import-wizard');
 });
 
+test('unknown published shield data stays unknown even if Foundry adds zero-only UI placeholders',()=>{
+  const canonical=sample(d=>d.system.vehiclePublishedShieldStatus==='unknown');
+  assert.ok(canonical);
+  const {VehicleImportEngine}=engine();
+  const hydrated=structuredClone(canonical);
+  hydrated.system.shields={value:0,max:0};
+  hydrated.system.shieldRating=0;
+  const plan=VehicleImportEngine.buildImportPlan(target(),hydrated,{mode:'replace'});
+  assert.equal(plan.system.vehiclePublishedShieldStatus,'unknown');
+  assert.equal(typeof plan['flags.swse.universalVehicleSource'].source.defenses.shieldRating,'undefined');
+  const tampered=structuredClone(hydrated);
+  tampered.system.shields.max=10;
+  assert.throws(()=>VehicleImportEngine.buildImportPlan(target(),tampered),
+    /UNIVERSAL_VEHICLE_SOURCE_INVALID_OR_UNTRUSTED/);
+});
+
 test('positive and explicit-zero SR survive without converting unknown data',()=>{
   const chosen=[sample(d=>d.system.shieldRating===0),sample(d=>d.system.shieldRating>0)];
   assert.ok(chosen.every(Boolean));
