@@ -23,6 +23,11 @@ export class VehicleImportEngine {
 
   static buildImportPlan(targetActor,sourceActor,options={}){
     if(!targetActor||!sourceActor)return null;
+    if(targetActor.type!=='vehicle')throw new Error('UNIVERSAL_VEHICLE_TARGET_TYPE_REQUIRED');
+    // Existing embedded weapon Items must not survive a statblock replacement.
+    // There is no player-world migration in this clean-break cutover.
+    if(Number(targetActor.items?.size??0)>0)
+      throw new Error('UNIVERSAL_VEHICLE_REQUIRES_EMPTY_TARGET_ITEMS');
     // Historical CP23 reserved drafts are still forbidden before every other
     // check. Their old numeric Initiative/default-synthesis audit remains valid.
     assertCP23C4CNoStagedSourceImport(sourceActor);
