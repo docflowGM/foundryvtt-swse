@@ -4502,7 +4502,9 @@
       "geometry": {
         "starshipScaleWidthSquares": 1,
         "starshipScaleLengthSquares": 1,
-        "coverCrew": "none"
+        "coverCrew": "none",
+        "characterScaleWidthSquares": 3,
+        "characterScaleLengthSquares": 3
       },
       "movement": {
         "speedModes": [
@@ -4639,7 +4641,7 @@
         }
       },
       "text": {
-        "sourceNotes": "Converted from previously PDF-verified canonical ship source record; weapon mounts and operational rules remain outside this staged certification."
+        "sourceNotes": "Converted from previously PDF-verified canonical ship source record; weapon mounts and operational rules remain outside this staged certification. Phase 3 targeted original PDF check: Starships of the Galaxy printed p78, physical p79, source SHA256 e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0: Fighting Space 3x3 character scale OR 1 square starship scale. Source geometry restored only; droid flight/walk mode operational transitions and source attacks still have no executable trust."
       },
       "exceptions": {
         "specialRules": [

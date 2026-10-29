@@ -377,11 +377,77 @@
       "requiresRuntimeConsumer": true,
       "allowExecutableAttacks": false,
       "sourceFieldQAAccepted": true
+    },
+    {
+      "id": "P3R-CORE-SOTG-VULTURE",
+      "sourceEntryKey": "core-vulture-class-droid-starfighter",
+      "relatedSourceEntryKeys": [
+        "sotg-baktoid-armor-workshop-vulture-class-starfighter"
+      ],
+      "sourceBook": "Core Rulebook",
+      "printedPages": [
+        181
+      ],
+      "pdfPhysicalPages": [
+        182
+      ],
+      "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+      "secondSource": {
+        "sourceBook": "Starships of the Galaxy",
+        "sourceEntryKey": "sotg-baktoid-armor-workshop-vulture-class-starfighter",
+        "printedPage": 78,
+        "pdfPhysicalPage": 79,
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0"
+      },
+      "sourceReconciliation": "dual-mode-and-cross-book-identity-verified-core-frozen-provenance-discrepancy-open",
+      "printedFacts": {
+        "coreHeading": "\"Vulture\" Droid Starfighter",
+        "coreStatblockPrintedPage": 181,
+        "corePdfPhysicalPage": 182,
+        "coreFrozenCensusName": "Vulture-class Droid Starfighter",
+        "coreFrozenCensusPrintedPage": 180,
+        "coreFrozenCensusPdfPhysicalPage": 181,
+        "sotgHeading": "Baktoid Armor Workshop Vulture-class Starfighter",
+        "sotgPrintedPage": 78,
+        "printedTypeLine": "Huge starfighter/ground vehicle (walker)",
+        "coreChallenges": 7,
+        "sotgChallenge": 7,
+        "walkSpeedSquares": 6,
+        "flightSpeedCharacterSquares": 16,
+        "flightSpeedStarshipSquares": 4,
+        "coreTransitionAction": "standard action",
+        "sotgCharacterScaleFightingSpace": "3x3",
+        "sotgStarshipScaleFightingSpace": "1 square"
+      },
+      "identityBoundary": "Core and SotG each print a statblock; preserve TWO independent book-specific source keys. Each statblock is one hybrid starfighter/ground walker identity, never two separate Actors for its flight and walking modes.",
+      "sourceEvidence": "Original Core Rulebook p181/physical PDF p182 and Starships of the Galaxy p78/physical PDF p79 visually inspected with matching source SHA fingerprints. Earlier Core physical p181 is printed page180 and does NOT contain the Vulture statblock.",
+      "knownConflict": "Core frozen census and Phase 2 staging mis-locate the Vulture title at printed p180, physical p181, and normalize its title as Vulture-class. The original printed header is '\"Vulture\" Droid Starfighter' on printed p181, physical p182. Correct via explicit evidence-backed census/provenance amendment, not silent key regeneration.",
+      "provenanceAmendmentRecommended": {
+        "keepSourceEntryKey": "core-vulture-class-droid-starfighter",
+        "correctPrintedTitle": "\"Vulture\" Droid Starfighter",
+        "correctPrintedPage": 181,
+        "correctPhysicalPdfPage": 182,
+        "doNotRewriteFrozenCensusWithoutExplicitReconciliation": true
+      },
+      "sourceFidelityCorrectionApplied": [
+        "SotG original 3x3 character-scale fighting space restored to staged record"
+      ],
+      "unresolvedOperational": [
+        "source-authoritative reconciliation of Core printed title/page against frozen 429 census, Phase 1 ledger and original canonical 316 ship references",
+        "dual-mode transition typed consumer in V2",
+        "drone autonomous pilot semantics",
+        "physical mount and arc geometry per publication"
+      ],
+      "requiresRuntimeConsumer": true,
+      "allowExecutableAttacks": false,
+      "sourceFieldQAAccepted": false,
+      "phase3GlobalProvenanceGate": "blocked-pending-core-source-provenance-reconciliation"
     }
   ],
-  "remainingTargetedCandidates": [
-    "Vulture hybrid walker/starfighter"
-  ],
+  "remainingTargetedCandidates": [],
   "phase4CutoverAuthorized": false,
-  "strictPhysicalMountCertificationPromoted": 0
+  "strictPhysicalMountCertificationPromoted": 0,
+  "remainingProvenanceBlockers": [
+    "Core Vulture printed name and page differ from frozen census: see P3R-CORE-SOTG-VULTURE"
+  ]
 }
