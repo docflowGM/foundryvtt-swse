@@ -20,6 +20,7 @@ import { SWSECombatDocument } from "./scripts/combat/swse-combat.js";
 import { SWSECombatant } from "./scripts/combat/swse-combatant.js";
 import { registerSystemSettings } from "./scripts/core/settings.js";
 import { registerCP23C4ObservationSetting } from "./scripts/domain/vehicles/vehicle-cp23c4-gm-observation-ledger.js";
+import { auditUniversalVehicleRuntime, openUniversalVehicleSampleSheet } from "./scripts/domain/vehicles/vehicle-phase4d-runtime-audit.js";
 import { registerForceTraditionHouseRuleSettings } from "./scripts/settings/force-tradition-house-rules.js";
 import { registerCustomContentApprovalSettings } from "./scripts/settings/custom-content-approval.js";
 import { UIManager } from "./scripts/ui/ui-manager.js";
@@ -98,6 +99,12 @@ Hooks.once("init", async () => {
   // SWSE.debug.attackRolls.events after rolling an attack. Disabled (no-op,
   // no logging) by default.
   globalThis.SWSE.debug.attackRolls = AttackRollDiagnostics;
+  // Phase 4D: explicitly invoked GM-only native pack/Actor data inspection.
+  // No startup scanning, no auto-import, no world mutations or attack trust.
+  globalThis.SWSE.debug.vehicles = Object.freeze({
+    audit: (options = {}) => auditUniversalVehicleRuntime(options),
+    openSampleSheet: (sourceKey, options = {}) => openUniversalVehicleSampleSheet(sourceKey, options)
+  });
   // Phase 1 actor authority + performance baseline: opt-in actor/derived/
   // modifier-cache/sheet-context timing. Enable the 'performanceDiagnostics'
   // (or 'debugMode') client setting, then use SWSE.debug.performance.actor(actor),
