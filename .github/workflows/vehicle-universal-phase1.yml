@@ -8,6 +8,9 @@ on:
       - 'docs/audits/vehicles/universal-vehicle-phase-roadmap.md'
       - 'tests/vehicle-universal-*.test.mjs'
       - 'tools/build-universal-vehicle-canonical.mjs'
+      - 'tools/build-universal-vehicle-pack-sources.mjs'
+      - 'tools/build-universal-vehicle-native-packs.mjs'
+      - 'tools/release/**'
       - 'tools/build-universal-vehicle-phase3-source-preview.mjs'
       - 'tools/lib/universal-vehicle-source-provenance.mjs'
       - 'data/canonical/vehicles/vehicles.json'
@@ -29,3 +32,24 @@ jobs:
           node tools/build-universal-vehicle-phase3-source-preview.mjs --check
           node tools/build-universal-vehicle-canonical.mjs --check
           node --test tests/vehicle-universal-phase*.test.mjs
+  native-vehicle-packs:
+    needs: provenance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: tools/release/package-lock.json
+      - name: Install pinned Foundry V13 native pack compiler
+        run: npm ci --prefix tools/release
+      - name: Build and independently read back all 429 native Actors
+        run: node tools/build-universal-vehicle-native-packs.mjs --out build/vehicle-phase4b/native
+      - name: Archive verified native vehicle compendiums
+        uses: actions/upload-artifact@v4
+        with:
+          name: swse-universal-vehicles-phase4b-native
+          path: build/vehicle-phase4b/native/
+          if-no-files-found: error
+          retention-days: 14
