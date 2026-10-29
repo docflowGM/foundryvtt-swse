@@ -16,7 +16,7 @@
     "missingHP": [],
     "missingRef": [],
     "newIssues": [],
-    "patchStatus": "Source exception corrections and census reconciled"
+    "patchStatus": "Phase 3I inherited Chu'unthor source-only targeted correction: starship-scale geometry, Use Computer and backup hyperdrive, no new vehicle identities"
   },
   "records": [
     {
@@ -48,8 +48,8 @@
         "cl": 15
       },
       "geometry": {
-        "characterScaleWidthSquares": 2,
-        "characterScaleLengthSquares": 2,
+        "starshipScaleWidthSquares": 2,
+        "starshipScaleLengthSquares": 2,
         "coverCrew": "total"
       },
       "movement": {
@@ -65,7 +65,8 @@
         "raw": "x2 (backup x18), navicomputer",
         "capability": "equipped",
         "primaryMultiplier": 2,
-        "navComputer": "installed"
+        "navComputer": "installed",
+        "backupMultiplier": 18
       },
       "defenses": {
         "reflex": 18,
@@ -99,6 +100,11 @@
             "name": "Pilot",
             "printedModifier": -4,
             "raw": "Pilot -4"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 12,
+            "raw": "Use Computer +12"
           }
         ],
         "initiativePrinted": -4,
@@ -111,7 +117,7 @@
       "combat": {
         "baseAttackBonusPrinted": 2,
         "grappleBonusPrinted": 107,
-        "rangedAttackLine": "2 tractor beam batteries\" +8"
+        "rangedAttackLine": "2 tractor beam batteries +8 (see below)"
       },
       "armament": {
         "firingGroups": [
@@ -142,7 +148,7 @@
           "unit": "years",
           "raw": "5 years"
         },
-        "storageNotes": "Printed Carried Craft various"
+        "storageNotes": "Printed Carried Craft: various shuttlecraft (number not stated)"
       },
       "systems": {},
       "modifications": {},
@@ -154,7 +160,7 @@
         }
       },
       "text": {
-        "sourceNotes": "Source text excerpt anchored at 553102; original PDF audit ledger confirms publication identity. No executable mount certification."
+        "sourceNotes": "Phase 3I narrow inherited-ship discrepancy regression: Jedi Academy Training Manual original PDF SHA256 c4dce616776949aa0501b8932012b82d6fd1cd1c27e9646f0a772ab596b4cea9 printed p151/physical PDF p152 directly checked. Chu'unthor CL15, Colossal (station) capital ship, Fighting Space 2x2 STARSHIP scale, Speed fly 1 starship square, Use Computer +12, hyperdrive x2 with backup x18, and various unspecified shuttlecraft; printed 2 tractor beam batteries +8 are source attack declaration and DO NOT authorize physical mounts or executable stock attacks. This is targeted remediation only, not a renewed fleet audit."
       },
       "exceptions": {
         "manualReviewRequired": true
