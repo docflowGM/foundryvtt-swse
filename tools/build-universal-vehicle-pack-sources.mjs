@@ -59,7 +59,9 @@ export function projectVehicleActor(record,pack) {
   const system={
     model:record.identity.name,
     category:cat,
-    vehicleBucket:pack,
+    vehicleBucket:pack.slice('vehicles-'.length),
+    vehiclePackName:pack,
+    vehicleSourcePrimaryCategory:cat,
     vehicleFamily:(record.classification?.mobilityDomains??[]).includes('space')?'starship':'planetary',
     vehicleSourceEntryKey:sourceKey,
     vehicleSourceBook:record.publication.book,
