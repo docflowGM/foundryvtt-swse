@@ -5,8 +5,8 @@
   "scope": "Only 48 new final-seven-book identities; previously reviewed spacecraft and first-seven-book vehicles excluded",
   "pdfFieldQA": {
     "total": 48,
-    "verified": 47,
-    "pending": 1
+    "verified": 48,
+    "pending": 0
   },
   "statusSemantics": {
     "pdf-field-verified": "Every populated field compared with original rendered source page; not strict mechanical certification",
@@ -585,7 +585,10 @@
       "printedPage": 82,
       "pdfPhysicalPage": 83,
       "sourcePdfSha256": "bd72d74278b812dab95a6ee9d0aef730afec4feb9c37daef59bc733842489361",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Scavenger's Guide to Droids primary original PDF printed p82, physical p83, checksum bd72d74278b812dab95a6ee9d0aef730afec4feb9c37daef59bc733842489361",
+      "method": "printed original PDF direct page visual field comparison",
+      "strictMechanicalCertification": "not-certified"
     }
   ]
 }

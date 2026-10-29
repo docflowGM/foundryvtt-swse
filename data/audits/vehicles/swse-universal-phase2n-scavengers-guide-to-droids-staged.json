@@ -14,11 +14,11 @@
     "new": 1,
     "supplemental": 0,
     "legacyGroups": 0,
-    "groups": 0,
+    "groups": 2,
     "newIssues": [],
     "errors": [],
     "errorCount": 0,
-    "patchStatus": "Source exception corrections and census reconciled"
+    "patchStatus": "Phase 3N: single DP-2 hybrid source vehicle full primary-PDF field verification complete; melee and two ranged source lines segregated; strict mount/runtime mechanical certification pending"
   },
   "records": [
     {
@@ -130,18 +130,38 @@
       "combat": {
         "baseAttackBonusPrinted": 0,
         "grappleBonusPrinted": 9,
-        "rangedAttackLine": "blaster cannon +2 (see below) and"
+        "meleeAttackLine": "claw +4 (see below)",
+        "rangedAttackLine": "blaster cannon +2 (see below) and space beacon launcher +2 (see below)"
       },
       "armament": {
-        "firingGroups": [],
+        "firingGroups": [
+          {
+            "groupKey": "sgtd-dp-2-probe-droid-published-attack-1",
+            "label": "Blaster cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 2,
+            "specialNotes": "Printed attack Atk +2, damage 3d12, source only; no mount/operator/arc or execution certification."
+          },
+          {
+            "groupKey": "sgtd-dp-2-probe-droid-published-attack-2",
+            "label": "Space beacon launcher",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 2,
+            "specialNotes": "Printed attack Atk +2, damage --; payload 16 space beacons. Not damage-authorized or executable."
+          }
+        ],
         "carriedPayloads": [
           {
             "value": 16,
             "unit": "space beacons",
-            "raw": "16 space beacons"
+            "raw": "Payload 16 space beacons"
           }
         ],
-        "notes": "No verified printable attack group extracted; do not interpret as proof of unarmed stock vehicle."
+        "notes": "Three printed attack entries: melee Claw +4 (1d6+4), ranged blaster +2 (3d12), ranged beacon launcher +2 (no damage). The claw is preserved in combat.meleeAttackLine, NOT an invented vehicle ranged firing group; no mount keys authorized."
       },
       "crew": {
         "raw": "0 (normal)",
@@ -173,7 +193,8 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 310745, candidate score 31. Original PDF source SHA bd72d74278b812dab95a6ee9d0aef730afec4feb9c37daef59bc733842489361. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Original Scavenger's Guide to Droids optimized PDF printed p82, physical PDF p83 (SHA256 bd72d74278b812dab95a6ee9d0aef730afec4feb9c37daef59bc733842489361) visually inspected, complete independent Large starfighter/ground vehicle (speeder) and 2nd-degree droid statblock. Vehicle CL6 Ref12 HP40, movement fly 12 squares (575 km/h) and 3 starship squares. Printed ranged blaster +2 and space beacon +2, melee claw +4, payload 16 beacons, crew 0 normal, licensed 36,500. The droid's skills and telemetric/droid actions belong to source notes only until a typed droid/vehicle actor consumer exists; no executable attacks or physical mounts authorized.",
+        "mechanicalNotes": "Hybrid DP-2 vehicle-droid, single publication identity. Immune droid traits. Droid-side Move, Extended Sensor Range, Extended Weapon Range, Patch Job, Reconnoiter and Telemetry are printed as droid actions with telemetric/controller prerequisites. Do NOT automatically grant these as vehicle combat engine actions."
       },
       "exceptions": {
         "manualReviewRequired": true
