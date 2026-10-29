@@ -88,8 +88,8 @@ export function classifyVehicleActorSource(document, data = undefined) {
   // A supplied swse canonical-claim payload must be complete. An omitted
   // half of provenance cannot be inherited from a different creation surface.
   if (object(data?.flags?.swse) &&
-      (own(inputFlags, 'canonicalPublication') || own(inputFlags, 'universalVehicleSource')) &&
-      (!own(inputFlags, 'canonicalPublication') || !own(inputFlags, 'universalVehicleSource')))
+      (own(view.inputFlags, 'canonicalPublication') || own(view.inputFlags, 'universalVehicleSource')) &&
+      (!own(view.inputFlags, 'canonicalPublication') || !own(view.inputFlags, 'universalVehicleSource')))
     issue(errors, 'INCOMPLETE_CREATION_PROVENANCE');
   for (const field of ['canonicalPublication', 'universalVehicleSource']) {
     if (own(view.docFlags, field) && own(view.inputFlags, field) &&
