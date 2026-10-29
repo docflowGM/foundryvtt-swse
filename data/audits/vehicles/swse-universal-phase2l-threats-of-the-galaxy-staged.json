@@ -12,11 +12,11 @@
     "total": 5,
     "inherited": 1,
     "new": 4,
-    "groups": 4,
+    "groups": 5,
     "missingHP": [],
     "missingRef": [],
     "newIssues": [],
-    "patchStatus": "Source exception corrections and census reconciled"
+    "patchStatus": "Phase 3L: all four new Threats of the Galaxy vehicle entries visually original-PDF field verified, one inherited ship unchanged, strict weapon/Foundry permissions pending"
   },
   "records": [
     {
@@ -288,7 +288,7 @@
       "combat": {
         "baseAttackBonusPrinted": 10,
         "grappleBonusPrinted": 55,
-        "rangedAttackLine": "quad laser cannon +12 (see below) or"
+        "rangedAttackLine": "quad laser cannon +12 OR medium concussion missile +12 OR ion cannon +12"
       },
       "armament": {
         "firingGroups": [
@@ -312,12 +312,19 @@
           },
           {
             "groupKey": "tog-hounds-tooth-source-attack-3",
-            "label": "lon cannon",
+            "label": "Ion cannon",
             "groupKind": "unknown",
             "batteryMembershipStatus": "not-stated",
             "mountKeys": [],
             "attackBonusPrinted": 12,
-            "specialNotes": "Printed operator pilot, damage 6d10x?2 ion . Physical mounts and firing arcs NOT certified."
+            "specialNotes": "Published pilot Ion cannon Atk +12 Dmg 6d10x2 ion; source attack only, no physical mount or firing arc."
+          }
+        ],
+        "carriedPayloads": [
+          {
+            "value": 6,
+            "unit": "medium concussion missiles",
+            "raw": "Payload 6 medium concussion missiles"
           }
         ]
       },
@@ -337,19 +344,33 @@
           "unit": "months",
           "raw": "6 months"
         },
-        "storageNotes": "Printed Carried Craft 1 smail scout ship"
+        "carriedCraft": [
+          {
+            "name": "small scout ship",
+            "count": 1,
+            "raw": "1 small scout ship"
+          }
+        ],
+        "passengerGroups": [
+          {
+            "group": "prisoners",
+            "count": 4,
+            "raw": "4 prisoners"
+          }
+        ]
       },
       "systems": {},
       "modifications": {},
       "economics": {
         "availability": "Licensed",
         "priceNew": {
-          "status": "ambiguous",
-          "raw": "not for sale"
+          "status": "not-for-sale",
+          "raw": "Cost not for sale"
         }
       },
       "text": {
-        "sourceNotes": "Source text excerpt anchored at 60061; original PDF audit ledger confirms publication identity. No executable mount certification."
+        "sourceNotes": "Threats of the Galaxy original scanned PDF primary field verification: printed p18 / physical PDF p19, checksum 63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f. CL12 Hound's Tooth three weapon attack entries, six-missile payload, scout ship carried, not for sale; printed Colossal* special starfighter-targeting footnote retained separately. Not physical mount geometry, operator/executable attack certification, or Foundry actor authorization.",
+        "mechanicalNotes": "Printed footnote: Colossal* ship counts as Gargantuan starfighter when targeted by capital-ship weapons, dogfighting and starship maneuvers. Source only, no typed executable normalization."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -415,7 +436,8 @@
         "reflexFlatFooted": 25,
         "fortitude": 13,
         "armorBonus": 0,
-        "damageReduction": 5
+        "damageReduction": 5,
+        "shieldRating": 0
       },
       "durability": {
         "hitPoints": 36,
@@ -474,12 +496,9 @@
           "unit": "kg",
           "raw": "2 kg"
         },
-        "consumables": {
-          "value": null,
-          "unit": null,
-          "raw": "—"
-        },
-        "storageNotes": "Printed Carried Craft —"
+        "consumables": null,
+        "storageNotes": "Printed Carried Craft —",
+        "carriedCraft": []
       },
       "systems": {},
       "modifications": {},
@@ -488,22 +507,29 @@
         "priceNew": {
           "status": "priced",
           "amountCredits": 4000,
-          "raw": "4,000"
+          "raw": "4,000 (new)"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 1000,
+          "raw": "1,000 (used)"
         }
       },
       "text": {
-        "sourceNotes": "Source text excerpt anchored at 280969; original PDF audit ledger confirms publication identity. No executable mount certification."
+        "sourceNotes": "Threats of the Galaxy original scanned PDF primary field verification: printed p81 / physical PDF p82, checksum 63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f. Darth Maul Bloodfin CL15 stat block gives printed SR0, crew1 cargo2 kg, consumables --, carried craft --, 4,000 new/1,000 used; no ranged weapon group. Not physical mount geometry, operator/executable attack certification, or Foundry actor authorization."
       },
       "exceptions": {
         "manualReviewRequired": true
       },
       "fieldStates": {
-        "/defenses/shieldRating": "not-stated",
+        "/defenses/shieldRating": "not-applicable",
         "/abilities/con": "explicitly-none",
         "/hyperspace/capability": "not-stated",
         "/armament/weaponMounts": "not-stated",
         "/armament/firingArcs": "not-stated",
-        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+        "/rules/strictMechanicalCertification": "not-yet-reviewed",
+        "/capacity/consumables": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none"
       },
       "rules": {
         "reviewStatus": "partial-source-probe"
@@ -539,8 +565,9 @@
         "cl": 7
       },
       "geometry": {
-        "notes": "1 square",
-        "coverCrew": "total!"
+        "characterScaleWidthSquares": 1,
+        "characterScaleLengthSquares": 1,
+        "coverCrew": "total"
       },
       "movement": {
         "speedModes": [
@@ -607,7 +634,17 @@
         "rangedAttackLine": "laser cannon +8 (4d8+3)"
       },
       "armament": {
-        "firingGroups": []
+        "firingGroups": [
+          {
+            "groupKey": "tog-modified-r-2000-raptor-speeder-bike-published-attack-1",
+            "label": "Laser cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 8,
+            "specialNotes": "Published Ranged laser cannon +8 (4d8+3); no attack subsection or operator grant; not physically certified or executable."
+          }
+        ]
       },
       "crew": {
         "raw": "1",
@@ -620,11 +657,7 @@
           "unit": "kg",
           "raw": "1 kg"
         },
-        "consumables": {
-          "value": null,
-          "unit": null,
-          "raw": "—"
-        }
+        "consumables": null
       },
       "systems": {},
       "modifications": {},
@@ -633,11 +666,16 @@
         "priceNew": {
           "status": "priced",
           "amountCredits": 10000,
-          "raw": "10,000"
+          "raw": "10,000 (new)"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 7000,
+          "raw": "7,000 (used)"
         }
       },
       "text": {
-        "sourceNotes": "Source text excerpt anchored at 347509; original PDF audit ledger confirms publication identity. No executable mount certification."
+        "sourceNotes": "Threats of the Galaxy original scanned PDF primary field verification: printed p98 / physical PDF p99, checksum 63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f. Modified R-2000 Raptor CL7 includes Ranged laser cannon +8 (4d8+3), 1-square fighting space, 10,000 new/7,000 used, printed SR0; no invented weapon mount. Not physical mount geometry, operator/executable attack certification, or Foundry actor authorization."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -647,7 +685,8 @@
         "/hyperspace/capability": "not-stated",
         "/armament/weaponMounts": "not-stated",
         "/armament/firingArcs": "not-stated",
-        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+        "/rules/strictMechanicalCertification": "not-yet-reviewed",
+        "/capacity/consumables": "explicitly-none"
       },
       "rules": {
         "reviewStatus": "partial-source-probe"
@@ -682,21 +721,30 @@
       "challenge": {
         "cl": 2
       },
-      "geometry": {},
+      "geometry": {
+        "characterScaleWidthSquares": 1,
+        "characterScaleLengthSquares": 1,
+        "coverCrew": "total"
+      },
       "movement": {
         "speedModes": [
           {
             "mode": "flying",
             "scale": "character",
-            "squaresPerMove": 12
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 600,
+            "raw": "Speed 12 squares (max. velocity 600 km/h)"
           }
-        ]
+        ],
+        "maxVelocityKmh": 600,
+        "raw": "Speed 12 squares (max. velocity 600 km/h)"
       },
       "hyperspace": {},
       "defenses": {
         "reflex": 18,
         "reflexFlatFooted": 11,
         "fortitude": 13,
+        "armorBonus": 0,
         "damageReduction": 5
       },
       "durability": {
@@ -704,21 +752,78 @@
         "damageThreshold": 18
       },
       "abilities": {
-        "skills": [],
+        "str": 16,
+        "dex": 24,
+        "int": 16,
+        "con": null,
         "initiativePrinted": 7,
-        "perceptionPrinted": 2
+        "perceptionPrinted": 2,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 7,
+            "raw": "Initiative +7"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 2,
+            "raw": "Mechanics +2"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 2,
+            "raw": "Perception +2"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 7,
+            "raw": "Pilot +7"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 2,
+            "raw": "Use Computer +2"
+          }
+        ]
       },
-      "combat": {},
+      "combat": {
+        "baseAttackBonusPrinted": 3,
+        "grappleBonusPrinted": 16
+      },
       "armament": {
         "firingGroups": []
       },
-      "crew": {},
-      "capacity": {},
+      "crew": {
+        "raw": "1",
+        "crewCount": 1
+      },
+      "capacity": {
+        "passengerCount": 0,
+        "cargo": {
+          "value": 2,
+          "unit": "kg",
+          "raw": "2 kg"
+        },
+        "consumables": null,
+        "carriedCraft": []
+      },
       "systems": {},
       "modifications": {},
-      "economics": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 5500,
+          "raw": "5,500 (new)"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 1050,
+          "raw": "1,050 (used)"
+        }
+      },
       "text": {
-        "sourceNotes": "Source text excerpt anchored at 348741; original PDF audit ledger confirms publication identity. No executable mount certification."
+        "sourceNotes": "Threats of the Galaxy original scanned PDF primary field verification: printed p99 / physical PDF p100, checksum 63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f. Completed truncated Nebulon-Q CL2 Large ground swoop source block with 12 squares/600 km/h, Str16 Dex24 Int16, all five printed skills, BAB3/Grp16, crew1, cargo2 kg, no consumables, 5,500/1,050 credits. Not physical mount geometry, operator/executable attack certification, or Foundry actor authorization."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -728,7 +833,10 @@
         "/hyperspace/capability": "not-stated",
         "/armament/weaponMounts": "not-stated",
         "/armament/firingArcs": "not-stated",
-        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+        "/rules/strictMechanicalCertification": "not-yet-reviewed",
+        "/abilities/con": "explicitly-none",
+        "/capacity/consumables": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none"
       },
       "rules": {
         "reviewStatus": "partial-source-probe"

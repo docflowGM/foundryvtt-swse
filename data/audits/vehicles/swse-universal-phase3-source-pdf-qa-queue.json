@@ -5,8 +5,8 @@
   "scope": "Only 48 new final-seven-book identities; previously reviewed spacecraft and first-seven-book vehicles excluded",
   "pdfFieldQA": {
     "total": 48,
-    "verified": 43,
-    "pending": 5
+    "verified": 47,
+    "pending": 1
   },
   "statusSemantics": {
     "pdf-field-verified": "Every populated field compared with original rendered source page; not strict mechanical certification",
@@ -381,7 +381,10 @@
       "printedPage": 18,
       "pdfPhysicalPage": 19,
       "sourcePdfSha256": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Threats of the Galaxy printed p18, physical PDF p19, SHA256 63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
+      "method": "visually inspected original scanned PDF page, fully compared populated fields",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Threats of the Galaxy",
@@ -390,7 +393,10 @@
       "printedPage": 81,
       "pdfPhysicalPage": 82,
       "sourcePdfSha256": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Threats of the Galaxy printed p81, physical PDF p82, SHA256 63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
+      "method": "visually inspected original scanned PDF page, fully compared populated fields",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Threats of the Galaxy",
@@ -399,7 +405,10 @@
       "printedPage": 98,
       "pdfPhysicalPage": 99,
       "sourcePdfSha256": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Threats of the Galaxy printed p98, physical PDF p99, SHA256 63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
+      "method": "visually inspected original scanned PDF page, fully compared populated fields",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Threats of the Galaxy",
@@ -408,7 +417,10 @@
       "printedPage": 99,
       "pdfPhysicalPage": 100,
       "sourcePdfSha256": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Threats of the Galaxy printed p99, physical PDF p100, SHA256 63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
+      "method": "visually inspected original scanned PDF page, fully compared populated fields",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Unknown Regions",
