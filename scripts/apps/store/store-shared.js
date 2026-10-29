@@ -1,3 +1,5 @@
+import { UNIVERSAL_VEHICLE_PACKS } from '../../domain/vehicles/universal-vehicle-pack-registry.js';
+
 /**
  * store-shared.js - Hardened helpers and Rendarr dialogue
  *
@@ -362,18 +364,12 @@ const DROID_DEGREE_DEFINITIONS = [
   { key: '5th-degree', label: '5th-Degree', subcategory: '5th-Degree: Labor & Utility', description: 'Labor and utility Droids' }
 ];
 
-const VEHICLE_SUBCATEGORY_DEFINITIONS = [
-  { key: 'speeders', label: 'Speeders', family: 'ground', familyLabel: 'Ground Vehicles' },
-  { key: 'tracked-vehicles', label: 'Tracked Vehicles', family: 'ground', familyLabel: 'Ground Vehicles' },
-  { key: 'walkers', label: 'Walkers', family: 'ground', familyLabel: 'Ground Vehicles' },
-  { key: 'wheeled-vehicles', label: 'Wheeled Vehicles', family: 'ground', familyLabel: 'Ground Vehicles' },
-  { key: 'weapon-emplacements', label: 'Weapon Emplacements', family: 'ground', familyLabel: 'Ground Vehicles' },
-  { key: 'airspeeders', label: 'Airspeeders', family: 'air', familyLabel: 'Air Vehicles' },
-  { key: 'starfighters', label: 'Starfighters', family: 'starship', familyLabel: 'Starships' },
-  { key: 'space-transports', label: 'Space Transports', family: 'starship', familyLabel: 'Starships' },
-  { key: 'capital-ships', label: 'Capital Ships', family: 'starship', familyLabel: 'Starships' },
-  { key: 'space-stations', label: 'Space Stations', family: 'starship', familyLabel: 'Starships' }
-];
+const VEHICLE_SUBCATEGORY_DEFINITIONS = UNIVERSAL_VEHICLE_PACKS.map(pack=>({
+  key: pack.name.slice('vehicles-'.length),
+  label: pack.label.replace(/^Vehicles [—-] /,''),
+  family: pack.family,
+  familyLabel: ({ground:'Ground Vehicles',air:'Air Vehicles',starship:'Starships',hybrid:'Hybrid Vehicles'})[pack.family]
+}));
 
 const VEHICLE_ROLE_DEFINITIONS = {
   speeders: [
@@ -557,7 +553,7 @@ export function getVehicleSubcategoryDefinitions() {
 
 export function getVehicleFamily(itemOrSubcategory = {}) {
   const sys = itemOrSubcategory?.system ?? itemOrSubcategory?.data ?? {};
-  const value = itemOrSubcategory?.subcategory ?? sys.subcategory ?? sys.category ?? sys.type ?? itemOrSubcategory;
+  const value = sys.vehicleBucket ?? itemOrSubcategory?.subcategory ?? sys.subcategory ?? sys.category ?? sys.type ?? itemOrSubcategory;
   const def = vehicleDefinitionFromValue(value);
   return def?.family || '';
 }
