@@ -92,17 +92,11 @@
       <div class="swse-vehicle-import-mode-grid">
         <button type="button" class="swse-vehicle-import-mode {{#if (eq mode "replace")}}is-selected{{/if}}" data-mode="replace">
           <strong>Replace Statblock</strong>
-          <span>Replace this vehicle's system data with the selected compendium vehicle.</span>
+          <span>Replace with source-backed published values; unverified attacks remain disabled.</span>
         </button>
-        <button type="button" class="swse-vehicle-import-mode {{#if (eq mode "merge")}}is-selected{{/if}}" data-mode="merge">
-          <strong>Merge Fields</strong>
-          <span>Apply the selected vehicle fields over the current vehicle without replacing the whole actor object.</span>
-        </button>
+
       </div>
-      <div class="swse-vehicle-import-preserve">
-        <label><input type="checkbox" name="preserve.name" {{#if preserve.name}}checked{{/if}}/> Preserve current name</label>
-        <label><input type="checkbox" name="preserve.image" {{#if preserve.image}}checked{{/if}}/> Preserve current image</label>
-      </div>
+      <p>Canonical vehicles use complete replacement. Legacy fields and items are not merged.</p>
     {{/if}}
 
     {{#if (eq step "confirm")}}
