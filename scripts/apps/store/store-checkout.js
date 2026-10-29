@@ -459,6 +459,24 @@ export async function buyDroid(store, actorId) {
         return;
     }
 
+    // P0 source preflight: construct and validate the exact source-backed
+    // Actor mutation BEFORE asking StoreEngine to debit credits. Index-only
+    // views may omit flags, so hydrate the full canonical Actor from its
+    // sourceEntryKey. Never purchase a legacy or partial vehicle record.
+    let vehiclePlans;
+    try {
+        vehiclePlans = await createVehiclePlans([{
+            id: actorId,
+            name: vehicleTemplate.name,
+            template: vehicleTemplate,
+            condition
+        }], store.itemsById);
+    } catch (err) {
+        SWSELogger.error('SWSE Store | Vehicle source preflight failed:', err);
+        ui.notifications.warn('Vehicle purchase unavailable: canonical source record could not be verified.');
+        return;
+    }
+
     // Confirm purchase
     const confirmed = await SWSEDialogV2.confirm({
         title: 'Confirm Droid Purchase',
@@ -521,12 +539,16 @@ export async function buyVehicle(store, actorId, condition) {
     // legacy support only and may not include GM policy overlays.
     let vehicleTemplate = store.itemsById?.get(actorId) || game.actors.get(actorId);
 
-    // If not found in world, search compendiums
+    // Never fall back to the retired catch-all vehicles pack. New canonical
+    // inventory is spread over 11 source-specific Actor packs; identify
+    // publications by sourceEntryKey or exact indexed document ID.
     if (!vehicleTemplate) {
-        const pack = game.packs.get('foundryvtt-swse.vehicles');  // Fixed typo: was 'foundryvtt-foundryvtt-swse'
-        if (pack) {
-            vehicleTemplate = await pack.getDocument(actorId);
-        }
+        const { VehiclePackDataLoader } = await import('/systems/foundryvtt-swse/scripts/core/vehicle-pack-data-loader.js');
+        const index = await VehiclePackDataLoader.loadVehicleIndex();
+        const matches = index.filter(entry =>
+            entry.id === actorId || entry.sourceEntryKey === actorId || entry.documentId === actorId);
+        if (matches.length === 1)
+            vehicleTemplate = await VehiclePackDataLoader.loadVehicleDocument(matches[0]);
     }
 
     if (!vehicleTemplate) {
@@ -577,12 +599,7 @@ export async function buyVehicle(store, actorId, condition) {
             totalCost: finalCost,
             itemGrantCallback: async (actor, items) => {
                 // PHASE 1: Return MutationPlans instead of mutating directly
-                return await createVehiclePlans([{
-                    id: actorId,
-                    name: vehicleTemplate.name,
-                    template: vehicleTemplate,
-                    condition: condition
-                }], store.itemsById);
+                return vehiclePlans;
             }
         });
 
@@ -919,6 +936,8 @@ async function createDroidPlans(cartDroids) {
 async function createVehiclePlans(cartVehicles, itemsById) {
   // Import VehicleFactory dynamically to avoid circular deps
   const { VehicleFactory } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-factory.js');
+  const { VehiclePackDataLoader } = await import('/systems/foundryvtt-swse/scripts/core/vehicle-pack-data-loader.js');
+  const index = await VehiclePackDataLoader.loadVehicleIndex();
 
   const plans = [];
 
@@ -928,10 +947,24 @@ async function createVehiclePlans(cartVehicles, itemsById) {
       throw new Error(`Vehicle template not found for id=${vehicle.id}`);
     }
 
-    // PHASE 5: Use VehicleFactory to build MutationPlan
+    // A store card is a catalog view, not a source Actor. Resolve by exact
+    // publication identity and hydrate the one owning canonical pack.
+    const key = template.sourceEntryKey ?? template.system?.vehicleSourceEntryKey ??
+      template.raw?.system?.vehicleSourceEntryKey ??
+      template.doc?.system?.vehicleSourceEntryKey ??
+      template.template?.system?.vehicleSourceEntryKey;
+    const matches = index.filter(entry => key
+      ? entry.sourceEntryKey === key
+      : entry.id === vehicle.id || entry.documentId === vehicle.id);
+    if (matches.length !== 1)
+      throw new Error('UNIVERSAL_VEHICLE_STORE_SOURCE_IDENTITY_REQUIRED: ' + String(vehicle.id));
+    const canonicalActor = await VehiclePackDataLoader.loadVehicleDocument(matches[0]);
+    if (!canonicalActor)
+      throw new Error('UNIVERSAL_VEHICLE_STORE_DOCUMENT_UNAVAILABLE: ' + matches[0].sourceEntryKey);
+
     try {
       const plan = VehicleFactory.buildMutationPlan({
-        template: template,
+        template: canonicalActor,
         condition: vehicle.condition
       });
       plans.push(plan);
