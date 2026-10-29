@@ -91,6 +91,9 @@ export function classifyVehicleActorSource(document, data = undefined) {
       (own(view.inputFlags, 'canonicalPublication') || own(view.inputFlags, 'universalVehicleSource')) &&
       (!own(view.inputFlags, 'canonicalPublication') || !own(view.inputFlags, 'universalVehicleSource')))
     issue(errors, 'INCOMPLETE_CREATION_PROVENANCE');
+  if ((own(view.docFlags, 'canonicalPublication') || own(view.docFlags, 'universalVehicleSource')) &&
+      (!own(view.docFlags, 'canonicalPublication') || !own(view.docFlags, 'universalVehicleSource')))
+    issue(errors, 'INCOMPLETE_DOCUMENT_PROVENANCE');
   for (const field of ['canonicalPublication', 'universalVehicleSource']) {
     if (own(view.docFlags, field) && own(view.inputFlags, field) &&
         !same(view.docFlags[field], view.inputFlags[field]))
