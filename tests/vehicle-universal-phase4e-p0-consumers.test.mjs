@@ -114,4 +114,10 @@ test('legacy Store checkout resolves the universal source pack before any credit
   assert.match(plans, /entry\.sourceEntryKey === key/);
   assert.match(plans, /VehiclePackDataLoader\.loadVehicleDocument\(matches\[0\]\)/);
   assert.match(plans, /template: canonicalActor/);
+  assert.match(plans, /projection\.published\.price\?\.status !== 'priced'/);
+  assert.match(code, /const stagedVehiclePlans = store\.cart\.vehicles\?\.length > 0/);
+  const checkout = code.slice(code.indexOf('export async function checkout('));
+  assert.ok(checkout.indexOf('await createVehiclePlans(store.cart.vehicles, store.itemsById)') <
+    checkout.indexOf('StoreEngine.purchase('), 'cart source preflight must precede debit');
+  assert.match(checkout, /plans\.push\(\.\.\.stagedVehiclePlans\);/);
 });
