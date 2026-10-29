@@ -138,11 +138,93 @@
       "requiresRuntimeConsumer": true,
       "allowExecutableAttacks": false,
       "sourceFieldQAAccepted": true
+    },
+    {
+      "id": "P3R-CW-SPHA",
+      "sourceEntryKey": "cw-self-propelled-heavy-artillery",
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedPages": [
+        168,
+        169
+      ],
+      "pdfPhysicalPages": [
+        169,
+        170
+      ],
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+      "sourceReconciliation": "verified-five-exclusive-primary-weapon-configurations",
+      "printedFacts": {
+        "cl": 16,
+        "printedTypeLine": "Colossal ground vehicle (walker)",
+        "variantKeys": [
+          "SPHA-T",
+          "SPHA-I",
+          "SPHA-V",
+          "SPHA-C",
+          "SPHA-M"
+        ],
+        "sourcePrimaryGroupCount": 5,
+        "sharedSupportGroup": "12 heavy repeating blaster cannons (autofire only)",
+        "totalSourceAttackGroupCount": 6,
+        "missileVariantOnly": "SPHA-C",
+        "missilePayload": 48,
+        "crew": 25
+      },
+      "identityBoundary": "One printed SPHA vehicle statblock; five primary gun variant designations, not five distinct independently statted publication identities.",
+      "configurationConstraint": "Exactly one of the five primary armaments for a selected source configuration; common repeating blaster groups are distinct support source rows, not five additional primaries.",
+      "sourceEvidence": "Original Clone Wars PDF printed pp168-169 scanned; SHA verified against Phase1 ledger.",
+      "unresolvedOperational": [
+        "typed variant selector and optional hull configuration",
+        "weapon hardware count and arcs",
+        "source list of 12 heavy repeaters not authenticated as mounts"
+      ],
+      "requiresRuntimeConsumer": true,
+      "allowExecutableAttacks": false,
+      "sourceFieldQAAccepted": true
+    },
+    {
+      "id": "P3R-CW-TX130",
+      "sourceEntryKey": "cw-tx-130t-saber-class-fighter-tank",
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedPages": [
+        169
+      ],
+      "pdfPhysicalPages": [
+        170
+      ],
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+      "sourceReconciliation": "verified-retain-cross-variant-printed-attack-discrepancy",
+      "printedFacts": {
+        "cl": 7,
+        "printedTypeLine": "Huge ground vehicle (speeder)",
+        "firstRangedPilotLaserBonus": 3,
+        "secondRangedPilotLaserBonus": 1,
+        "laserDetailedBonus": 3,
+        "optionalAstromech": true,
+        "baseCrew": 3,
+        "astromechModifiedMechanicsBonus": 12,
+        "astromechModifiedUseComputerBonus": 12,
+        "missilePayload": 16,
+        "laterVariantAdds": "top-mounted composite beam turret"
+      },
+      "identityBoundary": "TX-130T Clone Wars printed p169 is a distinct publication claim from Force Unleashed TX-130T printed p203; no silent cross-book stat merge.",
+      "knownConflict": "Second Ranged summary lists laser +1, while detailed Laser Cannons row lists +3. First Ranged summary lists +3. Preserve all source declarations without declaring a preferred effective value.",
+      "configurationConstraint": "Astromech is optional and affects only starred skills; later composite turret is an added variant, not automatic default equipment.",
+      "sourceEvidence": "Original Clone Wars Campaign Guide printed p169, physical PDF p170; exact SHA verified.",
+      "unresolvedOperational": [
+        "approved effective value for contradictory alternate Ranged laser bonus",
+        "typed astromech skill override",
+        "later turret installed-source variant",
+        "physical mounts and operators",
+        "comparison to Force Unleashed cross-book TX-130"
+      ],
+      "requiresRuntimeConsumer": true,
+      "allowExecutableAttacks": false,
+      "sourceFieldQAAccepted": true
     }
   ],
   "remainingTargetedCandidates": [
     "Vulture hybrid walker/starfighter",
-    "SPHA published alternatives",
     "cross-book TX-130 variants",
     "Galaxy at War Shock and Awe source attack",
     "YU-410 duplicated DR",

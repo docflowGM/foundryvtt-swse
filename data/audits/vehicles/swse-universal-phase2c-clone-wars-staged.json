@@ -9417,7 +9417,7 @@
         }
       },
       "text": {
-        "sourceNotes": "Original scanned PDF physically reviewed: printed p168, physical p169. Source PDF SHA-256 3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6.",
+        "sourceNotes": "Phase 3 original-PDF targeted review Clone Wars Campaign Guide printed pp168-169, physical pp169-170, SHA256 3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6. Single SPHA statblock declares mutually exclusive primary SPHA-T/I/V/C/M gun model, each paired with twelve heavy repeating blaster cannons (autofire only). Source attack group inventory of 6 is NOT six simultaneous primary installed guns; SPHA-C only carries 48 concussion missiles. Source variant selection and any installed physical mounts require separate certification.",
         "mechanicalNotes": "Single source statblock, five mutually exclusive primary gun configurations; do not combine as simultaneous five mounts."
       },
       "exceptions": {
@@ -9543,7 +9543,7 @@
       "combat": {
         "baseAttackBonusPrinted": 0,
         "grappleBonusPrinted": 21,
-        "rangedAttackLine": "laser cannons +3 AND twin laser cannons +1 AND missile launcher +1; optional composite beam cannon +1"
+        "rangedAttackLine": "Ranged laser cannons +3 AND twin laser cannons +1 AND missile launcher +1 OR Ranged laser cannons +1 AND twin laser cannons +1 AND missile launcher +1 AND composite beam cannon +1"
       },
       "armament": {
         "carriedPayloads": [
@@ -9591,7 +9591,7 @@
             "specialNotes": "Published damage: 8d10. Operator: gunner. Printed page 169. Additional source attack evidence: {}. Physical mounts, arcs and executable bindings not certified."
           }
         ],
-        "notes": "Printed attack groups only; do not infer physical mounts, arcs or executable bindings."
+        "notes": "Primary PDF printed p169: two OR-separated Ranged patterns. Original laser-cannon detail row is +3; second Ranged summary uses laser cannons +1. Preserve both printed values as a source contradiction, do not choose an effective Attack. Composite beam cannon belongs to later top-mounted-turret variant, not assured on all stock tanks. Four source rows are not physical mounts."
       },
       "crew": {
         "raw": "3 plus optional astromech (normal)",
@@ -9622,7 +9622,7 @@
         }
       },
       "text": {
-        "sourceNotes": "Original scanned PDF physically reviewed: printed p169, physical p170. Source PDF SHA-256 3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6.",
+        "sourceNotes": "Phase 3 original-PDF targeted review Clone Wars Campaign Guide printed p169, physical p170, SHA256 3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6. Both printed Ranged alternatives retained verbatim in structure, including disputed laser +1 in turret pattern vs detailed +3. Optional astromech starred skills remain conditional; composite beam turret later variant not automatically installed. No physical weapon mount or executable attack authorization.",
         "mechanicalNotes": "Optional astromech and later turret/composite beam cannon are alternative configurations; not simultaneous stock defaults."
       },
       "exceptions": {
@@ -9631,14 +9631,16 @@
             "key": "source-exception",
             "label": "Special published mechanic / variant",
             "category": "source-specific",
-            "summary": "Optional astromech and later turret/composite beam cannon are alternative configurations; not simultaneous stock defaults.",
+            "summary": "Optional astromech may use alternate starred skill modifiers; later TX-130T variant adds top-mounted composite beam turret. Two OR-separated printed Ranged patterns have laser cannons +3 versus +1 despite one detailed laser row +3. This source mismatch remains unadjudicated; later variant is not default stock.",
             "reference": "Clone Wars Campaign Guide p169",
             "implementationStatus": "requires-consumer",
             "typedPredicateStatus": "pending"
           }
         ],
         "unmappedFacts": [
-          "Typed runtime consumer pending: Optional astromech and later turret/composite beam cannon are alternative configurations; not simultaneous stock defaults."
+          "Optional astromech changes only specifically marked skills; no default droid installed.",
+          "Later optional composite beam turret changes the printed Ranged alternative but does not create a separate publication identity.",
+          "Published Ranged alternative lists laser cannons +1 while detailed attack line lists +3; source discrepancy retained, no effective runtime override."
         ],
         "manualReviewRequired": true
       },
