@@ -174,6 +174,27 @@ test('Foundry hooks register once; no hidden importer or post-create weapon hydr
   const good = pick(() => true);
   const bad = clone(good); bad.system.weapons = [{ name: 'uncertified' }];
   assert.equal(gate(good, good), undefined);
+  // The Store/Shipyard handoff payload is Actor.create data with a
+  // separate initialized Document, not necessarily a compendium Document.
+  // No P2/P3 purchase logic is executed or certified in this test.
+  for (const callsign of ['Store Purchase A', 'Shipyard Copy B']) {
+    const world = clone(good);
+    world._id = callsign.replaceAll(' ', '-');
+    world.name = callsign;
+    let updateCalls = 0;
+    const document = {
+      type: 'vehicle',
+      name: callsign,
+      toObject() { return clone(world); },
+      updateSource() { updateCalls++; }
+    };
+    const createPayload = {
+      type: 'vehicle', name: callsign,
+      system: clone(world.system), flags: clone(world.flags), items: []
+    };
+    assert.equal(gate(document, createPayload), undefined);
+    assert.equal(updateCalls, 0, 'published facts must never be mutated in preCreate');
+  }
   assert.equal(gate(bad, bad), false);
   assert.equal(gate({ type: 'vehicle', system: {}, flags: {} }), undefined);
 });
