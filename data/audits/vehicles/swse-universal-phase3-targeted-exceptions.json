@@ -1,0 +1,107 @@
+{
+  "schema": "swse.vehicle.universal.phase3.targeted-exception-reconciliation.v1",
+  "scope": "Targeted known source anomalies only; not new publication census, not physical weapon certification",
+  "baselineSourceQA": "docs/audits/vehicles/universal-vehicle-phase3-focused-48-source-qa-closeout.md",
+  "sourceAssertions": [
+    "Independent publication identity preserved",
+    "Conflicting print remains conflicting",
+    "Owner-approved interpretations separated from print",
+    "No new physical mounts, operator grants, or executable attacks"
+  ],
+  "cases": [
+    {
+      "id": "P3R-SAV-STARFORGE",
+      "sourceEntryKey": "sav-starforge-station",
+      "sourceBook": "Scum and Villainy",
+      "printedPages": [
+        129,
+        130
+      ],
+      "pdfPhysicalPages": [
+        130,
+        131
+      ],
+      "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+      "sourceReconciliation": "verified-preserve-contradictions",
+      "printedFacts": {
+        "cl": 20,
+        "printedTypeLine": "Colossal (station) space station",
+        "headerInitiative": -4,
+        "skillsInitiative": -5,
+        "headerPerception": 6,
+        "skillsPerception": 5,
+        "sourceRangedGroup": "5 turbolaser batteries +12",
+        "detailAttackBonus": 12,
+        "smallerTargetPenalty": -20,
+        "smallerTargetEffectiveAttack": -8,
+        "groupKind": "weapon-battery",
+        "declaredBatteries": 5,
+        "sourceAttackGroupCount": 1
+      },
+      "identityBoundary": "Explicit source sidebar: unrelated to the ancient Rakatan Star Forge. Do not merge.",
+      "knownConflict": "Printed header Initiative -4 and Perception +6 contradict Skills Initiative -5 and Perception +5; neither is silently adjudicated.",
+      "sourceEvidence": "Original scanned Scum and Villainy printed pp129-130, physical p130-131; checksum matched.",
+      "unresolvedOperational": [
+        "individual installed mounts and arcs",
+        "physical interpretation of five source battery declarations",
+        "typed market and shipyard effects",
+        "approved initiative/perception effective-value adjudication"
+      ],
+      "requiresRuntimeConsumer": true,
+      "allowExecutableAttacks": false,
+      "sourceFieldQAAccepted": true
+    },
+    {
+      "id": "P3R-SAV-HORNET",
+      "sourceEntryKey": "sav-tenloss-corporation-hornet-class-interceptor",
+      "sourceBook": "Scum and Villainy",
+      "printedPages": [
+        125
+      ],
+      "pdfPhysicalPages": [
+        126
+      ],
+      "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+      "sourceReconciliation": "verified-conditional-alternate-configuration",
+      "printedFacts": {
+        "cl": 12,
+        "printedTypeLine": "Gargantuan starfighter",
+        "defaultGroup": "advanced heavy laser cannons",
+        "defaultAttackBonus": 6,
+        "defaultAutofireBonus": 1,
+        "defaultDamage": "10d10x2",
+        "alternateGroup": "medium laser cannons",
+        "alternateAttackBonus": 6,
+        "alternateAutofireBonus": 1,
+        "alternateDamage": "5d10x2",
+        "overloadNaturalOne": true,
+        "overloadSelfDamage": "6d10x2",
+        "overloadIgnoresSR": true,
+        "overloadDestroysDefaultCannons": true
+      },
+      "identityBoundary": "Approved supplemental publication claim remains one Hornet identity; alternate loadout is not another source entry.",
+      "configurationConstraint": "Alternate medium lasers replace the heavy lasers; these are not two simultaneously installed stock groups. Default overload does not transfer to alternate.",
+      "hyperdriveEvidence": "not stated in printed source; never turn silence into unavailable",
+      "sourceEvidence": "Original scanned Scum and Villainy printed p125, physical p126; checksum matched against supplemental overlay.",
+      "unresolvedOperational": [
+        "approved source-to-runtime configuration selector",
+        "actual installed cannon mount count/arcs",
+        "conditional overload executable handler"
+      ],
+      "requiresRuntimeConsumer": true,
+      "allowExecutableAttacks": false,
+      "sourceFieldQAAccepted": true
+    }
+  ],
+  "remainingTargetedCandidates": [
+    "Basilisk vehicle-droid",
+    "Vulture hybrid walker/starfighter",
+    "SPHA published alternatives",
+    "cross-book TX-130 variants",
+    "Galaxy at War Shock and Awe source attack",
+    "YU-410 duplicated DR",
+    "WLO-5 ambiguous price"
+  ],
+  "phase4CutoverAuthorized": false,
+  "strictPhysicalMountCertificationPromoted": 0
+}
