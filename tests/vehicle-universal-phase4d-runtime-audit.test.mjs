@@ -43,7 +43,7 @@ function actor(pack,key,id,{initiative=-5,shield=null}={}){
   };
   return {...raw,id, toObject(){return clone(raw);}};
 }
-function mockGame({skip=null,reduce=null,override=null,generation=13,gm=true}={}){
+function mockGame({skip=null,reduce=null,override=null,generation=13,gm=true,mapIndex=false}={}){
   const packs=new Map();
   let global=0;
   for(const p of UNIVERSAL_VEHICLE_PACKS){
@@ -55,7 +55,7 @@ function mockGame({skip=null,reduce=null,override=null,generation=13,gm=true}={}
     const byId=new Map(docs.map(x=>[x.id,x]));
     packs.set('foundryvtt-swse.'+p.name,{
       documentName:'Actor',
-      async getIndex(){return docs.map(d=>({_id:d._id,system:clone(d.system),name:d.name}));},
+      async getIndex(){const data=docs.map(d=>({_id:d._id,system:clone(d.system),name:d.name}));return mapIndex?new Map(data.map(x=>[x._id,x])):data;},
       async getDocument(id){return byId.get(id)??null;}
     });
   }
@@ -100,6 +100,12 @@ test('all 429 mocked native documents pass readback and report no release certif
   assert.equal(report.exactReleaseCertified,false);
   assert.equal(report.worldActorsCreated,0);
 });
+test('native audit verifies all 429 when getIndex returns a Foundry Map/Collection',async()=>{
+  const report=await auditUniversalVehicleRuntime({context:mockGame({mapIndex:true})});
+  assert.equal(report.status,'RUNTIME_DATA_VERIFIED');
+  assert.equal(report.counts.verified,429);
+});
+
 test('missing native pack and missing Actor block a full runtime pass',async()=>{
   const missing=await auditUniversalVehicleRuntime({context:mockGame({skip:'vehicles-hybrids'})});
   assert.equal(missing.status,'BLOCKED');
