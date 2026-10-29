@@ -14,11 +14,11 @@
     "new": 18,
     "supplemental": 0,
     "legacyGroups": 72,
-    "groups": 103,
+    "groups": 94,
     "newIssues": [],
     "errors": [],
     "errorCount": 0,
-    "patchStatus": "Source exception corrections and census reconciled"
+    "patchStatus": "Phase 3K: 18 new Rebellion Era vehicle statblocks visually checked against primary PDF, source bleed repaired, 35 historical ships untouched"
   },
   "records": [
     {
@@ -6645,7 +6645,7 @@
         }
       },
       "text": {
-        "sourceNotes": "Direct source PDF printed page 60 visually verified; original TXT heading is corrupted."
+        "sourceNotes": "Primary original-PDF QA: Rebellion Era Campaign Guide printed p60 / physical PDF p61; source SHA256 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. One unarmed CL3 cargo speeder; 10 squares 250 km/h, 3x3 (or starship-scale one square), 135-ton cargo and 16 passengers; original Bantha-II values retained.. No inferred mounts, arcs, operational stock attacks, or Foundry actor permission."
       },
       "exceptions": {
         "unmappedFacts": [
@@ -6787,18 +6787,9 @@
             "mountKeys": [],
             "attackBonusPrinted": 3,
             "specialNotes": "Printed operator copilot; damage 5410; source search-text-derived candidate p61. Physical mounts, firing arcs and executable bindings are NOT certified."
-          },
-          {
-            "groupKey": "re-storm-iv-twin-pod-cloud-car-published-attack-2",
-            "label": "Double blaster cannon",
-            "groupKind": "unknown",
-            "batteryMembershipStatus": "not-stated",
-            "mountKeys": [],
-            "attackBonusPrinted": 5,
-            "specialNotes": "Printed operator pilot; damage 4d10x2; source search-text-derived candidate p61. Physical mounts, firing arcs and executable bindings are NOT certified."
           }
         ],
-        "notes": "Extracted printed attack headings only; groups not certified mounts."
+        "notes": "Only copilot Double blaster cannon +3 (5d10), not Talon's pilot +5. No executable or physical mount certification."
       },
       "crew": {
         "raw": "2 (skilled)",
@@ -6835,7 +6826,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 209880, candidate score 31. Original PDF source SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary original-PDF QA: Rebellion Era Campaign Guide printed p61 / physical PDF p62; source SHA256 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. Only one printed source attack group double blaster cannon copilot +3 (-2 autofire), Dmg 5d10; second copied Talon attack deleted.. No inferred mounts, arcs, operational stock attacks, or Foundry actor permission."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -6952,7 +6943,9 @@
         "str": 32,
         "dex": 22,
         "int": 12,
-        "con": null
+        "con": null,
+        "initiativePrinted": 7,
+        "perceptionPrinted": 6
       },
       "combat": {
         "baseAttackBonusPrinted": 2,
@@ -6977,7 +6970,9 @@
         "notes": "Extracted printed attack headings only; groups not certified mounts."
       },
       "crew": {
-        "raw": "and cannot leave the atmosphere, they fill a gap between"
+        "raw": "1 (skilled)",
+        "crewCount": 1,
+        "crewQuality": "skilled"
       },
       "capacity": {
         "passengerCount": 1,
@@ -7004,7 +6999,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 210958, candidate score 25. Original PDF source SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary original-PDF QA: Rebellion Era Campaign Guide printed p61 / physical PDF p62; source SHA256 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. Crew 1 (skilled), passenger 1; copied narrative crew raw removed; pilot Double blaster cannon +5 (+0 autofire), 4d10x2. No inferred mounts, arcs, operational stock attacks, or Foundry actor permission."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -7060,8 +7055,17 @@
         "coverCrew": "total"
       },
       "movement": {
-        "speedModes": [],
-        "raw": "coupled with extra cargo capacity, or heavier armor and a lower flight ceiling. Unlike many"
+        "speedModes": [
+          {
+            "mode": "repulsorlift",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 300,
+            "raw": "Speed 12 squares (max. velocity 300 km/h)"
+          }
+        ],
+        "maxVelocityKmh": 300,
+        "raw": "Speed 12 squares (max. velocity 300 km/h)"
       },
       "hyperspace": {},
       "defenses": {
@@ -7126,9 +7130,9 @@
       "capacity": {
         "passengerCount": 1,
         "cargo": {
-          "value": null,
-          "unit": null,
-          "raw": "capacity, or heavier armor and a lower flight ceiling. Unlike many"
+          "value": 30,
+          "unit": "kg",
+          "raw": "30 kg"
         },
         "consumables": {
           "value": 1,
@@ -7153,7 +7157,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 213338, candidate score 23. Original PDF source SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary original-PDF QA: Rebellion Era Campaign Guide printed p62 / physical PDF p63; source SHA256 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. Printed speed and cargo recovered; Speed 12 squares (300 km/h) and Cargo 30 kg, not adjacent Air-2 prose.. No inferred mounts, arcs, operational stock attacks, or Foundry actor permission."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -7302,7 +7306,7 @@
         }
       },
       "text": {
-        "sourceNotes": "Direct source PDF printed p62 verified: TXT lost defense/HP lines and misread 12 instead of 16-square speed."
+        "sourceNotes": "Primary original-PDF QA: Rebellion Era Campaign Guide printed p62 / physical PDF p63; source SHA256 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. One unarmed printed Air-2 CL2, 16 squares 600 km/h, 50 HP, +5 Mechanics repair feature is narrative context, not an owned executable rule.. No inferred mounts, arcs, operational stock attacks, or Foundry actor permission."
       },
       "exceptions": {
         "unmappedFacts": [
@@ -7369,7 +7373,7 @@
           }
         ],
         "maxVelocityKmh": 95,
-        "raw": "O squares (immobile in firing mode), 6 squares (max. velocity 95 km/h)"
+        "raw": "Speed 0 squares (immobile in firing mode), 6 squares (max. velocity 95 km/h)"
       },
       "hyperspace": {},
       "defenses": {
@@ -7439,7 +7443,7 @@
           {
             "value": 30,
             "unit": "proton torpedoes",
-            "raw": "30 proton torpedoes"
+            "raw": "Payload 30 proton torpedoes"
           }
         ],
         "notes": "Extracted printed attack headings only; groups not certified mounts."
@@ -7486,7 +7490,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 407260, candidate score 31. Original PDF source SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary original-PDF QA: Rebellion Era Campaign Guide printed p110 / physical PDF p111; source SHA256 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. Source retains 0 speed while firing versus 6 squares (95 km/h) mobile, payload 30 proton torpedoes, CL8.. No inferred mounts, arcs, operational stock attacks, or Foundry actor permission."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -7537,8 +7541,8 @@
         "cl": 8
       },
       "geometry": {
-        "characterScaleWidthSquares": 3,
-        "characterScaleLengthSquares": 3,
+        "characterScaleWidthSquares": 4,
+        "characterScaleLengthSquares": 6,
         "coverCrew": "total"
       },
       "movement": {
@@ -7546,12 +7550,13 @@
           {
             "mode": "repulsorlift",
             "scale": "character",
-            "squaresPerMove": 12,
-            "maxVelocityKmh": 400
+            "squaresPerMove": 6,
+            "maxVelocityKmh": 95,
+            "raw": "Speed 6 squares (max. velocity 95 km/h)"
           }
         ],
-        "maxVelocityKmh": 400,
-        "raw": "12 squares (max. velocity 400 km/h)"
+        "maxVelocityKmh": 95,
+        "raw": "Speed 6 squares (max. velocity 95 km/h)"
       },
       "hyperspace": {},
       "defenses": {
@@ -7602,8 +7607,8 @@
       },
       "combat": {
         "baseAttackBonusPrinted": 2,
-        "grappleBonusPrinted": 24,
-        "rangedAttackLine": "heavy blaster cannon +4 (see below) and double light laser cannon +6 (see below) or"
+        "grappleBonusPrinted": 30,
+        "rangedAttackLine": "medium blaster cannon +4 (see below)"
       },
       "armament": {
         "firingGroups": [
@@ -7614,7 +7619,7 @@
             "batteryMembershipStatus": "not-stated",
             "mountKeys": [],
             "attackBonusPrinted": 4,
-            "specialNotes": "Printed operator gunner; damage 4410x2; source search-text-derived candidate p111. Physical mounts, firing arcs and executable bindings are NOT certified."
+            "specialNotes": "Printed gunner; damage 4d10x2. PDF-verified published firing group, no physical mount or trust certificate."
           }
         ],
         "notes": "Extracted printed attack headings only; groups not certified mounts."
@@ -7654,7 +7659,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 411256, candidate score 31. Original PDF source SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary original-PDF QA: Rebellion Era Campaign Guide printed p111 / physical PDF p112; source SHA256 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. CL8 Gargantuan repulsorlift ground vehicle has 4x6 fighting space, speed 6 squares (95 km/h), medium blaster cannon +4, Grp +30; adjacent ULAV did not supply its speed. No inferred mounts, arcs, operational stock attacks, or Foundry actor permission."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -7734,11 +7739,17 @@
         "damageThreshold": 32
       },
       "abilities": {
+        "str": 34,
+        "dex": 22,
+        "con": null,
+        "int": 14,
+        "initiativePrinted": 10,
+        "perceptionPrinted": 6,
         "skills": [
           {
             "name": "Initiative",
-            "printedModifier": 3,
-            "raw": "Initiative +3"
+            "printedModifier": 10,
+            "raw": "Initiative +10"
           },
           {
             "name": "Mechanics",
@@ -7752,64 +7763,49 @@
           },
           {
             "name": "Pilot",
-            "printedModifier": 3,
-            "raw": "Pilot +3"
+            "printedModifier": 10,
+            "raw": "Pilot +10"
           },
           {
             "name": "Use Computer",
             "printedModifier": 6,
             "raw": "Use Computer +6"
           }
-        ],
-        "initiativePrinted": 10,
-        "perceptionPrinted": 6,
-        "str": 36,
-        "dex": 14,
-        "int": 14,
-        "con": null
+        ]
       },
       "combat": {
         "baseAttackBonusPrinted": 2,
         "grappleBonusPrinted": 24,
-        "rangedAttackLine": "heavy blaster cannon +4 (see below) and double light laser cannon +6 (see below) or"
+        "rangedAttackLine": "heavy blaster cannon +4 and double light laser cannon +6 OR heavy blaster cannon +4 and concussion grenade launcher +6"
       },
       "armament": {
         "firingGroups": [
           {
             "groupKey": "re-ultra-light-assault-vehicle-ulav-published-attack-1",
-            "label": "Medium blaster cannon",
-            "groupKind": "unknown",
-            "batteryMembershipStatus": "not-stated",
-            "mountKeys": [],
-            "attackBonusPrinted": 4,
-            "specialNotes": "Printed operator gunner; damage 4410x2; source search-text-derived candidate p111. Physical mounts, firing arcs and executable bindings are NOT certified."
-          },
-          {
-            "groupKey": "re-ultra-light-assault-vehicle-ulav-published-attack-2",
             "label": "Double light laser cannon",
             "groupKind": "unknown",
             "batteryMembershipStatus": "not-stated",
             "mountKeys": [],
             "attackBonusPrinted": 6,
-            "specialNotes": "Printed operator pilot; damage 4d10x2; source search-text-derived candidate p111. Physical mounts, firing arcs and executable bindings are NOT certified."
+            "specialNotes": "Printed pilot; damage 4d10x2. PDF-verified published firing group, no physical mount or trust certificate."
           },
           {
-            "groupKey": "re-ultra-light-assault-vehicle-ulav-published-attack-3",
+            "groupKey": "re-ultra-light-assault-vehicle-ulav-published-attack-2",
             "label": "Concussion grenade launcher",
             "groupKind": "unknown",
             "batteryMembershipStatus": "not-stated",
             "mountKeys": [],
             "attackBonusPrinted": 6,
-            "specialNotes": "Printed operator pilot; damage 8d6, 2-square burst; source search-text-derived candidate p111. Physical mounts, firing arcs and executable bindings are NOT certified."
+            "specialNotes": "Printed pilot; damage 8d6, 2-square burst. PDF-verified published firing group, no physical mount or trust certificate."
           },
           {
-            "groupKey": "re-ultra-light-assault-vehicle-ulav-published-attack-4",
+            "groupKey": "re-ultra-light-assault-vehicle-ulav-published-attack-3",
             "label": "Heavy blaster cannon",
             "groupKind": "unknown",
             "batteryMembershipStatus": "not-stated",
             "mountKeys": [],
             "attackBonusPrinted": 4,
-            "specialNotes": "Printed operator gunner; damage 5d10x2; source search-text-derived candidate p111. Physical mounts, firing arcs and executable bindings are NOT certified."
+            "specialNotes": "Printed gunner; damage 5d10x2. PDF-verified published firing group, no physical mount or trust certificate."
           }
         ],
         "notes": "Extracted printed attack headings only; groups not certified mounts."
@@ -7820,11 +7816,11 @@
         "crewQuality": "skilled"
       },
       "capacity": {
-        "passengerCount": 16,
+        "passengerCount": 0,
         "cargo": {
-          "value": 1,
-          "unit": "ton",
-          "raw": "1 ton"
+          "value": 25,
+          "unit": "kg",
+          "raw": "25 kg"
         },
         "consumables": {
           "value": 1,
@@ -7839,17 +7835,17 @@
         "availability": "Military",
         "priceNew": {
           "status": "priced",
-          "amountCredits": 20000,
-          "raw": "20,000"
+          "amountCredits": 50000,
+          "raw": "50,000"
         },
         "priceUsed": {
           "status": "priced",
-          "amountCredits": 11000,
-          "raw": "11,000"
+          "amountCredits": 22000,
+          "raw": "22,000"
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 412732, candidate score 31. Original PDF source SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary original-PDF QA: Rebellion Era Campaign Guide printed p111 / physical PDF p112; source SHA256 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. CL5 Huge speed 12 squares (400 km/h), Initiative +10, Str34 Dex22, no passengers, cargo25 kg, price 50,000 (22,000 used), three source attack groups. No inferred mounts, arcs, operational stock attacks, or Foundry actor permission."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -8017,7 +8013,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 414928, candidate score 31. Original PDF source SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary original-PDF QA: Rebellion Era Campaign Guide printed p112 / physical PDF p113; source SHA256 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. CL8 heavy tracker printed heavy laser gunner +6 versus +3 without Omniprobe; one physical source attack group, conditional modifier not runtime-certified. No inferred mounts, arcs, operational stock attacks, or Foundry actor permission."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -8150,27 +8146,9 @@
             "mountKeys": [],
             "attackBonusPrinted": 5,
             "specialNotes": "Printed operator gunner; damage 4d10x2; source search-text-derived candidate p112. Physical mounts, firing arcs and executable bindings are NOT certified."
-          },
-          {
-            "groupKey": "re-t2-b-repulsor-tank-published-attack-2",
-            "label": "Heavy laser cannons",
-            "groupKind": "unknown",
-            "batteryMembershipStatus": "not-stated",
-            "mountKeys": [],
-            "attackBonusPrinted": 4,
-            "specialNotes": "Printed operator gunner; damage 5d10x2, 2-square splash radius; source search-text-derived candidate p112. Physical mounts, firing arcs and executable bindings are NOT certified."
-          },
-          {
-            "groupKey": "re-t2-b-repulsor-tank-published-attack-3",
-            "label": "Triple concussion missile launcher",
-            "groupKind": "unknown",
-            "batteryMembershipStatus": "not-stated",
-            "mountKeys": [],
-            "attackBonusPrinted": 4,
-            "specialNotes": "Printed operator gunner; damage 8d10x2, 2-square burst radius; source search-text-derived candidate p112. Physical mounts, firing arcs and executable bindings are NOT certified."
           }
         ],
-        "notes": "Extracted printed attack headings only; groups not certified mounts."
+        "notes": "Only printed T2-B quad light blaster +5 (+0 autofire), 4d10x2; copied heavy laser and concussion missile groups are T4-B next page"
       },
       "crew": {
         "raw": "3 (skilled)",
@@ -8201,7 +8179,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 416910, candidate score 31. Original PDF source SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary original-PDF QA: Rebellion Era Campaign Guide printed p112 / physical PDF p113; source SHA256 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. Removed neighboring T4-B two attack groups, retaining one quad light blaster cannon +5. No inferred mounts, arcs, operational stock attacks, or Foundry actor permission."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -8259,10 +8237,13 @@
           {
             "mode": "tracked",
             "scale": "character",
-            "squaresPerMove": 6
+            "squaresPerMove": 6,
+            "maxVelocityKmh": 40,
+            "raw": "Speed 6 squares (max. velocity 40 km/h)"
           }
         ],
-        "raw": "6 squares (max, velocity 40 km/h)"
+        "maxVelocityKmh": 40,
+        "raw": "Speed 6 squares (max. velocity 40 km/h)"
       },
       "hyperspace": {},
       "defenses": {
@@ -8368,7 +8349,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 418312, candidate score 31. Original PDF source SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary original-PDF QA: Rebellion Era Campaign Guide printed p113 / physical PDF p114; source SHA256 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. CL12 Gargantuan tank has two attacks and corrected tracked maximum velocity 40 km/h. No inferred mounts, arcs, operational stock attacks, or Foundry actor permission."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -8418,28 +8399,24 @@
         "cl": 10
       },
       "geometry": {
-        "characterScaleWidthSquares": 4,
-        "characterScaleLengthSquares": 4,
+        "characterScaleWidthSquares": 6,
+        "characterScaleLengthSquares": 12,
         "starshipScaleWidthSquares": 1,
         "starshipScaleLengthSquares": 1,
-        "coverCrew": "total"
+        "coverCrew": "total (crew)"
       },
       "movement": {
         "speedModes": [
           {
             "mode": "walking",
             "scale": "character",
-            "squaresPerMove": 16,
-            "maxVelocityKmh": 1050
-          },
-          {
-            "mode": "starship-flight",
-            "scale": "starship",
-            "squaresPerMove": 4
+            "squaresPerMove": 4,
+            "maxVelocityKmh": 60,
+            "raw": "Speed 4 squares (max. velocity 60 km/h)"
           }
         ],
-        "maxVelocityKmh": 1050,
-        "raw": "fly 16 squares (max. velocity 1,050 km/h), fly 4 squares (starship scale)"
+        "maxVelocityKmh": 60,
+        "raw": "Speed 4 squares (max. velocity 60 km/h)"
       },
       "hyperspace": {
         "raw": "x12, navicomputer",
@@ -8452,51 +8429,51 @@
         "reflexFlatFooted": 14,
         "fortitude": 27,
         "armorBonus": 14,
-        "damageReduction": 20,
-        "shieldRating": 15
+        "damageReduction": 20
       },
       "durability": {
         "hitPoints": 210,
         "damageThreshold": 77
       },
       "abilities": {
+        "str": 44,
+        "dex": 10,
+        "int": 14,
+        "con": null,
+        "initiativePrinted": -5,
+        "perceptionPrinted": 5,
         "skills": [
           {
             "name": "Initiative",
-            "printedModifier": 5,
-            "raw": "Initiative +5"
+            "printedModifier": -5,
+            "raw": "Initiative -5"
           },
           {
             "name": "Mechanics",
-            "printedModifier": 6,
-            "raw": "Mechanics +6"
+            "printedModifier": 5,
+            "raw": "Mechanics +5"
           },
           {
             "name": "Perception",
-            "printedModifier": 6,
-            "raw": "Perception +6"
+            "printedModifier": 5,
+            "raw": "Perception +5"
           },
           {
             "name": "Pilot",
-            "printedModifier": 5,
-            "raw": "Pilot +5"
+            "printedModifier": -5,
+            "raw": "Pilot -5"
           },
           {
             "name": "Use Computer",
-            "printedModifier": 6,
-            "raw": "Use Computer +6"
+            "printedModifier": 5,
+            "raw": "Use Computer +5"
           }
-        ],
-        "initiativePrinted": -5,
-        "perceptionPrinted": 5
+        ]
       },
       "combat": {
-        "baseAttackBonusPrinted": 2,
-        "grappleBonusPrinted": 36,
-        "rangedAttackLine": "laser cannon +7 (see below) or",
-        "attackOptions": [
-          "autofire (medium laser cannons, medium ion cannons),"
-        ]
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 41,
+        "rangedAttackLine": "flak pod +2 OR light missile launcher +2"
       },
       "armament": {
         "firingGroups": [
@@ -8521,24 +8498,24 @@
         ],
         "carriedPayloads": [
           {
-            "value": 40,
-            "unit": "medium concussion missiles",
-            "raw": "40 medium concussion missiles"
+            "value": 36,
+            "unit": "light concussion missiles",
+            "raw": "Payload 36 light concussion missiles"
           }
         ],
         "notes": "Extracted printed attack headings only; groups not certified mounts."
       },
       "crew": {
-        "raw": "1 (skilled)",
-        "crewCount": 1,
-        "crewQuality": "skilled"
+        "raw": "3 (normal)",
+        "crewCount": 3,
+        "crewQuality": "normal"
       },
       "capacity": {
         "passengerCount": 0,
         "cargo": {
-          "value": 100,
+          "value": 250,
           "unit": "kg",
-          "raw": "100 kg"
+          "raw": "250 kg"
         },
         "consumables": {
           "value": 3,
@@ -8552,18 +8529,12 @@
       "economics": {
         "availability": "Military",
         "priceNew": {
-          "status": "priced",
-          "amountCredits": 125000,
-          "raw": "125,000"
-        },
-        "priceUsed": {
-          "status": "priced",
-          "amountCredits": 75000,
-          "raw": "75,000"
+          "status": "not-for-sale",
+          "raw": "not available for sale"
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 482207, candidate score 31. Original PDF source SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary original-PDF QA: Rebellion Era Campaign Guide printed p131 / physical PDF p132; source SHA256 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. Restored AT-AA walker page rather than Assault Gunboat adjacent statblock: Init -5, walking 4 squares (60 km/h), 6x12, Str44 Dex10 Int14, +5 skills, 3 normal crew, 36 missiles, not for sale; Flak pod +2 and light missile +2; no shields or autofire. No inferred mounts, arcs, operational stock attacks, or Foundry actor permission."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -8572,7 +8543,8 @@
         "/capacity/carriedCraft": "explicitly-none",
         "/armament/weaponMounts": "not-yet-reviewed",
         "/armament/firingArcs": "not-stated",
-        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+        "/rules/strictMechanicalCertification": "not-yet-reviewed",
+        "/defenses/shieldRating": "not-stated"
       },
       "rules": {
         "reviewStatus": "partial-source-probe"
@@ -8662,7 +8634,11 @@
           }
         ],
         "initiativePrinted": 7,
-        "perceptionPrinted": 6
+        "perceptionPrinted": 6,
+        "str": 24,
+        "dex": 14,
+        "int": 12,
+        "con": null
       },
       "combat": {
         "baseAttackBonusPrinted": 2,
@@ -8691,24 +8667,6 @@
             "mountKeys": [],
             "attackBonusPrinted": 5,
             "specialNotes": "Printed operator pilot; damage 8d6, 2-square burst; source search-text-derived candidate p132. Physical mounts, firing arcs and executable bindings are NOT certified."
-          },
-          {
-            "groupKey": "re-at-pt-all-terrain-personal-transport-published-attack-3",
-            "label": "Quad turbolaser battery",
-            "groupKind": "weapon-battery",
-            "batteryMembershipStatus": "printed",
-            "mountKeys": [],
-            "attackBonusPrinted": 15,
-            "specialNotes": "Printed operator 6 gunners; damage 6d10x5; source search-text-derived candidate p132. Physical mounts, firing arcs and executable bindings are NOT certified."
-          },
-          {
-            "groupKey": "re-at-pt-all-terrain-personal-transport-published-attack-4",
-            "label": "Point-defense light laser cannon battery",
-            "groupKind": "weapon-battery",
-            "batteryMembershipStatus": "printed",
-            "mountKeys": [],
-            "attackBonusPrinted": 15,
-            "specialNotes": "Printed operator 6 gunners; damage 2d10x2; source search-text-derived candidate p132. Physical mounts, firing arcs and executable bindings are NOT certified."
           }
         ],
         "carriedPayloads": [
@@ -8736,15 +8694,16 @@
         ],
         "cargo": {
           "value": 150,
-          "unit": "kg\"",
-          "raw": "150 kg\""
+          "unit": "kg",
+          "raw": "150 kg"
         },
         "consumables": {
           "value": 2,
           "unit": "days",
           "raw": "2 days"
         },
-        "carriedCraft": []
+        "carriedCraft": [],
+        "storageNotes": "Printed footnote: AT-PT can carry either cargo OR one passenger, not both."
       },
       "systems": {},
       "modifications": {},
@@ -8756,7 +8715,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 484288, candidate score 31. Original PDF source SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary original-PDF QA: Rebellion Era Campaign Guide printed p132 / physical PDF p133; source SHA256 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. CL6 Large walker with only double heavy blaster cannon +5 and grenade launcher +5, removed unrelated Imperial Cargo Ship batteries; printed alternative cargo/person capacity retained. No inferred mounts, arcs, operational stock attacks, or Foundry actor permission."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -8867,7 +8826,7 @@
       "combat": {
         "baseAttackBonusPrinted": 2,
         "grappleBonusPrinted": 31,
-        "rangedAttackLine": "proton beam cannon +6 (see below) and 2 laser cannons +4 (see below)"
+        "rangedAttackLine": "proton beam cannon +6 and 2 laser cannons +4"
       },
       "armament": {
         "firingGroups": [
@@ -8888,33 +8847,6 @@
             "mountKeys": [],
             "attackBonusPrinted": 4,
             "specialNotes": "Printed operator gunner; damage 2d10x2; source search-text-derived candidate p133. Physical mounts, firing arcs and executable bindings are NOT certified."
-          },
-          {
-            "groupKey": "re-lancet-aerial-artillery-published-attack-3",
-            "label": "Medium laser cannon",
-            "groupKind": "unknown",
-            "batteryMembershipStatus": "not-stated",
-            "mountKeys": [],
-            "attackBonusPrinted": 8,
-            "specialNotes": "Printed operator pilot; damage 5d10x2; source search-text-derived candidate p133. Physical mounts, firing arcs and executable bindings are NOT certified."
-          },
-          {
-            "groupKey": "re-lancet-aerial-artillery-published-attack-4",
-            "label": "Advanced missile launcher",
-            "groupKind": "unknown",
-            "batteryMembershipStatus": "not-stated",
-            "mountKeys": [],
-            "attackBonusPrinted": 8,
-            "specialNotes": "Printed operator pilot; damage 5d10x5; source search-text-derived candidate p133. Physical mounts, firing arcs and executable bindings are NOT certified."
-          },
-          {
-            "groupKey": "re-lancet-aerial-artillery-published-attack-5",
-            "label": "Missile launcher",
-            "groupKind": "unknown",
-            "batteryMembershipStatus": "not-stated",
-            "mountKeys": [],
-            "attackBonusPrinted": 8,
-            "specialNotes": "Printed operator pilot; damage 9d10x2; source search-text-derived candidate p133. Physical mounts, firing arcs and executable bindings are NOT certified."
           }
         ],
         "notes": "Extracted printed attack headings only; groups not certified mounts."
@@ -8948,7 +8880,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 489110, candidate score 23. Original PDF source SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary original-PDF QA: Rebellion Era Campaign Guide printed p133 / physical PDF p134; source SHA256 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. CL12 aerial artillery printed 2 attacks (proton beam +6, two laser cannons +4); removed 3 adjacent Imperial capital ship/Aggressor source groups. No inferred mounts, arcs, operational stock attacks, or Foundry actor permission."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -9114,7 +9046,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 493541, candidate score 26. Original PDF source SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary original-PDF QA: Rebellion Era Campaign Guide printed p135 / physical PDF p136; source SHA256 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. TIE ap-1 Mauler CL7 tracked with one pilot attack triple medium blaster cannons +6, 6d10x2; no starfighter attacks. No inferred mounts, arcs, operational stock attacks, or Foundry actor permission."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -9289,7 +9221,7 @@
         }
       },
       "text": {
-        "sourceNotes": "Direct PDF printed p135: TIE Crawler distinct from TIE ap-1 Mauler, not the same vehicle."
+        "sourceNotes": "Primary original-PDF QA: Rebellion Era Campaign Guide printed p135 / physical PDF p136; source SHA256 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. TIE Crawler CL6 tracked has alternative pilot light turbolaser +5 (3d10x5) OR double medium blasters +5 (5d10x2); distinct from Mauler. No inferred mounts, arcs, operational stock attacks, or Foundry actor permission."
       },
       "exceptions": {
         "unmappedFacts": [
@@ -9348,7 +9280,17 @@
         "coverCrew": "total"
       },
       "movement": {
-        "speedModes": []
+        "speedModes": [
+          {
+            "mode": "repulsorlift",
+            "scale": "character",
+            "squaresPerMove": 6,
+            "maxVelocityKmh": 50,
+            "raw": "Speed 6 squares (max. velocity 50 km/h)"
+          }
+        ],
+        "maxVelocityKmh": 50,
+        "raw": "Speed 6 squares (max. velocity 50 km/h)"
       },
       "hyperspace": {},
       "defenses": {
@@ -9458,7 +9400,8 @@
         }
       },
       "text": {
-        "sourceNotes": "Direct PDF printed p153 verified; 250 HP, DR15, SR10, threshold54."
+        "sourceNotes": "Primary original-PDF QA: Rebellion Era Campaign Guide printed p153 / physical PDF p154; source SHA256 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. CL10 assault tank has 250 HP, speed 6 squares (50 km/h), SR10. Printed Draw Enemy Fire recorded source-only, no runtime authority. No inferred mounts, arcs, operational stock attacks, or Foundry actor permission.",
+        "mechanicalNotes": "Printed Draw Enemy Fire: pilot standard-action Persuasion check vs enemy Will defense within LOS/LOE; successful enemy must attack tank instead of another target. Not automated pending typed approved consumer."
       },
       "exceptions": {
         "unmappedFacts": [
@@ -9542,11 +9485,17 @@
         "damageThreshold": 44
       },
       "abilities": {
+        "str": 38,
+        "dex": 14,
+        "int": 14,
+        "con": null,
+        "initiativePrinted": 3,
+        "perceptionPrinted": 6,
         "skills": [
           {
             "name": "Initiative",
-            "printedModifier": -2,
-            "raw": "Initiative -2"
+            "printedModifier": 3,
+            "raw": "Initiative +3"
           },
           {
             "name": "Mechanics",
@@ -9560,21 +9509,15 @@
           },
           {
             "name": "Pilot",
-            "printedModifier": -2,
-            "raw": "Pilot -2"
+            "printedModifier": 3,
+            "raw": "Pilot +3"
           },
           {
             "name": "Use Computer",
             "printedModifier": 6,
             "raw": "Use Computer +6"
           }
-        ],
-        "initiativePrinted": 3,
-        "perceptionPrinted": 6,
-        "str": 96,
-        "dex": 14,
-        "int": 14,
-        "con": null
+        ]
       },
       "combat": {
         "baseAttackBonusPrinted": 4,
@@ -9613,7 +9556,8 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 551245, candidate score 23. Original PDF source SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary original-PDF QA: Rebellion Era Campaign Guide printed p154 / physical PDF p155; source SHA256 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8. F9-TZ CL8 transport has Str38 (not adjacent Keldabe battleship's Str96), Init+3, crew2 skilled, 40 passengers, no printed stock attacks, original cloak source narrative retained fail-closed. No inferred mounts, arcs, operational stock attacks, or Foundry actor permission.",
+        "mechanicalNotes": "Printed F9-TZ Cloaking Device: cannot operate with shields; 15-minute activity, 30-minute recharge and DC20 Mechanics check; grants total concealment and affects detection checks. Source only, not executable."
       },
       "exceptions": {
         "manualReviewRequired": true

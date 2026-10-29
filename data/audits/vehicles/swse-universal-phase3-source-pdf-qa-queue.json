@@ -5,8 +5,8 @@
   "scope": "Only 48 new final-seven-book identities; previously reviewed spacecraft and first-seven-book vehicles excluded",
   "pdfFieldQA": {
     "total": 48,
-    "verified": 25,
-    "pending": 23
+    "verified": 43,
+    "pending": 5
   },
   "statusSemantics": {
     "pdf-field-verified": "Every populated field compared with original rendered source page; not strict mechanical certification",
@@ -165,7 +165,10 @@
       "printedPage": 60,
       "pdfPhysicalPage": 61,
       "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Rebellion Era Campaign Guide scanned primary page 61, printed p60; PDF SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "method": "original source PDF page visual field reconciliation",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Rebellion Era Campaign Guide",
@@ -174,7 +177,10 @@
       "printedPage": 61,
       "pdfPhysicalPage": 62,
       "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Rebellion Era Campaign Guide scanned primary page 62, printed p61; PDF SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "method": "original source PDF page visual field reconciliation",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Rebellion Era Campaign Guide",
@@ -183,7 +189,10 @@
       "printedPage": 61,
       "pdfPhysicalPage": 62,
       "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Rebellion Era Campaign Guide scanned primary page 62, printed p61; PDF SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "method": "original source PDF page visual field reconciliation",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Rebellion Era Campaign Guide",
@@ -192,7 +201,10 @@
       "printedPage": 62,
       "pdfPhysicalPage": 63,
       "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Rebellion Era Campaign Guide scanned primary page 63, printed p62; PDF SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "method": "original source PDF page visual field reconciliation",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Rebellion Era Campaign Guide",
@@ -201,7 +213,10 @@
       "printedPage": 62,
       "pdfPhysicalPage": 63,
       "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Rebellion Era Campaign Guide scanned primary page 63, printed p62; PDF SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "method": "original source PDF page visual field reconciliation",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Rebellion Era Campaign Guide",
@@ -210,7 +225,10 @@
       "printedPage": 110,
       "pdfPhysicalPage": 111,
       "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Rebellion Era Campaign Guide scanned primary page 111, printed p110; PDF SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "method": "original source PDF page visual field reconciliation",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Rebellion Era Campaign Guide",
@@ -219,7 +237,10 @@
       "printedPage": 111,
       "pdfPhysicalPage": 112,
       "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Rebellion Era Campaign Guide scanned primary page 112, printed p111; PDF SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "method": "original source PDF page visual field reconciliation",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Rebellion Era Campaign Guide",
@@ -228,7 +249,10 @@
       "printedPage": 111,
       "pdfPhysicalPage": 112,
       "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Rebellion Era Campaign Guide scanned primary page 112, printed p111; PDF SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "method": "original source PDF page visual field reconciliation",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Rebellion Era Campaign Guide",
@@ -237,7 +261,10 @@
       "printedPage": 112,
       "pdfPhysicalPage": 113,
       "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Rebellion Era Campaign Guide scanned primary page 113, printed p112; PDF SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "method": "original source PDF page visual field reconciliation",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Rebellion Era Campaign Guide",
@@ -246,7 +273,10 @@
       "printedPage": 112,
       "pdfPhysicalPage": 113,
       "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Rebellion Era Campaign Guide scanned primary page 113, printed p112; PDF SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "method": "original source PDF page visual field reconciliation",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Rebellion Era Campaign Guide",
@@ -255,7 +285,10 @@
       "printedPage": 113,
       "pdfPhysicalPage": 114,
       "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Rebellion Era Campaign Guide scanned primary page 114, printed p113; PDF SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "method": "original source PDF page visual field reconciliation",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Rebellion Era Campaign Guide",
@@ -264,7 +297,10 @@
       "printedPage": 131,
       "pdfPhysicalPage": 132,
       "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Rebellion Era Campaign Guide scanned primary page 132, printed p131; PDF SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "method": "original source PDF page visual field reconciliation",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Rebellion Era Campaign Guide",
@@ -273,7 +309,10 @@
       "printedPage": 132,
       "pdfPhysicalPage": 133,
       "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Rebellion Era Campaign Guide scanned primary page 133, printed p132; PDF SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "method": "original source PDF page visual field reconciliation",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Rebellion Era Campaign Guide",
@@ -282,7 +321,10 @@
       "printedPage": 133,
       "pdfPhysicalPage": 134,
       "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Rebellion Era Campaign Guide scanned primary page 134, printed p133; PDF SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "method": "original source PDF page visual field reconciliation",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Rebellion Era Campaign Guide",
@@ -291,7 +333,10 @@
       "printedPage": 135,
       "pdfPhysicalPage": 136,
       "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Rebellion Era Campaign Guide scanned primary page 136, printed p135; PDF SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "method": "original source PDF page visual field reconciliation",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Rebellion Era Campaign Guide",
@@ -300,7 +345,10 @@
       "printedPage": 135,
       "pdfPhysicalPage": 136,
       "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Rebellion Era Campaign Guide scanned primary page 136, printed p135; PDF SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "method": "original source PDF page visual field reconciliation",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Rebellion Era Campaign Guide",
@@ -309,7 +357,10 @@
       "printedPage": 153,
       "pdfPhysicalPage": 154,
       "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Rebellion Era Campaign Guide scanned primary page 154, printed p153; PDF SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "method": "original source PDF page visual field reconciliation",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Rebellion Era Campaign Guide",
@@ -318,7 +369,10 @@
       "printedPage": 154,
       "pdfPhysicalPage": 155,
       "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Rebellion Era Campaign Guide scanned primary page 155, printed p154; PDF SHA 60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+      "method": "original source PDF page visual field reconciliation",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Threats of the Galaxy",
