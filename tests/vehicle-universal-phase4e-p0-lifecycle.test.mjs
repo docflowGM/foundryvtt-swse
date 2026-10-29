@@ -102,10 +102,10 @@ test('malformed canonical claims cannot pass as custom Actors', () => {
     d => { delete d.flags.swse.universalVehicleSource; },
     d => { d.system.vehicleMovementModes = []; }
   ];
-  for (const mutate of variants) {
+  for (const [index, mutate] of variants.entries()) {
     const tampered = clone(baseline); mutate(tampered);
     const result = classifyVehicleActorSource(tampered);
-    assert.equal(result.kind, 'invalid-canonical', result.errors.join(','));
+    assert.equal(result.kind, 'invalid-canonical', 'variant ' + index + ': ' + result.errors.join(','));
     assert.throws(() => getVehicleRuntimeProjection(tampered), /UNIVERSAL_VEHICLE_SOURCE_INVALID/);
   }
 });
