@@ -4,6 +4,7 @@
  * installed weapon Item creation occurs at Actor creation.
  */
 import { classifyVehicleActorSource } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
+import { UNIVERSAL_VEHICLE_PACKS } from "/systems/foundryvtt-swse/scripts/domain/vehicles/universal-vehicle-pack-registry.js";
 
 let registered = false;
 
@@ -30,11 +31,11 @@ export function registerVehiclePreCreateHooks() {
   // reference evidence, not permissions or physical mounted weapons.
 }
 
-/** Published category authority comes from the universal registry. */
+/**
+ * Category ownership follows the same 11-pack registry used by the pack
+ * builder/browser. Never recreate an incomplete category list in this hook.
+ */
 export async function getVehicleCategoryMapping() {
-  const { UNIVERSAL_VEHICLE_PACKS } = await import(
-    "/systems/foundryvtt-swse/scripts/domain/vehicles/universal-vehicle-pack-registry.js"
-  );
   return Object.fromEntries(UNIVERSAL_VEHICLE_PACKS.flatMap(
     spec => spec.categories.map(category => [category, spec.name])
   ));
@@ -42,8 +43,9 @@ export async function getVehicleCategoryMapping() {
 
 export function getCanonicalCategories() {
   return {
-    planetary: ['walker', 'speeder', 'tracked-vehicle', 'wheeled-vehicle', 'repulsorlift-tank'],
-    starships: ['starfighter', 'space-transport', 'capital-ship', 'space-station'],
-    hybrid: ['hybrid-vehicle-droid', 'vehicle-droid']
+    planetary: UNIVERSAL_VEHICLE_PACKS.filter(spec => spec.family !== 'starship')
+      .flatMap(spec => spec.categories),
+    starships: UNIVERSAL_VEHICLE_PACKS.filter(spec => spec.family === 'starship')
+      .flatMap(spec => spec.categories)
   };
 }
