@@ -110,6 +110,33 @@ test('malformed canonical claims cannot pass as custom Actors', () => {
   }
 });
 
+
+test('old consumer mirrors cannot replace printed crew, cargo, passengers, or price', () => {
+  const cases = [
+    [d => d.system.crew !== undefined, d => { d.system.crew = '6'; }, 'PUBLISHED_CREW_MIRROR_DRIFT'],
+    [d => d.system.vehicleCrewCount !== undefined, d => { d.system.vehicleCrewCount = 999; }, 'PUBLISHED_CREW_MIRROR_DRIFT'],
+    [d => d.system.cargo !== undefined, d => { d.system.cargo = '500 tons'; }, 'PUBLISHED_CARGO_MIRROR_DRIFT'],
+    [d => d.system.passengers !== undefined, d => { d.system.passengers += 3; }, 'PUBLISHED_PASSENGERS_MIRROR_DRIFT'],
+    [d => d.system.vehiclePublishedPrice !== undefined, d => { d.system.vehiclePublishedPrice = { status: 'priced', amountCredits: 1 }; }, 'PUBLISHED_PRICE_MIRROR_DRIFT'],
+    [d => typeof d.system.cost === 'number', d => { d.system.cost = 1; }, 'PUBLISHED_PRICE_MIRROR_DRIFT'],
+    [d => d.system.vehiclePublishedHyperdrive !== undefined, d => { d.system.vehiclePublishedHyperdrive = { capability: 'equipped', primaryMultiplier: 1 }; }, 'PUBLISHED_HYPERDRIVE_MIRROR_DRIFT'],
+    [d => d.system.size !== undefined, d => { d.system.size = 'Diminutive'; }, 'PUBLISHED_SIZE_MIRROR_DRIFT']
+  ];
+  for (const [find, mutate, expected] of cases) {
+    const actor = pick(find);
+    // Ensure this mutation actually changes the source-backed mirror.
+    const before = JSON.stringify(actor.system);
+    mutate(actor);
+    if (JSON.stringify(actor.system) === before) continue;
+    const result = classifyVehicleActorSource(actor);
+    assert.equal(result.kind, 'invalid-canonical', expected + ': ' + result.errors.join(','));
+    assert.ok(result.errors.includes(expected), result.errors.join(','));
+  }
+  const unknown = pick(d => d.system.vehiclePublishedPrice?.status !== 'priced');
+  unknown.system.costNumeric = 10000;
+  assert.ok(classifyVehicleActorSource(unknown).errors.includes('UNKNOWN_PRICE_PROMOTED_TO_NUMBER'));
+});
+
 test('creation input and Document cannot disagree about canonical provenance', () => {
   const actor = pick(() => true);
   const data = clone(actor);
