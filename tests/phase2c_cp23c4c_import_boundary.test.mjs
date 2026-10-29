@@ -124,23 +124,18 @@ test('real normalizer invents defaults for source-silent fields, not canonical p
     {value:0,max:0});
 });
 
-test('unreserved legacy source import retains its existing path but gets no stock trust',async()=>{
+test('unreserved legacy vehicle imports now fail closed after owner-approved clean break',async()=>{
   const {engine,writes}=actualImporter();
   const source={id:'abc123',pack:'foundryvtt-swse.vehicles-starfighters',
-    type:'vehicle',name:'Legacy Uncertified',
-    img:'icons/svg/ship.svg',system:{model:'Legacy Uncertified',
-      initiative:'+3',hp:{value:20,max:20,temp:0},
-      weapons:[]}};
+    type:'vehicle',name:'Legacy Uncertified',img:'icons/svg/ship.svg',
+    system:{model:'Legacy Uncertified',initiative:'+3',weapons:[]}};
   const target={id:'world-old',type:'vehicle',system:{}};
-  assert.equal(classifyCP23C4CSourceImport(source).status,
-    'NOT_A_CP23_CANONICAL_SOURCE');
-  const plan=engine.buildImportPlan(target,source,{mode:'replace'});
-  assert.equal(plan.name,source.name);
-  assert.equal(plan.system.initiative,'+3');
-  assert.equal(plan.system.hp.max,20);
-  assert.deepEqual(Array.from(plan.system.weapons),[]);
-  await engine.apply(target,source,{mode:'replace'});
-  assert.equal(writes.length,1);
+  assert.equal(classifyCP23C4CSourceImport(source).status,'NOT_A_CP23_CANONICAL_SOURCE');
+  assert.throws(()=>engine.buildImportPlan(target,source,{mode:'replace'}),
+    /UNIVERSAL_VEHICLE_SOURCE_REQUIRED/);
+  await assert.rejects(engine.apply(target,source,{mode:'replace'}),
+    /UNIVERSAL_VEHICLE_SOURCE_REQUIRED/);
+  assert.equal(writes.length,0);
   assert.equal(TRUSTED_STOCK_WEAPON_GROUP_COUNT,0);
 });
 
@@ -162,7 +157,8 @@ test('normalization loss API has no capability to issue receipts or installation
   assert.equal(executable.includes('game.settings.set('),false);
   assert.equal(executable.includes('createEmbeddedDocuments('),false);
   const importer=text('scripts/engine/import/vehicle-import-engine.js');
-  assert.ok(importer.indexOf('assertCP23C4CNoStagedSourceImport(sourceActor)')<
-    importer.indexOf('normalizeVehicleImportData(rawSystem,'));
+  assert.ok(importer.includes('assertCP23C4CNoStagedSourceImport(sourceActor)'));
+  assert.equal(importer.includes('normalizeVehicleImportData('),false);
+  assert.ok(importer.includes('UNIVERSAL_VEHICLE_SOURCE_REQUIRED'));
   assert.ok(importer.includes('return { actor: targetActor, update };'));
 });
