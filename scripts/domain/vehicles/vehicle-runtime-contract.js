@@ -246,9 +246,13 @@ export function getVehicleRuntimeProjection(actor) {
       shields: { value: sys.shields?.value ?? null, max: sys.shields?.max ?? null },
       crewAssignments: copy(sys.crewPositions ?? null)
     },
+    // Until the P2 installation ledger exists, actor-provided modification
+    // claims are display/reference only, never certified installed hardware.
     installed: {
-      modifications: copy(sys.vehicleModifications ?? []),
-      mounts: [], stockMountsCertified: false
-    }
+      modifications: [], mounts: [], stockMountsCertified: false,
+      certification: 'NONE'
+    },
+    unverifiedModificationClaims: copy(sys.vehicleModifications ?? [])
+
   });
 }
