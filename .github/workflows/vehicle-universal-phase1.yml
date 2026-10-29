@@ -28,6 +28,7 @@ on:
       - 'index.js'
       - 'scripts/domain/vehicles/vehicle-phase4d-runtime-audit.js'
       - 'scripts/domain/vehicles/vehicle-phase4d-scratch-import.js'
+      - 'scripts/domain/vehicles/vehicle-compendium-index.js'
       - 'tests/phase2c_cp23c4c_import_boundary.test.mjs'
       - 'scripts/core/vehicle-pack-data-loader.js'
       - 'scripts/domain/vehicles/universal-vehicle-pack-registry.js'
