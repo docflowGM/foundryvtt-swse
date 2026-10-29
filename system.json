@@ -536,7 +536,7 @@
     },
     {
       "name": "vehicles-speeders",
-      "label": "Vehicles - Speeders",
+      "label": "Vehicles — Speeders",
       "type": "Actor",
       "path": "packs/vehicles-speeders",
       "system": "foundryvtt-swse",
@@ -549,7 +549,7 @@
     },
     {
       "name": "vehicles-airspeeders",
-      "label": "Vehicles - Airspeeders",
+      "label": "Vehicles — Airspeeders & Atmospheric Craft",
       "type": "Actor",
       "path": "packs/vehicles-airspeeders",
       "system": "foundryvtt-swse",
@@ -562,7 +562,7 @@
     },
     {
       "name": "vehicles-tracked",
-      "label": "Vehicles - Tracked Vehicles",
+      "label": "Vehicles — Tracked Vehicles",
       "type": "Actor",
       "path": "packs/vehicles-tracked",
       "system": "foundryvtt-swse",
@@ -575,7 +575,7 @@
     },
     {
       "name": "vehicles-walkers",
-      "label": "Vehicles - Walkers",
+      "label": "Vehicles — Walkers",
       "type": "Actor",
       "path": "packs/vehicles-walkers",
       "system": "foundryvtt-swse",
@@ -588,7 +588,7 @@
     },
     {
       "name": "vehicles-wheeled",
-      "label": "Vehicles - Wheeled Vehicles",
+      "label": "Vehicles — Wheeled Vehicles",
       "type": "Actor",
       "path": "packs/vehicles-wheeled",
       "system": "foundryvtt-swse",
@@ -600,34 +600,8 @@
       }
     },
     {
-      "name": "vehicles-weapon-emplacements",
-      "label": "Vehicles - Weapon Emplacements",
-      "type": "Actor",
-      "path": "packs/vehicles-weapon-emplacements",
-      "system": "foundryvtt-swse",
-      "ownership": {
-        "PLAYER": "OBSERVER",
-        "TRUSTED": "OBSERVER",
-        "ASSISTANT": "OBSERVER",
-        "GAMEMASTER": "OWNER"
-      }
-    },
-    {
-      "name": "vehicles-canonical-ships",
-      "label": "Starships - Canonical Published Ships (316)",
-      "type": "Actor",
-      "path": "packs/vehicles-canonical-ships",
-      "system": "foundryvtt-swse",
-      "ownership": {
-        "PLAYER": "OBSERVER",
-        "TRUSTED": "OBSERVER",
-        "ASSISTANT": "OBSERVER",
-        "GAMEMASTER": "OWNER"
-      }
-    },
-    {
       "name": "vehicles-starfighters",
-      "label": "Vehicles - Starfighters",
+      "label": "Vehicles — Starfighters",
       "type": "Actor",
       "path": "packs/vehicles-starfighters",
       "system": "foundryvtt-swse",
@@ -640,7 +614,7 @@
     },
     {
       "name": "vehicles-space-transports",
-      "label": "Vehicles - Space Transports",
+      "label": "Vehicles — Space Transports & Escape Craft",
       "type": "Actor",
       "path": "packs/vehicles-space-transports",
       "system": "foundryvtt-swse",
@@ -653,7 +627,7 @@
     },
     {
       "name": "vehicles-capital-ships",
-      "label": "Vehicles - Capital Ships",
+      "label": "Vehicles — Capital Ships",
       "type": "Actor",
       "path": "packs/vehicles-capital-ships",
       "system": "foundryvtt-swse",
@@ -666,22 +640,9 @@
     },
     {
       "name": "vehicles-stations",
-      "label": "Vehicles - Space Stations",
+      "label": "Vehicles — Space Stations",
       "type": "Actor",
       "path": "packs/vehicles-stations",
-      "system": "foundryvtt-swse",
-      "ownership": {
-        "PLAYER": "OBSERVER",
-        "TRUSTED": "OBSERVER",
-        "ASSISTANT": "OBSERVER",
-        "GAMEMASTER": "OWNER"
-      }
-    },
-    {
-      "name": "vehicles",
-      "label": "Vehicles (All)",
-      "type": "Actor",
-      "path": "packs/vehicles",
       "system": "foundryvtt-swse",
       "ownership": {
         "PLAYER": "OBSERVER",
@@ -913,6 +874,32 @@
       "type": "Item",
       "path": "packs/poisons",
       "system": "foundryvtt-swse"
+    },
+    {
+      "name": "vehicles-ground-armor",
+      "label": "Vehicles — Repulsorlift Armor",
+      "type": "Actor",
+      "path": "packs/vehicles-ground-armor",
+      "system": "foundryvtt-swse",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
+        "GAMEMASTER": "OWNER"
+      }
+    },
+    {
+      "name": "vehicles-hybrids",
+      "label": "Vehicles — Hybrid & Droid Vehicles",
+      "type": "Actor",
+      "path": "packs/vehicles-hybrids",
+      "system": "foundryvtt-swse",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
+        "GAMEMASTER": "OWNER"
+      }
     }
   ]
 }
