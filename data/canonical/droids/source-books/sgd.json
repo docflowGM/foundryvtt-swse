@@ -1,0 +1,3471 @@
+{
+  "schema": "swse.droid.source-book-hydration-ledger/0.1-partial",
+  "bookId": "SGD",
+  "book": "Scavenger's Guide to Droids",
+  "draftSourceEntrySchema": "swse.droid.universal-source/0.1-draft",
+  "censusPath": "data/audits/droids/droid-publication-census.json",
+  "scope": "Census parity / sparse mechanical hydration. Only three PDF pages have field sample review. This is not a completed-book or mechanically certified ledger.",
+  "expectedPublicationClaims": 46,
+  "sourceEntries": [
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-001",
+        "printedName": "8D Smelter Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 68,
+        "printedPageEnd": 69,
+        "pdfPageStart1Based": 69,
+        "textLineAnchor1Based": 6205,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-001-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 68,
+              "pdfPage1Based": 69,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-001"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 5,
+        "size": "Medium",
+        "classTextRaw": "Medium droid (5th-degree) nonheroic 1"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 18,
+        "dex": 10,
+        "con": null,
+        "int": 8,
+        "wis": 10,
+        "cha": 8,
+        "initiativePrinted": -2,
+        "perceptionPrinted": 2,
+        "skills": [
+          {
+            "name": "Endurance",
+            "printedTotal": 8
+          },
+          {
+            "name": "Knowledge (physical sciences)",
+            "printedTotal": 4
+          },
+          {
+            "name": "Perception",
+            "printedTotal": 2
+          }
+        ],
+        "senses": [
+          {
+            "name": "darkvision"
+          }
+        ],
+        "languages": [
+          {
+            "name": "Basic"
+          },
+          {
+            "name": "Binary"
+          }
+        ]
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 1",
+        "nonheroicLevels": 1
+      },
+      "defenses": {
+        "reflex": 15,
+        "flatFootedReflex": 15,
+        "fortitude": 14,
+        "will": 10,
+        "armorNote": "Duravlex shell (+4 armor)",
+        "conditionalDefenseRules": [
+          {
+            "ruleId": "SGD-8D-HEAT-RESISTANT",
+            "statement": "Against fire/extreme heat: half damage on successful attack, none on failed attack; no condition-track movement.",
+            "scope": "8D Smelter Droid only",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 68,
+              "pdfPage1Based": 69,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-001"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "durability": {
+        "hitPoints": 4,
+        "damageThreshold": 14
+      },
+      "movement": {
+        "speedLineRaw": "Speed 4 squares (walking)",
+        "locomotionSystems": [
+          {
+            "instanceId": "walk-1",
+            "mode": "walking",
+            "speedSquares": 4,
+            "raw": "Speed 4 squares (walking)"
+          }
+        ]
+      },
+      "anatomy": {
+        "manipulatorCount": 2
+      },
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grapplePrinted": 4,
+        "attackGroups": [
+          {
+            "attackId": "claw",
+            "raw": "Melee claw +2 (1d4+4)",
+            "name": "claw",
+            "attackBonus": 2,
+            "damageExpression": "1d4+4",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "claw-mighty-swing",
+            "raw": "Melee claw +2 (2d4+4) with Mighty Swing",
+            "name": "claw",
+            "attackBonus": 2,
+            "damageExpression": "2d4+4",
+            "condition": "Mighty Swing",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "ranged-by-weapon",
+            "raw": "Ranged by weapon +0",
+            "name": "by weapon",
+            "attackBonus": 0,
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "basic processor, walking locomotion, 2 claw appendages, improved sensor package, darkvision, secondary battery, vocabulator, duravlex shell (+4 armor)"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 7250,
+        "availability": "Licensed"
+      },
+      "text": {
+        "mechanicsNotes": "Hero eligibility stated in accompanying text. Protocol presentation on same printed page. Component-instance and mount audit unfinished; no executable attack rights."
+      },
+      "exceptions": {},
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-001",
+          "SGD:TXT:6205",
+          "SGD:printed-p68:PDF-page-69-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-002",
+        "printedName": "A9G-Series Archive Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 70,
+        "printedPageEnd": 71,
+        "pdfPageStart1Based": 71,
+        "textLineAnchor1Based": 6428,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-002-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 70,
+              "pdfPage1Based": 71,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-002"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-002",
+          "SGD:TXT:6428"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-003",
+        "printedName": "AD-Series Weapons Maintenance Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 72,
+        "printedPageEnd": 73,
+        "pdfPageStart1Based": 73,
+        "textLineAnchor1Based": 6631,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-003-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-003"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-003",
+          "SGD:TXT:6631"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-004",
+        "printedName": "Annihilator Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 74,
+        "printedPageEnd": 75,
+        "pdfPageStart1Based": 75,
+        "textLineAnchor1Based": 6861,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-004-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 74,
+              "pdfPage1Based": 75,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-004"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-004",
+          "SGD:TXT:6861"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-005",
+        "printedName": "BLX Labor Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 76,
+        "printedPageEnd": 77,
+        "pdfPageStart1Based": 77,
+        "textLineAnchor1Based": 7095,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-005-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 76,
+              "pdfPage1Based": 77,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-005"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-005",
+          "SGD:TXT:7095"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-006",
+        "printedName": "Colicoid Infiltrator-Series Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 78,
+        "printedPageEnd": 79,
+        "pdfPageStart1Based": 79,
+        "textLineAnchor1Based": 7278,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-006-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 78,
+              "pdfPage1Based": 79,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-006"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-006",
+          "SGD:TXT:7278"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-007",
+        "printedName": "CZ-Series Secretary Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 80,
+        "printedPageEnd": 81,
+        "pdfPageStart1Based": 81,
+        "textLineAnchor1Based": 7438,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-007-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 80,
+              "pdfPage1Based": 81,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-007"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-007",
+          "SGD:TXT:7438"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-008",
+        "printedName": "DP-2 Probe Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 82,
+        "printedPageEnd": 83,
+        "pdfPageStart1Based": 83,
+        "textLineAnchor1Based": 7760,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-008-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 82,
+              "pdfPage1Based": 83,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-008"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "vehicle-scale-droid",
+        "statblockFormat": "vehicle",
+        "ruleEntityNature": "vehicle-format-droid",
+        "primaryActorAuthority": "vehicle",
+        "publishedDegree": 2,
+        "size": "Large",
+        "rawSize": "Large starfighter/ground vehicle (speeder)"
+      },
+      "challenge": {
+        "challengeLevel": 6
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 18,
+        "dex": 14,
+        "con": null,
+        "int": 14,
+        "initiativePrinted": 6,
+        "perceptionPrinted": 7,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedTotal": 6
+          },
+          {
+            "name": "Mechanics",
+            "printedTotal": 7
+          },
+          {
+            "name": "Perception",
+            "printedTotal": 7
+          },
+          {
+            "name": "Pilot",
+            "printedTotal": 6
+          },
+          {
+            "name": "Use Computer",
+            "printedTotal": 7
+          }
+        ]
+      },
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grapplePrinted": 9
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "Protocol vital systems: 1 claw appendage, space beacon launcher with 16 beacons, blaster cannon"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 36500,
+        "availability": "Licensed"
+      },
+      "text": {
+        "mechanicsNotes": "HYBRID/VEHICLE AUTHORITY: printed vehicle-format row has Ref 12 (flat-footed 10), Fort 14, HP 40, DR 5, Threshold 19; fly 12 squares (3 starship-scale), maximum 575 km/h; 0 crew, no passengers, 15 kg cargo, 2 days consumables, payload 16 beacons, blaster cannon +2 (3d12), claw +4 (1d6+4), launcher +2 (no damage). These are source-transcription notes ONLY pending canonical Vehicle source-link; they are deliberately NOT copied into droid-owned defenses/durability/attack groups."
+      },
+      "exceptions": {
+        "notes": "Vehicle source identity and attack-group/mount certification unresolved. Protocol lists Extended Sensor Range, Extended Weapon Range, Patch Job, Reconnoiter, Telemetry; each needs rule-scope mapping without creating a second vehicle authority."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-008",
+          "SGD:TXT:7760",
+          "SGD:printed-p82:PDF-page-83-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-009",
+        "printedName": "Droideka Mark II"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 84,
+        "printedPageEnd": 85,
+        "pdfPageStart1Based": 85,
+        "textLineAnchor1Based": 7970,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-009-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 84,
+              "pdfPage1Based": 85,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-009"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 4,
+        "size": "Large",
+        "classTextRaw": "Large droid (4th-degree) nonheroic 12/soldier 4"
+      },
+      "challenge": {
+        "challengeLevel": 8
+      },
+      "geometry": {
+        "fightingSpace": "2x2",
+        "reachSquares": 1
+      },
+      "abilities": {
+        "str": 17,
+        "dex": 16,
+        "con": null,
+        "int": 8,
+        "wis": 14,
+        "cha": 7,
+        "initiativePrinted": 16,
+        "perceptionPrinted": 15,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedTotal": 16
+          },
+          {
+            "name": "Perception",
+            "printedTotal": 15
+          },
+          {
+            "name": "Stealth",
+            "printedTotal": 6
+          }
+        ],
+        "languages": [
+          {
+            "name": "Basic",
+            "understands": true,
+            "speaks": false,
+            "raw": "Basic (understand only)"
+          },
+          {
+            "name": "Binary"
+          }
+        ]
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 12/soldier 4",
+        "nonheroicLevels": 12,
+        "classes": [
+          {
+            "className": "nonheroic",
+            "level": 12
+          },
+          {
+            "className": "soldier",
+            "level": 4
+          }
+        ],
+        "forcePoints": 3
+      },
+      "defenses": {
+        "reflex": 18,
+        "flatFootedReflex": 15,
+        "fortitude": 19,
+        "will": 16,
+        "shieldRating": 20,
+        "armorNote": "bronzium shell (+5 armor; treat as quadanium plating)"
+      },
+      "durability": {
+        "hitPoints": 80,
+        "damageThreshold": 29
+      },
+      "movement": {
+        "speedLineRaw": "Speed 2 squares (walking), 10 squares (wheeled)",
+        "locomotionSystems": [
+          {
+            "instanceId": "walk-1",
+            "mode": "walking",
+            "speedSquares": 2
+          },
+          {
+            "instanceId": "wheeled-1",
+            "mode": "wheeled",
+            "speedSquares": 10,
+            "restricted": "exclusive",
+            "requiresAction": "2 swift actions to change to wheeled mode"
+          }
+        ]
+      },
+      "anatomy": {
+        "manipulatorCount": 2
+      },
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 13,
+        "grapplePrinted": 21,
+        "attackGroups": [
+          {
+            "attackId": "melee-unarmed",
+            "attackBonus": 16,
+            "damageExpression": "1d4+5",
+            "raw": "Melee unarmed +16 (1d4+5)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "laser-single",
+            "attackBonus": 17,
+            "damageExpression": "3d8+2",
+            "raw": "Ranged laser cannon +17 (3d8+2)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "laser-burst",
+            "attackBonus": 12,
+            "damageExpression": "5d8+2",
+            "raw": "Ranged laser cannon +12 (5d8+2) with Burst Fire",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "laser-double",
+            "attackBonus": 15,
+            "damageExpression": "3d8+2",
+            "raw": "Ranged laser cannon +15/+15 (3d8+2)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "laser-double-burst",
+            "attackBonus": 10,
+            "damageExpression": "5d8+2",
+            "raw": "Ranged laser cannon +10/+10 (5d8+2) with Burst Fire",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "ion-single",
+            "attackBonus": 17,
+            "damageExpression": "3d8+2 ion",
+            "raw": "Ranged ion cannon +17 (3d8+2 ion)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "ion-burst",
+            "attackBonus": 12,
+            "damageExpression": "5d8+2 ion",
+            "raw": "Ranged ion cannon +12 (5d8+2 ion) with Burst Fire",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "ion-double",
+            "attackBonus": 15,
+            "damageExpression": "3d8+2 ion",
+            "raw": "Ranged ion cannon +15/+15 (3d8+2 ion)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "ion-double-burst",
+            "attackBonus": 10,
+            "damageExpression": "5d8+2 ion",
+            "raw": "Ranged ion cannon +10/+10 (5d8+2 ion) with Burst Fire",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomotion, wheeled locomotion (exclusive), remote receiver, 2 tool appendages, shield generator (SR 20), internal comlink, bronzium shell (+5 armor; treat as quadanium plating)"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 31435,
+        "availability": "Military"
+      },
+      "text": {
+        "mechanicsNotes": "Two laser cannons and two ion cannons appear as possessions; no verified mount/physical location mapping and no executable attack rights. Rapid Shot, Burst Fire, dual-wield combinations and protocol special actions require separate treatment."
+      },
+      "exceptions": {},
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-009",
+          "SGD:TXT:7970",
+          "SGD:printed-p84:PDF-page-85-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-010",
+        "printedName": "DT-16 \"Destructor\" Battle Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 86,
+        "printedPageEnd": 87,
+        "pdfPageStart1Based": 87,
+        "textLineAnchor1Based": 8219,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-010-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 86,
+              "pdfPage1Based": 87,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-010"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-010",
+          "SGD:TXT:8219"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-011",
+        "printedName": "Duelist Elite Training Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 88,
+        "printedPageEnd": 89,
+        "pdfPageStart1Based": 89,
+        "textLineAnchor1Based": 8434,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-011-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 88,
+              "pdfPage1Based": 89,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-011"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-011",
+          "SGD:TXT:8434"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-012",
+        "printedName": "E522 Assassin Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 90,
+        "printedPageEnd": 91,
+        "pdfPageStart1Based": 91,
+        "textLineAnchor1Based": 8640,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-012-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 90,
+              "pdfPage1Based": 91,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-012"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-012",
+          "SGD:TXT:8640"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-013",
+        "printedName": "EI-9 Network Security Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 92,
+        "printedPageEnd": 93,
+        "pdfPageStart1Based": 93,
+        "textLineAnchor1Based": 8875,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-013-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 92,
+              "pdfPage1Based": 93,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-013"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-013",
+          "SGD:TXT:8875"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-014",
+        "printedName": "EV-Series Supervisor Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 94,
+        "printedPageEnd": 95,
+        "pdfPageStart1Based": 95,
+        "textLineAnchor1Based": 9071,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-014-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 94,
+              "pdfPage1Based": 95,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-014"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-014",
+          "SGD:TXT:9071"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-015",
+        "printedName": "FLTCH-Series Battle Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 96,
+        "printedPageEnd": 97,
+        "pdfPageStart1Based": 97,
+        "textLineAnchor1Based": 9293,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-015-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 96,
+              "pdfPage1Based": 97,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-015"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-015",
+          "SGD:TXT:9293"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-016",
+        "printedName": "G2 Repair Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 98,
+        "printedPageEnd": 99,
+        "pdfPageStart1Based": 99,
+        "textLineAnchor1Based": 9520,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-016-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 98,
+              "pdfPage1Based": 99,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-016"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-016",
+          "SGD:TXT:9520"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-017",
+        "printedName": "GD16-Series Pilot Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 100,
+        "printedPageEnd": 101,
+        "pdfPageStart1Based": 101,
+        "textLineAnchor1Based": 9734,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-017-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 100,
+              "pdfPage1Based": 101,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-017"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-017",
+          "SGD:TXT:9734"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-018",
+        "printedName": "GX1-Series Battle Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 102,
+        "printedPageEnd": 103,
+        "pdfPageStart1Based": 103,
+        "textLineAnchor1Based": 9956,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-018-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 102,
+              "pdfPage1Based": 103,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-018"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-018",
+          "SGD:TXT:9956"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-019",
+        "printedName": "GY-I Information Analysis Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 104,
+        "printedPageEnd": 105,
+        "pdfPageStart1Based": 105,
+        "textLineAnchor1Based": 10192,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-019-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 104,
+              "pdfPage1Based": 105,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-019"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-019",
+          "SGD:TXT:10192"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-020",
+        "printedName": "H-1ME Battle Mechanic Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 106,
+        "printedPageEnd": 107,
+        "pdfPageStart1Based": 107,
+        "textLineAnchor1Based": 10371,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-020-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 106,
+              "pdfPage1Based": 107,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-020"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-020",
+          "SGD:TXT:10371"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-021",
+        "printedName": "HK-77 Assassin Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 108,
+        "printedPageEnd": 109,
+        "pdfPageStart1Based": 109,
+        "textLineAnchor1Based": 10587,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-021-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 108,
+              "pdfPage1Based": 109,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-021"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-021",
+          "SGD:TXT:10587"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-022",
+        "printedName": "HKB-3 Hunter-Killer Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 110,
+        "printedPageEnd": 111,
+        "pdfPageStart1Based": 111,
+        "textLineAnchor1Based": 10796,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-022-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 110,
+              "pdfPage1Based": 111,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-022"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-022",
+          "SGD:TXT:10796"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-023",
+        "printedName": "KM1 Mining Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 112,
+        "printedPageEnd": 113,
+        "pdfPageStart1Based": 113,
+        "textLineAnchor1Based": 11027,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-023-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 112,
+              "pdfPage1Based": 113,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-023"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-023",
+          "SGD:TXT:11027"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-024",
+        "printedName": "M38 Explorer Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 114,
+        "printedPageEnd": 115,
+        "pdfPageStart1Based": 115,
+        "textLineAnchor1Based": 11237,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-024-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 114,
+              "pdfPage1Based": 115,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-024"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-024",
+          "SGD:TXT:11237"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-025",
+        "printedName": "MEV-Series Medical Evacuation Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 116,
+        "printedPageEnd": 117,
+        "pdfPageStart1Based": 117,
+        "textLineAnchor1Based": 11473,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-025-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 116,
+              "pdfPage1Based": 117,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-025"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-025",
+          "SGD:TXT:11473"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-026",
+        "printedName": "MK-Series Maintenance Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 118,
+        "printedPageEnd": 119,
+        "pdfPageStart1Based": 119,
+        "textLineAnchor1Based": 11712,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-026-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 118,
+              "pdfPage1Based": 119,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-026"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-026",
+          "SGD:TXT:11712"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-027",
+        "printedName": "Model 88-Series Administration Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 120,
+        "printedPageEnd": 121,
+        "pdfPageStart1Based": 121,
+        "textLineAnchor1Based": 11923,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-027-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 120,
+              "pdfPage1Based": 121,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-027"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-027",
+          "SGD:TXT:11923"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-028",
+        "printedName": "PG-5 Gunnery Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 122,
+        "printedPageEnd": 123,
+        "pdfPageStart1Based": 123,
+        "textLineAnchor1Based": 12161,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-028-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 122,
+              "pdfPage1Based": 123,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-028"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-028",
+          "SGD:TXT:12161"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-029",
+        "printedName": "PLNK-Series Power Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 124,
+        "printedPageEnd": 125,
+        "pdfPageStart1Based": 125,
+        "textLineAnchor1Based": 12403,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-029-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 124,
+              "pdfPage1Based": 125,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-029"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-029",
+          "SGD:TXT:12403"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-030",
+        "printedName": "RO-D-Series Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 126,
+        "printedPageEnd": 127,
+        "pdfPageStart1Based": 127,
+        "textLineAnchor1Based": 12610,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-030-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 126,
+              "pdfPage1Based": 127,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-030"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-030",
+          "SGD:TXT:12610"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-031",
+        "printedName": "R8-Series Astromech Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 128,
+        "printedPageEnd": 129,
+        "pdfPageStart1Based": 129,
+        "textLineAnchor1Based": 12861,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-031-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-031"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-031",
+          "SGD:TXT:12861"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-032",
+        "printedName": "RWW-Series Protocol Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 130,
+        "printedPageEnd": 131,
+        "pdfPageStart1Based": 131,
+        "textLineAnchor1Based": 13066,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-032-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 130,
+              "pdfPage1Based": 131,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-032"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-032",
+          "SGD:TXT:13066"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-033",
+        "printedName": "RX-Series Pilot Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 132,
+        "printedPageEnd": 133,
+        "pdfPageStart1Based": 133,
+        "textLineAnchor1Based": 13277,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-033-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 132,
+              "pdfPage1Based": 133,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-033"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-033",
+          "SGD:TXT:13277"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-034",
+        "printedName": "S19 Astromech Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 134,
+        "printedPageEnd": 135,
+        "pdfPageStart1Based": 135,
+        "textLineAnchor1Based": 13516,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-034-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-034"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-034",
+          "SGD:TXT:13516"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-035",
+        "printedName": "SD-9-Series Battle Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 136,
+        "printedPageEnd": 137,
+        "pdfPageStart1Based": 137,
+        "textLineAnchor1Based": 13720,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-035-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-035"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-035",
+          "SGD:TXT:13720"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-036",
+        "printedName": "SD-X-Series Stealth Battle Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 138,
+        "printedPageEnd": 139,
+        "pdfPageStart1Based": 139,
+        "textLineAnchor1Based": 13988,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-036-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-036"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-036",
+          "SGD:TXT:13988"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-037",
+        "printedName": "LEP-Series Service Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 140,
+        "printedPageEnd": 141,
+        "pdfPageStart1Based": 141,
+        "textLineAnchor1Based": 14238,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-037-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 140,
+              "pdfPage1Based": 141,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-037"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-037",
+          "SGD:TXT:14238"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-038",
+        "printedName": "Shadow Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 142,
+        "printedPageEnd": 143,
+        "pdfPageStart1Based": 143,
+        "textLineAnchor1Based": 14458,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-038-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 142,
+              "pdfPage1Based": 143,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-038"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-038",
+          "SGD:TXT:14458"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-039",
+        "printedName": "Colicoid T4 Turret Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 144,
+        "printedPageEnd": 145,
+        "pdfPageStart1Based": 145,
+        "textLineAnchor1Based": 14671,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-039-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 144,
+              "pdfPage1Based": 145,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-039"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-039",
+          "SGD:TXT:14671"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-040",
+        "printedName": "TC-SC Infiltration Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 146,
+        "printedPageEnd": 147,
+        "pdfPageStart1Based": 147,
+        "textLineAnchor1Based": 14911,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-040-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 146,
+              "pdfPage1Based": 147,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-040"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-040",
+          "SGD:TXT:14911"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-041",
+        "printedName": "TT-8L Gatekeeper Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 148,
+        "printedPageEnd": 149,
+        "pdfPageStart1Based": 149,
+        "textLineAnchor1Based": 15117,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-041-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 148,
+              "pdfPage1Based": 149,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-041"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-041",
+          "SGD:TXT:15117"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-042",
+        "printedName": "V2-Series Commando Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 150,
+        "printedPageEnd": 151,
+        "pdfPageStart1Based": 151,
+        "textLineAnchor1Based": 15329,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-042-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 150,
+              "pdfPage1Based": 151,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-042"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-042",
+          "SGD:TXT:15329"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-043",
+        "printedName": "V6-Series Pilot Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 152,
+        "printedPageEnd": 153,
+        "pdfPageStart1Based": 153,
+        "textLineAnchor1Based": 15574,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-043-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 152,
+              "pdfPage1Based": 153,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-043"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-043",
+          "SGD:TXT:15574"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-044",
+        "printedName": "X-1 Viper Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 154,
+        "printedPageEnd": 155,
+        "pdfPageStart1Based": 155,
+        "textLineAnchor1Based": 15775,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-044-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 154,
+              "pdfPage1Based": 155,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-044"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-044",
+          "SGD:TXT:15775"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-045",
+        "printedName": "XLT-014 Labor Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 156,
+        "printedPageEnd": 157,
+        "pdfPageStart1Based": 157,
+        "textLineAnchor1Based": 16033,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-045-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 156,
+              "pdfPage1Based": 157,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-045"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-045",
+          "SGD:TXT:16033"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SGD-DROID-046",
+        "printedName": "YVH-Series Battle Droid"
+      },
+      "publication": {
+        "book": "Scavenger's Guide to Droids",
+        "bookId": "SGD",
+        "printedPageStart": 158,
+        "printedPageEnd": 159,
+        "pdfPageStart1Based": 159,
+        "textLineAnchor1Based": 16253,
+        "sourceViews": [
+          {
+            "viewId": "SGD-DROID-046-protocol",
+            "format": "protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "verifiedBy": "txt",
+              "sourceEntryKey": "SGD-DROID-046"
+            }
+          }
+        ]
+      },
+      "classification": {
+        "sourceStatblockFormat": "droid-actor",
+        "statblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {},
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {},
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "txt-indexed",
+        "mechanicalStatus": "unreviewed",
+        "runtimeStatus": "not-tested",
+        "reviewerEvidenceRefs": [
+          "census:SGD-DROID-046",
+          "SGD:TXT:16253"
+        ]
+      }
+    }
+  ]
+}
