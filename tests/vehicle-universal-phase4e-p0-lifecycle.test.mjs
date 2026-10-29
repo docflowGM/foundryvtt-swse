@@ -137,6 +137,26 @@ test('old consumer mirrors cannot replace printed crew, cargo, passengers, or pr
   assert.ok(classifyVehicleActorSource(unknown).errors.includes('UNKNOWN_PRICE_PROMOTED_TO_NUMBER'));
 });
 
+test('unknown publication fields cannot be populated through consumer-friendly defaults', () => {
+  const cases = [
+    [d => d.flags.swse.universalVehicleSource.source.capacity?.passengerCount == null,
+      d => { d.system.passengers = 6; }, 'UNKNOWN_PASSENGER_COUNT_FABRICATED'],
+    [d => d.flags.swse.universalVehicleSource.source.capacity?.cargo == null,
+      d => { d.system.vehiclePublishedCargo = { value: 500, unit: 'tons' }; }, 'UNKNOWN_CARGO_FABRICATED'],
+    [d => d.flags.swse.universalVehicleSource.source.capacity?.consumables == null,
+      d => { d.system.vehiclePublishedConsumables = { value: 12, unit: 'months' }; }, 'UNKNOWN_CONSUMABLES_FABRICATED'],
+    [d => d.flags.swse.universalVehicleSource.source.economics?.priceNew?.status !== 'priced',
+      d => { d.system.cost = '10000'; }, 'UNKNOWN_PRICE_PROMOTED_TO_NUMBER'],
+    [d => Object.keys(d.flags.swse.universalVehicleSource.source.hyperspace ?? {}).length === 0,
+      d => { d.system.vehiclePublishedHyperdrive = { capability: 'equipped' }; }, 'UNKNOWN_HYPERDRIVE_FABRICATED']
+  ];
+  for (const [predicate, mutate, code] of cases) {
+    const actor = pick(predicate);
+    mutate(actor);
+    assert.ok(classifyVehicleActorSource(actor).errors.includes(code), code);
+  }
+});
+
 test('creation input and Document cannot disagree about canonical provenance', () => {
   const actor = pick(() => true);
   const data = clone(actor);
