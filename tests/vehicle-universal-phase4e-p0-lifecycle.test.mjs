@@ -88,7 +88,7 @@ test('malformed canonical claims cannot pass as custom Actors', () => {
     d => { d.flags.swse.canonicalPublication.sourceEntryKey = 'tampered'; },
     d => { delete d.flags.swse.canonicalPublication; },
     d => { d.system.vehicleSourceEntryKey = 'another-key'; },
-    d => { d.system.vehiclePackName = 'vehicles-starfighters'; },
+    d => { d.system.vehiclePackName = 'vehicles-nonexistent'; },
     d => { d.system.vehicleSourcePrimaryCategory = 'made-up'; },
     d => { d.system.model = 'Fictional Hull'; },
     d => { d.system.reflexDefense = -99; },
