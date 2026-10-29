@@ -148,6 +148,8 @@
             {{/if}}
             {{#if vehiclePanels.shieldManagementPanel}}
               {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-shield-management-panel.hbs" panel=vehiclePanels.shieldManagementPanel}}
+            {{else if publicationView}}
+              <div class="swse-vehicle-panel" data-shield-state="{{publicationView.shield.state}}"><header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">{{localize "SWSE.ActorUI.Shields"}}</h3></header><div class="swse-vehicle-panel-body">{{publicationView.shield.label}}. Directional shield management applies only to a published, positive shield rating.</div></div>
             {{else}}
               <div class="swse-vehicle-panel swse-vehicle-wire-panel"><header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">{{localize "SWSE.ActorUI.Shields"}}</h3><span class="swse-vehicle-mini-badge swse-vehicle-mini-badge--phase">{{localize "SWSE.ActorUI.PHASE2"}}</span></header><div class="swse-vehicle-panel-body">{{localize "SWSE.ActorUI.EnhancedShieldManagementIsDesignedAndWillPopulate"}}</div></div>
             {{/if}}

@@ -379,7 +379,7 @@ function buildVehicleResourceStrip(actor, panels, typeFlags, parsedCargo) {
     entries: [
       { key: 'hull', label: 'Hull', value: `${hp.value ?? 0} / ${hp.max ?? 0}`, bar: hpPercent, tone: hpPercent <= 25 ? 'critical' : hpPercent <= 50 ? 'warning' : 'normal' },
       { key: 'sr', label: 'SR', value: unknownPublishedSR ? 'Unknown' : canonicalSR?.state === 'explicit-zero' ? '0 (printed)' : (canonicalSR ? `${canonicalSR.current} / ${canonicalSR.max}` : srMax ? `${srValue} / ${srMax}` : shieldState.hasShield ? 'Source Needed' : '0'), bar: unknownPublishedSR ? 0 : srMax ? Math.round((srValue / srMax) * 100) : 0, tone: unknownPublishedSR ? 'warning' : srMax ? (srValue <= 0 ? 'neutral' : 'normal') : shieldState.hasShield ? 'warning' : 'neutral' },
-      { key: 'ep', label: 'EP', value: ep ? `${ep.available} / ${ep.budget}` : 'Phase 2', bar: ep ? Math.min(100, Math.max(0, 100 - safeNumber(ep.percentAllocated, 0))) : 0, tone: ep?.overAllocated ? 'critical' : ep ? 'normal' : 'neutral', badge: ep?.enabled === false ? 'RULE OFF' : ep ? null : 'WIRE GAP' },
+      { key: 'ep', label: 'Power', value: ep ? `${ep.available} / ${ep.budget}` : 'Not active', bar: ep ? Math.min(100, Math.max(0, 100 - safeNumber(ep.percentAllocated, 0))) : 0, tone: ep?.overAllocated ? 'critical' : ep ? 'normal' : 'neutral', badge: ep?.enabled === false ? 'RULE OFF' : null },
       { key: 'crew', label: 'Crew', value: `${crew.filledSlots ?? 0} / ${crew.totalSlots ?? '?'}`, bar: crew.totalSlots ? Math.round(((crew.filledSlots ?? 0) / crew.totalSlots) * 100) : 0, tone: crew.filledSlots ? 'normal' : 'warning' },
       { key: 'cargo', label: typeFlags.labels.cargo, value: parsedCargo?.known ? parsedCargo.display : (parsedCargo?.raw ? parsedCargo.display : SOURCE_UNKNOWN), bar: Math.max(0, Math.min(100, safeNumber(cargo.percentUsed, 0))), tone: cargo.state === 'over' ? 'critical' : cargo.state === 'near' ? 'warning' : 'normal' },
       { key: 'condition', label: 'Condition', value: condition.label || 'Operational', bar: null, tone: condition.severity || 'normal' }
@@ -984,9 +984,11 @@ export function buildVehicleShieldManagementPanel(actor, shieldZones) {
  * @returns {Object}
  */
 export function buildVehiclePowerSummaryPanel(actor, powerData) {
-  const available = safeNumber(powerData?.available, 350);
-  const allocated = safeNumber(powerData?.allocated, 250);
-  const budget = safeNumber(powerData?.budget, 600);
+  // No power rule context means no power panel; there are no invented 350/250/600 defaults.
+  if (!powerData) return null;
+  const available = safeNumber(powerData.available, 0);
+  const allocated = safeNumber(powerData.allocated, 0);
+  const budget = safeNumber(powerData.budget, 0);
   const overAllocated = allocated > budget;
 
   const subsystemLoads = [];
@@ -1281,7 +1283,11 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
   const crewAssignmentPanel = buildVehicleCrewAssignmentPanel(actor);
   const customStationEditorPanel = buildVehicleCustomStationEditorPanel(actor);
   const subsystemDetailPanel = buildVehicleSubsystemDetailPanel(actor, subsystemData, subsystemPenalties);
-  const shieldManagementPanel = buildVehicleShieldManagementPanel(actor, shieldZones);
+  // Directional shield zones only exist for a published, positive SR; unknown, conditional,
+  // conflicting and explicit-zero SR vehicles show no zone panel (not a row of zeros).
+  const shieldManagementPanel = publicationView && !publicationView.shield.editable
+    ? null
+    : buildVehicleShieldManagementPanel(actor, shieldZones);
   const powerSummaryPanel = buildVehiclePowerSummaryPanel(actor, powerData);
   const cargoSummaryPanel = buildVehicleCargoSummaryPanel(actor, totalCargoWeight, cargoState);
   const cargoManifestPanel = buildVehicleCargoManifestPanel(actor);
