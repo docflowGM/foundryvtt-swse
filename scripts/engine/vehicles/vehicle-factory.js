@@ -394,7 +394,10 @@ export class VehicleFactory {
     const condition = buildSpec.condition || 'new';
 
     const source = template?.doc || template?.template || template;
-    const templateObj = source?.toObject ? source.toObject(false) : clone(source || {});
+    // Foundry V13 toObject(false) can expose prepared/derived values rather
+    // than the recorded source payload. Canonical authority is the raw Actor
+    // document; computed sheet fields must never replace publication facts.
+    const templateObj = source?.toObject ? source.toObject(true) : clone(source || {});
     const templateSystem = templateObj.system || template?.system || {};
 
     // Universal source-backed Actors must pass through as complete certified
