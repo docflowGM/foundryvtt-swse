@@ -1,6 +1,7 @@
 import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
 import { ActorPerfDiagnostics } from "/systems/foundryvtt-swse/scripts/utils/actor-perf-diagnostics.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { classifyVehicleActorSource } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { getActorSheetThemeGroups } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js";
@@ -882,7 +883,18 @@ export class SWSEV2VehicleSheet extends SWSEV2ActorSheetBase {
       /^system\.weapons\.\d+\.(name|arc|attackBonus|damage|range|fireControl|notes)$/,
       /^system\.attributes\.(str|dex|int|wis|cha)\.(base|racial|temp)$/
     ];
-    const isWritable = (path) => writableExact.has(path) || writablePatterns.some(pattern => pattern.test(path));
+    const sourceAssessment = classifyVehicleActorSource(this.actor);
+    if (sourceAssessment.kind === 'invalid-canonical')
+      throw new Error('UNIVERSAL_VEHICLE_SHEET_INVALID_SOURCE: ' + sourceAssessment.errors.join(','));
+    // Source-only Actors are not free-form templates: mutable runtime state
+    // and callsign/notes are separate from published source facts.
+    const canonicalWritable = new Set([
+      'name', 'img', 'system.hp.value', 'system.shields.value',
+      'system.notes', 'system.details.notes', 'system.description'
+    ]);
+    const isWritable = (path) => sourceAssessment.kind === 'canonical'
+      ? canonicalWritable.has(path)
+      : writableExact.has(path) || writablePatterns.some(pattern => pattern.test(path));
     const root = this.element instanceof HTMLElement ? this.element : null;
     const source = event?.target?.closest?.('form') || root;
     if (!source) return;
