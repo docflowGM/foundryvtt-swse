@@ -6,7 +6,8 @@
     "Independent publication identity preserved",
     "Conflicting print remains conflicting",
     "Owner-approved interpretations separated from print",
-    "No new physical mounts, operator grants, or executable attacks"
+    "No new physical mounts, operator grants, or executable attacks",
+    "Core Vulture printed p181 and physical p182 resolved through SHA-checked additive source provenance view, not retroactive edit of frozen audit files"
   ],
   "cases": [
     {
@@ -399,7 +400,7 @@
         "pdfPhysicalPage": 79,
         "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0"
       },
-      "sourceReconciliation": "dual-mode-and-cross-book-identity-verified-core-frozen-provenance-discrepancy-open",
+      "sourceReconciliation": "source-provenance-reconciled-via-approved-additive-effective-view",
       "printedFacts": {
         "coreHeading": "\"Vulture\" Droid Starfighter",
         "coreStatblockPrintedPage": 181,
@@ -433,23 +434,23 @@
         "SotG original 3x3 character-scale fighting space restored to staged record"
       ],
       "unresolvedOperational": [
-        "source-authoritative reconciliation of Core printed title/page against frozen 429 census, Phase 1 ledger and original canonical 316 ship references",
+        "Phase 4A builder MUST resolve the approved immutable Core page/title amendment before any new SSOT rows are constructed",
         "dual-mode transition typed consumer in V2",
         "drone autonomous pilot semantics",
         "physical mount and arc geometry per publication"
       ],
       "requiresRuntimeConsumer": true,
       "allowExecutableAttacks": false,
-      "sourceFieldQAAccepted": false,
-      "phase3GlobalProvenanceGate": "blocked-pending-core-source-provenance-reconciliation"
+      "sourceFieldQAAccepted": true,
+      "phase3GlobalProvenanceGate": "resolved-by-approved-additive-amendment",
+      "provenanceAmendmentApplied": true,
+      "provenanceAmendmentPath": "data/audits/vehicles/swse-universal-phase3-vulture-provenance-amendment.json"
     }
   ],
   "remainingTargetedCandidates": [],
   "phase4CutoverAuthorized": false,
   "strictPhysicalMountCertificationPromoted": 0,
-  "remainingProvenanceBlockers": [
-    "Core Vulture printed name and page differ from frozen census: see P3R-CORE-SOTG-VULTURE"
-  ],
+  "remainingProvenanceBlockers": [],
   "globalGate": {
     "sourceFieldPdfQueue": {
       "reviewed": 48,
@@ -462,14 +463,19 @@
     },
     "namedTargetedRisksReviewed": 10,
     "namedTargetedRisksPendingPrimaryPdfReview": 0,
-    "unresolvedCriticalProvenance": [
-      "P3R-CORE-SOTG-VULTURE"
+    "unresolvedCriticalProvenance": [],
+    "resolvedProvenanceAmendments": [
+      "P3R-CORE-VULTURE-PROVENANCE-001"
     ],
-    "phase3SourceAcceptance": "HOLD",
-    "phase4CanonicalSsotAuthorized": false,
+    "phase3SourceAcceptance": "ACCEPTED_FOR_PHASE4A_SOURCE_PREPARATION",
+    "phase4CanonicalSsotAuthorized": true,
+    "phase4NativePackRegistrationAuthorized": false,
+    "phase4ActorImportAuthorized": false,
+    "phase4CutoverAuthorized": false,
     "migrationRuntimeAuthorized": false,
     "mechanicalWeaponMountPromotionAuthorized": false,
-    "reason": "Core Vulture original printed title and start page do not agree with frozen Phase1 ledger, global 429 census and Core Phase2 staged metadata. Preserve old files and source keys pending explicit audited provenance repair.",
-    "normalizerBlocker": "CP23-C4C numeric Initiative loss and unknown/default conflation remains a hard Phase4 importer gate."
+    "reason": "All 48 focused PDF-field source reviews and 10 named targeted risks reconciled, with the only frozen Core provenance mismatch resolved by a read-only, checksum-anchored additive effective source view. Printed ambiguities remain informational and mechanically fail-closed.",
+    "normalizerBlocker": "CP23-C4C numeric Initiative loss and unknown/default conflation remains an independent hard Phase 4 importer block; no V2 playable import or installed stock attacks authorized.",
+    "sourceBuilder": "tools/build-universal-vehicle-phase3-source-preview.mjs"
   }
 }

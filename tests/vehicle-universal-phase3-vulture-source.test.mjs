@@ -28,7 +28,7 @@ test('Vulture has two publication claims in separate books; flight/walker modes 
  assert.equal(sb.geometry.characterScaleLengthSquares,3);
  assert.equal(sb.geometry.starshipScaleWidthSquares,1);
 });
-test('Core printed page and title provenance discrepancy remains explicit, unpromoted and actionable',()=>{
+test('Frozen Core page and title discrepancy remains visible while approved effective provenance is source-accepted',()=>{
  const a=census.find(x=>x.sourceEntryKey===coreKey),b=census.find(x=>x.sourceEntryKey===sotgKey);
  assert.ok(a);assert.ok(b);
  assert.equal(a.printedStatblockStartPage,180);
@@ -39,8 +39,8 @@ test('Core printed page and title provenance discrepancy remains explicit, unpro
  assert.equal(row.printedFacts.corePdfPhysicalPage,182);
  assert.equal(row.provenanceAmendmentRecommended.correctPrintedPage,181);
  assert.equal(row.provenanceAmendmentRecommended.keepSourceEntryKey,coreKey);
- assert.equal(row.sourceFieldQAAccepted,false);
- assert.equal(row.phase3GlobalProvenanceGate,'blocked-pending-core-source-provenance-reconciliation');
+ assert.equal(row.sourceFieldQAAccepted,true);
+ assert.equal(row.phase3GlobalProvenanceGate,'resolved-by-approved-additive-amendment');
  assert.equal(b.printedStatblockStartPage,78);
  assert.equal(sb.publication.page,78);
 });

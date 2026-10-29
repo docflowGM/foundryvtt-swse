@@ -32,15 +32,20 @@ test('Ten targeted named risks have source-evidence reviewed, without weapon tru
  }
  assert.equal(risk.strictPhysicalMountCertificationPromoted,0);
 });
-test('Core Vulture provenance mismatch blocks Phase 3 global acceptance and all Phase 4 cutover permissions',()=>{
+test('Core Vulture provenance is resolved by checksum-anchored additive view; Phase 4 runtime and cutover remain prohibited',()=>{
  const r=risk.cases.find(x=>x.id==='P3R-CORE-SOTG-VULTURE');
- assert.equal(r.sourceFieldQAAccepted,false);
+ assert.equal(r.sourceFieldQAAccepted,true);
  assert.equal(r.printedFacts.coreFrozenCensusPrintedPage,180);
  assert.equal(r.printedFacts.coreStatblockPrintedPage,181);
  assert.equal(r.provenanceAmendmentRecommended.keepSourceEntryKey,'core-vulture-class-droid-starfighter');
- assert.deepEqual(risk.globalGate.unresolvedCriticalProvenance,['P3R-CORE-SOTG-VULTURE']);
- assert.equal(risk.globalGate.phase3SourceAcceptance,'HOLD');
- assert.equal(risk.globalGate.phase4CanonicalSsotAuthorized,false);
+ assert.equal(r.provenanceAmendmentApplied,true);
+ assert.equal(r.phase3GlobalProvenanceGate,'resolved-by-approved-additive-amendment');
+ assert.deepEqual(risk.globalGate.unresolvedCriticalProvenance,[]);
+ assert.deepEqual(risk.globalGate.resolvedProvenanceAmendments,['P3R-CORE-VULTURE-PROVENANCE-001']);
+ assert.equal(risk.globalGate.phase3SourceAcceptance,'ACCEPTED_FOR_PHASE4A_SOURCE_PREPARATION');
+ assert.equal(risk.globalGate.phase4CanonicalSsotAuthorized,true);
+ assert.equal(risk.globalGate.phase4NativePackRegistrationAuthorized,false);
+ assert.equal(risk.globalGate.phase4ActorImportAuthorized,false);
  assert.equal(risk.globalGate.mechanicalWeaponMountPromotionAuthorized,false);
  assert.equal(risk.globalGate.migrationRuntimeAuthorized,false);
  assert.equal(risk.phase4CutoverAuthorized,false);
