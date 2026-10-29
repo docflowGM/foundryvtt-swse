@@ -7,6 +7,11 @@ on:
       - 'data/audits/vehicles/swse-universal-*.json'
       - 'docs/audits/vehicles/universal-vehicle-phase-roadmap.md'
       - 'tests/vehicle-universal-*.test.mjs'
+      - 'tools/build-universal-vehicle-canonical.mjs'
+      - 'tools/build-universal-vehicle-phase3-source-preview.mjs'
+      - 'tools/lib/universal-vehicle-source-provenance.mjs'
+      - 'data/canonical/vehicles/vehicles.json'
+      - 'data/canonical/vehicles/vehicles.manifest.json'
       - '.github/workflows/vehicle-universal-phase1.yml'
   workflow_dispatch:
 permissions:
@@ -20,4 +25,7 @@ jobs:
         with:
           node-version: '22'
       - name: Test publication identity and provenance
-        run: node --test tests/vehicle-universal-phase*.test.mjs
+        run: |
+          node tools/build-universal-vehicle-phase3-source-preview.mjs --check
+          node tools/build-universal-vehicle-canonical.mjs --check
+          node --test tests/vehicle-universal-phase*.test.mjs
