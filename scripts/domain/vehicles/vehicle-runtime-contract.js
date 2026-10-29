@@ -7,6 +7,7 @@
  */
 import { getUniversalVehiclePackForCategory } from './universal-vehicle-pack-registry.js';
 import { digestUniversalVehicleSource } from './vehicle-source-digest.js';
+import { readCertifiedInstallations } from './vehicle-installation-ledger.js';
 
 const SOURCE_SCHEMA = 'swse.vehicle.universal.actor-source.v1';
 const finite = value => typeof value === 'number' && Number.isFinite(value);
@@ -331,13 +332,22 @@ export function getVehicleRuntimeProjection(actor) {
       shields: { value: sys.shields?.value ?? null, max: sys.shields?.max ?? null },
       crewAssignments: copy(sys.crewPositions ?? null)
     },
-    // Until the P2 installation ledger exists, actor-provided modification
-    // claims are display/reference only, never certified installed hardware.
-    installed: {
-      modifications: [], mounts: [], stockMountsCertified: false,
-      certification: 'NONE'
-    },
+    // Installed hardware comes only from the sealed P2 ledger (separate from the
+    // published base). Unsealed/forged entries are ignored; actor-provided
+    // modification claims remain reference-only. Stock mounts are never certified.
+    installed: installedFromLedger(raw.flags, record.identity.sourceEntryKey),
     unverifiedModificationClaims: copy(sys.vehicleModifications ?? [])
 
   });
+}
+
+function installedFromLedger(flags, sourceEntryKey) {
+  const { entries, rejected } = readCertifiedInstallations(flags, sourceEntryKey);
+  return {
+    modifications: copy(entries),
+    mounts: copy(entries.filter(e => e.mount)),
+    stockMountsCertified: false,
+    rejectedLedgerEntries: rejected,
+    certification: entries.length ? 'LEDGER' : 'NONE'
+  };
 }

@@ -230,8 +230,82 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Decision authority | Project owner |
 | Resolution | |
 
+## V-P2-01 — Spendable Emplacement Points of a canonical hull
+
+| Field | Content |
+|---|---|
+| Rules domain | Vehicle modification (Shipyard) |
+| Feature | Spendable Emplacement Points of a canonical hull |
+| Source | Published vehicle records `modifications.emplacementPointsTotal` (3 of 429: kotor-amalgamated-hyperdyne-578-r-space-transport = 4, kotor-arakyd-industries-lethisk-class-armed-freighter = 3, kotor-corellia-stardrive-quartermaster-class-supply-carrier = 2); special-rule text on unused/unspent Emplacement Points for sotg-corellian-yt-1300-transport, sotg-sorosuub-cutlass-9-patrol-fighter, sotg-kuat-systems-engineering-firespray-31-patrol-craft. |
+| Evidence | The other 426 records state no Emplacement Point figure. Three state a figure labelled a total. Three Starships of the Galaxy entries mention unused/unspent Emplacement Points in special-rule text. |
+| Confirmed behavior | A few hulls publish an EP figure or mention unused EP. |
+| Unresolved question | Whether a published `emplacementPointsTotal` is the points available to spend or the hull's total including stock equipment; how to treat the 426 hulls with no published figure. |
+| Options | None supported by certified evidence. |
+| Recommended ruling | None |
+| Implementation impact | `DEFAULT_VEHICLE_INSTALLATION_RULES.resolveEpBudget` denies every install (`EP_BUDGET_UNKNOWN`). No canonical hull can be modified until ruled. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Review classification | `PENDING_SOURCE_VERIFICATION` for the vehicle-modification rules text (EP formula by size) plus a policy question for hulls with no figure. |
+| Decision authority | Project owner |
+| Resolution | |
+
+## V-P2-02 — Provenance of data/vehicle-modifications catalog
+
+| Field | Content |
+|---|---|
+| Rules domain | Vehicle modification (Shipyard) |
+| Feature | Provenance of data/vehicle-modifications catalog |
+| Source | `data/vehicle-modifications/*.json` (187 rows: id, category, emplacementPoints, availability, sizeRestriction, cost, costType, effect text). |
+| Evidence | No row carries a book or printed page. Pricing includes `base`, `flat`, `multiplier` and `modifier` cost types; effects are free text. |
+| Confirmed behavior | Rows exist with EP, availability and size restrictions. |
+| Unresolved question | Which rows match a published source and are certified; how `base`/`multiplier`/`modifier` cost types resolve to credits; whether size restrictions such as bare 'Colossal' include frigate/cruiser/station hulls. |
+| Options | None supported by certified evidence. |
+| Recommended ruling | None |
+| Implementation impact | Planner requires a `certification` block (MECHANIC_SPECIFIED, book, page) on a row, accepts only `flat` costs, and returns SIZE_AMBIGUOUS for the bare-Colossal/subtype cases. No row currently qualifies. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Review classification | `PENDING_SOURCE_VERIFICATION` (row-by-row certification) and `DEFERRED_RULES_REVIEW` (size subtype and cost-type policy). |
+| Decision authority | Project owner |
+| Resolution | |
+
+## V-P2-03 — Removal refund, install procedure and stat effects
+
+| Field | Content |
+|---|---|
+| Rules domain | Vehicle modification (Shipyard) |
+| Feature | Removal refund, install procedure and stat effects |
+| Source | Legacy `vehicle-system-definitions.js` uses an uncertified 0.5 resale multiplier and fixed stat deltas; D-001 covers the install/removal procedure for items. |
+| Evidence | No certified source for vehicle resale value, install time/DC, or how a modification's effect stacks with printed values. |
+| Confirmed behavior | None. |
+| Unresolved question | Refund on uninstall; install time/DC/failure; stacking and bonus type for effects on defenses, speed, damage reduction and shields. |
+| Options | None supported by certified evidence. |
+| Recommended ruling | None |
+| Implementation impact | Uninstall moves no credits and reports `refundPolicyDecided:false`; effects are not applied to effective stats (only EP/cost are tracked). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Review classification | `PENDING_SOURCE_VERIFICATION`, linked to D-001. |
+| Decision authority | Project owner |
+| Resolution | |
+
+## V-P2-04 — Evidence required to certify a physical mount
+
+| Field | Content |
+|---|---|
+| Rules domain | Vehicle weapon installation |
+| Feature | Evidence required to certify a physical mount |
+| Source | Printed firing groups carry `mountKeys: []` and 'Physical mounting, weapon bindings and firing arcs NOT CERTIFIED'. |
+| Evidence | Stock weapon mount identity, arc, battery membership and operator are unpublished or unreviewed for these records. |
+| Confirmed behavior | Printed attack groups are reference-only. |
+| Unresolved question | What evidence suffices for a mount (the planner currently requires mountKey, arc, operatorRole and book/page evidence) and whether a purchased weapon may be executable at all. |
+| Options | None supported by certified evidence. |
+| Recommended ruling | None |
+| Implementation impact | Weapon installs are denied without mount evidence; even with it the ledger entry is `executable:false`. Enabling execution is P4-D. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Review classification | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
 ---
 
 ## Revision log
 
 - **Revision 2 (2026-10-14):** introduced `PENDING_SOURCE_VERIFICATION` versus `DEFERRED_RULES_REVIEW`; added a *Review classification* row to D-001–D-012. Of the twelve entries, eleven are research gaps awaiting source examination; only D-006 (policy for unpriced modifications) is a decision for the owner today. No decision ID, original field, owner ruling or interim position was changed. No recommended ruling is made for any entry. Source examination is the next step for D-001 first, because it blocks the install procedure.
+
+- **Revision 3 (2026-10-29):** appended V-P2-01 to V-P2-04 (vehicle Shipyard EP budget, catalog provenance, refund/effects, mount certification). No existing entry changed.
