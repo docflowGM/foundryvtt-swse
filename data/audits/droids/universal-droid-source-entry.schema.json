@@ -1,0 +1,2508 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://swse.local/schemas/universal-droid-source-entry-0.1-draft.schema.json",
+  "title": "SWSE Universal Droid Publication Source Record — draft 0.1",
+  "description": "Full canonical replacement source vocabulary for published SWSE droids. Not a Foundry actor instance. Sparse fields + evidence-qualified nulls, fail-closed for mechanics. Derived from audited 14-book census and universal vehicle source schema. Not yet owner frozen.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "swse.droid.universal-source/0.1-draft"
+    },
+    "recordType": {
+      "const": "droid-publication-source-entry"
+    },
+    "identity": {
+      "type": "object",
+      "description": "Published source identity is immutable; not identical to canonical family or runtime actor.",
+      "properties": {
+        "sourceEntryKey": {
+          "type": [
+            "string"
+          ],
+          "description": "Stable book-specific statblock identity; duplicates across books remain separate"
+        },
+        "printedName": {
+          "type": [
+            "string"
+          ],
+          "description": "Name exactly as printed"
+        },
+        "droidFamilyKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Underlying factory lineage, independently reconciled; null until proven Never inferred from name alone."
+        },
+        "modelCode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed model/series identity"
+        },
+        "manufacturer": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed manufacturer, if stated"
+        },
+        "variantKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Unique source-backed configuration/variant Never inferred from name alone."
+        },
+        "baseModelSourceKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Publication statblock for related model; never inferred from similar name Never inferred from name alone."
+        },
+        "namedIndividual": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True only for a printed individual named character"
+        },
+        "aliases": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Alternate printed names; empty only if proven none"
+        },
+        "sourcePresentationIds": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Linked protocol/source presentation refs; not duplicated entries"
+        }
+      },
+      "required": [
+        "sourceEntryKey",
+        "printedName"
+      ],
+      "additionalProperties": false
+    },
+    "publication": {
+      "type": "object",
+      "description": "Printed-source evidence; sourcebook specificity is preserved.",
+      "properties": {
+        "book": {
+          "type": [
+            "string"
+          ],
+          "description": "Full printed book title"
+        },
+        "bookId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Census book code"
+        },
+        "printedPageStart": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed page where statblock starts"
+        },
+        "printedPageEnd": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed page where statblock ends"
+        },
+        "pdfPageStart1Based": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Source PDF page"
+        },
+        "textLineAnchor1Based": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Searchable TXT source line"
+        },
+        "printedTypeLine": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Exact size/type/degree line"
+        },
+        "publicationKind": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "model",
+            "named-character",
+            "squad",
+            "vehicle-format-droid",
+            "other",
+            null
+          ],
+          "description": "One printed publication identity; droid squad not factory chassis"
+        },
+        "sourceViews": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object",
+            "description": "One printed source representation",
+            "properties": {
+              "viewId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Alternate view identifier"
+              },
+              "format": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Protocol or other printed format"
+              },
+              "source": {
+                "$ref": "#/$defs/sourceCitation"
+              }
+            },
+            "required": [
+              "viewId"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Alternate protocol views as source evidence; not duplicated models"
+        },
+        "sourceRevision": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Official errata or printing when verified"
+        }
+      },
+      "required": [
+        "book"
+      ],
+      "additionalProperties": false
+    },
+    "classification": {
+      "type": "object",
+      "description": "Droid species/body/degree, actor authority and printed formats are distinct.",
+      "properties": {
+        "publishedDegree": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "1-5 when printed; contextual heading is separate and must not be promoted"
+        },
+        "contextualDegreeHeading": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Nearest section heading, not automatically the printed model degree"
+        },
+        "size": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "Fine",
+            "Diminutive",
+            "Tiny",
+            "Small",
+            "Medium",
+            "Large",
+            "Huge",
+            "Gargantuan",
+            "Colossal",
+            null
+          ],
+          "description": "Published size"
+        },
+        "rawSize": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed size and type line"
+        },
+        "ruleEntityNature": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "standard-droid",
+            "replica-droid",
+            "shard-in-droid-shell",
+            "vehicle-format-droid",
+            "device-derived-droid",
+            "other",
+            null
+          ],
+          "description": "Rules identity; not inferred from printed class names"
+        },
+        "statblockFormat": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "droid-actor",
+            "vehicle",
+            "squad",
+            "character-template",
+            null
+          ],
+          "description": "Normalized publication presentation format"
+        },
+        "sourceStatblockFormat": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Raw census presentation (e.g. starship-scale-droid); do not discard original format identity"
+        },
+        "primaryActorAuthority": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "droid",
+            "vehicle",
+            "squad-aggregation",
+            null
+          ],
+          "description": "Use vehicle engine for autonomous vehicle droids"
+        },
+        "role": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Published roles, not deduced from combat loadout"
+        },
+        "classTextRaw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Published class line, without inferring Force/organic identity"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "challenge": {
+      "type": "object",
+      "description": "Challenge is printed data, not a license for derived formula.",
+      "properties": {
+        "challengeLevel": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed CL"
+        },
+        "raw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Raw CL line"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "geometry": {
+      "type": "object",
+      "description": "Size, fighting space, reach and cover do not automatically derive from limb inventory.",
+      "properties": {
+        "reachSquares": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed reach; limb count does not set it"
+        },
+        "fightingSpace": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed fighting-space expression"
+        },
+        "stabilityModifiers": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Size/extra-leg/other scoped stability rules"
+        },
+        "cover": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed enclosure or cover"
+        },
+        "naturalWeaponContact": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed contact/appendage reach notes"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "abilities": {
+      "type": "object",
+      "description": "Published scores, skills and senses, not derived mechanics or assumptions.",
+      "properties": {
+        "str": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed STR score; null is NOT score zero. For no CON use fieldStates explicitly-none."
+        },
+        "dex": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed DEX score; null is NOT score zero. For no CON use fieldStates explicitly-none."
+        },
+        "con": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed CON score; null is NOT score zero. For no CON use fieldStates explicitly-none."
+        },
+        "int": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed INT score; null is NOT score zero. For no CON use fieldStates explicitly-none."
+        },
+        "wis": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed WIS score; null is NOT score zero. For no CON use fieldStates explicitly-none."
+        },
+        "cha": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed CHA score; null is NOT score zero. For no CON use fieldStates explicitly-none."
+        },
+        "initiativePrinted": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed Initiative total, never additive feat bonus"
+        },
+        "perceptionPrinted": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed Perception total"
+        },
+        "skills": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object",
+            "description": "Published skill value",
+            "properties": {
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Skill name"
+              },
+              "printedTotal": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Printed skill total"
+              },
+              "raw": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Raw line"
+              },
+              "source": {
+                "$ref": "#/$defs/sourceCitation"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Every skill actually printed"
+        },
+        "senses": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object",
+            "description": "Published sense",
+            "properties": {
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Sense/sensor label"
+              },
+              "detail": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Published constraints"
+              },
+              "source": {
+                "$ref": "#/$defs/sourceCitation"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Published senses; may be equipment or processor dependent"
+        },
+        "languages": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object",
+            "description": "Understanding and speaking are separate capabilities",
+            "properties": {
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Language"
+              },
+              "understands": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Understands published language"
+              },
+              "speaks": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Speaks published language"
+              },
+              "raw": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Verbatim capability description"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Published language capabilities"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "progression": {
+      "type": "object",
+      "description": "Printed progression separate from new PC starting choices.",
+      "properties": {
+        "classLineRaw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed classes, levels, and slash ordering"
+        },
+        "nonheroicLevels": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed level count"
+        },
+        "classes": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object",
+            "description": "Class entry",
+            "properties": {
+              "className": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Printed class name"
+              },
+              "level": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Level count"
+              }
+            },
+            "required": [
+              "className"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Source classes, not an eligibility proof"
+        },
+        "feats": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/appliedTrait"
+          },
+          "description": "Printed feats and provenance"
+        },
+        "talents": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/appliedTrait"
+          },
+          "description": "Printed talents and provenance"
+        },
+        "forcePoints": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed Force Points; not proof of unrestricted Force eligibility"
+        },
+        "darkSideScore": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed Dark Side Score"
+        },
+        "conditionalForceCapability": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Specific exemptions for Shard/special droid combat programming"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "defenses": {
+      "type": "object",
+      "description": "Printed defenses, without silently calculating from feats or sensors.",
+      "properties": {
+        "reflex": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed Reflex Defense"
+        },
+        "flatFootedReflex": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed flat-footed Reflex"
+        },
+        "fortitude": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed Fortitude"
+        },
+        "will": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed Will"
+        },
+        "armorBonus": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed armor contribution"
+        },
+        "armorNote": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed chassis armor and loadout context"
+        },
+        "damageReduction": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed DR"
+        },
+        "shieldRating": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed SR if any"
+        },
+        "immunities": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/appliedTrait"
+          },
+          "description": "Source-scoped immunity claims, including exceptions"
+        },
+        "resistances": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/appliedTrait"
+          },
+          "description": "Source-scoped resistance, e.g. extreme heat"
+        },
+        "vulnerabilities": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/appliedTrait"
+          },
+          "description": "Source-scoped vulnerabilities"
+        },
+        "conditionalDefenseRules": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Conditional cover, shielding or other temporary defenses"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "durability": {
+      "type": "object",
+      "description": "Stock max values only. Current HP is never in immutable published source.",
+      "properties": {
+        "hitPoints": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed maximum HP"
+        },
+        "damageThreshold": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed threshold"
+        },
+        "conditionTrack": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Published condition exception if any"
+        },
+        "repairRules": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Model-specific repair/maintenance healing"
+        },
+        "maintenanceProfileRef": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Droid maintenance profile, replica exemption, Shard shell etc Never inferred from name alone."
+        },
+        "destructionRules": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Specific self-destruct, detonator, or volatile power systems"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "movement": {
+      "type": "object",
+      "description": "Printed speed and installed movement systems, not runtime activation state.",
+      "properties": {
+        "locomotionSystems": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/locomotionInstance"
+          },
+          "description": "Independent installed locomotion systems and modes"
+        },
+        "speedLineRaw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Full published Speed line"
+        },
+        "specialMovement": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Model-specific climb, run, leap, tether/hover etc"
+        },
+        "starshipMovementRef": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Vehicle model source key if the record is vehicle format Never inferred from name alone."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "anatomy": {
+      "type": "object",
+      "description": "Body/occupant separation; physical components can be many and have no generic pool.",
+      "properties": {
+        "bodyPlatformKind": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "ordinary-chassis",
+            "replica-humanoid",
+            "shard-shell",
+            "device-body",
+            "vehicle-hull",
+            "other",
+            null
+          ],
+          "description": "Body platform not necessarily creature identity"
+        },
+        "physicalLocations": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object",
+            "description": "Physical location only; never a weapon/item modification-slot pool",
+            "properties": {
+              "locationId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Stable physical attachment/mount location"
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Location label"
+              },
+              "locationKind": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "hand, tool arm, leg, internal bay etc"
+              },
+              "installedComponentIds": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Component instance refs actually installed"
+              },
+              "capacity": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Only model-specific printed number, NOT universal slots"
+              }
+            },
+            "required": [
+              "locationId"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Only source-established distinct physical locations"
+        },
+        "manipulatorCount": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed functional manipulators, not inferred from walking legs"
+        },
+        "locomotionAppendageCount": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed locomotion limbs"
+        },
+        "integratedWeapons": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Physical weapon component IDs, not duplicate weapon profiles"
+        },
+        "occupantProfileRef": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Separate Shard or other mind/body occupant profile when applicable Never inferred from name alone."
+        },
+        "bodyTraits": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/appliedTrait"
+          },
+          "description": "Body-specific traits; do not assume ordinary droid universal package"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "processor": {
+      "type": "object",
+      "description": "Processor/controller separate from degree, body and skill.",
+      "properties": {
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed processor classification (basic/heuristic etc)"
+        },
+        "brainType": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed droid brain implementation"
+        },
+        "autonomy": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "independent",
+            "remote-controlled",
+            "limited-autonomy",
+            "conditional",
+            null
+          ],
+          "description": "Published controller autonomy"
+        },
+        "commandLink": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Network, remote-control, signal-loss and command rules"
+        },
+        "personality": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Published behavioral or narrative personality"
+        },
+        "memory": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Memory capacity/erase restrictions supported by printed source"
+        },
+        "processorInstanceId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Installed processor component instance Never inferred from name alone."
+        },
+        "controlHostRef": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Explicit controller reference Never inferred from name alone."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "programming": {
+      "type": "object",
+      "description": "Published behavior; no inferred universal permission from missing restrictions.",
+      "properties": {
+        "behaviorRestrictions": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Inhibition rules and source exceptions"
+        },
+        "defaultDuties": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Published programmed tasks or role"
+        },
+        "languagesSoftware": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Language packages and translation constraints"
+        },
+        "activationTriggers": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Self-destruct or task activation conditions"
+        },
+        "reprogramming": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Model-specific PC/GM reprogramming limitations"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "combat": {
+      "type": "object",
+      "description": "Attack expressions separate from physical mounts and trusted runtime attacks.",
+      "properties": {
+        "baseAttackBonusPrinted": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published BAB"
+        },
+        "grapplePrinted": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published grapple total"
+        },
+        "attackGroups": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/attackExpression"
+          },
+          "description": "Published attacks only, not installed executable weapon rights"
+        },
+        "specialActions": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Published unusual attack options"
+        },
+        "firingDelegation": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Vehicle droid brain/crew gunnery rules; reuse vehicle engine"
+        },
+        "naturalAttacks": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Published natural/unarmed/manipulator rules"
+        },
+        "conditions": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Model-specific tactics, action, or condition modifiers"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "capacity": {
+      "type": "object",
+      "description": "Weight capacity/storage NOT physical attachment slots or equipment upgrades.",
+      "properties": {
+        "internalStorage": {
+          "$ref": "#/$defs/capacityQuantity"
+        },
+        "externalCargo": {
+          "$ref": "#/$defs/capacityQuantity"
+        },
+        "carryingCapacity": {
+          "$ref": "#/$defs/capacityQuantity"
+        },
+        "liftingCapacity": {
+          "$ref": "#/$defs/capacityQuantity"
+        },
+        "payload": {
+          "$ref": "#/$defs/capacityQuantity"
+        },
+        "passengers": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published passengers, only if applicable"
+        },
+        "consumables": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Published duration"
+        },
+        "specialCapacityRules": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Separate cargo/lift capacity modifiers and conditions"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "systems": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Physical installed system instances; may be null if source provides no information.",
+      "properties": {
+        "installed": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/componentInstance"
+          },
+          "description": "Source-identified factory/presented installed components"
+        },
+        "factorySystems": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Stable installed component IDs with factory evidence"
+        },
+        "systemPackageRef": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Published chassis/starting package, not manufacturing recipe reconstruction Never inferred from name alone."
+        },
+        "sourceSystemsRaw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Original systems/possessions equipment text"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "equipment": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Droid-owned items reuse equipment store and its own upgrade slot rules.",
+      "properties": {
+        "possessions": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object",
+            "description": "Possession and item upgrade authority separate from physical chassis",
+            "properties": {
+              "entryId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Local identity"
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Published item"
+              },
+              "itemRef": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Existing Item equipment or weapon authority Never inferred from name alone."
+              },
+              "quantity": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Printed quantity"
+              },
+              "isIntegrated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Only source-proven integration"
+              },
+              "componentInstanceId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Same integrated weapon, not a second entity Never inferred from name alone."
+              },
+              "factoryVsPresented": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "enum": [
+                  "factory",
+                  "example-loadout",
+                  "named-individual",
+                  "unknown",
+                  null
+                ],
+                "description": "Source distinction"
+              }
+            },
+            "required": [
+              "entryId",
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Published possessions; [] means source explicitly says none"
+        },
+        "chassisArmorRef": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Source armor identity under Armor authority Never inferred from name alone."
+        },
+        "deviceToDroidSourceRef": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Scum & Villainy Droidification source identity if applicable Never inferred from name alone."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "modifications": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "No universal numeric droid component-slot pool. Null does not mean modifications allowed.",
+      "properties": {
+        "publishedNonFactoryChanges": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Identified installed additions/changes beyond factory baseline"
+        },
+        "availablePhysicalLocations": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Only explicit per-model physical mount locations"
+        },
+        "droidModifications": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Approved component/droid-system modification facts, separate from equipment slots"
+        },
+        "itemUpgradeAuthorityRefs": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "External Item-domain V2 modification registry references"
+        },
+        "constraints": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Printed compatibility/cost/restriction predicates"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "pcConstruction": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Creation rules are not NPC statblock inventory or runtime eligibility authorization.",
+      "properties": {
+        "heroEligibility": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "allowed",
+            "prohibited",
+            "conditional",
+            null
+          ],
+          "description": "Published permission only; lack of prohibition is not allowance"
+        },
+        "heroEligibilityCondition": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Published conditional reprogramming/GM permission"
+        },
+        "creationRoute": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "custom-degree",
+            "stock-model",
+            "stock-chassis",
+            "replica-trait-profile",
+            "shard-shell",
+            "device-droid",
+            "follower",
+            "not-applicable",
+            null
+          ],
+          "description": "Starting route never inferred from NPC class levels"
+        },
+        "pcIdentityKind": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "ordinary-droid",
+            "replica-droid",
+            "shard-in-droid-shell",
+            "device-derived-droid",
+            "other",
+            null
+          ],
+          "description": "Separate occupant person and body platform"
+        },
+        "startingProfileRef": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Source-backed PC creation profile; separate from printed NPC example Never inferred from name alone."
+        },
+        "startingSelections": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Selectable free systems/feats according to printed route"
+        },
+        "baseTraitPackageRef": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Degree/chassis creation modifiers applied once Never inferred from name alone."
+        },
+        "restrictions": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Creation restrictions; absence never means permitted"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "vehicleLink": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Vehicle-format droid links to vehicle SSOT; never duplicates vehicle statblock.",
+      "properties": {
+        "vehicleSourceEntryKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Exact canonical vehicle authority key; no independent vehicle stats here Never inferred from name alone."
+        },
+        "relationKind": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "same-publication-actor",
+            "shared-model-family",
+            "alternate-view",
+            null
+          ],
+          "description": "Explicit droid/vehicle authority mapping"
+        },
+        "vehicleRulesRef": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Existing vehicle combat/movement engine authority Never inferred from name alone."
+        },
+        "droidTraitOverlayRefs": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Droid-only traits applied to vehicle host after source certification"
+        },
+        "stockWeaponCertification": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "unreviewed",
+            "blocked",
+            "certified",
+            null
+          ],
+          "description": "Must not infer trusted weapons from droid identity"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "economics": {
+      "type": "object",
+      "description": "No inferred purchasability, price, cost multiplier or credit conversion.",
+      "properties": {
+        "newCredits": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published new market price"
+        },
+        "usedCredits": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published used price"
+        },
+        "estimatedValueCredits": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published estimated/unsaleable appraisal"
+        },
+        "availability": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Published restriction/legal status"
+        },
+        "forSale": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True only if source says purchasable; null does NOT imply yes"
+        },
+        "manufacturingCost": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Only explicitly published construction cost"
+        },
+        "maintenanceCost": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Only source backed"
+        },
+        "priceNotes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Exact conditional costs; no guessed factor conversion"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "text": {
+      "type": "object",
+      "description": "Player-facing summary separated from verbatim rule authority.",
+      "properties": {
+        "shortSummary": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Derived concise, player-readable summary, never substitute canonical rules"
+        },
+        "publishedFlavor": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Source-excerpt provenance constrained by publishing rights"
+        },
+        "mechanicsNotes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Source prose mechanical notes, source-verified vs derived distinguished"
+        },
+        "sourceWarnings": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Printed tensions, OCR issues, duplicate presentations"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "exceptions": {
+      "type": "object",
+      "description": "Do not correct or erase source inconsistencies.",
+      "properties": {
+        "sourceContradictions": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object",
+            "description": "Contradiction retained",
+            "properties": {
+              "issueId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Conflict ID"
+              },
+              "fieldPointers": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Affected pointers"
+              },
+              "statements": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "$ref": "#/$defs/sourceCitation"
+                },
+                "description": "Printed conflict sources"
+              },
+              "resolutionStatus": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "enum": [
+                  "unresolved",
+                  "approved-effective",
+                  "errata",
+                  null
+                ],
+                "description": "Adjudication, not silent correction"
+              }
+            },
+            "required": [
+              "issueId"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Printed contradictions, including differing skill totals"
+        },
+        "unmappedFacts": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Facts without a certified typed destination; block mechanical certification"
+        },
+        "transcriptionWarnings": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "TXT/PDF interleaving, column artifacts"
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Other source constraints"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "fieldStates": {
+      "type": "object",
+      "description": "JSON pointer -> evidence state. For EVERY persisted null value store a state; null never grants absence/permission. Unreviewed paths should be omitted, not filled with null.",
+      "propertyNames": {
+        "pattern": "^/"
+      },
+      "additionalProperties": {
+        "enum": [
+          "not-stated",
+          "not-applicable",
+          "explicitly-none",
+          "unclear-source",
+          "not-yet-reviewed",
+          "source-verified"
+        ]
+      }
+    },
+    "rules": {
+      "type": "object",
+      "description": "No second V2 rules engine. All effects keyed to source and existing runtime authority.",
+      "properties": {
+        "conditionalMechanics": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Printed local or source-specific rule claims"
+        },
+        "globalRuleReferences": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Stable existing engine rules, not copies of generic formulas"
+        },
+        "controllingSourceDecisionId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "DROID-RULE-001 when applicable; other conflicts require owner/errata"
+        },
+        "mechanicalExecutionStatus": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "source-only",
+            "pending-certification",
+            "partially-certified",
+            "certified",
+            null
+          ],
+          "description": "Independent of source citation"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "certification": {
+      "type": "object",
+      "description": "Identity, mechanical fidelity and Foundry runtime have separate gates.",
+      "properties": {
+        "identityStatus": {
+          "type": "string",
+          "enum": [
+            "unreviewed",
+            "txt-indexed",
+            "pdf-reviewed",
+            "source-verified"
+          ],
+          "description": "Published identity review only"
+        },
+        "mechanicalStatus": {
+          "type": "string",
+          "enum": [
+            "unreviewed",
+            "partial",
+            "blocked",
+            "certified"
+          ],
+          "description": "Independent complete field certification"
+        },
+        "runtimeStatus": {
+          "type": "string",
+          "enum": [
+            "not-tested",
+            "mock-only",
+            "live-verified"
+          ],
+          "description": "Actual V13 runtime testing"
+        },
+        "reviewNotes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Blocking evidence and outstanding checks"
+        },
+        "reviewerEvidenceRefs": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Source citations/approval receipts"
+        }
+      },
+      "required": [
+        "identityStatus",
+        "mechanicalStatus",
+        "runtimeStatus"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "recordType",
+    "identity",
+    "publication",
+    "classification",
+    "challenge",
+    "geometry",
+    "abilities",
+    "progression",
+    "defenses",
+    "durability",
+    "movement",
+    "anatomy",
+    "processor",
+    "programming",
+    "combat",
+    "capacity",
+    "systems",
+    "equipment",
+    "modifications",
+    "pcConstruction",
+    "vehicleLink",
+    "economics",
+    "text",
+    "exceptions",
+    "fieldStates",
+    "rules",
+    "certification"
+  ],
+  "$defs": {
+    "sourceCitation": {
+      "type": "object",
+      "description": "Publication-specific source citation. No inferred page if unverified.",
+      "properties": {
+        "book": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Exact printed book title"
+        },
+        "page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed page number, not PDF index"
+        },
+        "textLine1Based": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "One-based line in searchable source TXT"
+        },
+        "pdfPage1Based": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "One-based PDF page"
+        },
+        "citationLabel": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Citation to printed rule/record"
+        },
+        "verifiedBy": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "txt",
+            "pdf-visual",
+            "errata",
+            "owner-adjudication",
+            null
+          ],
+          "description": "Verification level"
+        },
+        "sourceEntryKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Publication-specific source identity Never inferred from name alone."
+        }
+      },
+      "required": [
+        "book"
+      ],
+      "additionalProperties": false
+    },
+    "sourceRule": {
+      "type": "object",
+      "description": "Source-scoped rules claim with no automatic runtime execution.",
+      "properties": {
+        "ruleId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Stable, scoped rule identifier"
+        },
+        "statement": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Source-mechanical claim; use own text when public distribution is intended"
+        },
+        "scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Exact model, size, host type or action condition"
+        },
+        "source": {
+          "$ref": "#/$defs/sourceCitation"
+        },
+        "effectRef": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Existing engine or registry effect identifier Never inferred from name alone."
+        },
+        "executionStatus": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "source-only",
+            "pending-certification",
+            "certified-runtime",
+            "blocked-conflict",
+            null
+          ],
+          "description": "Certification is independent of source text"
+        },
+        "precedenceDecisionId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Owner-approved controlling decision (not automatically inferred) Never inferred from name alone."
+        },
+        "competingClaims": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceCitation"
+          },
+          "description": "Alternative conflicting published statements"
+        }
+      },
+      "required": [
+        "ruleId"
+      ],
+      "additionalProperties": false
+    },
+    "appliedTrait": {
+      "type": "object",
+      "description": "Source claim for a model/creation trait, not a second rules engine.",
+      "properties": {
+        "traitId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Canonical rules-profile trait ref or source-local ID"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Published trait label"
+        },
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Published value or text, when present"
+        },
+        "source": {
+          "$ref": "#/$defs/sourceCitation"
+        },
+        "rulesRef": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Existing droid/species/progression engine rule Never inferred from name alone."
+        },
+        "scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Exact activation/classification condition"
+        },
+        "enabledInRuntime": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True only after independent mechanic certification"
+        }
+      },
+      "required": [
+        "traitId"
+      ],
+      "additionalProperties": false
+    },
+    "componentInstance": {
+      "type": "object",
+      "description": "Installed physical droid-system item; never manufacture instances from generic text.",
+      "properties": {
+        "instanceId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Stable per-instance ID inside one record, not a manufacturer model key"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Published component name"
+        },
+        "componentCategory": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "appendage",
+            "locomotion",
+            "processor",
+            "sensor",
+            "communications",
+            "tools",
+            "armor",
+            "weapon",
+            "storage",
+            "accessory",
+            "power",
+            "control",
+            "other",
+            null
+          ],
+          "description": "Physical droid component family"
+        },
+        "source": {
+          "$ref": "#/$defs/sourceCitation"
+        },
+        "catalogRef": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Canonical equipment/droid-system authority reference Never inferred from name alone."
+        },
+        "physicalLocationId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Physical location/attachment position; NEVER generic upgrade-slot count Never inferred from name alone."
+        },
+        "mountRef": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Exact equipment/weapon mount identity Never inferred from name alone."
+        },
+        "count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Only explicitly printed number of component instances; count does not grant actions"
+        },
+        "systemRules": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Model-specific installed behavior"
+        },
+        "isFactoryInstalled": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True only if printed as factory-equipped; not assumed by a statblock example"
+        },
+        "isActiveByDefault": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True/false only if source establishes activation default"
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed equipment/system context and unresolved mappings"
+        }
+      },
+      "required": [
+        "instanceId",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "attackExpression": {
+      "type": "object",
+      "description": "One printed attack expression; contains no trusted Foundry attack rights.",
+      "properties": {
+        "attackId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Local published attack-row identifier; not a physical weapon mount"
+        },
+        "raw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed attack expression, including AND/OR"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Published attack label"
+        },
+        "attackBonus": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Total printed bonus, not an additive bonus to BAB"
+        },
+        "damageExpression": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed damage exactly; not a generated weapon definition"
+        },
+        "damageType": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Published damage descriptor"
+        },
+        "actionType": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Published action type, if explicit"
+        },
+        "range": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Published range if provided"
+        },
+        "source": {
+          "$ref": "#/$defs/sourceCitation"
+        },
+        "weaponComponentId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Exact installed weapon instance ID if certified Never inferred from name alone."
+        },
+        "vehicleAttackGroupKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Vehicle firing-group key for published vehicle-format droid Never inferred from name alone."
+        },
+        "condition": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed prerequisites/conditions; no inferred permission to execute"
+        },
+        "operationStatus": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "source-only",
+            "certified-installed",
+            "certified-executable",
+            null
+          ],
+          "description": "No stock attack unlocked by a printed row"
+        }
+      },
+      "required": [
+        "attackId"
+      ],
+      "additionalProperties": false
+    },
+    "locomotionInstance": {
+      "type": "object",
+      "description": "Independent locomotion entry; multiple systems coexist without invented extra movement actions.",
+      "properties": {
+        "instanceId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Per-instance locomotion system identity"
+        },
+        "mode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "walking/wheeled/tracked/hovering/flying/etc exactly or normalized with printed raw"
+        },
+        "speedSquares": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Character-scale speed"
+        },
+        "starshipSpeedSquares": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Starship-scale speed if printed"
+        },
+        "maxKmh": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Published maximum speed km/h"
+        },
+        "raw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed movement line"
+        },
+        "restricted": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "exclusive",
+            "limited",
+            "other",
+            "none",
+            null
+          ],
+          "description": "Restricted locomotion classification only if printed"
+        },
+        "requiresAction": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Source-specific engage/disengage or alternative mode transition"
+        },
+        "usageCondition": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Published locomotion constraints"
+        },
+        "componentInstanceId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Link to installed component instance Never inferred from name alone."
+        },
+        "source": {
+          "$ref": "#/$defs/sourceCitation"
+        },
+        "rules": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/sourceRule"
+          },
+          "description": "Model-specific move/hover/run/altitude rules"
+        }
+      },
+      "required": [
+        "instanceId"
+      ],
+      "additionalProperties": false
+    },
+    "capacityQuantity": {
+      "type": "object",
+      "description": "Capacity is not equipment slot count, component mount count, or carrying strength.",
+      "properties": {
+        "amount": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Printed capacity amount"
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "kg/tonnes/liters/etc as printed"
+        },
+        "context": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Internal vs external storage vs lift vs hold etc"
+        },
+        "source": {
+          "$ref": "#/$defs/sourceCitation"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  }
+}
