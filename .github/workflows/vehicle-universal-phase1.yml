@@ -11,6 +11,17 @@ on:
       - 'tools/build-universal-vehicle-pack-sources.mjs'
       - 'tools/build-universal-vehicle-native-packs.mjs'
       - 'tools/release/**'
+      - 'system.json'
+      - 'scripts/core/vehicle-pack-data-loader.js'
+      - 'scripts/domain/vehicles/universal-vehicle-pack-registry.js'
+      - 'scripts/engine/store/**'
+      - 'scripts/apps/store/store-shared.js'
+      - 'scripts/apps/vehicle-import-wizard.js'
+      - 'scripts/engine/import/vehicle-import-engine.js'
+      - 'scripts/data/vehicle-category-registry.js'
+      - 'scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js'
+      - 'templates/actors/vehicle/v2/partials/vehicle-sheet-content.hbs'
+      - 'templates/apps/vehicle-import-wizard.hbs'
       - 'tools/build-universal-vehicle-phase3-source-preview.mjs'
       - 'tools/lib/universal-vehicle-source-provenance.mjs'
       - 'data/canonical/vehicles/vehicles.json'
@@ -46,6 +57,8 @@ jobs:
         run: npm ci --prefix tools/release
       - name: Build and independently read back all 429 native Actors
         run: node tools/build-universal-vehicle-native-packs.mjs --out build/vehicle-phase4b/native
+      - name: Verify release builder reads canonical vehicle source, not legacy pack
+        run: node tools/release/build-packs.mjs --out build/vehicle-phase4c/release --only vehicles-hybrids
       - name: Archive verified native vehicle compendiums
         uses: actions/upload-artifact@v4
         with:
