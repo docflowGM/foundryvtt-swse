@@ -9,6 +9,8 @@
  * vehicle-specific field shapes (defenses, hull/hp coercion, identity labels).
  */
 
+import { getPublishedDerivedBase } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-published-derived.js";
+
 /**
  * Safe numeric coercion with fallback
  */
@@ -138,10 +140,13 @@ export function buildVehicleDerived(actor, system) {
   // shorthand keys (ref/fort) and the shared actor keys (reflex/fortitude).
   // Character-derived defaults often initialize to 10 first; vehicles must not
   // preserve those defaults over imported or GM-edited statblock values.
-  const refDefense = buildDefenseValue(system.reflexDefense ?? system.defenses?.reflex?.total ?? system.defenses?.reflex ?? 10, 10);
-  const fortDefense = buildDefenseValue(system.fortitudeDefense ?? system.defenses?.fortitude?.total ?? system.defenses?.fortitude ?? 10, 10);
+  // Source-backed vehicles: printed values (digest-verified record) win over the
+  // mutable system mirrors; unknown printed values are flagged, not invented.
+  const published = getPublishedDerivedBase(actor);
+  const refDefense = published?.reflex != null ? buildDefenseValue(published.reflex, 10) : buildDefenseValue(system.reflexDefense ?? system.defenses?.reflex?.total ?? system.defenses?.reflex ?? 10, 10);
+  const fortDefense = published?.fortitude != null ? buildDefenseValue(published.fortitude, 10) : buildDefenseValue(system.fortitudeDefense ?? system.defenses?.fortitude?.total ?? system.defenses?.fortitude ?? 10, 10);
   const willDefense = buildDefenseValue(system.willDefense ?? system.defenses?.will?.total ?? system.defenses?.will ?? 10, 10);
-  const flatFootedDefense = buildDefenseValue(system.flatFooted ?? system.flatFootedDefense ?? system.defenses?.flatFooted?.total ?? system.defenses?.flatFooted ?? refDefense.total, 10);
+  const flatFootedDefense = published?.flatFooted != null ? buildDefenseValue(published.flatFooted, 10) : buildDefenseValue(system.flatFooted ?? system.flatFootedDefense ?? system.defenses?.flatFooted?.total ?? system.defenses?.flatFooted ?? refDefense.total, 10);
 
   system.derived.defenses.ref = refDefense;
   system.derived.defenses.reflex = refDefense;
@@ -154,9 +159,19 @@ export function buildVehicleDerived(actor, system) {
   // DAMAGE: Threshold, reduction, and state
   // ════════════════════════════════════════════════════════════════════════════
 
-  const vehicleDamageThreshold = safeNumber(system.damageThreshold ?? system.threshold, 10);
+  const vehicleDamageThreshold = published?.damageThreshold != null
+    ? published.damageThreshold
+    : safeNumber(system.damageThreshold ?? system.threshold, 10);
   system.derived.damage.threshold = vehicleDamageThreshold;
-  system.derived.damage.reduction = safeNumber(system.damageReduction ?? system.damageReductionValue, 0);
+  system.derived.damage.reduction = published
+    ? (published.damageReduction ?? 0)
+    : safeNumber(system.damageReduction ?? system.damageReductionValue, 0);
+  if (published) {
+    // 0 above means "no DR applied", not "printed DR 0", when the source is silent.
+    system.derived.damage.reductionPublished = published.damageReduction != null;
+    system.derived.damage.thresholdPublished = published.damageThreshold != null;
+    system.derived.defenses.flatFootedPublished = published.flatFooted != null;
+  }
 
   // Phase 2 authority normalization fix: also mirror onto the FLAT
   // system.derived.damageThreshold path (no ".damage." nesting) — the one
@@ -181,6 +196,7 @@ export function buildVehicleDerived(actor, system) {
   // ════════════════════════════════════════════════════════════════════════════
 
   const hp = coerceVehicleHp(system);
+  if (published?.hpMax != null) hp.max = published.hpMax; // printed max; current HP stays actor state
   const hpState = calculateHpState(hp.value, hp.max);
 
   system.derived.hp.value = hp.value;
