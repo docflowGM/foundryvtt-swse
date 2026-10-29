@@ -9,7 +9,7 @@
  * vehicle-specific field shapes (defenses, hull/hp coercion, identity labels).
  */
 
-import { getPublishedDerivedBase } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-published-derived.js";
+import { getPublishedDerivedBase } from "../../domain/vehicles/vehicle-published-derived.js";
 
 /**
  * Safe numeric coercion with fallback
