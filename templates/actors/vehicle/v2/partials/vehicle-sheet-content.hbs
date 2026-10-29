@@ -7,6 +7,13 @@
 
     <div class="swse-vehicle-concept-identity">
       <div class="swse-vehicle-concept-kicker">VEHICLE DATAPAD // {{vehicleTypeFlags.typeLabel}}</div>
+      {{#if vehiclePublication}}
+        <div class="swse-vehicle-source-citation">
+          Published: {{vehiclePublication.book}}, p. {{vehiclePublication.page}}
+          — {{vehiclePublication.shieldStatus}}
+        </div>
+        <div class="swse-vehicle-source-attack-note">{{vehiclePublication.attackStatus}}</div>
+      {{/if}}
       {{#if editable}}
         <input class="swse-vehicle-name-input swse-vehicle-concept-name-input" name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'SWSE.ActorUI.VehicleName'}}"/>
       {{else}}
