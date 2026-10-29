@@ -114,7 +114,9 @@ test('legacy Store checkout resolves the universal source pack before any credit
   assert.match(plans, /entry\.sourceEntryKey === key/);
   assert.match(plans, /VehiclePackDataLoader\.loadVehicleDocument\(matches\[0\]\)/);
   assert.match(plans, /template: canonicalActor/);
-  assert.match(plans, /projection\.published\.price\?\.status !== 'priced'/);
+  // P3: the inline priced-status check became the condition-aware published-price gate.
+  assert.match(plans, /evaluateVehiclePurchase\(/);
+  assert.match(plans, /UNIVERSAL_VEHICLE_STORE_NOT_ELIGIBLE/);
   assert.match(code, /const stagedVehiclePlans = store\.cart\.vehicles\?\.length > 0/);
   const checkout = code.slice(code.indexOf('export async function checkout('));
   assert.ok(checkout.indexOf('await createVehiclePlans(store.cart.vehicles, store.itemsById)') <

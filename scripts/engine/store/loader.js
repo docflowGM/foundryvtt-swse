@@ -22,7 +22,7 @@
 
 import { STORE_PACKS, STORE_RULES } from "/systems/foundryvtt-swse/scripts/engine/store/store-constants.js";
 
-const { CACHE_KEY, CACHE_TTL } = STORE_RULES;
+const { CACHE_KEY, CACHE_TTL, LEGACY_CACHE_KEYS = [] } = STORE_RULES;
 
 /* ------------------------------------------- */
 /* CACHE HELPERS                                */
@@ -30,6 +30,9 @@ const { CACHE_KEY, CACHE_TTL } = STORE_RULES;
 
 function loadCache() {
   try {
+    // Entries cached before the universal vehicle catalog may hold the retired
+    // aggregate vehicle list; drop them rather than ever reading them.
+    for (const legacy of LEGACY_CACHE_KEYS) localStorage.removeItem(legacy);
     const raw = localStorage.getItem(CACHE_KEY);
     if (!raw) {return null;}
 
@@ -38,7 +41,7 @@ function loadCache() {
       localStorage.removeItem(CACHE_KEY);
       return null;
     }
-    if (!parsed.metadata.loadedAt || !parsed.metadata.version || parsed.metadata.version < 6 || (parsed.items.length + parsed.actors.length) === 0) {
+    if (!parsed.metadata.loadedAt || !parsed.metadata.version || parsed.metadata.version < 7 || (parsed.items.length + parsed.actors.length) === 0) {
       localStorage.removeItem(CACHE_KEY);
       return null;
     }
@@ -257,8 +260,10 @@ export async function loadRawStoreData({ useCache = true } = {}) {
 
   // P0-4: Filter world actors to only include droid/vehicle types (not PCs/NPCs)
   // This prevents player characters from appearing as store inventory
+  // Owned/world vehicles are play state, not merchant inventory: the vehicle catalog
+  // comes only from the 11 canonical publication packs.
   const worldActors = (game.actors.contents || [])
-    .filter(a => a && a.type && (a.type === 'droid' || a.type === 'vehicle'));
+    .filter(a => a && a.type && a.type === 'droid');
 
   /* ------------------------------------------- */
   /* LOAD PACK ITEMS                              */
@@ -307,6 +312,19 @@ export async function loadRawStoreData({ useCache = true } = {}) {
   const actorPackResults = await Promise.all(actorPackNames.map(safeGetPackDocuments));
   let packActorDocs = actorPackResults.flatMap(result => result.docs);
 
+  // Verified-complete catalog or no vehicles: a partial 429-entry catalog is never shown.
+  let vehicleCatalog = { complete: false, error: null };
+  try {
+    const { VehiclePackDataLoader } = await import('/systems/foundryvtt-swse/scripts/core/vehicle-pack-data-loader.js');
+    const index = await VehiclePackDataLoader.loadVehicleIndex();
+    vehicleCatalog = { complete: true, error: null, count: index.length };
+  } catch (err) {
+    vehicleCatalog = { complete: false, error: String(err?.message ?? err) };
+    console.error('SWSE Store | Universal vehicle catalog unavailable; vehicles hidden', err);
+    try { ui?.notifications?.error?.('SWSE Store: vehicle catalog is incomplete (' + vehicleCatalog.error + '). Vehicles are hidden.'); } catch (_e) { /* no UI */ }
+    packActorDocs = packActorDocs.filter(doc => doc?.type !== 'vehicle');
+  }
+
   const missingPacks = [...itemPackResults, ...actorPackResults]
     .filter(result => !result.found)
     .map(result => result.packName);
@@ -327,7 +345,8 @@ export async function loadRawStoreData({ useCache = true } = {}) {
   /* ------------------------------------------- */
 
   const metadata = {
-    version: 6,
+    version: 7,
+    vehicleCatalog,
     loadedAt: Date.now(),
     packsUsed: flattenPackNames([
       STORE_PACKS.WEAPON_PACKS,

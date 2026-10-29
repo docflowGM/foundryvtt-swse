@@ -18,7 +18,7 @@ import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-
 import { calculateFinalCost } from "/systems/foundryvtt-swse/scripts/engine/store/pricing.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { VehicleCustomizationRouter } from "/systems/foundryvtt-swse/scripts/applications/vehicle/vehicle-customization-router.js";
-import { VehicleModificationManager } from "/systems/foundryvtt-swse/scripts/apps/vehicle-modification-manager.js";
+import { evaluateVehiclePurchase } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-store-eligibility.js";
 import { launchNewProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { getRandomDialogue } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
 import { SWSEVehicleHandler } from "/systems/foundryvtt-swse/scripts/actors/vehicle/swse-vehicle-handler.js";
@@ -334,9 +334,9 @@ async function revalidateCart(store, actor, originalTotal) {
                 };
             }
 
-            const priceDiff = Math.abs(currentPrice - vehicle.cost);
-            const threshold = vehicle.cost * 0.05;
-            if (priceDiff > threshold) {
+            // Vehicles are charged exactly the price the player reviewed: any drift
+            // (no tolerance) sends the cart back for review.
+            if (currentPrice !== vehicle.cost) {
                 return {
                     valid: false,
                     error: `Price of ${vehicle.condition} "${vehicle.name}" changed. Please review your cart.`
@@ -573,7 +573,8 @@ export async function buyVehicle(store, actorId, condition) {
             id: actorId,
             name: vehicleTemplate.name,
             template: vehicleTemplate,
-            condition
+            condition,
+            cost: finalCost
         }], store.itemsById);
     } catch (err) {
         SWSELogger.error('SWSE Store | Vehicle source preflight failed:', err);
@@ -635,48 +636,11 @@ export async function createCustomDroid(actor, closeCallback) {
  * @param {Function} closeCallback - Callback to close the store
  */
 export async function createCustomStarship(actor, closeCallback) {
-    const credits = LedgerService.getCurrentCredits(actor);
-
-    if (!VehicleModificationManager._initialized) {
-        await VehicleModificationManager.init();
-    }
-
-    const stockShips = VehicleModificationManager.getStockShips();
-    const frameCosts = stockShips.map(ship => normalizeCredits(ship.cost)).filter(cost => cost > 0);
-    const minimumFrameCost = frameCosts.length ? Math.min(...frameCosts) : 30000;
-
-    if (credits < minimumFrameCost) {
-        ui.notifications.warn(storeI18n('SWSE.Store.Notifications.NeedCreditsForStarship', { required: minimumFrameCost.toLocaleString() }));
-        return;
-    }
-
-    // Confirm
-    const confirmed = await SWSEDialogV2.confirm({
-        title: storeI18n('SWSE.Store.Dialogs.BuildCustomStarship'),
-        content: `<p>Enter Marl Skindar's shipyard builder?</p>
-                 <p>Select a stock frame, then customize it with real vehicle modification data.</p>
-                 <p><strong>Budget:</strong> your current wallet (${credits.toLocaleString()} credits), not a fixed chargen pool.</p>
-                 <p><strong>Minimum frame cost:</strong> ${minimumFrameCost.toLocaleString()} credits</p>
-                 <p><em>Restricted, military, and high-value builds may route to GM approval.</em></p>`,
-        defaultYes: true
-    });
-
-    if (!confirmed) {return;}
-
-    try {
-        // Close this store window
-        if (closeCallback) {
-            closeCallback();
-        }
-
-        // Launch store-construction shipyard lane
-        VehicleCustomizationRouter.openVehicleCustomization(actor, {
-            contextMode: 'storeConstruction'
-        });
-    } catch (err) {
-        SWSELogger.error('SWSE Store | Failed to launch starship builder:', err);
-        ui.notifications.error(storeI18n('SWSE.Store.Notifications.FailedOpenStarshipBuilder'));
-    }
+    // The old builder started from data/stock-ships.json frames, which is no longer
+    // a stock authority. Published hulls are bought from the vehicle catalog and
+    // modified through certified installations (see rules decisions V-P2-01..04).
+    ui.notifications.warn('The legacy starship builder is retired. Buy a published hull from the vehicle catalog; modifications become available once certified.');
+    return;
 }
 
 /**
@@ -963,10 +927,17 @@ async function createVehiclePlans(cartVehicles, itemsById) {
     if (!canonicalActor)
       throw new Error('UNIVERSAL_VEHICLE_STORE_DOCUMENT_UNAVAILABLE: ' + matches[0].sourceEntryKey);
     const projection = getVehicleRuntimeProjection(canonicalActor);
-    if (projection.kind !== 'canonical' ||
-        projection.published.price?.status !== 'priced' ||
-        !(projection.published.price.amountCredits > 0))
-      throw new Error('UNIVERSAL_VEHICLE_STORE_NOT_PUBLISHED_PRICED: ' + matches[0].sourceEntryKey);
+    if (projection.kind !== 'canonical')
+      throw new Error('UNIVERSAL_VEHICLE_STORE_NOT_CANONICAL: ' + matches[0].sourceEntryKey);
+    // Re-evaluate source eligibility for THIS condition under the transaction: the
+    // published price state must allow it (used needs a published used price) and
+    // the store's offer must be a positive price. No GM override is wired here.
+    const verdict = evaluateVehiclePurchase(canonicalActor.toObject().flags.swse.universalVehicleSource.source, {
+      condition: vehicle.condition === 'used' ? 'used' : 'new',
+      offerPrice: vehicle.cost ?? null
+    });
+    if (!verdict.ok)
+      throw new Error('UNIVERSAL_VEHICLE_STORE_NOT_ELIGIBLE: ' + matches[0].sourceEntryKey + ': ' + verdict.reasons.join(','));
 
     try {
       const plan = VehicleFactory.buildMutationPlan({

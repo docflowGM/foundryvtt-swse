@@ -1,6 +1,10 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
+ * @deprecated Phase 4E P3: no remaining runtime consumer. It loads data/stock-ships.json
+ * (not a stock authority) and treats unknown EP as 0. Candidate for deletion with its data
+ * once macro compatibility is confirmed.
+ *
  * Vehicle Modification Manager
  * Handles loading, calculating, and managing starship modifications
  */
