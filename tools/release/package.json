@@ -1,7 +1,7 @@
 {
   "name": "foundryvtt-swse-release-tools",
   "private": true,
-  "description": "Release-only tooling: compiles the legacy packs/*.db sources into the V13 LevelDB pack directories declared in system.json. Not shipped.",
+  "description": "Release-only tooling: compiles canonical 429-source vehicle Actor packs and remaining NeDB sources into Foundry V13 LevelDB directories. Not shipped.",
   "devDependencies": {
     "@foundryvtt/foundryvtt-cli": "3.0.5"
   }
