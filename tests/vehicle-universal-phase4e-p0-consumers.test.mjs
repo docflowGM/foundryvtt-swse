@@ -121,3 +121,22 @@ test('legacy Store checkout resolves the universal source pack before any credit
     checkout.indexOf('StoreEngine.purchase('), 'cart source preflight must precede debit');
   assert.match(checkout, /plans\.push\(\.\.\.stagedVehiclePlans\);/);
 });
+
+test('Foundry V13 Factory uses toObject(true) source, never prepared derived data', () => {
+  const Factory = factory();
+  const original = sample(() => true);
+  let consulted = null;
+  const stub = {
+    toObject(isSource) {
+      consulted = isSource;
+      if (isSource) return clone(original);
+      const prepared = clone(original);
+      prepared.system.hp.max = 9999;
+      return prepared;
+    }
+  };
+  const created = Factory.buildVehicleActorData({ template: { doc: stub } });
+  assert.equal(consulted, true, 'Foundry source flag must be true');
+  assert.equal(created.system.hp.max, original.system.hp.max);
+  assert.equal(classifyVehicleActorSource(created).kind, 'canonical');
+});
