@@ -181,8 +181,12 @@ export async function openUniversalVehicleSampleSheet(sourceKey, { context = glo
   const sheet=doc.sheet;
   if(!sheet || typeof sheet.render!=='function')
     throw new Error('VEHICLE_PHASE4D_SHEET_MISSING: '+sourceKey);
+  if(sheet.constructor?.name!=='SWSEV2VehicleSheet')
+    throw new Error('VEHICLE_PHASE4D_WRONG_SHEET: '+(sheet.constructor?.name??'unknown'));
   // Render is explicitly opt-in and intentionally left open for visual QA.
   await sheet.render({force:true});
+  if(sheet.rendered!==true)
+    throw new Error('VEHICLE_PHASE4D_SHEET_NOT_RENDERED: '+sourceKey);
   return {
     sourceKey, pack:entry.packName, actorId:idOf(doc),
     sheetClass:sheet.constructor?.name??'unknown',
