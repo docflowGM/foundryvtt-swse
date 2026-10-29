@@ -359,6 +359,8 @@ function buildVehicleTypeFlags(system = {}) {
 }
 
 function buildVehicleResourceStrip(actor, panels, typeFlags, parsedCargo) {
+  const printed=actor?.flags?.swse?.universalVehicleSource?.source;
+  const unknownPublishedSR=printed?.recordType==='vehicle-source-entry' && typeof printed.defenses?.shieldRating!=='number';
   const hp = panels.hpConditionPanel?.hp ?? {};
   const hpPercent = Math.max(0, Math.min(100, safeNumber(hp.percent, 0)));
   const shieldState = resolveVehicleShieldState(actor?.system ?? {});
@@ -372,7 +374,7 @@ function buildVehicleResourceStrip(actor, panels, typeFlags, parsedCargo) {
   return {
     entries: [
       { key: 'hull', label: 'Hull', value: `${hp.value ?? 0} / ${hp.max ?? 0}`, bar: hpPercent, tone: hpPercent <= 25 ? 'critical' : hpPercent <= 50 ? 'warning' : 'normal' },
-      { key: 'sr', label: 'SR', value: srMax ? `${srValue} / ${srMax}` : shieldState.hasShield ? 'Source Needed' : '0', bar: srMax ? Math.round((srValue / srMax) * 100) : 0, tone: srMax ? (srValue <= 0 ? 'neutral' : 'normal') : shieldState.hasShield ? 'warning' : 'neutral' },
+      { key: 'sr', label: 'SR', value: unknownPublishedSR ? 'Unknown' : (srMax ? `${srValue} / ${srMax}` : shieldState.hasShield ? 'Source Needed' : '0'), bar: unknownPublishedSR ? 0 : srMax ? Math.round((srValue / srMax) * 100) : 0, tone: unknownPublishedSR ? 'warning' : srMax ? (srValue <= 0 ? 'neutral' : 'normal') : shieldState.hasShield ? 'warning' : 'neutral' },
       { key: 'ep', label: 'EP', value: ep ? `${ep.available} / ${ep.budget}` : 'Phase 2', bar: ep ? Math.min(100, Math.max(0, 100 - safeNumber(ep.percentAllocated, 0))) : 0, tone: ep?.overAllocated ? 'critical' : ep ? 'normal' : 'neutral', badge: ep?.enabled === false ? 'RULE OFF' : ep ? null : 'WIRE GAP' },
       { key: 'crew', label: 'Crew', value: `${crew.filledSlots ?? 0} / ${crew.totalSlots ?? 0}`, bar: crew.totalSlots ? Math.round(((crew.filledSlots ?? 0) / crew.totalSlots) * 100) : 0, tone: crew.filledSlots ? 'normal' : 'warning' },
       { key: 'cargo', label: typeFlags.labels.cargo, value: parsedCargo?.display || `${cargo.totalWeight ?? 0} / ${cargo.capacity ?? 0}`, bar: Math.max(0, Math.min(100, safeNumber(cargo.percentUsed, 0))), tone: cargo.state === 'over' ? 'critical' : cargo.state === 'near' ? 'warning' : 'normal' },
@@ -1192,6 +1194,23 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
   const cargoState = options.cargoState || 'normal';
 
   const vehicleTypeFlags = buildVehicleTypeFlags(actor?.system ?? {});
+  const printedVehicle = actor?.flags?.swse?.universalVehicleSource?.source ?? null;
+  // Source publication evidence is separate from mutable/runtime state.
+  const vehiclePublication=printedVehicle?.recordType==='vehicle-source-entry' ? {
+    sourceKey: printedVehicle.identity?.sourceEntryKey ?? '',
+    book: printedVehicle.publication?.book ?? '',
+    page: printedVehicle.publication?.page ?? null,
+    printedType: printedVehicle.publication?.printedTypeLine ?? '',
+    shieldStatus: typeof printedVehicle.defenses?.shieldRating === 'number'
+      ? (printedVehicle.defenses.shieldRating===0?'Explicitly SR 0':'Published SR '+printedVehicle.defenses.shieldRating)
+      : 'SR unknown in published source',
+    attackStatus:'Printed attack groups are reference-only; no installed mounts are certified.',
+    attackGroupCount: printedVehicle.armament?.firingGroups?.length ?? 0
+  } : null;
+  if(vehiclePublication) {
+    const rated=printedVehicle.defenses?.shieldRating;
+    vehicleTypeFlags.supportsShields=typeof rated==='number'&&rated>0;
+  }
   const parsedCargo = parseCargoString(actor?.system?.cargo);
   const parsedSpeed = parseVehicleSpeed(actor?.system ?? {});
 
@@ -1236,6 +1255,7 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
 
   return {
     vehicleTypeFlags,
+    vehiclePublication,
     vehicleResourceStrip,
     vehicleConceptTabs,
     vehicleAnnotation,
