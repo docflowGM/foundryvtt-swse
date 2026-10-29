@@ -183,3 +183,24 @@ test('service refuses non-canonical vehicles', async () => {
   assert.match(r.reasons[0], /VEHICLE_NOT_SOURCE_BACKED/);
   assert.equal(s.calls.length, 0);
 });
+
+test('legacy Customization Bay engine blocks canonical vehicles at every entry point', async () => {
+  const code = readFileSync('scripts/engine/customization/vehicle-customization-engine.js', 'utf8')
+    .replace(/^import[\s\S]*?;\s*$/gm, '').replace(/\bexport\s+/g, '');
+  let txCalls = 0;
+  const ctx = { classifyVehicleActorSource, SWSELogger: { error() {} }, VEHICLE_SYSTEM_DEFINITIONS: {},
+    VehicleSlotGovernanceEngine: {}, TransactionEngine: { executeAssetCustomizationTransaction: async () => { txCalls++; return { success: true }; } } };
+  runInNewContext(code + '\nglobalThis.E = VehicleCustomizationEngine;', ctx);
+  const v = vehicleDoc(XW);
+  for (const r of [ctx.E.getNormalizedVehicleProfile(v), ctx.E.getVehicleCustomizationState(v),
+    ctx.E.previewVehicleCustomization(v, { add: ['x'] }), await ctx.E.applyVehicleCustomization(v, { add: ['x'] })]) {
+    assert.equal(r.success, false);
+    assert.equal(r.error, 'VEHICLE_CUSTOMIZATION_CANONICAL_REQUIRES_INSTALLATION_SERVICE');
+  }
+  const corrupted = vehicleDoc(XW); corrupted.system.hp.max = 1;
+  assert.equal(ctx.E.getVehicleCustomizationState(corrupted).canonicalBlocked, true);
+  assert.equal(txCalls, 0);
+  // a scratch/custom vehicle is not blocked by the canonical guard
+  const custom = { type: 'vehicle', system: { type: 'transport' }, flags: {}, id: 'c' };
+  assert.notEqual(ctx.E.getNormalizedVehicleProfile(custom).error, 'VEHICLE_CUSTOMIZATION_CANONICAL_REQUIRES_INSTALLATION_SERVICE');
+});

@@ -27,7 +27,24 @@
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/core/logger.js';
 import { VEHICLE_SYSTEM_DEFINITIONS } from '/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-system-definitions.js';
 import { VehicleSlotGovernanceEngine } from '/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-slot-governance.js';
+import { classifyVehicleActorSource } from '/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js';
 import { TransactionEngine } from '/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js';
+
+const CANONICAL_BLOCK = 'VEHICLE_CUSTOMIZATION_CANONICAL_REQUIRES_INSTALLATION_SERVICE';
+
+/**
+ * Source-backed vehicles are modified only through VehicleInstallationService (sealed
+ * ledger). The legacy installedSystems path below prices and applies uncertified
+ * VEHICLE_SYSTEM_DEFINITIONS and must never touch a canonical hull.
+ */
+function canonicalBlock(actor) {
+  const kind = classifyVehicleActorSource(actor).kind;
+  if (kind !== 'canonical' && kind !== 'invalid-canonical') return null;
+  return {
+    success: false, error: CANONICAL_BLOCK, canonicalBlocked: true,
+    blockingReason: 'Published vehicles are modified through certified installations only; none are currently available (see rules decisions V-P2-01..04).'
+  };
+}
 
 export class VehicleCustomizationEngine {
   /**
@@ -38,6 +55,7 @@ export class VehicleCustomizationEngine {
     if (!actor || actor.type !== 'vehicle') {
       return { success: false, error: 'Not a vehicle actor' };
     }
+    { const blocked = canonicalBlock(actor); if (blocked) return blocked; }
 
     const vehicleType = actor.system?.type || 'transport';
     const installedSystems = actor.system?.installedSystems ?? {};
@@ -64,6 +82,7 @@ export class VehicleCustomizationEngine {
     if (!actor || actor.type !== 'vehicle') {
       return { success: false, error: 'Not a vehicle actor' };
     }
+    { const blocked = canonicalBlock(actor); if (blocked) return blocked; }
 
     const profile = this.getNormalizedVehicleProfile(actor);
     if (!profile.success) {
@@ -116,6 +135,7 @@ export class VehicleCustomizationEngine {
     if (!actor || actor.type !== 'vehicle') {
       return { success: false, error: 'Not a vehicle actor', blockingReason: 'Invalid actor type' };
     }
+    { const blocked = canonicalBlock(actor); if (blocked) return blocked; }
 
     const profile = this.getNormalizedVehicleProfile(actor);
     if (!profile.success) {
@@ -238,6 +258,7 @@ export class VehicleCustomizationEngine {
     if (!actor || actor.type !== 'vehicle') {
       return { success: false, error: 'Not a vehicle actor' };
     }
+    { const blocked = canonicalBlock(actor); if (blocked) return blocked; }
     const walletActor = options.walletActor || actor;
 
     const preview = this.previewVehicleCustomization(actor, changeSet, { walletActor });
