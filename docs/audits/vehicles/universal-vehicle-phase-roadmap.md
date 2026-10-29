@@ -2,6 +2,16 @@
 
 Branch: `audit/universal-vehicles-phase1`. Parent: `feat/vehicle-canonical-census-cutover` (head `25472be`). Do not merge directly into main until Phase 4 acceptance.
 
+## Verified current gate (2026-10-29)
+
+**Phase 0, 1 and 2: complete for defined scopes. Phase 3: source-accepted for Phase 4A source-only assembly.** The 14-book census contains **429 distinct publication claims**, the final-seven-book focused new-record PDF QA is **48/48**, and all **10 named high-risk source cases** have targeted PDF review. The single frozen Core Vulture title/page problem is corrected in a separate, SHA-anchored **effective provenance amendment**. Frozen audit/source files remain immutable.
+
+**Controlling source acceptance:** `docs/audits/vehicles/universal-vehicle-phase3-final-source-acceptance.md` and `data/audits/vehicles/swse-universal-phase3-targeted-exceptions.json`. The mandatory effective-source resolver is `tools/lib/universal-vehicle-source-provenance.mjs`; the non-production 429-record input preview is `tools/build-universal-vehicle-phase3-source-preview.mjs --check` or `--emit-ndjson`. **Do not use raw frozen Core Vulture p180/title when building the new SSOT.**
+
+**Phase 4 source preparation can be discussed next.** Production `data/canonical/vehicles/vehicles.json`, category pack generation/registration, V2 compendium rewiring, world Actor import and cutover are **not complete and not deployed**. CP23-C4C source-to-import normalization losses (numeric Initiative and source-unknown default synthesis) remain a hard importer blocker. Strict installed weapon mounts, firing arcs, operator stations and executable stock attacks are separate certifications; source review never grants them. See `docs/audits/vehicles/universal-vehicle-phase4-cutover-readiness-handoff.md`.
+
+The chronology below is the **original historical execution roadmap**. Past-tense checkpoint status in this header supersedes older "NEXT" or provisional counters in the original planning notes; do not restart Phase 0–3.
+
 ## Mission and scope
 
 Build one unified publication-specific census and one production vehicle SSOT for every independent vehicle statblock in all **14** supplied SWSE sourcebooks. This includes starfighters, transports, capital ships, walker vehicles, speeders and speeder bikes, airspeeders and atmospheric gunships, tracked/wheeled vehicles, repulsorlift tanks, watercraft, installations when encoded as vehicle Actors, and hybrid space/ground vehicles.
