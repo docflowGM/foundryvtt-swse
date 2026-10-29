@@ -89,6 +89,17 @@ test('tampered universal sources and partial merge are rejected, no weapon trust
   }
 });
 
+test('canonical import refuses nonvehicle and pre-armed targets to prevent surviving weapons',()=>{
+  const source=sample(d=>d.system.vehiclePublishedShieldStatus==='published');
+  const {VehicleImportEngine}=engine();
+  const wrong={id:'world-npc',type:'npc',system:{}};
+  assert.throws(()=>VehicleImportEngine.buildImportPlan(wrong,source),
+    /UNIVERSAL_VEHICLE_TARGET_TYPE_REQUIRED/);
+  const equipped={id:'world-armed',type:'vehicle',items:{size:1},system:{}};
+  assert.throws(()=>VehicleImportEngine.buildImportPlan(equipped,source),
+    /UNIVERSAL_VEHICLE_REQUIRES_EMPTY_TARGET_ITEMS/);
+});
+
 test('legacy CP23-C4C reserved source documents are still denied before universal import',()=>{
   const item=sample(d=>d.system.shieldRating>0);
   item.pack='foundryvtt-swse.sotg-canonical-stock-source';
