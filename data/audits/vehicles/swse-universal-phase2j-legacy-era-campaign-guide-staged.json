@@ -18,7 +18,7 @@
     "newIssues": [],
     "errors": [],
     "errorCount": 0,
-    "patchStatus": "Source exception corrections and census reconciled"
+    "patchStatus": "Phase 3J: all ten new Legacy Era vehicle statblocks direct primary-PDF field QA completed; source column bleed repaired; strict mechanical/Foundry trust pending"
   },
   "records": [
     {
@@ -8253,18 +8253,8 @@
         "grappleBonusPrinted": 13
       },
       "armament": {
-        "firingGroups": [
-          {
-            "groupKey": "le-model-67-shrieker-speeder-bike-published-attack-1",
-            "label": "Blaster cannon",
-            "groupKind": "unknown",
-            "batteryMembershipStatus": "not-stated",
-            "mountKeys": [],
-            "attackBonusPrinted": 7,
-            "specialNotes": "Printed operator pilot; damage 3d10; source search-text-derived candidate p80. Physical mounts, firing arcs and executable bindings are NOT certified."
-          }
-        ],
-        "notes": "Extracted printed attack headings only; groups not certified mounts."
+        "firingGroups": [],
+        "notes": "Original PDF p81/printed p80 has NO ranged attack line or weapon statblock; previous blaster cannon came from QuickFire adjacent page."
       },
       "crew": {
         "raw": "1 (skilled)",
@@ -8297,7 +8287,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 267622, candidate score 31. Original PDF source SHA 344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Phase 3 direct primary-PDF field QA: Legacy Era Campaign Guide printed p80, physical PDF p81, SHA256 344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d. No printed ranged attack; removed false neighboring QuickFire blaster. Original published source facts only; weapon firing groups do NOT establish mounts, arcs, operator execution, or trusted Foundry attacks."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -8308,7 +8298,7 @@
         "/capacity/consumables": "explicitly-none",
         "/capacity/carriedCraft": "explicitly-none",
         "/hyperspace/capability": "not-stated",
-        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/weaponMounts": "not-stated",
         "/armament/firingArcs": "not-stated",
         "/rules/strictMechanicalCertification": "not-yet-reviewed"
       },
@@ -8459,7 +8449,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 269262, candidate score 31. Original PDF source SHA 344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Phase 3 direct primary-PDF field QA: Legacy Era Campaign Guide printed p81, physical PDF p82, SHA256 344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d. One printed blaster cannon attack, pilot +7 / 3d10. Original published source facts only; weapon firing groups do NOT establish mounts, arcs, operator execution, or trusted Foundry attacks."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -8614,7 +8604,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 271402, candidate score 31. Original PDF source SHA 344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Phase 3 direct primary-PDF field QA: Legacy Era Campaign Guide printed p81, physical PDF p82, SHA256 344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d. No printed ranged attack, Speed fly 16 squares, 1,000 km/h. Original published source facts only; weapon firing groups do NOT establish mounts, arcs, operator execution, or trusted Foundry attacks."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -8764,7 +8754,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 273665, candidate score 31. Original PDF source SHA 344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Phase 3 direct primary-PDF field QA: Legacy Era Campaign Guide printed p82, physical PDF p83, SHA256 344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d. No printed ranged attack; Speed fly 12 squares, 950 km/h. Original published source facts only; weapon firing groups do NOT establish mounts, arcs, operator execution, or trusted Foundry attacks."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -8818,7 +8808,14 @@
         "coverCrew": "total"
       },
       "movement": {
-        "speedModes": [],
+        "speedModes": [
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 1,
+            "raw": "fly 1* squares (starship scale)"
+          }
+        ],
         "raw": "fly 1* squares (starship scale)"
       },
       "hyperspace": {
@@ -8861,6 +8858,11 @@
             "name": "Pilot",
             "printedModifier": -8,
             "raw": "Pilot -8"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
           }
         ],
         "initiativePrinted": -8,
@@ -8873,7 +8875,7 @@
       "combat": {
         "baseAttackBonusPrinted": 2,
         "grappleBonusPrinted": 82,
-        "rangedAttackLine": "10 turbolaser batteries +14** (see below) and",
+        "rangedAttackLine": "10 turbolaser batteries +14** and 4 point-defense laser cannon batteries +12 and 4 proton torpedo batteries +12** and 4 tractor beam batteries +12**",
         "attackOptions": [
           "autofire (point-defense laser cannon batteries)"
         ]
@@ -8887,7 +8889,7 @@
             "batteryMembershipStatus": "printed",
             "mountKeys": [],
             "attackBonusPrinted": 14,
-            "specialNotes": "Printed operator 5 gunners; damage 8d10x5; source search-text-derived candidate p152. Physical mounts, firing arcs and executable bindings are NOT certified."
+            "specialNotes": "Printed operator 5 gunners; damage 8d10x5; Phase 3 PDF-verified source group; formerly TXT-derived candidate p152. Physical mounts, firing arcs and executable bindings are NOT certified."
           },
           {
             "groupKey": "le-golan-viii-space-defense-platform-published-attack-2",
@@ -8896,7 +8898,7 @@
             "batteryMembershipStatus": "printed",
             "mountKeys": [],
             "attackBonusPrinted": 12,
-            "specialNotes": "Printed operator 4 gunners; damage 2d10x2; source search-text-derived candidate p152. Physical mounts, firing arcs and executable bindings are NOT certified."
+            "specialNotes": "Printed operator 4 gunners; damage 2d10x2; Phase 3 PDF-verified source group; formerly TXT-derived candidate p152. Physical mounts, firing arcs and executable bindings are NOT certified."
           },
           {
             "groupKey": "le-golan-viii-space-defense-platform-published-attack-3",
@@ -8905,7 +8907,16 @@
             "batteryMembershipStatus": "printed",
             "mountKeys": [],
             "attackBonusPrinted": 12,
-            "specialNotes": "Printed operator 4 gunners; damage 10d10x5,; source search-text-derived candidate p152. Physical mounts, firing arcs and executable bindings are NOT certified."
+            "specialNotes": "Printed operator 4 gunners; damage 10d10x5,; Phase 3 PDF-verified source group; formerly TXT-derived candidate p152. Physical mounts, firing arcs and executable bindings are NOT certified."
+          },
+          {
+            "groupKey": "le-golan-viii-space-defense-platform-published-attack-4",
+            "label": "Tractor beam battery",
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "mountKeys": [],
+            "attackBonusPrinted": 12,
+            "specialNotes": "4 tractor beam batteries; 5 gunners; no damage, grapple +82; -8 vs smaller than Colossal. Original PDF source attack; untrusted for hardware mounts, arcs, or executable stock attacks."
           }
         ],
         "carriedPayloads": [
@@ -8941,7 +8952,23 @@
           "unit": "months",
           "raw": "6 months"
         },
-        "storageNotes": "Carried Craft 20 shuttles,"
+        "carriedCraft": [
+          {
+            "name": "shuttles",
+            "count": 20,
+            "raw": "20 shuttles"
+          },
+          {
+            "name": "starfighters",
+            "count": 24,
+            "raw": "24 starfighters"
+          },
+          {
+            "name": "work pods",
+            "count": 150,
+            "raw": "150 work pods"
+          }
+        ]
       },
       "systems": {},
       "modifications": {},
@@ -8959,7 +8986,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 543952, candidate score 31. Original PDF source SHA 344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Phase 3 direct primary-PDF field QA: Legacy Era Campaign Guide printed p152, physical PDF p153, SHA256 344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d. Four printed battery attack groups (including tractor beam), Use Computer +6, craft counts confirmed. Moving uses special printed restriction: shields drop and attacks prohibited that turn. Keep restriction advisory pending typed consumer. Original published source facts only; weapon firing groups do NOT establish mounts, arcs, operator execution, or trusted Foundry attacks."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -9009,7 +9036,14 @@
         "coverCrew": "total"
       },
       "movement": {
-        "speedModes": [],
+        "speedModes": [
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 1,
+            "raw": "fly 1* squares (starship scale)"
+          }
+        ],
         "raw": "fly 1* squares (starship scale)"
       },
       "hyperspace": {
@@ -9069,7 +9103,7 @@
       "combat": {
         "baseAttackBonusPrinted": 0,
         "grappleBonusPrinted": 78,
-        "rangedAttackLine": "2 turbolaser batteries +9** (see below) and 2 point-defense laser cannon batteries +9 (see below) 4 tractor beam batteries +9** (see below)",
+        "rangedAttackLine": "2 turbolaser batteries +9** and 2 point-defense laser cannon batteries +9 and 4 tractor beam batteries +9**",
         "attackOptions": [
           "autofire (point-defense laser cannon batteries)"
         ]
@@ -9083,7 +9117,7 @@
             "batteryMembershipStatus": "printed",
             "mountKeys": [],
             "attackBonusPrinted": 9,
-            "specialNotes": "Printed operator 4 gunners; damage 8d10x5; source search-text-derived candidate p153. Physical mounts, firing arcs and executable bindings are NOT certified."
+            "specialNotes": "Printed operator 4 gunners; damage 8d10x5; Phase 3 PDF-verified source group; formerly TXT-derived candidate p153. Physical mounts, firing arcs and executable bindings are NOT certified."
           },
           {
             "groupKey": "le-rendili-star-drive-mobile-spacedock-220-published-attack-2",
@@ -9092,7 +9126,16 @@
             "batteryMembershipStatus": "printed",
             "mountKeys": [],
             "attackBonusPrinted": 9,
-            "specialNotes": "Printed operator 4 gunners; damage 2d10x2; source search-text-derived candidate p153. Physical mounts, firing arcs and executable bindings are NOT certified."
+            "specialNotes": "Printed operator 4 gunners; damage 2d10x2; Phase 3 PDF-verified source group; formerly TXT-derived candidate p153. Physical mounts, firing arcs and executable bindings are NOT certified."
+          },
+          {
+            "groupKey": "le-rendili-star-drive-mobile-spacedock-220-published-attack-3",
+            "label": "Tractor beam battery",
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "mountKeys": [],
+            "attackBonusPrinted": 9,
+            "specialNotes": "4 tractor beam batteries; 4 gunners; no damage, grapple +78; -11 vs smaller than Colossal. Original PDF source attack; untrusted for hardware mounts, arcs, or executable stock attacks."
           }
         ],
         "notes": "Extracted printed attack headings only; groups not certified mounts."
@@ -9121,7 +9164,18 @@
           "unit": "year",
           "raw": "1 year"
         },
-        "storageNotes": "Carried Craft 20 shuttles,"
+        "carriedCraft": [
+          {
+            "name": "shuttles",
+            "count": 20,
+            "raw": "20 shuttles"
+          },
+          {
+            "name": "work pods",
+            "count": 150,
+            "raw": "150 work pods"
+          }
+        ]
       },
       "systems": {},
       "modifications": {},
@@ -9139,7 +9193,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 546787, candidate score 31. Original PDF source SHA 344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Phase 3 direct primary-PDF field QA: Legacy Era Campaign Guide printed p153, physical PDF p154, SHA256 344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d. Three attack groups, including printed tractor beam battery, carried craft 20 shuttles + 150 work pods, printable one-square starship speed. Docked ship prohibits dock movement; source note only. Original published source facts only; weapon firing groups do NOT establish mounts, arcs, operator execution, or trusted Foundry attacks."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -9304,7 +9358,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 657507, candidate score 31. Original PDF source SHA 344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Phase 3 direct primary-PDF field QA: Legacy Era Campaign Guide printed p184, physical PDF p185, SHA256 344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d. Laser cannon pilot +9, with autofire +4, verified distinct from AT-RCT right-column attacks. Original published source facts only; weapon firing groups do NOT establish mounts, arcs, operator execution, or trusted Foundry attacks."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -9419,7 +9473,7 @@
         "grappleBonusPrinted": 25,
         "rangedAttackLine": "double medium blaster cannons +9 (see below) and suppression cannons +7 (see below)",
         "attackOptions": [
-          "autofire (double medium blaster cannons, suppression"
+          "autofire (double medium blaster cannons, suppression cannons)"
         ]
       },
       "armament": {
@@ -9431,7 +9485,7 @@
             "batteryMembershipStatus": "not-stated",
             "mountKeys": [],
             "attackBonusPrinted": 9,
-            "specialNotes": "Printed operator pilot; damage 5d10x2; source search-text-derived candidate p184. Physical mounts, firing arcs and executable bindings are NOT certified."
+            "specialNotes": "Printed operator pilot; damage 5d10x2; Phase 3 PDF-verified source group; formerly TXT-derived candidate p184. Physical mounts, firing arcs and executable bindings are NOT certified."
           },
           {
             "groupKey": "le-all-terrain-riot-control-transport-at-rct-published-attack-2",
@@ -9440,28 +9494,10 @@
             "batteryMembershipStatus": "not-stated",
             "mountKeys": [],
             "attackBonusPrinted": 7,
-            "specialNotes": "Printed operator copilot; damage 4d10x2 stun, ignores the normal 6-square; source search-text-derived candidate p184. Physical mounts, firing arcs and executable bindings are NOT certified."
-          },
-          {
-            "groupKey": "le-all-terrain-riot-control-transport-at-rct-published-attack-3",
-            "label": "Heavy laser cannons",
-            "groupKind": "unknown",
-            "batteryMembershipStatus": "not-stated",
-            "mountKeys": [],
-            "attackBonusPrinted": 8,
-            "specialNotes": "Printed operator gunner; damage 8d10x2, 2-square splash; source search-text-derived candidate p184. Physical mounts, firing arcs and executable bindings are NOT certified."
-          },
-          {
-            "groupKey": "le-all-terrain-riot-control-transport-at-rct-published-attack-4",
-            "label": "Heavy blaster cannons",
-            "groupKind": "unknown",
-            "batteryMembershipStatus": "not-stated",
-            "mountKeys": [],
-            "attackBonusPrinted": 8,
-            "specialNotes": "Printed operator gunner; damage 5d10x2; source search-text-derived candidate p184. Physical mounts, firing arcs and executable bindings are NOT certified."
+            "specialNotes": "Printed operator copilot; damage 4d10x2 stun, ignores the normal 6-square; Phase 3 PDF-verified source group; formerly TXT-derived candidate p184. Physical mounts, firing arcs and executable bindings are NOT certified."
           }
         ],
-        "notes": "Extracted printed attack headings only; groups not certified mounts."
+        "notes": "Two original AT-RCT weapon attacks (double medium blaster cannons, suppression cannons); heavy laser and heavy blaster belong to next-page AT-AHT."
       },
       "crew": {
         "raw": "2",
@@ -9487,7 +9523,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 659542, candidate score 31. Original PDF source SHA 344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Phase 3 direct primary-PDF field QA: Legacy Era Campaign Guide printed p184, physical PDF p185, SHA256 344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d. Removed two attack groups contaminated from printed p185 AT-AHT; retained pilot and copilot attacks. Printed Speed says 'fly' despite walker type; retain exact raw printed text and walker classification. Original published source facts only; weapon firing groups do NOT establish mounts, arcs, operator execution, or trusted Foundry attacks."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -9650,7 +9686,7 @@
           "unit": "week",
           "raw": "1 week"
         },
-        "storageNotes": "Carried Craft 8 speeder bikes or 3"
+        "storageNotes": "Carried Craft 8 speeder bikes OR 3 AT-RCTs"
       },
       "systems": {},
       "modifications": {},
@@ -9662,7 +9698,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 661119, candidate score 31. Original PDF source SHA 344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Phase 3 direct primary-PDF field QA: Legacy Era Campaign Guide printed p185, physical PDF p186, SHA256 344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d. Two gunner attacks, 6x12 squares, 60 troops, alternate carried craft 8 speeder bikes or 3 AT-RCTs. Original published source facts only; weapon firing groups do NOT establish mounts, arcs, operator execution, or trusted Foundry attacks."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -9788,7 +9824,7 @@
             "batteryMembershipStatus": "printed",
             "mountKeys": [],
             "attackBonusPrinted": 17,
-            "specialNotes": "Printed operator 6 gunners; damage 8d10x5; source search-text-derived candidate p205. Physical mounts, firing arcs and executable bindings are NOT certified."
+            "specialNotes": "Printed operator 6 gunners; damage 8d10x5; Phase 3 PDF-verified source group; formerly TXT-derived candidate p205. Physical mounts, firing arcs and executable bindings are NOT certified."
           },
           {
             "groupKey": "le-the-wheel-published-attack-2",
@@ -9797,16 +9833,25 @@
             "batteryMembershipStatus": "printed",
             "mountKeys": [],
             "attackBonusPrinted": 15,
-            "specialNotes": "Printed operator 5 gunners; damage 3d10x2; source search-text-derived candidate p205. Physical mounts, firing arcs and executable bindings are NOT certified."
+            "specialNotes": "Printed operator 5 gunners; damage 3d10x2; Phase 3 PDF-verified source group; formerly TXT-derived candidate p205. Physical mounts, firing arcs and executable bindings are NOT certified."
           },
           {
             "groupKey": "le-the-wheel-published-attack-3",
-            "label": "lon cannon battery",
+            "label": "Ion cannon battery",
             "groupKind": "weapon-battery",
             "batteryMembershipStatus": "printed",
             "mountKeys": [],
             "attackBonusPrinted": 17,
-            "specialNotes": "Printed operator 6 gunners; damage 5d10x5 ion; source search-text-derived candidate p205. Physical mounts, firing arcs and executable bindings are NOT certified."
+            "specialNotes": "Printed operator 6 gunners; damage 5d10x5 ion; Phase 3 PDF-verified source group; formerly TXT-derived candidate p205. Physical mounts, firing arcs and executable bindings are NOT certified."
+          },
+          {
+            "groupKey": "le-the-wheel-published-attack-4",
+            "label": "Tractor beam battery",
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "mountKeys": [],
+            "attackBonusPrinted": 13,
+            "specialNotes": "10 tractor beam batteries; 4 gunners; no damage, grapple +85; -7 vs smaller than Colossal. Original PDF source attack; untrusted for hardware mounts, arcs, or executable stock attacks."
           }
         ],
         "notes": "Extracted printed attack headings only; groups not certified mounts."
@@ -9828,7 +9873,7 @@
           "unit": "years",
           "raw": "5 years"
         },
-        "storageNotes": "Carried Craft 48 starfighters,"
+        "storageNotes": "Carried Craft 48 starfighters, various support and visiting craft"
       },
       "systems": {},
       "modifications": {},
@@ -9840,7 +9885,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 730622, candidate score 23. Original PDF source SHA 344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Phase 3 direct primary-PDF field QA: Legacy Era Campaign Guide printed p205, physical PDF p206, SHA256 344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d. Four attack groups; corrected OCR 'lon' to printed Ion cannon; tractor beam fourth group. No propulsion beyond printed starship-scale zero. Original published source facts only; weapon firing groups do NOT establish mounts, arcs, operator execution, or trusted Foundry attacks."
       },
       "exceptions": {
         "manualReviewRequired": true

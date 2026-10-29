@@ -5,8 +5,8 @@
   "scope": "Only 48 new final-seven-book identities; previously reviewed spacecraft and first-seven-book vehicles excluded",
   "pdfFieldQA": {
     "total": 48,
-    "verified": 2,
-    "pending": 46
+    "verified": 12,
+    "pending": 36
   },
   "statusSemantics": {
     "pdf-field-verified": "Every populated field compared with original rendered source page; not strict mechanical certification",
@@ -45,7 +45,10 @@
       "printedPage": 80,
       "pdfPhysicalPage": 81,
       "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Legacy Era Campaign Guide PDF physical page 81 (printed p80), verified checksum",
+      "method": "direct visual, statblock-by-statblock field comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Legacy Era Campaign Guide",
@@ -54,7 +57,10 @@
       "printedPage": 81,
       "pdfPhysicalPage": 82,
       "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Legacy Era Campaign Guide PDF physical page 82 (printed p81), verified checksum",
+      "method": "direct visual, statblock-by-statblock field comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Legacy Era Campaign Guide",
@@ -63,7 +69,10 @@
       "printedPage": 81,
       "pdfPhysicalPage": 82,
       "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Legacy Era Campaign Guide PDF physical page 82 (printed p81), verified checksum",
+      "method": "direct visual, statblock-by-statblock field comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Legacy Era Campaign Guide",
@@ -72,7 +81,10 @@
       "printedPage": 82,
       "pdfPhysicalPage": 83,
       "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Legacy Era Campaign Guide PDF physical page 83 (printed p82), verified checksum",
+      "method": "direct visual, statblock-by-statblock field comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Legacy Era Campaign Guide",
@@ -81,7 +93,10 @@
       "printedPage": 152,
       "pdfPhysicalPage": 153,
       "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Legacy Era Campaign Guide PDF physical page 153 (printed p152), verified checksum",
+      "method": "direct visual, statblock-by-statblock field comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Legacy Era Campaign Guide",
@@ -90,7 +105,10 @@
       "printedPage": 153,
       "pdfPhysicalPage": 154,
       "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Legacy Era Campaign Guide PDF physical page 154 (printed p153), verified checksum",
+      "method": "direct visual, statblock-by-statblock field comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Legacy Era Campaign Guide",
@@ -99,7 +117,10 @@
       "printedPage": 184,
       "pdfPhysicalPage": 185,
       "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Legacy Era Campaign Guide PDF physical page 185 (printed p184), verified checksum",
+      "method": "direct visual, statblock-by-statblock field comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Legacy Era Campaign Guide",
@@ -108,7 +129,10 @@
       "printedPage": 184,
       "pdfPhysicalPage": 185,
       "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Legacy Era Campaign Guide PDF physical page 185 (printed p184), verified checksum",
+      "method": "direct visual, statblock-by-statblock field comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Legacy Era Campaign Guide",
@@ -117,7 +141,10 @@
       "printedPage": 185,
       "pdfPhysicalPage": 186,
       "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Legacy Era Campaign Guide PDF physical page 186 (printed p185), verified checksum",
+      "method": "direct visual, statblock-by-statblock field comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Legacy Era Campaign Guide",
@@ -126,7 +153,10 @@
       "printedPage": 205,
       "pdfPhysicalPage": 206,
       "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Legacy Era Campaign Guide PDF physical page 206 (printed p205), verified checksum",
+      "method": "direct visual, statblock-by-statblock field comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Rebellion Era Campaign Guide",
