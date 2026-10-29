@@ -66,6 +66,72 @@ export function projectVehicleActor(record,pack) {
     vehicleMovementModes:copy(record.movement?.speedModes??[]),
     vehicleSourceFieldStates:copy(record.fieldStates??{})
   };
+  // Bind only explicitly printed values to existing V2 sheet/store field names.
+  // The full publication claim remains in read-only flags for all ambiguities.
+  put(system,'sourcebook',record.publication?.book);
+  put(system,'page',record.publication?.page);
+  put(system,'type',record.publication?.printedTypeLine);
+  const abilities={};
+  for(const key of ['str','dex','int','con','wis','cha']) {
+    const score=record.abilities?.[key];
+    if(finite(score))abilities[key]={base:score,racial:0,temp:0};
+  }
+  if(Object.keys(abilities).length)system.attributes=abilities;
+  const modes=record.movement?.speedModes??[];
+  const character=modes.find(m=>m.scale==='character'&&finite(m.squaresPerMove));
+  const starship=modes.find(m=>m.scale==='starship'&&finite(m.squaresPerMove));
+  const movementLabel=m=>m.mode==='walking'?'Walk':m.mode==='starship-flight'?'Fly':
+    m.mode?m.mode[0].toUpperCase()+m.mode.slice(1).replace(/-/g,' '):'Move';
+  if(character){
+    system.characterScaleSpeed=character.squaresPerMove;
+    system.characterScaleMovementMode=character.mode;
+    system.characterScaleSpeedLabel=movementLabel(character)+' '+character.squaresPerMove+' squares';
+    system.speed=system.characterScaleSpeedLabel;
+    system.vehicleHasCharacterScaleSpeed=true;
+  }
+  if(starship){
+    system.starshipScaleSpeed=starship.squaresPerMove;
+    system.starshipScaleMovementMode=starship.mode;
+    system.starshipScaleSpeedLabel=movementLabel(starship)+' '+starship.squaresPerMove+' squares';
+    system.starshipSpeed=system.starshipScaleSpeedLabel;
+    system.vehicleHasStarshipScaleSpeed=true;
+  }
+  if(finite(record.movement?.maxVelocityKmh))
+    system.maxVelocity=record.movement.maxVelocityKmh+' km/h';
+  if(modes.length){
+    system.vehicleMovementSummary=modes.map(m=>m.scale+': '+
+      (finite(m.squaresPerMove)?m.squaresPerMove+' squares':'source-specific')).join(' | ');
+  }
+  const crewRaw=sourced(record.crew?.raw);
+  if(crewRaw)system.crew=crewRaw;
+  else if(finite(record.crew?.crewCount))system.crew=String(record.crew.crewCount);
+  put(system,'crewQuality',sourced(record.crew?.crewQuality));
+  if(finite(record.capacity?.passengerCount))system.passengers=record.capacity.passengerCount;
+  const sourceQuantity=value=>{
+    if(!value||typeof value!=='object')return null;
+    return sourced(value.raw)??(defined(value.value)?String(value.value)+(value.unit?' '+value.unit:''):null);
+  };
+  const cargo=sourceQuantity(record.capacity?.cargo);
+  const consumables=sourceQuantity(record.capacity?.consumables);
+  if(cargo)system.cargo=cargo;
+  if(consumables)system.consumables=consumables;
+  const hyper=record.hyperspace??{};
+  if(Object.keys(hyper).length)system.vehiclePublishedHyperdrive=copy(hyper);
+  if(hyper.capability==='equipped'){
+    system.vehicleHasHyperdrive=true;
+    if(finite(hyper.primaryMultiplier))system.hyperdrive_class=String(hyper.primaryMultiplier);
+    if(finite(hyper.backupMultiplier))system.backup_class=String(hyper.backupMultiplier);
+  }else if(hyper.capability==='unavailable'){
+    system.vehicleHasHyperdrive=false;
+  }
+  const price=record.economics?.priceNew;
+  if(price && typeof price==='object'){
+    system.vehiclePublishedPrice=copy(price);
+    if(price.status==='priced' && finite(price.amountCredits)){
+      system.cost=price.amountCredits;
+      system.costNumeric=price.amountCredits;
+    }
+  }
   put(system,'flatFooted',record.defenses.reflexFlatFooted);
   put(system,'damageReduction',record.defenses.damageReduction);
   put(system,'damageThreshold',record.durability.damageThreshold);
