@@ -459,24 +459,6 @@ export async function buyDroid(store, actorId) {
         return;
     }
 
-    // P0 source preflight: construct and validate the exact source-backed
-    // Actor mutation BEFORE asking StoreEngine to debit credits. Index-only
-    // views may omit flags, so hydrate the full canonical Actor from its
-    // sourceEntryKey. Never purchase a legacy or partial vehicle record.
-    let vehiclePlans;
-    try {
-        vehiclePlans = await createVehiclePlans([{
-            id: actorId,
-            name: vehicleTemplate.name,
-            template: vehicleTemplate,
-            condition
-        }], store.itemsById);
-    } catch (err) {
-        SWSELogger.error('SWSE Store | Vehicle source preflight failed:', err);
-        ui.notifications.warn('Vehicle purchase unavailable: canonical source record could not be verified.');
-        return;
-    }
-
     // Confirm purchase
     const confirmed = await SWSEDialogV2.confirm({
         title: 'Confirm Droid Purchase',
@@ -578,6 +560,24 @@ export async function buyVehicle(store, actorId, condition) {
 
     if (!eligible.canPurchase) {
         ui.notifications.warn(eligible.reason || 'Cannot purchase vehicle.');
+        return;
+    }
+
+    // P0 source preflight: construct and validate the exact source-backed
+    // Actor mutation BEFORE asking StoreEngine to debit credits. Index-only
+    // views may omit flags, so hydrate the full canonical Actor from its
+    // sourceEntryKey. Never purchase a legacy or partial vehicle record.
+    let vehiclePlans;
+    try {
+        vehiclePlans = await createVehiclePlans([{
+            id: actorId,
+            name: vehicleTemplate.name,
+            template: vehicleTemplate,
+            condition
+        }], store.itemsById);
+    } catch (err) {
+        SWSELogger.error('SWSE Store | Vehicle source preflight failed:', err);
+        ui.notifications.warn('Vehicle purchase unavailable: canonical source record could not be verified.');
         return;
     }
 
