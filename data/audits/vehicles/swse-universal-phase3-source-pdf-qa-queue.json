@@ -5,8 +5,8 @@
   "scope": "Only 48 new final-seven-book identities; previously reviewed spacecraft and first-seven-book vehicles excluded",
   "pdfFieldQA": {
     "total": 48,
-    "verified": 12,
-    "pending": 36
+    "verified": 25,
+    "pending": 23
   },
   "statusSemantics": {
     "pdf-field-verified": "Every populated field compared with original rendered source page; not strict mechanical certification",
@@ -363,7 +363,10 @@
       "printedPage": 48,
       "pdfPhysicalPage": 49,
       "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Unknown Regions PDF printed p48, physical p49; PDF checksum 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "method": "primary PDF page visually reviewed, field-level source comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Unknown Regions",
@@ -372,7 +375,10 @@
       "printedPage": 48,
       "pdfPhysicalPage": 49,
       "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Unknown Regions PDF printed p48, physical p49; PDF checksum 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "method": "primary PDF page visually reviewed, field-level source comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Unknown Regions",
@@ -381,7 +387,10 @@
       "printedPage": 48,
       "pdfPhysicalPage": 49,
       "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Unknown Regions PDF printed p48, physical p49; PDF checksum 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "method": "primary PDF page visually reviewed, field-level source comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Unknown Regions",
@@ -390,7 +399,10 @@
       "printedPage": 49,
       "pdfPhysicalPage": 50,
       "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Unknown Regions PDF printed p49, physical p50; PDF checksum 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "method": "primary PDF page visually reviewed, field-level source comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Unknown Regions",
@@ -399,7 +411,10 @@
       "printedPage": 49,
       "pdfPhysicalPage": 50,
       "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Unknown Regions PDF printed p49, physical p50; PDF checksum 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "method": "primary PDF page visually reviewed, field-level source comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Unknown Regions",
@@ -408,7 +423,10 @@
       "printedPage": 49,
       "pdfPhysicalPage": 50,
       "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Unknown Regions PDF printed p49, physical p50; PDF checksum 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "method": "primary PDF page visually reviewed, field-level source comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Unknown Regions",
@@ -417,7 +435,10 @@
       "printedPage": 50,
       "pdfPhysicalPage": 51,
       "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Unknown Regions PDF printed p50, physical p51; PDF checksum 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "method": "primary PDF page visually reviewed, field-level source comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Unknown Regions",
@@ -426,7 +447,10 @@
       "printedPage": 50,
       "pdfPhysicalPage": 51,
       "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Unknown Regions PDF printed p50, physical p51; PDF checksum 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "method": "primary PDF page visually reviewed, field-level source comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Unknown Regions",
@@ -435,7 +459,10 @@
       "printedPage": 50,
       "pdfPhysicalPage": 51,
       "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Unknown Regions PDF printed p50, physical p51; PDF checksum 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "method": "primary PDF page visually reviewed, field-level source comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Unknown Regions",
@@ -444,7 +471,10 @@
       "printedPage": 51,
       "pdfPhysicalPage": 52,
       "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Unknown Regions PDF printed p51, physical p52; PDF checksum 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "method": "primary PDF page visually reviewed, field-level source comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Unknown Regions",
@@ -453,7 +483,10 @@
       "printedPage": 58,
       "pdfPhysicalPage": 59,
       "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Unknown Regions PDF printed p58, physical p59; PDF checksum 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "method": "primary PDF page visually reviewed, field-level source comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Unknown Regions",
@@ -462,7 +495,10 @@
       "printedPage": 189,
       "pdfPhysicalPage": 190,
       "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Unknown Regions PDF printed p189, physical p190; PDF checksum 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "method": "primary PDF page visually reviewed, field-level source comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Unknown Regions",
@@ -471,7 +507,10 @@
       "printedPage": 214,
       "pdfPhysicalPage": 215,
       "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
-      "status": "pending-pdf-field-qa"
+      "status": "pdf-field-verified",
+      "evidence": "Original Unknown Regions PDF printed p214, physical p215; PDF checksum 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "method": "primary PDF page visually reviewed, field-level source comparison",
+      "strictMechanicalCertification": "not-certified"
     },
     {
       "sourceBook": "Scavenger's Guide to Droids",

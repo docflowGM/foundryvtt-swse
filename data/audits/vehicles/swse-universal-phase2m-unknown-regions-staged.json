@@ -14,11 +14,11 @@
     "new": 13,
     "supplemental": 1,
     "legacyGroups": 22,
-    "groups": 41,
+    "groups": 33,
     "newIssues": [],
     "errors": [],
     "errorCount": 0,
-    "patchStatus": "Source exception corrections and census reconciled"
+    "patchStatus": "Phase 3M: all 13 new Unknown Regions vehicles primary-PDF field-QA complete; column contamination fixed; source-only status and runtime distrust preserved"
   },
   "records": [
     {
@@ -2451,18 +2451,8 @@
         "grappleBonusPrinted": 9
       },
       "armament": {
-        "firingGroups": [
-          {
-            "groupKey": "ur-gallis-tech-48-roller-wheel-bike-published-attack-1",
-            "label": "Laser cannon",
-            "groupKind": "unknown",
-            "batteryMembershipStatus": "not-stated",
-            "mountKeys": [],
-            "attackBonusPrinted": 7,
-            "specialNotes": "Printed operator pilot; damage 4d10; source search-text-derived candidate p48. Physical mounts, firing arcs and executable bindings are NOT certified."
-          }
-        ],
-        "notes": "Extracted printed attack headings only; groups not certified mounts."
+        "firingGroups": [],
+        "notes": "No printed ranged-attack line in this vehicle's original PDF statblock; neighboring source attack row removed."
       },
       "crew": {
         "raw": "1 (normal)",
@@ -2498,7 +2488,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 177990, candidate score 27. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary-source PDF field QA: Unknown Regions printed p48, one-based physical PDF p49, PDF SHA256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. Gallis 48 CL1 wheeled civilian vehicle has no printed armament, weapon line belongs to right-column Aerosled. Attack-group labels are source facts only; physical mounts, arc geometry, crew permissions and executable stock attacks remain uncertified."
       },
       "exceptions": {
         "manualReviewRequired": true,
@@ -2510,7 +2500,7 @@
         "/defenses/shieldRating": "not-stated",
         "/abilities/con": "explicitly-none",
         "/hyperspace/capability": "not-stated",
-        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/weaponMounts": "not-stated",
         "/armament/firingArcs": "not-stated",
         "/rules/strictMechanicalCertification": "not-yet-reviewed"
       },
@@ -2670,7 +2660,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 179375, candidate score 31. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary-source PDF field QA: Unknown Regions printed p48, one-based physical PDF p49, PDF SHA256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. Tangan armed variant only, pilot laser cannon +7, damage 4d10; civilian/unarmed variant in narrative remains separate optional text, not a newly invented publication identity. Attack-group labels are source facts only; physical mounts, arc geometry, crew permissions and executable stock attacks remain uncertified."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -2717,8 +2707,8 @@
         "cl": 1
       },
       "geometry": {
-        "starshipScaleWidthSquares": 1,
-        "starshipScaleLengthSquares": 1,
+        "characterScaleWidthSquares": 1,
+        "characterScaleLengthSquares": 1,
         "coverCrew": "none"
       },
       "movement": {
@@ -2780,18 +2770,8 @@
         "grappleBonusPrinted": 5
       },
       "armament": {
-        "firingGroups": [
-          {
-            "groupKey": "ur-all-terrain-roller-published-attack-1",
-            "label": "Medium blaster cannon",
-            "groupKind": "unknown",
-            "batteryMembershipStatus": "not-stated",
-            "mountKeys": [],
-            "attackBonusPrinted": 9,
-            "specialNotes": "Printed operator pilot; damage 5d10; source search-text-derived candidate p48. Physical mounts, firing arcs and executable bindings are NOT certified."
-          }
-        ],
-        "notes": "Extracted printed attack headings only; groups not certified mounts."
+        "firingGroups": [],
+        "notes": "No printed ranged-attack line in this vehicle's original PDF statblock; neighboring source attack row removed."
       },
       "crew": {
         "raw": "1 (normal)",
@@ -2823,7 +2803,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 180475, candidate score 31. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary-source PDF field QA: Unknown Regions printed p48, one-based physical PDF p49, PDF SHA256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. All-Terrain Roller Medium wheeled ground vehicle, Fighting Space one character-scale square, no weapon. Attack-group labels are source facts only; physical mounts, arc geometry, crew permissions and executable stock attacks remain uncertified."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -2833,7 +2813,7 @@
         "/abilities/con": "explicitly-none",
         "/capacity/cargo": "explicitly-none",
         "/hyperspace/capability": "not-stated",
-        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/weaponMounts": "not-stated",
         "/armament/firingArcs": "not-stated",
         "/rules/strictMechanicalCertification": "not-yet-reviewed"
       },
@@ -2971,11 +2951,12 @@
         "availability": "Military",
         "priceNew": {
           "status": "not-for-sale",
-          "raw": "Not available for sale (25,000 credits on the"
-        }
+          "raw": "Not available for sale (25,000 credits on the black market)"
+        },
+        "notes": "Printed 25,000 credits is black-market contextual price, NOT an ordinary priceNew."
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 182017, candidate score 31. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary-source PDF field QA: Unknown Regions printed p49, one-based physical PDF p50, PDF SHA256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. Printed PX-10 CL7 tracked vehicle with medium blaster cannon +9; market price is 25,000 credits black market only. Attack-group labels are source facts only; physical mounts, arc geometry, crew permissions and executable stock attacks remain uncertified."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -3121,7 +3102,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 182955, candidate score 31. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary-source PDF field QA: Unknown Regions printed p49, one-based physical PDF p50, PDF SHA256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. Groundcar CL0 Huge wheeled, no printed attack. Attack-group labels are source facts only; physical mounts, arc geometry, crew permissions and executable stock attacks remain uncertified."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -3172,8 +3153,17 @@
         "coverCrew": "total"
       },
       "movement": {
-        "speedModes": [],
-        "raw": "makes their use for anything beyond hauling cargo highly impractical."
+        "speedModes": [
+          {
+            "mode": "tracked",
+            "scale": "character",
+            "squaresPerMove": 6,
+            "maxVelocityKmh": 95,
+            "raw": "Speed 6 squares (max. velocity 95 km/h)"
+          }
+        ],
+        "maxVelocityKmh": 95,
+        "raw": "Speed 6 squares (max. velocity 95 km/h)"
       },
       "hyperspace": {},
       "defenses": {
@@ -3222,18 +3212,8 @@
         "grappleBonusPrinted": 20
       },
       "armament": {
-        "firingGroups": [
-          {
-            "groupKey": "ur-land-crawler-published-attack-1",
-            "label": "Medium blaster cannons",
-            "groupKind": "unknown",
-            "batteryMembershipStatus": "not-stated",
-            "mountKeys": [],
-            "attackBonusPrinted": 2,
-            "specialNotes": "Printed operator gunner; damage 5d10; source search-text-derived candidate p49. Physical mounts, firing arcs and executable bindings are NOT certified."
-          }
-        ],
-        "notes": "Extracted printed attack headings only; groups not certified mounts."
+        "firingGroups": [],
+        "notes": "No printed ranged-attack line in this vehicle's original PDF statblock; neighboring source attack row removed."
       },
       "crew": {
         "raw": "1 (normal)",
@@ -3243,9 +3223,9 @@
       "capacity": {
         "passengerCount": 6,
         "cargo": {
-          "value": null,
-          "unit": null,
-          "raw": "highly impractical."
+          "value": 5,
+          "unit": "tons",
+          "raw": "5 tons"
         },
         "consumables": {
           "value": 1,
@@ -3269,7 +3249,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 183998, candidate score 23. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary-source PDF field QA: Unknown Regions printed p49, one-based physical PDF p50, PDF SHA256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. Land Crawler CL1 tracked, speed 6 squares / 95 km/h, cargo 5 tons, no ranged attack; unrelated blaster cannon came from adjacent Landmaster text. Attack-group labels are source facts only; physical mounts, arc geometry, crew permissions and executable stock attacks remain uncertified."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -3278,7 +3258,7 @@
         "/defenses/shieldRating": "not-stated",
         "/abilities/con": "explicitly-none",
         "/hyperspace/capability": "not-stated",
-        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/weaponMounts": "not-stated",
         "/armament/firingArcs": "not-stated",
         "/rules/strictMechanicalCertification": "not-yet-reviewed"
       },
@@ -3389,15 +3369,6 @@
             "mountKeys": [],
             "attackBonusPrinted": 2,
             "specialNotes": "Printed operator gunner; damage 5d10; source search-text-derived candidate p50. Physical mounts, firing arcs and executable bindings are NOT certified."
-          },
-          {
-            "groupKey": "ur-jaffryes-universal-automotive-ark-ii-series-landmaster-published-attack-2",
-            "label": "Light quad blaster cannon",
-            "groupKind": "unknown",
-            "batteryMembershipStatus": "not-stated",
-            "mountKeys": [],
-            "attackBonusPrinted": 5,
-            "specialNotes": "Printed operator gunner; damage 5d10; source search-text-derived candidate p50. Physical mounts, firing arcs and executable bindings are NOT certified."
           }
         ],
         "notes": "Extracted printed attack headings only; groups not certified mounts."
@@ -3436,7 +3407,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 185665, candidate score 31. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary-source PDF field QA: Unknown Regions printed p50, one-based physical PDF p51, PDF SHA256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. Landmaster CL8 has one medium-blaster-cannons source group, not right-column Hyrotii light quad cannon. Attack-group labels are source facts only; physical mounts, arc geometry, crew permissions and executable stock attacks remain uncertified."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -3556,15 +3527,6 @@
             "mountKeys": [],
             "attackBonusPrinted": 5,
             "specialNotes": "Printed operator gunner; damage 5d10; source search-text-derived candidate p50. Physical mounts, firing arcs and executable bindings are NOT certified."
-          },
-          {
-            "groupKey": "ur-hyrotii-corporation-mobile-recon-research-vehicle-published-attack-2",
-            "label": "Laser cannon",
-            "groupKind": "unknown",
-            "batteryMembershipStatus": "not-stated",
-            "mountKeys": [],
-            "attackBonusPrinted": 2,
-            "specialNotes": "Printed operator pilot; damage 4410; source search-text-derived candidate p50. Physical mounts, firing arcs and executable bindings are NOT certified."
           }
         ],
         "notes": "Extracted printed attack headings only; groups not certified mounts."
@@ -3586,7 +3548,13 @@
           "unit": "months",
           "raw": "2 months"
         },
-        "storageNotes": "Carried Craft 2 speeder bikes"
+        "carriedCraft": [
+          {
+            "name": "speeder bikes",
+            "count": 2,
+            "raw": "2 speeder bikes (or equivalent)"
+          }
+        ]
       },
       "systems": {},
       "modifications": {},
@@ -3604,7 +3572,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 187288, candidate score 31. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary-source PDF field QA: Unknown Regions printed p50, one-based physical PDF p51, PDF SHA256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. Hyrotii CL0 has light quad blaster cannon only; right-column Nightfalcon laser cannon is separate. Two speeder bikes or equivalent in carried craft. Attack-group labels are source facts only; physical mounts, arc geometry, crew permissions and executable stock attacks remain uncertified."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -3766,7 +3734,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 188534, candidate score 31. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary-source PDF field QA: Unknown Regions printed p50, one-based physical PDF p51, PDF SHA256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. Nightfalcon CL2 laser cannon pilot +2 (-3 autofire), damage 4d10; not Hyrotii's cannon. Attack-group labels are source facts only; physical mounts, arc geometry, crew permissions and executable stock attacks remain uncertified."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -3886,18 +3854,9 @@
             "mountKeys": [],
             "attackBonusPrinted": 3,
             "specialNotes": "Printed operator gunner; damage 4d10; source search-text-derived candidate p51. Physical mounts, firing arcs and executable bindings are NOT certified."
-          },
-          {
-            "groupKey": "ur-srv-1-scout-and-retrieval-vehicle-published-attack-2",
-            "label": "Light blaster cannon",
-            "groupKind": "unknown",
-            "batteryMembershipStatus": "not-stated",
-            "mountKeys": [],
-            "attackBonusPrinted": 3,
-            "specialNotes": "Printed operator gunner; damage 2d10x2; source search-text-derived candidate p51. Physical mounts, firing arcs and executable bindings are NOT certified."
           }
         ],
-        "notes": "Extracted printed attack headings only; groups not certified mounts."
+        "notes": "Two printed medium blaster cannons, one source attack group, in military variant; civilian version narrative is unarmed. Physical mounts/authorization remain separate."
       },
       "crew": {
         "raw": "3 (skilled)",
@@ -3933,7 +3892,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 190798, candidate score 23. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary-source PDF field QA: Unknown Regions printed p51, one-based physical PDF p52, PDF SHA256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. SRV-1 CL6 has printed two medium blaster cannons +3 and no light blaster cannon; adjacent Deep-X starfighter row was incorrectly copied. Attack-group labels are source facts only; physical mounts, arc geometry, crew permissions and executable stock attacks remain uncertified."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -4003,20 +3962,13 @@
         "maxVelocityKmh": 650,
         "raw": "fly 12 squares (max. velocity 650 km/h), fly 3 squares (starship scale)"
       },
-      "hyperspace": {
-        "raw": "x3 (backup x15), navicomputer",
-        "capability": "equipped",
-        "primaryMultiplier": 3,
-        "backupMultiplier": 15,
-        "navComputer": "installed"
-      },
+      "hyperspace": {},
       "defenses": {
         "reflex": 12,
         "reflexFlatFooted": 12,
         "fortitude": 20,
         "armorBonus": 4,
-        "damageReduction": 5,
-        "shieldRating": 45
+        "damageReduction": 5
       },
       "durability": {
         "hitPoints": 100,
@@ -4059,31 +4011,11 @@
       },
       "combat": {
         "baseAttackBonusPrinted": 0,
-        "grappleBonusPrinted": 20,
-        "rangedAttackLine": "6 turbolaser batteries +5* (see below) and tractor beam battery +5* (see below)"
+        "grappleBonusPrinted": 20
       },
       "armament": {
-        "firingGroups": [
-          {
-            "groupKey": "ur-landing-sphere-published-attack-1",
-            "label": "Turbolaser battery",
-            "groupKind": "weapon-battery",
-            "batteryMembershipStatus": "printed",
-            "mountKeys": [],
-            "attackBonusPrinted": 5,
-            "specialNotes": "Printed operator 2 gunners; damage 3d10x5; source search-text-derived candidate p58. Physical mounts, firing arcs and executable bindings are NOT certified."
-          },
-          {
-            "groupKey": "ur-landing-sphere-published-attack-2",
-            "label": "Tractor beam battery",
-            "groupKind": "weapon-battery",
-            "batteryMembershipStatus": "printed",
-            "mountKeys": [],
-            "attackBonusPrinted": 5,
-            "specialNotes": "Printed operator 2 gunners; damage — (grapple +42); source search-text-derived candidate p58. Physical mounts, firing arcs and executable bindings are NOT certified."
-          }
-        ],
-        "notes": "Extracted printed attack headings only; groups not certified mounts."
+        "firingGroups": [],
+        "notes": "Landing Sphere has no printed weapon attack or statblock armament; source ship Star Seeder in facing column has six turbolaser batteries and one tractor beam."
       },
       "crew": {
         "raw": "1 (normal)",
@@ -4106,21 +4038,9 @@
       },
       "systems": {},
       "modifications": {},
-      "economics": {
-        "availability": "Licensed",
-        "priceNew": {
-          "status": "priced",
-          "amountCredits": 3000000,
-          "raw": "3 million credits (1 million used)"
-        },
-        "priceUsed": {
-          "status": "priced",
-          "amountCredits": 1000000,
-          "raw": "3 million credits (1 million used)"
-        }
-      },
+      "economics": {},
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 206178, candidate score 31. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary-source PDF field QA: Unknown Regions printed p58, one-based physical PDF p59, PDF SHA256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. Landing Sphere CL2 Huge airspeed vehicle has no SR, hyperdrive, weapons, or printed availability/cost; all those fields were incorrectly inherited from neighboring Star Seeder capital ship. Attack-group labels are source facts only; physical mounts, arc geometry, crew permissions and executable stock attacks remain uncertified."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -4128,9 +4048,11 @@
       "fieldStates": {
         "/abilities/con": "explicitly-none",
         "/capacity/carriedCraft": "explicitly-none",
-        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/weaponMounts": "not-stated",
         "/armament/firingArcs": "not-stated",
-        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+        "/rules/strictMechanicalCertification": "not-yet-reviewed",
+        "/defenses/shieldRating": "not-stated",
+        "/hyperspace/capability": "not-stated"
       },
       "rules": {
         "reviewStatus": "partial-source-probe"
@@ -4277,7 +4199,8 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 773337, candidate score 31. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary-source PDF field QA: Unknown Regions printed p189, one-based physical PDF p190, PDF SHA256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. Wind Skiff CL6, debris clearing cannon pilot +0, 3d10; printed footnote allows optional wheel replacement using ground movement speed instead of fly movement, WITHOUT distinct vehicle identity. Attack-group labels are source facts only; physical mounts, arc geometry, crew permissions and executable stock attacks remain uncertified.",
+        "mechanicalNotes": "Optional source configuration: wheeled version is otherwise mechanically identical, replacing repulsorlift fly speed with ground speed. Not a separate publication identity."
       },
       "exceptions": {
         "manualReviewRequired": true
@@ -4459,7 +4382,7 @@
         }
       },
       "text": {
-        "sourceNotes": "New Phase 1 identity; source text search at index 881846, candidate score 31. Original PDF source SHA 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. TXT navigation is provisional; printed source/PDF is final authority."
+        "sourceNotes": "Primary-source PDF field QA: Unknown Regions printed p214, one-based physical PDF p215, PDF SHA256 43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b. Eeook CL7 patrol airspeeder, light laser +6 OR rocket launcher +6, separate source groups not certified mounts. Attack-group labels are source facts only; physical mounts, arc geometry, crew permissions and executable stock attacks remain uncertified."
       },
       "exceptions": {
         "manualReviewRequired": true
