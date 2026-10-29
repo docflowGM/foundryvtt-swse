@@ -276,13 +276,111 @@
       "requiresRuntimeConsumer": true,
       "allowExecutableAttacks": false,
       "sourceFieldQAAccepted": true
+    },
+    {
+      "id": "P3R-GAW-YU410",
+      "sourceEntryKey": "gaw-yu-410-light-freighter",
+      "sourceBook": "Galaxy at War",
+      "printedPages": [
+        65
+      ],
+      "pdfPhysicalPages": [
+        66
+      ],
+      "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+      "sourceReconciliation": "verified-literal-duplicate-dr-and-initiative-conflict",
+      "printedFacts": {
+        "cl": 7,
+        "headerInitiative": -5,
+        "skillsInitiative": -2,
+        "damageReductionLabeled1": 15,
+        "damageReductionLabeled2": 20,
+        "explicitShieldRatingLabel": false,
+        "hitPoints": 120,
+        "damageThreshold": 76
+      },
+      "knownConflict": "Two DR labels printed; second value cannot be silently converted to SR 20 despite prose referencing shields. Header Initiative -5 differs from Skills Initiative -2.",
+      "sourceEvidence": "Galaxy at War printed p65 / original PDF physical p66 visually inspected, matching source hash.",
+      "unresolvedOperational": [
+        "authoritative interpretation of duplicated DR labels",
+        "which printed Initiative is effective",
+        "untyped +5 Stealth concealment cargo rule"
+      ],
+      "requiresRuntimeConsumer": true,
+      "allowExecutableAttacks": false,
+      "sourceFieldQAAccepted": true
+    },
+    {
+      "id": "P3R-GAW-WLO5",
+      "sourceEntryKey": "gaw-wlo-5-speeder-tank",
+      "sourceBook": "Galaxy at War",
+      "printedPages": [
+        63
+      ],
+      "pdfPhysicalPages": [
+        64
+      ],
+      "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+      "sourceReconciliation": "verified-malformed-price-preserved",
+      "printedFacts": {
+        "cl": 6,
+        "printedNewCost": "115,00 credits",
+        "parsedNewCost": null,
+        "usedCost": 65000,
+        "availability": "Military",
+        "gunnerCover": "+5",
+        "equipmentMechanicsBonus": 5
+      },
+      "knownConflict": "Printed new price lacks a digit/valid grouping. It is an ambiguous literal, not certified 115,000 or 11,500.",
+      "configurationConstraint": "Pirate-added antipersonnel cannons are narrative aftermarket additions, not automatically stocked weapon groups.",
+      "sourceEvidence": "Galaxy at War printed p63/physical PDF p64; source checksum confirmed.",
+      "unresolvedOperational": [
+        "owner-approved price repair or published errata",
+        "typed repair bonus and gunner cover",
+        "optional pirate modifications vs stock attacks"
+      ],
+      "requiresRuntimeConsumer": true,
+      "allowExecutableAttacks": false,
+      "sourceFieldQAAccepted": true
+    },
+    {
+      "id": "P3R-GAW-GAT-SHOCK",
+      "sourceEntryKey": "gaw-ground-armored-tank",
+      "sourceBook": "Galaxy at War",
+      "printedPages": [
+        216
+      ],
+      "pdfPhysicalPages": [
+        217
+      ],
+      "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+      "sourceReconciliation": "verified-conditional-fire-effect-not-stock-attack",
+      "printedFacts": {
+        "cl": 10,
+        "encounterInstances": 4,
+        "publicationStatblockCount": 1,
+        "publishedFiringGroups": 2,
+        "shockAndAweRadiusSquares": 6,
+        "activation": "standard action",
+        "forgoAllAttacks": true,
+        "extraConditionStep": -1,
+        "thresholdGate": "target must be damaged by a successful attack meeting/exceeding damage threshold"
+      },
+      "knownConflict": "Shock and Awe is an area-based special Fire Effect, not a printed weapon firing-group entry and not automatic immediate damage.",
+      "sourceEvidence": "Galaxy at War printed p216/physical PDF p217, original page visually checked; source hash verified.",
+      "unresolvedOperational": [
+        "typed Fire Effect area/predicate/condition-track consumer",
+        "per-turn action substitution; must forgo attacks",
+        "per-instance actor ownership and source item provenance",
+        "certified physical mounts for two separate ranged source rows"
+      ],
+      "requiresRuntimeConsumer": true,
+      "allowExecutableAttacks": false,
+      "sourceFieldQAAccepted": true
     }
   ],
   "remainingTargetedCandidates": [
-    "Vulture hybrid walker/starfighter",
-    "Galaxy at War Shock and Awe source attack",
-    "YU-410 duplicated DR",
-    "WLO-5 ambiguous price"
+    "Vulture hybrid walker/starfighter"
   ],
   "phase4CutoverAuthorized": false,
   "strictPhysicalMountCertificationPromoted": 0
