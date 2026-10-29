@@ -46,7 +46,9 @@ function inspect(document, data) {
     system: { ...docSystem, ...inputSystem },
     flags: { ...docFlags, ...inputFlags },
     type: data?.type ?? raw?.type ?? document?.type,
-    items: data?.items ?? raw?.items ?? document?.items
+    items: data?.items ?? raw?.items ?? document?.items,
+    documentItems: raw?.items ?? document?.items,
+    inputItems: data?.items
   };
 }
 
@@ -156,6 +158,8 @@ export function classifyVehicleActorSource(document, data = undefined) {
       own(original?.armament, 'weaponMounts') ||
       !Array.isArray(sys.weapons) || sys.weapons.length !== 0 ||
       itemsCount(view.items) !== 0 ||
+      itemsCount(view.documentItems) !== 0 ||
+      itemsCount(view.inputItems) !== 0 ||
       (own(sys, 'sourceAttackGroups') && !same(sys.sourceAttackGroups, groups)))
     issue(errors, 'SOURCE_ATTACKS_NOT_INSTALLABLE');
 
