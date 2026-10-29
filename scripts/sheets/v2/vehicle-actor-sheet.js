@@ -8,7 +8,7 @@ import { getActorSheetThemeGroups } from "/systems/foundryvtt-swse/scripts/theme
 import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
 import { ShellSurfaceRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellSurfaceRegistry.js";
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
-import { buildVehicleSheetContext } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js";
+import { buildVehicleSheetContext, parseCargoString } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js";
 import { VehicleRulesAdapter } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-rules-adapter.js";
 import { bindVehicleCrewAssignmentControls } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-crew-assignment-controls.js";
 // Imported for its module-load side effect only: registers the GM-only,
@@ -309,7 +309,10 @@ export class SWSEV2VehicleSheet extends SWSEV2ActorSheetBase {
     }
 
     const system = actor.system ?? {};
-    const cargoCapacity = Number(system?.cargo?.capacity ?? 500) || 500;
+    // Capacity comes only from the (published) cargo string; unknown stays
+    // unknown. There is no invented 500 default.
+    const cargoParsed = parseCargoString(system?.cargo);
+    const cargoCapacity = cargoParsed.known ? cargoParsed.kilograms : null;
     let totalCargoWeight = 0;
     const cargoItems = Array.from(actor.items ?? []).filter(item => item.type === 'equipment');
     for (const item of cargoItems) {
@@ -317,7 +320,8 @@ export class SWSEV2VehicleSheet extends SWSEV2ActorSheetBase {
       const quantity = Number(item.system?.quantity ?? 1) || 1;
       totalCargoWeight += weight * quantity;
     }
-    const cargoState = totalCargoWeight > cargoCapacity * 1.1 ? 'over' : totalCargoWeight > cargoCapacity * 0.8 ? 'near' : 'normal';
+    const cargoState = cargoCapacity === null ? 'unknown'
+      : totalCargoWeight > cargoCapacity * 1.1 ? 'over' : totalCargoWeight > cargoCapacity * 0.8 ? 'near' : 'normal';
 
     const ruleContexts = VehicleRulesAdapter.buildAllRuleContexts(actor);
     const panelContext = ActorPerfDiagnostics.time(
@@ -490,7 +494,7 @@ export class SWSEV2VehicleSheet extends SWSEV2ActorSheetBase {
       hpWarning: hp.warning ?? false,
       hpCritical: hp.critical ?? false,
       ctWarning: Number(system?.conditionTrack?.current ?? 0) > 0,
-      cargoCapacity: Math.round(cargoCapacity * 100) / 100,
+      cargoCapacity: cargoCapacity === null ? null : Math.round(cargoCapacity * 100) / 100,
       totalCargoWeight: Math.round(totalCargoWeight * 100) / 100,
       cargoState,
       items: Array.from(actor.items ?? []).map(item => ({

@@ -12,6 +12,7 @@
           Published: {{vehiclePublication.book}}, p. {{vehiclePublication.page}}
           — {{vehiclePublication.shieldStatus}}
         </div>
+        {{#if publicationView.identity.callSignDiffers}}<div class="swse-vehicle-source-model">Printed model: {{publicationView.identity.printedModel}}</div>{{/if}}
         <div class="swse-vehicle-source-attack-note">{{vehiclePublication.attackStatus}}</div>
       {{/if}}
       {{#if editable}}
@@ -87,11 +88,19 @@
             <div class="swse-vehicle-panel swse-vehicle-mini-panel">
               <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">{{localize "SWSE.ActorUI.FlightProfile"}}</h3></header>
               <div class="swse-vehicle-panel-body swse-vehicle-kv-list">
+                {{#if publicationView}}
+                  {{#each publicationView.movement as |mode|}}
+                    <div class="swse-vehicle-movement-mode" data-scale="{{mode.scale}}"><span>{{mode.scale}} / {{mode.mode}}</span><strong>{{mode.label}}</strong></div>
+                  {{else}}
+                    <div><span>Movement</span><strong>Not stated in source</strong></div>
+                  {{/each}}
+                {{else}}
                 <div><span>{{localize "SWSE.ActorUI.Mode2"}}</span><strong>{{parsedSpeed.mode}}</strong></div>
                 <div><span>{{localize "SWSE.ActorUI.CharacterScale"}}</span><strong>{{parsedSpeed.character}}</strong></div>
                 <div><span>{{localize "SWSE.ActorUI.StarshipScale"}}</span><strong>{{parsedSpeed.starship}}</strong></div>
                 <div><span>Character Space</span><strong>{{parsedSpeed.characterFightingSpace}}</strong></div>
                 <div><span>Starship Space</span><strong>{{parsedSpeed.starshipFightingSpace}}</strong></div>
+                {{/if}}
               </div>
             </div>
           </div>
@@ -123,6 +132,9 @@
       </section>
 
       <section class="tab flexcol" data-group="primary" data-tab="stats">
+        {{#if publicationView}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-publication-panel.hbs" view=publicationView}}
+        {{/if}}
         <div class="swse-vehicle-stats-grid">
           <div class="swse-vehicle-stats-col">
             {{> "systems/foundryvtt-swse/templates/actors/shared/v2-concept/partials/panels/abilities-panel.hbs"}}
@@ -218,6 +230,9 @@
               actionBreakdown=actionEconomy.breakdown
               swiftMax=actionEconomy.state.swiftMax}}
         {{/if}}
+        {{#if publicationView}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-attack-reference-panel.hbs" view=publicationView}}
+        {{/if}}
         {{#if vehiclePanels.weaponMountPanel}}
           {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-weapon-mount-panel.hbs" panel=vehiclePanels.weaponMountPanel}}
         {{/if}}
@@ -240,6 +255,26 @@
       {{/if}}
 
       {{#if editable}}
+        {{#if sourceFactsReadOnly}}
+        <section class="tab flexcol" data-group="primary" data-tab="edit">
+          <div class="swse-vehicle-edit-grid">
+            <section class="swse-vehicle-panel swse-vehicle-edit-panel" data-canonical-edit="true">
+              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Current State</h3></header>
+              <div class="swse-vehicle-panel-body swse-vehicle-form-grid">
+                <p>Published statistics are read-only. Only call sign, current hit points, current shields and notes can be changed.</p>
+                <p>Call sign is edited in the sheet header.</p>
+                <label>Current Hit Points (max {{publicationView.hp.max}})<input name="system.hp.value" type="number" min="0" max="{{publicationView.hp.max}}" value="{{publicationView.hp.current}}" data-dtype="Number"/></label>
+                {{#if publicationView.shield.editable}}
+                <label>Current Shields (max {{publicationView.shield.max}})<input name="system.shields.value" type="number" min="0" max="{{publicationView.shield.max}}" value="{{publicationView.shield.current}}" data-dtype="Number"/></label>
+                {{else}}
+                <div>Shields: {{publicationView.shield.label}}</div>
+                {{/if}}
+                <label>Notes<textarea name="system.notes">{{system.notes}}</textarea></label>
+              </div>
+            </section>
+          </div>
+        </section>
+        {{else}}
         <section class="tab flexcol" data-group="primary" data-tab="edit">
           <div class="swse-vehicle-edit-grid">
             <section class="swse-vehicle-panel swse-vehicle-edit-panel">
@@ -300,6 +335,7 @@
             </section>
           </div>
         </section>
+        {{/if}}
       {{/if}}
 
     </section>

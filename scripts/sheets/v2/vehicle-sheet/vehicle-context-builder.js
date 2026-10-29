@@ -8,6 +8,7 @@
 
 import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
 import { getVehicleRuntimeProjection } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
+import { buildVehiclePublicationViewModel, buildPublishedCrewSummary, describeShield, SOURCE_UNKNOWN } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-publication-view-model.js";
 import { getStationSkillActions } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-skill-router.js";
 import { resolveVehicleCrewStations } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-resolver.js";
 import { resolveWeaponOperatorStation } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/weapon-station-mapping.js";
@@ -345,7 +346,7 @@ function buildVehicleTypeFlags(system = {}) {
     isStation,
     supportsHyperdrive: hasHyperdrive,
     supportsBackupHyperdrive: hasBackupHyperdrive,
-    supportsShields: hasShields || isStarship || isCapital,
+    supportsShields: hasShields,
     supportsStarshipManeuvers: isStarship || isCapital,
     supportsShipyard: isStarship || isCapital || isWalker || isSpeeder || isGround,
     supportsOperationsTab: isStarship || isCapital || isWalker || isGround,
@@ -361,7 +362,9 @@ function buildVehicleTypeFlags(system = {}) {
 
 function buildVehicleResourceStrip(actor, panels, typeFlags, parsedCargo) {
   const printed=actor?.flags?.swse?.universalVehicleSource?.source;
-  const unknownPublishedSR=printed?.recordType==='vehicle-source-entry' && typeof printed.defenses?.shieldRating!=='number';
+  const canonicalSR = printed?.recordType === 'vehicle-source-entry' ? describeShield(
+    getVehicleRuntimeProjection(actor).published, actor?.system?.shields) : null;
+  const unknownPublishedSR = canonicalSR ? canonicalSR.max === null && canonicalSR.state !== 'explicit-zero' : false;
   const hp = panels.hpConditionPanel?.hp ?? {};
   const hpPercent = Math.max(0, Math.min(100, safeNumber(hp.percent, 0)));
   const shieldState = resolveVehicleShieldState(actor?.system ?? {});
@@ -375,10 +378,10 @@ function buildVehicleResourceStrip(actor, panels, typeFlags, parsedCargo) {
   return {
     entries: [
       { key: 'hull', label: 'Hull', value: `${hp.value ?? 0} / ${hp.max ?? 0}`, bar: hpPercent, tone: hpPercent <= 25 ? 'critical' : hpPercent <= 50 ? 'warning' : 'normal' },
-      { key: 'sr', label: 'SR', value: unknownPublishedSR ? 'Unknown' : (srMax ? `${srValue} / ${srMax}` : shieldState.hasShield ? 'Source Needed' : '0'), bar: unknownPublishedSR ? 0 : srMax ? Math.round((srValue / srMax) * 100) : 0, tone: unknownPublishedSR ? 'warning' : srMax ? (srValue <= 0 ? 'neutral' : 'normal') : shieldState.hasShield ? 'warning' : 'neutral' },
+      { key: 'sr', label: 'SR', value: canonicalSR && unknownPublishedSR ? 'Not stated' : canonicalSR?.state === 'explicit-zero' ? '0 (printed)' : (canonicalSR ? `${canonicalSR.current} / ${canonicalSR.max}` : srMax ? `${srValue} / ${srMax}` : shieldState.hasShield ? 'Source Needed' : '0'), bar: unknownPublishedSR ? 0 : srMax ? Math.round((srValue / srMax) * 100) : 0, tone: unknownPublishedSR ? 'warning' : srMax ? (srValue <= 0 ? 'neutral' : 'normal') : shieldState.hasShield ? 'warning' : 'neutral' },
       { key: 'ep', label: 'EP', value: ep ? `${ep.available} / ${ep.budget}` : 'Phase 2', bar: ep ? Math.min(100, Math.max(0, 100 - safeNumber(ep.percentAllocated, 0))) : 0, tone: ep?.overAllocated ? 'critical' : ep ? 'normal' : 'neutral', badge: ep?.enabled === false ? 'RULE OFF' : ep ? null : 'WIRE GAP' },
-      { key: 'crew', label: 'Crew', value: `${crew.filledSlots ?? 0} / ${crew.totalSlots ?? 0}`, bar: crew.totalSlots ? Math.round(((crew.filledSlots ?? 0) / crew.totalSlots) * 100) : 0, tone: crew.filledSlots ? 'normal' : 'warning' },
-      { key: 'cargo', label: typeFlags.labels.cargo, value: parsedCargo?.display || `${cargo.totalWeight ?? 0} / ${cargo.capacity ?? 0}`, bar: Math.max(0, Math.min(100, safeNumber(cargo.percentUsed, 0))), tone: cargo.state === 'over' ? 'critical' : cargo.state === 'near' ? 'warning' : 'normal' },
+      { key: 'crew', label: 'Crew', value: `${crew.filledSlots ?? 0} / ${crew.totalSlots ?? '?'}`, bar: crew.totalSlots ? Math.round(((crew.filledSlots ?? 0) / crew.totalSlots) * 100) : 0, tone: crew.filledSlots ? 'normal' : 'warning' },
+      { key: 'cargo', label: typeFlags.labels.cargo, value: parsedCargo?.known ? parsedCargo.display : (parsedCargo?.raw ? parsedCargo.display : SOURCE_UNKNOWN), bar: Math.max(0, Math.min(100, safeNumber(cargo.percentUsed, 0))), tone: cargo.state === 'over' ? 'critical' : cargo.state === 'near' ? 'warning' : 'normal' },
       { key: 'condition', label: 'Condition', value: condition.label || 'Operational', bar: null, tone: condition.severity || 'normal' }
     ]
   };
@@ -739,17 +742,19 @@ export function buildVehicleCrewSummaryPanel(actor) {
   const filledSlots = filledFromPositions || ownedActors.filter((entry) => entry && (entry.id || entry.uuid || entry.name)).length;
 
   const crewRaw = system.crew;
-  let totalSlots = 6;
-  if (crewRaw && typeof crewRaw === 'object') totalSlots = safeNumber(crewRaw.total, Object.keys(crewPositions || {}).length || 6);
+  // Unknown complement stays null; it is never defaulted to a plausible 6.
+  let totalSlots = null;
+  if (crewRaw && typeof crewRaw === 'object') totalSlots = Number.isFinite(Number(crewRaw.total)) ? Number(crewRaw.total) : null;
   else {
     const match = safeString(crewRaw).match(/(\d+)/);
-    totalSlots = match ? safeNumber(match[1], 6) : (Object.keys(crewPositions || {}).length || 6);
+    totalSlots = match ? safeNumber(match[1], null) : (Object.keys(crewPositions || {}).length || null);
   }
 
   return {
     title: 'Crew',
     filledSlots,
-    totalSlots: Math.max(1, totalSlots),
+    totalSlots,
+    totalKnown: totalSlots !== null,
     quality: crewQuality,
     passengers: system.passengers ? `${system.passengers} passengers` : 'No passengers'
   };
@@ -1013,16 +1018,18 @@ export function buildVehicleCargoSummaryPanel(actor, totalCargoWeight, cargoStat
   const system = actor?.system ?? {};
   const parsed = parseCargoString(system.cargo);
   const cargoCapacity = safeNumber(parsed.kilograms, 0);
+  const capacityKnown = parsed.known;
   const cargoWeight = safeNumber(totalCargoWeight, 0);
   const percentUsed = cargoCapacity > 0 ? (cargoWeight / cargoCapacity) * 100 : 0;
   const derivedState = cargoCapacity > 0
     ? cargoWeight > cargoCapacity * 1.1 ? 'over' : cargoWeight > cargoCapacity * 0.8 ? 'near' : 'normal'
-    : cargoState || 'unknown';
+    : capacityKnown ? (cargoState || 'normal') : 'unknown';
 
   return {
     title: 'Cargo',
     totalWeight: Math.round(cargoWeight * 100) / 100,
-    capacity: parsed.value ?? Math.round(cargoCapacity * 100) / 100,
+    capacityKnown,
+    capacity: capacityKnown ? (parsed.value ?? Math.round(cargoCapacity * 100) / 100) : SOURCE_UNKNOWN,
     capacityUnit: parsed.unit || 'kg',
     capacityDisplay: parsed.display,
     percentUsed: Math.round(percentUsed),
@@ -1175,6 +1182,37 @@ function buildTurnPhasePanel(turnPhaseData) {
   };
 }
 
+function buildPublishedDefensesPanel(view) {
+  const d = view.defenses;
+  const row = (key, label, fact) => ({ key, label, total: fact.display, known: fact.known });
+  return {
+    title: 'Defenses (printed)',
+    defenses: [
+      row('ref', 'Reflex', d.reflex), row('fort', 'Fortitude', d.fortitude),
+      row('flatFooted', 'Flat-Footed', d.flatFooted), row('armor', 'Armor Bonus', d.armorBonus)
+    ],
+    damageThreshold: d.damageThreshold.value
+  };
+}
+
+function buildPublishedHpPanel(actor, view) {
+  const max = view.hp.max;
+  const value = Number.isFinite(view.hp.current) ? view.hp.current : 0;
+  const ratio = max > 0 ? value / max : 0;
+  const ct = actor?.system?.conditionTrack ?? { current: 0, penalty: 0 };
+  const labels = ['Operational', 'Wounded', 'Disabled', 'Incapacitated'];
+  const sev = ['normal', 'warning', 'critical', 'destroyed'];
+  const step = Math.min(3, Math.max(0, safeNumber(ct.current, 0)));
+  return {
+    title: 'Hull Integrity',
+    hp: { value, max, temp: 0, percent: Math.max(0, Math.min(100, ratio * 100)) },
+    damageThreshold: view.defenses.damageThreshold.known ? view.defenses.damageThreshold.value : SOURCE_UNKNOWN,
+    damageReduction: view.defenses.damageReduction.known ? view.defenses.damageReduction.value : SOURCE_UNKNOWN,
+    warning: ratio <= 0.5 && ratio > 0.25, critical: ratio <= 0.25,
+    condition: { label: labels[step], severity: sev[step], step, penalty: safeNumber(ct.penalty, 0) }
+  };
+}
+
 /**
  * Main context builder for vehicle sheet.
  *
@@ -1200,10 +1238,17 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
   const vehicleRuntimeProjection = getVehicleRuntimeProjection(actor);
   const published = vehicleRuntimeProjection?.published;
   const source = vehicleRuntimeProjection?.source;
+  // Canonical Actors classify from the published category ONLY: the printed
+  // type line, tags and legacy hyperdrive mirrors are not consulted.
   const vehicleTypeFlags = buildVehicleTypeFlags({
     ...(actor?.system ?? {}),
-    ...(source ? { category: source.primaryCategory } : {})
+    ...(source ? { category: source.primaryCategory, type: '', tags: [] } : {})
   });
+  const publicationView = source ? buildVehiclePublicationViewModel(actor, vehicleRuntimeProjection) : null;
+  if (publicationView) {
+    vehicleTypeFlags.supportsHyperdrive = publicationView.hyperdrive.capability === 'equipped';
+    vehicleTypeFlags.supportsBackupHyperdrive = false;
+  }
   const shieldFact = published?.defenses?.shield;
   const vehiclePublication = source ? {
     sourceKey: source.sourceEntryKey,
@@ -1227,10 +1272,12 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
   const parsedSpeed = parseVehicleSpeed(actor?.system ?? {});
 
   const headerSummaryPanel = buildVehicleHeaderSummaryPanel(actor, { sourceModelName: options.sourceModelName });
-  const defensesPanel = buildVehicleDefensesPanel(actor);
-  const hpConditionPanel = buildVehicleHpConditionPanel(actor);
+  const defensesPanel = publicationView ? buildPublishedDefensesPanel(publicationView) : buildVehicleDefensesPanel(actor);
+  const hpConditionPanel = publicationView ? buildPublishedHpPanel(actor, publicationView) : buildVehicleHpConditionPanel(actor);
   const weaponMountPanel = buildVehicleWeaponMountPanel(actor);
-  const crewSummaryPanel = buildVehicleCrewSummaryPanel(actor);
+  const crewSummaryPanel = publicationView
+    ? { title: 'Crew', ...buildPublishedCrewSummary(publicationView, actor?.system?.crewPositions) }
+    : buildVehicleCrewSummaryPanel(actor);
   const crewAssignmentPanel = buildVehicleCrewAssignmentPanel(actor);
   const customStationEditorPanel = buildVehicleCustomStationEditorPanel(actor);
   const subsystemDetailPanel = buildVehicleSubsystemDetailPanel(actor, subsystemData, subsystemPenalties);
@@ -1269,12 +1316,14 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
     vehicleTypeFlags,
     vehicleRuntimeProjection,
     vehiclePublication,
+    publicationView,
     vehicleResourceStrip,
     vehicleConceptTabs,
     vehicleAnnotation,
     parsedCargo,
-    parsedSpeed,
+    parsedSpeed: publicationView ? { ...parsedSpeed, modes: publicationView.movement } : parsedSpeed,
     editContext: buildVehicleEditContext(actor, { sourceModelName: options.sourceModelName }),
+    sourceFactsReadOnly: Boolean(publicationView),
     abilitiesPanel,
     abilities,
     conceptLayout: {
