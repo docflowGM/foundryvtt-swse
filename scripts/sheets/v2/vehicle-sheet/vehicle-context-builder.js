@@ -7,6 +7,7 @@
  */
 
 import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
+import { getVehicleRuntimeProjection } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
 import { getStationSkillActions } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-skill-router.js";
 import { resolveVehicleCrewStations } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-resolver.js";
 import { resolveWeaponOperatorStation } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/weapon-station-mapping.js";
@@ -401,7 +402,7 @@ function buildVehicleEditContext(actor, options = {}) {
   const system = actor?.system ?? {};
   const derived = system.derived ?? {};
   const identity = derived.identity ?? {};
-  const hp = system.hull ?? system.hp ?? {};
+  const hp = system.hp ?? system.hull ?? {};
   const shields = resolveVehicleShieldState(system);
   return {
     identity: {
@@ -577,7 +578,7 @@ export function buildVehicleHpConditionPanel(actor) {
   const system = actor?.system ?? {};
   const derived = system.derived ?? {};
   const derivedHp = derived.hp ?? {};
-  const hull = system.hull ?? system.hp ?? {};
+  const hull = system.hp ?? system.hull ?? {};
   const hullValue = safeVehicleNumber(hull.value, derivedHp.value, 0);
   const hullMax = Math.max(1, safeVehicleNumber(hull.max, derivedHp.max, 1));
   const hp = {
@@ -1193,24 +1194,35 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
   const totalCargoWeight = safeNumber(options.totalCargoWeight, 0);
   const cargoState = options.cargoState || 'normal';
 
-  const vehicleTypeFlags = buildVehicleTypeFlags(actor?.system ?? {});
-  const printedVehicle = actor?.flags?.swse?.universalVehicleSource?.source ?? null;
-  // Source publication evidence is separate from mutable/runtime state.
-  const vehiclePublication=printedVehicle?.recordType==='vehicle-source-entry' ? {
-    sourceKey: printedVehicle.identity?.sourceEntryKey ?? '',
-    book: printedVehicle.publication?.book ?? '',
-    page: printedVehicle.publication?.page ?? null,
-    printedType: printedVehicle.publication?.printedTypeLine ?? '',
-    shieldStatus: typeof printedVehicle.defenses?.shieldRating === 'number'
-      ? (printedVehicle.defenses.shieldRating===0?'Explicitly SR 0':'Published SR '+printedVehicle.defenses.shieldRating)
-      : 'SR unknown in published source',
-    attackStatus:'Printed attack groups are reference-only; no installed mounts are certified.',
-    attackGroupCount: printedVehicle.armament?.firingGroups?.length ?? 0
+  // One P0 selector is the source/current/installed authority. The sheet
+  // may compose display labels but may never re-interpret source flags as
+  // certified equipment or infer publication facts from mutable state.
+  const vehicleRuntimeProjection = getVehicleRuntimeProjection(actor);
+  const published = vehicleRuntimeProjection?.published;
+  const source = vehicleRuntimeProjection?.source;
+  const vehicleTypeFlags = buildVehicleTypeFlags({
+    ...(actor?.system ?? {}),
+    ...(source ? { category: source.primaryCategory } : {})
+  });
+  const shieldFact = published?.defenses?.shield;
+  const vehiclePublication = source ? {
+    sourceKey: source.sourceEntryKey,
+    book: source.book,
+    page: source.page,
+    printedType: actor?.flags?.swse?.universalVehicleSource?.source?.publication?.printedTypeLine ?? '',
+    shieldStatus: shieldFact?.state === 'unknown'
+      ? 'SR unknown in published source'
+      : shieldFact?.state === 'explicit-zero'
+        ? 'Explicitly SR 0'
+        : shieldFact?.state === 'conflicting' ? 'Published SR conflicting'
+        : shieldFact?.state === 'conditional' ? 'Published SR conditional'
+        : 'Published SR ' + shieldFact?.value,
+    attackStatus: 'Printed attack groups are reference-only; no installed mounts are certified.',
+    attackGroupCount: published.attackGroups.length
   } : null;
-  if(vehiclePublication) {
-    const rated=printedVehicle.defenses?.shieldRating;
-    vehicleTypeFlags.supportsShields=typeof rated==='number'&&rated>0;
-  }
+  if (source) vehicleTypeFlags.supportsShields =
+    (shieldFact?.state === 'known' && shieldFact?.value > 0) ||
+    (vehicleRuntimeProjection.current?.shields?.max > 0);
   const parsedCargo = parseCargoString(actor?.system?.cargo);
   const parsedSpeed = parseVehicleSpeed(actor?.system ?? {});
 
@@ -1255,6 +1267,7 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
 
   return {
     vehicleTypeFlags,
+    vehicleRuntimeProjection,
     vehiclePublication,
     vehicleResourceStrip,
     vehicleConceptTabs,
