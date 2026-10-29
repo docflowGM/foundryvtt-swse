@@ -307,15 +307,6 @@ export async function loadRawStoreData({ useCache = true } = {}) {
   const actorPackResults = await Promise.all(actorPackNames.map(safeGetPackDocuments));
   let packActorDocs = actorPackResults.flatMap(result => result.docs);
 
-  // Canonical vehicles pack fallback: only use when split vehicle packs return no actors.
-  if (packActorDocs.length === 0 && STORE_PACKS.VEHICLES_CANONICAL) {
-    const canonicalVehicles = await safeGetPackDocuments(STORE_PACKS.VEHICLES_CANONICAL);
-    if (canonicalVehicles.found) {
-      actorPackResults.push(canonicalVehicles);
-      packActorDocs = canonicalVehicles.docs;
-    }
-  }
-
   const missingPacks = [...itemPackResults, ...actorPackResults]
     .filter(result => !result.found)
     .map(result => result.packName);
@@ -345,8 +336,7 @@ export async function loadRawStoreData({ useCache = true } = {}) {
       STORE_PACKS.ARMOR_CANONICAL,
       STORE_PACKS.EQUIPMENT,
       STORE_PACKS.DROIDS,
-      STORE_PACKS.VEHICLE_PACKS,
-      STORE_PACKS.VEHICLES_CANONICAL
+      STORE_PACKS.VEHICLE_PACKS
     ]),
     missingPacks,
     sourceCounts: {
