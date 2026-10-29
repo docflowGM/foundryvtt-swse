@@ -160,5 +160,5 @@ test('normalization loss API has no capability to issue receipts or installation
   assert.ok(importer.includes('assertCP23C4CNoStagedSourceImport(sourceActor)'));
   assert.equal(importer.includes('normalizeVehicleImportData('),false);
   assert.ok(importer.includes('UNIVERSAL_VEHICLE_SOURCE_REQUIRED'));
-  assert.match(importer,/return\\s*\\{\\s*actor:\\s*targetActor,\\s*update\\s*\\}/);
+  assert.ok(importer.includes('return {actor:targetActor,update};'));
 });
