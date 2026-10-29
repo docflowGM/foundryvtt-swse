@@ -1,0 +1,46 @@
+{
+  "schema": "swse.vehicle.universal.phase3.provenance-amendment.v1",
+  "id": "P3R-CORE-VULTURE-PROVENANCE-001",
+  "disposition": "APPROVED_SOURCE_FACT_CORRECTION",
+  "sourceEntryKey": "core-vulture-class-droid-starfighter",
+  "sourceBook": "Core Rulebook",
+  "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+  "sourcePdfFile": "Star Wars Saga Edition.pdf",
+  "visualEvidence": "Original printed page 181, physical PDF ordinal 182 (zero-index page 181), verified against PDF SHA-256. Header is the quoted title; page 180 contains a different starfighter and not this statblock.",
+  "frozenHistoricalClaim": {
+    "printedName": "Vulture-class Droid Starfighter",
+    "printedStatblockStartPage": 180,
+    "pdfPhysicalPage": 181
+  },
+  "correctedPublishedClaim": {
+    "printedName": "\"Vulture\" Droid Starfighter",
+    "printedStatblockStartPage": 181,
+    "pdfPhysicalPage": 182
+  },
+  "unchanged": {
+    "sourceEntryKey": true,
+    "recordCount429": true,
+    "sourceBook": true,
+    "printedTypeLine": true,
+    "sourceAttackGroups": true,
+    "operationalMountCertification": true,
+    "legacy316RawRecords": true
+  },
+  "immutableHistory": [
+    "data/audits/vehicles/swse-phase1-vehicle-provenance.json",
+    "data/audits/vehicles/swse-universal-phase1a-core-rulebook.json",
+    "data/audits/vehicles/swse-universal-phase1-publication-census.ndjson",
+    "data/audits/vehicles/swse-universal-phase2a-core-rulebook-staged.json",
+    "data/canonical/vehicles/ships.json"
+  ],
+  "effectiveResolutionAuthority": "tools/lib/universal-vehicle-source-provenance.mjs",
+  "effectiveProjectionConsumers": [
+    "phase1-ledger",
+    "phase1-census",
+    "phase2-staged",
+    "historic-ship"
+  ],
+  "migrationPolicy": "Phase4A MUST apply the reviewed effective provenance view before assembling canonical vehicles; never consume the frozen Core Vulture name/page as the new printed authority. Old raw records remain retained for audit.",
+  "fieldQaStatus": "SOURCE_PDF_PROVENANCE_RECONCILED",
+  "phase4CutoverAuthorized": false
+}
