@@ -63,7 +63,10 @@ test('all 429: runtime projection with an equipment Item is valid and identical 
 });
 
 test('hook and store creation paths remain on the strict creation mode', () => {
-  assert.doesNotMatch(readFileSync('scripts/actors/vehicle/vehicle-precreate-hooks.js', 'utf8'), /mode: 'runtime'/);
+  const hooks = readFileSync('scripts/actors/vehicle/vehicle-precreate-hooks.js', 'utf8');
+  const creation = hooks.slice(hooks.indexOf('export function validateVehicleCreation'), hooks.indexOf('export function applyChangesToCopy') > 0 ? hooks.indexOf('/**\n * Apply an update') : undefined);
+  assert.match(creation, /classifyVehicleActorSource\(document, data\)/);
+  assert.doesNotMatch(creation, /mode: 'runtime'/);
   const factory = readFileSync('scripts/engine/vehicles/vehicle-factory.js', 'utf8');
   assert.match(factory, /classifyVehicleActorSource\(\{ \.\.\.templateObj, type: 'vehicle' \}\)/);
 });
