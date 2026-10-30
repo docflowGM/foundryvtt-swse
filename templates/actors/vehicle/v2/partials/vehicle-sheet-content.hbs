@@ -134,6 +134,8 @@
       <section class="tab flexcol" data-group="primary" data-tab="stats">
         {{#if publicationView}}
           {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-publication-panel.hbs" view=publicationView}}
+          {{!-- Printed armament lives on the always-present Stats tab: Operations is absent for some categories. --}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-attack-reference-panel.hbs" view=publicationView}}
         {{/if}}
         <div class="swse-vehicle-stats-grid">
           <div class="swse-vehicle-stats-col">
@@ -231,9 +233,6 @@
               actionState=actionEconomy.state
               actionBreakdown=actionEconomy.breakdown
               swiftMax=actionEconomy.state.swiftMax}}
-        {{/if}}
-        {{#if publicationView}}
-          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-attack-reference-panel.hbs" view=publicationView}}
         {{/if}}
         {{#if vehiclePanels.weaponMountPanel}}
           {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-weapon-mount-panel.hbs" panel=vehiclePanels.weaponMountPanel}}

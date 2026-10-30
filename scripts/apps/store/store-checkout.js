@@ -18,7 +18,7 @@ import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-
 import { calculateFinalCost } from "/systems/foundryvtt-swse/scripts/engine/store/pricing.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { VehicleCustomizationRouter } from "/systems/foundryvtt-swse/scripts/applications/vehicle/vehicle-customization-router.js";
-import { evaluateVehiclePurchase } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-store-eligibility.js";
+import { evaluateVehicleMerchantPurchase } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-store-eligibility.js";
 import { launchNewProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { getRandomDialogue } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
 import { SWSEVehicleHandler } from "/systems/foundryvtt-swse/scripts/actors/vehicle/swse-vehicle-handler.js";
@@ -346,11 +346,15 @@ async function revalidateCart(store, actor, originalTotal) {
 
         return { valid: true, error: null };
     } catch (err) {
-        SWSELogger.warn('StoreCheckout: Cart re-validation failed, proceeding anyway', {
-            error: err.message
+        // Fail closed: a cart that cannot be verified is never purchased.
+        SWSELogger.error('StoreCheckout: Cart re-validation failed; purchase blocked', {
+            error: err?.message
         });
-        // Non-fatal: if validation fails, allow purchase to proceed
-        return { valid: true, error: null };
+        return {
+            valid: false,
+            error: 'Your cart could not be verified, so nothing was purchased and no credits were charged.',
+            diagnostic: String(err?.message ?? err)
+        };
     }
 }
 
@@ -505,6 +509,12 @@ export async function buyDroid(store, actorId) {
  * @param {string} condition - "new" or "used"
  */
 export async function buyVehicle(store, actorId, condition) {
+    return withPurchaseLock(store?.actor?.id, () => buyVehicleUnguarded(store, actorId, condition), () => {
+        ui.notifications.warn('A purchase is already in progress.');
+    });
+}
+
+async function buyVehicleUnguarded(store, actorId, condition) {
     if (!actorId) {
         ui.notifications.warn(storeI18n('SWSE.Store.Notifications.InvalidVehicleSelection'));
         return;
@@ -932,9 +942,14 @@ async function createVehiclePlans(cartVehicles, itemsById) {
     // Re-evaluate source eligibility for THIS condition under the transaction: the
     // published price state must allow it (used needs a published used price) and
     // the store's offer must be a positive price. No GM override is wired here.
-    const verdict = evaluateVehiclePurchase(canonicalActor.toObject().flags.swse.universalVehicleSource.source, {
-      condition: vehicle.condition === 'used' ? 'used' : 'new',
-      offerPrice: vehicle.cost ?? null
+    // The charge must equal the Store's own policy-applied offer for this item (looked up
+    // by id in the merchant index), never just a cart value the client holds.
+    const merchantItem = itemsById?.get(vehicle.id) ?? template;
+    const condition = vehicle.condition === 'used' ? 'used' : 'new';
+    const verdict = evaluateVehicleMerchantPurchase(canonicalActor.toObject().flags.swse.universalVehicleSource.source, {
+      condition,
+      merchantPrice: getVehicleConditionCost(merchantItem, condition),
+      cartPrice: vehicle.cost ?? null
     });
     if (!verdict.ok)
       throw new Error('UNIVERSAL_VEHICLE_STORE_NOT_ELIGIBLE: ' + matches[0].sourceEntryKey + ': ' + verdict.reasons.join(','));
@@ -1111,7 +1126,24 @@ async function submitStoreItemApprovalRequest(actor, approvalItems = []) {
  * @param {Function} animateNumberCallback - Callback to animate numbers
  * @returns {Promise<Object>} { success: boolean, transactionId?: string, total?: number, error?: string }
  */
+const purchasesInFlight = new Set();
+
+/** One checkout/vehicle purchase per wallet actor at a time (double-click / concurrent clients). */
+async function withPurchaseLock(actorId, work, onBusy) {
+    const key = String(actorId ?? '');
+    if (!key || purchasesInFlight.has(key)) return onBusy();
+    purchasesInFlight.add(key);
+    try { return await work(); } finally { purchasesInFlight.delete(key); }
+}
+
 export async function checkout(store, animateNumberCallback) {
+    return withPurchaseLock(store?.actor?.id, () => checkoutUnguarded(store, animateNumberCallback), () => {
+        ui.notifications.warn('A purchase is already in progress.');
+        return { success: false, error: 'purchase-in-progress' };
+    });
+}
+
+async function checkoutUnguarded(store, animateNumberCallback) {
     const actor = store.actor;
     if (SettingsHelper.getSafe('storeOpen', true) !== true) {
         ui.notifications.warn(storeI18n('SWSE.Store.Notifications.StoreClosed'));

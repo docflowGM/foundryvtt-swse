@@ -82,6 +82,24 @@ export function buildCanonicalVehicleCostRecord(economics) {
   };
 }
 
+/**
+ * Verify the amount about to be charged against the AUTHORITATIVE merchant offer (the
+ * Store's policy-applied price for this item), not a mutable cart value.
+ * @param {{merchantPrice:number|null, cartPrice?:number|null}} offer
+ */
+export function evaluateVehicleMerchantPurchase(record, { condition = 'new', merchantPrice = null, cartPrice = undefined, gmOffer = null } = {}) {
+  if (!finite(merchantPrice) || merchantPrice <= 0) {
+    const r = evaluateVehiclePurchase(record, { condition, gmOffer });
+    return r.ok ? { ...r, ok: false, reasons: ['MERCHANT_OFFER_UNAVAILABLE'] } : r;
+  }
+  const verdict = evaluateVehiclePurchase(record, { condition, offerPrice: merchantPrice, gmOffer });
+  if (verdict.ok && cartPrice !== undefined && cartPrice !== null && cartPrice !== merchantPrice) {
+    verdict.ok = false;
+    verdict.reasons.push('CART_PRICE_MISMATCH');
+  }
+  return verdict;
+}
+
 /** Browse listing for the source catalog. Eligibility here is "what the source allows". */
 export function buildVehicleCatalogListing(sourceActors) {
   const seen = new Set(), issues = [], entries = [];

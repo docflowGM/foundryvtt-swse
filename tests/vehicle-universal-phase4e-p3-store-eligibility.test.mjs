@@ -122,7 +122,7 @@ const loader = readFileSync('scripts/engine/store/loader.js', 'utf8');
 const constants = readFileSync('scripts/engine/store/store-constants.js', 'utf8');
 
 test('checkout: source eligibility is evaluated before any debit, exact price on drift, no retired pack', () => {
-  assert.match(checkout, /evaluateVehiclePurchase\(/);
+  assert.match(checkout, /evaluateVehicleMerchantPurchase\(/);
   assert.doesNotMatch(checkout, /vehicle\.cost \* 0\.05/);
   assert.match(checkout, /currentPrice !== vehicle\.cost/);
   assert.doesNotMatch(checkout, /foundryvtt-swse\.vehicles['"`]/);

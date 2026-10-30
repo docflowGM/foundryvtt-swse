@@ -11,6 +11,9 @@ import { getVehicleRuntimeProjection } from '../../../domain/vehicles/vehicle-ru
 
 const finite = value => typeof value === 'number' && Number.isFinite(value);
 const text = value => (typeof value === 'string' && value.trim()) ? value.trim() : null;
+/** Signed printed bonus: -2 -> "-2", 0 -> "+0", 5 -> "+5" (never "+-2"; zero is a value). */
+export function signedBonus(n) { return n < 0 ? String(n) : '+' + n; }
+
 export const SOURCE_UNKNOWN = 'Not stated in source';
 
 function quantity(q) {
@@ -133,6 +136,7 @@ export function buildVehiclePublicationViewModel(actor, projection = getVehicleR
       note: 'Printed attack groups are reference-only. No installed mounts are certified.',
       groups: published.attackGroups.map(g => ({
         label: g.label, attackBonusPrinted: finite(g.attackBonusPrinted) ? g.attackBonusPrinted : null,
+        attackLabel: finite(g.attackBonusPrinted) ? signedBonus(g.attackBonusPrinted) : null,
         notes: text(g.specialNotes)
       }))
     },

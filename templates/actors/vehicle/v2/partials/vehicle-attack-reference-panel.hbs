@@ -9,7 +9,7 @@
     {{#each view.attackReference.groups as |group|}}
       <div class="swse-vehicle-list-card">
         <strong>{{group.label}}</strong>
-        {{#if group.attackBonusPrinted}}<span>Printed attack +{{group.attackBonusPrinted}}</span>{{/if}}
+        {{#if group.attackLabel}}<span>Printed attack {{group.attackLabel}}</span>{{/if}}
         {{#if group.notes}}<span>{{group.notes}}</span>{{/if}}
       </div>
     {{else}}
