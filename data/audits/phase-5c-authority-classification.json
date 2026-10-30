@@ -18,9 +18,9 @@
   "GENERATED_RUNTIME_INDEX": 1,
   "GENERATED_COMPATIBILITY": 3,
   "MIGRATION_ALIAS_ONLY": 2,
-  "HISTORICAL_AUDIT_EVIDENCE": 430,
+  "HISTORICAL_AUDIT_EVIDENCE": 431,
   "DEAD_REMOVE": 0,
-  "OTHER_DOMAIN_DATA": 14,
+  "OTHER_DOMAIN_DATA": 15,
   "REFERENCE_BEARING_DOMAIN_DATA": 14
  },
  "unclassified": [],
@@ -982,6 +982,11 @@
   },
   {
    "path": "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000015.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-p2-sotg-modification-evidence.json",
    "class": "HISTORICAL_AUDIT_EVIDENCE",
    "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
   },
@@ -1951,19 +1956,24 @@
    "note": "The one operational authority for its domain."
   },
   {
+   "path": "data/canonical/vehicles/construction/stock-frames.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Universal vehicle publication SSOT, its manifest, the retired ship ledger, and the certified starship stock frames; vehicle domain, not the personal weapon or feat corpus."
+  },
+  {
    "path": "data/canonical/vehicles/ships.json",
    "class": "OTHER_DOMAIN_DATA",
-   "note": "Universal vehicle publication SSOT, its manifest, and the retired ship ledger; vehicle domain, not the personal weapon or feat corpus."
+   "note": "Universal vehicle publication SSOT, its manifest, the retired ship ledger, and the certified starship stock frames; vehicle domain, not the personal weapon or feat corpus."
   },
   {
    "path": "data/canonical/vehicles/vehicles.json",
    "class": "OTHER_DOMAIN_DATA",
-   "note": "Universal vehicle publication SSOT, its manifest, and the retired ship ledger; vehicle domain, not the personal weapon or feat corpus."
+   "note": "Universal vehicle publication SSOT, its manifest, the retired ship ledger, and the certified starship stock frames; vehicle domain, not the personal weapon or feat corpus."
   },
   {
    "path": "data/canonical/vehicles/vehicles.manifest.json",
    "class": "OTHER_DOMAIN_DATA",
-   "note": "Universal vehicle publication SSOT, its manifest, and the retired ship ledger; vehicle domain, not the personal weapon or feat corpus."
+   "note": "Universal vehicle publication SSOT, its manifest, the retired ship ledger, and the certified starship stock frames; vehicle domain, not the personal weapon or feat corpus."
   },
   {
    "path": "data/canonical/weapons.json",

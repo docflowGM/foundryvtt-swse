@@ -13,7 +13,7 @@ const { SnapshotManager } = await import('../scripts/engine/progression/utils/sn
 
 const actors = [...buildUniversalVehiclePackSources().output.values()].flat();
 const XW = 'core-incom-t-65b-x-wing-starfighter';
-const fixtureRules = { resolveEpBudget: () => ({ state: 'known', total: 4 }), resolveUninstallRefund: () => null };
+const fixtureRules = { resolveEpBudget: () => ({ state: 'known', total: 4 }), resolveUninstallRefund: () => null, allowEpShortfall: false, resolveNonstandard: () => ({ nonstandard: false, basis: 'FIXTURE' }) };
 const catalogRow = (over = {}) => ({ id: 'fx', name: 'Fixture Plating', category: 'Defense', emplacementPoints: 2, cost: 1000,
   costType: 'flat', availability: 'Licensed', sizeRestriction: null,
   certification: { status: 'MECHANIC_SPECIFIED', book: 'B', page: 1 }, ...over });

@@ -1,0 +1,2399 @@
+{
+ "schema": "swse.vehicle.p2.sotg-modification-evidence.v1",
+ "book": "Starships of the Galaxy",
+ "sourceFile": "reference/sourcebooks/Starships of the Galaxy_djvu.txt",
+ "sourceSha256": "04fc2297996f2370d4e183dfe33df0b885215cb84c2f1602f60e227f3d853ad3",
+ "pageEvidence": "Printed pages are table-of-contents section ranges (the OCR has no page markers); the PDF is final authority for the exact page.",
+ "sections": {
+  "costModifiersAndEmplacement": {
+   "printedPages": [
+    38,
+    40
+   ],
+   "note": "Table 3-1 cost modifiers; emplacement points; gaining EP; unused EP (Table 3-2); nonstandard modifications; installation; work force; time; checks"
+  },
+  "movementSystems": {
+   "printedPages": [
+    40,
+    43
+   ]
+  },
+  "defenseSystems": {
+   "printedPages": [
+    43,
+    44
+   ]
+  },
+  "weaponSystems": {
+   "printedPages": [
+    44,
+    48
+   ]
+  },
+  "accessories": {
+   "printedPages": [
+    48,
+    53
+   ]
+  },
+  "stockShips": {
+   "printedPages": [
+    53,
+    54
+   ]
+  }
+ },
+ "tables": {
+  "movement": [
+   {
+    "line": 3877,
+    "ocrName": "Atmospheric thruster",
+    "key": "atmospheric thruster",
+    "emplacementPoints": 2,
+    "availability": "Common",
+    "sizeRestriction": "Colossal or smaller",
+    "cost": 2000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 3878,
+    "ocrName": "Atmospheric thruster, advanced",
+    "key": "atmospheric thruster advanced",
+    "emplacementPoints": 5,
+    "availability": "Common",
+    "sizeRestriction": "Gargantuan or smaller",
+    "cost": 5000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 3879,
+    "ocrName": "Combat thruster",
+    "key": "combat thruster",
+    "emplacementPoints": 1,
+    "availability": "Common",
+    "sizeRestriction": "Colossal",
+    "cost": 2000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 3880,
+    "ocrName": "Hyperdrive, class .75",
+    "key": "hyperdrive class 0.75",
+    "emplacementPoints": 4,
+    "availability": "Military",
+    "sizeRestriction": "Colossal (cruiser) or smaller",
+    "cost": 5000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 3881,
+    "ocrName": "Hyperdrive, class 1",
+    "key": "hyperdrive class 1",
+    "emplacementPoints": 3,
+    "availability": "Licensed",
+    "sizeRestriction": "Colossal (cruiser) or smaller",
+    "cost": 3000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 3882,
+    "ocrName": "Hyperdrive, class 1.5",
+    "key": "hyperdrive class 1.5",
+    "emplacementPoints": 3,
+    "availability": "Licensed",
+    "sizeRestriction": "Colossal (cruiser) or smaller",
+    "cost": 2500,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 3883,
+    "ocrName": "Hyperdrive, class 2",
+    "key": "hyperdrive class 2",
+    "emplacementPoints": 3,
+    "availability": "Common",
+    "sizeRestriction": null,
+    "cost": 2000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 3884,
+    "ocrName": "Hyperdrive, class 3",
+    "key": "hyperdrive class 3",
+    "emplacementPoints": 2,
+    "availability": "Common",
+    "sizeRestriction": null,
+    "cost": 1500,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 3885,
+    "ocrName": "Hyperdrive, class 4",
+    "key": "hyperdrive class 4",
+    "emplacementPoints": 2,
+    "availability": "Common",
+    "sizeRestriction": null,
+    "cost": 1000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 3886,
+    "ocrName": "Hyperdrive, class 5",
+    "key": "hyperdrive class 5",
+    "emplacementPoints": 2,
+    "availability": "Common",
+    "sizeRestriction": null,
+    "cost": 500,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 3887,
+    "ocrName": "Hyperdrive, class 6",
+    "key": "hyperdrive class 6",
+    "emplacementPoints": 2,
+    "availability": "Common",
+    "sizeRestriction": null,
+    "cost": 400,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 3888,
+    "ocrName": "Hyperdrive, class 8",
+    "key": "hyperdrive class 8",
+    "emplacementPoints": 1,
+    "availability": "Common",
+    "sizeRestriction": null,
+    "cost": 300,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 3889,
+    "ocrName": "Hyperdrive, class 10",
+    "key": "hyperdrive class 10",
+    "emplacementPoints": 1,
+    "availability": "Common",
+    "sizeRestriction": null,
+    "cost": 200,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 3890,
+    "ocrName": "Hyperdrive, class 15",
+    "key": "hyperdrive class 15",
+    "emplacementPoints": 1,
+    "availability": "Common",
+    "sizeRestriction": null,
+    "cost": 100,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 3891,
+    "ocrName": "Maneuvering jets +2",
+    "key": "maneuvering jets +2",
+    "emplacementPoints": null,
+    "availability": "Common",
+    "sizeRestriction": null,
+    "cost": 2000,
+    "costType": "base",
+    "noisy": [
+     {
+      "cell": "emplacementPoints",
+      "ocr": "Z"
+     }
+    ]
+   },
+   {
+    "line": 3892,
+    "ocrName": "Maneuvering jets +4",
+    "key": "maneuvering jets +4",
+    "emplacementPoints": 3,
+    "availability": "Common",
+    "sizeRestriction": "Colossal or smaller",
+    "cost": 5000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 3893,
+    "ocrName": "Maneuvering jets +6",
+    "key": "maneuvering jets +6",
+    "emplacementPoints": 4,
+    "availability": "Licensed",
+    "sizeRestriction": "Gargantuan or smaller",
+    "cost": 10000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 3894,
+    "ocrName": "Navicomputer, limited",
+    "key": "navicomputer limited",
+    "emplacementPoints": 0,
+    "availability": "Common",
+    "sizeRestriction": null,
+    "cost": 500,
+    "costType": "flat",
+    "noisy": []
+   },
+   {
+    "line": 3896,
+    "ocrName": "Navicomputer",
+    "key": "navicomputer",
+    "emplacementPoints": 1,
+    "availability": "Licensed",
+    "sizeRestriction": null,
+    "cost": 2000,
+    "costType": "flat",
+    "noisy": []
+   },
+   {
+    "line": 3898,
+    "ocrName": "Navicomputer, advanced",
+    "key": "navicomputer advanced",
+    "emplacementPoints": 2,
+    "availability": "Licensed",
+    "sizeRestriction": null,
+    "cost": 20000,
+    "costType": "flat",
+    "noisy": []
+   },
+   {
+    "line": 3900,
+    "ocrName": "SubLight Accelerator Motor",
+    "key": "sublight accelerator motor",
+    "emplacementPoints": 2,
+    "availability": "Military",
+    "sizeRestriction": "Gargantuan or smaller",
+    "cost": 25000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 3901,
+    "ocrName": "Sublight drive (speed 1 square)",
+    "key": "sublight drive speed 1 square",
+    "emplacementPoints": 2,
+    "availability": "Common",
+    "sizeRestriction": null,
+    "cost": 1000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 3902,
+    "ocrName": "Sublight drive (speed 2 squares)",
+    "key": "sublight drive speed 2 squares",
+    "emplacementPoints": 3,
+    "availability": "Common",
+    "sizeRestriction": null,
+    "cost": 2000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 3903,
+    "ocrName": "Sublight drive (speed 3 squares)",
+    "key": "sublight drive speed 3 squares",
+    "emplacementPoints": 4,
+    "availability": "Licensed",
+    "sizeRestriction": "Colossal (cruiser) or smaller",
+    "cost": 5000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 3904,
+    "ocrName": "Sublight drive (speed 4 squares)",
+    "key": "sublight drive speed 4 squares",
+    "emplacementPoints": 5,
+    "availability": "Restricted",
+    "sizeRestriction": "Colossal (cruiser) or smaller",
+    "cost": 10000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 3905,
+    "ocrName": "Sublight drive (speed 5 squares)",
+    "key": "sublight drive speed 5 squares",
+    "emplacementPoints": 6,
+    "availability": "Military",
+    "sizeRestriction": "Colossal or smaller",
+    "cost": 20000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 3906,
+    "ocrName": "Sublight drive (speed 6 squares)",
+    "key": "sublight drive speed 6 squares",
+    "emplacementPoints": 7,
+    "availability": "Military",
+    "sizeRestriction": "Gargantuan or smaller",
+    "cost": 100000,
+    "costType": "base",
+    "noisy": []
+   }
+  ],
+  "defense": [
+   {
+    "line": 4014,
+    "ocrName": "Armor, +1",
+    "key": "armor +1",
+    "emplacementPoints": null,
+    "availability": "Licensed",
+    "sizeRestriction": null,
+    "cost": 2000,
+    "costType": "base",
+    "noisy": [
+     {
+      "cell": "emplacementPoints",
+      "ocr": "A"
+     }
+    ]
+   },
+   {
+    "line": 4016,
+    "ocrName": "Armor, +2",
+    "key": "armor +2",
+    "emplacementPoints": 5,
+    "availability": "Restricted",
+    "sizeRestriction": "Colossal or larger",
+    "cost": 5000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 4018,
+    "ocrName": "Armor, +3",
+    "key": "armor +3",
+    "emplacementPoints": 10,
+    "availability": "Military",
+    "sizeRestriction": "Colossal (frigate) or larger",
+    "cost": 10000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 4020,
+    "ocrName": "Armor, +4",
+    "key": "armor +4",
+    "emplacementPoints": 20,
+    "availability": "Military",
+    "sizeRestriction": "Colossal (cruiser) or larger",
+    "cost": 20000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 4022,
+    "ocrName": "Jamming suite",
+    "key": "jamming suite",
+    "emplacementPoints": 1,
+    "availability": "Common",
+    "sizeRestriction": null,
+    "cost": 5000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 4024,
+    "ocrName": "Jamming array",
+    "key": "jamming array",
+    "emplacementPoints": 5,
+    "availability": "Common",
+    "sizeRestriction": "Colossal or larger",
+    "cost": 20000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 4026,
+    "ocrName": "Regenerating shields",
+    "key": "regenerating shields",
+    "emplacementPoints": 2,
+    "availability": "Restricted",
+    "sizeRestriction": null,
+    "cost": 5000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 4028,
+    "ocrName": "Reinforced bulkheads +10%",
+    "key": "reinforced bulkheads +10%",
+    "emplacementPoints": 2,
+    "availability": "Common",
+    "sizeRestriction": null,
+    "cost": 2000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 4030,
+    "ocrName": "Reinforced bulkheads +20%",
+    "key": "reinforced bulkheads +20%",
+    "emplacementPoints": 5,
+    "availability": "Licensed",
+    "sizeRestriction": null,
+    "cost": 5000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 4032,
+    "ocrName": "Reinforced bulkheads +30%",
+    "key": "reinforced bulkheads +30%",
+    "emplacementPoints": 10,
+    "availability": "Restricted",
+    "sizeRestriction": null,
+    "cost": 10000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 4034,
+    "ocrName": "Shields,SR10",
+    "key": "shields sr 10",
+    "emplacementPoints": 1,
+    "availability": "Common",
+    "sizeRestriction": null,
+    "cost": 750,
+    "costType": "base",
+    "noisy": [
+     {
+      "cell": "sizeRestriction",
+      "ocr": "None a"
+     }
+    ]
+   },
+   {
+    "line": 4036,
+    "ocrName": "Shields, SR 15",
+    "key": "shields sr 15",
+    "emplacementPoints": 1,
+    "availability": "Common",
+    "sizeRestriction": null,
+    "cost": 1000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 4038,
+    "ocrName": "Shields,SR20.",
+    "key": "shields sr 20",
+    "emplacementPoints": 1,
+    "availability": "Common",
+    "sizeRestriction": "Gargantuan or larger",
+    "cost": 1250,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 4039,
+    "ocrName": "Shields, SR 25",
+    "key": "shields sr 25",
+    "emplacementPoints": 1,
+    "availability": "Common",
+    "sizeRestriction": "Gargantuan or larger",
+    "cost": 1500,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 4040,
+    "ocrName": "Shields, SR 30",
+    "key": "shields sr 30",
+    "emplacementPoints": 2,
+    "availability": "Common",
+    "sizeRestriction": "Gargantuan or larger",
+    "cost": 2000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 4041,
+    "ocrName": "Shields, SR 35",
+    "key": "shields sr 35",
+    "emplacementPoints": 2,
+    "availability": "Common",
+    "sizeRestriction": "Gargantuan or larger",
+    "cost": 2500,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 4042,
+    "ocrName": "Shields, SR 40",
+    "key": "shields sr 40",
+    "emplacementPoints": null,
+    "availability": "Common",
+    "sizeRestriction": "Colossal or larger",
+    "cost": 3000,
+    "costType": "base",
+    "noisy": [
+     {
+      "cell": "emplacementPoints",
+      "ocr": "De"
+     }
+    ]
+   },
+   {
+    "line": 4043,
+    "ocrName": "Shields, SR 45",
+    "key": "shields sr 45",
+    "emplacementPoints": 2,
+    "availability": "Common",
+    "sizeRestriction": "Colossal or larger",
+    "cost": 4000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 4044,
+    "ocrName": "Shields, SR 50",
+    "key": "shields sr 50",
+    "emplacementPoints": null,
+    "availability": "Common",
+    "sizeRestriction": "Colossal or larger",
+    "cost": 5000,
+    "costType": "base",
+    "noisy": [
+     {
+      "cell": "emplacementPoints",
+      "ocr": "s"
+     }
+    ]
+   },
+   {
+    "line": 4045,
+    "ocrName": "Shields, SR 55",
+    "key": "shields sr 55",
+    "emplacementPoints": 3,
+    "availability": "Common",
+    "sizeRestriction": "Colossal or larger",
+    "cost": 6000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 4046,
+    "ocrName": "Shields, SR 60",
+    "key": "shields sr 60",
+    "emplacementPoints": null,
+    "availability": "Common",
+    "sizeRestriction": "Colossal (frigate) or larger",
+    "cost": 8000,
+    "costType": "base",
+    "noisy": [
+     {
+      "cell": "emplacementPoints",
+      "ocr": "ce:"
+     }
+    ]
+   },
+   {
+    "line": 4047,
+    "ocrName": "Shields, SR 70",
+    "key": "shields sr 70",
+    "emplacementPoints": 3,
+    "availability": "Common",
+    "sizeRestriction": "Colossal (frigate) or larger",
+    "cost": 10000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 4048,
+    "ocrName": "Shields, SR 80",
+    "key": "shields sr 80",
+    "emplacementPoints": 4,
+    "availability": "Common",
+    "sizeRestriction": "Colossal (frigate) or larger",
+    "cost": 12500,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 4049,
+    "ocrName": "Shields, SR 90",
+    "key": "shields sr 90",
+    "emplacementPoints": 4,
+    "availability": "Common",
+    "sizeRestriction": "Colossal (frigate) or larger",
+    "cost": 15000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 4050,
+    "ocrName": "Shields, SR 100",
+    "key": "shields sr 100",
+    "emplacementPoints": 5,
+    "availability": "Common",
+    "sizeRestriction": "Colossal (frigate) or larger",
+    "cost": 20000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 4051,
+    "ocrName": "Shields, SR 125",
+    "key": "shields sr 125",
+    "emplacementPoints": 6,
+    "availability": "Common",
+    "sizeRestriction": "Colossal (frigate) or larger",
+    "cost": 25000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 4053,
+    "ocrName": "Shields, SR 150",
+    "key": "shields sr 150",
+    "emplacementPoints": null,
+    "availability": "Common",
+    "sizeRestriction": "Colossal (cruiser) or larger",
+    "cost": 30000,
+    "costType": "base",
+    "noisy": [
+     {
+      "cell": "emplacementPoints",
+      "ocr": "i]"
+     }
+    ]
+   },
+   {
+    "line": 4054,
+    "ocrName": "Shields, SR 175",
+    "key": "shields sr 175",
+    "emplacementPoints": 8,
+    "availability": "Common",
+    "sizeRestriction": "Colossal (cruiser) or larger",
+    "cost": 40000,
+    "costType": "base",
+    "noisy": []
+   },
+   {
+    "line": 4055,
+    "ocrName": "Shields, SR 200",
+    "key": "shields sr 200",
+    "emplacementPoints": 10,
+    "availability": "Common",
+    "sizeRestriction": "Colossal (cruiser) or larger",
+    "cost": 50000,
+    "costType": "base",
+    "noisy": []
+   }
+  ]
+ },
+ "stockFrames": [
+  {
+   "class": "Battlecruiser",
+   "noisy": [
+    {
+     "cell": "damageReduction",
+     "ocr": "-/2 2,000 — 20. +16 20,000,000"
+    }
+   ],
+   "size": "Colossal (cruiser)",
+   "strength": 124,
+   "dexterity": 12,
+   "intelligence": 18,
+   "speed": "-/2",
+   "hitPoints": 2000,
+   "damageReduction": 20,
+   "armor": 16,
+   "cost": 20000000,
+   "crew": 20000,
+   "passengers": 5000,
+   "cargo": "20,000 tons",
+   "consumables": "2 years",
+   "stockEmplacementPoints": 200
+  },
+  {
+   "class": "Cruiser",
+   "noisy": [],
+   "size": "Colossal (cruiser)",
+   "strength": 118,
+   "dexterity": 14,
+   "intelligence": 16,
+   "speed": "-/2",
+   "hitPoints": 1500,
+   "damageReduction": 20,
+   "armor": 14,
+   "cost": 10000000,
+   "crew": 5000,
+   "passengers": 1000,
+   "cargo": "10,000 tons",
+   "consumables": "2 years",
+   "stockEmplacementPoints": 100
+  },
+  {
+   "class": "Frigate",
+   "noisy": [],
+   "size": "Colossal (frigate)",
+   "strength": 114,
+   "dexterity": 16,
+   "intelligence": 16,
+   "speed": "-/2",
+   "hitPoints": 800,
+   "damageReduction": 15,
+   "armor": 12,
+   "cost": 2000000,
+   "crew": 1000,
+   "passengers": 200,
+   "cargo": "5,000 tons",
+   "consumables": "1 year",
+   "stockEmplacementPoints": 50
+  },
+  {
+   "class": "Corvette",
+   "noisy": [],
+   "size": "Colossal (frigate)",
+   "strength": 110,
+   "dexterity": 18,
+   "intelligence": 16,
+   "speed": "-/3",
+   "hitPoints": 600,
+   "damageReduction": 15,
+   "armor": 12,
+   "cost": 1000000,
+   "crew": 50,
+   "passengers": 200,
+   "cargo": "2,000 tons",
+   "consumables": "1 year",
+   "stockEmplacementPoints": 20
+  },
+  {
+   "class": "Heavy freighter",
+   "noisy": [],
+   "size": "Colossal (frigate)",
+   "strength": 106,
+   "dexterity": 10,
+   "intelligence": 12,
+   "speed": "-/1",
+   "hitPoints": 400,
+   "damageReduction": 15,
+   "armor": 12,
+   "cost": 500000,
+   "crew": 10,
+   "passengers": 10,
+   "cargo": "100,000 tons",
+   "consumables": "6 months",
+   "stockEmplacementPoints": 5
+  },
+  {
+   "class": "Gunship",
+   "noisy": [],
+   "size": "Colossal",
+   "strength": 50,
+   "dexterity": 14,
+   "intelligence": 16,
+   "speed": "12/3",
+   "hitPoints": 150,
+   "damageReduction": 15,
+   "armor": 12,
+   "cost": 200000,
+   "crew": 4,
+   "passengers": 4,
+   "cargo": "5 tons",
+   "consumables": "1 month",
+   "stockEmplacementPoints": 20
+  },
+  {
+   "class": "Shuttle",
+   "noisy": [],
+   "size": "Colossal",
+   "strength": 46,
+   "dexterity": 14,
+   "intelligence": 14,
+   "speed": "12/3",
+   "hitPoints": 120,
+   "damageReduction": 15,
+   "armor": 12,
+   "cost": 50000,
+   "crew": 4,
+   "passengers": 8,
+   "cargo": "20 tons",
+   "consumables": "1 month",
+   "stockEmplacementPoints": 5
+  },
+  {
+   "class": "Light freighter",
+   "noisy": [],
+   "size": "Colossal",
+   "strength": 42,
+   "dexterity": 10,
+   "intelligence": 12,
+   "speed": "12/2",
+   "hitPoints": 120,
+   "damageReduction": 15,
+   "armor": 12,
+   "cost": 20000,
+   "crew": 2,
+   "passengers": 6,
+   "cargo": "100 tons",
+   "consumables": "2 months",
+   "stockEmplacementPoints": 5
+  },
+  {
+   "class": "Bomber",
+   "noisy": [],
+   "size": "Gargantuan",
+   "strength": 46,
+   "dexterity": 18,
+   "intelligence": 14,
+   "speed": "16/3",
+   "hitPoints": 150,
+   "damageReduction": 10,
+   "armor": 8,
+   "cost": 50000,
+   "crew": 2,
+   "passengers": 0,
+   "cargo": "50 kg",
+   "consumables": "2 days",
+   "stockEmplacementPoints": 10
+  },
+  {
+   "class": "Superiority fighter",
+   "noisy": [],
+   "size": "Gargantuan",
+   "strength": 42,
+   "dexterity": 22,
+   "intelligence": 14,
+   "speed": "16/4",
+   "hitPoints": 120,
+   "damageReduction": 10,
+   "armor": 7,
+   "cost": 50000,
+   "crew": 1,
+   "passengers": 0,
+   "cargo": "50 kg",
+   "consumables": "2 days",
+   "stockEmplacementPoints": 5
+  },
+  {
+   "class": "Interceptor",
+   "noisy": [],
+   "size": "Huge",
+   "strength": 38,
+   "dexterity": 24,
+   "intelligence": 14,
+   "speed": "16/6",
+   "hitPoints": 90,
+   "damageReduction": 10,
+   "armor": 3,
+   "cost": 100000,
+   "crew": 1,
+   "passengers": 0,
+   "cargo": "50 kg",
+   "consumables": "2 days",
+   "stockEmplacementPoints": 5
+  },
+  {
+   "class": "Light fighter",
+   "noisy": [
+    {
+     "cell": "crew",
+     "ocr": "|"
+    },
+    {
+     "cell": "stockEmplacementPoints",
+     "ocr": "vi"
+    }
+   ],
+   "size": "Huge",
+   "strength": 34,
+   "dexterity": 20,
+   "intelligence": 14,
+   "speed": "16/5",
+   "hitPoints": 60,
+   "damageReduction": 10,
+   "armor": 3,
+   "cost": 30000,
+   "crew": 1,
+   "passengers": 0,
+   "cargo": "50 kg",
+   "consumables": "2 days",
+   "stockEmplacementPoints": null
+  }
+ ],
+ "unusedEmplacementPoints": {
+  "printedPages": [
+   39,
+   39
+  ],
+  "rows": [
+   {
+    "ocrName": "Action IV transport",
+    "unusedEmplacementPoints": 3,
+    "noisy": []
+   },
+   {
+    "ocrName": "Firespray-31",
+    "unusedEmplacementPoints": 3,
+    "noisy": []
+   },
+   {
+    "ocrName": "Baudo-class star yacht",
+    "unusedEmplacementPoints": 2,
+    "noisy": []
+   },
+   {
+    "ocrName": "Ghtroc-720",
+    "unusedEmplacementPoints": 3,
+    "noisy": []
+   },
+   {
+    "ocrName": "Blockade runner",
+    "unusedEmplacementPoints": 5,
+    "noisy": []
+   },
+   {
+    "ocrName": "J-Type transports",
+    "unusedEmplacementPoints": null,
+    "noisy": [
+     {
+      "cell": "unusedEmplacementPoints",
+      "ocr": "iz"
+     }
+    ]
+   },
+   {
+    "ocrName": "Citadel cruiser",
+    "unusedEmplacementPoints": 3,
+    "noisy": []
+   },
+   {
+    "ocrName": "Republic cruiser",
+    "unusedEmplacementPoints": 5,
+    "noisy": []
+   },
+   {
+    "ocrName": "CloakShape fighter",
+    "unusedEmplacementPoints": 2,
+    "noisy": []
+   },
+   {
+    "ocrName": "SoroSuub patrol fighter",
+    "unusedEmplacementPoints": 3,
+    "noisy": []
+   },
+   {
+    "ocrName": "Corellian gunship",
+    "unusedEmplacementPoints": 5,
+    "noisy": []
+   },
+   {
+    "ocrName": "Star Galleon-class frigate",
+    "unusedEmplacementPoints": 4,
+    "noisy": []
+   },
+   {
+    "ocrName": "Dreadnaught",
+    "unusedEmplacementPoints": 3,
+    "noisy": []
+   },
+   {
+    "ocrName": "YT-series",
+    "unusedEmplacementPoints": 10,
+    "noisy": []
+   },
+   {
+    "ocrName": "Dynamic-class freighter",
+    "unusedEmplacementPoints": 6,
+    "noisy": []
+   }
+  ],
+  "unpairedLines": []
+ },
+ "catalogComparison": {
+  "counts": {
+   "TABLE_NOT_PARSED_NEEDS_PDF": 126,
+   "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF": 7,
+   "SOURCE_VERIFIED_TEXT": 48,
+   "OCR_ROW_DIFFERS_FROM_CATALOG": 1,
+   "IN_OTHER_BOOK_OCR_UNREADABLE_NEEDS_PDF": 4,
+   "NO_PRINTED_ROW_FOUND_IN_PARSED_TABLES": 1
+  },
+  "rows": [
+   {
+    "catalogId": "cargo-jettison",
+    "catalogFile": "accessories",
+    "catalogName": "Cargo Jettison System",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "cargo-pod-light",
+    "catalogFile": "accessories",
+    "catalogName": "Cargo Pod, Light",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "cargo-pod-medium",
+    "catalogFile": "accessories",
+    "catalogName": "Cargo Pod, Medium",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "cargo-pod-heavy",
+    "catalogFile": "accessories",
+    "catalogName": "Cargo Pod, Heavy",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "cloaking-hibridium",
+    "catalogFile": "accessories",
+    "catalogName": "Cloaking Device, Hibridium",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "cloaking-stygium",
+    "catalogFile": "accessories",
+    "catalogName": "Cloaking Device, Stygium",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "cryogenic-chambers",
+    "catalogFile": "accessories",
+    "catalogName": "Cryogenic Chambers",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "docking-clamps",
+    "catalogFile": "accessories",
+    "catalogName": "Docking Clamps",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "droid-repair-team",
+    "catalogFile": "accessories",
+    "catalogName": "Droid Repair Team",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "escape-pod-small",
+    "catalogFile": "accessories",
+    "catalogName": "Escape Pod, Small Lifeboat",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "escape-pod-large",
+    "catalogFile": "accessories",
+    "catalogName": "Escape Pod, Large Lifeboat",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "extended-range",
+    "catalogFile": "accessories",
+    "catalogName": "Extended Range",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "hangar-bay",
+    "catalogFile": "accessories",
+    "catalogName": "Hangar Bay",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "hangar-bay-concealed",
+    "catalogFile": "accessories",
+    "catalogName": "Hangar Bay, Concealed",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "holonet-transceiver",
+    "catalogFile": "accessories",
+    "catalogName": "Transceiver, HoloNet",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "hyper-transceiver",
+    "catalogFile": "accessories",
+    "catalogName": "Transceiver, Hyper",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "luxury-basic",
+    "catalogFile": "accessories",
+    "catalogName": "Luxury Upgrade, Basic",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "luxury-advanced",
+    "catalogFile": "accessories",
+    "catalogName": "Luxury Upgrade, Advanced",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "luxury-extreme",
+    "catalogFile": "accessories",
+    "catalogName": "Luxury Upgrade, Extreme",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "medical-suite",
+    "catalogFile": "accessories",
+    "catalogName": "Medical Suite",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "passenger-seating",
+    "catalogFile": "accessories",
+    "catalogName": "Passenger Conversion, Seating",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "passenger-quarters",
+    "catalogFile": "accessories",
+    "catalogName": "Passenger Conversion, Quarters",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "sensor-array-2",
+    "catalogFile": "accessories",
+    "catalogName": "Sensor Array Computer +2",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "sensor-array-4",
+    "catalogFile": "accessories",
+    "catalogName": "Sensor Array Computer +4",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "sensor-array-6",
+    "catalogFile": "accessories",
+    "catalogName": "Sensor Array Computer +6",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "sensor-enhancement",
+    "catalogFile": "accessories",
+    "catalogName": "Sensor Enhancement Package",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "slave-circuits-basic",
+    "catalogFile": "accessories",
+    "catalogName": "Slave Circuits, Basic",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "slave-circuits-advanced",
+    "catalogFile": "accessories",
+    "catalogName": "Slave Circuits, Advanced",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "slave-circuits-recall",
+    "catalogFile": "accessories",
+    "catalogName": "Slave Circuits, Recall",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "smuggler-compartments",
+    "catalogFile": "accessories",
+    "catalogName": "Smuggler's Compartments",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "transponder-iff",
+    "catalogFile": "accessories",
+    "catalogName": "Transponder, IFF",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "transponder-masked",
+    "catalogFile": "accessories",
+    "catalogName": "Transponder, Masked",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "transponder-disguised-1",
+    "catalogFile": "accessories",
+    "catalogName": "Transponder, Disguised (Basic)",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "transponder-disguised-2",
+    "catalogFile": "accessories",
+    "catalogName": "Transponder, Disguised (Improved)",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "transponder-disguised-3",
+    "catalogFile": "accessories",
+    "catalogName": "Transponder, Disguised (Superior)",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "amphibious-seals",
+    "catalogFile": "accessories",
+    "catalogName": "Amphibious Seals",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "auxiliary-generators-2",
+    "catalogFile": "accessories",
+    "catalogName": "Auxiliary Generators +2",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "auxiliary-generators-4",
+    "catalogFile": "accessories",
+    "catalogName": "Auxiliary Generators +4",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "auxiliary-generators-6",
+    "catalogFile": "accessories",
+    "catalogName": "Auxiliary Generators +6",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "backup-battery",
+    "catalogFile": "accessories",
+    "catalogName": "Backup Battery",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "baffled-drive",
+    "catalogFile": "accessories",
+    "catalogName": "Baffled Drive",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "cockpit-ejection",
+    "catalogFile": "accessories",
+    "catalogName": "Cockpit Ejection System",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "cofferdam",
+    "catalogFile": "accessories",
+    "catalogName": "Cofferdam",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "environmental-filters",
+    "catalogFile": "accessories",
+    "catalogName": "Environmental Filters",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "fuel-converters",
+    "catalogFile": "accessories",
+    "catalogName": "Fuel Converters",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "grappler-mag",
+    "catalogFile": "accessories",
+    "catalogName": "Grappler Mag",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "hardpoint",
+    "catalogFile": "accessories",
+    "catalogName": "Hardpoint",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "hidden-cargo-25",
+    "catalogFile": "accessories",
+    "catalogName": "Hidden Cargo Hold (25% of Cargo)",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "hidden-cargo-50",
+    "catalogFile": "accessories",
+    "catalogName": "Hidden Cargo Hold (50% of Cargo)",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "hidden-cargo-75",
+    "catalogFile": "accessories",
+    "catalogName": "Hidden Cargo Hold (75% of Cargo)",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "holding-cells-25",
+    "catalogFile": "accessories",
+    "catalogName": "Holding Cells (25% of Passengers)",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "holding-cells-50",
+    "catalogFile": "accessories",
+    "catalogName": "Holding Cells (50% of Passengers)",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "holding-cells-75",
+    "catalogFile": "accessories",
+    "catalogName": "Holding Cells (75% of Passengers)",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "interrogation-chamber",
+    "catalogFile": "accessories",
+    "catalogName": "Interrogation Chamber",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "personalized-controls",
+    "catalogFile": "accessories",
+    "catalogName": "Personalized Controls",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "sensor-baffling",
+    "catalogFile": "accessories",
+    "catalogName": "Sensor Baffling",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "sensor-decoy",
+    "catalogFile": "accessories",
+    "catalogName": "Sensor Decoy",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "sensor-mask",
+    "catalogFile": "accessories",
+    "catalogName": "Sensor Mask",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "workshop",
+    "catalogFile": "accessories",
+    "catalogName": "Workshop",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "launch-bay",
+    "catalogFile": "accessories",
+    "catalogName": "Launch Bay",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "plasma-punch",
+    "catalogFile": "accessories",
+    "catalogName": "Plasma Punch",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "plasma-torch",
+    "catalogFile": "accessories",
+    "catalogName": "Plasma Torch",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "tractor-clamp",
+    "catalogFile": "accessories",
+    "catalogName": "Tractor Clamp",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "armor-1",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Armor, +1",
+    "printedLine": 4014,
+    "printedName": "Armor, +1",
+    "table": "defense",
+    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
+    "noisy": [
+     {
+      "cell": "emplacementPoints",
+      "ocr": "A"
+     }
+    ]
+   },
+   {
+    "catalogId": "armor-2",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Armor, +2",
+    "printedLine": 4016,
+    "printedName": "Armor, +2",
+    "table": "defense",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "armor-3",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Armor, +3",
+    "printedLine": 4018,
+    "printedName": "Armor, +3",
+    "table": "defense",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "armor-4",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Armor, +4",
+    "printedLine": 4020,
+    "printedName": "Armor, +4",
+    "table": "defense",
+    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
+    "differences": [
+     {
+      "field": "sizeRestriction",
+      "printed": "Colossal (cruiser) or larger",
+      "catalog": "Colossal (Frigate) or Larger"
+     }
+    ]
+   },
+   {
+    "catalogId": "jamming-suite",
+    "catalogFile": "defense-systems",
+    "catalogName": "Jamming Suite",
+    "printedLine": 4022,
+    "printedName": "Jamming suite",
+    "table": "defense",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "jamming-array",
+    "catalogFile": "defense-systems",
+    "catalogName": "Jamming Array",
+    "printedLine": 4024,
+    "printedName": "Jamming array",
+    "table": "defense",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "regenerating-shields",
+    "catalogFile": "defense-systems",
+    "catalogName": "Regenerating Shields",
+    "printedLine": 4026,
+    "printedName": "Regenerating shields",
+    "table": "defense",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "reinforced-bulkheads-10",
+    "catalogFile": "defense-systems",
+    "catalogName": "Reinforced Bulkheads, +10%",
+    "printedLine": 4028,
+    "printedName": "Reinforced bulkheads +10%",
+    "table": "defense",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "reinforced-bulkheads-20",
+    "catalogFile": "defense-systems",
+    "catalogName": "Reinforced Bulkheads, +20%",
+    "printedLine": 4030,
+    "printedName": "Reinforced bulkheads +20%",
+    "table": "defense",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "reinforced-bulkheads-30",
+    "catalogFile": "defense-systems",
+    "catalogName": "Reinforced Bulkheads, +30%",
+    "printedLine": 4032,
+    "printedName": "Reinforced bulkheads +30%",
+    "table": "defense",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "shields-10",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Shields, SR 10",
+    "printedLine": 4034,
+    "printedName": "Shields,SR10",
+    "table": "defense",
+    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
+    "noisy": [
+     {
+      "cell": "sizeRestriction",
+      "ocr": "None a"
+     }
+    ]
+   },
+   {
+    "catalogId": "shields-15",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Shields, SR 15",
+    "printedLine": 4036,
+    "printedName": "Shields, SR 15",
+    "table": "defense",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "shields-20",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Shields, SR 20",
+    "printedLine": 4038,
+    "printedName": "Shields,SR20.",
+    "table": "defense",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "shields-25",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Shields, SR 25",
+    "printedLine": 4039,
+    "printedName": "Shields, SR 25",
+    "table": "defense",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "shields-30",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Shields, SR 30",
+    "printedLine": 4040,
+    "printedName": "Shields, SR 30",
+    "table": "defense",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "shields-35",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Shields, SR 35",
+    "printedLine": 4041,
+    "printedName": "Shields, SR 35",
+    "table": "defense",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "shields-40",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Shields, SR 40",
+    "printedLine": 4042,
+    "printedName": "Shields, SR 40",
+    "table": "defense",
+    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
+    "noisy": [
+     {
+      "cell": "emplacementPoints",
+      "ocr": "De"
+     }
+    ]
+   },
+   {
+    "catalogId": "shields-45",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Shields, SR 45",
+    "printedLine": 4043,
+    "printedName": "Shields, SR 45",
+    "table": "defense",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "shields-50",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Shields, SR 50",
+    "printedLine": 4044,
+    "printedName": "Shields, SR 50",
+    "table": "defense",
+    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
+    "noisy": [
+     {
+      "cell": "emplacementPoints",
+      "ocr": "s"
+     }
+    ]
+   },
+   {
+    "catalogId": "shields-55",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Shields, SR 55",
+    "printedLine": 4045,
+    "printedName": "Shields, SR 55",
+    "table": "defense",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "shields-60",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Shields, SR 60",
+    "printedLine": 4046,
+    "printedName": "Shields, SR 60",
+    "table": "defense",
+    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
+    "noisy": [
+     {
+      "cell": "emplacementPoints",
+      "ocr": "ce:"
+     }
+    ]
+   },
+   {
+    "catalogId": "shields-70",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Shields, SR 70",
+    "printedLine": 4047,
+    "printedName": "Shields, SR 70",
+    "table": "defense",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "shields-80",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Shields, SR 80",
+    "printedLine": 4048,
+    "printedName": "Shields, SR 80",
+    "table": "defense",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "shields-90",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Shields, SR 90",
+    "printedLine": 4049,
+    "printedName": "Shields, SR 90",
+    "table": "defense",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "shields-100",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Shields, SR 100",
+    "printedLine": 4050,
+    "printedName": "Shields, SR 100",
+    "table": "defense",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "shields-125",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Shields, SR 125",
+    "printedLine": 4051,
+    "printedName": "Shields, SR 125",
+    "table": "defense",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "shields-150",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Shields, SR 150",
+    "printedLine": 4053,
+    "printedName": "Shields, SR 150",
+    "table": "defense",
+    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
+    "noisy": [
+     {
+      "cell": "emplacementPoints",
+      "ocr": "i]"
+     }
+    ]
+   },
+   {
+    "catalogId": "shields-175",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Shields, SR 175",
+    "printedLine": 4054,
+    "printedName": "Shields, SR 175",
+    "table": "defense",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "shields-200",
+    "catalogFile": "defense-systems",
+    "catalogName": "Starship Shields, SR 200",
+    "printedLine": 4055,
+    "printedName": "Shields, SR 200",
+    "table": "defense",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "anti-boarding-systems",
+    "catalogFile": "defense-systems",
+    "catalogName": "Anti-Boarding Systems",
+    "status": "IN_OTHER_BOOK_OCR_UNREADABLE_NEEDS_PDF",
+    "foundIn": [
+     {
+      "book": "Scum and Villainy",
+      "line": 3713
+     }
+    ]
+   },
+   {
+    "catalogId": "com-jammers",
+    "catalogFile": "defense-systems",
+    "catalogName": "Com Jammers",
+    "status": "IN_OTHER_BOOK_OCR_UNREADABLE_NEEDS_PDF",
+    "foundIn": [
+     {
+      "book": "Scum and Villainy",
+      "line": 3825
+     }
+    ]
+   },
+   {
+    "catalogId": "reinforced-keel",
+    "catalogFile": "defense-systems",
+    "catalogName": "Reinforced Keel",
+    "status": "IN_OTHER_BOOK_OCR_UNREADABLE_NEEDS_PDF",
+    "foundIn": [
+     {
+      "book": "Scum and Villainy",
+      "line": 4129
+     }
+    ]
+   },
+   {
+    "catalogId": "reinforced-keel-boarding",
+    "catalogFile": "defense-systems",
+    "catalogName": "Reinforced Keel, Boarding",
+    "status": "NO_PRINTED_ROW_FOUND_IN_PARSED_TABLES"
+   },
+   {
+    "catalogId": "security-bracing",
+    "catalogFile": "defense-systems",
+    "catalogName": "Security Bracing",
+    "status": "IN_OTHER_BOOK_OCR_UNREADABLE_NEEDS_PDF",
+    "foundIn": [
+     {
+      "book": "Scum and Villainy",
+      "line": 4150
+     }
+    ]
+   },
+   {
+    "catalogId": "atmospheric-thrusters",
+    "catalogFile": "movement-systems",
+    "catalogName": "Atmospheric Thrusters",
+    "printedLine": 3877,
+    "printedName": "Atmospheric thruster",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "atmospheric-thrusters-advanced",
+    "catalogFile": "movement-systems",
+    "catalogName": "Atmospheric Thrusters, Advanced",
+    "printedLine": 3878,
+    "printedName": "Atmospheric thruster, advanced",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "combat-thrusters",
+    "catalogFile": "movement-systems",
+    "catalogName": "Combat Thrusters",
+    "printedLine": 3879,
+    "printedName": "Combat thruster",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "hyperdrive-075",
+    "catalogFile": "movement-systems",
+    "catalogName": "Hyperdrive, Class 0.75",
+    "printedLine": 3880,
+    "printedName": "Hyperdrive, class .75",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "hyperdrive-1",
+    "catalogFile": "movement-systems",
+    "catalogName": "Hyperdrive, Class 1",
+    "printedLine": 3881,
+    "printedName": "Hyperdrive, class 1",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "hyperdrive-15",
+    "catalogFile": "movement-systems",
+    "catalogName": "Hyperdrive, Class 1.5",
+    "printedLine": 3882,
+    "printedName": "Hyperdrive, class 1.5",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "hyperdrive-2",
+    "catalogFile": "movement-systems",
+    "catalogName": "Hyperdrive, Class 2",
+    "printedLine": 3883,
+    "printedName": "Hyperdrive, class 2",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "hyperdrive-3",
+    "catalogFile": "movement-systems",
+    "catalogName": "Hyperdrive, Class 3",
+    "printedLine": 3884,
+    "printedName": "Hyperdrive, class 3",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "hyperdrive-4",
+    "catalogFile": "movement-systems",
+    "catalogName": "Hyperdrive, Class 4",
+    "printedLine": 3885,
+    "printedName": "Hyperdrive, class 4",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "hyperdrive-5",
+    "catalogFile": "movement-systems",
+    "catalogName": "Hyperdrive, Class 5",
+    "printedLine": 3886,
+    "printedName": "Hyperdrive, class 5",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "hyperdrive-6",
+    "catalogFile": "movement-systems",
+    "catalogName": "Hyperdrive, Class 6",
+    "printedLine": 3887,
+    "printedName": "Hyperdrive, class 6",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "hyperdrive-8",
+    "catalogFile": "movement-systems",
+    "catalogName": "Hyperdrive, Class 8",
+    "printedLine": 3888,
+    "printedName": "Hyperdrive, class 8",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "hyperdrive-10",
+    "catalogFile": "movement-systems",
+    "catalogName": "Hyperdrive, Class 10",
+    "printedLine": 3889,
+    "printedName": "Hyperdrive, class 10",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "hyperdrive-15-class",
+    "catalogFile": "movement-systems",
+    "catalogName": "Hyperdrive, Class 15",
+    "printedLine": 3890,
+    "printedName": "Hyperdrive, class 15",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "maneuvering-jets-2",
+    "catalogFile": "movement-systems",
+    "catalogName": "Maneuvering Jets +2",
+    "printedLine": 3891,
+    "printedName": "Maneuvering jets +2",
+    "table": "movement",
+    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
+    "noisy": [
+     {
+      "cell": "emplacementPoints",
+      "ocr": "Z"
+     }
+    ]
+   },
+   {
+    "catalogId": "maneuvering-jets-4",
+    "catalogFile": "movement-systems",
+    "catalogName": "Maneuvering Jets +4",
+    "printedLine": 3892,
+    "printedName": "Maneuvering jets +4",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "maneuvering-jets-6",
+    "catalogFile": "movement-systems",
+    "catalogName": "Maneuvering Jets +6",
+    "printedLine": 3893,
+    "printedName": "Maneuvering jets +6",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "navicomputer-limited",
+    "catalogFile": "movement-systems",
+    "catalogName": "Navicomputer, Limited",
+    "printedLine": 3894,
+    "printedName": "Navicomputer, limited",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "navicomputer",
+    "catalogFile": "movement-systems",
+    "catalogName": "Navicomputer",
+    "printedLine": 3896,
+    "printedName": "Navicomputer",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "navicomputer-advanced",
+    "catalogFile": "movement-systems",
+    "catalogName": "Navicomputer, Advanced",
+    "printedLine": 3898,
+    "printedName": "Navicomputer, advanced",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "sublight-accelerator",
+    "catalogFile": "movement-systems",
+    "catalogName": "SubLight Accelerator Motor (SLAM)",
+    "printedLine": 3900,
+    "printedName": "SubLight Accelerator Motor",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "sublight-drive-1",
+    "catalogFile": "movement-systems",
+    "catalogName": "Sublight Drive (Speed 1 Square)",
+    "printedLine": 3901,
+    "printedName": "Sublight drive (speed 1 square)",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "sublight-drive-2",
+    "catalogFile": "movement-systems",
+    "catalogName": "Sublight Drive (Speed 2 Squares)",
+    "printedLine": 3902,
+    "printedName": "Sublight drive (speed 2 squares)",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "sublight-drive-3",
+    "catalogFile": "movement-systems",
+    "catalogName": "Sublight Drive (Speed 3 Squares)",
+    "printedLine": 3903,
+    "printedName": "Sublight drive (speed 3 squares)",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "sublight-drive-4",
+    "catalogFile": "movement-systems",
+    "catalogName": "Sublight Drive (Speed 4 Squares)",
+    "printedLine": 3904,
+    "printedName": "Sublight drive (speed 4 squares)",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "sublight-drive-5",
+    "catalogFile": "movement-systems",
+    "catalogName": "Sublight Drive (Speed 5 Squares)",
+    "printedLine": 3905,
+    "printedName": "Sublight drive (speed 5 squares)",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "sublight-drive-6",
+    "catalogFile": "movement-systems",
+    "catalogName": "Sublight Drive (Speed 6 Squares)",
+    "printedLine": 3906,
+    "printedName": "Sublight drive (speed 6 squares)",
+    "table": "movement",
+    "status": "SOURCE_VERIFIED_TEXT"
+   },
+   {
+    "catalogId": "autoblaster",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Autoblaster",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "blaster-cannon-light",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Blaster Cannon, Light",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "blaster-cannon-medium",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Blaster Cannon, Medium",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "blaster-cannon-heavy",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Blaster Cannon, Heavy",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "cannon-double",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Cannon, Double",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "cannon-quad",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Cannon, Quad",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "cannon-enhancement",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Cannon Enhancements",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "cannon-enhancement-advanced",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Cannon Enhancements, Advanced",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "concussion-missile-launcher-light",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Concussion Missile Launcher, Light",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "concussion-missile-light",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Concussion Missile, Light",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "concussion-missile-launcher-medium",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Concussion Missile Launcher, Medium",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "concussion-missile-medium",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Concussion Missile, Medium",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "concussion-missile-launcher-heavy",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Concussion Missile Launcher, Heavy",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "concussion-missile-heavy",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Concussion Missile, Heavy",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "ion-cannon-light",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Ion Cannon, Light",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "ion-cannon-medium",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Ion Cannon, Medium",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "ion-cannon-heavy",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Ion Cannon, Heavy",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "laser-cannon-light",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Laser Cannon, Light",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "laser-cannon-medium",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Laser Cannon, Medium",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "laser-cannon-heavy",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Laser Cannon, Heavy",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "proton-torpedo-launcher",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Proton Torpedo Launcher",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "proton-torpedo",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Proton Torpedo",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "turbolaser-light",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Turbolaser, Light",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "turbolaser-medium",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Turbolaser, Medium",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "turbolaser-heavy",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Turbolaser, Heavy",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "tractor-beam",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Tractor Beam",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "point-defense",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Point-Defense System",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "fire-linked-2",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Fire-Linked Weapon, 2",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "fire-linked-4",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Fire-Linked Weapon, 4",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "space-mine-launcher",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Space Mine Launcher",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "space-mine-standard",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Space Mine, Standard",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "ion-bomb-rack",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Ion Bomb Rack",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "ion-bomb",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Ion Bomb",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "shieldbuster-torpedo-launcher",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Shieldbuster Torpedo Launcher",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "shieldbuster-torpedo",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Shieldbuster Torpedo",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "discord-missile-launcher",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Discord Missile Launcher",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "discord-missile",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Discord Missile",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "gravity-mine-launcher",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Gravity Mine Launcher",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "gravity-mine-standard",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Gravity Mine, Standard",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "harpoon-gun",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Harpoon Gun",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "droid-jammer",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Droid Jammer",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "gravity-well-projector",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Gravity Well Projector",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "docking-gun",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Docking Gun",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "fire-linked-optional",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Fire-Linked Weapon, Optional",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "ion-cannon-hapan-triple",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Ion Cannon, Hapan Triple",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "space-mine-launcher-heavy",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Space Mine Launcher, Heavy",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "space-mine-advanced",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Space Mine, Advanced",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "space-mine-heavy",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Space Mine, Heavy",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "gravity-mine-magnetic",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Gravity Mine, Magnetic",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "composite-beam-cannon",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Composite Beam Cannon",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "energy-bomblet-generator",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Energy Bomblet Generator",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "heavy-ordnance-launcher",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Heavy Ordnance Launcher",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "ion-pulse-cannon",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Ion Pulse Cannon",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "mass-driver-cannon-standard",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Mass-Driver Cannon, Standard",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "mass-driver-cannon-heavy",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Mass-Driver Cannon, Heavy",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "microtractor-pressor",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Microtractor-Pressor",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "proton-grenade-launcher",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Proton Grenade Launcher",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "proton-grenade",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Proton Grenade",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "rail-cannon",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Rail Cannon",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "anti-aircraft-flak-pod",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Anti-Aircraft Flak Pod",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "chaff-gun",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Chaff Gun",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "defoliator-launcher",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Defoliator Launcher",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   },
+   {
+    "catalogId": "defoliator-shell",
+    "catalogFile": "weapon-systems",
+    "catalogName": "Defoliator Shell",
+    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+   }
+  ]
+ }
+}

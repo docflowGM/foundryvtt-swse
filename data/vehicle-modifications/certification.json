@@ -1,0 +1,536 @@
+{
+ "schema": "swse.vehicle.p2.modification-certification.v1",
+ "note": "SOURCE_VERIFIED = every table cell of the catalog row matches a clean OCR row of the cited Starships of the Galaxy table. It is NOT MECHANIC_SPECIFIED: a row becomes installable only when its effect is implemented. Page ranges are table-of-contents section ranges; the PDF is final authority for the exact page.",
+ "evidenceFile": "data/audits/vehicles/swse-p2-sotg-modification-evidence.json",
+ "sourceSha256": "04fc2297996f2370d4e183dfe33df0b885215cb84c2f1602f60e227f3d853ad3",
+ "rows": {
+  "armor-2": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    43,
+    44
+   ],
+   "table": "defense",
+   "ocrLine": 4016,
+   "pageResolution": "toc-section-range"
+  },
+  "armor-3": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    43,
+    44
+   ],
+   "table": "defense",
+   "ocrLine": 4018,
+   "pageResolution": "toc-section-range"
+  },
+  "jamming-suite": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    43,
+    44
+   ],
+   "table": "defense",
+   "ocrLine": 4022,
+   "pageResolution": "toc-section-range"
+  },
+  "jamming-array": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    43,
+    44
+   ],
+   "table": "defense",
+   "ocrLine": 4024,
+   "pageResolution": "toc-section-range"
+  },
+  "regenerating-shields": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    43,
+    44
+   ],
+   "table": "defense",
+   "ocrLine": 4026,
+   "pageResolution": "toc-section-range"
+  },
+  "reinforced-bulkheads-10": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    43,
+    44
+   ],
+   "table": "defense",
+   "ocrLine": 4028,
+   "pageResolution": "toc-section-range"
+  },
+  "reinforced-bulkheads-20": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    43,
+    44
+   ],
+   "table": "defense",
+   "ocrLine": 4030,
+   "pageResolution": "toc-section-range"
+  },
+  "reinforced-bulkheads-30": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    43,
+    44
+   ],
+   "table": "defense",
+   "ocrLine": 4032,
+   "pageResolution": "toc-section-range"
+  },
+  "shields-15": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    43,
+    44
+   ],
+   "table": "defense",
+   "ocrLine": 4036,
+   "pageResolution": "toc-section-range"
+  },
+  "shields-20": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    43,
+    44
+   ],
+   "table": "defense",
+   "ocrLine": 4038,
+   "pageResolution": "toc-section-range"
+  },
+  "shields-25": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    43,
+    44
+   ],
+   "table": "defense",
+   "ocrLine": 4039,
+   "pageResolution": "toc-section-range"
+  },
+  "shields-30": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    43,
+    44
+   ],
+   "table": "defense",
+   "ocrLine": 4040,
+   "pageResolution": "toc-section-range"
+  },
+  "shields-35": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    43,
+    44
+   ],
+   "table": "defense",
+   "ocrLine": 4041,
+   "pageResolution": "toc-section-range"
+  },
+  "shields-45": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    43,
+    44
+   ],
+   "table": "defense",
+   "ocrLine": 4043,
+   "pageResolution": "toc-section-range"
+  },
+  "shields-55": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    43,
+    44
+   ],
+   "table": "defense",
+   "ocrLine": 4045,
+   "pageResolution": "toc-section-range"
+  },
+  "shields-70": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    43,
+    44
+   ],
+   "table": "defense",
+   "ocrLine": 4047,
+   "pageResolution": "toc-section-range"
+  },
+  "shields-80": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    43,
+    44
+   ],
+   "table": "defense",
+   "ocrLine": 4048,
+   "pageResolution": "toc-section-range"
+  },
+  "shields-90": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    43,
+    44
+   ],
+   "table": "defense",
+   "ocrLine": 4049,
+   "pageResolution": "toc-section-range"
+  },
+  "shields-100": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    43,
+    44
+   ],
+   "table": "defense",
+   "ocrLine": 4050,
+   "pageResolution": "toc-section-range"
+  },
+  "shields-125": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    43,
+    44
+   ],
+   "table": "defense",
+   "ocrLine": 4051,
+   "pageResolution": "toc-section-range"
+  },
+  "shields-175": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    43,
+    44
+   ],
+   "table": "defense",
+   "ocrLine": 4054,
+   "pageResolution": "toc-section-range"
+  },
+  "shields-200": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    43,
+    44
+   ],
+   "table": "defense",
+   "ocrLine": 4055,
+   "pageResolution": "toc-section-range"
+  },
+  "atmospheric-thrusters": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3877,
+   "pageResolution": "toc-section-range"
+  },
+  "atmospheric-thrusters-advanced": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3878,
+   "pageResolution": "toc-section-range"
+  },
+  "combat-thrusters": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3879,
+   "pageResolution": "toc-section-range"
+  },
+  "hyperdrive-075": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3880,
+   "pageResolution": "toc-section-range"
+  },
+  "hyperdrive-1": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3881,
+   "pageResolution": "toc-section-range"
+  },
+  "hyperdrive-15": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3882,
+   "pageResolution": "toc-section-range"
+  },
+  "hyperdrive-2": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3883,
+   "pageResolution": "toc-section-range"
+  },
+  "hyperdrive-3": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3884,
+   "pageResolution": "toc-section-range"
+  },
+  "hyperdrive-4": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3885,
+   "pageResolution": "toc-section-range"
+  },
+  "hyperdrive-5": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3886,
+   "pageResolution": "toc-section-range"
+  },
+  "hyperdrive-6": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3887,
+   "pageResolution": "toc-section-range"
+  },
+  "hyperdrive-8": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3888,
+   "pageResolution": "toc-section-range"
+  },
+  "hyperdrive-10": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3889,
+   "pageResolution": "toc-section-range"
+  },
+  "hyperdrive-15-class": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3890,
+   "pageResolution": "toc-section-range"
+  },
+  "maneuvering-jets-4": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3892,
+   "pageResolution": "toc-section-range"
+  },
+  "maneuvering-jets-6": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3893,
+   "pageResolution": "toc-section-range"
+  },
+  "navicomputer-limited": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3894,
+   "pageResolution": "toc-section-range"
+  },
+  "navicomputer": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3896,
+   "pageResolution": "toc-section-range"
+  },
+  "navicomputer-advanced": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3898,
+   "pageResolution": "toc-section-range"
+  },
+  "sublight-accelerator": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3900,
+   "pageResolution": "toc-section-range"
+  },
+  "sublight-drive-1": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3901,
+   "pageResolution": "toc-section-range"
+  },
+  "sublight-drive-2": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3902,
+   "pageResolution": "toc-section-range"
+  },
+  "sublight-drive-3": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3903,
+   "pageResolution": "toc-section-range"
+  },
+  "sublight-drive-4": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3904,
+   "pageResolution": "toc-section-range"
+  },
+  "sublight-drive-5": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3905,
+   "pageResolution": "toc-section-range"
+  },
+  "sublight-drive-6": {
+   "status": "SOURCE_VERIFIED",
+   "book": "Starships of the Galaxy",
+   "printedPageRange": [
+    40,
+    43
+   ],
+   "table": "movement",
+   "ocrLine": 3906,
+   "pageResolution": "toc-section-range"
+  }
+ }
+}

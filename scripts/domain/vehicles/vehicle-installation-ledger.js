@@ -12,6 +12,7 @@
  */
 import { digestUniversalVehicleSource } from './vehicle-source-digest.js';
 import { VEHICLE_FIRING_ARCS } from './vehicle-firing-arc-geometry.js';
+import { costModifierForSize, nonstandardAssessment, quoteInstallation, systemCost } from './vehicle-modification-rules.js';
 
 export const VEHICLE_INSTALLATION_FLAG = 'vehicleInstallations';
 export const VEHICLE_INSTALLATION_FLAG_PATH = `flags.swse.${VEHICLE_INSTALLATION_FLAG}`;
@@ -68,7 +69,11 @@ export const DEFAULT_VEHICLE_INSTALLATION_RULES = Object.freeze({
   /** @returns {{state:'known', total:number}|{state:'unknown', reason:string}} spendable EP */
   resolveEpBudget: () => ({ state: 'unknown', reason: 'EP_BUDGET_SEMANTICS_UNRULED' }),
   /** Credits returned when hardware is removed. null = no ruling. */
-  resolveUninstallRefund: () => null
+  resolveUninstallRefund: () => null,
+  /** May an install exceed the unused emplacement points (published penalties apply)? No ruling => no. */
+  allowEpShortfall: false,
+  /** Objective nonstandard-modification test; null means the Gamemaster must decide. */
+  resolveNonstandard: nonstandardAssessment
 });
 
 export function sealLedgerEntry(entry) {
@@ -117,20 +122,23 @@ const deny = (...reasons) => ({ ok: false, reasons });
  * @param {number} p.availableCredits owner funds
  * @param {object} [p.rules]
  */
-export function planVehicleInstallation({ record, flags, catalogEntry, installId, availableCredits, installedAt, rules = DEFAULT_VEHICLE_INSTALLATION_RULES, mount = null }) {
+export function planVehicleInstallation({ record, flags, catalogEntry, installId, availableCredits, installedAt, rules = DEFAULT_VEHICLE_INSTALLATION_RULES, mount = null, nonstandard = undefined, starshipDesigner = false, workers = null }) {
   const reasons = [];
   const key = record?.identity?.sourceEntryKey;
   if (!nonEmpty(key)) return deny('VEHICLE_NOT_SOURCE_BACKED');
   if (!catalogEntry || !nonEmpty(catalogEntry.id)) return deny('CATALOG_ENTRY_MISSING');
 
   const cert = catalogEntry.certification;
-  if (cert?.status !== 'MECHANIC_SPECIFIED' || !nonEmpty(cert?.book) || cert?.page == null)
+  const certPage = cert?.page ?? (Array.isArray(cert?.printedPageRange) ? cert.printedPageRange.join('-') : null);
+  if (cert?.status === 'SOURCE_VERIFIED') reasons.push('MODIFICATION_EFFECT_NOT_IMPLEMENTED'); // table text verified, effect not encoded
+  else if (cert?.status !== 'MECHANIC_SPECIFIED' || !nonEmpty(cert?.book) || certPage == null)
     reasons.push('CATALOG_ENTRY_UNCERTIFIED');
   if (!finite(catalogEntry.emplacementPoints) || catalogEntry.emplacementPoints < 0)
     reasons.push('EP_COST_UNKNOWN');
-  if (!finite(catalogEntry.cost) || catalogEntry.cost < 0 || catalogEntry.costType !== 'flat')
-    reasons.push('PRICE_UNKNOWN_OR_UNRESOLVED'); // base/multiplier/modifier pricing needs a pricing ruling
   if (!nonEmpty(catalogEntry.availability)) reasons.push('AVAILABILITY_UNKNOWN');
+  const hullSize = record.classification?.printedSize;
+  if (costModifierForSize(hullSize) === null) reasons.push('HULL_SIZE_HAS_NO_PUBLISHED_COST_MODIFIER');
+  else { const price = systemCost(catalogEntry, hullSize); if (!price.ok) reasons.push(price.reason === 'PRICE_UNKNOWN' ? 'PRICE_UNKNOWN_OR_UNRESOLVED' : price.reason); }
 
   const size = evaluateSizeRestriction(catalogEntry.sizeRestriction, record.classification?.printedSize);
   if (size !== 'ok') reasons.push('SIZE_' + size.toUpperCase());
@@ -153,21 +161,32 @@ export function planVehicleInstallation({ record, flags, catalogEntry, installId
   // of it would silently drop (re-seal) or compound the problem.
   if (rawLedger.length !== entries.length) reasons.push('LEDGER_CONTAINS_UNVERIFIED_ENTRIES');
 
-  const budget = rules.resolveEpBudget(record);
-  if (budget?.state !== 'known' || !finite(budget.total)) reasons.push('EP_BUDGET_UNKNOWN');
-  else if (finite(catalogEntry.emplacementPoints) &&
-    summarizeInstallations(entries, budget).epUsed + catalogEntry.emplacementPoints > budget.total)
-    reasons.push('EP_EXCEEDED');
+  // Nonstandard modification: an explicit Gamemaster decision wins; otherwise only objectively
+  // determinable cases are decided and anything else must come back as a GM decision.
+  const nsInput = typeof nonstandard === 'boolean'
+    ? { nonstandard, basis: 'GM_DECISION' }
+    : (rules.resolveNonstandard ?? nonstandardAssessment)(catalogEntry, record, { starshipDesigner });
+  if (nsInput.nonstandard === null) reasons.push('NONSTANDARD_DETERMINATION_REQUIRED');
 
-  if (finite(catalogEntry.cost) && (!finite(availableCredits) || availableCredits < catalogEntry.cost))
-    reasons.push('INSUFFICIENT_CREDITS');
+  const budget = rules.resolveEpBudget(record);
+  let quote = null;
+  if (budget?.state !== 'known' || !finite(budget.total)) reasons.push('EP_BUDGET_UNKNOWN');
+  else if (nsInput.nonstandard !== null && !reasons.some(r => ['EP_COST_UNKNOWN', 'HULL_SIZE_HAS_NO_PUBLISHED_COST_MODIFIER', 'PRICE_UNKNOWN_OR_UNRESOLVED', 'COST_TYPE_NOT_RESOLVED_BY_PUBLISHED_RULES'].includes(r))) {
+    const remaining = Math.max(0, budget.total - summarizeInstallations(entries, budget).epUsed);
+    quote = quoteInstallation({ entry: catalogEntry, size: hullSize, unusedEmplacementPoints: remaining, workers, nonstandard: nsInput.nonstandard });
+    if (!quote.ok) reasons.push(...quote.reasons);
+    else if (quote.shortfall > 0 && rules.allowEpShortfall !== true) reasons.push('EP_EXCEEDED');
+  }
+  if (quote?.ok && (!finite(availableCredits) || availableCredits < quote.credits)) reasons.push('INSUFFICIENT_CREDITS');
 
   if (reasons.length) return { ok: false, reasons: [...new Set(reasons)] };
 
   const entry = sealLedgerEntry({
     installId, catalogId: catalogEntry.id, name: catalogEntry.name, category: catalogEntry.category,
-    sourceEntryKey: key, certification: { status: cert.status, book: cert.book, page: cert.page },
-    epCost: catalogEntry.emplacementPoints, priceCredits: catalogEntry.cost,
+    sourceEntryKey: key, certification: { status: cert.status, book: cert.book, page: certPage },
+    epCost: quote.emplacementPoints, priceCredits: quote.credits,
+    quote: { days: quote.days, mechanicsDC: quote.mechanicsDC, workForce: quote.workForce, shortfall: quote.shortfall,
+      nonstandard: quote.nonstandard, nonstandardBasis: nsInput.basis, consequences: quote.consequences },
     mount: mount ? { mountKey: mount.mountKey, arc: mount.arc, operatorRole: mount.operatorRole, evidence: mount.evidence } : null,
     executable: false, // enabling a weapon is P4-D's separate gate
     installedAt: installedAt ?? null

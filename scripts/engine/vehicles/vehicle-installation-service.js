@@ -30,7 +30,12 @@ export class VehicleInstallationService {
       if (!res.ok) throw new Error(`VEHICLE_MODIFICATION_CATALOG_LOAD_FAILED:${f}`);
       return res.json();
     }));
-    this._catalog = new Map(lists.flat().map(e => [e.id, e]));
+    // Certification is a separate, generated overlay (data/vehicle-modifications/certification.json):
+    // a catalog row without an entry there has no certification.
+    const certRes = await fetch('systems/foundryvtt-swse/data/vehicle-modifications/certification.json');
+    if (!certRes.ok) throw new Error('VEHICLE_MODIFICATION_CERTIFICATION_LOAD_FAILED');
+    const cert = (await certRes.json()).rows ?? {};
+    this._catalog = new Map(lists.flat().map(e => [e.id, cert[e.id] ? { ...e, certification: cert[e.id] } : e]));
     return this._catalog;
   }
 

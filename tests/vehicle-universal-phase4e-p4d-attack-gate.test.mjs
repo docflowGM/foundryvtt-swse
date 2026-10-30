@@ -77,7 +77,7 @@ test('sealed but non-executable or unsealed ledger entries do not arm a weapon',
   ({ vehicle, weapon } = armed({}, { system: { vehicleMount: { installId: undefined, crewRole: 'pilot' } } }));
   assert.equal(classifyInstalledVehicleWeapon(vehicle, weapon).kind, 'UNRESOLVED');
   // planner output never sets executable
-  const rules = { resolveEpBudget: () => ({ state: 'known', total: 9 }), resolveUninstallRefund: () => null };
+  const rules = { resolveEpBudget: () => ({ state: 'known', total: 9 }), resolveUninstallRefund: () => null, allowEpShortfall: false, resolveNonstandard: () => ({ nonstandard: false, basis: 'FIXTURE' }) };
   const plan = planVehicleInstallation({ record: rec(base(XW)), flags: base(XW).flags, installId: 'i', availableCredits: 9, rules, mount,
     catalogEntry: { id: 'w', name: 'W', category: 'Weapon', emplacementPoints: 1, cost: 1, costType: 'flat', availability: 'Common',
       certification: { status: 'MECHANIC_SPECIFIED', book: 'B', page: 1 } } });

@@ -12,7 +12,7 @@ const rec = a => a.flags.swse.universalVehicleSource.source;
 const XW = 'core-incom-t-65b-x-wing-starfighter';
 
 // Fixture for the project-owner-ruling seam; NOT a rules claim.
-const fixtureRules = { resolveEpBudget: () => ({ state: 'known', total: 4 }), resolveUninstallRefund: () => null };
+const fixtureRules = { resolveEpBudget: () => ({ state: 'known', total: 4 }), resolveUninstallRefund: () => null, allowEpShortfall: false, resolveNonstandard: () => ({ nonstandard: false, basis: 'FIXTURE' }) };
 const certified = (over = {}) => ({
   id: 'fx-armor', name: 'Fixture Plating', category: 'Defense', emplacementPoints: 2, cost: 1000,
   costType: 'flat', availability: 'Licensed', sizeRestriction: null,
@@ -44,13 +44,13 @@ test('certified entry but unruled EP budget still denies (default rules)', () =>
   const a = byKey.get(XW);
   const r = L.planVehicleInstallation({ record: rec(a), flags: a.flags, catalogEntry: certified(),
     installId: 'i', availableCredits: 1e9 });
-  assert.deepEqual(r.reasons, ['EP_BUDGET_UNKNOWN']);
+  assert.deepEqual([...r.reasons].sort(), ['EP_BUDGET_UNKNOWN', 'NONSTANDARD_DETERMINATION_REQUIRED']);
 });
 
 test('fail-closed reasons: unknown EP, price, availability, credits, size, exceeded', () => {
   assert.ok(plan({ catalogEntry: certified({ emplacementPoints: undefined }) }).reasons.includes('EP_COST_UNKNOWN'));
   assert.ok(plan({ catalogEntry: certified({ cost: null }) }).reasons.includes('PRICE_UNKNOWN_OR_UNRESOLVED'));
-  assert.ok(plan({ catalogEntry: certified({ costType: 'multiplier' }) }).reasons.includes('PRICE_UNKNOWN_OR_UNRESOLVED'));
+  assert.ok(plan({ catalogEntry: certified({ costType: 'multiplier' }) }).reasons.includes('COST_TYPE_NOT_RESOLVED_BY_PUBLISHED_RULES'));
   assert.ok(plan({ catalogEntry: certified({ availability: '' }) }).reasons.includes('AVAILABILITY_UNKNOWN'));
   assert.ok(plan({ availableCredits: 999 }).reasons.includes('INSUFFICIENT_CREDITS'));
   assert.ok(plan({ catalogEntry: certified({ sizeRestriction: 'Colossal or Larger' }) }).reasons.includes('SIZE_INELIGIBLE'));
