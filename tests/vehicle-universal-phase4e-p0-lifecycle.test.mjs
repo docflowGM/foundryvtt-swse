@@ -106,6 +106,9 @@ test('malformed canonical claims cannot pass as custom Actors', () => {
     const tampered = clone(baseline); mutate(tampered);
     const result = classifyVehicleActorSource(tampered);
     assert.equal(result.kind, 'invalid-canonical', 'variant ' + index + ': ' + result.errors.join(','));
+    // Embedded Items are a CREATION-time violation only (variant 10); at runtime equipment
+    // may coexist with a valid projection (see p5-stabilization tests).
+    if (index === 10) { assert.doesNotThrow(() => getVehicleRuntimeProjection(tampered)); continue; }
     assert.throws(() => getVehicleRuntimeProjection(tampered), /UNIVERSAL_VEHICLE_SOURCE_INVALID/);
   }
 });

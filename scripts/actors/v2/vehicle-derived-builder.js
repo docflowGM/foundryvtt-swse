@@ -9,7 +9,7 @@
  * vehicle-specific field shapes (defenses, hull/hp coercion, identity labels).
  */
 
-import { getPublishedDerivedBase } from "../../domain/vehicles/vehicle-published-derived.js";
+import { getPublishedDerivedBase, claimsPublishedSource } from "../../domain/vehicles/vehicle-published-derived.js";
 
 /**
  * Safe numeric coercion with fallback
@@ -143,6 +143,9 @@ export function buildVehicleDerived(actor, system) {
   // Source-backed vehicles: printed values (digest-verified record) win over the
   // mutable system mirrors; unknown printed values are flagged, not invented.
   const published = getPublishedDerivedBase(actor);
+  // A claim that fails verification is flagged, never silently treated as an ordinary
+  // custom vehicle (the sheet, Store and attack gate all refuse it).
+  system.derived.sourceInvalid = !published && claimsPublishedSource(actor);
   const refDefense = published?.reflex != null ? buildDefenseValue(published.reflex, 10) : buildDefenseValue(system.reflexDefense ?? system.defenses?.reflex?.total ?? system.defenses?.reflex ?? 10, 10);
   const fortDefense = published?.fortitude != null ? buildDefenseValue(published.fortitude, 10) : buildDefenseValue(system.fortitudeDefense ?? system.defenses?.fortitude?.total ?? system.defenses?.fortitude ?? 10, 10);
   const willDefense = buildDefenseValue(system.willDefense ?? system.defenses?.will?.total ?? system.defenses?.will ?? 10, 10);

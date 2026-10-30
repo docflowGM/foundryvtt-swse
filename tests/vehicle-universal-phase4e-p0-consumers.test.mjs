@@ -91,7 +91,7 @@ test('old vehicle sheet reads live HP before stale hull and exposes read-only so
   assert.match(context, /const hp = system\.hp \?\? system\.hull \?\? \{\};/);
   assert.match(context, /vehicleRuntimeProjection = getVehicleRuntimeProjection\(actor\)/);
   assert.match(context, /vehicleRuntimeProjection,/);
-  assert.match(sheet, /classifyVehicleActorSource\(this\.actor\)/);
+  assert.match(sheet, /classifyVehicleActorSource\(this\.actor, undefined, \{ mode: 'runtime' \}\)/);
   assert.match(sheet, /sourceAssessment\.kind === 'canonical'/);
   assert.match(sheet, /'system\.hp\.value'/);
   assert.doesNotMatch(sheet.slice(sheet.indexOf('const canonicalWritable ='),sheet.indexOf('const isWritable =')),

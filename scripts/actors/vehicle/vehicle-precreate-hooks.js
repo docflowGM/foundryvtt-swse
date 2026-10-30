@@ -5,6 +5,7 @@
  */
 import { classifyVehicleActorSource } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
 import { isLedgerUpdateAllowed } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-installation-ledger.js";
+import { checkProvenanceUpdate } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-source-identity.js";
 import { UNIVERSAL_VEHICLE_PACKS } from "/systems/foundryvtt-swse/scripts/domain/vehicles/universal-vehicle-pack-registry.js";
 
 let registered = false;
@@ -32,11 +33,20 @@ export function guardVehicleInstallationLedger(actor, changes) {
   return false;
 }
 
+/** preUpdateActor: published identity, source record and printed statistics are immutable. */
+export function guardVehicleProvenance(actor, changes) {
+  const verdict = checkProvenanceUpdate(actor, changes);
+  if (verdict.ok) return undefined;
+  console.error('[foundryvtt-swse] Vehicle provenance update denied: UNIVERSAL_VEHICLE_PROVENANCE_IMMUTABLE ' + verdict.paths.join(','));
+  return false;
+}
+
 export function registerVehiclePreCreateHooks() {
   if (registered) return;
   registered = true;
   Hooks.on('preCreateActor', validateVehicleCreation);
   Hooks.on('preUpdateActor', guardVehicleInstallationLedger);
+  Hooks.on('preUpdateActor', guardVehicleProvenance);
   // Intentionally no createActor weapon hydration. Source firing groups are
   // reference evidence, not permissions or physical mounted weapons.
 }

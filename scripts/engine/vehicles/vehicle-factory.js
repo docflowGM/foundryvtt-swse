@@ -183,7 +183,7 @@ export class VehicleFactory {
     if (!vehicleActor || vehicleActor.type !== 'vehicle') {
       throw new Error('VehicleFactory: existing vehicle actor required for modification mutation plan');
     }
-    const sourceAssessment = classifyVehicleActorSource(vehicleActor);
+    const sourceAssessment = classifyVehicleActorSource(vehicleActor, undefined, { mode: 'runtime' });
     if (sourceAssessment.kind === 'invalid-canonical')
       throw new Error('VEHICLE_FACTORY_UNTRUSTED_CANONICAL_ACTOR');
     if (sourceAssessment.kind === 'canonical')

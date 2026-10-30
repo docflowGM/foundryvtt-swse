@@ -5,11 +5,9 @@
  * publication claim; it is never an authorization to install or fire weapons.
  * This module has no Foundry globals and can be used in Node tests.
  */
-import { getUniversalVehiclePackForCategory } from './universal-vehicle-pack-registry.js';
-import { digestUniversalVehicleSource } from './vehicle-source-digest.js';
+import { collectSourceIdentityErrors } from './vehicle-source-identity.js';
 import { readCertifiedInstallations } from './vehicle-installation-ledger.js';
 
-const SOURCE_SCHEMA = 'swse.vehicle.universal.actor-source.v1';
 const finite = value => typeof value === 'number' && Number.isFinite(value);
 const own = (value, key) => Object.prototype.hasOwnProperty.call(value ?? {}, key);
 const copy = value => value === undefined ? undefined : structuredClone(value);
@@ -144,7 +142,13 @@ function inspect(document, data) {
  * Current HP/SR may be lower than their published maxima; source provenance
  * and maxima must not change. V13 may supply zero-only SR placeholders.
  */
-export function classifyVehicleActorSource(document, data = undefined) {
+export function classifyVehicleActorSource(document, data = undefined, options = {}) {
+  // 'creation' (default, strictest): a new source-backed Actor may carry NO embedded Items,
+  // so no stock weapon can be generated with it. 'runtime': the Actor already exists, so
+  // legitimately acquired equipment Items may coexist; everything else (identity, printed
+  // statistics, empty system.weapons, non-installable printed groups) is still enforced and
+  // weapon Items remain non-executable unless the attack gate finds a sealed installation.
+  const runtime = options?.mode === 'runtime';
   const view = inspect(document, data);
   if (view.type !== 'vehicle') return { kind: 'not-vehicle', errors: [] };
   if (!view.hasClaim) {
@@ -159,7 +163,6 @@ export function classifyVehicleActorSource(document, data = undefined) {
   const key = original?.identity?.sourceEntryKey;
   const category = original?.classification?.primaryCategory;
   const book = original?.publication?.book, page = original?.publication?.page;
-  const owner = getUniversalVehiclePackForCategory(category);
   const groups = original?.armament?.firingGroups;
   const printedSR = original?.defenses?.shieldRating;
 
@@ -185,32 +188,9 @@ export function classifyVehicleActorSource(document, data = undefined) {
       issue(errors, 'CONFLICTING_CREATION_FLAGS');
   }
 
-  if (universal?.schema !== SOURCE_SCHEMA ||
-      original?.recordType !== 'vehicle-source-entry' ||
-      !/^[0-9a-f]{64}$/.test(String(universal?.recordDigest ?? '')))
-    issue(errors, 'SOURCE_EVIDENCE_MISSING');
-  else if (digestUniversalVehicleSource(original) !== universal.recordDigest)
-    issue(errors, 'SOURCE_RECORD_DIGEST_DRIFT');
-  if (typeof key !== 'string' || !key.trim() ||
-      sys.vehicleSourceEntryKey !== key ||
-      canonical?.sourceEntryKey !== key)
-    issue(errors, 'SOURCE_IDENTITY_DRIFT');
-  if (!book || page === undefined || page === null ||
-      sys.vehicleSourceBook !== book || sys.vehicleSourcePage !== page ||
-      canonical?.sourceBook !== book || canonical?.printedPage !== page)
-    issue(errors, 'SOURCE_PUBLICATION_DRIFT');
-  if (!owner || sys.vehiclePackName !== owner.name ||
-      sys.vehicleSourcePrimaryCategory !== category ||
-      sys.category !== category)
-    issue(errors, 'SOURCE_CATEGORY_DRIFT');
-  if (typeof original?.identity?.name !== 'string' ||
-      sys.model !== original.identity.name)
-    issue(errors, 'SOURCE_MODEL_DRIFT');
-
-  if (canonical?.sourceCertification !== 'SOURCE_ONLY' ||
-      canonical?.foundryStockAttackTrusted !== false ||
-      canonical?.physicalMountCertification !== false)
-    issue(errors, 'SOURCE_ONLY_TRUST_REQUIRED');
+  // One shared implementation of the identity/provenance invariants (also used by
+  // derived data, the Store and combat).
+  for (const code of collectSourceIdentityErrors({ sys, canonical, universal })) issue(errors, code);
 
   if (!finite(original?.abilities?.initiativePrinted) ||
       !finite(sys.initiative) ||
@@ -242,9 +222,9 @@ export function classifyVehicleActorSource(document, data = undefined) {
       !groups.every(g => Array.isArray(g.mountKeys) && g.mountKeys.length === 0) ||
       own(original?.armament, 'weaponMounts') ||
       !Array.isArray(sys.weapons) || sys.weapons.length !== 0 ||
-      itemsCount(view.items) !== 0 ||
-      itemsCount(view.documentItems) !== 0 ||
-      itemsCount(view.inputItems) !== 0 ||
+      (!runtime && (itemsCount(view.items) !== 0 ||
+        itemsCount(view.documentItems) !== 0 ||
+        itemsCount(view.inputItems) !== 0)) ||
       (own(sys, 'sourceAttackGroups') && !same(sys.sourceAttackGroups, groups)))
     issue(errors, 'SOURCE_ATTACKS_NOT_INSTALLABLE');
 
@@ -281,8 +261,12 @@ export function getVehiclePublishedFieldState(value, evidence = undefined) {
  * system.hull, shipyard formulas, a name lookup or printed attack groups.
  * Mutable gameplay state is exposed separately from the published base.
  */
+export function classifyVehicleActorRuntime(actor) {
+  return classifyVehicleActorSource(actor, undefined, { mode: 'runtime' });
+}
+
 export function getVehicleRuntimeProjection(actor) {
-  const assessment = classifyVehicleActorSource(actor);
+  const assessment = classifyVehicleActorRuntime(actor);
   if (assessment.kind === 'invalid-canonical')
     throw new Error('UNIVERSAL_VEHICLE_SOURCE_INVALID: ' + assessment.errors.join(','));
   if (assessment.kind !== 'canonical') return frozen({
@@ -335,15 +319,24 @@ export function getVehicleRuntimeProjection(actor) {
     // Installed hardware comes only from the sealed P2 ledger (separate from the
     // published base). Unsealed/forged entries are ignored; actor-provided
     // modification claims remain reference-only. Stock mounts are never certified.
-    installed: installedFromLedger(raw.flags, record.identity.sourceEntryKey),
+    installed: installedFromLedger(raw.flags, record.identity.sourceEntryKey, raw.items),
     unverifiedModificationClaims: copy(sys.vehicleModifications ?? [])
 
   });
 }
 
-function installedFromLedger(flags, sourceEntryKey) {
+const WEAPON_ITEM_TYPES = new Set(['weapon', 'vehicle-weapon', 'vehicleWeapon', 'vehicleWeaponRange']);
+
+function installedFromLedger(flags, sourceEntryKey, items) {
   const { entries, rejected } = readCertifiedInstallations(flags, sourceEntryKey);
+  const owned = Array.isArray(items) ? items : [];
+  const weaponItems = owned.filter(i => WEAPON_ITEM_TYPES.has(i?.type));
+  const armed = new Set(entries.filter(e => e.executable === true && e.mount).map(e => e.installId));
   return {
+    // Embedded Items are allowed at runtime but never certify anything: a weapon Item is
+    // fireable only when a sealed, executable ledger entry backs it (see the attack gate).
+    equipmentItemCount: owned.length - weaponItems.length,
+    uncertifiedWeaponItems: weaponItems.filter(i => !armed.has(i?.system?.vehicleMount?.installId)).length,
     modifications: copy(entries),
     mounts: copy(entries.filter(e => e.mount)),
     stockMountsCertified: false,

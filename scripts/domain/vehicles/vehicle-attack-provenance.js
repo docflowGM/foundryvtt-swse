@@ -5,13 +5,8 @@
  * the shipyard's existing modification-data + shipyard bookkeeping.
  * Stock provenance is resolved separately from immutable source authority.
  */
-import { getVerifiedPublishedRecord } from './vehicle-published-derived.js';
+import { getVerifiedPublishedRecord, claimsPublishedSource } from './vehicle-source-identity.js';
 import { readCertifiedInstallations } from './vehicle-installation-ledger.js';
-
-function claimsSourceProvenance(vehicle) {
-  const swse = vehicle?.flags?.swse;
-  return Boolean(swse?.universalVehicleSource || swse?.canonicalPublication || vehicle?.system?.vehicleSourceEntryKey);
-}
 
 function validKey(x) { return typeof x === 'string' && x.trim().length > 0; }
 function sameWeaponLabel(a, b) {
@@ -43,7 +38,7 @@ export function classifyInstalledVehicleWeapon(vehicle, weapon) {
   // the vehicle actually owns can be fired; printed attack groups and forged rows never.
   // A vehicle that CLAIMS publication provenance but fails verification (edited record,
   // broken digest) stays on this path and is denied; it never downgrades to the legacy one.
-  if (claimsSourceProvenance(vehicle)) return classifySourceBackedWeapon(vehicle, weapon);
+  if (claimsPublishedSource(vehicle)) return classifySourceBackedWeapon(vehicle, weapon);
   const matchedIndex = /^system-weapons-(\d+)$/.exec(weapon.id);
   if (matchedIndex) {
     const index = Number(matchedIndex[1]);

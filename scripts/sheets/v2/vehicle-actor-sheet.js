@@ -887,7 +887,7 @@ export class SWSEV2VehicleSheet extends SWSEV2ActorSheetBase {
       /^system\.weapons\.\d+\.(name|arc|attackBonus|damage|range|fireControl|notes)$/,
       /^system\.attributes\.(str|dex|int|wis|cha)\.(base|racial|temp)$/
     ];
-    const sourceAssessment = classifyVehicleActorSource(this.actor);
+    const sourceAssessment = classifyVehicleActorSource(this.actor, undefined, { mode: 'runtime' });
     if (sourceAssessment.kind === 'invalid-canonical')
       throw new Error('UNIVERSAL_VEHICLE_SHEET_INVALID_SOURCE: ' + sourceAssessment.errors.join(','));
     // Source-only Actors are not free-form templates: mutable runtime state

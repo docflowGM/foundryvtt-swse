@@ -8,22 +8,12 @@
  * are reported as unknown, not turned into plausible numbers.
  * No Foundry globals: Node-testable.
  */
-import { digestUniversalVehicleSource } from './vehicle-source-digest.js';
+import { getVerifiedPublishedRecord, claimsPublishedSource } from './vehicle-source-identity.js';
 
 const finite = v => typeof v === 'number' && Number.isFinite(v);
-// Verified once per record object; Foundry replaces the flags object when it changes.
-const verified = new WeakMap();
 
-export function getVerifiedPublishedRecord(actor) {
-  const universal = actor?.flags?.swse?.universalVehicleSource;
-  const record = universal?.source;
-  if (!record || record.recordType !== 'vehicle-source-entry') return null;
-  if (verified.has(record)) return verified.get(record) ? record : null;
-  const ok = typeof universal.recordDigest === 'string' &&
-    digestUniversalVehicleSource(record) === universal.recordDigest;
-  verified.set(record, ok);
-  return ok ? record : null;
-}
+// One verification implementation for every consumer (see vehicle-source-identity.js).
+export { getVerifiedPublishedRecord, claimsPublishedSource };
 
 /** @returns {null|object} null when the actor has no verified publication record. */
 export function getPublishedDerivedBase(actor) {
@@ -45,7 +35,11 @@ export function getPublishedDerivedBase(actor) {
 /** Printed Initiative (signed; 0 is a value) or null when the actor has no verified record. */
 export function getPublishedVehicleInitiative(actor) {
   if (actor?.type !== 'vehicle') return null;
-  return getPublishedDerivedBase(actor)?.initiative ?? null;
+  const base = getPublishedDerivedBase(actor);
+  if (base) return base.initiative;
+  // A publication claim that fails verification never falls back to the character formula.
+  if (claimsPublishedSource(actor)) throw new Error('UNIVERSAL_VEHICLE_SOURCE_INVALID: initiative');
+  return null;
 }
 
 /**

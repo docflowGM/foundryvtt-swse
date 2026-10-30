@@ -38,7 +38,7 @@ const CANONICAL_BLOCK = 'VEHICLE_CUSTOMIZATION_CANONICAL_REQUIRES_INSTALLATION_S
  * VEHICLE_SYSTEM_DEFINITIONS and must never touch a canonical hull.
  */
 function canonicalBlock(actor) {
-  const kind = classifyVehicleActorSource(actor).kind;
+  const kind = classifyVehicleActorSource(actor, undefined, { mode: 'runtime' }).kind;
   if (kind !== 'canonical' && kind !== 'invalid-canonical') return null;
   return {
     success: false, error: CANONICAL_BLOCK, canonicalBlocked: true,

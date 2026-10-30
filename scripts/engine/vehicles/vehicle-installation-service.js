@@ -33,7 +33,7 @@ export class VehicleInstallationService {
   }
 
   static #source(vehicle) {
-    const assessment = classifyVehicleActorSource(vehicle);
+    const assessment = classifyVehicleActorSource(vehicle, undefined, { mode: 'runtime' });
     if (assessment.kind !== 'canonical') return { error: 'VEHICLE_NOT_SOURCE_BACKED:' + assessment.kind };
     const raw = vehicle.toObject();
     return { record: raw.flags.swse.universalVehicleSource.source, flags: raw.flags };

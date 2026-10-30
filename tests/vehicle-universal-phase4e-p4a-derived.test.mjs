@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
 import { buildUniversalVehiclePackSources } from '../tools/build-universal-vehicle-pack-sources.mjs';
-import { getPublishedDerivedBase } from '../scripts/domain/vehicles/vehicle-published-derived.js';
+import { getPublishedDerivedBase, claimsPublishedSource } from '../scripts/domain/vehicles/vehicle-published-derived.js';
 
 const actors = [...buildUniversalVehiclePackSources().output.values()].flat();
 const rec = a => a.flags.swse.universalVehicleSource.source;
@@ -13,7 +13,7 @@ const byKey = key => actors.find(a => a.system.vehicleSourceEntryKey === key);
 const builder = (() => {
   const code = readFileSync('scripts/actors/v2/vehicle-derived-builder.js', 'utf8')
     .replace(/^import[\s\S]*?;\s*$/gm, '').replace(/^export\s+\{[^}]*\};?/gm, '').replace(/\bexport\s+/g, '');
-  const ctx = { getPublishedDerivedBase };
+  const ctx = { getPublishedDerivedBase, claimsPublishedSource };
   runInNewContext(code + '\nglobalThis.build = buildVehicleDerived;', ctx);
   return ctx.build;
 })();
