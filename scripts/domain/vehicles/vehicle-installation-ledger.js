@@ -143,8 +143,15 @@ export function planVehicleInstallation({ record, flags, catalogEntry, installId
   }
 
   const { entries } = readCertifiedInstallations(flags, key);
+  const rawLedger = Array.isArray(flags?.swse?.[VEHICLE_INSTALLATION_FLAG]) ? flags.swse[VEHICLE_INSTALLATION_FLAG] : [];
+  if (!nonEmpty(installId)) reasons.push('INSTALL_ID_MISSING');
+  // Compare against the RAW ledger: an unsealed/invalid entry still occupies its id.
+  else if (rawLedger.some(e => e?.installId === installId)) reasons.push('DUPLICATE_INSTALL_ID');
   if (entries.some(e => e.catalogId === catalogEntry.id && catalogEntry.unique === true))
     reasons.push('ALREADY_INSTALLED');
+  // An invalid ledger entry means the stored ledger is not trustworthy; installing on top
+  // of it would silently drop (re-seal) or compound the problem.
+  if (rawLedger.length !== entries.length) reasons.push('LEDGER_CONTAINS_UNVERIFIED_ENTRIES');
 
   const budget = rules.resolveEpBudget(record);
   if (budget?.state !== 'known' || !finite(budget.total)) reasons.push('EP_BUDGET_UNKNOWN');

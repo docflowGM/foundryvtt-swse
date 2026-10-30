@@ -18,6 +18,8 @@ const CATALOG_FILES = ['accessories', 'defense-systems', 'movement-systems', 'we
 
 export class VehicleInstallationService {
   static _catalog = null;
+  /** Vehicles with an install/uninstall in flight (plan -> transaction), per client. */
+  static _busy = new Set();
   /** Owner-ruling seam; replaced only by a documented project ruling. */
   static rules = DEFAULT_VEHICLE_INSTALLATION_RULES;
 
@@ -39,9 +41,37 @@ export class VehicleInstallationService {
     return { record: raw.flags.swse.universalVehicleSource.source, flags: raw.flags };
   }
 
-  static async install({ ownerActor, vehicle, catalogId, mount = null, catalog = null }) {
+  /** The wallet actor must be the vehicle's recorded owner (or the user a GM). */
+  static #ownerAssociated(ownerActor, vehicle) {
+    if (!ownerActor?.id) return false;
+    if (globalThis.game?.user?.isGM === true) return true;
+    const s = vehicle.system ?? {};
+    return [s.ownedByActorId, s.storeAcquisition?.ownerActorId, s.assetOwnership?.primaryOwnerActorId,
+      vehicle.flags?.['foundryvtt-swse']?.storeAcquisition?.ownerActorId]
+      .some(id => id && id === ownerActor.id) ||
+      (Array.isArray(s.assetOwnership?.ownerActorIds) && s.assetOwnership.ownerActorIds.includes(ownerActor.id));
+  }
+
+  static async #exclusive(vehicle, work) {
+    const id = vehicle?.id;
+    if (!id) return { success: false, reasons: ['VEHICLE_ID_MISSING'] };
+    if (this._busy.has(id)) return { success: false, reasons: ['INSTALLATION_IN_PROGRESS'] };
+    this._busy.add(id);
+    try { return await work(); } finally { this._busy.delete(id); }
+  }
+
+  static async install(args) {
+    return this.#exclusive(args?.vehicle, () => this.#install(args));
+  }
+
+  static async uninstall(args) {
+    return this.#exclusive(args?.vehicle, () => this.#uninstall(args));
+  }
+
+  static async #install({ ownerActor, vehicle, catalogId, mount = null, catalog = null }) {
     const src = this.#source(vehicle);
     if (src.error) return { success: false, reasons: [src.error] };
+    if (!this.#ownerAssociated(ownerActor, vehicle)) return { success: false, reasons: ['OWNER_VEHICLE_NOT_ASSOCIATED'] };
     const entries = catalog ?? await this.loadCatalog();
     const catalogEntry = entries.get(catalogId);
     const plan = planVehicleInstallation({
@@ -62,9 +92,10 @@ export class VehicleInstallationService {
       : { success: false, reasons: ['TRANSACTION_FAILED'], error: tx.error };
   }
 
-  static async uninstall({ ownerActor, vehicle, installId }) {
+  static async #uninstall({ ownerActor, vehicle, installId }) {
     const src = this.#source(vehicle);
     if (src.error) return { success: false, reasons: [src.error] };
+    if (!this.#ownerAssociated(ownerActor, vehicle)) return { success: false, reasons: ['OWNER_VEHICLE_NOT_ASSOCIATED'] };
     const plan = planVehicleUninstall({ record: src.record, flags: src.flags, installId, rules: this.rules });
     if (!plan.ok) return { success: false, reasons: plan.reasons };
     authorizeLedgerWrite(vehicle.id, plan.nextLedger);

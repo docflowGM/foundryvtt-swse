@@ -723,7 +723,8 @@ export async function rollAttack(actor, weapon, options = {}) {
     const stationEvidence = (installedProvenance.kind === 'STOCK_CANDIDATE' || installedProvenance.kind === 'CERTIFIED_INSTALLATION')
       ? await resolveVehicleCrewStationEvidence({
           vehicle, weapon, domainResolution: vehicleDomain,
-          requestedCrewStation: rollOptions.crewStation ?? null
+          requestedCrewStation: rollOptions.crewStation ?? null,
+          certifiedStation: installedProvenance.kind === 'CERTIFIED_INSTALLATION' ? installedProvenance.mount?.operatorRole : null
         })
       : { crewStationResolved: false };
     const sourceGate = await authorizeVehicleAttackBeforeCosts({
