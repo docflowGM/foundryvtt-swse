@@ -3,7 +3,7 @@
 Each row: original value, corrected value, printed source, affected code path, regression test. Classification: **CORRECTED** (changed to the printed value), **VERIFIED** (checked, no change), **DEFERRED_RULES_REVIEW**, **LIVE_RUNTIME_PENDING**.
 
 ## A. Stock ship frames (`data/stock-ships.json`, retired legacy file; authority is `construction/stock-frames.json`)
-Field-by-field comparison of all 12 frames against Tables 3-8 (p. 52) and 3-9 (p. 53): 201 fields verified, 7 discrepancies corrected, 2 cells matched with a formerly noisy OCR cell (now PDF-confirmed), 0 outstanding. Tool: `tools/audits/vehicles/audit-legacy-stock-ships.mjs`; corrections: `correct-legacy-stock-ships.mjs` (recorded per frame under `provenance.corrections`).
+Field-by-field comparison of all 12 frames against Tables 3-8 (p. 52) and 3-9 (p. 53): 194 fields already matched and 7 discrepancies were corrected (201 verified afterwards); 2 formerly OCR-noisy cells were confirmed from the PDF; 0 outstanding. Tool: `tools/audits/vehicles/audit-legacy-stock-ships.mjs`; corrections: `correct-legacy-stock-ships.mjs` (recorded per frame under `provenance.corrections`).
 
 | Frame | Field | Original | Corrected | Source | Class |
 |---|---|---|---|---|---|
