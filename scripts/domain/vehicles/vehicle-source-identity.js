@@ -12,16 +12,12 @@ import { digestUniversalVehicleSource } from './vehicle-source-digest.js';
 
 export const SOURCE_SCHEMA = 'swse.vehicle.universal.actor-source.v1';
 
-// Digest verification is the only costly step; cache it per record object (Foundry
-// replaces the flags object when it changes, so identity is the invalidation key).
-const digestVerdicts = new WeakMap();
+// Digest verification is recomputed on every call (about 0.1-0.3 ms for the largest record).
+// It is deliberately NOT cached by object identity: an in-place mutation of an already
+// verified record must never be accepted.
 function digestMatches(record, expected) {
   if (!record || typeof record !== 'object') return false;
-  const cached = digestVerdicts.get(record);
-  if (cached && cached.expected === expected) return cached.ok;
-  const ok = digestUniversalVehicleSource(record) === expected;
-  digestVerdicts.set(record, { expected, ok });
-  return ok;
+  return digestUniversalVehicleSource(record) === expected;
 }
 
 /** Does this vehicle make ANY publication claim (flags or identity mirrors)? */
@@ -82,7 +78,12 @@ export function getVerifiedPublishedRecord(vehicle) {
 /* ------------------------------------------------------------------ */
 
 const PROTECTED_FLAG_ROOTS = ['flags.swse.universalVehicleSource', 'flags.swse.canonicalPublication'];
+// Legacy published-field mirrors (validated against the record at creation) are published
+// facts too: price, crew, passengers, cargo, consumables, hyperdrive, size, movement.
 const PROTECTED_SYSTEM = [
+  /^system\.cost$/, /^system\.costNumeric$/, /^system\.crew$/, /^system\.passengers$/,
+  /^system\.cargo$/, /^system\.consumables$/, /^system\.size$/, /^system\.vehicleCrew/,
+  /^system\.vehiclePassengers$/,
   /^system\.vehicleSource/, /^system\.vehiclePackName$/, /^system\.vehiclePublished/,
   /^system\.model$/, /^system\.category$/, /^system\.sourceAttackGroups/,
   /^system\.vehicleMovementModes/, /^system\.initiative$/, /^system\.hp\.max$/,

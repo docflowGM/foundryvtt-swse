@@ -5,7 +5,7 @@
  */
 import { classifyVehicleActorSource } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
 import { isLedgerUpdateAllowed } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-installation-ledger.js";
-import { checkProvenanceUpdate } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-source-identity.js";
+import { checkProvenanceUpdate, claimsPublishedSource } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-source-identity.js";
 import { UNIVERSAL_VEHICLE_PACKS } from "/systems/foundryvtt-swse/scripts/domain/vehicles/universal-vehicle-pack-registry.js";
 
 let registered = false;
@@ -33,12 +33,57 @@ export function guardVehicleInstallationLedger(actor, changes) {
   return false;
 }
 
-/** preUpdateActor: published identity, source record and printed statistics are immutable. */
+/**
+ * Apply an update's changes (dotted or nested, with -= deletions) to a plain copy of the
+ * Actor source, the way Foundry would, so the result can be validated BEFORE it persists.
+ */
+export function applyChangesToCopy(source, changes) {
+  const out = structuredClone(source);
+  const setPath = (path, value) => {
+    const keys = path.split('.');
+    let node = out;
+    for (let i = 0; i < keys.length - 1; i++) {
+      const k = keys[i].replace(/^(-=|==)/, '');
+      if (node[k] === null || typeof node[k] !== 'object') node[k] = {};
+      node = node[k];
+    }
+    const last = keys.at(-1);
+    if (last.startsWith('-=')) delete node[last.slice(2)];
+    else if (last.startsWith('==')) node[last.slice(2)] = value;
+    else node[last] = value;
+  };
+  const walk = (obj, prefix) => {
+    for (const [k, v] of Object.entries(obj ?? {})) {
+      const path = prefix ? `${prefix}.${k}` : k;
+      if (v && typeof v === 'object' && !Array.isArray(v) && Object.keys(v).length && !/^(-=|==)/.test(k)) walk(v, path);
+      else setPath(path, v);
+    }
+  };
+  walk(changes, '');
+  return out;
+}
+
+/**
+ * preUpdateActor: (1) published identity, source record and printed statistics are immutable,
+ * and (2) an ordinary update may not persist ANY state that would make the runtime contract
+ * reject the vehicle (e.g. current HP above the printed maximum, a forged mirror, a stock
+ * weapon row). A vehicle that is already invalid is not trapped: repairs remain possible.
+ */
 export function guardVehicleProvenance(actor, changes) {
   const verdict = checkProvenanceUpdate(actor, changes);
-  if (verdict.ok) return undefined;
-  console.error('[foundryvtt-swse] Vehicle provenance update denied: UNIVERSAL_VEHICLE_PROVENANCE_IMMUTABLE ' + verdict.paths.join(','));
-  return false;
+  if (!verdict.ok) {
+    console.error('[foundryvtt-swse] Vehicle provenance update denied: UNIVERSAL_VEHICLE_PROVENANCE_IMMUTABLE ' + verdict.paths.join(','));
+    return false;
+  }
+  if (actor?.type !== 'vehicle' || !claimsPublishedSource(actor)) return undefined;
+  const source = typeof actor.toObject === 'function' ? actor.toObject() : actor._source ?? actor;
+  if (classifyVehicleActorSource(source, undefined, { mode: 'runtime' }).kind !== 'canonical') return undefined;
+  const after = classifyVehicleActorSource(applyChangesToCopy(source, changes), undefined, { mode: 'runtime' });
+  if (after.kind === 'invalid-canonical') {
+    console.error('[foundryvtt-swse] Vehicle update denied: UNIVERSAL_VEHICLE_SOURCE_INVALID ' + after.errors.join(','));
+    return false;
+  }
+  return undefined;
 }
 
 export function registerVehiclePreCreateHooks() {

@@ -25,6 +25,11 @@ Branch `audit/universal-vehicles-phase1` (PR #1092 stays draft, unmerged). Start
 - `phase-5c-canonical-production-negative`: universal vehicle data registered in the authority classification registry (OTHER_DOMAIN_DATA) and the classification rebuilt. No guardrail was weakened; `verify-canonical-production` passes.
 - `talent-membership-and-pack-completion`: failed because `tools/check-system-manifest.mjs` demanded a committed source for `vehicles-ground-armor` and `vehicles-hybrids`. Canonical vehicle packs are generated from the SSOT by `tools/release/build-packs.mjs`; the manifest check now verifies generation (non-empty documents per pack) instead. The stale legacy `packs/vehicles-*.db` files remain as historical evidence for the CP23 reconciliation test and are not the source of the canonical packs.
 
+## Follow-up (independent review)
+- The provenance-update guard now also protects the legacy published mirrors (`cost`, `costNumeric`, crew, passengers, cargo, consumables, size, movement) and **simulates every update on a copy of the Actor**: any change that would make the runtime contract reject the vehicle (current HP above the printed maximum or below 0, shields out of range or on an unknown-SR hull, a stock weapon row, a forged mirror) is refused before it persists. An Actor that is already invalid is not trapped, so repairs remain possible.
+- Digest verification is no longer cached by object identity (about 0.1-0.3 ms per call); an in-place mutation of a verified record is rejected (regression test).
+- Open for live testing: install concurrency is serialized per vehicle within one client; behavior across separate GM/player clients needs a live check (TransactionEngine locks are also per client).
+
 ## Test infrastructure
 `tests/helpers/systems-resolver.mjs` (maps `/systems/foundryvtt-swse/…` imports) and `tests/helpers/foundry-stubs.mjs` let the real context builder, `TransactionEngine`, `StoreAcquisitionService`, Asset Bay and `rollAttack` run in Node. New suites: `p5-source-authority`, `p5-store-transaction`, `p5-acquisition-assetbay`, `p5-sheet-integration`, `p5-installation-transaction`, `p5-combat-chain`.
 
