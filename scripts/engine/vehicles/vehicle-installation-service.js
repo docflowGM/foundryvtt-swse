@@ -11,6 +11,7 @@ import {
   DEFAULT_VEHICLE_INSTALLATION_RULES, VEHICLE_INSTALLATION_FLAG_PATH,
   planVehicleInstallation, planVehicleUninstall, authorizeLedgerWrite, clearLedgerWrite
 } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-installation-ledger.js";
+import { makeUnusedEmplacementResolver } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-modification-rules.js";
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 
@@ -20,8 +21,19 @@ export class VehicleInstallationService {
   static _catalog = null;
   /** Vehicles with an install/uninstall in flight (plan -> transaction), per client. */
   static _busy = new Set();
+  static _rulesLoaded = false;
   /** Owner-ruling seam; replaced only by a documented project ruling. */
   static rules = DEFAULT_VEHICLE_INSTALLATION_RULES;
+
+  /** Rules with the published unused-EP table (call after loadCatalog). */
+  static async loadRules() {
+    if (this._rulesLoaded) return this.rules;
+    const res = await fetch('systems/foundryvtt-swse/data/canonical/vehicles/construction/unused-emplacement-points.json');
+    if (!res.ok) throw new Error('VEHICLE_UNUSED_EP_TABLE_LOAD_FAILED');
+    this.rules = { ...this.rules, resolveEpBudget: makeUnusedEmplacementResolver(await res.json()) };
+    this._rulesLoaded = true;
+    return this.rules;
+  }
 
   static async loadCatalog() {
     if (this._catalog) return this._catalog;
@@ -78,6 +90,7 @@ export class VehicleInstallationService {
     if (src.error) return { success: false, reasons: [src.error] };
     if (!this.#ownerAssociated(ownerActor, vehicle)) return { success: false, reasons: ['OWNER_VEHICLE_NOT_ASSOCIATED'] };
     const entries = catalog ?? await this.loadCatalog();
+    if (!catalog) await this.loadRules();
     const catalogEntry = entries.get(catalogId);
     const plan = planVehicleInstallation({
       record: src.record, flags: src.flags, catalogEntry, mount,

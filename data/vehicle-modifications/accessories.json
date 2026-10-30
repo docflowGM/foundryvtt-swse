@@ -8,8 +8,21 @@
     "sizeRestriction": null,
     "cost": 1000,
     "costType": "base",
-    "description": "Emergency cargo release system.",
-    "effect": "Can jettison cargo as swift action"
+    "description": "A pilot or system operator can dump any single cargo bay, or all cargo, as a swift action. Noticing it from another starship takes a DC 30 Perception or Use Computer check made as a reaction.",
+    "effect": "A pilot or system operator can dump any single cargo bay, or all cargo, as a swift action. Noticing it from another starship takes a DC 30 Perception or Use Computer check made as a reaction.",
+    "legacy": {
+      "description": "Emergency cargo release system.",
+      "effect": "Can jettison cargo as swift action"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "cargo-pod-light",
@@ -20,8 +33,21 @@
     "sizeRestriction": "Gargantuan or Larger",
     "cost": 500,
     "costType": "base",
-    "description": "External cargo container.",
-    "effect": "+10 tons cargo capacity"
+    "description": "Adds (the starship's cost modifier) x 1 tons of cargo. Each pod added reduces the starship's Dexterity by 2 (a pod cannot be added if it would drop Dexterity below 1). A pod can be made detachable, to act as an escape pod, for five times the cost.",
+    "effect": "Adds (the starship's cost modifier) x 1 tons of cargo. Each pod added reduces the starship's Dexterity by 2 (a pod cannot be added if it would drop Dexterity below 1). A pod can be made detachable, to act as an escape pod, for five times the cost.",
+    "legacy": {
+      "description": "External cargo container.",
+      "effect": "+10 tons cargo capacity"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "cargo-pod-medium",
@@ -32,8 +58,21 @@
     "sizeRestriction": "Colossal or Larger",
     "cost": 1000,
     "costType": "base",
-    "description": "Large external cargo pod.",
-    "effect": "+25 tons cargo capacity"
+    "description": "Adds (the starship's cost modifier) x 5 tons of cargo. Each pod added reduces the starship's Dexterity by 2 (a pod cannot be added if it would drop Dexterity below 1). A pod can be made detachable, to act as an escape pod, for five times the cost.",
+    "effect": "Adds (the starship's cost modifier) x 5 tons of cargo. Each pod added reduces the starship's Dexterity by 2 (a pod cannot be added if it would drop Dexterity below 1). A pod can be made detachable, to act as an escape pod, for five times the cost.",
+    "legacy": {
+      "description": "Large external cargo pod.",
+      "effect": "+25 tons cargo capacity"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "cargo-pod-heavy",
@@ -44,8 +83,21 @@
     "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 1500,
     "costType": "base",
-    "description": "Massive cargo container.",
-    "effect": "+100 tons cargo capacity"
+    "description": "Adds (the starship's cost modifier) x 10 tons of cargo. Each pod added reduces the starship's Dexterity by 2 (a pod cannot be added if it would drop Dexterity below 1). A pod can be made detachable, to act as an escape pod, for five times the cost.",
+    "effect": "Adds (the starship's cost modifier) x 10 tons of cargo. Each pod added reduces the starship's Dexterity by 2 (a pod cannot be added if it would drop Dexterity below 1). A pod can be made detachable, to act as an escape pod, for five times the cost.",
+    "legacy": {
+      "description": "Massive cargo container.",
+      "effect": "+100 tons cargo capacity"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "cloaking-hibridium",
@@ -56,8 +108,21 @@
     "sizeRestriction": "Colossal or Larger",
     "cost": 50000,
     "costType": "base",
-    "description": "Rare cloaking technology, but detectable.",
-    "effect": "Invisible to sensors, but distorts sensor readings nearby"
+    "description": "The starship has total concealment and may always make a Stealth check to sneak (a -10 penalty applies to notice it). While active it also treats all other targets as having total concealment, and those aboard cannot see out.",
+    "effect": "The starship has total concealment and may always make a Stealth check to sneak (a -10 penalty applies to notice it). While active it also treats all other targets as having total concealment, and those aboard cannot see out.",
+    "legacy": {
+      "description": "Rare cloaking technology, but detectable.",
+      "effect": "Invisible to sensors, but distorts sensor readings nearby"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "cloaking-stygium",
@@ -68,8 +133,21 @@
     "sizeRestriction": "Huge or Larger",
     "cost": 100000,
     "costType": "base",
-    "description": "Perfect cloaking device, extremely rare.",
-    "effect": "Perfect invisibility, undetectable"
+    "description": "The starship has total concealment and may always make a Stealth check to sneak (a -10 penalty applies to notice it). Noticing it does not negate the concealment but allows attacks against it with the normal concealment penalty.",
+    "effect": "The starship has total concealment and may always make a Stealth check to sneak (a -10 penalty applies to notice it). Noticing it does not negate the concealment but allows attacks against it with the normal concealment penalty.",
+    "legacy": {
+      "description": "Perfect cloaking device, extremely rare.",
+      "effect": "Perfect invisibility, undetectable"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "cryogenic-chambers",
@@ -80,8 +158,21 @@
     "sizeRestriction": "Colossal or Larger",
     "cost": 500,
     "costType": "base",
-    "description": "Suspended animation for long voyages.",
-    "effect": "10 cryogenic pods, extends consumables indefinitely"
+    "description": "Each unit carries (the starship's cost modifier)/5 Medium or smaller creatures in stasis; Large creatures take five times as much space and Huge creatures twenty times.",
+    "effect": "Each unit carries (the starship's cost modifier)/5 Medium or smaller creatures in stasis; Large creatures take five times as much space and Huge creatures twenty times.",
+    "legacy": {
+      "description": "Suspended animation for long voyages.",
+      "effect": "10 cryogenic pods, extends consumables indefinitely"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "docking-clamps",
@@ -92,8 +183,21 @@
     "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 2000,
     "costType": "base",
-    "description": "Secure docking for other vessels.",
-    "effect": "Can dock with and carry 1 smaller vessel"
+    "description": "Lets the starship dock with other starships in space; smaller ships can stay clamped through maneuvers, combat and hyperspace. If the ship takes damage exceeding its damage threshold, every starship attached by a docking clamp is shaken off.",
+    "effect": "Lets the starship dock with other starships in space; smaller ships can stay clamped through maneuvers, combat and hyperspace. If the ship takes damage exceeding its damage threshold, every starship attached by a docking clamp is shaken off.",
+    "legacy": {
+      "description": "Secure docking for other vessels.",
+      "effect": "Can dock with and carry 1 smaller vessel"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "droid-repair-team",
@@ -104,8 +208,21 @@
     "sizeRestriction": "Colossal or Larger",
     "cost": 5000,
     "costType": "base",
-    "description": "Automated repair droids.",
-    "effect": "+2 to Mechanics checks for repairs"
+    "description": "Deploys automatically when the starship moves -1 or more steps down the condition track, making one Mechanics check (modifier +13) to jury-rig it up 1 step. If damage gets past SR while the team is active there is a 25% chance it is destroyed.",
+    "effect": "Deploys automatically when the starship moves -1 or more steps down the condition track, making one Mechanics check (modifier +13) to jury-rig it up 1 step. If damage gets past SR while the team is active there is a 25% chance it is destroyed.",
+    "legacy": {
+      "description": "Automated repair droids.",
+      "effect": "+2 to Mechanics checks for repairs"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "escape-pod-small",
@@ -116,8 +233,21 @@
     "sizeRestriction": "Colossal or Larger",
     "cost": 400,
     "costType": "base",
-    "description": "Emergency escape pod for 4 people.",
-    "effect": "4-person escape capability"
+    "description": "Small lifeboats (ships of Colossal (frigate) size or larger): life support for fifteen Medium creatures for up to 1 week. One bay holds (the starship's cost modifier)/50 lifeboats; multiple bays may be installed.",
+    "effect": "Small lifeboats (ships of Colossal (frigate) size or larger): life support for fifteen Medium creatures for up to 1 week. One bay holds (the starship's cost modifier)/50 lifeboats; multiple bays may be installed.",
+    "legacy": {
+      "description": "Emergency escape pod for 4 people.",
+      "effect": "4-person escape capability"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "escape-pod-large",
@@ -128,8 +258,21 @@
     "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 800,
     "costType": "base",
-    "description": "Large escape pod for 20 people.",
-    "effect": "20-person escape capability"
+    "description": "Large lifeboats (ships of Colossal (cruiser) size or larger): life support for up to 50 Medium creatures for up to 2 months, with a class x15 hyperdrive for one jump. One bay holds (the starship's cost modifier)/100 lifeboats; multiple bays may be installed.",
+    "effect": "Large lifeboats (ships of Colossal (cruiser) size or larger): life support for up to 50 Medium creatures for up to 2 months, with a class x15 hyperdrive for one jump. One bay holds (the starship's cost modifier)/100 lifeboats; multiple bays may be installed.",
+    "legacy": {
+      "description": "Large escape pod for 20 people.",
+      "effect": "20-person escape capability"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "extended-range",
@@ -140,8 +283,21 @@
     "sizeRestriction": null,
     "cost": 100,
     "costType": "base",
-    "description": "Additional fuel and supplies storage.",
-    "effect": "Double consumables duration"
+    "description": "Improves the starship's consumables by 10% of the original value (rounded down, minimum 1 day) for each time it is installed.",
+    "effect": "Improves the starship's consumables by 10% of the original value (rounded down, minimum 1 day) for each time it is installed.",
+    "legacy": {
+      "description": "Additional fuel and supplies storage.",
+      "effect": "Double consumables duration"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "hangar-bay",
@@ -152,8 +308,21 @@
     "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 10000,
     "costType": "base",
-    "description": "Internal hangar for small craft.",
-    "effect": "1 hangar space (1 fighter or equivalent)"
+    "description": "Ships of Colossal (frigate) size or larger. Each bay has (the starship's cost modifier)/50 units of hangar space (Huge craft take 1 unit, Gargantuan 5, Colossal 20); a vehicle enters or exits with two move actions.",
+    "effect": "Ships of Colossal (frigate) size or larger. Each bay has (the starship's cost modifier)/50 units of hangar space (Huge craft take 1 unit, Gargantuan 5, Colossal 20); a vehicle enters or exits with two move actions.",
+    "legacy": {
+      "description": "Internal hangar for small craft.",
+      "effect": "1 hangar space (1 fighter or equivalent)"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "hangar-bay-concealed",
@@ -164,8 +333,21 @@
     "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 100000,
     "costType": "base",
-    "description": "Hidden hangar bay.",
-    "effect": "1 concealed hangar space, DC 25 Perception to detect"
+    "description": "As a hangar bay, but recognizing a concealed bay from outside takes a DC 30 Perception check (a thorough internal search finds it), and entering or exiting takes two full rounds.",
+    "effect": "As a hangar bay, but recognizing a concealed bay from outside takes a DC 30 Perception check (a thorough internal search finds it), and entering or exiting takes two full rounds.",
+    "legacy": {
+      "description": "Hidden hangar bay.",
+      "effect": "1 concealed hangar space, DC 25 Perception to detect"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "holonet-transceiver",
@@ -176,8 +358,21 @@
     "sizeRestriction": "Colossal or Larger",
     "cost": 50000,
     "costType": "base",
-    "description": "Real-time galactic communication network access.",
-    "effect": "Instant communication across galaxy"
+    "description": "Real-time audio, visual and holographic communication over unlimited range, and (with a hypertransceiver) the only way to contact a ship in hyperspace. Use Computer checks to gain information with it get a +5 equipment bonus. During the Galactic Empire its availability is Military.",
+    "effect": "Real-time audio, visual and holographic communication over unlimited range, and (with a hypertransceiver) the only way to contact a ship in hyperspace. Use Computer checks to gain information with it get a +5 equipment bonus. During the Galactic Empire its availability is Military.",
+    "legacy": {
+      "description": "Real-time galactic communication network access.",
+      "effect": "Instant communication across galaxy"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "hyper-transceiver",
@@ -188,8 +383,21 @@
     "sizeRestriction": null,
     "cost": 2000,
     "costType": "base",
-    "description": "Long-range communication system.",
-    "effect": "Communication across star systems"
+    "description": "Effectively unlimited-range communication (with time lag) and access to HoloNet information in reduced detail; one of the only means of contacting a ship in hyperspace.",
+    "effect": "Effectively unlimited-range communication (with time lag) and access to HoloNet information in reduced detail; one of the only means of contacting a ship in hyperspace.",
+    "legacy": {
+      "description": "Long-range communication system.",
+      "effect": "Communication across star systems"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "luxury-basic",
@@ -200,8 +408,21 @@
     "sizeRestriction": null,
     "cost": 10000,
     "costType": "base",
-    "description": "Comfortable accommodations.",
-    "effect": "+1 to Persuasion when entertaining guests"
+    "description": "Shipwide accommodation upgrade. Maintaining it costs 1/50 of its price each month, or the luxury level drops one step.",
+    "effect": "Shipwide accommodation upgrade. Maintaining it costs 1/50 of its price each month, or the luxury level drops one step.",
+    "legacy": {
+      "description": "Comfortable accommodations.",
+      "effect": "+1 to Persuasion when entertaining guests"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "luxury-advanced",
@@ -212,8 +433,21 @@
     "sizeRestriction": null,
     "cost": 20000,
     "costType": "base",
-    "description": "High-quality quarters and amenities.",
-    "effect": "+2 to Persuasion when entertaining guests"
+    "description": "Shipwide accommodation upgrade. Maintaining it costs 1/50 of its price each month, or the luxury level drops one step.",
+    "effect": "Shipwide accommodation upgrade. Maintaining it costs 1/50 of its price each month, or the luxury level drops one step.",
+    "legacy": {
+      "description": "High-quality quarters and amenities.",
+      "effect": "+2 to Persuasion when entertaining guests"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "luxury-extreme",
@@ -224,8 +458,21 @@
     "sizeRestriction": null,
     "cost": 50000,
     "costType": "base",
-    "description": "Palatial accommodations fit for royalty.",
-    "effect": "+5 to Persuasion when entertaining guests"
+    "description": "Shipwide accommodation upgrade. Maintaining it costs 1/50 of its price each month, or the luxury level drops one step. An extreme upgrade raises the ship's crew quality by one step (maximum expert), with no effect on a crew of heroes.",
+    "effect": "Shipwide accommodation upgrade. Maintaining it costs 1/50 of its price each month, or the luxury level drops one step. An extreme upgrade raises the ship's crew quality by one step (maximum expert), with no effect on a crew of heroes.",
+    "legacy": {
+      "description": "Palatial accommodations fit for royalty.",
+      "effect": "+5 to Persuasion when entertaining guests"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "medical-suite",
@@ -236,8 +483,21 @@
     "sizeRestriction": "Colossal or Larger",
     "cost": 3000,
     "costType": "base",
-    "description": "Full medical facility with bacta tank.",
-    "effect": "+2 to Treat Injury checks, can perform surgery"
+    "description": "Ships of Colossal (frigate) size or larger. Includes (the starship's size modifier)/5 medical beds and (the starship's size modifier)/50 bacta tanks; a medical bed counts as a medpac (10 uses), a medical kit and a surgical kit.",
+    "effect": "Ships of Colossal (frigate) size or larger. Includes (the starship's size modifier)/5 medical beds and (the starship's size modifier)/50 bacta tanks; a medical bed counts as a medpac (10 uses), a medical kit and a surgical kit.",
+    "legacy": {
+      "description": "Full medical facility with bacta tank.",
+      "effect": "+2 to Treat Injury checks, can perform surgery"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "passenger-seating",
@@ -248,8 +508,21 @@
     "sizeRestriction": null,
     "cost": 200,
     "costType": "base",
-    "description": "Basic seating for passengers.",
-    "effect": "+10 passenger capacity (seating only)"
+    "description": "One section holds a number of passengers equal to the ship's size modifier, with seats (typically for voyages of a day or less); steerage-quality accommodations.",
+    "effect": "One section holds a number of passengers equal to the ship's size modifier, with seats (typically for voyages of a day or less); steerage-quality accommodations.",
+    "legacy": {
+      "description": "Basic seating for passengers.",
+      "effect": "+10 passenger capacity (seating only)"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "passenger-quarters",
@@ -260,8 +533,21 @@
     "sizeRestriction": "Colossal or Larger",
     "cost": 500,
     "costType": "base",
-    "description": "Passenger cabins with bunks.",
-    "effect": "+10 passenger capacity (with quarters)"
+    "description": "One section holds a number of passengers equal to the ship's size modifier, with quarters; steerage-quality accommodations.",
+    "effect": "One section holds a number of passengers equal to the ship's size modifier, with quarters; steerage-quality accommodations.",
+    "legacy": {
+      "description": "Passenger cabins with bunks.",
+      "effect": "+10 passenger capacity (with quarters)"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "sensor-array-2",
@@ -272,8 +558,21 @@
     "sizeRestriction": null,
     "cost": 5000,
     "costType": "base",
-    "description": "Enhanced sensor processing.",
-    "effect": "+2 to Perception checks"
+    "description": "+2 equipment bonus to the starship's Intelligence score.",
+    "effect": "+2 equipment bonus to the starship's Intelligence score.",
+    "legacy": {
+      "description": "Enhanced sensor processing.",
+      "effect": "+2 to Perception checks"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "sensor-array-4",
@@ -284,8 +583,21 @@
     "sizeRestriction": null,
     "cost": 25000,
     "costType": "base",
-    "description": "Advanced sensor array.",
-    "effect": "+4 to Perception checks"
+    "description": "+4 equipment bonus to the starship's Intelligence score.",
+    "effect": "+4 equipment bonus to the starship's Intelligence score.",
+    "legacy": {
+      "description": "Advanced sensor array.",
+      "effect": "+4 to Perception checks"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "sensor-array-6",
@@ -296,8 +608,21 @@
     "sizeRestriction": null,
     "cost": 50000,
     "costType": "base",
-    "description": "Military-grade sensors.",
-    "effect": "+6 to Perception checks"
+    "description": "+6 equipment bonus to the starship's Intelligence score.",
+    "effect": "+6 equipment bonus to the starship's Intelligence score.",
+    "legacy": {
+      "description": "Military-grade sensors.",
+      "effect": "+6 to Perception checks"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "sensor-enhancement",
@@ -308,8 +633,21 @@
     "sizeRestriction": null,
     "cost": 15000,
     "costType": "base",
-    "description": "Specialized sensor upgrades.",
-    "effect": "+2 to specific sensor tasks (choose: scan, search, or track)"
+    "description": "Gives a system operator a +5 bonus on Perception and Use Computer checks made to operate the ship's sensors.",
+    "effect": "Gives a system operator a +5 bonus on Perception and Use Computer checks made to operate the ship's sensors.",
+    "legacy": {
+      "description": "Specialized sensor upgrades.",
+      "effect": "+2 to specific sensor tasks (choose: scan, search, or track)"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "slave-circuits-basic",
@@ -320,8 +658,21 @@
     "sizeRestriction": null,
     "cost": 1000,
     "costType": "base",
-    "description": "Remote control interface.",
-    "effect": "Ship can be piloted remotely (line of sight)"
+    "description": "Reduces the starship's crew requirement by 1/3 (never below 1). Crew quality is still based on the remaining crew.",
+    "effect": "Reduces the starship's crew requirement by 1/3 (never below 1). Crew quality is still based on the remaining crew.",
+    "legacy": {
+      "description": "Remote control interface.",
+      "effect": "Ship can be piloted remotely (line of sight)"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "slave-circuits-advanced",
@@ -332,8 +683,21 @@
     "sizeRestriction": null,
     "cost": 4000,
     "costType": "base",
-    "description": "Extended range remote control.",
-    "effect": "Ship can be piloted remotely (sensor range)"
+    "description": "Reduces the starship's crew requirement by 2/3 (never below 1). Crew quality is still based on the remaining crew.",
+    "effect": "Reduces the starship's crew requirement by 2/3 (never below 1). Crew quality is still based on the remaining crew.",
+    "legacy": {
+      "description": "Extended range remote control.",
+      "effect": "Ship can be piloted remotely (sensor range)"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "slave-circuits-recall",
@@ -344,8 +708,21 @@
     "sizeRestriction": "Colossal or Smaller",
     "cost": 6000,
     "costType": "base",
-    "description": "Automated return-to-base system.",
-    "effect": "Ship can return to designated location automatically"
+    "description": "Requires advanced slave circuits. The starship can be summoned by comlink and will lift off, fly to the comlink and land, taking no other actions. Crew quality under recall control is untrained, and anyone at the pilot position can disable it as a swift action.",
+    "effect": "Requires advanced slave circuits. The starship can be summoned by comlink and will lift off, fly to the comlink and land, taking no other actions. Crew quality under recall control is untrained, and anyone at the pilot position can disable it as a swift action.",
+    "legacy": {
+      "description": "Automated return-to-base system.",
+      "effect": "Ship can return to designated location automatically"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "smuggler-compartments",
@@ -356,8 +733,21 @@
     "sizeRestriction": null,
     "cost": 200,
     "costType": "base",
-    "description": "Hidden cargo compartments.",
-    "effect": "Hidden storage (5 tons), DC 25 Perception to detect"
+    "description": "Hidden cargo space found only by a detailed inspection and a DC 30 Perception check. One section holds up to (the starship's cost modifier) x 200 kg; no more than 5% of the original cargo capacity may be hidden.",
+    "effect": "Hidden cargo space found only by a detailed inspection and a DC 30 Perception check. One section holds up to (the starship's cost modifier) x 200 kg; no more than 5% of the original cargo capacity may be hidden.",
+    "legacy": {
+      "description": "Hidden cargo compartments.",
+      "effect": "Hidden storage (5 tons), DC 25 Perception to detect"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "transponder-iff",
@@ -368,8 +758,21 @@
     "sizeRestriction": null,
     "cost": 1000,
     "costType": "flat",
-    "description": "Military identification friend-or-foe system.",
-    "effect": "Identifies as military vessel to sensors"
+    "description": "A blank IFF transponder that can be switched on or off as a swift action. With the right codes the ship appears as a friend; without them a Use Computer check can be tried against the enemy ship (Will Defense 15 + its Intelligence modifier, starting attitude unfriendly, DC +10).",
+    "effect": "A blank IFF transponder that can be switched on or off as a swift action. With the right codes the ship appears as a friend; without them a Use Computer check can be tried against the enemy ship (Will Defense 15 + its Intelligence modifier, starting attitude unfriendly, DC +10).",
+    "legacy": {
+      "description": "Military identification friend-or-foe system.",
+      "effect": "Identifies as military vessel to sensors"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "transponder-masked",
@@ -380,8 +783,21 @@
     "sizeRestriction": null,
     "cost": 200,
     "costType": "base",
-    "description": "Conceals transponder signal.",
-    "effect": "DC 20 Perception to detect ship"
+    "description": "Makes the ship's transponder code unreadable. If the Mechanics check to install it fails by 10 or more, the sublight engines are destroyed as well; a masked transponder is immediately apparent and attracts the authorities.",
+    "effect": "Makes the ship's transponder code unreadable. If the Mechanics check to install it fails by 10 or more, the sublight engines are destroyed as well; a masked transponder is immediately apparent and attracts the authorities.",
+    "legacy": {
+      "description": "Conceals transponder signal.",
+      "effect": "DC 20 Perception to detect ship"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "transponder-disguised-1",
@@ -392,8 +808,21 @@
     "sizeRestriction": null,
     "cost": 500,
     "costType": "base",
-    "description": "Fake transponder signal.",
-    "effect": "Appears as different ship type, DC 15 to detect"
+    "description": "Broadcasts a second signal that makes the ship appear to be a different ship; switching it on or off is a swift action. Installation needs a Use Computer check to find a similar ship's code and a Deception check to forge the signal, with a -5 penalty for every disguised transponder already installed (this is disguised transponder 1).",
+    "effect": "Broadcasts a second signal that makes the ship appear to be a different ship; switching it on or off is a swift action. Installation needs a Use Computer check to find a similar ship's code and a Deception check to forge the signal, with a -5 penalty for every disguised transponder already installed (this is disguised transponder 1).",
+    "legacy": {
+      "description": "Fake transponder signal.",
+      "effect": "Appears as different ship type, DC 15 to detect"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "transponder-disguised-2",
@@ -404,8 +833,21 @@
     "sizeRestriction": null,
     "cost": 1000,
     "costType": "base",
-    "description": "Advanced fake transponder.",
-    "effect": "Appears as specific ship, DC 20 to detect"
+    "description": "Broadcasts a second signal that makes the ship appear to be a different ship; switching it on or off is a swift action. Installation needs a Use Computer check to find a similar ship's code and a Deception check to forge the signal, with a -5 penalty for every disguised transponder already installed (this is disguised transponder 2).",
+    "effect": "Broadcasts a second signal that makes the ship appear to be a different ship; switching it on or off is a swift action. Installation needs a Use Computer check to find a similar ship's code and a Deception check to forge the signal, with a -5 penalty for every disguised transponder already installed (this is disguised transponder 2).",
+    "legacy": {
+      "description": "Advanced fake transponder.",
+      "effect": "Appears as specific ship, DC 20 to detect"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "transponder-disguised-3",
@@ -416,8 +858,21 @@
     "sizeRestriction": null,
     "cost": 2000,
     "costType": "base",
-    "description": "Perfect fake transponder with database records.",
-    "effect": "Complete false identity, DC 25 to detect"
+    "description": "Broadcasts a second signal that makes the ship appear to be a different ship; switching it on or off is a swift action. Installation needs a Use Computer check to find a similar ship's code and a Deception check to forge the signal, with a -5 penalty for every disguised transponder already installed (this is disguised transponder 3).",
+    "effect": "Broadcasts a second signal that makes the ship appear to be a different ship; switching it on or off is a swift action. Installation needs a Use Computer check to find a similar ship's code and a Deception check to forge the signal, with a -5 penalty for every disguised transponder already installed (this is disguised transponder 3).",
+    "legacy": {
+      "description": "Perfect fake transponder with database records.",
+      "effect": "Complete false identity, DC 25 to detect"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        48,
+        53
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "amphibious-seals",
@@ -429,7 +884,8 @@
     "cost": 4000,
     "costType": "base",
     "description": "Waterproofing for underwater operations.",
-    "effect": "Can operate underwater"
+    "effect": "Can operate underwater",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "auxiliary-generators-2",
@@ -441,7 +897,8 @@
     "cost": 2000,
     "costType": "base",
     "description": "Additional power generation.",
-    "effect": "+2 to Use Computer for power management"
+    "effect": "+2 to Use Computer for power management",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "auxiliary-generators-4",
@@ -453,7 +910,8 @@
     "cost": 5000,
     "costType": "base",
     "description": "Enhanced power systems.",
-    "effect": "+4 to Use Computer for power management"
+    "effect": "+4 to Use Computer for power management",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "auxiliary-generators-6",
@@ -465,7 +923,8 @@
     "cost": 10000,
     "costType": "base",
     "description": "Military-grade auxiliary power.",
-    "effect": "+6 to Use Computer for power management"
+    "effect": "+6 to Use Computer for power management",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "backup-battery",
@@ -477,7 +936,8 @@
     "cost": 10000,
     "costType": "base",
     "description": "Emergency power reserve.",
-    "effect": "Life support continues for 24 hours if main power fails"
+    "effect": "Life support continues for 24 hours if main power fails",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "baffled-drive",
@@ -489,7 +949,8 @@
     "cost": 100000,
     "costType": "base",
     "description": "Silent-running engine modification.",
-    "effect": "+10 to Stealth in space"
+    "effect": "+10 to Stealth in space",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "cockpit-ejection",
@@ -501,7 +962,8 @@
     "cost": 8000,
     "costType": "flat",
     "description": "Ejectable cockpit module.",
-    "effect": "Cockpit ejects as escape pod if ship destroyed"
+    "effect": "Cockpit ejects as escape pod if ship destroyed",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "cofferdam",
@@ -513,7 +975,8 @@
     "cost": 3000,
     "costType": "base",
     "description": "Airlock for boarding and docking.",
-    "effect": "Can dock with ships lacking docking ports"
+    "effect": "Can dock with ships lacking docking ports",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "environmental-filters",
@@ -525,7 +988,8 @@
     "cost": 2000,
     "costType": "base",
     "description": "Advanced air and water filtration.",
-    "effect": "Can operate in hazardous atmospheres"
+    "effect": "Can operate in hazardous atmospheres",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "fuel-converters",
@@ -537,7 +1001,8 @@
     "cost": 2400,
     "costType": "base",
     "description": "Fuel scooping and conversion system.",
-    "effect": "Can refuel from gas giants or stars"
+    "effect": "Can refuel from gas giants or stars",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "grappler-mag",
@@ -549,7 +1014,8 @@
     "cost": 1000,
     "costType": "flat",
     "description": "Magnetic grappling system.",
-    "effect": "Can magnetically attach to metallic surfaces"
+    "effect": "Can magnetically attach to metallic surfaces",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "hardpoint",
@@ -561,7 +1027,8 @@
     "cost": 500,
     "costType": "flat",
     "description": "Weapon mounting point.",
-    "effect": "+1 emplacement point for weapons only"
+    "effect": "+1 emplacement point for weapons only",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "hidden-cargo-25",
@@ -573,7 +1040,8 @@
     "cost": 2000,
     "costType": "base",
     "description": "Large hidden storage area.",
-    "effect": "Hidden storage (25% of cargo), DC 25 to detect"
+    "effect": "Hidden storage (25% of cargo), DC 25 to detect",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "hidden-cargo-50",
@@ -585,7 +1053,8 @@
     "cost": 5000,
     "costType": "base",
     "description": "Massive hidden cargo system.",
-    "effect": "Hidden storage (50% of cargo), DC 30 to detect"
+    "effect": "Hidden storage (50% of cargo), DC 30 to detect",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "hidden-cargo-75",
@@ -597,7 +1066,8 @@
     "cost": 10000,
     "costType": "base",
     "description": "Nearly all cargo space is hidden.",
-    "effect": "Hidden storage (75% of cargo), DC 35 to detect"
+    "effect": "Hidden storage (75% of cargo), DC 35 to detect",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "holding-cells-25",
@@ -609,7 +1079,8 @@
     "cost": 1000,
     "costType": "base",
     "description": "Brig for prisoners.",
-    "effect": "Secure cells for 25% of passenger capacity"
+    "effect": "Secure cells for 25% of passenger capacity",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "holding-cells-50",
@@ -621,7 +1092,8 @@
     "cost": 2000,
     "costType": "base",
     "description": "Large prison facility.",
-    "effect": "Secure cells for 50% of passenger capacity"
+    "effect": "Secure cells for 50% of passenger capacity",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "holding-cells-75",
@@ -633,7 +1105,8 @@
     "cost": 5000,
     "costType": "base",
     "description": "Prison ship configuration.",
-    "effect": "Secure cells for 75% of passenger capacity"
+    "effect": "Secure cells for 75% of passenger capacity",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "interrogation-chamber",
@@ -645,7 +1118,8 @@
     "cost": 10000,
     "costType": "flat",
     "description": "Specialized interrogation facility.",
-    "effect": "+5 to Persuasion (intimidation) during interrogation"
+    "effect": "+5 to Persuasion (intimidation) during interrogation",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "personalized-controls",
@@ -657,7 +1131,8 @@
     "cost": 1000,
     "costType": "flat",
     "description": "Custom-configured controls for specific pilot.",
-    "effect": "+2 to Pilot checks for designated pilot only"
+    "effect": "+2 to Pilot checks for designated pilot only",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "sensor-baffling",
@@ -669,7 +1144,8 @@
     "cost": 20000,
     "costType": "base",
     "description": "Sensor-dampening hull coating.",
-    "effect": "+5 to Stealth vs sensors"
+    "effect": "+5 to Stealth vs sensors",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "sensor-decoy",
@@ -681,7 +1157,8 @@
     "cost": 2000,
     "costType": "base",
     "description": "Deployable sensor ghost.",
-    "effect": "Create false sensor contact"
+    "effect": "Create false sensor contact",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "sensor-mask",
@@ -693,7 +1170,8 @@
     "cost": 150000,
     "costType": "base",
     "description": "Advanced sensor spoofing system.",
-    "effect": "Appears as different size/type vessel"
+    "effect": "Appears as different size/type vessel",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "workshop",
@@ -705,7 +1183,8 @@
     "cost": 3000,
     "costType": "base",
     "description": "Fully equipped repair and fabrication facility.",
-    "effect": "+2 to Mechanics checks for repairs and modifications"
+    "effect": "+2 to Mechanics checks for repairs and modifications",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "launch-bay",
@@ -717,7 +1196,8 @@
     "cost": 5000,
     "costType": "base",
     "description": "External launch rack for small craft.",
-    "effect": "0.5 hangar space (can carry 1 fighter externally)"
+    "effect": "0.5 hangar space (can carry 1 fighter externally)",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "plasma-punch",
@@ -729,7 +1209,8 @@
     "cost": 25000,
     "costType": "flat",
     "description": "Plasma cutter for breaching hulls during boarding actions.",
-    "effect": "+5 to boarding attempts, can cut through armor"
+    "effect": "+5 to boarding attempts, can cut through armor",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "plasma-torch",
@@ -741,7 +1222,8 @@
     "cost": 6000,
     "costType": "flat",
     "description": "Industrial plasma cutting system for salvage and repairs.",
-    "effect": "Can cut through most materials, +2 to salvage operations"
+    "effect": "Can cut through most materials, +2 to salvage operations",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "tractor-clamp",
@@ -753,6 +1235,7 @@
     "cost": 15000,
     "costType": "flat",
     "description": "Enhanced tractor beam system with clamping mechanism.",
-    "effect": "Superior grappling, can hold larger vessels"
+    "effect": "Superior grappling, can hold larger vessels",
+    "effectVerification": "UNVERIFIED"
   }
 ]

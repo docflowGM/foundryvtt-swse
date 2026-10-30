@@ -8,8 +8,21 @@
     "sizeRestriction": "Colossal or Smaller",
     "cost": 2000,
     "costType": "base",
-    "description": "Allows the starship to enter and maneuver in planetary atmospheres without difficulty.",
-    "effect": "Vehicle can operate in atmosphere"
+    "description": "Raises maximum velocity and character-scale fly speed by 10% while flying in an atmosphere (rounded down to the nearest square and 10 km/h). No effect on starship-scale movement.",
+    "effect": "Raises maximum velocity and character-scale fly speed by 10% while flying in an atmosphere (rounded down to the nearest square and 10 km/h). No effect on starship-scale movement.",
+    "legacy": {
+      "description": "Allows the starship to enter and maneuver in planetary atmospheres without difficulty.",
+      "effect": "Vehicle can operate in atmosphere"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "atmospheric-thrusters-advanced",
@@ -20,8 +33,21 @@
     "sizeRestriction": "Gargantuan or Smaller",
     "cost": 5000,
     "costType": "base",
-    "description": "Provides exceptional atmospheric performance and maneuverability.",
-    "effect": "+2 to Pilot checks in atmosphere"
+    "description": "Raises maximum velocity and character-scale fly speed by 25% while flying in an atmosphere (rounded down to the nearest square and 10 km/h). No effect on starship-scale movement.",
+    "effect": "Raises maximum velocity and character-scale fly speed by 25% while flying in an atmosphere (rounded down to the nearest square and 10 km/h). No effect on starship-scale movement.",
+    "legacy": {
+      "description": "Provides exceptional atmospheric performance and maneuverability.",
+      "effect": "+2 to Pilot checks in atmosphere"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "combat-thrusters",
@@ -32,8 +58,21 @@
     "sizeRestriction": "Colossal",
     "cost": 2000,
     "costType": "base",
-    "description": "Enhanced maneuvering thrusters for combat situations.",
-    "effect": "+1 to Pilot checks in combat"
+    "description": "A space transport is treated as one size category smaller for being targeted by capital-ship weapons, and as a starfighter for dogfighting and starship combat maneuvers. Its size modifier to Reflex Defense does not change.",
+    "effect": "A space transport is treated as one size category smaller for being targeted by capital-ship weapons, and as a starfighter for dogfighting and starship combat maneuvers. Its size modifier to Reflex Defense does not change.",
+    "legacy": {
+      "description": "Enhanced maneuvering thrusters for combat situations.",
+      "effect": "+1 to Pilot checks in combat"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "hyperdrive-075",
@@ -44,8 +83,21 @@
     "sizeRestriction": "Colossal (Cruiser) or Smaller",
     "cost": 5000,
     "costType": "base",
-    "description": "Military-grade hyperdrive with exceptional speed.",
-    "effect": "Hyperdrive Class 0.75"
+    "description": "Hyperdrive of the listed class (a smaller class number is a better drive). Hyperdrives are always nonstandard modifications for starfighters; hyperdrive sleds and rings are the alternatives.",
+    "effect": "Hyperdrive of the listed class (a smaller class number is a better drive). Hyperdrives are always nonstandard modifications for starfighters; hyperdrive sleds and rings are the alternatives.",
+    "legacy": {
+      "description": "Military-grade hyperdrive with exceptional speed.",
+      "effect": "Hyperdrive Class 0.75"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "hyperdrive-1",
@@ -56,8 +108,21 @@
     "sizeRestriction": "Colossal (Cruiser) or Smaller",
     "cost": 3000,
     "costType": "base",
-    "description": "Standard fast hyperdrive used on most modern starships.",
-    "effect": "Hyperdrive Class 1"
+    "description": "Hyperdrive of the listed class (a smaller class number is a better drive). Hyperdrives are always nonstandard modifications for starfighters; hyperdrive sleds and rings are the alternatives.",
+    "effect": "Hyperdrive of the listed class (a smaller class number is a better drive). Hyperdrives are always nonstandard modifications for starfighters; hyperdrive sleds and rings are the alternatives.",
+    "legacy": {
+      "description": "Standard fast hyperdrive used on most modern starships.",
+      "effect": "Hyperdrive Class 1"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "hyperdrive-15",
@@ -68,8 +133,21 @@
     "sizeRestriction": "Colossal (Cruiser) or Smaller",
     "cost": 2500,
     "costType": "base",
-    "description": "Slightly slower than Class 1, but still quite capable.",
-    "effect": "Hyperdrive Class 1.5"
+    "description": "Hyperdrive of the listed class (a smaller class number is a better drive). Hyperdrives are always nonstandard modifications for starfighters; hyperdrive sleds and rings are the alternatives.",
+    "effect": "Hyperdrive of the listed class (a smaller class number is a better drive). Hyperdrives are always nonstandard modifications for starfighters; hyperdrive sleds and rings are the alternatives.",
+    "legacy": {
+      "description": "Slightly slower than Class 1, but still quite capable.",
+      "effect": "Hyperdrive Class 1.5"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "hyperdrive-2",
@@ -80,8 +158,21 @@
     "sizeRestriction": null,
     "cost": 2000,
     "costType": "base",
-    "description": "Common hyperdrive found on civilian vessels.",
-    "effect": "Hyperdrive Class 2"
+    "description": "Hyperdrive of the listed class (a smaller class number is a better drive). Hyperdrives are always nonstandard modifications for starfighters; hyperdrive sleds and rings are the alternatives.",
+    "effect": "Hyperdrive of the listed class (a smaller class number is a better drive). Hyperdrives are always nonstandard modifications for starfighters; hyperdrive sleds and rings are the alternatives.",
+    "legacy": {
+      "description": "Common hyperdrive found on civilian vessels.",
+      "effect": "Hyperdrive Class 2"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "hyperdrive-3",
@@ -92,8 +183,21 @@
     "sizeRestriction": null,
     "cost": 1500,
     "costType": "base",
-    "description": "Slower hyperdrive used on older or budget vessels.",
-    "effect": "Hyperdrive Class 3"
+    "description": "Hyperdrive of the listed class (a smaller class number is a better drive). Hyperdrives are always nonstandard modifications for starfighters; hyperdrive sleds and rings are the alternatives.",
+    "effect": "Hyperdrive of the listed class (a smaller class number is a better drive). Hyperdrives are always nonstandard modifications for starfighters; hyperdrive sleds and rings are the alternatives.",
+    "legacy": {
+      "description": "Slower hyperdrive used on older or budget vessels.",
+      "effect": "Hyperdrive Class 3"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "hyperdrive-4",
@@ -104,8 +208,21 @@
     "sizeRestriction": null,
     "cost": 1000,
     "costType": "base",
-    "description": "Outdated hyperdrive technology.",
-    "effect": "Hyperdrive Class 4"
+    "description": "Hyperdrive of the listed class (a smaller class number is a better drive). Hyperdrives are always nonstandard modifications for starfighters; hyperdrive sleds and rings are the alternatives.",
+    "effect": "Hyperdrive of the listed class (a smaller class number is a better drive). Hyperdrives are always nonstandard modifications for starfighters; hyperdrive sleds and rings are the alternatives.",
+    "legacy": {
+      "description": "Outdated hyperdrive technology.",
+      "effect": "Hyperdrive Class 4"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "hyperdrive-5",
@@ -116,8 +233,21 @@
     "sizeRestriction": null,
     "cost": 500,
     "costType": "base",
-    "description": "Very slow hyperdrive, often used as backup.",
-    "effect": "Hyperdrive Class 5"
+    "description": "Hyperdrive of the listed class (a smaller class number is a better drive). Hyperdrives are always nonstandard modifications for starfighters; hyperdrive sleds and rings are the alternatives.",
+    "effect": "Hyperdrive of the listed class (a smaller class number is a better drive). Hyperdrives are always nonstandard modifications for starfighters; hyperdrive sleds and rings are the alternatives.",
+    "legacy": {
+      "description": "Very slow hyperdrive, often used as backup.",
+      "effect": "Hyperdrive Class 5"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "hyperdrive-6",
@@ -128,8 +258,21 @@
     "sizeRestriction": null,
     "cost": 400,
     "costType": "base",
-    "description": "Primitive hyperdrive technology.",
-    "effect": "Hyperdrive Class 6"
+    "description": "Hyperdrive of the listed class (a smaller class number is a better drive). Hyperdrives are always nonstandard modifications for starfighters; hyperdrive sleds and rings are the alternatives.",
+    "effect": "Hyperdrive of the listed class (a smaller class number is a better drive). Hyperdrives are always nonstandard modifications for starfighters; hyperdrive sleds and rings are the alternatives.",
+    "legacy": {
+      "description": "Primitive hyperdrive technology.",
+      "effect": "Hyperdrive Class 6"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "hyperdrive-8",
@@ -140,8 +283,21 @@
     "sizeRestriction": null,
     "cost": 300,
     "costType": "base",
-    "description": "Ancient hyperdrive design, rarely seen.",
-    "effect": "Hyperdrive Class 8"
+    "description": "Hyperdrive of the listed class (a smaller class number is a better drive). Hyperdrives are always nonstandard modifications for starfighters; hyperdrive sleds and rings are the alternatives.",
+    "effect": "Hyperdrive of the listed class (a smaller class number is a better drive). Hyperdrives are always nonstandard modifications for starfighters; hyperdrive sleds and rings are the alternatives.",
+    "legacy": {
+      "description": "Ancient hyperdrive design, rarely seen.",
+      "effect": "Hyperdrive Class 8"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "hyperdrive-10",
@@ -152,8 +308,21 @@
     "sizeRestriction": null,
     "cost": 200,
     "costType": "base",
-    "description": "Extremely slow, obsolete hyperdrive.",
-    "effect": "Hyperdrive Class 10"
+    "description": "Hyperdrive of the listed class (a smaller class number is a better drive). Hyperdrives are always nonstandard modifications for starfighters; hyperdrive sleds and rings are the alternatives.",
+    "effect": "Hyperdrive of the listed class (a smaller class number is a better drive). Hyperdrives are always nonstandard modifications for starfighters; hyperdrive sleds and rings are the alternatives.",
+    "legacy": {
+      "description": "Extremely slow, obsolete hyperdrive.",
+      "effect": "Hyperdrive Class 10"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "hyperdrive-15-class",
@@ -164,8 +333,21 @@
     "sizeRestriction": null,
     "cost": 100,
     "costType": "base",
-    "description": "Barely functional hyperdrive, museum piece.",
-    "effect": "Hyperdrive Class 15"
+    "description": "Hyperdrive of the listed class (a smaller class number is a better drive). Hyperdrives are always nonstandard modifications for starfighters; hyperdrive sleds and rings are the alternatives.",
+    "effect": "Hyperdrive of the listed class (a smaller class number is a better drive). Hyperdrives are always nonstandard modifications for starfighters; hyperdrive sleds and rings are the alternatives.",
+    "legacy": {
+      "description": "Barely functional hyperdrive, museum piece.",
+      "effect": "Hyperdrive Class 15"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "maneuvering-jets-2",
@@ -176,8 +358,21 @@
     "sizeRestriction": null,
     "cost": 2000,
     "costType": "base",
-    "description": "Improved maneuvering thrusters for better handling.",
-    "effect": "+2 to Pilot checks"
+    "description": "+2 equipment bonus to the starship's Dexterity score.",
+    "effect": "+2 equipment bonus to the starship's Dexterity score.",
+    "legacy": {
+      "description": "Improved maneuvering thrusters for better handling.",
+      "effect": "+2 to Pilot checks"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "maneuvering-jets-4",
@@ -188,8 +383,21 @@
     "sizeRestriction": "Colossal or Smaller",
     "cost": 5000,
     "costType": "base",
-    "description": "Advanced maneuvering system for exceptional control.",
-    "effect": "+4 to Pilot checks"
+    "description": "+4 equipment bonus to the starship's Dexterity score.",
+    "effect": "+4 equipment bonus to the starship's Dexterity score.",
+    "legacy": {
+      "description": "Advanced maneuvering system for exceptional control.",
+      "effect": "+4 to Pilot checks"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "maneuvering-jets-6",
@@ -200,8 +408,21 @@
     "sizeRestriction": "Gargantuan or Smaller",
     "cost": 10000,
     "costType": "base",
-    "description": "Military-grade maneuvering system.",
-    "effect": "+6 to Pilot checks"
+    "description": "+6 equipment bonus to the starship's Dexterity score.",
+    "effect": "+6 equipment bonus to the starship's Dexterity score.",
+    "legacy": {
+      "description": "Military-grade maneuvering system.",
+      "effect": "+6 to Pilot checks"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "navicomputer-limited",
@@ -212,8 +433,21 @@
     "sizeRestriction": null,
     "cost": 500,
     "costType": "flat",
-    "description": "Basic navigation computer with limited jump calculations.",
-    "effect": "Can store 2 hyperspace routes"
+    "description": "Stores only two jumps' worth of information: enough to reach a destination and return.",
+    "effect": "Stores only two jumps' worth of information: enough to reach a destination and return.",
+    "legacy": {
+      "description": "Basic navigation computer with limited jump calculations.",
+      "effect": "Can store 2 hyperspace routes"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "navicomputer",
@@ -224,8 +458,21 @@
     "sizeRestriction": null,
     "cost": 2000,
     "costType": "flat",
-    "description": "Standard navigation computer for hyperspace travel.",
-    "effect": "Can calculate and store hyperspace routes"
+    "description": "Gives a +5 equipment bonus on Use Computer checks made for astrogation, and a character aboard need not be trained in Use Computer to astrogate. Most navicomputers are nonstandard for starfighters.",
+    "effect": "Gives a +5 equipment bonus on Use Computer checks made for astrogation, and a character aboard need not be trained in Use Computer to astrogate. Most navicomputers are nonstandard for starfighters.",
+    "legacy": {
+      "description": "Standard navigation computer for hyperspace travel.",
+      "effect": "Can calculate and store hyperspace routes"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "navicomputer-advanced",
@@ -236,8 +483,21 @@
     "sizeRestriction": null,
     "cost": 20000,
     "costType": "flat",
-    "description": "Advanced navicomputer with rapid calculations and extensive database.",
-    "effect": "+2 to Use Computer for navigation, stores unlimited routes"
+    "description": "Gives a +10 equipment bonus on Use Computer checks made for astrogation (instead of the usual +5), and a character aboard need not be trained in Use Computer to astrogate.",
+    "effect": "Gives a +10 equipment bonus on Use Computer checks made for astrogation (instead of the usual +5), and a character aboard need not be trained in Use Computer to astrogate.",
+    "legacy": {
+      "description": "Advanced navicomputer with rapid calculations and extensive database.",
+      "effect": "+2 to Use Computer for navigation, stores unlimited routes"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "sublight-accelerator",
@@ -248,8 +508,21 @@
     "sizeRestriction": "Gargantuan or Smaller",
     "cost": 25000,
     "costType": "base",
-    "description": "Temporary speed boost system that diverts power from shields.",
-    "effect": "Double speed for 3 rounds, shields drop to 0"
+    "description": "Gives a +5 bonus on Pilot checks to increase the vehicle's speed (+10 if the pilot is using all-out movement). It draws power from systems not in use.",
+    "effect": "Gives a +5 bonus on Pilot checks to increase the vehicle's speed (+10 if the pilot is using all-out movement). It draws power from systems not in use.",
+    "legacy": {
+      "description": "Temporary speed boost system that diverts power from shields.",
+      "effect": "Double speed for 3 rounds, shields drop to 0"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "sublight-drive-1",
@@ -260,8 +533,21 @@
     "sizeRestriction": null,
     "cost": 1000,
     "costType": "base",
-    "description": "Basic sublight engine for slow travel.",
-    "effect": "Starship Scale speed 1 square"
+    "description": "Determines the ship's speed in realspace: 1 square(s) at starship scale. Only military vessels may use the fastest ion drives.",
+    "effect": "Determines the ship's speed in realspace: 1 square(s) at starship scale. Only military vessels may use the fastest ion drives.",
+    "legacy": {
+      "description": "Basic sublight engine for slow travel.",
+      "effect": "Starship Scale speed 1 square"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "sublight-drive-2",
@@ -272,8 +558,21 @@
     "sizeRestriction": null,
     "cost": 2000,
     "costType": "base",
-    "description": "Standard sublight propulsion system.",
-    "effect": "Starship Scale speed 2 squares"
+    "description": "Determines the ship's speed in realspace: 2 square(s) at starship scale. Only military vessels may use the fastest ion drives.",
+    "effect": "Determines the ship's speed in realspace: 2 square(s) at starship scale. Only military vessels may use the fastest ion drives.",
+    "legacy": {
+      "description": "Standard sublight propulsion system.",
+      "effect": "Starship Scale speed 2 squares"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "sublight-drive-3",
@@ -284,8 +583,21 @@
     "sizeRestriction": "Colossal (Cruiser) or Smaller",
     "cost": 5000,
     "costType": "base",
-    "description": "Advanced sublight engines for faster travel.",
-    "effect": "Starship Scale speed 3 squares"
+    "description": "Determines the ship's speed in realspace: 3 square(s) at starship scale. Only military vessels may use the fastest ion drives.",
+    "effect": "Determines the ship's speed in realspace: 3 square(s) at starship scale. Only military vessels may use the fastest ion drives.",
+    "legacy": {
+      "description": "Advanced sublight engines for faster travel.",
+      "effect": "Starship Scale speed 3 squares"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "sublight-drive-4",
@@ -296,8 +608,21 @@
     "sizeRestriction": "Colossal (Cruiser) or Smaller",
     "cost": 10000,
     "costType": "base",
-    "description": "High-performance sublight drive.",
-    "effect": "Starship Scale speed 4 squares"
+    "description": "Determines the ship's speed in realspace: 4 square(s) at starship scale. Only military vessels may use the fastest ion drives.",
+    "effect": "Determines the ship's speed in realspace: 4 square(s) at starship scale. Only military vessels may use the fastest ion drives.",
+    "legacy": {
+      "description": "High-performance sublight drive.",
+      "effect": "Starship Scale speed 4 squares"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "sublight-drive-5",
@@ -308,8 +633,21 @@
     "sizeRestriction": "Colossal or Smaller",
     "cost": 20000,
     "costType": "base",
-    "description": "Military-grade high-speed engines.",
-    "effect": "Starship Scale speed 5 squares"
+    "description": "Determines the ship's speed in realspace: 5 square(s) at starship scale. Only military vessels may use the fastest ion drives.",
+    "effect": "Determines the ship's speed in realspace: 5 square(s) at starship scale. Only military vessels may use the fastest ion drives.",
+    "legacy": {
+      "description": "Military-grade high-speed engines.",
+      "effect": "Starship Scale speed 5 squares"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "sublight-drive-6",
@@ -320,7 +658,20 @@
     "sizeRestriction": "Gargantuan or Smaller",
     "cost": 100000,
     "costType": "base",
-    "description": "Exceptional sublight speed, only found on military interceptors.",
-    "effect": "Starship Scale speed 6 squares"
+    "description": "Determines the ship's speed in realspace: 6 square(s) at starship scale. Only military vessels may use the fastest ion drives.",
+    "effect": "Determines the ship's speed in realspace: 6 square(s) at starship scale. Only military vessels may use the fastest ion drives.",
+    "legacy": {
+      "description": "Exceptional sublight speed, only found on military interceptors.",
+      "effect": "Starship Scale speed 6 squares"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        40,
+        42
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   }
 ]

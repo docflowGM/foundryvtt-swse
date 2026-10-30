@@ -3,20 +3,19 @@
  "book": "Starships of the Galaxy",
  "sourceFile": "reference/sourcebooks/Starships of the Galaxy_djvu.txt",
  "sourceSha256": "04fc2297996f2370d4e183dfe33df0b885215cb84c2f1602f60e227f3d853ad3",
+ "printedTables": {
+  "Table 3-8 Stock Ship Types": 52,
+  "Table 3-9 Stock Ship Base Values": 53
+ },
  "printedPages": [
-  53,
-  54
+  52,
+  53
  ],
- "note": "Stock ship frames for designing a starship from scratch (Starships of the Galaxy, Stock Ships). A frame is certified only when every cell parsed cleanly; others need the PDF.",
+ "note": "Stock ship frames for designing a starship from scratch (Starships of the Galaxy, Stock Ships). stock EP is the frame allocation, NOT the unused EP of a constructed ship. SOURCE_VERIFIED_TEXT = every cell clean in the OCR; PDF_CONFIRMED = cells the OCR could not read were read from the PDF (data/audits/vehicles/swse-p2-pdf-review.json).",
  "frames": [
   {
    "class": "Battlecruiser",
-   "noisy": [
-    {
-     "cell": "damageReduction",
-     "ocr": "-/2 2,000 — 20. +16 20,000,000"
-    }
-   ],
+   "noisy": [],
    "size": "Colossal (cruiser)",
    "strength": 124,
    "dexterity": 12,
@@ -31,8 +30,15 @@
    "cargo": "20,000 tons",
    "consumables": "2 years",
    "stockEmplacementPoints": 200,
+   "pdfReviewedCells": [
+    "damageReduction"
+   ],
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
    "id": "battlecruiser",
-   "certification": "NEEDS_PDF_CONFIRMATION"
+   "certification": "PDF_CONFIRMED"
   },
   {
    "class": "Cruiser",
@@ -51,6 +57,10 @@
    "cargo": "10,000 tons",
    "consumables": "2 years",
    "stockEmplacementPoints": 100,
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
    "id": "cruiser",
    "certification": "SOURCE_VERIFIED_TEXT"
   },
@@ -71,6 +81,10 @@
    "cargo": "5,000 tons",
    "consumables": "1 year",
    "stockEmplacementPoints": 50,
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
    "id": "frigate",
    "certification": "SOURCE_VERIFIED_TEXT"
   },
@@ -91,6 +105,10 @@
    "cargo": "2,000 tons",
    "consumables": "1 year",
    "stockEmplacementPoints": 20,
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
    "id": "corvette",
    "certification": "SOURCE_VERIFIED_TEXT"
   },
@@ -111,6 +129,10 @@
    "cargo": "100,000 tons",
    "consumables": "6 months",
    "stockEmplacementPoints": 5,
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
    "id": "heavy-freighter",
    "certification": "SOURCE_VERIFIED_TEXT"
   },
@@ -131,6 +153,10 @@
    "cargo": "5 tons",
    "consumables": "1 month",
    "stockEmplacementPoints": 20,
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
    "id": "gunship",
    "certification": "SOURCE_VERIFIED_TEXT"
   },
@@ -151,6 +177,10 @@
    "cargo": "20 tons",
    "consumables": "1 month",
    "stockEmplacementPoints": 5,
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
    "id": "shuttle",
    "certification": "SOURCE_VERIFIED_TEXT"
   },
@@ -171,6 +201,10 @@
    "cargo": "100 tons",
    "consumables": "2 months",
    "stockEmplacementPoints": 5,
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
    "id": "light-freighter",
    "certification": "SOURCE_VERIFIED_TEXT"
   },
@@ -191,6 +225,10 @@
    "cargo": "50 kg",
    "consumables": "2 days",
    "stockEmplacementPoints": 10,
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
    "id": "bomber",
    "certification": "SOURCE_VERIFIED_TEXT"
   },
@@ -211,6 +249,10 @@
    "cargo": "50 kg",
    "consumables": "2 days",
    "stockEmplacementPoints": 5,
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
    "id": "superiority-fighter",
    "certification": "SOURCE_VERIFIED_TEXT"
   },
@@ -231,21 +273,16 @@
    "cargo": "50 kg",
    "consumables": "2 days",
    "stockEmplacementPoints": 5,
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
    "id": "interceptor",
    "certification": "SOURCE_VERIFIED_TEXT"
   },
   {
    "class": "Light fighter",
-   "noisy": [
-    {
-     "cell": "crew",
-     "ocr": "|"
-    },
-    {
-     "cell": "stockEmplacementPoints",
-     "ocr": "vi"
-    }
-   ],
+   "noisy": [],
    "size": "Huge",
    "strength": 34,
    "dexterity": 20,
@@ -259,9 +296,17 @@
    "passengers": 0,
    "cargo": "50 kg",
    "consumables": "2 days",
-   "stockEmplacementPoints": null,
+   "stockEmplacementPoints": 2,
+   "pdfReviewedCells": [
+    "crew",
+    "stockEmplacementPoints"
+   ],
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
    "id": "light-fighter",
-   "certification": "NEEDS_PDF_CONFIRMATION"
+   "certification": "PDF_CONFIRMED"
   }
  ]
 }

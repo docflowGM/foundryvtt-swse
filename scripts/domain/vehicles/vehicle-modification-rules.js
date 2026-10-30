@@ -28,6 +28,18 @@ export const SHORTFALL_PER_POINT = Object.freeze({ days: 2, dc: 5, costFraction:
 /** Base Mechanics DC 20, +1 per emplacement point (SotG p. 40). */
 export const BASE_INSTALL_DC = 20;
 
+/**
+ * Crew Quality (Core Rulebook sidebar, printed p. 174; read from the PDF). The check modifier applies to
+ * crew-operated skill checks; crew modifiers are already included in published vehicle statblocks.
+ */
+export const CREW_QUALITY = Object.freeze({
+  untrained: Object.freeze({ attackBonus: -5, checkModifier: 0, clModifier: -1 }),
+  normal: Object.freeze({ attackBonus: 0, checkModifier: 5, clModifier: 0 }),
+  skilled: Object.freeze({ attackBonus: 2, checkModifier: 6, clModifier: 1 }),
+  expert: Object.freeze({ attackBonus: 5, checkModifier: 8, clModifier: 2 }),
+  ace: Object.freeze({ attackBonus: 10, checkModifier: 12, clModifier: 4 })
+});
+
 const sizeKey = size => String(size ?? '').trim().toLowerCase();
 
 export function costModifierForSize(size) {
@@ -63,6 +75,8 @@ export function nonstandardAssessment(entry, record, { starshipDesigner = false 
   if (starshipDesigner) return { nonstandard: false, basis: 'STARSHIP_DESIGNER' };
   const name = String(entry?.name ?? '').toLowerCase();
   if (/hyperdrive/.test(name) && !/sled|ring/.test(name)) {
+    // "Because of their bulk, hyperdrives are always treated as nonstandard modifications for starfighters."
+    if (record?.classification?.primaryCategory === 'starfighter') return { nonstandard: true, basis: 'STARFIGHTER_HYPERDRIVE_ALWAYS_NONSTANDARD' };
     const cap = record?.hyperspace?.capability;
     if (cap === 'equipped') return { nonstandard: false, basis: 'STOCK_HAS_HYPERDRIVE' };
     if (cap === 'unavailable') return { nonstandard: true, basis: 'STOCK_LACKS_HYPERDRIVE' };
@@ -141,4 +155,18 @@ export function cargoTonsForEmplacementPoints(size, points) {
   const mod = costModifierForSize(size);
   if (mod === null || !Number.isInteger(points) || points < 0) return null;
   return mod * points;
+}
+
+/**
+ * Unused-EP resolver backed by data/canonical/vehicles/construction/unused-emplacement-points.json
+ * (generated from the published statements; see its `basis` values). A null entry stays unknown.
+ */
+export function makeUnusedEmplacementResolver(table) {
+  const byKey = new Map((table?.entries ?? []).map(e => [e.sourceEntryKey, e]));
+  return record => {
+    const entry = byKey.get(record?.identity?.sourceEntryKey);
+    if (!entry) return { state: 'unknown', reason: 'NO_UNUSED_EP_TABLE_ENTRY' };
+    if (!finite(entry.unusedEmplacementPoints)) return { state: 'unknown', reason: entry.basis };
+    return { state: 'known', total: entry.unusedEmplacementPoints, basis: entry.basis };
+  };
 }

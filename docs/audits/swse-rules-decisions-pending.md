@@ -400,6 +400,19 @@ Appended; no earlier entry was changed. Full evidence: `docs/audits/vehicles/uni
 | V-P2-04 | Damage/EP/availability/cost of installed weapons published; operator = pilot/copilot or a gunner (Core). No published firing-arc rule for installed weapons found in any searched book. | `DEFERRED_RULES_REVIEW` (Q6): the arc gate is a project policy. |
 | V-P4-01 | Size modifier applies to occupants' Initiative and Pilot checks; vehicle Initiative uses the pilot's modifier; crew modifiers are already in statblock statistics (Core). Whether the printed value already includes size is not stated. The code's size table omits the Colossal subtypes (Table 10-1 prints -10 for each). | `DEFERRED_RULES_REVIEW` (Q7). |
 
+## Source examination log, revision 6 (2026-10-30, PDF review and owner direction)
+
+Appended. Records the project owner's PDF readings (`data/audits/vehicles/swse-p2-pdf-review.json`) and directions given in conversation on 2026-10-30. Earlier entries are unchanged; the originals above remain the record of the questions.
+
+| ID | Addition |
+|---|---|
+| V-P2-01 | Owner direction: a standard stock design generally has 1 unused EP (exceptions apply); installs beyond the unused EP are permitted with the printed penalties. J-Type transports = 2 (Table 3-2, p. 39, PDF). Still open: the three KotOR statblock EP lines; the unmapped Table 3-2 names. |
+| V-P2-02 | 8 movement/defense cells read from the PDF (Tables 3-3 p. 41, 3-4 p. 43); `armor-4` size restriction corrected to Colossal (cruiser) or larger. Weapon and accessory tables not yet PDF-reviewed. |
+| V-P2-03 | Owner direction: implement the published installation and removal mechanics, and distinguish resale eligibility from a guaranteed refund. Implemented; the resale amount and whether play enforces the job procedure remain open. |
+| V-P4-01 | Owner direction: do not double-apply crew or size modifiers. Evidence: Initiative = Dex modifier + size modifier + crew check modifier fits 343 of 375 published vehicles. Source-backed vehicles no longer receive the extra size modifier. |
+| V-P5-01 | Owner direction: distinguish a frame's printed stock EP allocation from the unused EP of a constructed ship; a new design's spendable pool is the unused EP (general rule). |
+| V-P5-04 | Closed: Core Rulebook p. 174 Crew Quality table read from the PDF. |
+
 ---
 
 ## Revision log
@@ -409,3 +422,4 @@ Appended; no earlier entry was changed. Full evidence: `docs/audits/vehicles/uni
 - **Revision 3 (2026-10-29):** appended V-P2-01 to V-P2-04 (vehicle Shipyard EP budget, catalog provenance, refund/effects, mount certification). No existing entry changed.
 - **Revision 4 (2026-10-29):** appended V-P4-01 (vehicle size modifier vs printed Initiative). No existing entry changed.
 - **Revision 5 (2026-10-30):** appended the source examination log for V-P2-01..04 and V-P4-01 and new entries V-P5-01..04. No existing entry was changed.
+- **Revision 6 (2026-10-30):** appended PDF-review results and owner directions for V-P2-01/02/03, V-P4-01, V-P5-01 and V-P5-04. No existing entry was changed.

@@ -24,6 +24,8 @@ const OUT = 'data/audits/vehicles/swse-p2-sotg-modification-evidence.json';
 const BOOK = 'Starships of the Galaxy';
 const AVAIL = ['Common', 'Licensed', 'Restricted', 'Military', 'Illegal'];
 
+const review = JSON.parse(fs.readFileSync(path.join(root, 'data/audits/vehicles/swse-p2-pdf-review.json'), 'utf8'));
+const TABLE_PAGE = { movement: review.tables.starshipsOfTheGalaxy['table3-3MovementSystems'].printedPage, defense: review.tables.starshipsOfTheGalaxy['table3-4DefenseSystems'].printedPage };
 const text = fs.readFileSync(path.join(root, SOURCE), 'utf8');
 const lines = text.split('\n');
 const sha256 = crypto.createHash('sha256').update(text).digest('hex');
@@ -105,6 +107,19 @@ if (cIdx >= 0) rowsAfter(cIdx, 12).forEach((l, i) => {
   if (!/^\d+$/.test(g.ep)) frames[i].noisy.push({ cell: 'stockEmplacementPoints', ocr: g.ep });
 });
 
+// Cells the OCR could not read are filled ONLY from the recorded PDF review, and the frame is then
+// PDF_CONFIRMED. Cells the review does not cover keep their OCR status.
+for (const f of frames) {
+  const r = review.frames[f.class.toLowerCase().replace(/\s+/g, '-')];
+  if (!r) continue;
+  for (const [cell, value] of Object.entries(r.cells)) {
+    if (f[cell] !== undefined && f[cell] !== null && f[cell] !== value) throw new Error('PDF review contradicts clean OCR cell: ' + f.class + '.' + cell);
+    f[cell] = value;
+  }
+  f.noisy = f.noisy.filter(n => !Object.keys(r.cells).some(c => n.cell === c || (c === 'stockEmplacementPoints' && n.cell === 'stockEmplacementPoints') || (c === 'damageReduction' && n.cell === 'damageReduction') || (c === 'crew' && n.cell === 'crew')));
+  f.pdfReviewedCells = Object.keys(r.cells);
+}
+
 /* --------------------------- Table 3-2 unused emplacement points --------------------------- */
 const uIdx = lines.findIndex(l => l.trim() === 'UNUSED POINTS');
 const unused = [];
@@ -117,7 +132,68 @@ for (const l of lines.slice(uIdx, uIdx + 30)) {
     unused.push({ ocrName: m[1].trim(), unusedEmplacementPoints: ok ? Number(m[2]) : null, noisy: ok ? [] : [{ cell: 'unusedEmplacementPoints', ocr: m[2] }] });
   }
 }
+for (const u of unused) {
+  const reviewed = review.unusedEmplacementPoints[u.ocrName];
+  if (reviewed !== undefined) { u.unusedEmplacementPoints = reviewed; u.noisy = []; u.pdfReviewed = true; }
+}
 const unusedSingle = [];
+
+/* --------------------- weapon table: assisted transcription, machine-checked --------------------- */
+// The weapon table is OCR'd as two interleaved columns, so rows are transcribed by hand and EVERY
+// transcribed cell must still appear in the cited OCR fragment (the build fails otherwise). Footnote
+// (1) of the table reads "Colossal or larger starships only".
+const FOOTNOTE_1 = 'Colossal or larger';
+const W = (id, name, fragment, damage, ep, availability, cost, costType, extra = {}) =>
+  ({ id, printedName: name, fragment, damage, emplacementPoints: ep, availability, cost, costType, footnote1: false, noisy: [], ...extra });
+const weaponRows = [
+  W('autoblaster', 'Autoblaster', 'Autoblaster - +0 Restricted x2', null, 0, 'Restricted', 2, 'multiplier'),
+  W('blaster-cannon-light', 'Blaster cannon, light', 'Blaster cannon, light 3d10x2 1 Licensed 1,200', '3d10x2', 1, 'Licensed', 1200, 'flat'),
+  W('blaster-cannon-medium', 'Blaster cannon, medium', 'Blaster cannon, medium 4d10x2 1 Restricted 2,500', '4d10x2', 1, 'Restricted', 2500, 'flat'),
+  W('blaster-cannon-heavy', 'Blaster cannon, heavy', 'Blaster cannon, heavy 5d10x2 2 Military 5,500', '5d10x2', 2, 'Military', 5500, 'flat'),
+  W('cannon-double', 'Cannon, double', 'Cannon, double +1d10 +0 Licensed x3', '+1d10', 0, 'Licensed', 3, 'multiplier'),
+  W('cannon-quad', 'Cannon, quad', 'Cannon, quad +2d10 +1 Restricted x5', '+2d10', 1, 'Restricted', 5, 'multiplier'),
+  W('cannon-enhancement', 'Cannon enhancements', 'Cannon enhancements +1010 +1 Military x2', '+1d10', 1, 'Military', 2, 'multiplier', { noisy: [{ cell: 'damage', ocr: '+1010' }] }),
+  W('cannon-enhancement-advanced', 'Cannon enhancements, advanced', 'Cannon enhancements, +2d10 +2 Military x5', '+2d10', 2, 'Military', 5, 'multiplier'),
+  W('concussion-missile-light', 'Concussion missile, light', 'Concussion missile, light 7d10x2 0 Military 500', '7d10x2', 0, 'Military', 500, 'flat'),
+  W('concussion-missile-medium', 'Concussion missile, medium', 'Concussion missile, 9d10x2 0 Military 750', '9d10x2', 0, 'Military', 750, 'flat'),
+  W('concussion-missile-heavy', 'Concussion missile, heavy (1)', 'Concussion missile, 9d10x5 0 Military 2,000', '9d10x5', 0, 'Military', 2000, 'flat', { footnote1: true }),
+  W('concussion-missile-launcher-light', 'Concussion missile launcher, light', 'Concussion missile es 2 Military 2,000', null, 2, 'Military', 2000, 'flat', { noisy: [{ cell: 'damage', ocr: 'es' }] }),
+  W('concussion-missile-launcher-medium', 'Concussion missile launcher, medium', 'Concussion missile = 5 Military 3,500', null, 5, 'Military', 3500, 'flat', { noisy: [{ cell: 'damage', ocr: '=' }] }),
+  W('concussion-missile-launcher-heavy', 'Concussion missile launcher, heavy (1)', 'Concussion missile . 20 Military 30,000', null, 20, 'Military', 30000, 'flat', { footnote1: true, noisy: [{ cell: 'damage', ocr: '.' }] }),
+  W('docking-gun', 'Docking gun', 'Docking gun By weapon 1 Licensed +1,000', 'By weapon', 1, 'Licensed', 1000, 'modifier'),
+  W('droid-jammer', 'Droid jammer', 'Droid jammer Special 1 Licensed 8,000', 'Special', 1, 'Licensed', 8000, 'flat'),
+  W('fire-linked-2', 'Fire-linked weapon, 2', 'Fire-linked weapon,2 — +1d10 +1 Licensed x2', '+1d10', 1, 'Licensed', 2, 'multiplier'),
+  W('fire-linked-4', 'Fire-linked weapon, 4', 'Fire-linked weapon, 4 +2d10 +2 Restricted x4', '+2d10', 2, 'Restricted', 4, 'multiplier'),
+  W('fire-linked-optional', 'Fire-linked weapon, optional', 'Fire-linked weapon, Special of Licensed +1,000', 'Special', null, 'Licensed', 1000, 'modifier', { noisy: [{ cell: 'emplacementPoints', ocr: 'of' }] }),
+  W('gravity-well-projector', 'Gravity well projector (1)', 'Gravity well projector (1) Special 5 Military 50,000', 'Special', 5, 'Military', 50000, 'flat', { footnote1: true }),
+  W('ion-bomb', 'Ion bomb', 'lon bomb 5d10 ion ~ Military 500', '5d10 ion', null, 'Military', 500, 'flat', { noisy: [{ cell: 'emplacementPoints', ocr: '~' }] }),
+  W('ion-bomb-rack', 'Ion bomb rack', 'lon bomb rack - 1 Military 1,000', null, 1, 'Military', 1000, 'flat'),
+  W('ion-cannon-light', 'Ion cannon, light', 'lon cannon, light 3d10x2 ion 1 Licensed 2,000', '3d10x2 ion', 1, 'Licensed', 2000, 'flat'),
+  W('ion-cannon-medium', 'Ion cannon, medium', 'lon cannon, medium 5d10x2 ion 2 Restricted 3,000', '5d10x2 ion', 2, 'Restricted', 3000, 'flat'),
+  W('ion-cannon-heavy', 'Ion cannon, heavy (1)', 'lon cannon, heavy (1) 3d10x5 ion 5 Military 6,000', '3d10x5 ion', 5, 'Military', 6000, 'flat', { footnote1: true }),
+  W('ion-cannon-hapan-triple', 'Ion cannon, Hapan triple (1)', '5d10x5 ion 3 Illegal 12,000', '5d10x5 ion', 3, 'Illegal', 12000, 'flat', { footnote1: true }),
+  W('laser-cannon-light', 'Laser cannon, light', 'Laser cannon, light 3d10x2 1 Licensed 1,500', '3d10x2', 1, 'Licensed', 1500, 'flat'),
+  W('laser-cannon-medium', 'Laser cannon, medium', 'Lasercannon,medium 4d10x2 1 Restricted 4,000', '4d10x2', 1, 'Restricted', 4000, 'flat'),
+  W('laser-cannon-heavy', 'Laser cannon, heavy', 'Laser cannon, heavy 5d10x2 2 Military 6,000', '5d10x2', 2, 'Military', 6000, 'flat'),
+  W('point-defense', 'Point-defense weapon (1)', 'Point-defense weapon (1) — 0 Restricted +4,000', null, 0, 'Restricted', 4000, 'modifier', { footnote1: true }),
+  W('proton-torpedo', 'Proton torpedo', 'Proton torpedo 9d10x2 0 Military', '9d10x2', 0, 'Military', 800, 'flat', { noisy: [{ cell: 'cost', ocr: '=== 800' }] }),
+  W('proton-torpedo-launcher', 'Proton torpedo launcher', 'Proton torpedo launcher — 1 Military 2,500', null, 1, 'Military', 2500, 'flat'),
+  W('shieldbuster-torpedo', 'Shieldbuster torpedo', 'Shieldbuster torpedo 10d10x2 0 Mitay = 1000.', '10d10x2', 0, 'Military', 1000, 'flat', { noisy: [{ cell: 'availability', ocr: 'Mitay' }, { cell: 'cost', ocr: '= 1000.' }] }),
+  W('shieldbuster-torpedo-launcher', 'Shieldbuster torpedo launcher', 'Shieldbuster torpedo = — 3 Military 10,000', null, 3, 'Military', 10000, 'flat'),
+  W('space-mine-standard', 'Space mine, standard', 'Space mine, standard _—_7d10[ts[2 0 Military 1,000', '7d10x2', 0, 'Military', 1000, 'flat', { noisy: [{ cell: 'damage', ocr: '_—_7d10[ts[2' }] }),
+  W('space-mine-advanced', 'Space mine, advanced', 'Space mine, advanced 9d10x2 0 Military 5,000', '9d10x2', 0, 'Military', 5000, 'flat'),
+  W('space-mine-heavy', 'Space mine, heavy', 'Space mine, heavy 6d10x5 0 Military 5,000', '6d10x5', 0, 'Military', 5000, 'flat'),
+  W('space-mine-launcher', 'Space mine launcher', 'Space mine launcher - 2 Military 5,000', null, 2, 'Military', 5000, 'flat'),
+  W('tractor-beam', 'Tractor beam', 'Special 10 (ieeriged 10,000', 'Special', 10, 'Licensed', 10000, 'flat', { noisy: [{ cell: 'name', ocr: 'Thachar en' }, { cell: 'availability', ocr: '(ieeriged' }] }),
+  W('turbolaser-light', 'Turbolaser, light (1)', 'Turbolaser, light (1) 3d10x5 2 Military 5,000', '3d10x5', 2, 'Military', 5000, 'flat', { footnote1: true }),
+  W('turbolaser-medium', 'Turbolaser, medium (1)', 'Turbolaser, medium (1) | 5d10x5 5 Military 10,000', '5d10x5', 5, 'Military', 10000, 'flat', { footnote1: true }),
+  W('turbolaser-heavy', 'Turbolaser, heavy (1)', '7d10x5 10 Military 20,000', '7d10x5', 10, 'Military', 20000, 'flat', { footnote1: true })
+];
+// every transcribed fragment must exist in the OCR text, or the transcription is wrong
+for (const row of weaponRows) {
+  if (!text.includes(row.fragment) && !lines.some(l => l.includes(row.fragment)))
+    throw new Error('weapon table transcription not found in OCR: ' + row.id + ' <' + row.fragment + '>');
+}
 
 /* ------------------------------- comparison with the catalog ------------------------------- */
 const catalogFiles = ['accessories', 'defense-systems', 'movement-systems', 'weapon-systems'];
@@ -134,7 +210,26 @@ function otherBookHeadings(name) {
   }
   return hits;
 }
+const weaponById = new Map(weaponRows.map(w => [w.id, w]));
+const sameDamage = (a, b) => String(a ?? '').toLowerCase().replace(/[\s()]/g, '') === String(b ?? '').toLowerCase().replace(/[\s()]/g, '');
+function compareWeapon(row, w) {
+  const diffs = [];
+  const base = { catalogId: row.id, catalogFile: row.file, catalogName: row.name, printedName: w.printedName, table: 'weapon' };
+  const isNoisy = c => w.noisy.some(n => n.cell === c);
+  if (w.emplacementPoints !== null && w.emplacementPoints !== row.emplacementPoints) diffs.push({ field: 'emplacementPoints', printed: w.emplacementPoints, catalog: row.emplacementPoints });
+  if (!isNoisy('availability') && w.availability !== row.availability) diffs.push({ field: 'availability', printed: w.availability, catalog: row.availability });
+  const costVal = w.costType === 'multiplier' ? row.costMultiplier : row.cost;
+  if (!isNoisy('cost') && (w.cost !== costVal || w.costType !== row.costType)) diffs.push({ field: 'cost', printed: `${w.costType} ${w.cost}`, catalog: `${row.costType} ${costVal}` });
+  const printedSize = w.footnote1 ? FOOTNOTE_1 : null;
+  if (sizeKey(printedSize) !== sizeKey(row.sizeRestriction)) diffs.push({ field: 'sizeRestriction', printed: printedSize, catalog: row.sizeRestriction, note: w.footnote1 ? 'table footnote (1): "Colossal or larger starships only"' : 'no footnote' });
+  if (!isNoisy('damage') && w.damage !== null && !sameDamage(w.damage, row.damage)) diffs.push({ field: 'damage', printed: w.damage, catalog: row.damage });
+  if (w.damage === null && row.damage && !/^(See Ammunition|Special|—|-)?$/i.test(row.damage) && row.id === 'autoblaster') diffs.push({ field: 'damage', printed: null, catalog: row.damage, note: 'the table prints no damage for this entry' });
+  if (diffs.length) return { ...base, status: 'OCR_ROW_DIFFERS_FROM_CATALOG', differences: diffs, noisy: w.noisy };
+  if (w.noisy.length) return { ...base, status: 'MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF', noisy: w.noisy, certifiable: false };
+  return { ...base, status: 'SOURCE_VERIFIED_TEXT', certifiable: false, certificationNote: 'weapon table not yet PDF-reviewed; transcription evidence only' };
+}
 const comparison = catalog.map(row => {
+  if (weaponById.has(row.id)) return compareWeapon(row, weaponById.get(row.id));
   const base = { catalogId: row.id, catalogFile: row.file, catalogName: row.name };
   const hit = printed.get(norm(row.name));
   if (!hit) {
@@ -146,14 +241,22 @@ const comparison = catalog.map(row => {
       : { ...base, status: 'NO_PRINTED_ROW_FOUND_IN_PARSED_TABLES' };
   }
   const diffs = [];
-  if (hit.emplacementPoints !== null && hit.emplacementPoints !== row.emplacementPoints) diffs.push({ field: 'emplacementPoints', printed: hit.emplacementPoints, catalog: row.emplacementPoints });
+  // Recorded PDF review: replaces OCR cells it covers (and clears their noise flags).
+  const pdf = review.catalogRows[row.id];
+  const printedRow = { ...hit };
+  if (pdf) {
+    Object.assign(printedRow, pdf.cells);
+    printedRow.noisy = hit.noisy.filter(n => !(n.cell in pdf.cells));
+  }
+  if (printedRow.emplacementPoints !== null && printedRow.emplacementPoints !== row.emplacementPoints) diffs.push({ field: 'emplacementPoints', printed: printedRow.emplacementPoints, catalog: row.emplacementPoints });
   if (hit.availability !== row.availability) diffs.push({ field: 'availability', printed: hit.availability, catalog: row.availability });
-  if (sizeKey(hit.sizeRestriction) !== sizeKey(row.sizeRestriction)) diffs.push({ field: 'sizeRestriction', printed: hit.sizeRestriction, catalog: row.sizeRestriction });
+  if (sizeKey(printedRow.sizeRestriction) !== sizeKey(row.sizeRestriction)) diffs.push({ field: 'sizeRestriction', printed: printedRow.sizeRestriction, catalog: row.sizeRestriction });
   if (hit.cost !== row.cost) diffs.push({ field: 'cost', printed: hit.cost, catalog: row.cost });
   if (hit.costType !== row.costType) diffs.push({ field: 'costType', printed: hit.costType, catalog: row.costType });
-  const out = { ...base, printedLine: hit.line, printedName: hit.ocrName, table: hit.table };
+  const out = { ...base, printedLine: hit.line, printedName: hit.ocrName, table: hit.table, printedPage: TABLE_PAGE[hit.table] };
   if (diffs.length) return { ...out, status: 'OCR_ROW_DIFFERS_FROM_CATALOG', differences: diffs };
-  if (hit.noisy.length) return { ...out, status: 'MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF', noisy: hit.noisy };
+  if (printedRow.noisy.length) return { ...out, status: 'MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF', noisy: printedRow.noisy };
+  if (pdf) return { ...out, status: 'PDF_REVIEWED', reviewedCells: Object.keys(pdf.cells), ...(pdf.catalogCorrection ? { catalogCorrection: pdf.catalogCorrection } : {}) };
   return { ...out, status: 'SOURCE_VERIFIED_TEXT' };
 });
 const counts = comparison.reduce((a, c) => (a[c.status] = (a[c.status] ?? 0) + 1, a), {});
@@ -164,25 +267,28 @@ const evidence = {
   pageEvidence: 'Printed pages are table-of-contents section ranges (the OCR has no page markers); the PDF is final authority for the exact page.',
   sections: {
     costModifiersAndEmplacement: { printedPages: [38, 40], note: 'Table 3-1 cost modifiers; emplacement points; gaining EP; unused EP (Table 3-2); nonstandard modifications; installation; work force; time; checks' },
-    movementSystems: { printedPages: [40, 43] }, defenseSystems: { printedPages: [43, 44] },
-    weaponSystems: { printedPages: [44, 48] }, accessories: { printedPages: [48, 53] }, stockShips: { printedPages: [53, 54] }
+    movementSystems: { printedPages: [40, 43], table: 'Table 3-3 p. ' + TABLE_PAGE.movement }, defenseSystems: { printedPages: [43, 44], table: 'Table 3-4 p. ' + TABLE_PAGE.defense },
+    weaponSystems: { printedPages: [44, 48] }, accessories: { printedPages: [48, 53] }, stockShips: { printedPages: [52, 53], tables: 'Table 3-8 p. 52, Table 3-9 p. 53 (PDF review)' }
   },
-  tables: { movement, defense },
+  tables: { movement, defense, weapon: weaponRows },
   stockFrames: frames,
-  unusedEmplacementPoints: { printedPages: [39, 39], rows: unused, unpairedLines: unusedSingle },
+  unusedEmplacementPoints: { printedPages: [review.tables.starshipsOfTheGalaxy['table3-2UnusedEmplacementPoints'].printedPage], rows: unused, unpairedLines: unusedSingle },
   catalogComparison: { counts, rows: comparison }
 };
 
 const body = JSON.stringify(evidence, null, 1) + '\n';
 
 /* -------- derived, planner-facing files (generated; never hand-edited) -------- */
-const SECTION_PAGES = { movement: [40, 43], defense: [43, 44] };
+const SECTION_PAGES = { movement: [40, 43], defense: [43, 44], weapon: [44, 48] };
 const certification = {
   schema: 'swse.vehicle.p2.modification-certification.v1',
-  note: 'SOURCE_VERIFIED = every table cell of the catalog row matches a clean OCR row of the cited Starships of the Galaxy table. It is NOT MECHANIC_SPECIFIED: a row becomes installable only when its effect is implemented. Page ranges are table-of-contents section ranges; the PDF is final authority for the exact page.',
-  evidenceFile: OUT, sourceSha256: sha256,
-  rows: Object.fromEntries(comparison.filter(c => c.status === 'SOURCE_VERIFIED_TEXT').map(c => [c.catalogId, {
-    status: 'SOURCE_VERIFIED', book: BOOK, printedPageRange: SECTION_PAGES[c.table], table: c.table, ocrLine: c.printedLine, pageResolution: 'toc-section-range'
+  note: 'SOURCE_VERIFIED = every table cell of the catalog row matches the cited Starships of the Galaxy table (clean OCR, or cells read from the PDF by the project owner: evidence PDF_REVIEWED). It is NOT MECHANIC_SPECIFIED: a row becomes installable only when its effect is implemented.',
+  evidenceFile: OUT, pdfReviewFile: 'data/audits/vehicles/swse-p2-pdf-review.json', sourceSha256: sha256,
+  // The weapon and accessory tables have not been PDF-reviewed: their rows are evidence only and are never certified here.
+  rows: Object.fromEntries(comparison.filter(c => c.table !== 'weapon' && ['SOURCE_VERIFIED_TEXT', 'PDF_REVIEWED'].includes(c.status)).map(c => [c.catalogId, {
+    status: 'SOURCE_VERIFIED', evidence: c.status === 'PDF_REVIEWED' ? 'PDF_REVIEWED' : 'OCR_TEXT', book: BOOK,
+    printedPage: c.printedPage ?? null, printedPageRange: c.printedPage ? [c.printedPage, c.printedPage] : SECTION_PAGES[c.table],
+    table: c.table, ocrLine: c.printedLine ?? null, pageResolution: c.printedPage ? 'pdf-table-page' : 'toc-section-range'
   }]))
 };
 const CERT_OUT = 'data/vehicle-modifications/certification.json';
@@ -190,9 +296,11 @@ const certBody = JSON.stringify(certification, null, 1) + '\n';
 
 const frameDoc = {
   schema: 'swse.vehicle.p5.stock-frames.v1',
-  book: BOOK, sourceFile: SOURCE, sourceSha256: sha256, printedPages: [53, 54],
-  note: 'Stock ship frames for designing a starship from scratch (Starships of the Galaxy, Stock Ships). A frame is certified only when every cell parsed cleanly; others need the PDF.',
-  frames: frames.map(f => ({ ...f, id: f.class.toLowerCase().replace(/\s+/g, '-'), certification: f.noisy.length ? 'NEEDS_PDF_CONFIRMATION' : 'SOURCE_VERIFIED_TEXT' }))
+  book: BOOK, sourceFile: SOURCE, sourceSha256: sha256,
+  printedTables: { 'Table 3-8 Stock Ship Types': review.tables.starshipsOfTheGalaxy['table3-8StockShipTypes'].printedPage, 'Table 3-9 Stock Ship Base Values': review.tables.starshipsOfTheGalaxy['table3-9StockShipBaseValues'].printedPage },
+  printedPages: [review.tables.starshipsOfTheGalaxy['table3-8StockShipTypes'].printedPage, review.tables.starshipsOfTheGalaxy['table3-9StockShipBaseValues'].printedPage],
+  note: 'Stock ship frames for designing a starship from scratch (Starships of the Galaxy, Stock Ships). stock EP is the frame allocation, NOT the unused EP of a constructed ship. SOURCE_VERIFIED_TEXT = every cell clean in the OCR; PDF_CONFIRMED = cells the OCR could not read were read from the PDF (data/audits/vehicles/swse-p2-pdf-review.json).',
+  frames: frames.map(f => ({ ...f, printedTables: { 'Table 3-8 Stock Ship Types': review.tables.starshipsOfTheGalaxy['table3-8StockShipTypes'].printedPage, 'Table 3-9 Stock Ship Base Values': review.tables.starshipsOfTheGalaxy['table3-9StockShipBaseValues'].printedPage }, id: f.class.toLowerCase().replace(/\s+/g, '-'), certification: f.noisy.length ? 'NEEDS_PDF_CONFIRMATION' : (f.pdfReviewedCells ? 'PDF_CONFIRMED' : 'SOURCE_VERIFIED_TEXT') }))
 };
 const FRAME_OUT = 'data/canonical/vehicles/construction/stock-frames.json';
 const frameBody = JSON.stringify(frameDoc, null, 1) + '\n';

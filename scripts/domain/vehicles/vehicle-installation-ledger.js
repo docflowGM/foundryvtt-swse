@@ -70,8 +70,8 @@ export const DEFAULT_VEHICLE_INSTALLATION_RULES = Object.freeze({
   resolveEpBudget: () => ({ state: 'unknown', reason: 'EP_BUDGET_SEMANTICS_UNRULED' }),
   /** Credits returned when hardware is removed. null = no ruling. */
   resolveUninstallRefund: () => null,
-  /** May an install exceed the unused emplacement points (published penalties apply)? No ruling => no. */
-  allowEpShortfall: false,
+  /** An install may exceed the unused emplacement points with the published penalties (SotG p. 38); project owner direction 2026-10-30. */
+  allowEpShortfall: true,
   /** Objective nonstandard-modification test; null means the Gamemaster must decide. */
   resolveNonstandard: nonstandardAssessment
 });
@@ -129,7 +129,7 @@ export function planVehicleInstallation({ record, flags, catalogEntry, installId
   if (!catalogEntry || !nonEmpty(catalogEntry.id)) return deny('CATALOG_ENTRY_MISSING');
 
   const cert = catalogEntry.certification;
-  const certPage = cert?.page ?? (Array.isArray(cert?.printedPageRange) ? cert.printedPageRange.join('-') : null);
+  const certPage = cert?.page ?? cert?.printedPage ?? (Array.isArray(cert?.printedPageRange) ? cert.printedPageRange.join('-') : null);
   if (cert?.status === 'SOURCE_VERIFIED') reasons.push('MODIFICATION_EFFECT_NOT_IMPLEMENTED'); // table text verified, effect not encoded
   else if (cert?.status !== 'MECHANIC_SPECIFIED' || !nonEmpty(cert?.book) || certPage == null)
     reasons.push('CATALOG_ENTRY_UNCERTIFIED');

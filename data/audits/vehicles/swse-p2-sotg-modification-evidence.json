@@ -16,13 +16,15 @@
    "printedPages": [
     40,
     43
-   ]
+   ],
+   "table": "Table 3-3 p. 41"
   },
   "defenseSystems": {
    "printedPages": [
     43,
     44
-   ]
+   ],
+   "table": "Table 3-4 p. 43"
   },
   "weaponSystems": {
    "printedPages": [
@@ -38,9 +40,10 @@
   },
   "stockShips": {
    "printedPages": [
-    53,
-    54
-   ]
+    52,
+    53
+   ],
+   "tables": "Table 3-8 p. 52, Table 3-9 p. 53 (PDF review)"
   }
  },
  "tables": {
@@ -698,17 +701,576 @@
     "costType": "base",
     "noisy": []
    }
+  ],
+  "weapon": [
+   {
+    "id": "autoblaster",
+    "printedName": "Autoblaster",
+    "fragment": "Autoblaster - +0 Restricted x2",
+    "damage": null,
+    "emplacementPoints": 0,
+    "availability": "Restricted",
+    "cost": 2,
+    "costType": "multiplier",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "blaster-cannon-light",
+    "printedName": "Blaster cannon, light",
+    "fragment": "Blaster cannon, light 3d10x2 1 Licensed 1,200",
+    "damage": "3d10x2",
+    "emplacementPoints": 1,
+    "availability": "Licensed",
+    "cost": 1200,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "blaster-cannon-medium",
+    "printedName": "Blaster cannon, medium",
+    "fragment": "Blaster cannon, medium 4d10x2 1 Restricted 2,500",
+    "damage": "4d10x2",
+    "emplacementPoints": 1,
+    "availability": "Restricted",
+    "cost": 2500,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "blaster-cannon-heavy",
+    "printedName": "Blaster cannon, heavy",
+    "fragment": "Blaster cannon, heavy 5d10x2 2 Military 5,500",
+    "damage": "5d10x2",
+    "emplacementPoints": 2,
+    "availability": "Military",
+    "cost": 5500,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "cannon-double",
+    "printedName": "Cannon, double",
+    "fragment": "Cannon, double +1d10 +0 Licensed x3",
+    "damage": "+1d10",
+    "emplacementPoints": 0,
+    "availability": "Licensed",
+    "cost": 3,
+    "costType": "multiplier",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "cannon-quad",
+    "printedName": "Cannon, quad",
+    "fragment": "Cannon, quad +2d10 +1 Restricted x5",
+    "damage": "+2d10",
+    "emplacementPoints": 1,
+    "availability": "Restricted",
+    "cost": 5,
+    "costType": "multiplier",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "cannon-enhancement",
+    "printedName": "Cannon enhancements",
+    "fragment": "Cannon enhancements +1010 +1 Military x2",
+    "damage": "+1d10",
+    "emplacementPoints": 1,
+    "availability": "Military",
+    "cost": 2,
+    "costType": "multiplier",
+    "footnote1": false,
+    "noisy": [
+     {
+      "cell": "damage",
+      "ocr": "+1010"
+     }
+    ]
+   },
+   {
+    "id": "cannon-enhancement-advanced",
+    "printedName": "Cannon enhancements, advanced",
+    "fragment": "Cannon enhancements, +2d10 +2 Military x5",
+    "damage": "+2d10",
+    "emplacementPoints": 2,
+    "availability": "Military",
+    "cost": 5,
+    "costType": "multiplier",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "concussion-missile-light",
+    "printedName": "Concussion missile, light",
+    "fragment": "Concussion missile, light 7d10x2 0 Military 500",
+    "damage": "7d10x2",
+    "emplacementPoints": 0,
+    "availability": "Military",
+    "cost": 500,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "concussion-missile-medium",
+    "printedName": "Concussion missile, medium",
+    "fragment": "Concussion missile, 9d10x2 0 Military 750",
+    "damage": "9d10x2",
+    "emplacementPoints": 0,
+    "availability": "Military",
+    "cost": 750,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "concussion-missile-heavy",
+    "printedName": "Concussion missile, heavy (1)",
+    "fragment": "Concussion missile, 9d10x5 0 Military 2,000",
+    "damage": "9d10x5",
+    "emplacementPoints": 0,
+    "availability": "Military",
+    "cost": 2000,
+    "costType": "flat",
+    "footnote1": true,
+    "noisy": []
+   },
+   {
+    "id": "concussion-missile-launcher-light",
+    "printedName": "Concussion missile launcher, light",
+    "fragment": "Concussion missile es 2 Military 2,000",
+    "damage": null,
+    "emplacementPoints": 2,
+    "availability": "Military",
+    "cost": 2000,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": [
+     {
+      "cell": "damage",
+      "ocr": "es"
+     }
+    ]
+   },
+   {
+    "id": "concussion-missile-launcher-medium",
+    "printedName": "Concussion missile launcher, medium",
+    "fragment": "Concussion missile = 5 Military 3,500",
+    "damage": null,
+    "emplacementPoints": 5,
+    "availability": "Military",
+    "cost": 3500,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": [
+     {
+      "cell": "damage",
+      "ocr": "="
+     }
+    ]
+   },
+   {
+    "id": "concussion-missile-launcher-heavy",
+    "printedName": "Concussion missile launcher, heavy (1)",
+    "fragment": "Concussion missile . 20 Military 30,000",
+    "damage": null,
+    "emplacementPoints": 20,
+    "availability": "Military",
+    "cost": 30000,
+    "costType": "flat",
+    "footnote1": true,
+    "noisy": [
+     {
+      "cell": "damage",
+      "ocr": "."
+     }
+    ]
+   },
+   {
+    "id": "docking-gun",
+    "printedName": "Docking gun",
+    "fragment": "Docking gun By weapon 1 Licensed +1,000",
+    "damage": "By weapon",
+    "emplacementPoints": 1,
+    "availability": "Licensed",
+    "cost": 1000,
+    "costType": "modifier",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "droid-jammer",
+    "printedName": "Droid jammer",
+    "fragment": "Droid jammer Special 1 Licensed 8,000",
+    "damage": "Special",
+    "emplacementPoints": 1,
+    "availability": "Licensed",
+    "cost": 8000,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "fire-linked-2",
+    "printedName": "Fire-linked weapon, 2",
+    "fragment": "Fire-linked weapon,2 — +1d10 +1 Licensed x2",
+    "damage": "+1d10",
+    "emplacementPoints": 1,
+    "availability": "Licensed",
+    "cost": 2,
+    "costType": "multiplier",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "fire-linked-4",
+    "printedName": "Fire-linked weapon, 4",
+    "fragment": "Fire-linked weapon, 4 +2d10 +2 Restricted x4",
+    "damage": "+2d10",
+    "emplacementPoints": 2,
+    "availability": "Restricted",
+    "cost": 4,
+    "costType": "multiplier",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "fire-linked-optional",
+    "printedName": "Fire-linked weapon, optional",
+    "fragment": "Fire-linked weapon, Special of Licensed +1,000",
+    "damage": "Special",
+    "emplacementPoints": null,
+    "availability": "Licensed",
+    "cost": 1000,
+    "costType": "modifier",
+    "footnote1": false,
+    "noisy": [
+     {
+      "cell": "emplacementPoints",
+      "ocr": "of"
+     }
+    ]
+   },
+   {
+    "id": "gravity-well-projector",
+    "printedName": "Gravity well projector (1)",
+    "fragment": "Gravity well projector (1) Special 5 Military 50,000",
+    "damage": "Special",
+    "emplacementPoints": 5,
+    "availability": "Military",
+    "cost": 50000,
+    "costType": "flat",
+    "footnote1": true,
+    "noisy": []
+   },
+   {
+    "id": "ion-bomb",
+    "printedName": "Ion bomb",
+    "fragment": "lon bomb 5d10 ion ~ Military 500",
+    "damage": "5d10 ion",
+    "emplacementPoints": null,
+    "availability": "Military",
+    "cost": 500,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": [
+     {
+      "cell": "emplacementPoints",
+      "ocr": "~"
+     }
+    ]
+   },
+   {
+    "id": "ion-bomb-rack",
+    "printedName": "Ion bomb rack",
+    "fragment": "lon bomb rack - 1 Military 1,000",
+    "damage": null,
+    "emplacementPoints": 1,
+    "availability": "Military",
+    "cost": 1000,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "ion-cannon-light",
+    "printedName": "Ion cannon, light",
+    "fragment": "lon cannon, light 3d10x2 ion 1 Licensed 2,000",
+    "damage": "3d10x2 ion",
+    "emplacementPoints": 1,
+    "availability": "Licensed",
+    "cost": 2000,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "ion-cannon-medium",
+    "printedName": "Ion cannon, medium",
+    "fragment": "lon cannon, medium 5d10x2 ion 2 Restricted 3,000",
+    "damage": "5d10x2 ion",
+    "emplacementPoints": 2,
+    "availability": "Restricted",
+    "cost": 3000,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "ion-cannon-heavy",
+    "printedName": "Ion cannon, heavy (1)",
+    "fragment": "lon cannon, heavy (1) 3d10x5 ion 5 Military 6,000",
+    "damage": "3d10x5 ion",
+    "emplacementPoints": 5,
+    "availability": "Military",
+    "cost": 6000,
+    "costType": "flat",
+    "footnote1": true,
+    "noisy": []
+   },
+   {
+    "id": "ion-cannon-hapan-triple",
+    "printedName": "Ion cannon, Hapan triple (1)",
+    "fragment": "5d10x5 ion 3 Illegal 12,000",
+    "damage": "5d10x5 ion",
+    "emplacementPoints": 3,
+    "availability": "Illegal",
+    "cost": 12000,
+    "costType": "flat",
+    "footnote1": true,
+    "noisy": []
+   },
+   {
+    "id": "laser-cannon-light",
+    "printedName": "Laser cannon, light",
+    "fragment": "Laser cannon, light 3d10x2 1 Licensed 1,500",
+    "damage": "3d10x2",
+    "emplacementPoints": 1,
+    "availability": "Licensed",
+    "cost": 1500,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "laser-cannon-medium",
+    "printedName": "Laser cannon, medium",
+    "fragment": "Lasercannon,medium 4d10x2 1 Restricted 4,000",
+    "damage": "4d10x2",
+    "emplacementPoints": 1,
+    "availability": "Restricted",
+    "cost": 4000,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "laser-cannon-heavy",
+    "printedName": "Laser cannon, heavy",
+    "fragment": "Laser cannon, heavy 5d10x2 2 Military 6,000",
+    "damage": "5d10x2",
+    "emplacementPoints": 2,
+    "availability": "Military",
+    "cost": 6000,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "point-defense",
+    "printedName": "Point-defense weapon (1)",
+    "fragment": "Point-defense weapon (1) — 0 Restricted +4,000",
+    "damage": null,
+    "emplacementPoints": 0,
+    "availability": "Restricted",
+    "cost": 4000,
+    "costType": "modifier",
+    "footnote1": true,
+    "noisy": []
+   },
+   {
+    "id": "proton-torpedo",
+    "printedName": "Proton torpedo",
+    "fragment": "Proton torpedo 9d10x2 0 Military",
+    "damage": "9d10x2",
+    "emplacementPoints": 0,
+    "availability": "Military",
+    "cost": 800,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": [
+     {
+      "cell": "cost",
+      "ocr": "=== 800"
+     }
+    ]
+   },
+   {
+    "id": "proton-torpedo-launcher",
+    "printedName": "Proton torpedo launcher",
+    "fragment": "Proton torpedo launcher — 1 Military 2,500",
+    "damage": null,
+    "emplacementPoints": 1,
+    "availability": "Military",
+    "cost": 2500,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "shieldbuster-torpedo",
+    "printedName": "Shieldbuster torpedo",
+    "fragment": "Shieldbuster torpedo 10d10x2 0 Mitay = 1000.",
+    "damage": "10d10x2",
+    "emplacementPoints": 0,
+    "availability": "Military",
+    "cost": 1000,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": [
+     {
+      "cell": "availability",
+      "ocr": "Mitay"
+     },
+     {
+      "cell": "cost",
+      "ocr": "= 1000."
+     }
+    ]
+   },
+   {
+    "id": "shieldbuster-torpedo-launcher",
+    "printedName": "Shieldbuster torpedo launcher",
+    "fragment": "Shieldbuster torpedo = — 3 Military 10,000",
+    "damage": null,
+    "emplacementPoints": 3,
+    "availability": "Military",
+    "cost": 10000,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "space-mine-standard",
+    "printedName": "Space mine, standard",
+    "fragment": "Space mine, standard _—_7d10[ts[2 0 Military 1,000",
+    "damage": "7d10x2",
+    "emplacementPoints": 0,
+    "availability": "Military",
+    "cost": 1000,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": [
+     {
+      "cell": "damage",
+      "ocr": "_—_7d10[ts[2"
+     }
+    ]
+   },
+   {
+    "id": "space-mine-advanced",
+    "printedName": "Space mine, advanced",
+    "fragment": "Space mine, advanced 9d10x2 0 Military 5,000",
+    "damage": "9d10x2",
+    "emplacementPoints": 0,
+    "availability": "Military",
+    "cost": 5000,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "space-mine-heavy",
+    "printedName": "Space mine, heavy",
+    "fragment": "Space mine, heavy 6d10x5 0 Military 5,000",
+    "damage": "6d10x5",
+    "emplacementPoints": 0,
+    "availability": "Military",
+    "cost": 5000,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "space-mine-launcher",
+    "printedName": "Space mine launcher",
+    "fragment": "Space mine launcher - 2 Military 5,000",
+    "damage": null,
+    "emplacementPoints": 2,
+    "availability": "Military",
+    "cost": 5000,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": []
+   },
+   {
+    "id": "tractor-beam",
+    "printedName": "Tractor beam",
+    "fragment": "Special 10 (ieeriged 10,000",
+    "damage": "Special",
+    "emplacementPoints": 10,
+    "availability": "Licensed",
+    "cost": 10000,
+    "costType": "flat",
+    "footnote1": false,
+    "noisy": [
+     {
+      "cell": "name",
+      "ocr": "Thachar en"
+     },
+     {
+      "cell": "availability",
+      "ocr": "(ieeriged"
+     }
+    ]
+   },
+   {
+    "id": "turbolaser-light",
+    "printedName": "Turbolaser, light (1)",
+    "fragment": "Turbolaser, light (1) 3d10x5 2 Military 5,000",
+    "damage": "3d10x5",
+    "emplacementPoints": 2,
+    "availability": "Military",
+    "cost": 5000,
+    "costType": "flat",
+    "footnote1": true,
+    "noisy": []
+   },
+   {
+    "id": "turbolaser-medium",
+    "printedName": "Turbolaser, medium (1)",
+    "fragment": "Turbolaser, medium (1) | 5d10x5 5 Military 10,000",
+    "damage": "5d10x5",
+    "emplacementPoints": 5,
+    "availability": "Military",
+    "cost": 10000,
+    "costType": "flat",
+    "footnote1": true,
+    "noisy": []
+   },
+   {
+    "id": "turbolaser-heavy",
+    "printedName": "Turbolaser, heavy (1)",
+    "fragment": "7d10x5 10 Military 20,000",
+    "damage": "7d10x5",
+    "emplacementPoints": 10,
+    "availability": "Military",
+    "cost": 20000,
+    "costType": "flat",
+    "footnote1": true,
+    "noisy": []
+   }
   ]
  },
  "stockFrames": [
   {
    "class": "Battlecruiser",
-   "noisy": [
-    {
-     "cell": "damageReduction",
-     "ocr": "-/2 2,000 — 20. +16 20,000,000"
-    }
-   ],
+   "noisy": [],
    "size": "Colossal (cruiser)",
    "strength": 124,
    "dexterity": 12,
@@ -722,7 +1284,10 @@
    "passengers": 5000,
    "cargo": "20,000 tons",
    "consumables": "2 years",
-   "stockEmplacementPoints": 200
+   "stockEmplacementPoints": 200,
+   "pdfReviewedCells": [
+    "damageReduction"
+   ]
   },
   {
    "class": "Cruiser",
@@ -906,16 +1471,7 @@
   },
   {
    "class": "Light fighter",
-   "noisy": [
-    {
-     "cell": "crew",
-     "ocr": "|"
-    },
-    {
-     "cell": "stockEmplacementPoints",
-     "ocr": "vi"
-    }
-   ],
+   "noisy": [],
    "size": "Huge",
    "strength": 34,
    "dexterity": 20,
@@ -929,12 +1485,15 @@
    "passengers": 0,
    "cargo": "50 kg",
    "consumables": "2 days",
-   "stockEmplacementPoints": null
+   "stockEmplacementPoints": 2,
+   "pdfReviewedCells": [
+    "crew",
+    "stockEmplacementPoints"
+   ]
   }
  ],
  "unusedEmplacementPoints": {
   "printedPages": [
-   39,
    39
   ],
   "rows": [
@@ -965,13 +1524,9 @@
    },
    {
     "ocrName": "J-Type transports",
-    "unusedEmplacementPoints": null,
-    "noisy": [
-     {
-      "cell": "unusedEmplacementPoints",
-      "ocr": "iz"
-     }
-    ]
+    "unusedEmplacementPoints": 2,
+    "noisy": [],
+    "pdfReviewed": true
    },
    {
     "ocrName": "Citadel cruiser",
@@ -1023,12 +1578,13 @@
  },
  "catalogComparison": {
   "counts": {
-   "TABLE_NOT_PARSED_NEEDS_PDF": 126,
-   "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF": 7,
-   "SOURCE_VERIFIED_TEXT": 48,
-   "OCR_ROW_DIFFERS_FROM_CATALOG": 1,
+   "TABLE_NOT_PARSED_NEEDS_PDF": 84,
+   "PDF_REVIEWED": 8,
+   "SOURCE_VERIFIED_TEXT": 71,
    "IN_OTHER_BOOK_OCR_UNREADABLE_NEEDS_PDF": 4,
-   "NO_PRINTED_ROW_FOUND_IN_PARSED_TABLES": 1
+   "NO_PRINTED_ROW_FOUND_IN_PARSED_TABLES": 1,
+   "OCR_ROW_DIFFERS_FROM_CATALOG": 10,
+   "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF": 9
   },
   "rows": [
    {
@@ -1416,12 +1972,10 @@
     "printedLine": 4014,
     "printedName": "Armor, +1",
     "table": "defense",
-    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
-    "noisy": [
-     {
-      "cell": "emplacementPoints",
-      "ocr": "A"
-     }
+    "printedPage": 43,
+    "status": "PDF_REVIEWED",
+    "reviewedCells": [
+     "emplacementPoints"
     ]
    },
    {
@@ -1431,6 +1985,7 @@
     "printedLine": 4016,
     "printedName": "Armor, +2",
     "table": "defense",
+    "printedPage": 43,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1440,6 +1995,7 @@
     "printedLine": 4018,
     "printedName": "Armor, +3",
     "table": "defense",
+    "printedPage": 43,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1449,14 +2005,16 @@
     "printedLine": 4020,
     "printedName": "Armor, +4",
     "table": "defense",
-    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
-    "differences": [
-     {
-      "field": "sizeRestriction",
-      "printed": "Colossal (cruiser) or larger",
-      "catalog": "Colossal (Frigate) or Larger"
-     }
-    ]
+    "printedPage": 43,
+    "status": "PDF_REVIEWED",
+    "reviewedCells": [
+     "sizeRestriction"
+    ],
+    "catalogCorrection": {
+     "field": "sizeRestriction",
+     "original": "Colossal (Frigate) or Larger",
+     "corrected": "Colossal (Cruiser) or Larger"
+    }
    },
    {
     "catalogId": "jamming-suite",
@@ -1465,6 +2023,7 @@
     "printedLine": 4022,
     "printedName": "Jamming suite",
     "table": "defense",
+    "printedPage": 43,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1474,6 +2033,7 @@
     "printedLine": 4024,
     "printedName": "Jamming array",
     "table": "defense",
+    "printedPage": 43,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1483,6 +2043,7 @@
     "printedLine": 4026,
     "printedName": "Regenerating shields",
     "table": "defense",
+    "printedPage": 43,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1492,6 +2053,7 @@
     "printedLine": 4028,
     "printedName": "Reinforced bulkheads +10%",
     "table": "defense",
+    "printedPage": 43,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1501,6 +2063,7 @@
     "printedLine": 4030,
     "printedName": "Reinforced bulkheads +20%",
     "table": "defense",
+    "printedPage": 43,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1510,6 +2073,7 @@
     "printedLine": 4032,
     "printedName": "Reinforced bulkheads +30%",
     "table": "defense",
+    "printedPage": 43,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1519,12 +2083,11 @@
     "printedLine": 4034,
     "printedName": "Shields,SR10",
     "table": "defense",
-    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
-    "noisy": [
-     {
-      "cell": "sizeRestriction",
-      "ocr": "None a"
-     }
+    "printedPage": 43,
+    "status": "PDF_REVIEWED",
+    "reviewedCells": [
+     "emplacementPoints",
+     "sizeRestriction"
     ]
    },
    {
@@ -1534,6 +2097,7 @@
     "printedLine": 4036,
     "printedName": "Shields, SR 15",
     "table": "defense",
+    "printedPage": 43,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1543,6 +2107,7 @@
     "printedLine": 4038,
     "printedName": "Shields,SR20.",
     "table": "defense",
+    "printedPage": 43,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1552,6 +2117,7 @@
     "printedLine": 4039,
     "printedName": "Shields, SR 25",
     "table": "defense",
+    "printedPage": 43,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1561,6 +2127,7 @@
     "printedLine": 4040,
     "printedName": "Shields, SR 30",
     "table": "defense",
+    "printedPage": 43,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1570,6 +2137,7 @@
     "printedLine": 4041,
     "printedName": "Shields, SR 35",
     "table": "defense",
+    "printedPage": 43,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1579,12 +2147,10 @@
     "printedLine": 4042,
     "printedName": "Shields, SR 40",
     "table": "defense",
-    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
-    "noisy": [
-     {
-      "cell": "emplacementPoints",
-      "ocr": "De"
-     }
+    "printedPage": 43,
+    "status": "PDF_REVIEWED",
+    "reviewedCells": [
+     "emplacementPoints"
     ]
    },
    {
@@ -1594,6 +2160,7 @@
     "printedLine": 4043,
     "printedName": "Shields, SR 45",
     "table": "defense",
+    "printedPage": 43,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1603,12 +2170,10 @@
     "printedLine": 4044,
     "printedName": "Shields, SR 50",
     "table": "defense",
-    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
-    "noisy": [
-     {
-      "cell": "emplacementPoints",
-      "ocr": "s"
-     }
+    "printedPage": 43,
+    "status": "PDF_REVIEWED",
+    "reviewedCells": [
+     "emplacementPoints"
     ]
    },
    {
@@ -1618,6 +2183,7 @@
     "printedLine": 4045,
     "printedName": "Shields, SR 55",
     "table": "defense",
+    "printedPage": 43,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1627,12 +2193,10 @@
     "printedLine": 4046,
     "printedName": "Shields, SR 60",
     "table": "defense",
-    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
-    "noisy": [
-     {
-      "cell": "emplacementPoints",
-      "ocr": "ce:"
-     }
+    "printedPage": 43,
+    "status": "PDF_REVIEWED",
+    "reviewedCells": [
+     "emplacementPoints"
     ]
    },
    {
@@ -1642,6 +2206,7 @@
     "printedLine": 4047,
     "printedName": "Shields, SR 70",
     "table": "defense",
+    "printedPage": 43,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1651,6 +2216,7 @@
     "printedLine": 4048,
     "printedName": "Shields, SR 80",
     "table": "defense",
+    "printedPage": 43,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1660,6 +2226,7 @@
     "printedLine": 4049,
     "printedName": "Shields, SR 90",
     "table": "defense",
+    "printedPage": 43,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1669,6 +2236,7 @@
     "printedLine": 4050,
     "printedName": "Shields, SR 100",
     "table": "defense",
+    "printedPage": 43,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1678,6 +2246,7 @@
     "printedLine": 4051,
     "printedName": "Shields, SR 125",
     "table": "defense",
+    "printedPage": 43,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1687,12 +2256,10 @@
     "printedLine": 4053,
     "printedName": "Shields, SR 150",
     "table": "defense",
-    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
-    "noisy": [
-     {
-      "cell": "emplacementPoints",
-      "ocr": "i]"
-     }
+    "printedPage": 43,
+    "status": "PDF_REVIEWED",
+    "reviewedCells": [
+     "emplacementPoints"
     ]
    },
    {
@@ -1702,6 +2269,7 @@
     "printedLine": 4054,
     "printedName": "Shields, SR 175",
     "table": "defense",
+    "printedPage": 43,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1711,6 +2279,7 @@
     "printedLine": 4055,
     "printedName": "Shields, SR 200",
     "table": "defense",
+    "printedPage": 43,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1774,6 +2343,7 @@
     "printedLine": 3877,
     "printedName": "Atmospheric thruster",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1783,6 +2353,7 @@
     "printedLine": 3878,
     "printedName": "Atmospheric thruster, advanced",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1792,6 +2363,7 @@
     "printedLine": 3879,
     "printedName": "Combat thruster",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1801,6 +2373,7 @@
     "printedLine": 3880,
     "printedName": "Hyperdrive, class .75",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1810,6 +2383,7 @@
     "printedLine": 3881,
     "printedName": "Hyperdrive, class 1",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1819,6 +2393,7 @@
     "printedLine": 3882,
     "printedName": "Hyperdrive, class 1.5",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1828,6 +2403,7 @@
     "printedLine": 3883,
     "printedName": "Hyperdrive, class 2",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1837,6 +2413,7 @@
     "printedLine": 3884,
     "printedName": "Hyperdrive, class 3",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1846,6 +2423,7 @@
     "printedLine": 3885,
     "printedName": "Hyperdrive, class 4",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1855,6 +2433,7 @@
     "printedLine": 3886,
     "printedName": "Hyperdrive, class 5",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1864,6 +2443,7 @@
     "printedLine": 3887,
     "printedName": "Hyperdrive, class 6",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1873,6 +2453,7 @@
     "printedLine": 3888,
     "printedName": "Hyperdrive, class 8",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1882,6 +2463,7 @@
     "printedLine": 3889,
     "printedName": "Hyperdrive, class 10",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1891,6 +2473,7 @@
     "printedLine": 3890,
     "printedName": "Hyperdrive, class 15",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1900,12 +2483,10 @@
     "printedLine": 3891,
     "printedName": "Maneuvering jets +2",
     "table": "movement",
-    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
-    "noisy": [
-     {
-      "cell": "emplacementPoints",
-      "ocr": "Z"
-     }
+    "printedPage": 41,
+    "status": "PDF_REVIEWED",
+    "reviewedCells": [
+     "emplacementPoints"
     ]
    },
    {
@@ -1915,6 +2496,7 @@
     "printedLine": 3892,
     "printedName": "Maneuvering jets +4",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1924,6 +2506,7 @@
     "printedLine": 3893,
     "printedName": "Maneuvering jets +6",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1933,6 +2516,7 @@
     "printedLine": 3894,
     "printedName": "Navicomputer, limited",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1942,6 +2526,7 @@
     "printedLine": 3896,
     "printedName": "Navicomputer",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1951,6 +2536,7 @@
     "printedLine": 3898,
     "printedName": "Navicomputer, advanced",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1960,6 +2546,7 @@
     "printedLine": 3900,
     "printedName": "SubLight Accelerator Motor",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1969,6 +2556,7 @@
     "printedLine": 3901,
     "printedName": "Sublight drive (speed 1 square)",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1978,6 +2566,7 @@
     "printedLine": 3902,
     "printedName": "Sublight drive (speed 2 squares)",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1987,6 +2576,7 @@
     "printedLine": 3903,
     "printedName": "Sublight drive (speed 3 squares)",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -1996,6 +2586,7 @@
     "printedLine": 3904,
     "printedName": "Sublight drive (speed 4 squares)",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -2005,6 +2596,7 @@
     "printedLine": 3905,
     "printedName": "Sublight drive (speed 5 squares)",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
@@ -2014,217 +2606,467 @@
     "printedLine": 3906,
     "printedName": "Sublight drive (speed 6 squares)",
     "table": "movement",
+    "printedPage": 41,
     "status": "SOURCE_VERIFIED_TEXT"
    },
    {
     "catalogId": "autoblaster",
     "catalogFile": "weapon-systems",
     "catalogName": "Autoblaster",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Autoblaster",
+    "table": "weapon",
+    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
+    "differences": [
+     {
+      "field": "damage",
+      "printed": null,
+      "catalog": "3d8x2",
+      "note": "the table prints no damage for this entry"
+     }
+    ],
+    "noisy": []
    },
    {
     "catalogId": "blaster-cannon-light",
     "catalogFile": "weapon-systems",
     "catalogName": "Blaster Cannon, Light",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Blaster cannon, light",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "blaster-cannon-medium",
     "catalogFile": "weapon-systems",
     "catalogName": "Blaster Cannon, Medium",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Blaster cannon, medium",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "blaster-cannon-heavy",
     "catalogFile": "weapon-systems",
     "catalogName": "Blaster Cannon, Heavy",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Blaster cannon, heavy",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "cannon-double",
     "catalogFile": "weapon-systems",
     "catalogName": "Cannon, Double",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Cannon, double",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "cannon-quad",
     "catalogFile": "weapon-systems",
     "catalogName": "Cannon, Quad",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Cannon, quad",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "cannon-enhancement",
     "catalogFile": "weapon-systems",
     "catalogName": "Cannon Enhancements",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Cannon enhancements",
+    "table": "weapon",
+    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
+    "noisy": [
+     {
+      "cell": "damage",
+      "ocr": "+1010"
+     }
+    ],
+    "certifiable": false
    },
    {
     "catalogId": "cannon-enhancement-advanced",
     "catalogFile": "weapon-systems",
     "catalogName": "Cannon Enhancements, Advanced",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Cannon enhancements, advanced",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "concussion-missile-launcher-light",
     "catalogFile": "weapon-systems",
     "catalogName": "Concussion Missile Launcher, Light",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Concussion missile launcher, light",
+    "table": "weapon",
+    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
+    "noisy": [
+     {
+      "cell": "damage",
+      "ocr": "es"
+     }
+    ],
+    "certifiable": false
    },
    {
     "catalogId": "concussion-missile-light",
     "catalogFile": "weapon-systems",
     "catalogName": "Concussion Missile, Light",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Concussion missile, light",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "concussion-missile-launcher-medium",
     "catalogFile": "weapon-systems",
     "catalogName": "Concussion Missile Launcher, Medium",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Concussion missile launcher, medium",
+    "table": "weapon",
+    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
+    "noisy": [
+     {
+      "cell": "damage",
+      "ocr": "="
+     }
+    ],
+    "certifiable": false
    },
    {
     "catalogId": "concussion-missile-medium",
     "catalogFile": "weapon-systems",
     "catalogName": "Concussion Missile, Medium",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Concussion missile, medium",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "concussion-missile-launcher-heavy",
     "catalogFile": "weapon-systems",
     "catalogName": "Concussion Missile Launcher, Heavy",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Concussion missile launcher, heavy (1)",
+    "table": "weapon",
+    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
+    "differences": [
+     {
+      "field": "sizeRestriction",
+      "printed": "Colossal or larger",
+      "catalog": "Colossal (Frigate) or Larger",
+      "note": "table footnote (1): \"Colossal or larger starships only\""
+     }
+    ],
+    "noisy": [
+     {
+      "cell": "damage",
+      "ocr": "."
+     }
+    ]
    },
    {
     "catalogId": "concussion-missile-heavy",
     "catalogFile": "weapon-systems",
     "catalogName": "Concussion Missile, Heavy",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Concussion missile, heavy (1)",
+    "table": "weapon",
+    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
+    "differences": [
+     {
+      "field": "sizeRestriction",
+      "printed": "Colossal or larger",
+      "catalog": null,
+      "note": "table footnote (1): \"Colossal or larger starships only\""
+     }
+    ],
+    "noisy": []
    },
    {
     "catalogId": "ion-cannon-light",
     "catalogFile": "weapon-systems",
     "catalogName": "Ion Cannon, Light",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Ion cannon, light",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "ion-cannon-medium",
     "catalogFile": "weapon-systems",
     "catalogName": "Ion Cannon, Medium",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Ion cannon, medium",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "ion-cannon-heavy",
     "catalogFile": "weapon-systems",
     "catalogName": "Ion Cannon, Heavy",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Ion cannon, heavy (1)",
+    "table": "weapon",
+    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
+    "differences": [
+     {
+      "field": "sizeRestriction",
+      "printed": "Colossal or larger",
+      "catalog": "Colossal (Frigate) or Larger",
+      "note": "table footnote (1): \"Colossal or larger starships only\""
+     }
+    ],
+    "noisy": []
    },
    {
     "catalogId": "laser-cannon-light",
     "catalogFile": "weapon-systems",
     "catalogName": "Laser Cannon, Light",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Laser cannon, light",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "laser-cannon-medium",
     "catalogFile": "weapon-systems",
     "catalogName": "Laser Cannon, Medium",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Laser cannon, medium",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "laser-cannon-heavy",
     "catalogFile": "weapon-systems",
     "catalogName": "Laser Cannon, Heavy",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Laser cannon, heavy",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "proton-torpedo-launcher",
     "catalogFile": "weapon-systems",
     "catalogName": "Proton Torpedo Launcher",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Proton torpedo launcher",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "proton-torpedo",
     "catalogFile": "weapon-systems",
     "catalogName": "Proton Torpedo",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Proton torpedo",
+    "table": "weapon",
+    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
+    "noisy": [
+     {
+      "cell": "cost",
+      "ocr": "=== 800"
+     }
+    ],
+    "certifiable": false
    },
    {
     "catalogId": "turbolaser-light",
     "catalogFile": "weapon-systems",
     "catalogName": "Turbolaser, Light",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Turbolaser, light (1)",
+    "table": "weapon",
+    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
+    "differences": [
+     {
+      "field": "sizeRestriction",
+      "printed": "Colossal or larger",
+      "catalog": "Colossal (Frigate) or Larger",
+      "note": "table footnote (1): \"Colossal or larger starships only\""
+     }
+    ],
+    "noisy": []
    },
    {
     "catalogId": "turbolaser-medium",
     "catalogFile": "weapon-systems",
     "catalogName": "Turbolaser, Medium",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Turbolaser, medium (1)",
+    "table": "weapon",
+    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
+    "differences": [
+     {
+      "field": "sizeRestriction",
+      "printed": "Colossal or larger",
+      "catalog": "Colossal (Frigate) or Larger",
+      "note": "table footnote (1): \"Colossal or larger starships only\""
+     }
+    ],
+    "noisy": []
    },
    {
     "catalogId": "turbolaser-heavy",
     "catalogFile": "weapon-systems",
     "catalogName": "Turbolaser, Heavy",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Turbolaser, heavy (1)",
+    "table": "weapon",
+    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
+    "differences": [
+     {
+      "field": "sizeRestriction",
+      "printed": "Colossal or larger",
+      "catalog": "Colossal (Frigate) or Larger",
+      "note": "table footnote (1): \"Colossal or larger starships only\""
+     }
+    ],
+    "noisy": []
    },
    {
     "catalogId": "tractor-beam",
     "catalogFile": "weapon-systems",
     "catalogName": "Tractor Beam",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Tractor beam",
+    "table": "weapon",
+    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
+    "noisy": [
+     {
+      "cell": "name",
+      "ocr": "Thachar en"
+     },
+     {
+      "cell": "availability",
+      "ocr": "(ieeriged"
+     }
+    ],
+    "certifiable": false
    },
    {
     "catalogId": "point-defense",
     "catalogFile": "weapon-systems",
     "catalogName": "Point-Defense System",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Point-defense weapon (1)",
+    "table": "weapon",
+    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
+    "differences": [
+     {
+      "field": "sizeRestriction",
+      "printed": "Colossal or larger",
+      "catalog": null,
+      "note": "table footnote (1): \"Colossal or larger starships only\""
+     }
+    ],
+    "noisy": []
    },
    {
     "catalogId": "fire-linked-2",
     "catalogFile": "weapon-systems",
     "catalogName": "Fire-Linked Weapon, 2",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Fire-linked weapon, 2",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "fire-linked-4",
     "catalogFile": "weapon-systems",
     "catalogName": "Fire-Linked Weapon, 4",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Fire-linked weapon, 4",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "space-mine-launcher",
     "catalogFile": "weapon-systems",
     "catalogName": "Space Mine Launcher",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Space mine launcher",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "space-mine-standard",
     "catalogFile": "weapon-systems",
     "catalogName": "Space Mine, Standard",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Space mine, standard",
+    "table": "weapon",
+    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
+    "noisy": [
+     {
+      "cell": "damage",
+      "ocr": "_—_7d10[ts[2"
+     }
+    ],
+    "certifiable": false
    },
    {
     "catalogId": "ion-bomb-rack",
     "catalogFile": "weapon-systems",
     "catalogName": "Ion Bomb Rack",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Ion bomb rack",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "ion-bomb",
     "catalogFile": "weapon-systems",
     "catalogName": "Ion Bomb",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Ion bomb",
+    "table": "weapon",
+    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
+    "noisy": [
+     {
+      "cell": "emplacementPoints",
+      "ocr": "~"
+     }
+    ],
+    "certifiable": false
    },
    {
     "catalogId": "shieldbuster-torpedo-launcher",
     "catalogFile": "weapon-systems",
     "catalogName": "Shieldbuster Torpedo Launcher",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Shieldbuster torpedo launcher",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "shieldbuster-torpedo",
     "catalogFile": "weapon-systems",
     "catalogName": "Shieldbuster Torpedo",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Shieldbuster torpedo",
+    "table": "weapon",
+    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
+    "noisy": [
+     {
+      "cell": "availability",
+      "ocr": "Mitay"
+     },
+     {
+      "cell": "cost",
+      "ocr": "= 1000."
+     }
+    ],
+    "certifiable": false
    },
    {
     "catalogId": "discord-missile-launcher",
@@ -2260,31 +3102,70 @@
     "catalogId": "droid-jammer",
     "catalogFile": "weapon-systems",
     "catalogName": "Droid Jammer",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Droid jammer",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "gravity-well-projector",
     "catalogFile": "weapon-systems",
     "catalogName": "Gravity Well Projector",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Gravity well projector (1)",
+    "table": "weapon",
+    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
+    "differences": [
+     {
+      "field": "sizeRestriction",
+      "printed": "Colossal or larger",
+      "catalog": "Colossal (Frigate) or Larger",
+      "note": "table footnote (1): \"Colossal or larger starships only\""
+     }
+    ],
+    "noisy": []
    },
    {
     "catalogId": "docking-gun",
     "catalogFile": "weapon-systems",
     "catalogName": "Docking Gun",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Docking gun",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "fire-linked-optional",
     "catalogFile": "weapon-systems",
     "catalogName": "Fire-Linked Weapon, Optional",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Fire-linked weapon, optional",
+    "table": "weapon",
+    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
+    "noisy": [
+     {
+      "cell": "emplacementPoints",
+      "ocr": "of"
+     }
+    ],
+    "certifiable": false
    },
    {
     "catalogId": "ion-cannon-hapan-triple",
     "catalogFile": "weapon-systems",
     "catalogName": "Ion Cannon, Hapan Triple",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Ion cannon, Hapan triple (1)",
+    "table": "weapon",
+    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
+    "differences": [
+     {
+      "field": "sizeRestriction",
+      "printed": "Colossal or larger",
+      "catalog": "Colossal (Frigate) or Larger",
+      "note": "table footnote (1): \"Colossal or larger starships only\""
+     }
+    ],
+    "noisy": []
    },
    {
     "catalogId": "space-mine-launcher-heavy",
@@ -2296,13 +3177,21 @@
     "catalogId": "space-mine-advanced",
     "catalogFile": "weapon-systems",
     "catalogName": "Space Mine, Advanced",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Space mine, advanced",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "space-mine-heavy",
     "catalogFile": "weapon-systems",
     "catalogName": "Space Mine, Heavy",
-    "status": "TABLE_NOT_PARSED_NEEDS_PDF"
+    "printedName": "Space mine, heavy",
+    "table": "weapon",
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "gravity-mine-magnetic",

@@ -8,8 +8,21 @@
     "sizeRestriction": null,
     "cost": 2000,
     "costType": "base",
-    "description": "Additional armor plating to improve defense.",
-    "effect": "+1 Armor bonus to Reflex Defense"
+    "description": "+1 equipment bonus to the armor bonus the starship adds to its Reflex Defense. Skilled pilots may use their character level in place of the ship's armor bonus.",
+    "effect": "+1 equipment bonus to the armor bonus the starship adds to its Reflex Defense. Skilled pilots may use their character level in place of the ship's armor bonus.",
+    "legacy": {
+      "description": "Additional armor plating to improve defense.",
+      "effect": "+1 Armor bonus to Reflex Defense"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "armor-2",
@@ -20,8 +33,21 @@
     "sizeRestriction": "Colossal or Larger",
     "cost": 5000,
     "costType": "base",
-    "description": "Heavy armor plating for enhanced protection.",
-    "effect": "+2 Armor bonus to Reflex Defense"
+    "description": "+2 equipment bonus to the armor bonus the starship adds to its Reflex Defense. Skilled pilots may use their character level in place of the ship's armor bonus.",
+    "effect": "+2 equipment bonus to the armor bonus the starship adds to its Reflex Defense. Skilled pilots may use their character level in place of the ship's armor bonus.",
+    "legacy": {
+      "description": "Heavy armor plating for enhanced protection.",
+      "effect": "+2 Armor bonus to Reflex Defense"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "armor-3",
@@ -32,8 +58,21 @@
     "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 10000,
     "costType": "base",
-    "description": "Military-grade armor for capital ships.",
-    "effect": "+3 Armor bonus to Reflex Defense"
+    "description": "+3 equipment bonus to the armor bonus the starship adds to its Reflex Defense. Skilled pilots may use their character level in place of the ship's armor bonus.",
+    "effect": "+3 equipment bonus to the armor bonus the starship adds to its Reflex Defense. Skilled pilots may use their character level in place of the ship's armor bonus.",
+    "legacy": {
+      "description": "Military-grade armor for capital ships.",
+      "effect": "+3 Armor bonus to Reflex Defense"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "armor-4",
@@ -41,11 +80,24 @@
     "category": "Defense",
     "emplacementPoints": 20,
     "availability": "Military",
-    "sizeRestriction": "Colossal (Frigate) or Larger",
+    "sizeRestriction": "Colossal (Cruiser) or Larger",
     "cost": 20000,
     "costType": "base",
-    "description": "Maximum armor protection for warships.",
-    "effect": "+4 Armor bonus to Reflex Defense"
+    "description": "+4 equipment bonus to the armor bonus the starship adds to its Reflex Defense. Skilled pilots may use their character level in place of the ship's armor bonus.",
+    "effect": "+4 equipment bonus to the armor bonus the starship adds to its Reflex Defense. Skilled pilots may use their character level in place of the ship's armor bonus.",
+    "legacy": {
+      "description": "Maximum armor protection for warships.",
+      "effect": "+4 Armor bonus to Reflex Defense"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "jamming-suite",
@@ -56,8 +108,21 @@
     "sizeRestriction": null,
     "cost": 5000,
     "costType": "base",
-    "description": "Electronic countermeasures to disrupt enemy sensors and targeting.",
-    "effect": "+2 to Pilot checks to avoid being hit by guided weapons"
+    "description": "Swift action: choose one target starship within 6 squares (starship scale). The target takes a -4 (starfighter) or -2 (space transport) penalty on Use Computer checks for communications or sensors, and the same penalty applies to its fire control (which cannot reduce its Intelligence modifier on attack rolls below +0). Effective only against small craft and space transports; the target's system operator may oppose it with a Use Computer check.",
+    "effect": "Swift action: choose one target starship within 6 squares (starship scale). The target takes a -4 (starfighter) or -2 (space transport) penalty on Use Computer checks for communications or sensors, and the same penalty applies to its fire control (which cannot reduce its Intelligence modifier on attack rolls below +0). Effective only against small craft and space transports; the target's system operator may oppose it with a Use Computer check.",
+    "legacy": {
+      "description": "Electronic countermeasures to disrupt enemy sensors and targeting.",
+      "effect": "+2 to Pilot checks to avoid being hit by guided weapons"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "jamming-array",
@@ -68,8 +133,21 @@
     "sizeRestriction": "Colossal or Larger",
     "cost": 20000,
     "costType": "base",
-    "description": "Powerful jamming system for capital ships.",
-    "effect": "+5 to Pilot checks to avoid guided weapons, can jam enemy sensors"
+    "description": "Affects all enemy starships within 6 squares regardless of size: -6 (starfighters), -4 (space transports) or -2 (capital ships) on Use Computer checks for communications or sensors and on fire control (not below a +0 Intelligence modifier). A system operator may oppose it with a Use Computer check.",
+    "effect": "Affects all enemy starships within 6 squares regardless of size: -6 (starfighters), -4 (space transports) or -2 (capital ships) on Use Computer checks for communications or sensors and on fire control (not below a +0 Intelligence modifier). A system operator may oppose it with a Use Computer check.",
+    "legacy": {
+      "description": "Powerful jamming system for capital ships.",
+      "effect": "+5 to Pilot checks to avoid guided weapons, can jam enemy sensors"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "regenerating-shields",
@@ -80,8 +158,21 @@
     "sizeRestriction": null,
     "cost": 5000,
     "costType": "base",
-    "description": "Shields that automatically regenerate 5 SR per round.",
-    "effect": "Regenerate 5 SR per round (max starting SR)"
+    "description": "When the recharge shields action is used, the current shield rating increases by 10 (up to the ship's maximum shield rating) instead of the normal 5.",
+    "effect": "When the recharge shields action is used, the current shield rating increases by 10 (up to the ship's maximum shield rating) instead of the normal 5.",
+    "legacy": {
+      "description": "Shields that automatically regenerate 5 SR per round.",
+      "effect": "Regenerate 5 SR per round (max starting SR)"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "reinforced-bulkheads-10",
@@ -92,8 +183,21 @@
     "sizeRestriction": null,
     "cost": 2000,
     "costType": "base",
-    "description": "Structural reinforcement to increase hull strength.",
-    "effect": "+10% Hit Points"
+    "description": "Increases the starship's hit points by 10%. These improvements do not stack.",
+    "effect": "Increases the starship's hit points by 10%. These improvements do not stack.",
+    "legacy": {
+      "description": "Structural reinforcement to increase hull strength.",
+      "effect": "+10% Hit Points"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "reinforced-bulkheads-20",
@@ -104,8 +208,21 @@
     "sizeRestriction": null,
     "cost": 5000,
     "costType": "base",
-    "description": "Extensive structural bracing.",
-    "effect": "+20% Hit Points"
+    "description": "Increases the starship's hit points by 20%. These improvements do not stack.",
+    "effect": "Increases the starship's hit points by 20%. These improvements do not stack.",
+    "legacy": {
+      "description": "Extensive structural bracing.",
+      "effect": "+20% Hit Points"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "reinforced-bulkheads-30",
@@ -116,8 +233,21 @@
     "sizeRestriction": null,
     "cost": 10000,
     "costType": "base",
-    "description": "Maximum structural reinforcement.",
-    "effect": "+30% Hit Points"
+    "description": "Increases the starship's hit points by 30%. These improvements do not stack.",
+    "effect": "Increases the starship's hit points by 30%. These improvements do not stack.",
+    "legacy": {
+      "description": "Maximum structural reinforcement.",
+      "effect": "+30% Hit Points"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "shields-10",
@@ -128,8 +258,21 @@
     "sizeRestriction": null,
     "cost": 750,
     "costType": "base",
-    "description": "Basic deflector shields.",
-    "effect": "Shield Rating 10"
+    "description": "Deflector shields with a shield rating of 10.",
+    "effect": "Deflector shields with a shield rating of 10.",
+    "legacy": {
+      "description": "Basic deflector shields.",
+      "effect": "Shield Rating 10"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "shields-15",
@@ -140,8 +283,21 @@
     "sizeRestriction": null,
     "cost": 1000,
     "costType": "base",
-    "description": "Standard deflector shields.",
-    "effect": "Shield Rating 15"
+    "description": "Deflector shields with a shield rating of 15.",
+    "effect": "Deflector shields with a shield rating of 15.",
+    "legacy": {
+      "description": "Standard deflector shields.",
+      "effect": "Shield Rating 15"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "shields-20",
@@ -152,8 +308,21 @@
     "sizeRestriction": "Gargantuan or Larger",
     "cost": 1250,
     "costType": "base",
-    "description": "Enhanced deflector shields.",
-    "effect": "Shield Rating 20"
+    "description": "Deflector shields with a shield rating of 20.",
+    "effect": "Deflector shields with a shield rating of 20.",
+    "legacy": {
+      "description": "Enhanced deflector shields.",
+      "effect": "Shield Rating 20"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "shields-25",
@@ -164,8 +333,21 @@
     "sizeRestriction": "Gargantuan or Larger",
     "cost": 1500,
     "costType": "base",
-    "description": "Improved shields for larger vessels.",
-    "effect": "Shield Rating 25"
+    "description": "Deflector shields with a shield rating of 25.",
+    "effect": "Deflector shields with a shield rating of 25.",
+    "legacy": {
+      "description": "Improved shields for larger vessels.",
+      "effect": "Shield Rating 25"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "shields-30",
@@ -176,8 +358,21 @@
     "sizeRestriction": "Gargantuan or Larger",
     "cost": 2000,
     "costType": "base",
-    "description": "Advanced shield generators.",
-    "effect": "Shield Rating 30"
+    "description": "Deflector shields with a shield rating of 30.",
+    "effect": "Deflector shields with a shield rating of 30.",
+    "legacy": {
+      "description": "Advanced shield generators.",
+      "effect": "Shield Rating 30"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "shields-35",
@@ -188,8 +383,21 @@
     "sizeRestriction": "Gargantuan or Larger",
     "cost": 2500,
     "costType": "base",
-    "description": "High-output shield system.",
-    "effect": "Shield Rating 35"
+    "description": "Deflector shields with a shield rating of 35.",
+    "effect": "Deflector shields with a shield rating of 35.",
+    "legacy": {
+      "description": "High-output shield system.",
+      "effect": "Shield Rating 35"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "shields-40",
@@ -200,8 +408,21 @@
     "sizeRestriction": "Colossal or Larger",
     "cost": 3000,
     "costType": "base",
-    "description": "Capital ship grade shields.",
-    "effect": "Shield Rating 40"
+    "description": "Deflector shields with a shield rating of 40.",
+    "effect": "Deflector shields with a shield rating of 40.",
+    "legacy": {
+      "description": "Capital ship grade shields.",
+      "effect": "Shield Rating 40"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "shields-45",
@@ -212,8 +433,21 @@
     "sizeRestriction": "Colossal or Larger",
     "cost": 4000,
     "costType": "base",
-    "description": "Heavy capital ship shields.",
-    "effect": "Shield Rating 45"
+    "description": "Deflector shields with a shield rating of 45.",
+    "effect": "Deflector shields with a shield rating of 45.",
+    "legacy": {
+      "description": "Heavy capital ship shields.",
+      "effect": "Shield Rating 45"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "shields-50",
@@ -224,8 +458,21 @@
     "sizeRestriction": "Colossal or Larger",
     "cost": 5000,
     "costType": "base",
-    "description": "Military-grade shield system.",
-    "effect": "Shield Rating 50"
+    "description": "Deflector shields with a shield rating of 50.",
+    "effect": "Deflector shields with a shield rating of 50.",
+    "legacy": {
+      "description": "Military-grade shield system.",
+      "effect": "Shield Rating 50"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "shields-55",
@@ -236,8 +483,21 @@
     "sizeRestriction": "Colossal or Larger",
     "cost": 6000,
     "costType": "base",
-    "description": "Enhanced military shields.",
-    "effect": "Shield Rating 55"
+    "description": "Deflector shields with a shield rating of 55.",
+    "effect": "Deflector shields with a shield rating of 55.",
+    "legacy": {
+      "description": "Enhanced military shields.",
+      "effect": "Shield Rating 55"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "shields-60",
@@ -248,8 +508,21 @@
     "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 8000,
     "costType": "base",
-    "description": "Frigate-class shield generators.",
-    "effect": "Shield Rating 60"
+    "description": "Deflector shields with a shield rating of 60.",
+    "effect": "Deflector shields with a shield rating of 60.",
+    "legacy": {
+      "description": "Frigate-class shield generators.",
+      "effect": "Shield Rating 60"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "shields-70",
@@ -260,8 +533,21 @@
     "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 10000,
     "costType": "base",
-    "description": "Heavy frigate shields.",
-    "effect": "Shield Rating 70"
+    "description": "Deflector shields with a shield rating of 70.",
+    "effect": "Deflector shields with a shield rating of 70.",
+    "legacy": {
+      "description": "Heavy frigate shields.",
+      "effect": "Shield Rating 70"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "shields-80",
@@ -272,8 +558,21 @@
     "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 12500,
     "costType": "base",
-    "description": "Advanced frigate shields.",
-    "effect": "Shield Rating 80"
+    "description": "Deflector shields with a shield rating of 80.",
+    "effect": "Deflector shields with a shield rating of 80.",
+    "legacy": {
+      "description": "Advanced frigate shields.",
+      "effect": "Shield Rating 80"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "shields-90",
@@ -284,8 +583,21 @@
     "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 15000,
     "costType": "base",
-    "description": "Maximum frigate protection.",
-    "effect": "Shield Rating 90"
+    "description": "Deflector shields with a shield rating of 90.",
+    "effect": "Deflector shields with a shield rating of 90.",
+    "legacy": {
+      "description": "Maximum frigate protection.",
+      "effect": "Shield Rating 90"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "shields-100",
@@ -296,8 +608,21 @@
     "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 20000,
     "costType": "base",
-    "description": "Light cruiser shields.",
-    "effect": "Shield Rating 100"
+    "description": "Deflector shields with a shield rating of 100.",
+    "effect": "Deflector shields with a shield rating of 100.",
+    "legacy": {
+      "description": "Light cruiser shields.",
+      "effect": "Shield Rating 100"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "shields-125",
@@ -308,8 +633,21 @@
     "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 25000,
     "costType": "base",
-    "description": "Enhanced cruiser shields.",
-    "effect": "Shield Rating 125"
+    "description": "Deflector shields with a shield rating of 125.",
+    "effect": "Deflector shields with a shield rating of 125.",
+    "legacy": {
+      "description": "Enhanced cruiser shields.",
+      "effect": "Shield Rating 125"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "shields-150",
@@ -320,8 +658,21 @@
     "sizeRestriction": "Colossal (Cruiser) or Larger",
     "cost": 30000,
     "costType": "base",
-    "description": "Heavy cruiser shields.",
-    "effect": "Shield Rating 150"
+    "description": "Deflector shields with a shield rating of 150.",
+    "effect": "Deflector shields with a shield rating of 150.",
+    "legacy": {
+      "description": "Heavy cruiser shields.",
+      "effect": "Shield Rating 150"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "shields-175",
@@ -332,8 +683,21 @@
     "sizeRestriction": "Colossal (Cruiser) or Larger",
     "cost": 40000,
     "costType": "base",
-    "description": "Battlecruiser-class shields.",
-    "effect": "Shield Rating 175"
+    "description": "Deflector shields with a shield rating of 175.",
+    "effect": "Deflector shields with a shield rating of 175.",
+    "legacy": {
+      "description": "Battlecruiser-class shields.",
+      "effect": "Shield Rating 175"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "shields-200",
@@ -344,8 +708,21 @@
     "sizeRestriction": "Colossal (Cruiser) or Larger",
     "cost": 50000,
     "costType": "base",
-    "description": "Maximum capital ship protection.",
-    "effect": "Shield Rating 200"
+    "description": "Deflector shields with a shield rating of 200.",
+    "effect": "Deflector shields with a shield rating of 200.",
+    "legacy": {
+      "description": "Maximum capital ship protection.",
+      "effect": "Shield Rating 200"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        43,
+        44
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "anti-boarding-systems",
@@ -357,7 +734,8 @@
     "cost": 20000,
     "costType": "base",
     "description": "Automated defenses against boarding parties.",
-    "effect": "+5 to resist boarding actions"
+    "effect": "+5 to resist boarding actions",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "com-jammers",
@@ -369,7 +747,8 @@
     "cost": 20000,
     "costType": "flat",
     "description": "Jam enemy communications within sensor range.",
-    "effect": "Can jam communications as standard action"
+    "effect": "Can jam communications as standard action",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "reinforced-keel",
@@ -381,7 +760,8 @@
     "cost": 4000,
     "costType": "base",
     "description": "Strengthened keel structure.",
-    "effect": "+2 to resist ramming and collision damage"
+    "effect": "+2 to resist ramming and collision damage",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "reinforced-keel-boarding",
@@ -393,7 +773,8 @@
     "cost": 10000,
     "costType": "base",
     "description": "Keel designed for ramming attacks.",
-    "effect": "+5 to ramming attacks, +2 to resist ramming"
+    "effect": "+5 to ramming attacks, +2 to resist ramming",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "security-bracing",
@@ -405,6 +786,7 @@
     "cost": 5000,
     "costType": "base",
     "description": "Internal security systems and structural bracing.",
-    "effect": "+2 to resist internal sabotage"
+    "effect": "+2 to resist internal sabotage",
+    "effectVerification": "UNVERIFIED"
   }
 ]
