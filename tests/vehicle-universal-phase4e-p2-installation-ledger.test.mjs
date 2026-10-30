@@ -153,25 +153,25 @@ function service(tx) {
   runInNewContext(code + '\nglobalThis.S = VehicleInstallationService;', ctx);
   return { S: ctx.S, calls };
 }
-const vehicleDoc = key => { const a = structuredClone(byKey.get(key)); return { ...a, toObject: () => structuredClone(a) }; };
+const vehicleDoc = key => { const a = structuredClone(byKey.get(key)); a.system.ownedByActorId = 'o1'; return { ...a, id: 'veh1', toObject: () => structuredClone(a) }; };
 
 test('service: one transaction writes only the ledger path; failure and denial leave nothing', async () => {
   const catalog = new Map([['fx-armor', certified()]]);
   const ok = service(async () => ({ success: true, transactionId: 't1' }));
-  const r = await ok.S.install({ ownerActor: { credits: 5000 }, vehicle: vehicleDoc(XW), catalogId: 'fx-armor', catalog });
+  const r = await ok.S.install({ ownerActor: { id: 'o1', credits: 5000 }, vehicle: vehicleDoc(XW), catalogId: 'fx-armor', catalog });
   assert.equal(r.success, true);
   assert.equal(ok.calls.length, 1);
   assert.deepEqual([...Object.keys(ok.calls[0].assetMutationPlan.set)], ['flags.swse.vehicleInstallations']);
   assert.equal(ok.calls[0].cost, 1000);
 
   const failed = service(async () => ({ success: false, error: 'boom' }));
-  const f = await failed.S.install({ ownerActor: { credits: 5000 }, vehicle: vehicleDoc(XW), catalogId: 'fx-armor', catalog });
+  const f = await failed.S.install({ ownerActor: { id: 'o1', credits: 5000 }, vehicle: vehicleDoc(XW), catalogId: 'fx-armor', catalog });
   assert.equal(f.success, false);
   assert.deepEqual(JSON.parse(JSON.stringify(f.reasons)), ['TRANSACTION_FAILED']);
 
   const denied = service(async () => ({ success: true }));
   for (const [credits, cat] of [[10, catalog], [5000, new Map()]]) {
-    const d = await denied.S.install({ ownerActor: { credits }, vehicle: vehicleDoc(XW), catalogId: 'fx-armor', catalog: cat });
+    const d = await denied.S.install({ ownerActor: { id: 'o1', credits }, vehicle: vehicleDoc(XW), catalogId: 'fx-armor', catalog: cat });
     assert.equal(d.success, false);
   }
   assert.equal(denied.calls.length, 0, 'denied plans never reach the transaction engine');
@@ -179,7 +179,7 @@ test('service: one transaction writes only the ledger path; failure and denial l
 
 test('service refuses non-canonical vehicles', async () => {
   const s = service(async () => ({ success: true }));
-  const r = await s.S.install({ ownerActor: { credits: 9 }, vehicle: { type: 'vehicle', system: {}, flags: {}, toObject() { return this; } },
+  const r = await s.S.install({ ownerActor: { id: 'o1', credits: 9 }, vehicle: { id: 'c1', type: 'vehicle', system: {}, flags: {}, toObject() { return this; } },
     catalogId: 'x', catalog: new Map() });
   assert.match(r.reasons[0], /VEHICLE_NOT_SOURCE_BACKED/);
   assert.equal(s.calls.length, 0);
