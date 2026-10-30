@@ -9,9 +9,9 @@ Every feat/weapon data file under `data/` and `packs/` is classified exactly onc
 | GENERATED_RUNTIME_INDEX | 1 |
 | GENERATED_COMPATIBILITY | 3 |
 | MIGRATION_ALIAS_ONLY | 2 |
-| HISTORICAL_AUDIT_EVIDENCE | 239 |
+| HISTORICAL_AUDIT_EVIDENCE | 430 |
 | DEAD_REMOVE | 0 |
-| OTHER_DOMAIN_DATA | 11 |
+| OTHER_DOMAIN_DATA | 14 |
 | REFERENCE_BEARING_DOMAIN_DATA | 14 |
 
 Dependency direction: audits (evidence) → canonical corpus → deterministic generators → Foundry packs, runtime registries, compatibility outputs. Nothing flows back.
@@ -30,6 +30,9 @@ Guardrail (enforced by `tools/verify-canonical-production.mjs`): neither class m
 | `data/actor-weapon-ranges.json` | OTHER_DOMAIN_DATA | Vehicle / upgrade / range / class-feature data; not the personal weapon or feat corpus. |
 | `data/canonical/feats.json` | CANONICAL_SSOT | The one operational authority for its domain. |
 | `data/canonical/talents.json` | CANONICAL_SSOT | The one operational authority for its domain. |
+| `data/canonical/vehicles/ships.json` | OTHER_DOMAIN_DATA | Universal vehicle publication SSOT, its manifest, and the retired ship ledger; vehicle domain, not the personal weapon or feat corpus. |
+| `data/canonical/vehicles/vehicles.json` | OTHER_DOMAIN_DATA | Universal vehicle publication SSOT, its manifest, and the retired ship ledger; vehicle domain, not the personal weapon or feat corpus. |
+| `data/canonical/vehicles/vehicles.manifest.json` | OTHER_DOMAIN_DATA | Universal vehicle publication SSOT, its manifest, and the retired ship ledger; vehicle domain, not the personal weapon or feat corpus. |
 | `data/canonical/weapons.json` | CANONICAL_SSOT | The one operational authority for its domain. |
 | `data/combat/damage-profiles.vehicle-weapon.json` | OTHER_DOMAIN_DATA | Vehicle / upgrade / range / class-feature data; not the personal weapon or feat corpus. |
 | `data/combat/damage-profiles.weapon.json` | OTHER_DOMAIN_DATA | Vehicle / upgrade / range / class-feature data; not the personal weapon or feat corpus. |
@@ -125,4 +128,4 @@ Guardrail (enforced by `tools/verify-canonical-production.mjs`): neither class m
 | `packs/weapons-simple.db` | GENERATED_PRODUCTION | tools/build-weapon-production.mjs from data/canonical/weapons.json |
 | `packs/weapons.db` | GENERATED_PRODUCTION | tools/build-weapon-production.mjs from data/canonical/weapons.json |
 
-Audit evidence files under `data/audits/` (191) are all HISTORICAL_AUDIT_EVIDENCE; listed individually in the JSON.
+Audit evidence files under `data/audits/` (382) are all HISTORICAL_AUDIT_EVIDENCE; listed individually in the JSON.

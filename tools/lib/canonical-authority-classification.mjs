@@ -36,6 +36,7 @@ export const RULES = [
   [/^data\/skill-challenges\/skill-challenge-feat-hooks\.json$/, 'HISTORICAL_AUDIT_EVIDENCE', 'Read only by scripts/dev skill-challenge audits.'],
   [/^data\/generated\/class-feat-list-bindings\.json$/, 'REFERENCE_BEARING_DOMAIN_DATA', 'Class-owned feat id lists (runtime); ids verified against the canonical corpus.'],
   [/^data\/nonheroic\//, 'REFERENCE_BEARING_DOMAIN_DATA', 'Nonheroic damage-profile subsystem; weapon UUIDs verified by tools/audit-nonheroic-profile-weapon-uuids.mjs.'],
+  [/^data\/canonical\/vehicles\/(vehicles|ships|vehicles\.manifest)\.json$/, 'OTHER_DOMAIN_DATA', 'Universal vehicle publication SSOT, its manifest, and the retired ship ledger; vehicle domain, not the personal weapon or feat corpus.'],
   [/^data\/(actor-weapon-ranges|vehicle-weapon-ranges|vehicle-weapons)\.json$|^packs\/(vehicle-weapon-ranges|vehicle-weapons|vehicles-weapon-emplacements)\.db$|^data\/combat\/damage-profiles\.(vehicle-)?weapon\.json$|^data\/(upgrades\/weapon-upgrades|vehicle-modifications\/weapon-systems|prestige-layers\/weapon-master|class-features)\.json$/, 'OTHER_DOMAIN_DATA', 'Vehicle / upgrade / range / class-feature data; not the personal weapon or feat corpus.'],
 ];
 

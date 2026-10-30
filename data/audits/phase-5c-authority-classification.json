@@ -18,9 +18,9 @@
   "GENERATED_RUNTIME_INDEX": 1,
   "GENERATED_COMPATIBILITY": 3,
   "MIGRATION_ALIAS_ONLY": 2,
-  "HISTORICAL_AUDIT_EVIDENCE": 239,
+  "HISTORICAL_AUDIT_EVIDENCE": 430,
   "DEAD_REMOVE": 0,
-  "OTHER_DOMAIN_DATA": 11,
+  "OTHER_DOMAIN_DATA": 14,
   "REFERENCE_BEARING_DOMAIN_DATA": 14
  },
  "unclassified": [],
@@ -911,6 +911,961 @@
    "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
   },
   {
+   "path": "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000001.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000002.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000003.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000004.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000005.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000006.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000007.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000008.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000009.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000010.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000011.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000012.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000013.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000014.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/sotg-cp23c3-native-source-stage/sotgcp23b0000015.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase0-ship-census.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase0b-additional-vehicle-fixtures.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase0b-dryrun-fixtures.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase0b-dryrun-report.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase0b-global-rules-registry.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase0b-null-semantics-examples.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase0b-semantic-contract-report.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase0b-variant-fixtures.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase0b-vehicle-weapon.schema.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase0b-vehicle.blank.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase0b-vehicle.schema.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase0b-weapon-stress-fixtures.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase0b-weapon-stress-report.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase1-completion-report.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase1-rebellion-checkpoint.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase1-vehicle-provenance.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-clone-wars-cp1-per-entry-source-review-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-clone-wars-cp1-weapon-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-clone-wars-cp2-per-entry-source-review-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-clone-wars-cp2-weapon-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-clone-wars-cp3-per-entry-source-review-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-clone-wars-cp3-weapon-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-clone-wars-cp4-per-entry-source-review-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-clone-wars-cp4-weapon-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-clone-wars-cp5-book-source-closure-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-core-rulebook-book-source-closure-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-core-rulebook-book-source-closure-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-core-rulebook-cp1-source-review-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-core-rulebook-cp1-source-review-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-final17-book-counts.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-galaxy-at-war-book-source-closure-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-galaxy-at-war-book-source-closure-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-galaxy-of-intrigue-book-source-closure-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-galaxy-of-intrigue-book-source-closure-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-jedi-academy-training-manual-book-source-closure-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-jedi-academy-training-manual-book-source-closure-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-kotor-cp1-per-entry-source-review-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-kotor-cp1-weapon-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-kotor-cp3-book-source-closure-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-legacy-era-cp1-per-entry-source-review-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-legacy-era-cp1-weapon-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-legacy-era-cp2-per-entry-source-review-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-legacy-era-cp2-weapon-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-legacy-era-cp3-per-entry-source-review-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-legacy-era-cp3-weapon-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-legacy-era-cp4-book-source-closure-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-rebellion-era-cp1-per-entry-source-review-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-rebellion-era-cp1-weapon-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-rebellion-era-cp2-per-entry-source-review-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-rebellion-era-cp2-weapon-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-scum-and-villainy-book-source-closure-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-scum-and-villainy-book-source-closure-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-sotg-cp16-book-source-closure-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-sotg-cp17-independent-baseline.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-sotg-cp17-strict-certification-work-queue.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-full-100-ship-source-review-closeout.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche01-primary-source-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche02-primary-source-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche03-primary-source-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche04-primary-source-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche05-primary-source-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche06-primary-source-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche07-primary-source-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-threats-of-the-galaxy-book-source-closure-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-threats-of-the-galaxy-book-source-closure-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-unknown-regions-book-source-closure-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2b-unknown-regions-book-source-closure-mount-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-clone-wars-cp1-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-clone-wars-cp2-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-clone-wars-cp3-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-clone-wars-cp4-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-clone-wars-cp5-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-core-rulebook-book-source-closure-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-core-rulebook-cp1-source-review-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-cp1-evidence-semantics-pressure.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-cp1-identity-candidates.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-cp18-approved-two-layer-policy.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-cp18-evidence-envelope.schema.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-cp18-evidence-normalization-contract.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-cp2-crossbook-research.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-cp3-318-census-overlay.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-cp3-approved-decisions.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-cp3-authority-contract.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-cp4-runtime-integration-status.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-cp5-gunnery-integrity-status.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-cp6-immediate-stock-enforcement-status.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-cp7-first-four-stock-binding-discrepancies.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-cp8-stock-pack-remediation-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-cp8b-derived-metadata-remediation.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-force-unleashed-book-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-galaxy-at-war-book-source-closure-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-galaxy-of-intrigue-book-source-closure-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-jedi-academy-training-manual-book-source-closure-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-kotor-cp1-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-kotor-cp3-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-legacy-era-cp1-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-legacy-era-cp2-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-legacy-era-cp3-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-legacy-era-cp4-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-rebellion-era-cp1-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-rebellion-era-cp2-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-rebellion-era-cp3-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-scum-and-villainy-book-source-closure-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-sotg-cp18-evidence-observation-overlay.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-threats-of-the-galaxy-book-source-closure-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-unknown-regions-book-schema-discovery.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-phase2c-vehicle-v06-pressure-cases-cp16.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp20-controlled-source-corrections.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp20-source-fidelity-certificate.schema.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp20-source-fidelity-tranche02.schema.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp20-source-fidelity-tranche03.schema.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp20-source-fidelity-tranche04.schema.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp20-source-fidelity-tranche05.schema.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp20-source-fidelity-tranche06.schema.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp20-source-fidelity-tranche07-conflict-priority.schema.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp20-tranche01-source-fidelity-certificates.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp20-tranche02-source-fidelity-certificates.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp20-tranche03-source-fidelity-certificates.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp20-tranche04-source-fidelity-certificates.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp20-tranche05-source-fidelity-certificates.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp20-tranche06-source-fidelity-certificates.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp20-tranche07-conflict-priority-source-fidelity-certificates.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp21-owner-approved-adjudications.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp21-owner-approved-adjudications.schema.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp23-source-pack-reconciliation.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp23b-isolated-source-actor-proposals.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp23c-source-draft-parity-anchors.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp23c2-native-install-readiness.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp23c3-unregistered-native-stage.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-sotg-cp23c4-registration-and-observation-plan.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase1-closeout.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase1-publication-census.ndjson",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase1a-core-rulebook.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase1b-starships-of-the-galaxy.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase1c-clone-wars.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase1d-knights-of-the-old-republic.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase1e-force-unleashed.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase1f-scum-and-villainy.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase1g-galaxy-at-war.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase1h-galaxy-of-intrigue.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase1i-jedi-academy-training-manual.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase1j-legacy-era-campaign-guide.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase1k-rebellion-era-campaign-guide.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase1l-threats-of-the-galaxy.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase1m-unknown-regions.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase1n-scavengers-guide-to-droids.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase2a-core-rulebook-staged.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase2b-starships-of-the-galaxy-staged.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase2c-clone-wars-new-fixtures.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase2c-clone-wars-staged.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase2d-kotor-new-fixtures.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase2d-kotor-staged.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase2e-force-unleashed-new-fixtures.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase2e-force-unleashed-staged.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase2f-scum-and-villainy-fixtures.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase2f-scum-and-villainy-staged.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase2g-galaxy-at-war-fixtures.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase2g-galaxy-at-war-staged.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase2h-galaxy-of-intrigue-staged.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase2i-jedi-academy-training-manual-staged.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase2j-legacy-era-campaign-guide-staged.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase2k-rebellion-era-campaign-guide-staged.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase2l-threats-of-the-galaxy-staged.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase2m-unknown-regions-staged.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase2n-scavengers-guide-to-droids-staged.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase3-source-pdf-qa-queue.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase3-targeted-exceptions.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/swse-universal-phase3-vulture-provenance-amendment.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
    "path": "data/audits/weapon-phase-5a-runtime-consumer-matrix.json",
    "class": "HISTORICAL_AUDIT_EVIDENCE",
    "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
@@ -994,6 +1949,21 @@
    "path": "data/canonical/talents.json",
    "class": "CANONICAL_SSOT",
    "note": "The one operational authority for its domain."
+  },
+  {
+   "path": "data/canonical/vehicles/ships.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Universal vehicle publication SSOT, its manifest, and the retired ship ledger; vehicle domain, not the personal weapon or feat corpus."
+  },
+  {
+   "path": "data/canonical/vehicles/vehicles.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Universal vehicle publication SSOT, its manifest, and the retired ship ledger; vehicle domain, not the personal weapon or feat corpus."
+  },
+  {
+   "path": "data/canonical/vehicles/vehicles.manifest.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Universal vehicle publication SSOT, its manifest, and the retired ship ledger; vehicle domain, not the personal weapon or feat corpus."
   },
   {
    "path": "data/canonical/weapons.json",
