@@ -146,13 +146,16 @@ test('the PDF review resolves the eight OCR-questionable movement/defense rows a
     byId['shields-50'].emplacementPoints, byId['shields-60'].emplacementPoints, byId['shields-150'].emplacementPoints, byId['maneuvering-jets-2'].emplacementPoints], [2, 1, null, 2, 3, 3, 7, 2]);
 });
 
-test('weapon table transcription is machine-checked and its footnote disagreements are reported, not certified', () => {
+test('weapon table transcription is machine-checked; footnote corrections (P6A) are applied but never certified', () => {
   const w = evidence.catalogComparison.rows.filter(r => r.table === 'weapon');
   assert.ok(w.length >= 40);
   const turbo = w.find(r => r.catalogId === 'turbolaser-heavy');
-  assert.equal(turbo.status, 'OCR_ROW_DIFFERS_FROM_CATALOG');
-  assert.equal(turbo.differences[0].printed, 'Colossal or larger');
-  assert.equal(Object.keys(overlay.rows).includes('turbolaser-heavy'), false);
+  // P6A applied the footnote (1) size restriction, keeping the old value as legacy evidence
+  assert.equal(turbo.status, 'SOURCE_VERIFIED_TEXT');
+  const row = JSON.parse(readFileSync('data/vehicle-modifications/weapon-systems.json', 'utf8')).find(r => r.id === 'turbolaser-heavy');
+  assert.equal(row.sizeRestriction, 'Colossal or Larger');
+  assert.equal(row.legacy.p6a.sizeRestriction.value, 'Colossal (Frigate) or Larger');
+  assert.equal(Object.keys(overlay.rows).includes('turbolaser-heavy'), false, 'weapon rows stay uncertified');
 });
 
 test('stock frames: PDF-confirmed cells, exact table pages, and the X-wing cross-check', () => {

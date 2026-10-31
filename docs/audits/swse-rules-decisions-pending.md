@@ -527,6 +527,82 @@ Appended. Owner authorization: implement unambiguous published effects first (mo
 
 Owner direction recorded 2026-10-31 (not a rules question): construction credits are charged when the GM approves and funds the project; approval does not complete construction.
 
+## P6A component census (2026-10-31)
+
+Appended. Evidence: `data/audits/vehicles/p6a/`.
+
+### V-P6A-01 - Triple cannons
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6A-01 |
+| Rules domain | Vehicle weapons |
+| Feature | Triple cannons |
+| Source | *Starships of the Galaxy*, Weapon Systems, Cannon, Double/Quad |
+| Evidence | Triple cannons are 'functionally identical to double cannons, using three cannons (with slightly less power individually)'. |
+| Confirmed behavior | Same game statistics as a double cannon. |
+| Unresolved question | Whether a triple cannon also uses the double cannon's cost multiplier and EP, or is only a description of an existing double cannon. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Recorded as an alias of `cannon-double`; no separate catalog row. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6A-02 - Armor-piercing concussion missiles
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6A-02 |
+| Rules domain | Vehicle weapons |
+| Feature | Armor-piercing concussion missiles |
+| Source | *Starships of the Galaxy*, Concussion Missiles |
+| Evidence | Penetration 10 and -5 to attack; no cost, availability or EP printed. |
+| Confirmed behavior | The effect. |
+| Unresolved question | Price, availability and whether the variant is bought per missile. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Recorded as MISSING_FROM_CATALOG; not added. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6A-03 - Launcher capacity expansions
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6A-03 |
+| Rules domain | Vehicle weapons |
+| Feature | Launcher capacity expansions |
+| Source | *Starships of the Galaxy* (concussion, proton, shieldbuster, mines); *Galaxy at War* (chaff gun) |
+| Evidence | Each additional missile/torpedo/mine/canister raises the launcher cost by 20% or 25% up to a maximum. |
+| Confirmed behavior | Cost increase and maximum. |
+| Unresolved question | Whether added capacity changes EP, and whether the percentage applies to the base or the size-modified launcher cost. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Recorded as MISSING_FROM_CATALOG; not added. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6A-04 - Galaxy at War weapons without availability
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6A-04 |
+| Rules domain | Vehicle weapons |
+| Feature | Galaxy at War weapons without availability |
+| Source | *Galaxy at War*, Vehicle and Starship Weapons |
+| Evidence | The table prints Damage, Emplacement Points and Cost only; the text says a GM can add these weapons without the SotG system. |
+| Confirmed behavior | EP and cost. |
+| Unresolved question | What availability applies (the catalog had Common/Illegal with no source; now unknown). |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Availability set to unknown; the planner reports AVAILABILITY_UNKNOWN. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
 ---
 
 ## Revision log
@@ -539,3 +615,4 @@ Owner direction recorded 2026-10-31 (not a rules question): construction credits
 - **Revision 6 (2026-10-30):** appended PDF-review results and owner directions for V-P2-01/02/03, V-P4-01, V-P5-01 and V-P5-04. No existing entry was changed.
 - **Revision 7 (2026-10-31):** appended V-P6-01..05 (Shipyard modification effects). No existing entry changed.
 - **Revision 8 (2026-10-31):** appended V-P6-06 (failed design check) and the owner's construction-funding direction. No existing entry changed.
+- **Revision 9 (2026-10-31):** appended V-P6A-01..04 (component census). No existing entry changed.

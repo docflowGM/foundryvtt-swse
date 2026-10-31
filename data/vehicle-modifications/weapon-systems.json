@@ -4,7 +4,7 @@
     "name": "Autoblaster",
     "category": "Weapon",
     "weaponType": "Blaster",
-    "damage": "3d8x2",
+    "damage": null,
     "emplacementPoints": 0,
     "availability": "Restricted",
     "sizeRestriction": null,
@@ -13,7 +13,15 @@
     "costMultiplier": 2,
     "description": "Rapid-fire blaster weapon for anti-personnel use.",
     "effect": "Autofire mode available",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "damage": {
+          "value": "3d8x2",
+          "correctedFrom": "Starships of the Galaxy: the table prints no damage for this entry"
+        }
+      }
+    }
   },
   {
     "id": "blaster-cannon-light",
@@ -194,13 +202,21 @@
     "damage": "See Ammunition",
     "emplacementPoints": 20,
     "availability": "Military",
-    "sizeRestriction": "Colossal (Frigate) or Larger",
+    "sizeRestriction": "Colossal or Larger",
     "cost": 30000,
     "costType": "flat",
     "description": "Capital ship missile launcher.",
     "effect": "Fires heavy concussion missiles",
     "ammunition": "concussion-missile-heavy",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal (Frigate) or Larger",
+          "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
+        }
+      }
+    }
   },
   {
     "id": "concussion-missile-heavy",
@@ -210,12 +226,20 @@
     "damage": "9d10x5",
     "emplacementPoints": 0,
     "availability": "Military",
-    "sizeRestriction": null,
+    "sizeRestriction": "Colossal or Larger",
     "cost": 2000,
     "costType": "flat",
     "description": "Heavy capital ship missile.",
     "effect": "Capital scale guided weapon",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": null,
+          "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
+        }
+      }
+    }
   },
   {
     "id": "ion-cannon-light",
@@ -255,12 +279,20 @@
     "damage": "3d10x5 (Ion)",
     "emplacementPoints": 5,
     "availability": "Military",
-    "sizeRestriction": "Colossal (Frigate) or Larger",
+    "sizeRestriction": "Colossal or Larger",
     "cost": 6000,
     "costType": "flat",
     "description": "Heavy capital ship ion cannon.",
     "effect": "Capital scale ion damage",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal (Frigate) or Larger",
+          "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
+        }
+      }
+    }
   },
   {
     "id": "laser-cannon-light",
@@ -346,12 +378,20 @@
     "damage": "3d10x5",
     "emplacementPoints": 2,
     "availability": "Military",
-    "sizeRestriction": "Colossal (Frigate) or Larger",
+    "sizeRestriction": "Colossal or Larger",
     "cost": 5000,
     "costType": "flat",
     "description": "Light capital ship turbolaser.",
     "effect": "Capital scale weapon",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal (Frigate) or Larger",
+          "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
+        }
+      }
+    }
   },
   {
     "id": "turbolaser-medium",
@@ -361,12 +401,20 @@
     "damage": "5d10x5",
     "emplacementPoints": 5,
     "availability": "Military",
-    "sizeRestriction": "Colossal (Frigate) or Larger",
+    "sizeRestriction": "Colossal or Larger",
     "cost": 10000,
     "costType": "flat",
     "description": "Standard capital ship turbolaser.",
     "effect": "Capital scale weapon",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal (Frigate) or Larger",
+          "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
+        }
+      }
+    }
   },
   {
     "id": "turbolaser-heavy",
@@ -376,12 +424,20 @@
     "damage": "7d10x5",
     "emplacementPoints": 10,
     "availability": "Military",
-    "sizeRestriction": "Colossal (Frigate) or Larger",
+    "sizeRestriction": "Colossal or Larger",
     "cost": 20000,
     "costType": "flat",
     "description": "Heavy turbolaser for battleships.",
     "effect": "Capital scale heavy weapon",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal (Frigate) or Larger",
+          "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
+        }
+      }
+    }
   },
   {
     "id": "tractor-beam",
@@ -418,14 +474,20 @@
     "damage": "Special",
     "emplacementPoints": 0,
     "availability": "Restricted",
-    "sizeRestriction": null,
+    "sizeRestriction": "Colossal or Larger",
     "cost": 4000,
     "costType": "modifier",
     "description": "Only blaster cannons, laser cannons and light ion cannons can be point-defense weapons. The modification costs 4,000 credits per weapon with no emplacement point requirement beyond mounting the weapon; a point-defense weapon takes no penalty for attacking targets smaller than Colossal.",
     "effect": "Only blaster cannons, laser cannons and light ion cannons can be point-defense weapons. The modification costs 4,000 credits per weapon with no emplacement point requirement beyond mounting the weapon; a point-defense weapon takes no penalty for attacking targets smaller than Colossal.",
     "legacy": {
       "description": "Automated defense against missiles and fighters.",
-      "effect": "+2 to defend against missiles and torpedoes"
+      "effect": "+2 to defend against missiles and torpedoes",
+      "p6a": {
+        "sizeRestriction": {
+          "value": null,
+          "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
+        }
+      }
     },
     "effectVerification": "PRINTED_PROSE",
     "effectSource": {
@@ -582,13 +644,21 @@
     "damage": "See Ammunition",
     "emplacementPoints": 2,
     "availability": "Restricted",
-    "sizeRestriction": null,
+    "sizeRestriction": "Huge or Larger",
     "cost": 4000,
     "costType": "flat",
     "description": "Launches sensor-jamming missiles.",
     "effect": "Fires discord missiles",
     "ammunition": "discord-missile",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": null,
+          "correctedFrom": "Threats of the Galaxy"
+        }
+      }
+    }
   },
   {
     "id": "discord-missile",
@@ -686,14 +756,20 @@
     "damage": "Special",
     "emplacementPoints": 5,
     "availability": "Military",
-    "sizeRestriction": "Colossal (Frigate) or Larger",
+    "sizeRestriction": "Colossal or Larger",
     "cost": 50000,
     "costType": "flat",
     "description": "Treated as an area attack: choose a 4x4-square (starship scale) area within range and make an attack roll against Reflex Defense 10. On a hit it creates a hyperspace interdiction field; a starship starting its turn in it may not activate its hyperdrive that turn.",
     "effect": "Treated as an area attack: choose a 4x4-square (starship scale) area within range and make an attack roll against Reflex Defense 10. On a hit it creates a hyperspace interdiction field; a starship starting its turn in it may not activate its hyperdrive that turn.",
     "legacy": {
       "description": "Creates gravity well preventing hyperspace.",
-      "effect": "Prevents hyperspace in 10 square radius"
+      "effect": "Prevents hyperspace in 10 square radius",
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal (Frigate) or Larger",
+          "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
+        }
+      }
     },
     "effectVerification": "PRINTED_PROSE",
     "effectSource": {
@@ -755,12 +831,20 @@
     "damage": "5d10x5 (Ion)",
     "emplacementPoints": 3,
     "availability": "Illegal",
-    "sizeRestriction": "Colossal (Frigate) or Larger",
+    "sizeRestriction": "Colossal or Larger",
     "cost": 12000,
     "costType": "flat",
     "description": "Illegal Hapan triple ion cannon design.",
     "effect": "Capital scale ion damage, Hapan manufacture",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal (Frigate) or Larger",
+          "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
+        }
+      }
+    }
   },
   {
     "id": "space-mine-launcher-heavy",
@@ -770,13 +854,21 @@
     "damage": "See Ammunition",
     "emplacementPoints": 4,
     "availability": "Military",
-    "sizeRestriction": "Colossal (Frigate) or Larger",
+    "sizeRestriction": "Colossal or Larger",
     "cost": 5000,
     "costType": "flat",
     "description": "Capital ship mine deployment system.",
     "effect": "Deploys heavy space mines",
     "ammunition": "space-mine-heavy",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal (Frigate) or Larger",
+          "correctedFrom": "Starships of the Galaxy: table footnote (1)"
+        }
+      }
+    }
   },
   {
     "id": "space-mine-advanced",
@@ -891,12 +983,20 @@
     "damage": "6d10x2",
     "emplacementPoints": 3,
     "availability": "Military",
-    "sizeRestriction": "Colossal or Larger",
+    "sizeRestriction": "Gargantuan or Larger",
     "cost": 8000,
     "costType": "flat",
     "description": "Magnetic accelerator cannon firing solid projectiles.",
     "effect": "Kinetic weapon, bypasses some defenses",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal or Larger",
+          "correctedFrom": "Clone Wars Campaign Guide"
+        }
+      }
+    }
   },
   {
     "id": "mass-driver-cannon-heavy",
@@ -906,12 +1006,20 @@
     "damage": "7d10x2",
     "emplacementPoints": 5,
     "availability": "Military",
-    "sizeRestriction": "Colossal (Frigate) or Larger",
+    "sizeRestriction": "Gargantuan or Larger",
     "cost": 15000,
     "costType": "flat",
     "description": "Heavy magnetic accelerator weapon.",
     "effect": "Heavy kinetic weapon, bypasses some defenses",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal (Frigate) or Larger",
+          "correctedFrom": "Clone Wars Campaign Guide"
+        }
+      }
+    }
   },
   {
     "id": "microtractor-pressor",
@@ -967,12 +1075,20 @@
     "damage": "5d10x5",
     "emplacementPoints": 6,
     "availability": "Military",
-    "sizeRestriction": "Colossal (Frigate) or Larger",
+    "sizeRestriction": "Gargantuan or Larger",
     "cost": 25000,
     "costType": "flat",
     "description": "Electromagnetic rail gun for capital ships.",
     "effect": "Capital scale kinetic weapon",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal (Frigate) or Larger",
+          "correctedFrom": "Clone Wars Campaign Guide"
+        }
+      }
+    }
   },
   {
     "id": "anti-aircraft-flak-pod",
@@ -994,15 +1110,27 @@
     "name": "Chaff Gun",
     "category": "Weapon",
     "weaponType": "Defense",
-    "damage": "Special",
+    "damage": null,
     "emplacementPoints": 1,
-    "availability": "Common",
+    "availability": null,
     "sizeRestriction": null,
     "cost": 2000,
     "costType": "flat",
     "description": "Deploys sensor-blocking chaff.",
     "effect": "+4 to avoid guided weapons for 1 round",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "damage": {
+          "value": "Special",
+          "correctedFrom": "Galaxy At War"
+        },
+        "availability": {
+          "value": "Common",
+          "correctedFrom": "Galaxy At War: the source prints no value; catalog value has no source"
+        }
+      }
+    }
   },
   {
     "id": "defoliator-launcher",
@@ -1011,14 +1139,22 @@
     "weaponType": "Special",
     "damage": "See Ammunition",
     "emplacementPoints": 2,
-    "availability": "Illegal",
+    "availability": null,
     "sizeRestriction": null,
     "cost": 15000,
     "costType": "flat",
     "description": "Launches defoliator weapons (banned by galactic law).",
     "effect": "Fires defoliator shells",
     "ammunition": "defoliator-shell",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "availability": {
+          "value": "Illegal",
+          "correctedFrom": "Galaxy At War: the source prints no value; catalog value has no source"
+        }
+      }
+    }
   },
   {
     "id": "defoliator-shell",
@@ -1027,12 +1163,20 @@
     "weaponType": "Special",
     "damage": "4d10x2",
     "emplacementPoints": 0,
-    "availability": "Illegal",
+    "availability": null,
     "sizeRestriction": null,
     "cost": 3500,
     "costType": "flat",
     "description": "Banned chemical weapon that destroys organic matter.",
     "effect": "Kills unprotected organic targets, droids immune",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "availability": {
+          "value": "Illegal",
+          "correctedFrom": "Galaxy At War: the source prints no value; catalog value has no source"
+        }
+      }
+    }
   }
 ]

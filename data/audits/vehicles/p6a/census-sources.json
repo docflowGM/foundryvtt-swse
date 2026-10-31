@@ -1,0 +1,171 @@
+{
+  "schema": "swse.vehicle.p6a.census-sources.v1",
+  "note": "Curated census inputs. Starships of the Galaxy movement/defense/weapon table rows come from the existing evidence tool (swse-p2-sotg-modification-evidence.json); its accessory table is parsed by build-p6a-component-census.mjs. Every entry below carries OCR line anchors that the tool re-checks against the SHA-pinned OCR text. Cell evidence: OCR_CLEAN (read from the OCR exactly), PDF_REVIEWED (owner PDF review), OCR_NOISY_NEEDS_PDF, NOT_IN_OCR_NEEDS_PDF (the printed table is not in the OCR text), NOT_PRINTED (the source states no value). Pages: exact printed page only when known; otherwise null with a resolution note (the OCR has no page markers).",
+  "books": {
+    "Starships of the Galaxy": {
+      "file": "Starships of the Galaxy_djvu.txt",
+      "status": "EXAMINED",
+      "scope": "Chapter III (Starship Modifications, pp. 38-53): movement, defense, weapon and accessory tables and prose; Starship Designer feat; Stock Ships.",
+      "accessoryTable": { "nameLines": [4569, 4612], "availabilityLines": [4637, 4671], "costHeaderLine": 4706, "rowCount": 35, "printedPages": [48, 53] },
+      "accessoryCatalogMap": {
+        "Cargo jettison system": "cargo-jettison", "Cargo pod, light": "cargo-pod-light", "Cargo pod, medium": "cargo-pod-medium", "Cargo pod, heavy": "cargo-pod-heavy",
+        "Cloaking device, hibridium": "cloaking-hibridium", "Cloaking device, stygium": "cloaking-stygium", "Cryogenic chambers": "cryogenic-chambers",
+        "Docking clamp": "docking-clamps", "Droid repair team": "droid-repair-team", "Escape pod, small lifeboat": "escape-pod-small", "Escape pod, large lifeboat": "escape-pod-large",
+        "Extended range": "extended-range", "Hangar bay": "hangar-bay", "Hangar bay, concealed": "hangar-bay-concealed", "HoloNet transceiver": "holonet-transceiver",
+        "Hypertransceiver": "hyper-transceiver", "Luxury upgrade, basic": "luxury-basic", "Luxury upgrade, advanced": "luxury-advanced", "Luxury upgrade, extreme": "luxury-extreme",
+        "Medical suite": "medical-suite", "Passenger seating": "passenger-seating", "Passenger quarters": "passenger-quarters", "Sensor array computer +2": "sensor-array-2",
+        "Sensor array computer +4": "sensor-array-4", "Sensor array computer +6": "sensor-array-6", "Sensor enhancement package": "sensor-enhancement",
+        "Slave circuits, basic": "slave-circuits-basic", "Slave circuits, advanced": "slave-circuits-advanced", "Slave circuits, recall": "slave-circuits-recall",
+        "Smuggler's compartments": "smuggler-compartments", "Transponder, IFF": "transponder-iff", "Transponder, masked": "transponder-masked",
+        "Transponder, disguised (1)": "transponder-disguised-1", "Transponder, disguised (2)": "transponder-disguised-2", "Transponder, disguised (3)": "transponder-disguised-3"
+      },
+      "entries": [
+        { "censusId": "sotg-space-mine-launcher-heavy", "name": "Space mine launcher, heavy", "category": "Weapon", "subtype": "launcher", "table": "Weapon Systems table", "page": { "value": null, "resolution": "WEAPON_SECTION_PP_44_48" },
+          "cells": { "availability": { "value": "Military", "evidence": "OCR_CLEAN" }, "cost": { "value": 5000, "costType": "flat", "evidence": "OCR_CLEAN" }, "emplacementPoints": { "value": null, "evidence": "OCR_NOISY_NEEDS_PDF" }, "sizeRestriction": { "value": "Colossal or larger", "evidence": "OCR_CLEAN", "basis": "table footnote (1)" } },
+          "anchors": [{ "line": 4421, "contains": ["Military 5,000"] }, { "line": 4422, "contains": ["heavy (1)"] }], "installable": true, "catalogIds": ["space-mine-launcher-heavy"] },
+        { "censusId": "sotg-cannon-triple", "name": "Cannon, triple", "category": "Weapon", "subtype": "weapon-configuration", "table": "Weapon Systems prose (Cannon, Double/Quad)", "page": { "value": null, "resolution": "WEAPON_SECTION_PP_44_48" },
+          "effectSummary": "Functionally identical to a double cannon (three cannons of slightly less power).", "aliasOf": "cannon-double",
+          "anchors": [{ "line": 4182, "contains": ["Triple Cannons"] }], "installable": true, "catalogIds": [] },
+        { "censusId": "sotg-concussion-missile-armor-piercing", "name": "Concussion missile, armor-piercing", "category": "Ammunition", "subtype": "missile-variant", "table": "Weapon Systems prose (Concussion Missiles)", "page": { "value": null, "resolution": "WEAPON_SECTION_PP_44_48" },
+          "cells": { "cost": { "value": null, "evidence": "NOT_PRINTED" } },
+          "effectSummary": "Penetration 10 (ignores the first 10 points of DR or SR); -5 penalty on attack rolls with the weapon. No cost printed.",
+          "anchors": [{ "line": 4211, "contains": ["Armor-Piercing Concussion Missiles"] }], "installable": true, "catalogIds": [] },
+        { "censusId": "sotg-concussion-launcher-capacity", "name": "Concussion missile launcher, additional capacity", "category": "Weapon", "subtype": "capacity-expansion", "table": "Weapon Systems prose", "page": { "value": null, "resolution": "WEAPON_SECTION_PP_44_48" },
+          "effectSummary": "Capacity light 6 / medium 16 / heavy 30; +20% launcher cost per additional missile, up to double capacity.",
+          "anchors": [{ "line": 4217, "contains": ["ammunition capacity of a concussion missile launcher"] }], "installable": true, "catalogIds": [] },
+        { "censusId": "sotg-proton-launcher-capacity", "name": "Proton torpedo launcher, additional capacity", "category": "Weapon", "subtype": "capacity-expansion", "table": "Weapon Systems prose", "page": { "value": null, "resolution": "WEAPON_SECTION_PP_44_48" },
+          "effectSummary": "Standard launcher holds 3; +25% cost per additional torpedo, up to 16.",
+          "anchors": [{ "line": 4341, "contains": ["proton torpedo launcher holds three"] }], "installable": true, "catalogIds": [] },
+        { "censusId": "sotg-shieldbuster-launcher-capacity", "name": "Shieldbuster torpedo launcher, additional capacity", "category": "Weapon", "subtype": "capacity-expansion", "table": "Weapon Systems prose", "page": { "value": null, "resolution": "WEAPON_SECTION_PP_44_48" },
+          "effectSummary": "Standard launcher holds 4; +25% cost per additional torpedo, up to 8.",
+          "anchors": [{ "line": 4354, "contains": ["shieldbuster torpedo holds four"] }], "installable": true, "catalogIds": [] },
+        { "censusId": "sotg-mine-launcher-capacity", "name": "Space mine launcher, additional capacity", "category": "Weapon", "subtype": "capacity-expansion", "table": "Weapon Systems prose", "page": { "value": null, "resolution": "WEAPON_SECTION_PP_44_48" },
+          "effectSummary": "All mine launchers hold 6; +25% cost per additional mine, up to 12. Mines may also be IFF-keyed or command-detonated (no cost printed).",
+          "anchors": [{ "line": 4384, "contains": ["mine launchers hold six"] }, { "line": 4366, "contains": ["IFF codes"] }], "installable": true, "catalogIds": [] },
+        { "censusId": "sotg-cargo-pod-detachable", "name": "Cargo pod, detachable", "category": "Accessory", "subtype": "variant", "table": "Accessories prose (Cargo Pods)", "page": { "value": null, "resolution": "ACCESSORY_SECTION_PP_48_53" },
+          "cells": { "cost": { "value": "x5 of the cargo pod", "evidence": "OCR_CLEAN" } },
+          "effectSummary": "A cargo pod can be made detachable (to act as an escape pod) for five times the cost.",
+          "anchors": [{ "line": 4499, "contains": ["detachable (to act as an escape pod)"] }], "installable": true, "catalogIds": [] },
+        { "censusId": "sotg-custom-modification", "name": "Custom modification (Starship Designer)", "category": "Procedure", "subtype": "custom-modification", "table": "Starship Designer feat", "page": { "value": null, "resolution": "FEAT_CHAPTER" },
+          "effectSummary": "Base cost 5,000 credits x size cost modifier; DC 25 Mechanics; on failure half again time and money and +2 on the next attempt. A procedure for designers, not a catalog component.",
+          "anchors": [{ "line": 1781, "contains": ["custom modifications to starships"] }], "installable": false, "exclusion": "PROCEDURE_NOT_COMPONENT", "catalogIds": [] },
+        { "censusId": "sotg-docking-clamp-small-ship", "name": "Docking clamp (built into small ships)", "category": "Accessory", "subtype": "note", "table": "Accessories prose (Docking Clamp)", "page": { "value": null, "resolution": "ACCESSORY_SECTION_PP_48_53" },
+          "effectSummary": "Docking clamps on smaller ships are built into the cost of all starships and have no game effect.",
+          "anchors": [{ "line": 4550, "contains": ["Docking clamps on smaller ships"] }], "installable": false, "exclusion": "BUILT_IN_NO_EFFECT", "catalogIds": [] }
+      ]
+    },
+    "Galaxy At War": {
+      "file": "Galaxy At War_djvu.txt",
+      "status": "EXAMINED",
+      "scope": "Vehicle and Starship Weapons (format of the SotG starship upgrades; the table prints Damage, Emplacement Points, Cost - no Availability or Size column); Vehicle Fire Effects and battlefield effects (no modification required: not components).",
+      "entries": [
+        { "censusId": "gaw-chaff-gun", "name": "Chaff gun", "category": "Weapon", "subtype": "countermeasure", "table": "Vehicle and Starship Weapons", "page": { "value": null, "resolution": "TOC_UNREADABLE_NEEDS_PDF" },
+          "cells": { "damage": { "value": null, "evidence": "OCR_CLEAN" }, "emplacementPoints": { "value": 1, "evidence": "OCR_CLEAN" }, "cost": { "value": 2000, "costType": "flat", "evidence": "OCR_CLEAN" }, "availability": { "value": null, "evidence": "NOT_PRINTED" } },
+          "effectSummary": "Starship scale: debris in one square of your space; non-area attacks against you take -5 while you remain in it; vehicles entering take -5 Pilot; disperses at the end of your next turn. Holds 6 canisters; +25% per canister up to 12.",
+          "anchors": [{ "line": 6747, "contains": ["Chaff gun", "1", "2,000"] }, { "line": 6774, "contains": ["chaff gun holds six"] }], "installable": true, "catalogIds": ["chaff-gun"] },
+        { "censusId": "gaw-glowing-defoliator-launcher", "name": "Glowing defoliator launcher", "category": "Weapon", "subtype": "launcher", "table": "Vehicle and Starship Weapons", "page": { "value": null, "resolution": "TOC_UNREADABLE_NEEDS_PDF" },
+          "cells": { "emplacementPoints": { "value": 2, "evidence": "OCR_CLEAN" }, "cost": { "value": 15000, "costType": "flat", "evidence": "OCR_CLEAN" }, "availability": { "value": null, "evidence": "NOT_PRINTED" } },
+          "anchors": [{ "line": 6748, "contains": ["Glowing defoliator launcher", "15,000"] }], "installable": true, "catalogIds": ["defoliator-launcher"] },
+        { "censusId": "gaw-glowing-defoliator-shell", "name": "Glowing defoliator shell", "category": "Ammunition", "subtype": "shell", "table": "Vehicle and Starship Weapons", "page": { "value": null, "resolution": "TOC_UNREADABLE_NEEDS_PDF" },
+          "cells": { "damage": { "value": "4d10x2", "evidence": "OCR_CLEAN", "note": "footnote: droids and creatures in sealed suits or vehicles are immune" }, "cost": { "value": 3500, "costType": "flat", "evidence": "OCR_CLEAN" }, "emplacementPoints": { "value": null, "evidence": "OCR_NOISY_NEEDS_PDF" }, "availability": { "value": null, "evidence": "NOT_PRINTED" } },
+          "effectSummary": "Living creatures damaged take the same damage at the start of each later turn until dead unless they pass through an energy shield that blocks the effect; droids take none.",
+          "anchors": [{ "line": 6749, "contains": ["Glowing defoliator shell", "4d10x2", "3,500"] }, { "line": 6779, "contains": ["Glowing Defoliator"] }], "installable": true, "catalogIds": ["defoliator-shell"] }
+      ],
+      "excluded": [{ "name": "Battlefield effects (Anti-Personnel, Defender, Droid Hunter, Ground Churner, Heavy Assault, ...)", "line": 6832, "contains": ["requires no modifications"], "exclusion": "NOT_A_MODIFICATION" }]
+    },
+    "Threats of the Galaxy": {
+      "file": "Threats of the Galaxy_djvu.txt",
+      "status": "EXAMINED",
+      "scope": "Discord missile launcher entry (installable on any vehicle or starship of Huge size or larger).",
+      "entries": [
+        { "censusId": "tog-discord-missile-launcher", "name": "Discord missile launcher", "category": "Weapon", "subtype": "launcher", "table": "Discord Missile Launcher entry", "page": { "value": null, "resolution": "NEEDS_PDF" },
+          "cells": { "emplacementPoints": { "value": 2, "evidence": "OCR_CLEAN" }, "availability": { "value": "Restricted", "evidence": "OCR_CLEAN" }, "cost": { "value": 4000, "costType": "flat", "evidence": "OCR_CLEAN" }, "sizeRestriction": { "value": "Huge or larger", "evidence": "OCR_CLEAN" } },
+          "effectSummary": "Attack roll against a square (Reflex 10); releases three buzz droids (fills the square at starship scale); buzz droids attack entering vehicles with +5 equipment bonus and latch on.",
+          "anchors": [{ "line": 13910, "contains": ["Huge size or larger"] }, { "line": 13924, "contains": ["Emplacement Points 2"] }, { "line": 13925, "contains": ["Restricted; Cost 4,000"] }], "installable": true, "catalogIds": ["discord-missile-launcher"] },
+        { "censusId": "tog-discord-missile", "name": "Discord missile", "category": "Ammunition", "subtype": "missile", "table": "Discord Missile Launcher entry", "page": { "value": null, "resolution": "NEEDS_PDF" },
+          "cells": { "damage": { "value": "Special", "evidence": "OCR_CLEAN" }, "availability": { "value": "Restricted", "evidence": "OCR_CLEAN" }, "cost": { "value": 1000, "costType": "flat", "evidence": "OCR_CLEAN" } },
+          "anchors": [{ "line": 13926, "contains": ["Discord Missile: Damage Special"] }, { "line": 13927, "contains": ["1,000"] }], "installable": true, "catalogIds": ["discord-missile"] }
+      ]
+    },
+    "Legacy Era Campaign Guide": {
+      "file": "Legacy Era Campaign Guide_djvu.txt",
+      "status": "EXAMINED",
+      "scope": "Gravity mines table (Damage, Emplacement Points, Availability, Cost).",
+      "entries": [
+        { "censusId": "lecg-gravity-mine-launcher", "name": "Gravity mine launcher", "category": "Weapon", "subtype": "launcher", "table": "Gravity mine table", "page": { "value": null, "resolution": "NEEDS_PDF" },
+          "cells": { "emplacementPoints": { "value": 2, "evidence": "OCR_CLEAN" }, "availability": { "value": "Military", "evidence": "OCR_CLEAN" }, "cost": { "value": 5000, "costType": "flat", "evidence": "OCR_CLEAN" } },
+          "anchors": [{ "line": 18314, "contains": ["Gravity mine", "2 Military 5,000"] }], "installable": true, "catalogIds": ["gravity-mine-launcher"] },
+        { "censusId": "lecg-gravity-mine-standard", "name": "Gravity mine, standard", "category": "Ammunition", "subtype": "mine", "table": "Gravity mine table", "page": { "value": null, "resolution": "NEEDS_PDF" },
+          "cells": { "availability": { "value": "Military", "evidence": "OCR_CLEAN" }, "cost": { "value": 1000, "costType": "flat", "evidence": "OCR_CLEAN" } },
+          "effectSummary": "Deployed to an adjacent square (standard action); a ship entering the square or an adjacent one triggers a 3x3 mass shadow: pulled from hyperspace and cannot enter it while inside. Mines: Reflex 12, 20 hp, DT 10.",
+          "anchors": [{ "line": 18316, "contains": ["Gravity mine", "Military 1,000"] }, { "line": 18304, "contains": ["Reflex Defense 12, 20 hit points"] }], "installable": true, "catalogIds": ["gravity-mine-standard"] },
+        { "censusId": "lecg-gravity-mine-magnetic", "name": "Gravity mine, magnetic", "category": "Ammunition", "subtype": "mine", "table": "Gravity mine table", "page": { "value": null, "resolution": "NEEDS_PDF" },
+          "cells": { "availability": { "value": "Military", "evidence": "OCR_CLEAN" }, "cost": { "value": 4000, "costType": "flat", "evidence": "OCR_CLEAN" } },
+          "effectSummary": "As standard plus grapple +10: free grapple attempt against an entering ship's Reflex; attached mine cannot be targeted by that ship.",
+          "anchors": [{ "line": 18318, "contains": ["Gravity mine", "Military 4,000"] }], "installable": true, "catalogIds": ["gravity-mine-magnetic"] }
+      ]
+    },
+    "Clone Wars Campaign Guide": {
+      "file": "Clone Wars Campaign Guide_djvu.txt",
+      "status": "EXAMINED",
+      "scope": "Republic Vehicles, Weapon Systems (composite beam cannon, mass-driver cannon, proton grenade, rail cannon; the stat table is not in the OCR text). Other named weapons appear only in vehicle statblocks.",
+      "entries": [
+        { "censusId": "cwcg-composite-beam-cannon", "name": "Composite beam cannon", "category": "Weapon", "subtype": "beam", "table": "Weapon Systems", "page": { "value": null, "resolution": "NEEDS_PDF" },
+          "cells": { "damage": { "value": null, "evidence": "NOT_IN_OCR_NEEDS_PDF" }, "emplacementPoints": { "value": null, "evidence": "NOT_IN_OCR_NEEDS_PDF" }, "cost": { "value": null, "evidence": "NOT_IN_OCR_NEEDS_PDF" }, "availability": { "value": null, "evidence": "NOT_IN_OCR_NEEDS_PDF" } },
+          "effectSummary": "Ignores 5 points of the target's SR.", "anchors": [{ "line": 15559, "contains": ["Composite Beam Cannon"] }, { "line": 15561, "contains": ["ignoring 5 points of the target's SR"] }], "installable": true, "catalogIds": ["composite-beam-cannon"] },
+        { "censusId": "cwcg-mass-driver-cannon", "name": "Mass-driver cannon", "category": "Weapon", "subtype": "projectile", "table": "Weapon Systems", "page": { "value": null, "resolution": "NEEDS_PDF" },
+          "cells": { "sizeRestriction": { "value": "Gargantuan or larger", "evidence": "OCR_CLEAN" }, "emplacementPoints": { "value": null, "evidence": "NOT_IN_OCR_NEEDS_PDF" }, "cost": { "value": null, "evidence": "NOT_IN_OCR_NEEDS_PDF" } },
+          "effectSummary": "Can only be mounted on vehicles of Gargantuan size or larger (recoil). Standard/heavy variants: table not in the OCR.",
+          "anchors": [{ "line": 15564, "contains": ["Mass-Driver Cannon"] }, { "line": 15568, "contains": ["Gargantuan"] }], "installable": true, "catalogIds": ["mass-driver-cannon-standard", "mass-driver-cannon-heavy"] },
+        { "censusId": "cwcg-proton-grenade", "name": "Proton grenade (vehicle)", "category": "Ammunition", "subtype": "grenade", "table": "Weapon Systems", "page": { "value": null, "resolution": "NEEDS_PDF" },
+          "cells": { "damage": { "value": null, "evidence": "NOT_IN_OCR_NEEDS_PDF" }, "cost": { "value": null, "evidence": "NOT_IN_OCR_NEEDS_PDF" } },
+          "effectSummary": "Area attack: one roll against every target in a 3-square burst; full damage on a hit, half on a miss.",
+          "anchors": [{ "line": 15573, "contains": ["Proton Grenade"] }, { "line": 15580, "contains": ["3-square burst"] }], "installable": true, "catalogIds": ["proton-grenade", "proton-grenade-launcher"] },
+        { "censusId": "cwcg-rail-cannon", "name": "Rail cannon", "category": "Weapon", "subtype": "projectile", "table": "Weapon Systems", "page": { "value": null, "resolution": "NEEDS_PDF" },
+          "cells": { "sizeRestriction": { "value": "Gargantuan or larger", "evidence": "OCR_CLEAN" }, "emplacementPoints": { "value": null, "evidence": "NOT_IN_OCR_NEEDS_PDF" }, "cost": { "value": null, "evidence": "NOT_IN_OCR_NEEDS_PDF" } },
+          "anchors": [{ "line": 15585, "contains": ["Rail Cannon"] }, { "line": 15590, "contains": ["rail cannons can only be mounted"] }], "installable": true, "catalogIds": ["rail-cannon"] }
+      ]
+    },
+    "Rebellion Era Campaign Guide": {
+      "file": "Rebellion Era Campaign Guide_djvu.txt",
+      "status": "EXAMINED",
+      "scope": "Imperial weapon systems (anti-aircraft flak pod; stat values not in the OCR text). Weapon emplacements are vehicles, not components. Three statements of unused EP for specific ships (already in the unused-EP table).",
+      "entries": [
+        { "censusId": "recg-anti-aircraft-flak-pod", "name": "Anti-aircraft flak pod", "category": "Weapon", "subtype": "area", "table": "Imperial weapon systems", "page": { "value": null, "resolution": "NEEDS_PDF" },
+          "cells": { "damage": { "value": null, "evidence": "NOT_IN_OCR_NEEDS_PDF" }, "emplacementPoints": { "value": null, "evidence": "NOT_IN_OCR_NEEDS_PDF" }, "cost": { "value": null, "evidence": "NOT_IN_OCR_NEEDS_PDF" } },
+          "effectSummary": "Area attack even at starship scale: 2x2 area, roll vs Reflex 10, then compare to each ship; hit full, miss half; Vehicular Evasion halves / negates.",
+          "anchors": [{ "line": 12523, "contains": ["Anti-Aircraft Flak Pod"] }, { "line": 12531, "contains": ["2x2-square"] }], "installable": true, "catalogIds": ["anti-aircraft-flak-pod"] }
+      ]
+    },
+    "Scum and Villainy": {
+      "file": "Scum and Villainy_djvu.txt",
+      "status": "EXAMINED_OCR_UNREADABLE",
+      "scope": "Starship Systems (additional accessories). The OCR of this chapter is corrupted: headings are legible, table cells are not. Every cell needs the PDF.",
+      "headingEntries": [
+        ["Amphibious Seals", 3688, ["amphibious-seals"]], ["Anti-Boarding Systems", 3713, ["anti-boarding-systems"]], ["Auxiliary Generators", 3763, ["auxiliary-generators-2", "auxiliary-generators-4", "auxiliary-generators-6"]],
+        ["Backup Battery", 3785, ["backup-battery"]], ["Cockpit Ejection System", 3814, ["cockpit-ejection"]], ["Com Jammers", 3825, ["com-jammers"]], ["Cofferdam", 3849, ["cofferdam"]],
+        ["Environmental Filters", 3905, ["environmental-filters"]], ["Fuel Converters", 3924, ["fuel-converters"]], ["Grappler Mag", 3938, ["grappler-mag"]], ["Hardpoints", 3961, ["hardpoint"]],
+        ["Hidden Cargo Hold", 4007, ["hidden-cargo-25", "hidden-cargo-50", "hidden-cargo-75"]], ["Holding Cells", 4029, ["holding-cells-25", "holding-cells-50", "holding-cells-75"]],
+        ["Interrogation Chamber", 4048, ["interrogation-chamber"]], ["Personalized Controls", 4075, ["personalized-controls"]], ["Plasma Punch", 4096, ["plasma-punch"]], ["Plasma Torch", 4109, ["plasma-torch"]],
+        ["Reinforced Keel", 4129, ["reinforced-keel", "reinforced-keel-boarding"]], ["Security Bracing", 4150, ["security-bracing"]], ["Sensor Baffling", 4164, ["sensor-baffling"]],
+        ["Sensor Decoy", 4178, ["sensor-decoy"]], ["Sensor Mask", 4202, ["sensor-mask"]], ["Tractor Clamp", 4215, ["tractor-clamp"]], ["Workshop", 4228, ["workshop"]]
+      ],
+      "headingContains": { "Auxiliary Generators": "Generators", "Backup Battery": "Backup", "Cofferdam": "dam", "Hardpoints": "ardpoints", "Holding Cells": "Holding", "Sensor Baffling": "Sensor Baf", "Amphibious Seals": "mphibious Seals" }
+    },
+    "Core Rulebook": { "file": "Core Rulebook_djvu.txt", "status": "EXAMINED_NO_COMPONENT_TABLES", "scope": "Chapter 10 vehicles: vehicle weapons appear in statblocks (e.g. harpoon gun, tractor beams). No starship modification or emplacement-point system (0 occurrences of 'emplacement')." },
+    "Knights of the Old Republic Campaign Guide": { "file": "Knights of the Old Republic Campaign Guide_djvu.txt", "status": "EXAMINED_NO_COMPONENT_TABLES", "scope": "Ships follow the SotG modification rules; three statblock 'Emplacement Points' lines (V-P2-01, unruled). No component table." },
+    "Force Unleashed Campaign Guide": { "file": "Force Unleashed Campaign Guide_djvu.txt", "status": "EXAMINED_NO_COMPONENT_TABLES", "scope": "No starship component tables (one narrative 'emplacements')." },
+    "Galaxy of Intrigue": { "file": "Galaxy of Intrigue_djvu.txt", "status": "EXAMINED_NO_COMPONENT_TABLES", "scope": "Baffled drive, sensor decoys and miniaturized rail cannons appear only as equipment of specific ships/characters." },
+    "Jedi Academy Training Manual": { "file": "Jedi Academy Training Manual_djvu.txt", "status": "EXAMINED_NO_COMPONENT_TABLES", "scope": "No starship component content found." },
+    "Scavenger's Guide to Droids": { "file": "Scavenger's Guide to Droids_djvu.txt", "status": "EXAMINED_NO_COMPONENT_TABLES", "scope": "Droid systems only; no starship components." },
+    "Unknown Regions": { "file": "Unknown Regions_djvu.txt", "status": "EXAMINED_NO_COMPONENT_TABLES", "scope": "Sensor baffling appears only in a ship description (SkyBlind); no component table." }
+  },
+  "statblockOnly": [
+    { "catalogId": "harpoon-gun", "book": "Core Rulebook", "line": 16800, "contains": ["Harpoon Gun"], "note": "snowspeeder statblock weapon (grapple via harpoon); not an installable option list entry" },
+    { "catalogId": "energy-bomblet-generator", "book": "Clone Wars Campaign Guide", "line": 7545, "contains": ["bomblet generator"], "note": "Scurrg H-6 / UT-AT statblock equipment" },
+    { "catalogId": "heavy-ordnance-launcher", "book": "Clone Wars Campaign Guide", "line": 19854, "contains": ["Heavy Ordnance Launcher"], "note": "vehicle statblock weapon" },
+    { "catalogId": "ion-pulse-cannon", "book": "Clone Wars Campaign Guide", "line": 20842, "contains": ["ion pulse cannon"], "note": "Subjugator-class statblock weapon" },
+    { "catalogId": "microtractor-pressor", "book": "Clone Wars Campaign Guide", "line": 20595, "contains": ["microtractor-pressor"], "note": "vehicle statblock weapon" },
+    { "catalogId": "baffled-drive", "book": "Galaxy of Intrigue", "line": 6514, "contains": ["baffled drive"], "note": "equipment of a specific reconnaissance ship" }
+  ]
+}

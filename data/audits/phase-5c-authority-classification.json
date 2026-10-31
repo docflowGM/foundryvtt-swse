@@ -18,7 +18,7 @@
   "GENERATED_RUNTIME_INDEX": 1,
   "GENERATED_COMPATIBILITY": 3,
   "MIGRATION_ALIAS_ONLY": 2,
-  "HISTORICAL_AUDIT_EVIDENCE": 432,
+  "HISTORICAL_AUDIT_EVIDENCE": 438,
   "DEAD_REMOVE": 0,
   "OTHER_DOMAIN_DATA": 16,
   "REFERENCE_BEARING_DOMAIN_DATA": 14
@@ -907,6 +907,36 @@
   },
   {
    "path": "data/audits/talent-phase-3g-source-corrections.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/p6a/census-sources.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/p6a/certification-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/p6a/pdf-review-worksheet.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/p6a/readiness-manifest.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/p6a/reconciliation.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/vehicles/p6a/registry.json",
    "class": "HISTORICAL_AUDIT_EVIDENCE",
    "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
   },

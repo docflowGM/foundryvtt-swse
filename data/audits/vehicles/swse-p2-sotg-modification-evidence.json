@@ -1580,11 +1580,10 @@
   "counts": {
    "TABLE_NOT_PARSED_NEEDS_PDF": 84,
    "PDF_REVIEWED": 8,
-   "SOURCE_VERIFIED_TEXT": 71,
+   "SOURCE_VERIFIED_TEXT": 80,
    "IN_OTHER_BOOK_OCR_UNREADABLE_NEEDS_PDF": 4,
    "NO_PRINTED_ROW_FOUND_IN_PARSED_TABLES": 1,
-   "OCR_ROW_DIFFERS_FROM_CATALOG": 10,
-   "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF": 9
+   "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF": 10
   },
   "rows": [
    {
@@ -2615,16 +2614,9 @@
     "catalogName": "Autoblaster",
     "printedName": "Autoblaster",
     "table": "weapon",
-    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
-    "differences": [
-     {
-      "field": "damage",
-      "printed": null,
-      "catalog": "3d8x2",
-      "note": "the table prints no damage for this entry"
-     }
-    ],
-    "noisy": []
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "blaster-cannon-light",
@@ -2757,21 +2749,14 @@
     "catalogName": "Concussion Missile Launcher, Heavy",
     "printedName": "Concussion missile launcher, heavy (1)",
     "table": "weapon",
-    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
-    "differences": [
-     {
-      "field": "sizeRestriction",
-      "printed": "Colossal or larger",
-      "catalog": "Colossal (Frigate) or Larger",
-      "note": "table footnote (1): \"Colossal or larger starships only\""
-     }
-    ],
+    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
     "noisy": [
      {
       "cell": "damage",
       "ocr": "."
      }
-    ]
+    ],
+    "certifiable": false
    },
    {
     "catalogId": "concussion-missile-heavy",
@@ -2779,16 +2764,9 @@
     "catalogName": "Concussion Missile, Heavy",
     "printedName": "Concussion missile, heavy (1)",
     "table": "weapon",
-    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
-    "differences": [
-     {
-      "field": "sizeRestriction",
-      "printed": "Colossal or larger",
-      "catalog": null,
-      "note": "table footnote (1): \"Colossal or larger starships only\""
-     }
-    ],
-    "noisy": []
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "ion-cannon-light",
@@ -2816,16 +2794,9 @@
     "catalogName": "Ion Cannon, Heavy",
     "printedName": "Ion cannon, heavy (1)",
     "table": "weapon",
-    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
-    "differences": [
-     {
-      "field": "sizeRestriction",
-      "printed": "Colossal or larger",
-      "catalog": "Colossal (Frigate) or Larger",
-      "note": "table footnote (1): \"Colossal or larger starships only\""
-     }
-    ],
-    "noisy": []
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "laser-cannon-light",
@@ -2888,16 +2859,9 @@
     "catalogName": "Turbolaser, Light",
     "printedName": "Turbolaser, light (1)",
     "table": "weapon",
-    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
-    "differences": [
-     {
-      "field": "sizeRestriction",
-      "printed": "Colossal or larger",
-      "catalog": "Colossal (Frigate) or Larger",
-      "note": "table footnote (1): \"Colossal or larger starships only\""
-     }
-    ],
-    "noisy": []
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "turbolaser-medium",
@@ -2905,16 +2869,9 @@
     "catalogName": "Turbolaser, Medium",
     "printedName": "Turbolaser, medium (1)",
     "table": "weapon",
-    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
-    "differences": [
-     {
-      "field": "sizeRestriction",
-      "printed": "Colossal or larger",
-      "catalog": "Colossal (Frigate) or Larger",
-      "note": "table footnote (1): \"Colossal or larger starships only\""
-     }
-    ],
-    "noisy": []
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "turbolaser-heavy",
@@ -2922,16 +2879,9 @@
     "catalogName": "Turbolaser, Heavy",
     "printedName": "Turbolaser, heavy (1)",
     "table": "weapon",
-    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
-    "differences": [
-     {
-      "field": "sizeRestriction",
-      "printed": "Colossal or larger",
-      "catalog": "Colossal (Frigate) or Larger",
-      "note": "table footnote (1): \"Colossal or larger starships only\""
-     }
-    ],
-    "noisy": []
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "tractor-beam",
@@ -2958,16 +2908,9 @@
     "catalogName": "Point-Defense System",
     "printedName": "Point-defense weapon (1)",
     "table": "weapon",
-    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
-    "differences": [
-     {
-      "field": "sizeRestriction",
-      "printed": "Colossal or larger",
-      "catalog": null,
-      "note": "table footnote (1): \"Colossal or larger starships only\""
-     }
-    ],
-    "noisy": []
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "fire-linked-2",
@@ -3114,16 +3057,9 @@
     "catalogName": "Gravity Well Projector",
     "printedName": "Gravity well projector (1)",
     "table": "weapon",
-    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
-    "differences": [
-     {
-      "field": "sizeRestriction",
-      "printed": "Colossal or larger",
-      "catalog": "Colossal (Frigate) or Larger",
-      "note": "table footnote (1): \"Colossal or larger starships only\""
-     }
-    ],
-    "noisy": []
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "docking-gun",
@@ -3156,16 +3092,9 @@
     "catalogName": "Ion Cannon, Hapan Triple",
     "printedName": "Ion cannon, Hapan triple (1)",
     "table": "weapon",
-    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
-    "differences": [
-     {
-      "field": "sizeRestriction",
-      "printed": "Colossal or larger",
-      "catalog": "Colossal (Frigate) or Larger",
-      "note": "table footnote (1): \"Colossal or larger starships only\""
-     }
-    ],
-    "noisy": []
+    "status": "SOURCE_VERIFIED_TEXT",
+    "certifiable": false,
+    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
    },
    {
     "catalogId": "space-mine-launcher-heavy",

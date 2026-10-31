@@ -1,0 +1,2225 @@
+{
+ "schema": "swse.vehicle.p6a.readiness.v1",
+ "counts": {
+  "exposeAsReference": 180,
+  "installable": 39,
+  "mechanicallyApplied": 37,
+  "combatUsable": 0
+ },
+ "rows": [
+  {
+   "catalogId": "atmospheric-thrusters",
+   "name": "Atmospheric Thrusters",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "CONDITIONAL_EFFECT_NOT_APPLIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "atmospheric-thrusters-advanced",
+   "name": "Atmospheric Thrusters, Advanced",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "CONDITIONAL_EFFECT_NOT_APPLIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "combat-thrusters",
+   "name": "Combat Thrusters",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "EFFECT_NOT_IMPLEMENTED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "hyperdrive-075",
+   "name": "Hyperdrive, Class 0.75",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "hyperdrive-1",
+   "name": "Hyperdrive, Class 1",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "hyperdrive-15",
+   "name": "Hyperdrive, Class 1.5",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "hyperdrive-2",
+   "name": "Hyperdrive, Class 2",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "hyperdrive-3",
+   "name": "Hyperdrive, Class 3",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "hyperdrive-4",
+   "name": "Hyperdrive, Class 4",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "hyperdrive-5",
+   "name": "Hyperdrive, Class 5",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "hyperdrive-6",
+   "name": "Hyperdrive, Class 6",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "hyperdrive-8",
+   "name": "Hyperdrive, Class 8",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "hyperdrive-10",
+   "name": "Hyperdrive, Class 10",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "hyperdrive-15-class",
+   "name": "Hyperdrive, Class 15",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "maneuvering-jets-2",
+   "name": "Maneuvering Jets +2",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "maneuvering-jets-4",
+   "name": "Maneuvering Jets +4",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "maneuvering-jets-6",
+   "name": "Maneuvering Jets +6",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "navicomputer-limited",
+   "name": "Navicomputer, Limited",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "EFFECT_NOT_IMPLEMENTED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "navicomputer",
+   "name": "Navicomputer",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "EFFECT_NOT_IMPLEMENTED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "navicomputer-advanced",
+   "name": "Navicomputer, Advanced",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "EFFECT_NOT_IMPLEMENTED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "sublight-accelerator",
+   "name": "SubLight Accelerator Motor (SLAM)",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "EFFECT_NOT_IMPLEMENTED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "sublight-drive-1",
+   "name": "Sublight Drive (Speed 1 Square)",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "EFFECT_NOT_IMPLEMENTED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "sublight-drive-2",
+   "name": "Sublight Drive (Speed 2 Squares)",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "EFFECT_NOT_IMPLEMENTED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "sublight-drive-3",
+   "name": "Sublight Drive (Speed 3 Squares)",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "EFFECT_NOT_IMPLEMENTED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "sublight-drive-4",
+   "name": "Sublight Drive (Speed 4 Squares)",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "EFFECT_NOT_IMPLEMENTED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "sublight-drive-5",
+   "name": "Sublight Drive (Speed 5 Squares)",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "EFFECT_NOT_IMPLEMENTED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "sublight-drive-6",
+   "name": "Sublight Drive (Speed 6 Squares)",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "EFFECT_NOT_IMPLEMENTED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "armor-1",
+   "name": "Starship Armor, +1",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "armor-2",
+   "name": "Starship Armor, +2",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "armor-3",
+   "name": "Starship Armor, +3",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "armor-4",
+   "name": "Starship Armor, +4",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "jamming-suite",
+   "name": "Jamming Suite",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "EFFECT_NOT_IMPLEMENTED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "jamming-array",
+   "name": "Jamming Array",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "EFFECT_NOT_IMPLEMENTED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "regenerating-shields",
+   "name": "Regenerating Shields",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "EFFECT_NOT_IMPLEMENTED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "reinforced-bulkheads-10",
+   "name": "Reinforced Bulkheads, +10%",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "EFFECT_NOT_IMPLEMENTED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "reinforced-bulkheads-20",
+   "name": "Reinforced Bulkheads, +20%",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "EFFECT_NOT_IMPLEMENTED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "reinforced-bulkheads-30",
+   "name": "Reinforced Bulkheads, +30%",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "EFFECT_NOT_IMPLEMENTED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "shields-10",
+   "name": "Starship Shields, SR 10",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "shields-15",
+   "name": "Starship Shields, SR 15",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "shields-20",
+   "name": "Starship Shields, SR 20",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "shields-25",
+   "name": "Starship Shields, SR 25",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "shields-30",
+   "name": "Starship Shields, SR 30",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "shields-35",
+   "name": "Starship Shields, SR 35",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "shields-40",
+   "name": "Starship Shields, SR 40",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "shields-45",
+   "name": "Starship Shields, SR 45",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "shields-50",
+   "name": "Starship Shields, SR 50",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "shields-55",
+   "name": "Starship Shields, SR 55",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "shields-60",
+   "name": "Starship Shields, SR 60",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "shields-70",
+   "name": "Starship Shields, SR 70",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "shields-80",
+   "name": "Starship Shields, SR 80",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "shields-90",
+   "name": "Starship Shields, SR 90",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "shields-100",
+   "name": "Starship Shields, SR 100",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "shields-125",
+   "name": "Starship Shields, SR 125",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "shields-150",
+   "name": "Starship Shields, SR 150",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "shields-175",
+   "name": "Starship Shields, SR 175",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "shields-200",
+   "name": "Starship Shields, SR 200",
+   "exposeAsReference": true,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": false,
+   "reasons": [
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "anti-boarding-systems",
+   "name": "Anti-Boarding Systems",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "com-jammers",
+   "name": "Com Jammers",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "reinforced-keel",
+   "name": "Reinforced Keel",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "reinforced-keel-boarding",
+   "name": "Reinforced Keel, Boarding",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "security-bracing",
+   "name": "Security Bracing",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "autoblaster",
+   "name": "Autoblaster",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "blaster-cannon-light",
+   "name": "Blaster Cannon, Light",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "blaster-cannon-medium",
+   "name": "Blaster Cannon, Medium",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "blaster-cannon-heavy",
+   "name": "Blaster Cannon, Heavy",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "cannon-double",
+   "name": "Cannon, Double",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "cannon-quad",
+   "name": "Cannon, Quad",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "cannon-enhancement",
+   "name": "Cannon Enhancements",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "cannon-enhancement-advanced",
+   "name": "Cannon Enhancements, Advanced",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "concussion-missile-launcher-light",
+   "name": "Concussion Missile Launcher, Light",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "concussion-missile-light",
+   "name": "Concussion Missile, Light",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "concussion-missile-launcher-medium",
+   "name": "Concussion Missile Launcher, Medium",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "concussion-missile-medium",
+   "name": "Concussion Missile, Medium",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "concussion-missile-launcher-heavy",
+   "name": "Concussion Missile Launcher, Heavy",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "concussion-missile-heavy",
+   "name": "Concussion Missile, Heavy",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "ion-cannon-light",
+   "name": "Ion Cannon, Light",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "ion-cannon-medium",
+   "name": "Ion Cannon, Medium",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "ion-cannon-heavy",
+   "name": "Ion Cannon, Heavy",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "laser-cannon-light",
+   "name": "Laser Cannon, Light",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "laser-cannon-medium",
+   "name": "Laser Cannon, Medium",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "laser-cannon-heavy",
+   "name": "Laser Cannon, Heavy",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "proton-torpedo-launcher",
+   "name": "Proton Torpedo Launcher",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "proton-torpedo",
+   "name": "Proton Torpedo",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "turbolaser-light",
+   "name": "Turbolaser, Light",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "turbolaser-medium",
+   "name": "Turbolaser, Medium",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "turbolaser-heavy",
+   "name": "Turbolaser, Heavy",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "tractor-beam",
+   "name": "Tractor Beam",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "point-defense",
+   "name": "Point-Defense System",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "fire-linked-2",
+   "name": "Fire-Linked Weapon, 2",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "fire-linked-4",
+   "name": "Fire-Linked Weapon, 4",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "space-mine-launcher",
+   "name": "Space Mine Launcher",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "space-mine-standard",
+   "name": "Space Mine, Standard",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "ion-bomb-rack",
+   "name": "Ion Bomb Rack",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "ion-bomb",
+   "name": "Ion Bomb",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "shieldbuster-torpedo-launcher",
+   "name": "Shieldbuster Torpedo Launcher",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "shieldbuster-torpedo",
+   "name": "Shieldbuster Torpedo",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "discord-missile-launcher",
+   "name": "Discord Missile Launcher",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "discord-missile",
+   "name": "Discord Missile",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "gravity-mine-launcher",
+   "name": "Gravity Mine Launcher",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "gravity-mine-standard",
+   "name": "Gravity Mine, Standard",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "harpoon-gun",
+   "name": "Harpoon Gun",
+   "exposeAsReference": false,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_FOUND_IN_SOURCE",
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "droid-jammer",
+   "name": "Droid Jammer",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "gravity-well-projector",
+   "name": "Gravity Well Projector",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "docking-gun",
+   "name": "Docking Gun",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "fire-linked-optional",
+   "name": "Fire-Linked Weapon, Optional",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "ion-cannon-hapan-triple",
+   "name": "Ion Cannon, Hapan Triple",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "space-mine-launcher-heavy",
+   "name": "Space Mine Launcher, Heavy",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "space-mine-advanced",
+   "name": "Space Mine, Advanced",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "space-mine-heavy",
+   "name": "Space Mine, Heavy",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "gravity-mine-magnetic",
+   "name": "Gravity Mine, Magnetic",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "composite-beam-cannon",
+   "name": "Composite Beam Cannon",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "energy-bomblet-generator",
+   "name": "Energy Bomblet Generator",
+   "exposeAsReference": false,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_FOUND_IN_SOURCE",
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "heavy-ordnance-launcher",
+   "name": "Heavy Ordnance Launcher",
+   "exposeAsReference": false,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_FOUND_IN_SOURCE",
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "ion-pulse-cannon",
+   "name": "Ion Pulse Cannon",
+   "exposeAsReference": false,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_FOUND_IN_SOURCE",
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "mass-driver-cannon-standard",
+   "name": "Mass-Driver Cannon, Standard",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "mass-driver-cannon-heavy",
+   "name": "Mass-Driver Cannon, Heavy",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "microtractor-pressor",
+   "name": "Microtractor-Pressor",
+   "exposeAsReference": false,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_FOUND_IN_SOURCE",
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "proton-grenade-launcher",
+   "name": "Proton Grenade Launcher",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "proton-grenade",
+   "name": "Proton Grenade",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "rail-cannon",
+   "name": "Rail Cannon",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "anti-aircraft-flak-pod",
+   "name": "Anti-Aircraft Flak Pod",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "chaff-gun",
+   "name": "Chaff Gun",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "defoliator-launcher",
+   "name": "Defoliator Launcher",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "defoliator-shell",
+   "name": "Defoliator Shell",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "cargo-jettison",
+   "name": "Cargo Jettison System",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "cargo-pod-light",
+   "name": "Cargo Pod, Light",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "cargo-pod-medium",
+   "name": "Cargo Pod, Medium",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "cargo-pod-heavy",
+   "name": "Cargo Pod, Heavy",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "cloaking-hibridium",
+   "name": "Cloaking Device, Hibridium",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "cloaking-stygium",
+   "name": "Cloaking Device, Stygium",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "cryogenic-chambers",
+   "name": "Cryogenic Chambers",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "docking-clamps",
+   "name": "Docking Clamps",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "droid-repair-team",
+   "name": "Droid Repair Team",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "escape-pod-small",
+   "name": "Escape Pod, Small Lifeboat",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "escape-pod-large",
+   "name": "Escape Pod, Large Lifeboat",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "extended-range",
+   "name": "Extended Range",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "hangar-bay",
+   "name": "Hangar Bay",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "hangar-bay-concealed",
+   "name": "Hangar Bay, Concealed",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "holonet-transceiver",
+   "name": "Transceiver, HoloNet",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "hyper-transceiver",
+   "name": "Transceiver, Hyper",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "luxury-basic",
+   "name": "Luxury Upgrade, Basic",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "luxury-advanced",
+   "name": "Luxury Upgrade, Advanced",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "luxury-extreme",
+   "name": "Luxury Upgrade, Extreme",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "medical-suite",
+   "name": "Medical Suite",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "passenger-seating",
+   "name": "Passenger Conversion, Seating",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "passenger-quarters",
+   "name": "Passenger Conversion, Quarters",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "sensor-array-2",
+   "name": "Sensor Array Computer +2",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "sensor-array-4",
+   "name": "Sensor Array Computer +4",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "sensor-array-6",
+   "name": "Sensor Array Computer +6",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "sensor-enhancement",
+   "name": "Sensor Enhancement Package",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "slave-circuits-basic",
+   "name": "Slave Circuits, Basic",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "slave-circuits-advanced",
+   "name": "Slave Circuits, Advanced",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "slave-circuits-recall",
+   "name": "Slave Circuits, Recall",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "smuggler-compartments",
+   "name": "Smuggler's Compartments",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "transponder-iff",
+   "name": "Transponder, IFF",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "transponder-masked",
+   "name": "Transponder, Masked",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "transponder-disguised-1",
+   "name": "Transponder, Disguised (Basic)",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "transponder-disguised-2",
+   "name": "Transponder, Disguised (Improved)",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "transponder-disguised-3",
+   "name": "Transponder, Disguised (Superior)",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "amphibious-seals",
+   "name": "Amphibious Seals",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "auxiliary-generators-2",
+   "name": "Auxiliary Generators +2",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "auxiliary-generators-4",
+   "name": "Auxiliary Generators +4",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "auxiliary-generators-6",
+   "name": "Auxiliary Generators +6",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "backup-battery",
+   "name": "Backup Battery",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "baffled-drive",
+   "name": "Baffled Drive",
+   "exposeAsReference": false,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_FOUND_IN_SOURCE",
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "cockpit-ejection",
+   "name": "Cockpit Ejection System",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "cofferdam",
+   "name": "Cofferdam",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "environmental-filters",
+   "name": "Environmental Filters",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "fuel-converters",
+   "name": "Fuel Converters",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "grappler-mag",
+   "name": "Grappler Mag",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "hardpoint",
+   "name": "Hardpoint",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "hidden-cargo-25",
+   "name": "Hidden Cargo Hold (25% of Cargo)",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "hidden-cargo-50",
+   "name": "Hidden Cargo Hold (50% of Cargo)",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "hidden-cargo-75",
+   "name": "Hidden Cargo Hold (75% of Cargo)",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "holding-cells-25",
+   "name": "Holding Cells (25% of Passengers)",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "holding-cells-50",
+   "name": "Holding Cells (50% of Passengers)",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "holding-cells-75",
+   "name": "Holding Cells (75% of Passengers)",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "interrogation-chamber",
+   "name": "Interrogation Chamber",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "personalized-controls",
+   "name": "Personalized Controls",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "sensor-baffling",
+   "name": "Sensor Baffling",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "sensor-decoy",
+   "name": "Sensor Decoy",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "sensor-mask",
+   "name": "Sensor Mask",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "workshop",
+   "name": "Workshop",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "launch-bay",
+   "name": "Launch Bay",
+   "exposeAsReference": false,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_FOUND_IN_SOURCE",
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "plasma-punch",
+   "name": "Plasma Punch",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "plasma-torch",
+   "name": "Plasma Torch",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  },
+  {
+   "catalogId": "tractor-clamp",
+   "name": "Tractor Clamp",
+   "exposeAsReference": true,
+   "installable": false,
+   "mechanicallyApplied": false,
+   "combatUsable": false,
+   "reasons": [
+    "NOT_SOURCE_VERIFIED",
+    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+   ]
+  }
+ ]
+}
