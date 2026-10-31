@@ -7,6 +7,8 @@
  * customization surface.
  */
 
+import { buildVehicleAssetSummary, loadUnusedEpTable } from '/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-schema-view-model.js';
+
 function asArray(value) {
   if (Array.isArray(value)) return value;
   if (!value) return [];
@@ -217,22 +219,19 @@ function followerSlotReferences(ownerActor) {
   return refs;
 }
 
-function detailLine(entry, actor = null, mode = 'garage') {
+function detailLine(entry, actor = null, mode = 'garage', vehicle = null) {
   const system = actor?.system ?? entry?.system ?? {};
-  if (mode === 'shipyard') {
-    return String(system.model ?? system.vehicleModel ?? system.frame ?? system.size ?? entry?.model ?? entry?.role ?? 'Vehicle');
-  }
+  // Vehicles: published/custom identity comes from the runtime schema, never from legacy system.model/frame.
+  if (mode === 'shipyard' && vehicle) return `${vehicle.originLabel}${vehicle.sourceLabel ? ' · ' + vehicle.sourceLabel : ''}`;
+  if (mode === 'shipyard') return String(entry?.model ?? entry?.role ?? 'Vehicle');
   return String(system.droidModel ?? system.model ?? system.droidType ?? entry?.model ?? entry?.role ?? 'Droid');
 }
 
-function statusLine(entry, actor = null, mode = 'garage') {
+function statusLine(entry, actor = null, mode = 'garage', vehicle = null) {
   if (!actor) return 'Link unresolved';
   if (mode === 'shipyard') {
-    const hull = actor.system?.hull ?? actor.system?.hp ?? {};
-    const shields = actor.system?.shields ?? actor.system?.shield ?? {};
-    const hullText = hull?.max ? `Hull ${hull.value ?? 0}/${hull.max}` : 'Hull —';
-    const shieldText = shields?.max ? `Shields ${shields.value ?? 0}/${shields.max}` : 'Shields —';
-    return `${hullText} · ${shieldText}`;
+    if (!vehicle) return 'HP —';
+    return [vehicle.hpLabel, vehicle.shieldLabel, vehicle.installationLabel].join(' · ');
   }
   const hp = actor.system?.hp ?? actor.system?.hitPoints ?? {};
   const hpText = hp?.max ? `HP ${hp.value ?? 0}/${hp.max}` : 'HP —';
@@ -240,7 +239,7 @@ function statusLine(entry, actor = null, mode = 'garage') {
   return `${hpText} · ${source}`;
 }
 
-function collectOwnedEntries(ownerActor, mode) {
+function collectOwnedEntries(ownerActor, mode, epTable = null) {
   const normalizedMode = normalizeBayMode(mode);
   const system = ownerActor?.system ?? {};
   const candidates = [
@@ -278,6 +277,12 @@ function collectOwnedEntries(ownerActor, mode) {
     seen.add(dedupeKey);
 
     const isShipyard = assetMode === 'shipyard';
+    // Compact, read-only runtime-schema summary (HP, shields, installs, construction). Never throws into the Bay.
+    let vehicle = null;
+    if (isShipyard && actor) {
+      try { vehicle = buildVehicleAssetSummary(actor, { epTable }); }
+      catch (err) { vehicle = { originLabel: 'Vehicle record unavailable', hpLabel: 'HP —', shieldLabel: 'Shields —', installationLabel: 'Installations unavailable', constructionLabel: null, epLabel: null, sourceLabel: null, origin: 'UNAVAILABLE' }; }
+    }
     assets.push({
       id,
       actorId: actor?.id ?? id,
@@ -288,8 +293,13 @@ function collectOwnedEntries(ownerActor, mode) {
       bayMode: assetMode,
       kindLabel: isShipyard ? 'Ship / Vehicle' : 'Droid',
       kindIcon: isShipyard ? 'fa-rocket' : 'fa-robot',
-      detail: detailLine(entry, actor, assetMode),
-      status: statusLine(entry, actor, assetMode),
+      detail: detailLine(entry, actor, assetMode, vehicle),
+      status: statusLine(entry, actor, assetMode, vehicle),
+      vehicle,
+      vehicleOrigin: vehicle?.origin ?? null,
+      constructionLine: vehicle?.constructionLabel ?? null,
+      epLine: vehicle?.epLabel ?? null,
+      ownership: actor?.id ? (actor.isOwner === true ? 'You own this sheet' : actor.isOwner === false ? 'View only' : '') : '',
       isLinked: Boolean(actor?.id),
       canOpenSheet: Boolean(actor?.id),
       canModify: Boolean(actor?.id),
@@ -309,7 +319,8 @@ function collectOwnedEntries(ownerActor, mode) {
 export class AssetBaySurfaceService {
   static async buildViewModel(actor, options = {}) {
     const mode = normalizeBayMode(options.bayMode || options.mode || 'all');
-    const assets = collectOwnedEntries(actor, mode);
+    const epTable = options.epTable !== undefined ? options.epTable : await loadUnusedEpTable();
+    const assets = collectOwnedEntries(actor, mode, epTable);
     const droidCount = assets.filter(asset => asset.bayMode === 'garage').length;
     const shipCount = assets.filter(asset => asset.bayMode === 'shipyard').length;
     const isShipyard = mode === 'shipyard';

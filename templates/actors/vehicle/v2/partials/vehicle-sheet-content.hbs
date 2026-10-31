@@ -132,6 +132,7 @@
       </section>
 
       <section class="tab flexcol" data-group="primary" data-tab="stats">
+        {{#if schemaView}}{{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-schema-panel.hbs" view=schemaView}}{{/if}}
         {{#if publicationView}}
           {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-publication-panel.hbs" view=publicationView}}
           {{!-- Printed armament lives on the always-present Stats tab: Operations is absent for some categories. --}}

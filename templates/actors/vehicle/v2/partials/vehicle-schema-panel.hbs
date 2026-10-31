@@ -1,0 +1,79 @@
+{{!-- Read-only schema panel (P0-P5). Source: schemaView (vehicle-schema-view-model.js). No form inputs:
+      ledger, construction record and provenance are changed only through governed services. --}}
+<section class="swse-vehicle-panel swse-vehicle-schema-panel" data-vehicle-origin="{{view.origin}}">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">Vehicle Record</h3>
+    <span class="swse-vehicle-mini-badge">{{view.identity.badge}}</span>
+  </header>
+  <div class="swse-vehicle-panel-body swse-vehicle-kv-list">
+    {{#unless view.identity.published}}
+      <div><span>Call Sign</span><strong>{{view.identity.callSign}}</strong></div>
+      <div><span>Origin</span><strong>{{view.identity.sourceLabel}}</strong></div>
+      {{#if view.identity.stockFrame}}<div><span>Stock Frame</span><strong>{{view.identity.stockFrame}}</strong></div>{{/if}}
+    {{/unless}}
+    {{#each view.reasons}}<div class="swse-vehicle-warning" data-reason="{{this}}"><span>Notice</span><strong>{{this}}</strong></div>{{/each}}
+  </div>
+</section>
+
+{{#if view.construction}}
+<section class="swse-vehicle-panel swse-vehicle-construction-panel" data-approval="{{view.construction.approvalStatus}}">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">Construction</h3>
+    <span class="swse-vehicle-mini-badge">{{view.construction.statusLabel}}</span>
+  </header>
+  <div class="swse-vehicle-panel-body swse-vehicle-kv-list">
+    <div><span>Authorship</span><strong>{{view.construction.rulesLabel}}</strong></div>
+    <div><span>Frame</span><strong>{{view.construction.frame}} ({{view.construction.frameClass}})</strong></div>
+    <div><span>Crew Quality</span><strong>{{view.construction.crewQualityLabel}}</strong></div>
+    <div><span>Base Frame Cost</span><strong>{{#if view.construction.baseFrameCredits}}{{view.construction.baseFrameCredits}} cr{{else}}Unresolved{{/if}}</strong></div>
+    <div><span>System Costs</span><strong>{{view.construction.systemCredits}} cr</strong></div>
+    <div><span>Total Cost</span><strong>{{#if view.construction.totalCredits}}{{view.construction.totalCredits}} cr{{else}}Unresolved{{/if}}</strong></div>
+    <div><span>Design Time</span><strong>{{view.construction.designTimeLabel}}</strong></div>
+    <div><span>Mechanics DC</span><strong>{{view.construction.mechanicsDCLabel}}</strong></div>
+    {{#each view.construction.outstanding}}<div class="swse-vehicle-warning"><span>Outstanding</span><strong>{{this}}</strong></div>{{/each}}
+  </div>
+</section>
+{{/if}}
+
+<section class="swse-vehicle-panel swse-vehicle-ep-panel" data-ep-state="{{view.ep.state}}">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">Emplacement Points</h3>
+    <span class="swse-vehicle-mini-badge">{{view.ep.state}}</span>
+  </header>
+  <div class="swse-vehicle-panel-body swse-vehicle-kv-list">
+    <div><span>Status</span><strong>{{view.ep.label}}</strong></div>
+    {{#if view.ep.nonstandardCount}}<div><span>Nonstandard Installs</span><strong>{{view.ep.nonstandardCount}} (EP x2, cost x5)</strong></div>{{/if}}
+  </div>
+</section>
+
+<section class="swse-vehicle-panel swse-vehicle-installed-panel" data-certification="{{view.installed.certification}}">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">Certified Installed Systems</h3>
+    <span class="swse-vehicle-mini-badge">{{view.installed.count}}</span>
+  </header>
+  <div class="swse-vehicle-panel-body">
+    {{#each view.installed.entries}}
+      <div class="swse-vehicle-installed-row" data-install-id="{{installId}}">
+        <strong>{{name}}</strong> <em>{{category}}</em> — {{certification}}{{#if source}} ({{source}}){{/if}}
+        · EP {{epCost}} · {{priceCredits}} cr · {{standard}} · {{effectLabel}}
+        {{#if weapon}}· {{mountLabel}} · {{weaponLabel}}{{/if}}
+      </div>
+    {{else}}
+      <p>No certified installations.</p>
+    {{/each}}
+    {{#if view.installed.rejected}}<p class="swse-vehicle-warning">{{view.installed.rejected}} ledger entr{{#if (eq view.installed.rejected 1)}}y{{else}}ies{{/if}} failed verification and are ignored.</p>{{/if}}
+    {{#if view.installed.uncertifiedWeaponItems}}<p>{{view.installed.uncertifiedWeaponItems}} weapon item(s) are not certified and cannot fire.</p>{{/if}}
+  </div>
+</section>
+
+<section class="swse-vehicle-panel swse-vehicle-effective-panel">
+  <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Effective Statistics</h3></header>
+  <div class="swse-vehicle-panel-body">
+    {{#each view.effective}}
+      <div class="swse-vehicle-stat-row" data-stat="{{label}}">
+        <span>{{label}}</span> Base <strong>{{baseLabel}}</strong> · Modifications <em>{{modification}}</em>
+        · Effective <strong>{{#if effective}}{{effective}}{{else}}{{baseLabel}}{{/if}}</strong>{{#if current}} · Current <strong>{{current}}</strong>{{/if}}
+      </div>
+    {{/each}}
+  </div>
+</section>

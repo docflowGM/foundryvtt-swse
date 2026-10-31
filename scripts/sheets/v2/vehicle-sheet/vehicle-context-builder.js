@@ -8,6 +8,7 @@
 
 import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
 import { getVehicleRuntimeProjection } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
+import { buildVehicleSchemaViewModel } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-schema-view-model.js";
 import { buildVehiclePublicationViewModel, buildPublishedCrewSummary, describeShield, SOURCE_UNKNOWN } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-publication-view-model.js";
 import { getStationSkillActions } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-skill-router.js";
 import { resolveVehicleCrewStations } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-resolver.js";
@@ -1237,6 +1238,8 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
   // One P0 selector is the source/current/installed authority. The sheet
   // may compose display labels but may never re-interpret source flags as
   // certified equipment or infer publication facts from mutable state.
+  // An invalid-canonical Actor throws here; the sheet's caller surfaces that. The schema view model below
+  // reports the same condition as an explicit state when asked directly (Asset Bay).
   const vehicleRuntimeProjection = getVehicleRuntimeProjection(actor);
   const published = vehicleRuntimeProjection?.published;
   const source = vehicleRuntimeProjection?.source;
@@ -1323,6 +1326,7 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
     vehicleRuntimeProjection,
     vehiclePublication,
     publicationView,
+    schemaView: buildVehicleSchemaViewModel(actor, { epTable: options.epTable ?? null }),
     vehicleResourceStrip,
     vehicleConceptTabs,
     vehicleAnnotation,

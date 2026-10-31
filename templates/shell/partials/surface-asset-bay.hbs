@@ -83,6 +83,9 @@
               <h3>{{asset.name}}</h3>
               <div class="swse-asset-bay-card__detail">{{asset.detail}}</div>
               <div class="swse-asset-bay-card__status">{{asset.status}}</div>
+              {{#if asset.constructionLine}}<div class="swse-asset-bay-card__construction">{{asset.constructionLine}}</div>{{/if}}
+              {{#if asset.epLine}}<div class="swse-asset-bay-card__ep">{{asset.epLine}}</div>{{/if}}
+              {{#if asset.ownership}}<div class="swse-asset-bay-card__ownership">{{asset.ownership}}</div>{{/if}}
             </div>
             <div class="swse-asset-bay-card__actions">
               <button type="button"

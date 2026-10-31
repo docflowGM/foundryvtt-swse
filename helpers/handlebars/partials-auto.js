@@ -77,6 +77,7 @@ const PARTIALS = [
   "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-crew-assignment-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-crew-summary-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-publication-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-schema-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-attack-reference-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-defenses-panel-full.hbs",
   "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-header-summary-panel.hbs",

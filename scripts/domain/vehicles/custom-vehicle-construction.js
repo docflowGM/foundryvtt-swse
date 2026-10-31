@@ -238,6 +238,7 @@ export function buildConstructionRecord({ designId, name, frame, validation, aut
       certifiedPublishedRules: approved && authorship.kind === 'rules-legal' },
     approval: { status: approved ? 'APPROVED' : 'PENDING_APPROVAL', verifiedBy: approved ? 'system-authority-check' : null },
     crewQuality, installedSystems: validation.installedSystems, totalCredits: validation.totalCredits,
+    designStatus: validation.status, design: validation.design ?? null,
     derived: validation.preview.derived, pending: validation.preview.pending
   });
 }
