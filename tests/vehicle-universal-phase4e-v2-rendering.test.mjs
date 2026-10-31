@@ -82,7 +82,7 @@ t('published, custom-built, pending, unverified and invalid vehicles each render
   assert.match(unverified, /CUSTOM_UNVERIFIED_RECORD/);
   assert.doesNotMatch(unverified, /Approved for construction/);
   assert.match(unverified, /CONSTRUCTION_RECORD_DIGEST_MISMATCH/);
-  assert.doesNotMatch(pub + built + unverified, /<input|<select/);
+  assert.doesNotMatch(pub + built + unverified, /<input|<textarea/);
 });
 
 t('invalid published provenance: the sheet context does not throw and renders a verification failure only', () => {

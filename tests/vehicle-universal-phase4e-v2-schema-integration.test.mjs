@@ -202,7 +202,9 @@ test('summary never reads hull and exposes compact fields', () => {
 
 test('templates: schema panel is read-only (no inputs, no ledger/construction fields)', () => {
   const t = readFileSync('templates/actors/vehicle/v2/partials/vehicle-schema-panel.hbs', 'utf8');
-  assert.doesNotMatch(t, /<input|<select|<textarea|name="/);
+  assert.doesNotMatch(t, /<input|<textarea|name="/);
+  // the only control is the Shipyard catalog chooser; it carries no ledger/construction data
+  assert.deepEqual(t.match(/<select[^>]*>/g), ['<select data-shipyard-select="catalog">']);
   assert.doesNotMatch(t, /installedSystems|system\.weapons|system\.hull/);
   const content = readFileSync('templates/actors/vehicle/v2/partials/vehicle-sheet-content.hbs', 'utf8');
   assert.match(content, /vehicle-schema-panel\.hbs/);
