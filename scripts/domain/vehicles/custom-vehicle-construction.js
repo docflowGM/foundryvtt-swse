@@ -90,9 +90,13 @@ export function previewFrame(frame, { armorBonusFromSystems = 0, crewQuality = n
 export function designTime({ finalCredits, designers = 1, rounding } = {}) {
   if (!finite(finalCredits) || finalCredits < 0 || !Number.isInteger(designers) || designers < 1)
     return { ok: false, reasons: ['DESIGN_INPUT_INVALID'] };
-  if (rounding !== 'floor' && rounding !== 'ceil') return { ok: false, reasons: ['DESIGN_TIME_ROUNDING_UNRULED'] };
   // Several designers with the feat divide the cost used for TIME; the DC uses the full cost.
-  const steps = cost => (cost <= 100000 ? 0 : Math[rounding]((cost - 100000) / 100000));
+  // The rounding of a partial 100,000 is unruled; when floor and ceil agree for both quantities (cost at or below
+  // the first 100,000, or an exact multiple) no ruling is needed and the result is exact.
+  const raw = cost => (cost <= 100000 ? 0 : (cost - 100000) / 100000);
+  const decided = [raw(finalCredits / designers), raw(finalCredits)].every(x => Math.floor(x) === Math.ceil(x));
+  if (!decided && rounding !== 'floor' && rounding !== 'ceil') return { ok: false, reasons: ['DESIGN_TIME_ROUNDING_UNRULED'] };
+  const steps = cost => (decided ? raw(cost) : Math[rounding](raw(cost)));
   return { ok: true, reasons: [], days: 30 + steps(finalCredits / designers), mechanicsDC: 25 + steps(finalCredits) };
 }
 

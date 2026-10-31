@@ -112,7 +112,8 @@ test('previewable -> rules-validated -> approved: each tier needs more', () => {
   assert.deepEqual([noCrew.status, noCrew.previewable, noCrew.rulesValidated, noCrew.approved], ['PREVIEWABLE', true, false, false]);
   assert.deepEqual(noCrew.unresolved, ['CREW_QUALITY_NOT_CHOSEN']);
 
-  const noRounding = C.validateDesign(design({ rules: rulesWith({ designRounding: undefined }) }));
+  // cost 201,000: a partial 100,000 whose rounding is unruled (frame-only costs are exact multiples and need no ruling)
+  const noRounding = C.validateDesign(design({ frame: frame('gunship'), systems: [{ catalogEntry: row({ costType: 'flat', emplacementPoints: 0 }), installId: 's1' }], rules: rulesWith({ designRounding: undefined }) }));
   assert.equal(noRounding.status, 'PREVIEWABLE');
   assert.equal(noRounding.rulesValidated, false);
   assert.deepEqual(noRounding.unresolved, ['DESIGN_TIME_ROUNDING_UNRULED']);
@@ -130,9 +131,10 @@ test('previewable -> rules-validated -> approved: each tier needs more', () => {
 });
 
 test('a design with an unresolved required rule cannot be recorded as certified (fail closed)', () => {
-  const v = C.validateDesign(design({ rules: rulesWith({ designRounding: undefined }), authority: { verified: true } }));
+  const gunshipDesign = { frame: frame('gunship'), systems: [{ catalogEntry: row({ costType: 'flat', emplacementPoints: 0 }), installId: 's1' }] };
+  const v = C.validateDesign(design({ ...gunshipDesign, rules: rulesWith({ designRounding: undefined }), authority: { verified: true } }));
   assert.equal(v.approved, false, 'authority alone cannot approve while a required rule is unresolved');
-  assert.throws(() => C.buildConstructionRecord({ designId: 'd1', name: 'Test Ship', frame: frame('superiority-fighter'), validation: v, authorship: claims, crewQuality: 'skilled' }),
+  assert.throws(() => C.buildConstructionRecord({ designId: 'd1', name: 'Test Ship', frame: frame('gunship'), validation: v, authorship: claims, crewQuality: 'skilled' }),
     /CUSTOM_VEHICLE_DESIGN_INVALID.*DESIGN_TIME_ROUNDING_UNRULED/);
 });
 
@@ -225,6 +227,9 @@ test('design time: 30 days / DC 25, +1 per additional 100,000 credits; rounding 
   assert.equal(two.days, 30 + 4);
   assert.equal(two.mechanicsDC, 25 + 10);
   assert.deepEqual(C.designTime({ finalCredits: 250_000 }).reasons, ['DESIGN_TIME_ROUNDING_UNRULED']);
+  // exact multiples and costs within the first 100,000 need no rounding ruling
+  assert.deepEqual(C.designTime({ finalCredits: 200_000 }), { ok: true, reasons: [], days: 31, mechanicsDC: 26 });
+  assert.deepEqual(C.designTime({ finalCredits: 50_000 }), { ok: true, reasons: [], days: 30, mechanicsDC: 25 });
   assert.deepEqual(C.designTime({ finalCredits: -1, rounding: 'floor' }).reasons, ['DESIGN_INPUT_INVALID']);
 });
 
