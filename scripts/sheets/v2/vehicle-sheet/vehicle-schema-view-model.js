@@ -111,6 +111,9 @@ function constructionView(c) {
     totalCredits: finite(c.totalCredits) ? c.totalCredits : null,
     systemCredits: sysCost,
     baseFrameCredits: finite(c.totalCredits) ? c.totalCredits - sysCost : null,
+    totalCreditsLabel: creditsLabel(c.totalCredits),
+    systemCreditsLabel: creditsLabel(sysCost),
+    baseFrameCreditsLabel: creditsLabel(finite(c.totalCredits) ? c.totalCredits - sysCost : null),
     designStatus: c.designStatus ?? null,
     designTime: c.design?.days ?? null,
     mechanicsDC: c.design?.mechanicsDC ?? null,
@@ -121,10 +124,20 @@ function constructionView(c) {
   };
 }
 
+/** Explicit numeric presence: 0 is a value, never "absent" (Handlebars truthiness would hide it). */
+function presence(effective, current) {
+  return {
+    effectiveLabel: finite(effective) ? String(effective) : SOURCE_UNKNOWN,
+    hasCurrent: finite(current), currentLabel: finite(current) ? String(current) : ''
+  };
+}
+const creditsLabel = n => (finite(n) ? `${n} cr` : UNRESOLVED);
+
 function statRow(label, base, modification, current = null) {
   return {
     label, base: finite(base) ? base : null, baseLabel: finite(base) ? String(base) : SOURCE_UNKNOWN,
-    modification, effective: finite(base) ? base : null, current
+    modification, effective: finite(base) ? base : null, current: finite(current) ? current : null,
+    ...presence(base, current)
   };
 }
 
@@ -169,7 +182,7 @@ export function buildVehicleSchemaViewModel(actor, options = {}) {
         statRow('Hit Points', published.hitPoints.value, 'No automated modification effects', hp.value),
         statRow('Reflex Defense', published.defenses.reflex, 'No automated modification effects'),
         statRow('Fortitude Defense', published.defenses.fortitude, 'No automated modification effects'),
-        { label: 'Shield Rating', base: shield.max, baseLabel: shield.label, modification: 'No automated modification effects', effective: shield.max, current: shield.current }
+        { label: 'Shield Rating', base: shield.max, baseLabel: shield.label, modification: 'No automated modification effects', effective: shield.max, current: shield.current, ...presence(shield.max, shield.current) }
       ],
       reasons: supported ? [] : ['STARSHIP_MODIFICATION_RULES_UNSUPPORTED'],
       summaryLabel: 'Published'

@@ -1,5 +1,10 @@
 {{!-- Vehicle actor operational content; hosted by SWSEV2VehicleSheet or the shared actor shell. --}}
 <div class="swse-vehicle-actor-content swse-vehicle-sheet swse-vehicle-shell swse-vehicle-command-deck swse-vehicle-concept-sheet {{vehicleTypeFlags.cssClass}} v2 flexcol" data-vehicle-actor-content="true" data-vehicle-type="{{vehicleTypeFlags.vehicleType}}">
+{{#if vehicleSourceInvalid}}
+<header class="sheet-header swse-ui-frame swse-vehicle-concept-header"><div class="swse-vehicle-concept-identity"><div class="swse-vehicle-concept-kicker">VEHICLE DATAPAD // VERIFICATION FAILED</div><h1 class="swse-vehicle-concept-name">{{actor.name}}</h1></div></header>
+<div class="swse-vehicle-source-invalid" role="alert">This vehicle claims a published source, but the claim failed verification. Published statistics, installations and attacks are unavailable until a GM restores the record.</div>
+{{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-schema-panel.hbs" view=schemaView}}
+{{else}}
 <header class="sheet-header swse-ui-frame swse-vehicle-concept-header">
     <div class="swse-vehicle-concept-portrait">
       <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" alt="{{actor.name}}"/>
@@ -348,4 +353,5 @@
       {{#each vehicleAnnotation.chips as |chip|}}<span>{{chip.label}}</span>{{/each}}
     </footer>
   {{/if}}
+{{/if}}
 </div>

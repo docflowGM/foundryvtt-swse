@@ -152,7 +152,8 @@ test('8 damaged vehicle in the owner Asset Bay: HP from system.hp (never hull), 
   assert.doesNotMatch(card.status, /999|Hull/);
   assert.match(card.detail, /^Published/);
   assert.match(card.status, /No certified installations/);
-  assert.equal(card.ownership, 'You own this sheet');
+  assert.equal(card.ownership, 'Document permission: Owner');
+  assert.equal(card.ownedByThisActor, true);
   assert.equal(card.canOpenSheet, true);
   assert.equal(card.canModify, true);
 });

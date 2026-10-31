@@ -7,7 +7,7 @@
  */
 
 import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
-import { getVehicleRuntimeProjection } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
+import { getVehicleRuntimeProjection, classifyVehicleActorRuntime } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
 import { buildVehicleSchemaViewModel } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-schema-view-model.js";
 import { buildVehiclePublicationViewModel, buildPublishedCrewSummary, describeShield, SOURCE_UNKNOWN } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-publication-view-model.js";
 import { getStationSkillActions } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-skill-router.js";
@@ -1224,7 +1224,27 @@ function buildPublishedHpPanel(actor, view) {
  * @param {Object} options
  * @returns {Object}
  */
+/**
+ * Invalid published provenance: a read-only verification-failure display. No published statistics, derived values,
+ * rule contexts, attacks or edit tabs are built from the failed source (see vehicle-sheet-content.hbs).
+ */
+export function buildInvalidVehicleSourceContext(actor, rawContext, options = {}) {
+  return {
+    ...(rawContext ?? {}),
+    vehicleSourceInvalid: true,
+    schemaView: buildVehicleSchemaViewModel(actor, { epTable: options.epTable ?? null }),
+    publicationView: null,
+    vehiclePublication: null,
+    sourceFactsReadOnly: true,
+    vehicleTypeFlags: { cssClass: 'is-source-invalid', vehicleType: 'invalid', typeLabel: 'Verification failed' },
+    vehicleConceptTabs: [],
+    vehiclePanels: {}
+  };
+}
+
 export function buildVehicleSheetContext(actor, rawContext, options = {}) {
+  if (classifyVehicleActorRuntime(actor).kind === 'invalid-canonical')
+    return buildInvalidVehicleSourceContext(actor, rawContext, options);
   const subsystemData = options.subsystemData || null;
   const subsystemPenalties = options.subsystemPenalties || null;
   const shieldZones = options.shieldZones || null;

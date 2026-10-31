@@ -20,6 +20,7 @@
 import { ShellRouter } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js';
 import { ShellSurfaceRegistry } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellSurfaceRegistry.js';
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { assetModifyAuthorization } from '/systems/foundryvtt-swse/scripts/ui/shell/AssetBaySurfaceService.js';
 import { ShellSurfaceState } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellSurfaceState.js';
 import { ShellMutationGuard } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellMutationGuard.js';
 import { ShellUiStatePreserver } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellUiStatePreserver.js';
@@ -668,6 +669,11 @@ export function ShellHostMixin(BaseClass) {
           }
 
           if (action === 'modify') {
+            const modifyAuth = assetModifyAuthorization({ user: game.user, ownerActor: this.actor, assetActor: targetActor });
+            if (!modifyAuth.allowed) {
+              ui.notifications?.warn?.(`You cannot modify ${targetActor.name} from here (${modifyAuth.reason}).`);
+              return;
+            }
             const bayMode = bayModeFromEl || (targetActor.type === 'vehicle' ? 'shipyard' : 'garage');
             SWSELogger.log('[AssetBay] launching modification route', { bayMode, actorId: targetActor.id, actorType: targetActor.type });
             // PART 7 — Asset Bay routing symmetry (Phase 1). Garage and Shipyard

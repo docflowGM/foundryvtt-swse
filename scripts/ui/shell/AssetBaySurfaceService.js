@@ -201,6 +201,25 @@ function ownedVehicleReferencesFromActorOwnership(ownerActor) {
     }));
 }
 
+/**
+ * UI availability of Modify. Foundry document permission (actor.isOwner) is NOT in-game property ownership:
+ * a vehicle is modifiable here only when the user may edit the Actor AND it is linked to the owner actor as
+ * property (or the user is a GM). Authoritative checks remain in VehicleInstallationService/TransactionEngine.
+ */
+export function assetModifyAuthorization({ user, ownerActor, assetActor }) {
+  if (!assetActor?.id) return { allowed: false, reason: 'LINK_UNRESOLVED' };
+  if (user?.isGM) return { allowed: true, reason: null };
+  if (assetActor.isOwner !== true) return { allowed: false, reason: 'NO_DOCUMENT_PERMISSION' };
+  if (assetActor.type === 'vehicle' && !vehicleOwnerMatchesActor(assetActor, ownerActor))
+    return { allowed: false, reason: 'NOT_LINKED_AS_PROPERTY' };
+  return { allowed: true, reason: null };
+}
+
+function documentPermissionLabel(actor) {
+  if (!actor?.id) return '';
+  return actor.isOwner === true ? 'Document permission: Owner' : 'Document permission: view only';
+}
+
 function followerSlotReferences(ownerActor) {
   const refs = [];
   for (const slot of asArray(ownerActor?.getFlag?.('foundryvtt-swse', 'followerSlots'))) {
@@ -239,7 +258,7 @@ function statusLine(entry, actor = null, mode = 'garage', vehicle = null) {
   return `${hpText} · ${source}`;
 }
 
-function collectOwnedEntries(ownerActor, mode, epTable = null) {
+function collectOwnedEntries(ownerActor, mode, epTable = null, user = null) {
   const normalizedMode = normalizeBayMode(mode);
   const system = ownerActor?.system ?? {};
   const candidates = [
@@ -277,6 +296,7 @@ function collectOwnedEntries(ownerActor, mode, epTable = null) {
     seen.add(dedupeKey);
 
     const isShipyard = assetMode === 'shipyard';
+    const modifyAuth = assetModifyAuthorization({ user, ownerActor, assetActor: actor });
     // Compact, read-only runtime-schema summary (HP, shields, installs, construction). Never throws into the Bay.
     let vehicle = null;
     if (isShipyard && actor) {
@@ -299,10 +319,12 @@ function collectOwnedEntries(ownerActor, mode, epTable = null) {
       vehicleOrigin: vehicle?.origin ?? null,
       constructionLine: vehicle?.constructionLabel ?? null,
       epLine: vehicle?.epLabel ?? null,
-      ownership: actor?.id ? (actor.isOwner === true ? 'You own this sheet' : actor.isOwner === false ? 'View only' : '') : '',
+      ownership: documentPermissionLabel(actor),
+      ownedByThisActor: isShipyard ? vehicleOwnerMatchesActor(actor, ownerActor) : null,
+      modifyBlockedReason: modifyAuth.reason,
       isLinked: Boolean(actor?.id),
       canOpenSheet: Boolean(actor?.id),
-      canModify: Boolean(actor?.id),
+      canModify: modifyAuth.allowed,
       canGrantAccess: Boolean(actor?.id && game.user?.isGM),
       grantAccessLabel: isShipyard ? 'Give / Share Ship' : 'Give Droid',
       sheetLabel: isShipyard ? 'Open Ship Sheet' : 'Open Droid Sheet',
@@ -320,7 +342,7 @@ export class AssetBaySurfaceService {
   static async buildViewModel(actor, options = {}) {
     const mode = normalizeBayMode(options.bayMode || options.mode || 'all');
     const epTable = options.epTable !== undefined ? options.epTable : await loadUnusedEpTable();
-    const assets = collectOwnedEntries(actor, mode, epTable);
+    const assets = collectOwnedEntries(actor, mode, epTable, game.user);
     const droidCount = assets.filter(asset => asset.bayMode === 'garage').length;
     const shipCount = assets.filter(asset => asset.bayMode === 'shipyard').length;
     const isShipyard = mode === 'shipyard';

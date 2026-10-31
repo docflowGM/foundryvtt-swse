@@ -8,6 +8,7 @@ import { getActorSheetThemeGroups } from "/systems/foundryvtt-swse/scripts/theme
 import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
 import { ShellSurfaceRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellSurfaceRegistry.js";
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
+import { classifyVehicleActorRuntime } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
 import { loadUnusedEpTable } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-schema-view-model.js";
 import { buildVehicleSheetContext, parseCargoString } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js";
 import { VehicleRulesAdapter } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-rules-adapter.js";
@@ -324,7 +325,8 @@ export class SWSEV2VehicleSheet extends SWSEV2ActorSheetBase {
     const cargoState = cargoCapacity === null ? 'unknown'
       : totalCargoWeight > cargoCapacity * 1.1 ? 'over' : totalCargoWeight > cargoCapacity * 0.8 ? 'near' : 'normal';
 
-    const ruleContexts = VehicleRulesAdapter.buildAllRuleContexts(actor);
+    // Failed provenance: no rule contexts are derived from the unverified source.
+    const ruleContexts = classifyVehicleActorRuntime(actor).kind === 'invalid-canonical' ? {} : VehicleRulesAdapter.buildAllRuleContexts(actor);
     const epTable = await loadUnusedEpTable();
     const panelContext = ActorPerfDiagnostics.time(
       ms => ActorPerfDiagnostics.recordSheetContext('vehicle', ms),

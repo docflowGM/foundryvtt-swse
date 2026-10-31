@@ -25,9 +25,9 @@
     <div><span>Authorship</span><strong>{{view.construction.rulesLabel}}</strong></div>
     <div><span>Frame</span><strong>{{view.construction.frame}} ({{view.construction.frameClass}})</strong></div>
     <div><span>Crew Quality</span><strong>{{view.construction.crewQualityLabel}}</strong></div>
-    <div><span>Base Frame Cost</span><strong>{{#if view.construction.baseFrameCredits}}{{view.construction.baseFrameCredits}} cr{{else}}Unresolved{{/if}}</strong></div>
-    <div><span>System Costs</span><strong>{{view.construction.systemCredits}} cr</strong></div>
-    <div><span>Total Cost</span><strong>{{#if view.construction.totalCredits}}{{view.construction.totalCredits}} cr{{else}}Unresolved{{/if}}</strong></div>
+    <div><span>Base Frame Cost</span><strong>{{view.construction.baseFrameCreditsLabel}}</strong></div>
+    <div><span>System Costs</span><strong>{{view.construction.systemCreditsLabel}}</strong></div>
+    <div><span>Total Cost</span><strong>{{view.construction.totalCreditsLabel}}</strong></div>
     <div><span>Design Time</span><strong>{{view.construction.designTimeLabel}}</strong></div>
     <div><span>Mechanics DC</span><strong>{{view.construction.mechanicsDCLabel}}</strong></div>
     {{#each view.construction.outstanding}}<div class="swse-vehicle-warning"><span>Outstanding</span><strong>{{this}}</strong></div>{{/each}}
@@ -72,7 +72,7 @@
     {{#each view.effective}}
       <div class="swse-vehicle-stat-row" data-stat="{{label}}">
         <span>{{label}}</span> Base <strong>{{baseLabel}}</strong> · Modifications <em>{{modification}}</em>
-        · Effective <strong>{{#if effective}}{{effective}}{{else}}{{baseLabel}}{{/if}}</strong>{{#if current}} · Current <strong>{{current}}</strong>{{/if}}
+        · Effective <strong>{{effectiveLabel}}</strong>{{#if hasCurrent}} · Current <strong>{{currentLabel}}</strong>{{/if}}
       </div>
     {{/each}}
   </div>

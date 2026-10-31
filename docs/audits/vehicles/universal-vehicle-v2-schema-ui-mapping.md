@@ -31,3 +31,10 @@ INCORRECT (was) / INTENTIONALLY_HIDDEN. "Was" = state before this change; "Now" 
 - The character sheet continues to reach vehicles through the Asset Bay; no separate character-sheet vehicle block was added.
 - `HomeSurfaceService` still falls back to `hull` when `hp` is absent (non-canonical legacy actors only).
 - `LIVE_RUNTIME_PENDING`: template rendering in Foundry V13 (no Handlebars runtime in the offline harness).
+
+## Final UI corrections (review pass)
+- Zero values: effective/current/credit cells use explicit numeric labels (`effectiveLabel`, `hasCurrent`, `currentLabel`, `*CreditsLabel`) instead of Handlebars truthiness; rendered with real Handlebars in `tests/vehicle-universal-phase4e-v2-rendering.test.mjs`.
+- Asset Bay: "document permission" (Foundry) is shown separately from "linked as property" (`ownedByThisActor`); Modify is enabled only for GMs or for an Actor the user can edit that is linked to the owner as property (`assetModifyAuthorization`, also enforced in `ShellHost` before routing). Service-level checks remain authoritative.
+- Invalid published provenance: `buildVehicleSheetContext` returns a verification-failure context (no publication view, no tabs, no rule contexts, no edit controls) and the template renders only the failure notice and schema panel.
+- Handlebars is a test-only dependency of `tools/release`; the vehicle workflow installs it and sets `SWSE_REQUIRE_HANDLEBARS=1` (missing = failure). The rolling workflow's zero-npm policy is kept: there the rendering test skips.
+- Live Foundry V13 rendering remains `LIVE_RUNTIME_PENDING`.

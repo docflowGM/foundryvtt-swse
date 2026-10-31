@@ -3,6 +3,7 @@
   "private": true,
   "description": "Release-only tooling: compiles canonical 429-source vehicle Actor packs and remaining NeDB sources into Foundry V13 LevelDB directories. Not shipped.",
   "devDependencies": {
-    "@foundryvtt/foundryvtt-cli": "3.0.5"
+    "@foundryvtt/foundryvtt-cli": "3.0.5",
+    "handlebars": "^4.7.8"
   }
 }
