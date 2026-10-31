@@ -11,7 +11,7 @@ const same = (a,b) => typeof a==='string' && typeof b==='string' &&
 const VALID_STATIONS = new Set(['pilot','gunner']);
 
 export async function resolveVehicleCrewStationEvidence({
-  vehicle, weapon, domainResolution, requestedCrewStation = null
+  vehicle, weapon, domainResolution, requestedCrewStation = null, certifiedStation = null
 } = {}) {
   if(!vehicle || vehicle.type!=='vehicle' || !weapon || !domainResolution?.ok)
     return fail('VEHICLE_CREW_CONTEXT_MISSING');
@@ -26,6 +26,9 @@ export async function resolveVehicleCrewStationEvidence({
     if(owned!==weapon)return fail('WEAPON_NOT_OWNED_BY_VEHICLE');
     station=String(weapon.system?.operatorStation ?? weapon.system?.crewRole ?? '').trim().toLowerCase();
   }
+  // A certified installation's operator station comes from the sealed ledger mount, never
+  // from editable Item fields.
+  if(certifiedStation) station=String(certifiedStation).trim().toLowerCase();
   if(!VALID_STATIONS.has(station))return fail('WEAPON_OPERATOR_STATION_UNRESOLVED');
   if(requestedCrewStation && !same(requestedCrewStation,station))
     return fail('REQUESTED_CREW_STATION_CONTRADICTS_INSTALLED_MOUNT');

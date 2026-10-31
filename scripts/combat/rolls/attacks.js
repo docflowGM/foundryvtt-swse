@@ -720,10 +720,11 @@ export async function rollAttack(actor, weapon, options = {}) {
     // allowed to assert station resolution. Existing shipyard modifications
     // retain their separate provenance path, not a fictitious stock binding.
     const installedProvenance = classifyInstalledVehicleWeapon(vehicle, weapon);
-    const stationEvidence = installedProvenance.kind === 'STOCK_CANDIDATE'
+    const stationEvidence = (installedProvenance.kind === 'STOCK_CANDIDATE' || installedProvenance.kind === 'CERTIFIED_INSTALLATION')
       ? await resolveVehicleCrewStationEvidence({
           vehicle, weapon, domainResolution: vehicleDomain,
-          requestedCrewStation: rollOptions.crewStation ?? null
+          requestedCrewStation: rollOptions.crewStation ?? null,
+          certifiedStation: installedProvenance.kind === 'CERTIFIED_INSTALLATION' ? installedProvenance.mount?.operatorRole : null
         })
       : { crewStationResolved: false };
     const sourceGate = await authorizeVehicleAttackBeforeCosts({

@@ -97,7 +97,23 @@
     "cargoCapacity": "100 Tons",
     "consumables": "2 Months",
     "emplacementPoints": 5,
-    "unusedEmplacementPoints": 10
+    "unusedEmplacementPoints": 1,
+    "provenance": {
+      "book": "Starships of the Galaxy",
+      "printedPages": [
+        53,
+        54
+      ],
+      "tables": "Stock Ships",
+      "corrections": [
+        {
+          "field": "unusedEmplacementPoints",
+          "original": 10,
+          "corrected": 1,
+          "basis": "SotG p. 39: a standard stock design generally has 1 unused emplacement point; named-design exceptions (Table 3-2, YT-series 10, Corellian Engineering Corporation 5) do not apply to the generic frame"
+        }
+      ]
+    }
   },
   {
     "name": "Shuttle",
@@ -142,7 +158,7 @@
   {
     "name": "Heavy Freighter",
     "size": "Colossal (Frigate)",
-    "strength": 56,
+    "strength": 106,
     "dexterity": 10,
     "intelligence": 12,
     "speedCharacter": null,
@@ -157,12 +173,28 @@
     "cargoCapacity": "100,000 Tons",
     "consumables": "6 Months",
     "emplacementPoints": 5,
-    "unusedEmplacementPoints": 1
+    "unusedEmplacementPoints": 1,
+    "provenance": {
+      "book": "Starships of the Galaxy",
+      "printedPages": [
+        53,
+        54
+      ],
+      "tables": "Stock Ships",
+      "corrections": [
+        {
+          "field": "strength",
+          "original": 56,
+          "corrected": 106,
+          "basis": "SotG Stock Ships table, printed pp. 53-54"
+        }
+      ]
+    }
   },
   {
     "name": "Corvette",
     "size": "Colossal (Frigate)",
-    "strength": 58,
+    "strength": 110,
     "dexterity": 18,
     "intelligence": 16,
     "speedCharacter": null,
@@ -177,12 +209,34 @@
     "cargoCapacity": "2,000 Tons",
     "consumables": "1 Year",
     "emplacementPoints": 20,
-    "unusedEmplacementPoints": 5
+    "unusedEmplacementPoints": 1,
+    "provenance": {
+      "book": "Starships of the Galaxy",
+      "printedPages": [
+        53,
+        54
+      ],
+      "tables": "Stock Ships",
+      "corrections": [
+        {
+          "field": "strength",
+          "original": 58,
+          "corrected": 110,
+          "basis": "SotG Stock Ships table, printed pp. 53-54"
+        },
+        {
+          "field": "unusedEmplacementPoints",
+          "original": 5,
+          "corrected": 1,
+          "basis": "SotG p. 39: a standard stock design generally has 1 unused emplacement point; named-design exceptions (Table 3-2, YT-series 10, Corellian Engineering Corporation 5) do not apply to the generic frame"
+        }
+      ]
+    }
   },
   {
     "name": "Frigate",
     "size": "Colossal (Frigate)",
-    "strength": 60,
+    "strength": 114,
     "dexterity": 16,
     "intelligence": 16,
     "speedCharacter": null,
@@ -197,12 +251,28 @@
     "cargoCapacity": "5,000 Tons",
     "consumables": "1 Year",
     "emplacementPoints": 50,
-    "unusedEmplacementPoints": 1
+    "unusedEmplacementPoints": 1,
+    "provenance": {
+      "book": "Starships of the Galaxy",
+      "printedPages": [
+        53,
+        54
+      ],
+      "tables": "Stock Ships",
+      "corrections": [
+        {
+          "field": "strength",
+          "original": 60,
+          "corrected": 114,
+          "basis": "SotG Stock Ships table, printed pp. 53-54"
+        }
+      ]
+    }
   },
   {
     "name": "Cruiser",
     "size": "Colossal (Cruiser)",
-    "strength": 94,
+    "strength": 118,
     "dexterity": 14,
     "intelligence": 16,
     "speedCharacter": null,
@@ -217,12 +287,28 @@
     "cargoCapacity": "10,000 Tons",
     "consumables": "2 Years",
     "emplacementPoints": 100,
-    "unusedEmplacementPoints": 1
+    "unusedEmplacementPoints": 1,
+    "provenance": {
+      "book": "Starships of the Galaxy",
+      "printedPages": [
+        53,
+        54
+      ],
+      "tables": "Stock Ships",
+      "corrections": [
+        {
+          "field": "strength",
+          "original": 94,
+          "corrected": 118,
+          "basis": "SotG Stock Ships table, printed pp. 53-54"
+        }
+      ]
+    }
   },
   {
     "name": "Battlecruiser",
     "size": "Colossal (Cruiser)",
-    "strength": 100,
+    "strength": 124,
     "dexterity": 12,
     "intelligence": 18,
     "speedCharacter": null,
@@ -237,6 +323,22 @@
     "cargoCapacity": "20,000 Tons",
     "consumables": "2 Years",
     "emplacementPoints": 200,
-    "unusedEmplacementPoints": 1
+    "unusedEmplacementPoints": 1,
+    "provenance": {
+      "book": "Starships of the Galaxy",
+      "printedPages": [
+        53,
+        54
+      ],
+      "tables": "Stock Ships",
+      "corrections": [
+        {
+          "field": "strength",
+          "original": 100,
+          "corrected": 124,
+          "basis": "SotG Stock Ships table, printed pp. 53-54"
+        }
+      ]
+    }
   }
 ]

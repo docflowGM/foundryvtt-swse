@@ -1,4 +1,5 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { getEffectiveVehicleInitiative } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-published-derived.js";
 import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 
@@ -8,6 +9,8 @@ function numeric(value, fallback = 0) {
 }
 
 function getInitiativeSkillTotal(actor) {
+  const printed = getEffectiveVehicleInitiative(actor);
+  if (printed !== null) return printed;
   const derivedSkills = actor?.system?.derived?.skills;
   const fromList = Array.isArray(derivedSkills?.list)
     ? derivedSkills.list.find(row => row?.key === 'initiative')
@@ -66,8 +69,11 @@ export class SWSECombatDocument extends Combat {
 
     let initTotal = getInitiativeSkillTotal(actor);
 
-    // Add vehicle size modifier if this is a vehicle
-    if (actor.type === 'vehicle') {
+    // Add vehicle size modifier if this is a vehicle, unless its printed Initiative is the base: a
+    // published statblock Initiative already includes the size modifier and the crew modifier
+    // (Initiative = Dex modifier + size modifier + crew check modifier; this fits 343 of the 375
+    // published vehicles whose parts are printed), so adding it again would double-apply it.
+    if (actor.type === 'vehicle' && getEffectiveVehicleInitiative(actor) === null) {
       const sizeMod = this._getVehicleSizeModifier(actor);
       initTotal += sizeMod;
     }
@@ -82,7 +88,9 @@ export class SWSECombatDocument extends Combat {
    * @returns {number} The size modifier to apply to Initiative
    */
   _getVehicleSizeModifier(vehicle) {
-    const size = vehicle.system.size?.toLowerCase() || 'medium';
+    // Core Table 10-1 prints -10 for Colossal and for each of its subtypes (frigate, cruiser, station).
+    const raw = vehicle.system.size?.toLowerCase() || 'medium';
+    const size = raw.startsWith('colossal') ? 'colossal' : raw;
 
     const sizeModifiers = {
       'colossal': -10,

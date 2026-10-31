@@ -34,6 +34,13 @@
         <span class="swse-asset-bay-count"><strong>{{vm.droidCount}}</strong> {{localize "SWSE.ShellUI.Droids"}}</span>
         <span class="swse-asset-bay-count"><strong>{{vm.shipCount}}</strong> {{localize "SWSE.ShellUI.ShipsVehicles"}}</span>
       </div>
+      {{#unless vm.isGarageMode}}
+      <div class="swse-asset-bay-design-actions">
+        <button type="button" class="swse-asset-bay-action" data-asset-bay-action="design-ship"><i class="fas fa-drafting-compass"></i><span>Design Custom Starship</span></button>
+        <button type="button" class="swse-asset-bay-action" data-asset-bay-action="ship-projects"><i class="fas fa-hard-hat"></i><span>Ship Projects</span></button>
+        {{#if vm.isGM}}<button type="button" class="swse-asset-bay-action" data-asset-bay-action="review-designs"><i class="fas fa-clipboard-check"></i><span>Review Ship Designs</span></button>{{/if}}
+      </div>
+      {{/unless}}
       {{#if vm.showModeFilters}}
       <div class="swse-asset-bay-mode-pills" role="group" aria-label="{{localize 'SWSE.ShellUI.AssetFilters'}}">
         <button type="button"
@@ -83,6 +90,9 @@
               <h3>{{asset.name}}</h3>
               <div class="swse-asset-bay-card__detail">{{asset.detail}}</div>
               <div class="swse-asset-bay-card__status">{{asset.status}}</div>
+              {{#if asset.constructionLine}}<div class="swse-asset-bay-card__construction">{{asset.constructionLine}}</div>{{/if}}
+              {{#if asset.epLine}}<div class="swse-asset-bay-card__ep">{{asset.epLine}}</div>{{/if}}
+              {{#if asset.ownership}}<div class="swse-asset-bay-card__ownership">{{asset.ownership}}</div>{{/if}}
             </div>
             <div class="swse-asset-bay-card__actions">
               <button type="button"
@@ -98,7 +108,7 @@
                       data-asset-bay-action="modify"
                       data-actor-id="{{asset.actorId}}"
                       data-bay-mode="{{asset.bayMode}}"
-                      {{#unless asset.canModify}}disabled{{/unless}}>
+                      {{#unless asset.canModify}}disabled title="{{asset.modifyBlockedReason}}"{{/unless}}>
                 <i class="fas fa-tools"></i>
                 <span>{{asset.modifyLabel}}</span>
               </button>

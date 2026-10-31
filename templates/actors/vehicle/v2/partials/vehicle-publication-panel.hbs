@@ -1,0 +1,24 @@
+{{!-- P1: published source facts. Read-only; sourced from getVehicleRuntimeProjection via publicationView. --}}
+<section class="swse-vehicle-panel swse-vehicle-publication-panel" data-source-key="{{view.identity.sourceKey}}">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">Published Statistics</h3>
+    <span class="swse-vehicle-mini-badge">{{view.identity.book}}, p. {{view.identity.page}}</span>
+  </header>
+  <div class="swse-vehicle-panel-body swse-vehicle-kv-list">
+    <div><span>Printed Model</span><strong>{{view.identity.printedModel}}</strong></div>
+    <div><span>Call Sign</span><strong>{{view.identity.callSign}}</strong></div>
+    {{#if view.identity.printedType}}<div><span>Printed Type</span><strong>{{view.identity.printedType}}</strong></div>{{/if}}
+    <div><span>Category</span><strong>{{view.identity.category}}</strong></div>
+    <div><span>Size</span><strong>{{#if view.identity.size}}{{view.identity.size}}{{else}}Not stated in source{{/if}}</strong></div>
+    <div><span>Initiative</span><strong>{{view.initiative.display}}</strong></div>
+    <div><span>Hit Points (max)</span><strong>{{view.hp.max}}</strong></div>
+    <div><span>Shields</span><strong>{{view.shield.label}}</strong></div>
+    <div><span>Crew</span><strong>{{view.crew.label}}</strong></div>
+    <div><span>Passengers</span><strong>{{view.crew.passengersLabel}}</strong></div>
+    <div><span>Cargo</span><strong>{{view.cargo.display}}</strong></div>
+    <div><span>Consumables</span><strong>{{view.consumables.display}}</strong></div>
+    <div><span>Hyperdrive</span><strong>{{view.hyperdrive.label}}</strong></div>
+    <div><span>Published Price</span><strong>{{view.price.label}}</strong></div>
+    {{#if view.availability}}<div><span>Availability</span><strong>{{view.availability}}</strong></div>{{/if}}
+  </div>
+</section>

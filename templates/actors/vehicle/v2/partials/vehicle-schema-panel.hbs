@@ -1,0 +1,128 @@
+{{!-- Read-only schema panel (P0-P5). Source: schemaView (vehicle-schema-view-model.js). No form inputs:
+      ledger, construction record and provenance are changed only through governed services. --}}
+<section class="swse-vehicle-panel swse-vehicle-schema-panel" data-vehicle-origin="{{view.origin}}">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">Vehicle Record</h3>
+    <span class="swse-vehicle-mini-badge">{{view.identity.badge}}</span>
+  </header>
+  <div class="swse-vehicle-panel-body swse-vehicle-kv-list">
+    {{#unless view.identity.published}}
+      <div><span>Call Sign</span><strong>{{view.identity.callSign}}</strong></div>
+      <div><span>Origin</span><strong>{{view.identity.sourceLabel}}</strong></div>
+      {{#if view.identity.stockFrame}}<div><span>Stock Frame</span><strong>{{view.identity.stockFrame}}</strong></div>{{/if}}
+    {{/unless}}
+    {{#each view.reasons}}<div class="swse-vehicle-warning" data-reason="{{this}}"><span>Notice</span><strong>{{this}}</strong></div>{{/each}}
+  </div>
+</section>
+
+{{#if view.construction}}
+<section class="swse-vehicle-panel swse-vehicle-construction-panel" data-approval="{{view.construction.approvalStatus}}">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">Construction</h3>
+    <span class="swse-vehicle-mini-badge">{{view.construction.statusLabel}}</span>
+  </header>
+  <div class="swse-vehicle-panel-body swse-vehicle-kv-list">
+    <div><span>Authorship</span><strong>{{view.construction.rulesLabel}}</strong></div>
+    <div><span>Frame</span><strong>{{view.construction.frame}} ({{view.construction.frameClass}})</strong></div>
+    <div><span>Crew Quality</span><strong>{{view.construction.crewQualityLabel}}</strong></div>
+    <div><span>Base Frame Cost</span><strong>{{view.construction.baseFrameCreditsLabel}}</strong></div>
+    <div><span>System Costs</span><strong>{{view.construction.systemCreditsLabel}}</strong></div>
+    <div><span>Total Cost</span><strong>{{view.construction.totalCreditsLabel}}</strong></div>
+    <div><span>Design Time</span><strong>{{view.construction.designTimeLabel}}</strong></div>
+    <div><span>Mechanics DC</span><strong>{{view.construction.mechanicsDCLabel}}</strong></div>
+    {{#each view.construction.outstanding}}<div class="swse-vehicle-warning"><span>Outstanding</span><strong>{{this}}</strong></div>{{/each}}
+  </div>
+</section>
+{{/if}}
+
+<section class="swse-vehicle-panel swse-vehicle-ep-panel" data-ep-state="{{view.ep.state}}">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">Emplacement Points</h3>
+    <span class="swse-vehicle-mini-badge">{{view.ep.state}}</span>
+  </header>
+  <div class="swse-vehicle-panel-body swse-vehicle-kv-list">
+    <div><span>Status</span><strong>{{view.ep.label}}</strong></div>
+    {{#if view.ep.nonstandardCount}}<div><span>Nonstandard Installs</span><strong>{{view.ep.nonstandardCount}} (EP x2, cost x5)</strong></div>{{/if}}
+  </div>
+</section>
+
+<section class="swse-vehicle-panel swse-vehicle-installed-panel" data-certification="{{view.installed.certification}}">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">Certified Installed Systems</h3>
+    <span class="swse-vehicle-mini-badge">{{view.installed.count}}</span>
+  </header>
+  <div class="swse-vehicle-panel-body">
+    {{#each view.installed.entries}}
+      <div class="swse-vehicle-installed-row" data-install-id="{{installId}}">
+        <strong>{{name}}</strong> <em>{{category}}</em> — {{certification}}{{#if source}} ({{source}}){{/if}}
+        · EP {{epCost}} · {{priceCredits}} cr · {{standard}} · {{effectLabel}}
+        {{#if weapon}}· {{mountLabel}} · {{weaponLabel}}{{/if}}
+      </div>
+    {{else}}
+      <p>No certified installations.</p>
+    {{/each}}
+    {{#if view.installed.rejected}}<p class="swse-vehicle-warning">{{view.installed.rejected}} ledger entr{{#if (eq view.installed.rejected 1)}}y{{else}}ies{{/if}} failed verification and are ignored.</p>{{/if}}
+    {{#if view.installed.uncertifiedWeaponItems}}<p>{{view.installed.uncertifiedWeaponItems}} weapon item(s) are not certified and cannot fire.</p>{{/if}}
+  </div>
+</section>
+
+<section class="swse-vehicle-panel swse-vehicle-effective-panel">
+  <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Effective Statistics</h3></header>
+  <div class="swse-vehicle-panel-body">
+    {{#each view.effective}}
+      <div class="swse-vehicle-stat-row" data-stat="{{label}}">
+        <span>{{label}}</span> Base <strong>{{baseLabel}}</strong> · Modifications <em>{{modification}}</em>
+        · Effective <strong>{{effectiveLabel}}</strong>{{#if hasCurrent}} · Current <strong>{{currentLabel}}</strong>{{/if}}
+      </div>
+    {{/each}}
+  </div>
+</section>
+
+{{#if view.shipyard.supported}}
+<section class="swse-vehicle-panel swse-vehicle-shipyard-jobs-panel" data-reserved-ep="{{view.shipyard.reservedEp}}">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">Installation Work</h3>
+    <span class="swse-vehicle-mini-badge">{{view.shipyard.activeJobs.length}} pending</span>
+  </header>
+  <div class="swse-vehicle-panel-body">
+    {{#each view.shipyard.jobs}}
+      <div class="swse-vehicle-job-row" data-job-id="{{jobId}}" data-job-status="{{status}}">
+        <strong>{{name}}</strong> — {{status}} (attempt {{attemptNumber}})
+        · Mechanics DC {{dc}}{{#if mechanicsBonus}} (+{{mechanicsBonus}} retry bonus){{/if}}
+        · Work {{daysLogged}} / {{daysRequired}} days ({{remainingDays}} remaining)
+        · Paid {{creditsPaid}} cr · EP reserved {{epReserved}}
+        {{#if wasted}}· Lost {{wasted.credits}} cr and {{wasted.days}} days{{/if}}
+        {{#if completion}}· Completed by {{completion.mode}}{{#if completion.reason}} ({{completion.reason}}){{/if}}{{/if}}
+        {{#if canRetry}}<em>Retry: {{retryCredits}} cr and {{retryDays}} days, +{{retryBonus}} on the check.</em>{{/if}}
+        {{#if canRestart}}<em>Total failure: starting again is a new, fully charged attempt.</em>{{/if}}
+        {{#if ../view.shipyard.canAct}}
+          <span class="swse-vehicle-job-actions">
+            {{#if canRecordCheck}}<button type="button" data-shipyard-action="record-check" data-job-id="{{jobId}}">Roll Mechanics check</button>{{/if}}
+            {{#if canRetry}}<button type="button" data-shipyard-action="retry-job" data-job-id="{{jobId}}">Pay for retry</button>{{/if}}
+            {{#if ../view.shipyard.isGM}}
+              {{#if active}}<button type="button" data-shipyard-action="log-days" data-job-id="{{jobId}}">Log work days</button>
+              <button type="button" data-shipyard-action="gm-complete" data-job-id="{{jobId}}">GM: mark completed</button>{{/if}}
+            {{/if}}
+          </span>
+        {{/if}}
+      </div>
+    {{else}}
+      <p>No installation work in progress.</p>
+    {{/each}}
+    {{#if view.shipyard.rejected}}<p class="swse-vehicle-warning">{{view.shipyard.rejected}} job record(s) failed verification; new work is blocked.</p>{{/if}}
+    {{#if view.shipyard.canAct}}
+      {{#if view.shipyard.hasOptions}}
+      <div class="swse-vehicle-job-start">
+        <select data-shipyard-select="catalog">
+          {{#each view.shipyard.options}}<option value="{{id}}">{{name}} — {{category}} — EP {{ep}}</option>{{/each}}
+        </select>
+        <button type="button" data-shipyard-action="start-job">Begin installation</button>
+        {{#if view.shipyard.isGM}}<button type="button" data-shipyard-action="gm-instant">GM: install instantly</button>{{/if}}
+      </div>
+      {{else}}
+      <p>No certified modifications are installable on this vehicle.</p>
+      {{/if}}
+    {{/if}}
+  </div>
+</section>
+{{/if}}

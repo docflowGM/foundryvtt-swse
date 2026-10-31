@@ -1,0 +1,39 @@
+{
+  "schema": "swse.vehicle.p2.pdf-review.v1",
+  "evidence": "PROJECT_OWNER_PDF_REVIEW",
+  "reviewedOn": "2026-10-30",
+  "note": "Values read by the project owner from the scanned PDFs, resolving cells the OCR text could not. They are recorded here as review evidence; the extraction tool applies them and compares them with the catalog, it does not invent any value.",
+  "tables": {
+    "starshipsOfTheGalaxy": {
+      "book": "Starships of the Galaxy",
+      "table3-2UnusedEmplacementPoints": { "printedPage": 39 },
+      "table3-3MovementSystems": { "printedPage": 41 },
+      "table3-4DefenseSystems": { "printedPage": 43 },
+      "table3-8StockShipTypes": { "printedPage": 52 },
+      "table3-9StockShipBaseValues": { "printedPage": 53 }
+    },
+    "coreRulebook": { "book": "Core Rulebook", "crewQualitySidebar": { "printedPage": 174 } }
+  },
+  "catalogRows": {
+    "armor-1": { "table": "defense", "cells": { "emplacementPoints": 2 } },
+    "armor-4": { "table": "defense", "cells": { "sizeRestriction": "Colossal (cruiser) or larger" }, "catalogCorrection": { "field": "sizeRestriction", "original": "Colossal (Frigate) or Larger", "corrected": "Colossal (Cruiser) or Larger" } },
+    "shields-10": { "table": "defense", "cells": { "emplacementPoints": 1, "sizeRestriction": null } },
+    "shields-40": { "table": "defense", "cells": { "emplacementPoints": 2 } },
+    "shields-50": { "table": "defense", "cells": { "emplacementPoints": 3 } },
+    "shields-60": { "table": "defense", "cells": { "emplacementPoints": 3 } },
+    "shields-150": { "table": "defense", "cells": { "emplacementPoints": 7 } },
+    "maneuvering-jets-2": { "table": "movement", "cells": { "emplacementPoints": 2 } }
+  },
+  "frames": {
+    "battlecruiser": { "cells": { "damageReduction": 20 } },
+    "light-fighter": { "cells": { "crew": 1, "stockEmplacementPoints": 2 } }
+  },
+  "unusedEmplacementPoints": { "J-Type transports": 2 },
+  "crewQuality": {
+    "untrained": { "attackBonus": -5, "checkModifier": 0, "clModifier": -1 },
+    "normal": { "attackBonus": 0, "checkModifier": 5, "clModifier": 0 },
+    "skilled": { "attackBonus": 2, "checkModifier": 6, "clModifier": 1 },
+    "expert": { "attackBonus": 5, "checkModifier": 8, "clModifier": 2 },
+    "ace": { "attackBonus": 10, "checkModifier": 12, "clModifier": 4 }
+  }
+}

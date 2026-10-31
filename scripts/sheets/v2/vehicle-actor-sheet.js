@@ -1,13 +1,18 @@
 import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
 import { ActorPerfDiagnostics } from "/systems/foundryvtt-swse/scripts/utils/actor-perf-diagnostics.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { classifyVehicleActorSource } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { getActorSheetThemeGroups } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js";
 import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
 import { ShellSurfaceRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellSurfaceRegistry.js";
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
-import { buildVehicleSheetContext } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js";
+import { bindShipyardActions, createDefaultShipyardDeps } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-shipyard-actions.js";
+import { VehicleInstallationService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-installation-service.js";
+import { classifyVehicleActorRuntime } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
+import { loadUnusedEpTable } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-schema-view-model.js";
+import { buildVehicleSheetContext, parseCargoString } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js";
 import { VehicleRulesAdapter } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-rules-adapter.js";
 import { bindVehicleCrewAssignmentControls } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-crew-assignment-controls.js";
 // Imported for its module-load side effect only: registers the GM-only,
@@ -308,7 +313,10 @@ export class SWSEV2VehicleSheet extends SWSEV2ActorSheetBase {
     }
 
     const system = actor.system ?? {};
-    const cargoCapacity = Number(system?.cargo?.capacity ?? 500) || 500;
+    // Capacity comes only from the (published) cargo string; unknown stays
+    // unknown. There is no invented 500 default.
+    const cargoParsed = parseCargoString(system?.cargo);
+    const cargoCapacity = cargoParsed.known ? cargoParsed.kilograms : null;
     let totalCargoWeight = 0;
     const cargoItems = Array.from(actor.items ?? []).filter(item => item.type === 'equipment');
     for (const item of cargoItems) {
@@ -316,9 +324,14 @@ export class SWSEV2VehicleSheet extends SWSEV2ActorSheetBase {
       const quantity = Number(item.system?.quantity ?? 1) || 1;
       totalCargoWeight += weight * quantity;
     }
-    const cargoState = totalCargoWeight > cargoCapacity * 1.1 ? 'over' : totalCargoWeight > cargoCapacity * 0.8 ? 'near' : 'normal';
+    const cargoState = cargoCapacity === null ? 'unknown'
+      : totalCargoWeight > cargoCapacity * 1.1 ? 'over' : totalCargoWeight > cargoCapacity * 0.8 ? 'near' : 'normal';
 
-    const ruleContexts = VehicleRulesAdapter.buildAllRuleContexts(actor);
+    // Failed provenance: no rule contexts are derived from the unverified source.
+    const ruleContexts = classifyVehicleActorRuntime(actor).kind === 'invalid-canonical' ? {} : VehicleRulesAdapter.buildAllRuleContexts(actor);
+    const epTable = await loadUnusedEpTable();
+    // Installable choices for the Shipyard panel; a failed load simply offers none.
+    const shipyardCatalog = await VehicleInstallationService.loadCatalog().catch(() => null);
     const panelContext = ActorPerfDiagnostics.time(
       ms => ActorPerfDiagnostics.recordSheetContext('vehicle', ms),
       () => buildVehicleSheetContext(actor, context, {
@@ -330,7 +343,9 @@ export class SWSEV2VehicleSheet extends SWSEV2ActorSheetBase {
         commanderData: ruleContexts.commanderData,
         turnPhaseData: ruleContexts.turnPhaseData,
         totalCargoWeight,
-        cargoState
+        cargoState,
+        epTable,
+        catalog: shipyardCatalog
       })
     );
 
@@ -489,7 +504,7 @@ export class SWSEV2VehicleSheet extends SWSEV2ActorSheetBase {
       hpWarning: hp.warning ?? false,
       hpCritical: hp.critical ?? false,
       ctWarning: Number(system?.conditionTrack?.current ?? 0) > 0,
-      cargoCapacity: Math.round(cargoCapacity * 100) / 100,
+      cargoCapacity: cargoCapacity === null ? null : Math.round(cargoCapacity * 100) / 100,
       totalCargoWeight: Math.round(totalCargoWeight * 100) / 100,
       cargoState,
       items: Array.from(actor.items ?? []).map(item => ({
@@ -793,6 +808,9 @@ export class SWSEV2VehicleSheet extends SWSEV2ActorSheetBase {
       }, { signal });
     });
 
+    // Shipyard installation work: governed service calls only (no direct ledger/jobs edits).
+    if (this.actor) bindShipyardActions(root, this.actor, createDefaultShipyardDeps(VehicleInstallationService));
+
     root.querySelectorAll('[data-action="customize-vehicle"]').forEach(btn => {
       btn.addEventListener('click', async (ev) => {
         ev.preventDefault();
@@ -882,7 +900,18 @@ export class SWSEV2VehicleSheet extends SWSEV2ActorSheetBase {
       /^system\.weapons\.\d+\.(name|arc|attackBonus|damage|range|fireControl|notes)$/,
       /^system\.attributes\.(str|dex|int|wis|cha)\.(base|racial|temp)$/
     ];
-    const isWritable = (path) => writableExact.has(path) || writablePatterns.some(pattern => pattern.test(path));
+    const sourceAssessment = classifyVehicleActorSource(this.actor, undefined, { mode: 'runtime' });
+    if (sourceAssessment.kind === 'invalid-canonical')
+      throw new Error('UNIVERSAL_VEHICLE_SHEET_INVALID_SOURCE: ' + sourceAssessment.errors.join(','));
+    // Source-only Actors are not free-form templates: mutable runtime state
+    // and callsign/notes are separate from published source facts.
+    const canonicalWritable = new Set([
+      'name', 'img', 'system.hp.value', 'system.shields.value',
+      'system.notes', 'system.details.notes', 'system.description'
+    ]);
+    const isWritable = (path) => sourceAssessment.kind === 'canonical'
+      ? canonicalWritable.has(path)
+      : writableExact.has(path) || writablePatterns.some(pattern => pattern.test(path));
     const root = this.element instanceof HTMLElement ? this.element : null;
     const source = event?.target?.closest?.('form') || root;
     if (!source) return;

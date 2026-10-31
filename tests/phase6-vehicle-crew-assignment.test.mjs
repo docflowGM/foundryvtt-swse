@@ -35,6 +35,7 @@ const resolver = await readFile(new URL('../scripts/sheets/v2/vehicle-sheet/crew
 const contextBuilder = await readFile(new URL('../scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js', import.meta.url), 'utf8');
 const panelTemplate = await readFile(new URL('../templates/actors/vehicle/v2/partials/vehicle-crew-assignment-panel.hbs', import.meta.url), 'utf8');
 const skillRouter = await readFile(new URL('../scripts/sheets/v2/vehicle-sheet/crew-skill-router.js', import.meta.url), 'utf8');
+const crewActorAuthority = await readFile(new URL('../scripts/engine/crew/vehicle-crew-actor-authority.js', import.meta.url), 'utf8');
 
 // --- Root cause: reachability ---------------------------------------------
 
@@ -244,8 +245,10 @@ assert.match(openSheetFn, /no longer exists\. Remove this station assignment and
 // field/keying the assignment service writes to (canonicalStationKey's
 // resolved `targetStation` IS the crewPositions key). No second,
 // independent crew-lookup implementation for attack routing.
-assert.match(skillRouter, /const positions = system\.crewPositions \?\? \{\};/);
-assert.match(skillRouter, /const entry = positions\?\.\[stationKey\];/);
+assert.match(skillRouter, /resolveVehicleCrewActor\(vehicle, stationKey\)/);
+assert.match(skillRouter, /vehicle-crew-actor-authority\.js/);
+assert.match(crewActorAuthority, /system\.crewPositions\?\.\[stationKey\]/);
+assert.match(crewActorAuthority, /getVehicleCrewEntry\(vehicle,stationKey\)/);
 
 // --- Static station-list duplication check ----------------------------------
 

@@ -1,0 +1,20 @@
+{{!-- P1: printed attack groups. Reference only: no Fire control exists here by design. --}}
+<section class="swse-vehicle-panel swse-vehicle-attack-reference-panel" data-attack-reference="true">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">Printed Armament (reference only)</h3>
+    <span class="swse-vehicle-mini-badge">Not installed</span>
+  </header>
+  <div class="swse-vehicle-panel-body">
+    <p>{{view.attackReference.note}}</p>
+    {{#each view.attackReference.groups as |group|}}
+      <div class="swse-vehicle-list-card">
+        <strong>{{group.label}}</strong>
+        {{#if group.attackLabel}}<span>Printed attack {{group.attackLabel}}</span>{{/if}}
+        {{#if group.notes}}<span>{{group.notes}}</span>{{/if}}
+      </div>
+    {{else}}
+      <p>No printed attack groups.</p>
+    {{/each}}
+    <p>Installed mounts: {{#if view.installed.mounts.length}}{{view.installed.mounts.length}}{{else}}none certified{{/if}}</p>
+  </div>
+</section>

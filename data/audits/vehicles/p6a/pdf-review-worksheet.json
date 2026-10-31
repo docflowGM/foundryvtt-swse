@@ -1,0 +1,696 @@
+{
+ "schema": "swse.vehicle.p6a.pdf-review-worksheet.v1",
+ "note": "Cells the OCR cannot settle. Fill from the printed PDF; the generator then updates the census sources.",
+ "items": [
+  {
+   "catalogId": "cloaking-stygium",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "cost"
+   ],
+   "reason": "OCR column value disagrees with the catalog: [{\"field\":\"cost\",\"catalog\":\"100000 base\",\"printed\":\"100000000 base\"}]"
+  },
+  {
+   "catalogId": "hangar-bay",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "cost"
+   ],
+   "reason": "OCR column value disagrees with the catalog: [{\"field\":\"cost\",\"catalog\":\"10000 base\",\"printed\":\"10 base\"}]"
+  },
+  {
+   "catalogId": "hangar-bay-concealed",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "cost"
+   ],
+   "reason": "OCR column value disagrees with the catalog: [{\"field\":\"cost\",\"catalog\":\"100000 base\",\"printed\":\"1000 base\"}]"
+  },
+  {
+   "catalogId": "anti-boarding-systems",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "com-jammers",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "reinforced-keel",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "reinforced-keel-boarding",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "security-bracing",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "cannon-enhancement",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "damage"
+   ]
+  },
+  {
+   "catalogId": "concussion-missile-launcher-light",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "damage"
+   ]
+  },
+  {
+   "catalogId": "concussion-missile-launcher-medium",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "damage"
+   ]
+  },
+  {
+   "catalogId": "concussion-missile-launcher-heavy",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "damage"
+   ]
+  },
+  {
+   "catalogId": "proton-torpedo",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "tractor-beam",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "name",
+    "availability"
+   ]
+  },
+  {
+   "catalogId": "space-mine-standard",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "damage"
+   ]
+  },
+  {
+   "catalogId": "ion-bomb",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints"
+   ]
+  },
+  {
+   "catalogId": "shieldbuster-torpedo",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "availability",
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "fire-linked-optional",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints"
+   ]
+  },
+  {
+   "catalogId": "space-mine-launcher-heavy",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints"
+   ]
+  },
+  {
+   "catalogId": "composite-beam-cannon",
+   "book": "Clone Wars Campaign Guide",
+   "fields": [
+    "damage",
+    "emplacementPoints",
+    "cost",
+    "availability"
+   ]
+  },
+  {
+   "catalogId": "mass-driver-cannon-standard",
+   "book": "Clone Wars Campaign Guide",
+   "fields": [
+    "emplacementPoints",
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "mass-driver-cannon-heavy",
+   "book": "Clone Wars Campaign Guide",
+   "fields": [
+    "emplacementPoints",
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "proton-grenade-launcher",
+   "book": "Clone Wars Campaign Guide",
+   "fields": [
+    "damage",
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "proton-grenade",
+   "book": "Clone Wars Campaign Guide",
+   "fields": [
+    "damage",
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "rail-cannon",
+   "book": "Clone Wars Campaign Guide",
+   "fields": [
+    "emplacementPoints",
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "anti-aircraft-flak-pod",
+   "book": "Rebellion Era Campaign Guide",
+   "fields": [
+    "damage",
+    "emplacementPoints",
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "defoliator-shell",
+   "book": "Galaxy At War",
+   "fields": [
+    "emplacementPoints"
+   ]
+  },
+  {
+   "catalogId": "cargo-jettison",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "cargo-pod-light",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "cargo-pod-medium",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "cargo-pod-heavy",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "cloaking-hibridium",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "cryogenic-chambers",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "docking-clamps",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "droid-repair-team",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "escape-pod-small",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "escape-pod-large",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "extended-range",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "holonet-transceiver",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "hyper-transceiver",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "luxury-basic",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "luxury-advanced",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "luxury-extreme",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "medical-suite",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "passenger-seating",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "passenger-quarters",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "sensor-array-2",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "sensor-array-4",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "sensor-array-6",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "sensor-enhancement",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "slave-circuits-basic",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "slave-circuits-advanced",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "slave-circuits-recall",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "smuggler-compartments",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "transponder-iff",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "transponder-masked",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "transponder-disguised-1",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "transponder-disguised-2",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "transponder-disguised-3",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "amphibious-seals",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "auxiliary-generators-2",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "auxiliary-generators-4",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "auxiliary-generators-6",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "backup-battery",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "cockpit-ejection",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "cofferdam",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "environmental-filters",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "fuel-converters",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "grappler-mag",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "hardpoint",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "hidden-cargo-25",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "hidden-cargo-50",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "hidden-cargo-75",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "holding-cells-25",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "holding-cells-50",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "holding-cells-75",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "interrogation-chamber",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "personalized-controls",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "sensor-baffling",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "sensor-decoy",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "sensor-mask",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "workshop",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "plasma-punch",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "plasma-torch",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "tractor-clamp",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "censusId": "sotg-concussion-missile-armor-piercing",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "all"
+   ],
+   "reason": "missing component: confirm printed values before adding"
+  },
+  {
+   "censusId": "sotg-concussion-launcher-capacity",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "all"
+   ],
+   "reason": "missing component: confirm printed values before adding"
+  },
+  {
+   "censusId": "sotg-proton-launcher-capacity",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "all"
+   ],
+   "reason": "missing component: confirm printed values before adding"
+  },
+  {
+   "censusId": "sotg-shieldbuster-launcher-capacity",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "all"
+   ],
+   "reason": "missing component: confirm printed values before adding"
+  },
+  {
+   "censusId": "sotg-mine-launcher-capacity",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "all"
+   ],
+   "reason": "missing component: confirm printed values before adding"
+  },
+  {
+   "censusId": "sotg-cargo-pod-detachable",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "all"
+   ],
+   "reason": "missing component: confirm printed values before adding"
+  }
+ ]
+}

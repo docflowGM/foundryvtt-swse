@@ -1,0 +1,312 @@
+{
+ "schema": "swse.vehicle.p5.stock-frames.v1",
+ "book": "Starships of the Galaxy",
+ "sourceFile": "reference/sourcebooks/Starships of the Galaxy_djvu.txt",
+ "sourceSha256": "04fc2297996f2370d4e183dfe33df0b885215cb84c2f1602f60e227f3d853ad3",
+ "printedTables": {
+  "Table 3-8 Stock Ship Types": 52,
+  "Table 3-9 Stock Ship Base Values": 53
+ },
+ "printedPages": [
+  52,
+  53
+ ],
+ "note": "Stock ship frames for designing a starship from scratch (Starships of the Galaxy, Stock Ships). stock EP is the frame allocation, NOT the unused EP of a constructed ship. SOURCE_VERIFIED_TEXT = every cell clean in the OCR; PDF_CONFIRMED = cells the OCR could not read were read from the PDF (data/audits/vehicles/swse-p2-pdf-review.json).",
+ "frames": [
+  {
+   "class": "Battlecruiser",
+   "noisy": [],
+   "size": "Colossal (cruiser)",
+   "strength": 124,
+   "dexterity": 12,
+   "intelligence": 18,
+   "speed": "-/2",
+   "hitPoints": 2000,
+   "damageReduction": 20,
+   "armor": 16,
+   "cost": 20000000,
+   "crew": 20000,
+   "passengers": 5000,
+   "cargo": "20,000 tons",
+   "consumables": "2 years",
+   "stockEmplacementPoints": 200,
+   "pdfReviewedCells": [
+    "damageReduction"
+   ],
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
+   "id": "battlecruiser",
+   "certification": "PDF_CONFIRMED"
+  },
+  {
+   "class": "Cruiser",
+   "noisy": [],
+   "size": "Colossal (cruiser)",
+   "strength": 118,
+   "dexterity": 14,
+   "intelligence": 16,
+   "speed": "-/2",
+   "hitPoints": 1500,
+   "damageReduction": 20,
+   "armor": 14,
+   "cost": 10000000,
+   "crew": 5000,
+   "passengers": 1000,
+   "cargo": "10,000 tons",
+   "consumables": "2 years",
+   "stockEmplacementPoints": 100,
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
+   "id": "cruiser",
+   "certification": "SOURCE_VERIFIED_TEXT"
+  },
+  {
+   "class": "Frigate",
+   "noisy": [],
+   "size": "Colossal (frigate)",
+   "strength": 114,
+   "dexterity": 16,
+   "intelligence": 16,
+   "speed": "-/2",
+   "hitPoints": 800,
+   "damageReduction": 15,
+   "armor": 12,
+   "cost": 2000000,
+   "crew": 1000,
+   "passengers": 200,
+   "cargo": "5,000 tons",
+   "consumables": "1 year",
+   "stockEmplacementPoints": 50,
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
+   "id": "frigate",
+   "certification": "SOURCE_VERIFIED_TEXT"
+  },
+  {
+   "class": "Corvette",
+   "noisy": [],
+   "size": "Colossal (frigate)",
+   "strength": 110,
+   "dexterity": 18,
+   "intelligence": 16,
+   "speed": "-/3",
+   "hitPoints": 600,
+   "damageReduction": 15,
+   "armor": 12,
+   "cost": 1000000,
+   "crew": 50,
+   "passengers": 200,
+   "cargo": "2,000 tons",
+   "consumables": "1 year",
+   "stockEmplacementPoints": 20,
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
+   "id": "corvette",
+   "certification": "SOURCE_VERIFIED_TEXT"
+  },
+  {
+   "class": "Heavy freighter",
+   "noisy": [],
+   "size": "Colossal (frigate)",
+   "strength": 106,
+   "dexterity": 10,
+   "intelligence": 12,
+   "speed": "-/1",
+   "hitPoints": 400,
+   "damageReduction": 15,
+   "armor": 12,
+   "cost": 500000,
+   "crew": 10,
+   "passengers": 10,
+   "cargo": "100,000 tons",
+   "consumables": "6 months",
+   "stockEmplacementPoints": 5,
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
+   "id": "heavy-freighter",
+   "certification": "SOURCE_VERIFIED_TEXT"
+  },
+  {
+   "class": "Gunship",
+   "noisy": [],
+   "size": "Colossal",
+   "strength": 50,
+   "dexterity": 14,
+   "intelligence": 16,
+   "speed": "12/3",
+   "hitPoints": 150,
+   "damageReduction": 15,
+   "armor": 12,
+   "cost": 200000,
+   "crew": 4,
+   "passengers": 4,
+   "cargo": "5 tons",
+   "consumables": "1 month",
+   "stockEmplacementPoints": 20,
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
+   "id": "gunship",
+   "certification": "SOURCE_VERIFIED_TEXT"
+  },
+  {
+   "class": "Shuttle",
+   "noisy": [],
+   "size": "Colossal",
+   "strength": 46,
+   "dexterity": 14,
+   "intelligence": 14,
+   "speed": "12/3",
+   "hitPoints": 120,
+   "damageReduction": 15,
+   "armor": 12,
+   "cost": 50000,
+   "crew": 4,
+   "passengers": 8,
+   "cargo": "20 tons",
+   "consumables": "1 month",
+   "stockEmplacementPoints": 5,
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
+   "id": "shuttle",
+   "certification": "SOURCE_VERIFIED_TEXT"
+  },
+  {
+   "class": "Light freighter",
+   "noisy": [],
+   "size": "Colossal",
+   "strength": 42,
+   "dexterity": 10,
+   "intelligence": 12,
+   "speed": "12/2",
+   "hitPoints": 120,
+   "damageReduction": 15,
+   "armor": 12,
+   "cost": 20000,
+   "crew": 2,
+   "passengers": 6,
+   "cargo": "100 tons",
+   "consumables": "2 months",
+   "stockEmplacementPoints": 5,
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
+   "id": "light-freighter",
+   "certification": "SOURCE_VERIFIED_TEXT"
+  },
+  {
+   "class": "Bomber",
+   "noisy": [],
+   "size": "Gargantuan",
+   "strength": 46,
+   "dexterity": 18,
+   "intelligence": 14,
+   "speed": "16/3",
+   "hitPoints": 150,
+   "damageReduction": 10,
+   "armor": 8,
+   "cost": 50000,
+   "crew": 2,
+   "passengers": 0,
+   "cargo": "50 kg",
+   "consumables": "2 days",
+   "stockEmplacementPoints": 10,
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
+   "id": "bomber",
+   "certification": "SOURCE_VERIFIED_TEXT"
+  },
+  {
+   "class": "Superiority fighter",
+   "noisy": [],
+   "size": "Gargantuan",
+   "strength": 42,
+   "dexterity": 22,
+   "intelligence": 14,
+   "speed": "16/4",
+   "hitPoints": 120,
+   "damageReduction": 10,
+   "armor": 7,
+   "cost": 50000,
+   "crew": 1,
+   "passengers": 0,
+   "cargo": "50 kg",
+   "consumables": "2 days",
+   "stockEmplacementPoints": 5,
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
+   "id": "superiority-fighter",
+   "certification": "SOURCE_VERIFIED_TEXT"
+  },
+  {
+   "class": "Interceptor",
+   "noisy": [],
+   "size": "Huge",
+   "strength": 38,
+   "dexterity": 24,
+   "intelligence": 14,
+   "speed": "16/6",
+   "hitPoints": 90,
+   "damageReduction": 10,
+   "armor": 3,
+   "cost": 100000,
+   "crew": 1,
+   "passengers": 0,
+   "cargo": "50 kg",
+   "consumables": "2 days",
+   "stockEmplacementPoints": 5,
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
+   "id": "interceptor",
+   "certification": "SOURCE_VERIFIED_TEXT"
+  },
+  {
+   "class": "Light fighter",
+   "noisy": [],
+   "size": "Huge",
+   "strength": 34,
+   "dexterity": 20,
+   "intelligence": 14,
+   "speed": "16/5",
+   "hitPoints": 60,
+   "damageReduction": 10,
+   "armor": 3,
+   "cost": 30000,
+   "crew": 1,
+   "passengers": 0,
+   "cargo": "50 kg",
+   "consumables": "2 days",
+   "stockEmplacementPoints": 2,
+   "pdfReviewedCells": [
+    "crew",
+    "stockEmplacementPoints"
+   ],
+   "printedTables": {
+    "Table 3-8 Stock Ship Types": 52,
+    "Table 3-9 Stock Ship Base Values": 53
+   },
+   "id": "light-fighter",
+   "certification": "PDF_CONFIRMED"
+  }
+ ]
+}

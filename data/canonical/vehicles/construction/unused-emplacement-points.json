@@ -1,0 +1,3045 @@
+{
+ "schema": "swse.vehicle.p2.unused-emplacement-points.v1",
+ "note": "Unused emplacement points available for modifications, per published vehicle. A stock frame's own \"Emplacement Points\" figure (stock-frames.json) is its allocation and is a different quantity. null = cannot be decided from the text.",
+ "precedence": [
+  "explicit statement for the ship",
+  "SotG Table 3-2",
+  "YT-series (10)",
+  "Corellian Engineering Corporation (5)",
+  "general rule (1)"
+ ],
+ "counts": {
+  "SOTG_GENERAL_RULE": 400,
+  "SOTG_YT_SERIES": 5,
+  "KOTOR_STATBLOCK_EMPLACEMENT_POINTS_UNRULED": 3,
+  "SOTG_CEC_DEFAULT": 6,
+  "REBELLION_ERA_STATEMENT": 3,
+  "SOTG_TABLE_3_2": 11,
+  "RECORD_SPECIAL_RULE": 1
+ },
+ "unmapped": [
+  {
+   "tableName": "Blockade runner",
+   "unusedEmplacementPoints": 5,
+   "reason": "several records could be the named design"
+  },
+  {
+   "tableName": "J-Type transports",
+   "unusedEmplacementPoints": 2,
+   "reason": "the only SotG J-type record is a star skiff, not a transport"
+  },
+  {
+   "tableName": "Republic cruiser",
+   "unusedEmplacementPoints": 5,
+   "reason": "several records could be the named design"
+  }
+ ],
+ "entries": [
+  {
+   "sourceEntryKey": "core-aat-1",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "core-aratech-74-z-speeder-bike",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "core-arc-170-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "core-at-at",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "core-at-st",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "core-corellian-yt-1300-transport",
+   "unusedEmplacementPoints": 10,
+   "basis": "SOTG_YT_SERIES",
+   "book": "Starships of the Galaxy",
+   "printedPage": 154
+  },
+  {
+   "sourceEntryKey": "core-droid-tri-fighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "core-eta-2-actis-interceptor",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "core-imperial-i-class-star-destroyer",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "core-incom-t-65b-x-wing-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "core-koensayr-y-wing-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "core-laat-i-gunship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "core-modified-incom-t-47-airspeeder",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "core-sorosuub-x-34-landspeeder",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "core-tie-fighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "core-tie-interceptor",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "core-vulture-class-droid-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-all-terrain-attack-pod-at-ap",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-all-terrain-experimental-transport-at-xt",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-all-terrain-recon-transport-at-rt",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-all-terrain-tactical-enforcer-at-te",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-azure-angel",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-barc-speeder",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-barloz-class-freighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-bc-714-luxury-transport",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-belbullab-heavy-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-c-9979-landing-craft",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-cis-advanced-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-consular-class-cruiser-charger-c70-retrofit",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-cr-20-troop-carrier",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-dagger-class-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-daystar-dc0052-intergalactic-speeder",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-delta-7-aethersprite-interceptor-high-maneuver-variant",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-delta-7-aethersprite-interceptor-high-speed-variant",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-diamond-class-cruiser",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-dianoga-class-assault-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-droch-class-boarding-ship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-eta-2-actis-interceptor-heavy-defenses-variant",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-eta-2-actis-interceptor-high-maneuver-variant",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-freefall-class-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-g9-rigger",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-grievous-wheel-bike-modified-tsmeu-6",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-ground-armored-tank",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-gs-100-salvage-ship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-hardcell-class-transport",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-hyena-class-bomber",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-ig-227-hailfire-class-droid-tank",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-infantry-support-speeder-platform",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-invisible-hand",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-kappa-class-shuttle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-koensayr-btl-s1-y-wing",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-kr-tb-doomtreader",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-laat-c-carrier",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-manta-droid-subfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-medlifter-troop-transport",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-medstar-class-frigate",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-morningstar-a-assault-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-multi-troop-transport",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-nu-class-attack-shuttle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-oevvaor-jet-catamaran",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-og-9-homing-spider-droid",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-pelta-class-medical-frigate",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-persuader-class-droid-enforcer",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-providence-class-destroyer",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-punworcca-116-class-sloop",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-pursuer-class-enforcement-ship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-raddaugh-gnasp-fluttercraft",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-republic-troop-transport",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-s40k-phoenix-hawk-class-light-pinnace",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-sabaoth-destroyer",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-sabaoth-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-scurrg-h-6-prototype-bomber",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-self-propelled-heavy-artillery",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-sheathipede-class-shuttle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-single-trooper-aerial-platform",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-soulless-one-modified-belbullab-22",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-subjugator-class-heavy-cruiser",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-trade-federation-troop-carrier",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-tri-droid",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-tsmeu-6-personal-wheel-bike",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-tx-130t-saber-class-fighter-tank",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-ubrikkian-seltiss-2-caravel",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-ubrikkian-seltiss-2-caravel-cabin",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "cw-unstable-terrain-artillery-transport-ut-at",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-a-7-hunter-interceptor",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-a-a5-speeder-truck",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-a5-juggernaut",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-aratech-74-z-speeder-bike",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-armored-groundcar",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-arrow-23-landspeeder-paramilitary",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-at-ct",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-at-kt",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-command-speeder",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-escort-carrier",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-flare-s-swoop",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-gladiator-class-star-destroyer",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-guardian-class-light-cruiser",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-h-60-tempest-bomber",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-hwk-290",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-kaac-freerunner",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-m3-a-scyk-fighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-maka-eekai-l4000-transport",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-mobile-command-base",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-modified-sorosuub-x-34-speeder-escort",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-neutron-star-bulk-cruiser",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-novasword-space-superiority-fighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-r-41-starchaser",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-rogue-shadow",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-sentinel-class-landing-shuttle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-tartan-class-patrol-cruiser",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-tie-prototype",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-toscan-8-q",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-tx-130t-fighter-tank",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-v-35-courier",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-venator-class-star-destroyer",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-victory-i-class-star-destroyer",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-zebra-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "fucg-zephyr-g-swoop",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "gaw-corona-class-armed-transport",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "gaw-drop-pod",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "gaw-freeco-speeder",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "gaw-ground-armored-tank",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "gaw-imperial-landing-craft",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "gaw-koensayr-ilh-kk-citadel-class-cruiser",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "gaw-penumbra-class-attack-shuttle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "gaw-shelter-speeder",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "gaw-t8-loading-vehicle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "gaw-wlo-5-speeder-tank",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "gaw-yu-410-light-freighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "goi-corona-limited-luxury-groundspeeder",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "goi-modified-incom-a-24-sleuth",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "goi-modified-sienar-fleet-systems-lambda-class-shuttle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "goi-ptv-2100-incarcerator",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "goi-republic-engineering-corporation-ferret-class-reconnaissance-vessel",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "goi-republic-engineering-corporation-prowler-class-reconnaissance-vessel",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "goi-sabaoth-frigate-spy-ship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "goi-sorosuub-jg-8-luxury-landspeeder",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "jatm-chu-unthor",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-amalgamated-hyperdyne-578-r-space-transport",
+   "unusedEmplacementPoints": null,
+   "basis": "KOTOR_STATBLOCK_EMPLACEMENT_POINTS_UNRULED",
+   "book": "Knights of the Old Republic Campaign Guide",
+   "printedPage": 98,
+   "note": "the statblock prints \"Emplacement Points: N\" without saying \"unused\""
+  },
+  {
+   "sourceEntryKey": "kotor-arakyd-industries-lethisk-class-armed-freighter",
+   "unusedEmplacementPoints": null,
+   "basis": "KOTOR_STATBLOCK_EMPLACEMENT_POINTS_UNRULED",
+   "book": "Knights of the Old Republic Campaign Guide",
+   "printedPage": 99,
+   "note": "the statblock prints \"Emplacement Points: N\" without saying \"unused\""
+  },
+  {
+   "sourceEntryKey": "kotor-aratech-urban-navigator-speeder-bike",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-basilisk-war-droid",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-corellia-stardrive-quartermaster-class-supply-carrier",
+   "unusedEmplacementPoints": null,
+   "basis": "KOTOR_STATBLOCK_EMPLACEMENT_POINTS_UNRULED",
+   "book": "Knights of the Old Republic Campaign Guide",
+   "printedPage": 100,
+   "note": "the statblock prints \"Emplacement Points: N\" without saying \"unused\""
+  },
+  {
+   "sourceEntryKey": "kotor-corellian-engineering-corporation-s-100-stinger-class-starfighter",
+   "unusedEmplacementPoints": 5,
+   "basis": "SOTG_CEC_DEFAULT",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-corellian-engineering-corporation-s-250-chela-class-starfighter",
+   "unusedEmplacementPoints": 5,
+   "basis": "SOTG_CEC_DEFAULT",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-davaab-type-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-ebon-hawk",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-eleaor-propulsion-baronial-class-yacht",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-eleaor-propulsion-starscape-class-yacht",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-hoersch-kessel-drive-g-type-light-shuttle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-jehavey-ir-type-assault-ship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-kandosii-type-dreadnaught",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-koros-spaceworks-cx-133-chaos-fighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-koros-spaceworks-supremacy-class-attack-ship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-kyramud-type-battleship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-lhosan-industries-aerochaser-speeder-bike",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-lhosan-industries-swoop-racer",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-pelagia-duplex-command-assault-gunship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-rendili-hyperworks-hammerhead-class-cruiser",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-rendili-hyperworks-inexpugnable-class-tactical-command-vessel",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-rendili-hyperworks-praetorian-class-frigate",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-republic-fleet-systems-aurek-tactical-strikefighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-republic-fleet-systems-conductor-class-short-haul-landing-craft",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-republic-fleet-systems-foray-class-blockade-runner",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-republic-fleet-systems-kt-400-military-droid-carrier",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-republic-fleet-systems-star-saber-xc-01-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-shaadlar-type-troopship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-sorosuub-tt-6-landspeeder",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-sorosuub-twin-228-airspeeder",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-star-forge-manufacture-centurion-class-battlecruiser",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-star-forge-manufacture-derriphan-class-battleship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-star-forge-manufacture-herald-class-shuttle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-star-forge-manufacture-interdictor-class-warship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-star-forge-manufacture-sith-interceptor",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-teroch-type-fast-attack-gunship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-ubrikkian-pl-90-luxury-speeder",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "kotor-zentine-dynamics-ministry-class-orbital-shuttle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-a519-invader-close-support-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-all-terrain-armored-heavy-transport-at-aht",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-all-terrain-riot-control-transport-at-rct",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-ardent-class-fast-frigate",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-bb-2-starfire-fighter-bomber",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-besh-type-personal-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-cf9-crossfire-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-crimson-axe",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-crix-class-assault-shuttle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-crix-class-diplomatic-courier-shuttle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-fury-class-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-gladius-class-light-freighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-golan-viii-space-defense-platform",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-gpe-3300-airspeeder",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-gpe-7300-space-transport",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-helot-class-medium-transport",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-i4-ionizer-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-imperious-class-star-destroyer",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-indomitable-scythe-class-battle-cruiser",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-j-1-shuttle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-jumpstar-hpf-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-kybuck-speeder-bike",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-mc-24a-light-shuttle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-model-67-shrieker-speeder-bike",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-mt-dropship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-nemesis-class-patrol-ship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-neutralizer-class-bomber",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-nune-class-imperial-shuttle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-pellaeon-class-star-destroyer",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-phoebos-class-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-predator-class-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-quickfire-speeder-bike",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-r-28-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-rc-2-twilight-scoutship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-rendili-star-drive-mobile-spacedock-220",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-sabertooth-class-assault-rescue-vessel",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-scarlet-star-modified-yt-2400-transport",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-scythe-class-battle-cruiser",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-shashore-class-frigate",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-sigma-class-long-range-shuttle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-spinward-class-tender",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-the-grinning-liar",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-the-mynock",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-the-wheel",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-tri-scythe-class-frigate",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-veltiss-2-airspeeder",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-x-83-twintail-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-yx-1980-space-transport",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "le-yz-2500-heavy-transport",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-9000-z004-landspeeder",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-aeg-77-vigo-gunship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-air-2-swoop",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-assassin-class-corvette",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-assault-gunboat",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-at-aa-anti-aircraft-platform",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-at-pt-all-terrain-personal-transport",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-bantha-ii-cargo-skiff",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-canderous-class-assault-tank",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-corellian-engineering-corporation-ym-2800-limpet-ship",
+   "unusedEmplacementPoints": 5,
+   "basis": "SOTG_CEC_DEFAULT",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-corellian-yv-545",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-f9-tz-transport",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-g1-m4-c-dunelizard-fighter",
+   "unusedEmplacementPoints": 3,
+   "basis": "REBELLION_ERA_STATEMENT",
+   "book": "Rebellion Era Campaign Guide",
+   "printedPage": null
+  },
+  {
+   "sourceEntryKey": "re-gallofree-htt-26-heavy-troop-transport",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-hoersch-kessel-t-wing-interceptor",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-imperial-cargo-ship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-imperial-ii-class-frigate",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-incom-x4-gunship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-ird-a-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-ird-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-ixiyen-class-fast-attack-craft",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-keldabe-class-battleship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-kihraxz-light-fighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-lancet-aerial-artillery",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-m12-l-kimogila-heavy-fighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-m22-t-krayt-gunship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-mekuun-heavy-tracker",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-missile-boat",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-mobquet-medium-transport",
+   "unusedEmplacementPoints": 10,
+   "basis": "REBELLION_ERA_STATEMENT",
+   "book": "Rebellion Era Campaign Guide",
+   "printedPage": null
+  },
+  {
+   "sourceEntryKey": "re-mptl-2a-mobile-proton-torpedo-launcher",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-pinook-fighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-razor-class-fighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-rihkxyrk-assault-fighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-royal-guard-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-storm-iv-twin-pod-cloud-car",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-supa-fighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-t2-b-repulsor-tank",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-t4-b-heavy-tank",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-talon-i-combat-cloud-car",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-tie-aggressor",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-tie-ap-1-mauler",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-tie-crawler",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-tie-experimental-m2",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-tie-experimental-m3",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-tie-oppressor",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-tie-phantom",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-tie-scout",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-tie-shuttle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-ultra-light-assault-vehicle-ulav",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-vaksai",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-vt-49-decimator",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-ye-4-gunship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "re-ykl-37r-nova-courier",
+   "unusedEmplacementPoints": 5,
+   "basis": "REBELLION_ERA_STATEMENT",
+   "book": "Rebellion Era Campaign Guide",
+   "printedPage": null
+  },
+  {
+   "sourceEntryKey": "sav-c-wing-ugly-fighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sav-clutch-ugly-fighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sav-corellian-engineering-corporation-yt-1250-transport",
+   "unusedEmplacementPoints": 10,
+   "basis": "SOTG_YT_SERIES",
+   "book": "Starships of the Galaxy",
+   "printedPage": 154
+  },
+  {
+   "sourceEntryKey": "sav-corellian-engineering-corporation-yt-1930-transport",
+   "unusedEmplacementPoints": 10,
+   "basis": "SOTG_YT_SERIES",
+   "book": "Starships of the Galaxy",
+   "printedPage": 154
+  },
+  {
+   "sourceEntryKey": "sav-corelliaspace-gymsnor-3-light-freighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sav-errant-venture",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sav-kaloth-style-battlecruiser",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sav-kazellis-corporation-light-freighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sav-starforge-station",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sav-surronian-conqueror-class-assault-ship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sav-tenloss-corporation-hornet-class-interceptor",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sav-x-tie-ugly-fighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sav-y164-thalassian-slave-transport",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sgtd-dp-2-probe-droid",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-advanced-v-19-torrent-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-alliance-a-wing-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-archaic-heavy-cruiser",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-baktoid-armor-workshop-vulture-class-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-banking-clan-munificent-class-frigate",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-baudo-class-star-yacht",
+   "unusedEmplacementPoints": 2,
+   "basis": "SOTG_TABLE_3_2",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-buuper-torsckil-abbey-devices-porax-38-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-chiss-nssis-class-clawcraft",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-cloakshape-fighter",
+   "unusedEmplacementPoints": 2,
+   "basis": "SOTG_TABLE_3_2",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-coralskipper",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-corellian-engineering-corporation-action-vi-bulk-transport",
+   "unusedEmplacementPoints": 3,
+   "basis": "SOTG_TABLE_3_2",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-corellian-engineering-corporation-consular-class-cruiser",
+   "unusedEmplacementPoints": 5,
+   "basis": "SOTG_CEC_DEFAULT",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-corellian-engineering-corporation-cr70-corvette",
+   "unusedEmplacementPoints": 5,
+   "basis": "SOTG_CEC_DEFAULT",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-corellian-engineering-corporation-cr90-corvette",
+   "unusedEmplacementPoints": 5,
+   "basis": "SOTG_CEC_DEFAULT",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-corellian-gunship",
+   "unusedEmplacementPoints": 5,
+   "basis": "SOTG_TABLE_3_2",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-corellian-yt-1300-transport",
+   "unusedEmplacementPoints": 10,
+   "basis": "RECORD_SPECIAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 154
+  },
+  {
+   "sourceEntryKey": "sotg-corellian-yt-2000",
+   "unusedEmplacementPoints": 10,
+   "basis": "SOTG_YT_SERIES",
+   "book": "Starships of the Galaxy",
+   "printedPage": 154
+  },
+  {
+   "sourceEntryKey": "sotg-corellian-yt-2400",
+   "unusedEmplacementPoints": 10,
+   "basis": "SOTG_YT_SERIES",
+   "book": "Starships of the Galaxy",
+   "printedPage": 154
+  },
+  {
+   "sourceEntryKey": "sotg-damorian-manufacturing-s-carrack-class-light-cruiser",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-delta-7-aethersprite-light-interceptor",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-dynamic-class-freighter",
+   "unusedEmplacementPoints": 6,
+   "basis": "SOTG_TABLE_3_2",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-eclipse",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-escape-pod",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-feethan-ottraw-scalable-industries-mankvim-814-light-interceptor",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-fondor-shipyards-super-star-destroyer",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-freitek-inc-e-wing-starfighter-type-b",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-gallofree-gr-75-medium-transport",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-ghtroc-industries-class-720-freighter",
+   "unusedEmplacementPoints": 3,
+   "basis": "SOTG_TABLE_3_2",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-gozanti-cruiser",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-haor-chall-engineering-scarab-class-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-hapan-battle-dragon",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-hapes-nova-cruiser",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-hoersch-kessel-drive-inc-lucrehulk-class-battleship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-hoersch-kessel-drive-inc-lucrehulk-class-core-ship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-hoersch-kessel-drive-inc-lucrehulk-class-droid-control-ship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-home-one",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-huppla-pasa-tisc-shipwrights-collective-ginivex-class-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-immobilizer-418-interdictor-class-heavy-cruiser",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-incom-subpro-arc-170-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-incom-subpro-z-95-headhunter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-incom-t-65b-x-wing-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-incom-t-65br-x-wing-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-incom-t-65xj3-x-wing-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-ipv-1-system-patrol-craft",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-j-type-star-skiff",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-junker-tye-wing",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-koensayr-btl-a4-lp-longprobe",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-koensayr-btl-s3-courier",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-koensayr-btl-s3-y-wing",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-koensayr-ilh-kk-citadel-class-cruiser",
+   "unusedEmplacementPoints": 3,
+   "basis": "SOTG_TABLE_3_2",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-koensayr-manufacturing-btl-58-k-wing",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-krayt-s-honor",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-kuat-drive-yards-imperial-ii-class-star-destroyer",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-kuat-drive-yards-lancer-class-frigate",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-kuat-drive-yards-nebulon-b-frigate",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-kuat-drive-yards-pellaeon-class-star-destroyer",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-kuat-drive-yards-star-galleon",
+   "unusedEmplacementPoints": 4,
+   "basis": "SOTG_TABLE_3_2",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-kuat-systems-engineering-alpha-3-nimbus-v-wing-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-kuat-systems-engineering-eta-2-actis-interceptor",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-kuat-systems-engineering-firespray-31-patrol-craft",
+   "unusedEmplacementPoints": 3,
+   "basis": "SOTG_TABLE_3_2",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-loronar-corporation-strike-class-medium-cruiser",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-lusankya",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-mandalmotors-starviper-assault-fighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-millennium-falcon",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-modified-republic-sienar-systems-armored-star-courier",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-mon-calamari-mc80-star-cruiser",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-mon-calamari-star-defender",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-nebula-class-star-destroyer",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-olanji-charubah-miy-til-assault-bomber",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-olanji-charubah-miy-til-fighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-outbound-flight",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-phlac-arphocc-automata-industries-droid-tri-fighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-predator-class-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-rebel-assault-frigate-mk-i",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-rebel-assault-frigate-mk-ii",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-rebel-assault-frigate-prototype",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-recusant-class-light-destroyer",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-rendili-star-drive-light-corvette",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-rendili-stardrive-dreadnaught-class-heavy-cruiser",
+   "unusedEmplacementPoints": 3,
+   "basis": "SOTG_TABLE_3_2",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-rendili-stardrive-victory-ii-class-star-destroyer",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-rothana-heavy-engineering-acclamator-class-transgalactic-military-assault-ship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-rothana-heavy-engineering-acclamator-ii-class-transgalactic-military-assault-ship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-sienar-fleet-systems-gat-12h",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-sienar-fleet-systems-lambda-class-shuttle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-sienar-fleet-systems-scimitar-assault-bomber",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-sienar-fleet-systems-tie-advanced-x1",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-sienar-fleet-systems-tie-bomber",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-sienar-fleet-systems-tie-defender",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-sienar-fleet-systems-tie-in-fighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-sienar-fleet-systems-tie-interceptor",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-sienar-technologies-marauder-corvette",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-sith-interceptor",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-slave-i",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-slayn-korpil-b-wing-e2-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-slayn-korpil-b-wing-shuttle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-slayn-korpil-b-wing-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-sorosuub-cutlass-9-patrol-fighter",
+   "unusedEmplacementPoints": 3,
+   "basis": "SOTG_TABLE_3_2",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-telgorn-corp-gamma-class-assault-shuttle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-territorial-defense-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-theed-palace-space-vessel-engineering-corps-n-1-royal-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-theta-class-shuttle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-v-19-torrent-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-venator-class-star-destroyer",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-vindicator-class-heavy-cruiser",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "sotg-x-83-twintail-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "tog-bloodfin-razalon-fc-20-speeder-bike",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "tog-cec-vcx-350-light-freighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "tog-hounds-tooth",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "tog-modified-r-2000-raptor-speeder-bike",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "tog-nebulon-q-swoop",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-all-terrain-roller",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-compact-assault-vehicle-wheeled-px-10",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-eeook-protector-vi-patrol-speeder",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-gallis-tech-48-roller-wheel-bike",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-groundcar",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-hoersch-kessel-vaya-class-scout-ship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-hyrotii-corporation-mobile-recon-research-vehicle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-ikas-adno-22-b-nightfalcon-speeder-bike",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-jaffryes-universal-automotive-ark-ii-series-landmaster",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-jumpmaster-5000-scout-ship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-killik-dartship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-kuat-drive-yards-star-seeder-class-colony-ship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-land-crawler",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-landing-sphere",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-loronar-corporation-skyblind-recon-ship",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-mesens-corporation-sct-scout-craft",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-mrx-br-pacifier-combat-contact-vessel",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-royal-fortune-light-clipper",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-sienar-fleet-systems-mu-2-model-2-shuttle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-sorosuub-drexl-class-planetary-defender-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-sorosuub-preybird-class-starfighter",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-srv-1-scout-and-retrieval-vehicle",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-surfeik-cruiser",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-tangan-industries-aerosled-mark-iii",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-uulshos-manufacturing-deep-x-explorer",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  },
+  {
+   "sourceEntryKey": "ur-wind-skiff",
+   "unusedEmplacementPoints": 1,
+   "basis": "SOTG_GENERAL_RULE",
+   "book": "Starships of the Galaxy",
+   "printedPage": 39
+  }
+ ]
+}

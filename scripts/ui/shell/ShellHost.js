@@ -20,6 +20,7 @@
 import { ShellRouter } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js';
 import { ShellSurfaceRegistry } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellSurfaceRegistry.js';
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { assetModifyAuthorization } from '/systems/foundryvtt-swse/scripts/ui/shell/AssetBaySurfaceService.js';
 import { ShellSurfaceState } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellSurfaceState.js';
 import { ShellMutationGuard } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellMutationGuard.js';
 import { ShellUiStatePreserver } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellUiStatePreserver.js';
@@ -635,6 +636,15 @@ export function ShellHostMixin(BaseClass) {
             return;
           }
 
+          if (action === 'design-ship' || action === 'review-designs' || action === 'ship-projects') {
+            // Custom starship construction: the dialogs collect input; CustomVehicleConstructionService decides.
+            const ui = await import('/systems/foundryvtt-swse/scripts/ui/shell/construction-designer-ui.js');
+            const result = action === 'design-ship' ? await ui.openShipDesigner(this.actor)
+              : action === 'ship-projects' ? await ui.openShipProjects(this.actor) : await ui.openDesignReview();
+            if (result?.success) await this.requestSurfaceRender({ reason: `asset-bay-${action}`, surfaceId: 'asset-bay' });
+            return;
+          }
+
           if (!rawActorId) {
             SWSELogger.warn('[AssetBay] Missing actor id for action', { action, dataset: { ...el.dataset } });
             ui.notifications?.warn?.('That asset action is missing an actor id. See console for details.');
@@ -668,6 +678,11 @@ export function ShellHostMixin(BaseClass) {
           }
 
           if (action === 'modify') {
+            const modifyAuth = assetModifyAuthorization({ user: game.user, ownerActor: this.actor, assetActor: targetActor });
+            if (!modifyAuth.allowed) {
+              ui.notifications?.warn?.(`You cannot modify ${targetActor.name} from here (${modifyAuth.reason}).`);
+              return;
+            }
             const bayMode = bayModeFromEl || (targetActor.type === 'vehicle' ? 'shipyard' : 'garage');
             SWSELogger.log('[AssetBay] launching modification route', { bayMode, actorId: targetActor.id, actorType: targetActor.type });
             // PART 7 — Asset Bay routing symmetry (Phase 1). Garage and Shipyard

@@ -230,8 +230,389 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Decision authority | Project owner |
 | Resolution | |
 
+## V-P2-01 — Spendable Emplacement Points of a canonical hull
+
+| Field | Content |
+|---|---|
+| Rules domain | Vehicle modification (Shipyard) |
+| Feature | Spendable Emplacement Points of a canonical hull |
+| Source | Published vehicle records `modifications.emplacementPointsTotal` (3 of 429: kotor-amalgamated-hyperdyne-578-r-space-transport = 4, kotor-arakyd-industries-lethisk-class-armed-freighter = 3, kotor-corellia-stardrive-quartermaster-class-supply-carrier = 2); special-rule text on unused/unspent Emplacement Points for sotg-corellian-yt-1300-transport, sotg-sorosuub-cutlass-9-patrol-fighter, sotg-kuat-systems-engineering-firespray-31-patrol-craft. |
+| Evidence | The other 426 records state no Emplacement Point figure. Three state a figure labelled a total. Three Starships of the Galaxy entries mention unused/unspent Emplacement Points in special-rule text. |
+| Confirmed behavior | A few hulls publish an EP figure or mention unused EP. |
+| Unresolved question | Whether a published `emplacementPointsTotal` is the points available to spend or the hull's total including stock equipment; how to treat the 426 hulls with no published figure. |
+| Options | None supported by certified evidence. |
+| Recommended ruling | None |
+| Implementation impact | `DEFAULT_VEHICLE_INSTALLATION_RULES.resolveEpBudget` denies every install (`EP_BUDGET_UNKNOWN`). No canonical hull can be modified until ruled. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Review classification | `PENDING_SOURCE_VERIFICATION` for the vehicle-modification rules text (EP formula by size) plus a policy question for hulls with no figure. |
+| Decision authority | Project owner |
+| Resolution | |
+
+## V-P2-02 — Provenance of data/vehicle-modifications catalog
+
+| Field | Content |
+|---|---|
+| Rules domain | Vehicle modification (Shipyard) |
+| Feature | Provenance of data/vehicle-modifications catalog |
+| Source | `data/vehicle-modifications/*.json` (187 rows: id, category, emplacementPoints, availability, sizeRestriction, cost, costType, effect text). |
+| Evidence | No row carries a book or printed page. Pricing includes `base`, `flat`, `multiplier` and `modifier` cost types; effects are free text. |
+| Confirmed behavior | Rows exist with EP, availability and size restrictions. |
+| Unresolved question | Which rows match a published source and are certified; how `base`/`multiplier`/`modifier` cost types resolve to credits; whether size restrictions such as bare 'Colossal' include frigate/cruiser/station hulls. |
+| Options | None supported by certified evidence. |
+| Recommended ruling | None |
+| Implementation impact | Planner requires a `certification` block (MECHANIC_SPECIFIED, book, page) on a row, accepts only `flat` costs, and returns SIZE_AMBIGUOUS for the bare-Colossal/subtype cases. No row currently qualifies. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Review classification | `PENDING_SOURCE_VERIFICATION` (row-by-row certification) and `DEFERRED_RULES_REVIEW` (size subtype and cost-type policy). |
+| Decision authority | Project owner |
+| Resolution | |
+
+## V-P2-03 — Removal refund, install procedure and stat effects
+
+| Field | Content |
+|---|---|
+| Rules domain | Vehicle modification (Shipyard) |
+| Feature | Removal refund, install procedure and stat effects |
+| Source | Legacy `vehicle-system-definitions.js` uses an uncertified 0.5 resale multiplier and fixed stat deltas; D-001 covers the install/removal procedure for items. |
+| Evidence | No certified source for vehicle resale value, install time/DC, or how a modification's effect stacks with printed values. |
+| Confirmed behavior | None. |
+| Unresolved question | Refund on uninstall; install time/DC/failure; stacking and bonus type for effects on defenses, speed, damage reduction and shields. |
+| Options | None supported by certified evidence. |
+| Recommended ruling | None |
+| Implementation impact | Uninstall moves no credits and reports `refundPolicyDecided:false`; effects are not applied to effective stats (only EP/cost are tracked). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Review classification | `PENDING_SOURCE_VERIFICATION`, linked to D-001. |
+| Decision authority | Project owner |
+| Resolution | |
+
+## V-P2-04 — Evidence required to certify a physical mount
+
+| Field | Content |
+|---|---|
+| Rules domain | Vehicle weapon installation |
+| Feature | Evidence required to certify a physical mount |
+| Source | Printed firing groups carry `mountKeys: []` and 'Physical mounting, weapon bindings and firing arcs NOT CERTIFIED'. |
+| Evidence | Stock weapon mount identity, arc, battery membership and operator are unpublished or unreviewed for these records. |
+| Confirmed behavior | Printed attack groups are reference-only. |
+| Unresolved question | What evidence suffices for a mount (the planner currently requires mountKey, arc, operatorRole and book/page evidence) and whether a purchased weapon may be executable at all. |
+| Options | None supported by certified evidence. |
+| Recommended ruling | None |
+| Implementation impact | Weapon installs are denied without mount evidence; even with it the ledger entry is `executable:false`. Enabling execution is P4-D. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Review classification | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## V-P4-01 — Vehicle size modifier on top of printed Initiative
+
+| Field | Content |
+|---|---|
+| Rules domain | Vehicle Initiative |
+| Feature | `SWSECombatDocument._getVehicleSizeModifier` (Colossal -10, Gargantuan -5, Huge -2, Large -1) added to a vehicle's Initiative formula |
+| Source | Published vehicle records `abilities.initiativePrinted` (all 429); the code table has no cited book/page |
+| Evidence | Every record prints an Initiative modifier (e.g. Incom T-65B X-wing, *Core Rulebook* p. 178: +7). The code adds a size modifier on top of the actor's Initiative skill total; its origin is not cited. |
+| Confirmed behavior | The printed Initiative is the vehicle's Initiative modifier. Implemented in P4-B: source-backed vehicles use it as the base in `SWSEInitiative` and `swse-combat`. |
+| Unresolved question | Whether a size modifier applies in addition to the printed Initiative, and if so which table is authoritative. |
+| Options | None supported by certified evidence. |
+| Recommended ruling | None |
+| Implementation impact | The existing size modifier is left unchanged and still applies to source-backed vehicles on top of the printed value. A ruling may remove or replace it. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Review classification | `PENDING_SOURCE_VERIFICATION` — examine the vehicle Initiative text in the Core Rulebook. |
+| Decision authority | Project owner |
+| Resolution | |
+
+## V-P5-01 — Emplacement point pool of a newly designed stock frame
+
+| Field | Content |
+|---|---|
+| Rules domain | Custom starship construction |
+| Feature | Emplacement point pool of a newly designed stock frame |
+| Source | *Starships of the Galaxy*, Stock Ships (printed pp. 53-54) |
+| Evidence | Each stock frame row lists an "Emplacement Points" figure (e.g. superiority fighter 5, frigate 50). The text uses that figure only in the rule for worsening a category (gain 10% of it per 25% worsened). |
+| Confirmed behavior | Frames and their statistics are published; systems are added with the modification rules. |
+| Unresolved question | Whether the frame figure is the pool available for added systems. |
+| Options | Stated in the question; neither is a recommendation. |
+| Recommended ruling | None |
+| Implementation impact | `DEFAULT_CONSTRUCTION_RULES.resolveFrameEpPool` returns unknown; a design cannot add systems until ruled (a bare frame validates). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## V-P5-02 — Starship Designer design time rounding
+
+| Field | Content |
+|---|---|
+| Rules domain | Custom starship construction |
+| Feature | Starship Designer design time rounding |
+| Source | *Starships of the Galaxy*, feat "Starship Designer" |
+| Evidence | Minimum 30 days and DC 25, adding 1 to the DC and 1 day for every additional 100,000 credits of final cost beyond the first 100,000. |
+| Confirmed behavior | The 30-day/DC 25 base and the 100,000-credit step. |
+| Unresolved question | Whether "every additional 100,000" counts full or started increments. |
+| Options | Stated in the question; neither is a recommendation. |
+| Recommended ruling | None |
+| Implementation impact | `designTime` requires the rounding from the rules seam; without it the result is `DESIGN_TIME_ROUNDING_UNRULED`. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## V-P5-03 — Non-starship vehicles
+
+| Field | Content |
+|---|---|
+| Rules domain | Vehicle modification and construction |
+| Feature | Non-starship vehicles |
+| Source | Searched all 14 sourcebook texts |
+| Evidence | The modification chapter is for starships (cost modifiers start at Huge). One weapon (the discord missile launcher, *Threats of the Galaxy*) may be installed on "any vehicle or starship of Huge size or larger". No procedure for walkers, tanks or speeders was found. |
+| Confirmed behavior | Starship modification and construction rules. |
+| Unresolved question | Whether ground/air vehicles are supported at all, and if so only as GM homebrew. |
+| Options | Stated in the question; neither is a recommendation. |
+| Recommended ruling | None |
+| Implementation impact | Hulls without a published cost modifier are refused (`HULL_SIZE_HAS_NO_PUBLISHED_COST_MODIFIER`). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## V-P5-04 — Derived statistics that depend on crew quality
+
+| Field | Content |
+|---|---|
+| Rules domain | Custom starship construction |
+| Feature | Derived statistics that depend on crew quality |
+| Source | Core Rulebook "Crew Quality" sidebar (printed p. 174) |
+| Evidence | The sidebar text is not present in the OCR. *Starships of the Galaxy* says to determine Initiative, Perception, base attack, grapple, attacks, damage threshold and fighting space with the Core rules after choosing a crew quality, and gives no formula for Challenge Level. |
+| Confirmed behavior | Reflex Defense, Fortitude Defense and damage threshold formulas (verified against the printed X-wing and 390 other records). |
+| Unresolved question | Source gap, not a ruling: the crew-quality values must be read from the PDF. |
+| Options | Stated in the question; neither is a recommendation. |
+| Recommended ruling | None |
+| Implementation impact | `previewFrame` lists these statistics under `pending` and derives none of them. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## Source examination log (2026-10-30)
+
+Appended; no earlier entry was changed. Full evidence: `docs/audits/vehicles/universal-vehicle-p2-p5-rules-certification.md`. Pages are table-of-contents section ranges from the OCR text; the PDF is final authority.
+
+| ID | Examination result | Status after examination |
+|---|---|---|
+| V-P2-01 | Spendable EP = *unused* emplacement points (*Starships of the Galaxy* p. 39: stock designs generally 1, Corellian Engineering Corporation 5, Table 3-2 lists 15 designs). Records state a figure for only 3 hulls plus 3 KotOR statblock lines whose meaning the text does not give. Install beyond unused EP is permitted with published penalties (p. 38). | Source answers the formula; the default for hulls with no stated figure and the shortfall policy remain `DEFERRED_RULES_REVIEW` (Q1, Q2). One Table 3-2 cell (J-Type transports) needs the PDF. |
+| V-P2-02 | 187 catalog rows compared with the SotG movement/defense tables: 48 text-verified, 7 noisy, 1 differing (`armor-4`), 5 not in SotG tables, 126 in unparseable tables. Cost modifiers (Table 3-1) and the base/flat cost rule are published. | `PENDING_SOURCE_VERIFICATION` for 139 rows (PDF); certification threshold is Q3. |
+| V-P2-03 | Install time, Mechanics DC, work force, failure outcomes, removal (half time, free) are published (pp. 38-40). Resale is conditional on a buyer. Effects are prose per system. | Procedure answered; resale policy and workflow automation `DEFERRED_RULES_REVIEW` (Q4, Q5); effects are an implementation backlog. |
+| V-P2-04 | Damage/EP/availability/cost of installed weapons published; operator = pilot/copilot or a gunner (Core). No published firing-arc rule for installed weapons found in any searched book. | `DEFERRED_RULES_REVIEW` (Q6): the arc gate is a project policy. |
+| V-P4-01 | Size modifier applies to occupants' Initiative and Pilot checks; vehicle Initiative uses the pilot's modifier; crew modifiers are already in statblock statistics (Core). Whether the printed value already includes size is not stated. The code's size table omits the Colossal subtypes (Table 10-1 prints -10 for each). | `DEFERRED_RULES_REVIEW` (Q7). |
+
+## Source examination log, revision 6 (2026-10-30, PDF review and owner direction)
+
+Appended. Records the project owner's PDF readings (`data/audits/vehicles/swse-p2-pdf-review.json`) and directions given in conversation on 2026-10-30. Earlier entries are unchanged; the originals above remain the record of the questions.
+
+| ID | Addition |
+|---|---|
+| V-P2-01 | Owner direction: a standard stock design generally has 1 unused EP (exceptions apply); installs beyond the unused EP are permitted with the printed penalties. J-Type transports = 2 (Table 3-2, p. 39, PDF). Still open: the three KotOR statblock EP lines; the unmapped Table 3-2 names. |
+| V-P2-02 | 8 movement/defense cells read from the PDF (Tables 3-3 p. 41, 3-4 p. 43); `armor-4` size restriction corrected to Colossal (cruiser) or larger. Weapon and accessory tables not yet PDF-reviewed. |
+| V-P2-03 | Owner direction: implement the published installation and removal mechanics, and distinguish resale eligibility from a guaranteed refund. Implemented; the resale amount and whether play enforces the job procedure remain open. |
+| V-P4-01 | Owner direction: do not double-apply crew or size modifiers. Evidence: Initiative = Dex modifier + size modifier + crew check modifier fits 343 of 375 published vehicles. Source-backed vehicles no longer receive the extra size modifier. |
+| V-P5-01 | Owner direction: distinguish a frame's printed stock EP allocation from the unused EP of a constructed ship; a new design's spendable pool is the unused EP (general rule). |
+| V-P5-04 | Closed: Core Rulebook p. 174 Crew Quality table read from the PDF. |
+
+## Shipyard modification effects (2026-10-31)
+
+Appended. Owner authorization: implement unambiguous published effects first (movement/defense); defer ambiguity. 39 of 56 certified rows now have implemented effects (armor x4, shields x19, maneuvering jets x3, hyperdrives x11, atmospheric thrusters x2). The rest stay `SOURCE_VERIFIED` and cannot be installed.
+
+### V-P6-01 - Reinforced Bulkheads +10% / +20% / +30%
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6-01 |
+| Rules domain | Vehicle modifications |
+| Feature | Reinforced Bulkheads +10% / +20% / +30% |
+| Source | *Starships of the Galaxy*, Armor / Shields / Movement Systems sections and Tables 3-3 (p. 41) and 3-4 (p. 43) |
+| Evidence | Prints that the improvement increases the starship's hit points by 10%, 20% or 30%, and that these improvements do not stack. |
+| Confirmed behavior | A percentage increase; the three improvements do not stack with each other. |
+| Unresolved question | How the increased hit-point total is rounded; the printed text does not say. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | `reinforced-bulkheads-10/20/30` stay SOURCE_VERIFIED and uninstallable. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6-02 - Shield / hyperdrive / sublight drive on a hull that already has one
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6-02 |
+| Rules domain | Vehicle modifications |
+| Feature | Shield / hyperdrive / sublight drive on a hull that already has one |
+| Source | *Starships of the Galaxy*, Armor / Shields / Movement Systems sections and Tables 3-3 (p. 41) and 3-4 (p. 43) |
+| Evidence | The tables list shields, hyperdrives and sublight drives as systems with a rating, class or speed; the Shields text calls shields a popular addition for ships that lack them. |
+| Confirmed behavior | Installing shields on a hull printed with SR 0, or a hyperdrive on a hull printed without one, sets that value. |
+| Unresolved question | Whether a new shield generator, hyperdrive or sublight drive replaces, adds to, or is capped by the hull's printed system; and, for sublight drives, the 'only military vessels' restriction. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Planner denies with SHIELD_REPLACEMENT_OR_ADDITION_UNRULED / HYPERDRIVE_REPLACEMENT_UNRULED; `sublight-drive-*` stay SOURCE_VERIFIED. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6-03 - Stacking of two systems of the same kind (armor, maneuvering jets, shields, hyperdrive, atmospheric thrusters)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6-03 |
+| Rules domain | Vehicle modifications |
+| Feature | Stacking of two systems of the same kind (armor, maneuvering jets, shields, hyperdrive, atmospheric thrusters) |
+| Source | *Starships of the Galaxy*, Armor / Shields / Movement Systems sections and Tables 3-3 (p. 41) and 3-4 (p. 43); Core Rulebook equipment-bonus wording |
+| Evidence | Bulkhead improvements are stated not to stack; no stacking text was found for armor, jets or atmospheric thrusters. |
+| Confirmed behavior | Each system's own bonus when it is the only one of its kind. |
+| Unresolved question | Whether and how two equipment bonuses of the same kind combine on one starship. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Planner denies a second system of the same effect group (EFFECT_STACKING_UNRULED). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6-04 - Starship Armor versus the pilot character-level substitution
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6-04 |
+| Rules domain | Vehicle modifications |
+| Feature | Starship Armor versus the pilot character-level substitution |
+| Source | *Starships of the Galaxy*, Armor / Shields / Movement Systems sections and Tables 3-3 (p. 41) and 3-4 (p. 43), Armor |
+| Evidence | Armor is bought as an equipment bonus to the armor the ship adds to Reflex Defense; skilled pilots may use their character level in place of the ship's armor bonus. |
+| Confirmed behavior | The equipment bonus adds to the ship's armor bonus; the static Reflex Defense shown includes it. |
+| Unresolved question | Whether the equipment bonus still applies when a pilot substitutes character level for the ship's armor bonus. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | The sheet shows the static ship-armor-bonus basis only; no per-pilot substitution is applied. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6-05 - Effects needing roll or action integration (Jamming Suite/Array, Regenerating Shields, Combat Thrusters, Navicomputers, SLAM)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6-05 |
+| Rules domain | Vehicle modifications |
+| Feature | Effects needing roll or action integration (Jamming Suite/Array, Regenerating Shields, Combat Thrusters, Navicomputers, SLAM) |
+| Source | *Starships of the Galaxy*, Armor / Shields / Movement Systems sections and Tables 3-3 (p. 41) and 3-4 (p. 43) |
+| Evidence | The effects are bonuses or penalties to checks or actions rather than statistics. |
+| Confirmed behavior | The printed bonuses and penalties. |
+| Unresolved question | No rules question: engineering scope. The rows are not marked MECHANIC_SPECIFIED until roll/action integration exists. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Rows stay SOURCE_VERIFIED. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6-06 - Failed Starship Designer design check
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6-06 |
+| Rules domain | Vehicle construction |
+| Feature | Starship Designer (designing a starship from scratch) |
+| Source | *Starships of the Galaxy*, Starship Designer feat; Stock Ships section |
+| Evidence | Designing takes a minimum of 30 days and a DC 25 Mechanics check, +1 DC and +1 day per additional 100,000 credits beyond the first 100,000; others may aid the check. The custom-modification paragraph gives a failure rule (half again time and money, +2) for custom modifications only. The Stock Ships section says a designer normally needs the aid of a shipyard to build the ship. |
+| Confirmed behavior | Design time and design DC; aid another applies. |
+| Unresolved question | What happens when the design Mechanics check fails (retry cost/time, bonus, or loss), and whether any build time follows the design time. |
+| Options | None supported by the sources searched (the custom-modification failure rule is a different activity). |
+| Recommended ruling | None |
+| Implementation impact | A failed design check sets the project to CHECK_FAILED; no retry is automated; only a recorded GM adjudication delivers the ship. No build time beyond the design time is applied. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+Owner direction recorded 2026-10-31 (not a rules question): construction credits are charged when the GM approves and funds the project; approval does not complete construction.
+
+## P6A component census (2026-10-31)
+
+Appended. Evidence: `data/audits/vehicles/p6a/`.
+
+### V-P6A-01 - Triple cannons
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6A-01 |
+| Rules domain | Vehicle weapons |
+| Feature | Triple cannons |
+| Source | *Starships of the Galaxy*, Weapon Systems, Cannon, Double/Quad |
+| Evidence | Triple cannons are 'functionally identical to double cannons, using three cannons (with slightly less power individually)'. |
+| Confirmed behavior | Same game statistics as a double cannon. |
+| Unresolved question | Whether a triple cannon also uses the double cannon's cost multiplier and EP, or is only a description of an existing double cannon. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Recorded as an alias of `cannon-double`; no separate catalog row. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6A-02 - Armor-piercing concussion missiles
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6A-02 |
+| Rules domain | Vehicle weapons |
+| Feature | Armor-piercing concussion missiles |
+| Source | *Starships of the Galaxy*, Concussion Missiles |
+| Evidence | Penetration 10 and -5 to attack; no cost, availability or EP printed. |
+| Confirmed behavior | The effect. |
+| Unresolved question | Price, availability and whether the variant is bought per missile. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Recorded as MISSING_FROM_CATALOG; not added. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6A-03 - Launcher capacity expansions
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6A-03 |
+| Rules domain | Vehicle weapons |
+| Feature | Launcher capacity expansions |
+| Source | *Starships of the Galaxy* (concussion, proton, shieldbuster, mines); *Galaxy at War* (chaff gun) |
+| Evidence | Each additional missile/torpedo/mine/canister raises the launcher cost by 20% or 25% up to a maximum. |
+| Confirmed behavior | Cost increase and maximum. |
+| Unresolved question | Whether added capacity changes EP, and whether the percentage applies to the base or the size-modified launcher cost. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Recorded as MISSING_FROM_CATALOG; not added. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6A-04 - Galaxy at War weapons without availability
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6A-04 |
+| Rules domain | Vehicle weapons |
+| Feature | Galaxy at War weapons without availability |
+| Source | *Galaxy at War*, Vehicle and Starship Weapons |
+| Evidence | The table prints Damage, Emplacement Points and Cost only; the text says a GM can add these weapons without the SotG system. |
+| Confirmed behavior | EP and cost. |
+| Unresolved question | What availability applies (the catalog had Common/Illegal with no source; now unknown). |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Availability set to unknown; the planner reports AVAILABILITY_UNKNOWN. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
 ---
 
 ## Revision log
 
 - **Revision 2 (2026-10-14):** introduced `PENDING_SOURCE_VERIFICATION` versus `DEFERRED_RULES_REVIEW`; added a *Review classification* row to D-001–D-012. Of the twelve entries, eleven are research gaps awaiting source examination; only D-006 (policy for unpriced modifications) is a decision for the owner today. No decision ID, original field, owner ruling or interim position was changed. No recommended ruling is made for any entry. Source examination is the next step for D-001 first, because it blocks the install procedure.
+
+- **Revision 3 (2026-10-29):** appended V-P2-01 to V-P2-04 (vehicle Shipyard EP budget, catalog provenance, refund/effects, mount certification). No existing entry changed.
+- **Revision 4 (2026-10-29):** appended V-P4-01 (vehicle size modifier vs printed Initiative). No existing entry changed.
+- **Revision 5 (2026-10-30):** appended the source examination log for V-P2-01..04 and V-P4-01 and new entries V-P5-01..04. No existing entry was changed.
+- **Revision 6 (2026-10-30):** appended PDF-review results and owner directions for V-P2-01/02/03, V-P4-01, V-P5-01 and V-P5-04. No existing entry was changed.
+- **Revision 7 (2026-10-31):** appended V-P6-01..05 (Shipyard modification effects). No existing entry changed.
+- **Revision 8 (2026-10-31):** appended V-P6-06 (failed design check) and the owner's construction-funding direction. No existing entry changed.
+- **Revision 9 (2026-10-31):** appended V-P6A-01..04 (component census). No existing entry changed.
