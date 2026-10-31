@@ -190,7 +190,7 @@ export class VehicleInstallationService {
       roll = roller ? await roller() : (await new Roll('1d20').evaluate()).total;
       checkTotal = roll + bonus + retryBonus;
     }
-    const plan = planJobCheck({ record: p.src.record, flags: p.src.flags, jobId, total: checkTotal, gm, installedAt: Date.now() });
+    const plan = planJobCheck({ record: p.src.record, flags: p.src.flags, jobId, total: checkTotal, installedAt: Date.now() });
     if (!plan.ok) return { success: false, reasons: plan.reasons };
     const tx = await this.#commit({ ownerActor, vehicle, nextJobs: plan.nextJobs, nextLedger: plan.nextLedger, reason: `Installation check: ${plan.outcome}`,
       audit: { kind: 'vehicle-install-check', jobId, outcome: plan.outcome, total: checkTotal } });

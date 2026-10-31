@@ -137,16 +137,17 @@ function appendCompleted(flags, key, job, completion, installedAt) {
 }
 
 /**
- * Record the Mechanics check for the current attempt. Non-GM callers may record a check only after the
- * attempt's work time has been logged. SUCCESS finalizes the certified ledger entry; failures keep the money
+ * Record the Mechanics check for the current attempt. Nobody - GM included - may record a normal check before
+ * the attempt's work time has been logged; waiving the time is only possible through the explicit, audited
+ * GM adjudication (planGmCompleteJob, which requires a reason). SUCCESS finalizes the certified ledger entry; failures keep the money
  * already spent. The roll total (bonus included) is the caller's input.
  */
-export function planJobCheck({ record, flags, jobId, total, gm = false, installedAt }) {
+export function planJobCheck({ record, flags, jobId, total, installedAt }) {
   const key = record?.identity?.sourceEntryKey;
   const f = findActive(flags, key, jobId); if (f.error) return deny(f.error);
   const d = describeJob(f.job);
   if (!d.canRecordCheck) return deny('JOB_NOT_AWAITING_CHECK');
-  if (!d.timeComplete && !gm) return deny('WORK_TIME_INCOMPLETE');
+  if (!d.timeComplete) return deny('WORK_TIME_INCOMPLETE');
   const r = recordInstallationCheck(f.job, { total });
   if (!r.ok) return deny(...r.reasons);
   let job = { ...f.job, ...r.job, attempts: r.job.attempts };

@@ -67,7 +67,7 @@ test('reserved EP protects against conflicting purchases', async () => {
   assert.equal(owner.system.credits, 8000, 'the refused attempt is not charged');
 });
 
-test('the check needs the logged work time unless a GM records it; players never type a total', async () => {
+test('the check needs the logged work time; players never type a total', async () => {
   world();
   await S.startJob({ ownerActor: owner, vehicle, catalogId: 'fx', catalog });
   const job = jobs()[0];
@@ -80,6 +80,33 @@ test('the check needs the logged work time unless a GM records it; players never
   const days = J.describeJob(jobs()[0]).daysRequired;
   assert.equal((await S.logWorkDays({ ownerActor: owner, vehicle, jobId: job.jobId, days })).success, true);
   assert.equal(J.describeJob(jobs()[0]).remainingDays, 0);
+});
+
+test('a GM cannot bypass the installation time by recording a normal check; the waiver is the audited override', async () => {
+  world({ gm: true });
+  await S.startJob({ ownerActor: owner, vehicle, catalogId: 'fx', catalog });
+  const id = jobs()[0].jobId;
+  // GM-entered total, time not logged: refused, nothing written to the ledger
+  const early = await S.recordCheck({ ownerActor: owner, vehicle, jobId: id, total: 40 });
+  assert.deepEqual(early.reasons, ['WORK_TIME_INCOMPLETE']);
+  assert.equal(ledger().length, 0);
+  assert.equal(jobs()[0].status, 'AWAITING_CHECK');
+  // pure planner: there is no GM flag that skips the time
+  const p = J.planJobCheck({ record: src.flags.swse.universalVehicleSource.source, flags: src.flags, jobId: id, total: 40, gm: true });
+  assert.deepEqual(p.reasons, ['WORK_TIME_INCOMPLETE']);
+  // the explicit waiver path needs a reason and records it
+  assert.ok((await S.gmCompleteJob({ ownerActor: owner, vehicle, jobId: id, reason: '' })).reasons.includes('GM_OVERRIDE_REASON_REQUIRED'));
+  assert.equal((await S.gmCompleteJob({ ownerActor: owner, vehicle, jobId: id, reason: 'work done offscreen' })).success, true);
+  assert.equal(ledger()[0].completion.mode, 'GM_ADJUDICATED');
+  assert.equal(ledger()[0].completion.reason, 'work done offscreen');
+  // after logging the time, a GM-entered table roll is accepted as a normal check
+  world({ gm: true });
+  await S.startJob({ ownerActor: owner, vehicle, catalogId: 'fx', catalog });
+  const id2 = jobs()[0].jobId;
+  await S.logWorkDays({ ownerActor: owner, vehicle, jobId: id2, days: J.describeJob(jobs()[0]).daysRequired });
+  const ok = await S.recordCheck({ ownerActor: owner, vehicle, jobId: id2, total: 30 });
+  assert.equal(ok.outcome, 'SUCCESS');
+  assert.equal(ledger()[0].completion.mode, 'MECHANICS_CHECK');
 });
 
 async function logAll(jobId) { asGM(true); await S.logWorkDays({ ownerActor: owner, vehicle, jobId, days: J.describeJob(jobs().find(j => j.jobId === jobId)).remainingDays || 0.0001 }); asGM(false); }
