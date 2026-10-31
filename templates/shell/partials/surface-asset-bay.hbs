@@ -34,6 +34,12 @@
         <span class="swse-asset-bay-count"><strong>{{vm.droidCount}}</strong> {{localize "SWSE.ShellUI.Droids"}}</span>
         <span class="swse-asset-bay-count"><strong>{{vm.shipCount}}</strong> {{localize "SWSE.ShellUI.ShipsVehicles"}}</span>
       </div>
+      {{#unless vm.isGarageMode}}
+      <div class="swse-asset-bay-design-actions">
+        <button type="button" class="swse-asset-bay-action" data-asset-bay-action="design-ship"><i class="fas fa-drafting-compass"></i><span>Design Custom Starship</span></button>
+        {{#if vm.isGM}}<button type="button" class="swse-asset-bay-action" data-asset-bay-action="review-designs"><i class="fas fa-clipboard-check"></i><span>Review Ship Designs</span></button>{{/if}}
+      </div>
+      {{/unless}}
       {{#if vm.showModeFilters}}
       <div class="swse-asset-bay-mode-pills" role="group" aria-label="{{localize 'SWSE.ShellUI.AssetFilters'}}">
         <button type="button"
