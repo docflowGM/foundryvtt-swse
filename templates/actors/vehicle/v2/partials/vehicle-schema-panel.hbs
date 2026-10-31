@@ -77,3 +77,52 @@
     {{/each}}
   </div>
 </section>
+
+{{#if view.shipyard.supported}}
+<section class="swse-vehicle-panel swse-vehicle-shipyard-jobs-panel" data-reserved-ep="{{view.shipyard.reservedEp}}">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">Installation Work</h3>
+    <span class="swse-vehicle-mini-badge">{{view.shipyard.activeJobs.length}} pending</span>
+  </header>
+  <div class="swse-vehicle-panel-body">
+    {{#each view.shipyard.jobs}}
+      <div class="swse-vehicle-job-row" data-job-id="{{jobId}}" data-job-status="{{status}}">
+        <strong>{{name}}</strong> — {{status}} (attempt {{attemptNumber}})
+        · Mechanics DC {{dc}}{{#if mechanicsBonus}} (+{{mechanicsBonus}} retry bonus){{/if}}
+        · Work {{daysLogged}} / {{daysRequired}} days ({{remainingDays}} remaining)
+        · Paid {{creditsPaid}} cr · EP reserved {{epReserved}}
+        {{#if wasted}}· Lost {{wasted.credits}} cr and {{wasted.days}} days{{/if}}
+        {{#if completion}}· Completed by {{completion.mode}}{{#if completion.reason}} ({{completion.reason}}){{/if}}{{/if}}
+        {{#if canRetry}}<em>Retry: {{retryCredits}} cr and {{retryDays}} days, +{{retryBonus}} on the check.</em>{{/if}}
+        {{#if canRestart}}<em>Total failure: starting again is a new, fully charged attempt.</em>{{/if}}
+        {{#if ../view.shipyard.canAct}}
+          <span class="swse-vehicle-job-actions">
+            {{#if canRecordCheck}}<button type="button" data-shipyard-action="record-check" data-job-id="{{jobId}}">Roll Mechanics check</button>{{/if}}
+            {{#if canRetry}}<button type="button" data-shipyard-action="retry-job" data-job-id="{{jobId}}">Pay for retry</button>{{/if}}
+            {{#if ../view.shipyard.isGM}}
+              {{#if active}}<button type="button" data-shipyard-action="log-days" data-job-id="{{jobId}}">Log work days</button>
+              <button type="button" data-shipyard-action="gm-complete" data-job-id="{{jobId}}">GM: mark completed</button>{{/if}}
+            {{/if}}
+          </span>
+        {{/if}}
+      </div>
+    {{else}}
+      <p>No installation work in progress.</p>
+    {{/each}}
+    {{#if view.shipyard.rejected}}<p class="swse-vehicle-warning">{{view.shipyard.rejected}} job record(s) failed verification; new work is blocked.</p>{{/if}}
+    {{#if view.shipyard.canAct}}
+      {{#if view.shipyard.hasOptions}}
+      <div class="swse-vehicle-job-start">
+        <select data-shipyard-select="catalog">
+          {{#each view.shipyard.options}}<option value="{{id}}">{{name}} — {{category}} — EP {{ep}}</option>{{/each}}
+        </select>
+        <button type="button" data-shipyard-action="start-job">Begin installation</button>
+        {{#if view.shipyard.isGM}}<button type="button" data-shipyard-action="gm-instant">GM: install instantly</button>{{/if}}
+      </div>
+      {{else}}
+      <p>No certified modifications are installable on this vehicle.</p>
+      {{/if}}
+    {{/if}}
+  </div>
+</section>
+{{/if}}

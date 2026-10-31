@@ -1232,7 +1232,7 @@ export function buildInvalidVehicleSourceContext(actor, rawContext, options = {}
   return {
     ...(rawContext ?? {}),
     vehicleSourceInvalid: true,
-    schemaView: buildVehicleSchemaViewModel(actor, { epTable: options.epTable ?? null }),
+    schemaView: buildVehicleSchemaViewModel(actor, { epTable: options.epTable ?? null, catalog: options.catalog ?? null, isGM: globalThis.game?.user?.isGM === true }),
     publicationView: null,
     vehiclePublication: null,
     sourceFactsReadOnly: true,
@@ -1346,7 +1346,7 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
     vehicleRuntimeProjection,
     vehiclePublication,
     publicationView,
-    schemaView: buildVehicleSchemaViewModel(actor, { epTable: options.epTable ?? null }),
+    schemaView: buildVehicleSchemaViewModel(actor, { epTable: options.epTable ?? null, catalog: options.catalog ?? null, isGM: globalThis.game?.user?.isGM === true }),
     vehicleResourceStrip,
     vehicleConceptTabs,
     vehicleAnnotation,

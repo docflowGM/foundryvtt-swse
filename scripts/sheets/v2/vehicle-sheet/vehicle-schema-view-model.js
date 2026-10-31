@@ -14,7 +14,8 @@ import { classifyVehicleActorRuntime, getVehicleRuntimeProjection } from '../../
 import { CREW_QUALITY, makeUnusedEmplacementResolver } from '../../../domain/vehicles/vehicle-modification-rules.js';
 import { summarizeInstallations } from '../../../domain/vehicles/vehicle-installation-ledger.js';
 import { verifyConstructionRecord, DEFAULT_CONSTRUCTION_RULES } from '../../../domain/vehicles/custom-vehicle-construction.js';
-import { computeEffectiveStatistics } from '../../../domain/vehicles/vehicle-modification-effects.js';
+import { computeEffectiveStatistics, effectInstallability } from '../../../domain/vehicles/vehicle-modification-effects.js';
+import { readJobs, describeJob, reservedEpFromJobs } from '../../../domain/vehicles/vehicle-installation-jobs.js';
 import { describeShield, SOURCE_UNKNOWN } from './vehicle-publication-view-model.js';
 
 const finite = v => typeof v === 'number' && Number.isFinite(v);
@@ -71,7 +72,7 @@ function entryView(e) {
   };
 }
 
-function epView({ supported, record, entries, rules, epTable, constructed }) {
+function epView({ supported, record, entries, rules, epTable, constructed, reserved = 0 }) {
   if (!supported) return { state: 'UNSUPPORTED', label: 'Starship modification rules do not apply to this vehicle. No emplacement-point budget.', total: null, used: null, remaining: null, shortfall: null, nonstandardCount: 0 };
   let budget;
   if (constructed) {
@@ -85,10 +86,10 @@ function epView({ supported, record, entries, rules, epTable, constructed }) {
   const nonstandardCount = entries.filter(e => e.quote?.nonstandard === true).length;
   return {
     state: budget.state === 'known' ? 'KNOWN' : 'UNKNOWN',
-    total: s.epTotal, used: s.epUsed, remaining: s.epRemaining === null ? null : Math.max(0, s.epRemaining), shortfall,
+    total: s.epTotal, used: s.epUsed, reserved, remaining: s.epRemaining === null ? null : Math.max(0, s.epRemaining - reserved), shortfall,
     nonstandardCount, basis: budget.basis ?? budget.reason ?? null,
     label: budget.state === 'known'
-      ? `Unused EP ${s.epTotal}; consumed ${s.epUsed}; remaining ${Math.max(0, s.epRemaining)}` + (shortfall ? `; shortfall ${shortfall}` : '')
+      ? `Unused EP ${s.epTotal}; consumed ${s.epUsed}` + (reserved ? `; reserved by pending installations ${reserved}` : '') + `; remaining ${Math.max(0, s.epRemaining - reserved)}` + (shortfall ? `; shortfall ${shortfall}` : '')
       : `Unused EP unknown (${budget.reason ?? 'not decidable'}); consumed ${s.epUsed}`
   };
 }
@@ -191,6 +192,8 @@ export function buildVehicleSchemaViewModel(actor, options = {}) {
     const record = flags.swse.universalVehicleSource.source;
     const supported = hasStarshipScale(published);
     const entries = installed.modifications.map(entryView);
+    const shipyard = shipyardView({ record, flags, key: source.sourceEntryKey, catalog: options.catalog ?? null, entries: installed.modifications, supported,
+      canAct: actor?.isOwner === true || options.isGM === true, isGM: options.isGM === true });
     const hp = currentHp(actor, published.hitPoints.value);
     const shield = describeShield(published, p.current.shields);
     return {
@@ -201,8 +204,8 @@ export function buildVehicleSchemaViewModel(actor, options = {}) {
         book: source.book, page: source.page, sourceLabel: `${source.book}, p. ${source.page}`,
         sourceKey: source.sourceEntryKey, category: source.primaryCategory, size: record.classification?.printedSize ?? null
       },
-      hp, shield,
-      ep: epView({ supported, record, entries: installed.modifications, rules: DEFAULT_CONSTRUCTION_RULES, epTable: options.epTable ?? null, constructed: false }),
+      hp, shield, shipyard,
+      ep: epView({ supported, record, entries: installed.modifications, rules: DEFAULT_CONSTRUCTION_RULES, epTable: options.epTable ?? null, constructed: false, reserved: shipyard.reservedEp }),
       installed: { entries, count: entries.length, certification: installed.certification, rejected: installed.rejectedLedgerEntries,
         equipmentItemCount: installed.equipmentItemCount, uncertifiedWeaponItems: installed.uncertifiedWeaponItems },
       effective: (() => {
@@ -259,6 +262,17 @@ export function buildVehicleSchemaViewModel(actor, options = {}) {
     reasons: tampered ? ['CONSTRUCTION_RECORD_DIGEST_MISMATCH'] : [],
     summaryLabel: tampered ? 'Custom (unverified record)' : 'Custom (unrecorded)'
   };
+}
+
+/** Pending installation work and installable choices (read-only model; actions go through VehicleInstallationService). */
+function shipyardView({ record, flags, key, catalog, entries, supported, canAct = false, isGM = false }) {
+  const { jobs, rejected } = readJobs(flags, key);
+  const views = jobs.map(describeJob);
+  const options = supported && catalog
+    ? [...catalog.values()].filter(c => c.certification?.status === 'MECHANIC_SPECIFIED' && !effectInstallability({ catalogEntry: c, record, entries }).length)
+      .map(c => ({ id: c.id, name: c.name, category: c.category, ep: c.emplacementPoints })).sort((a, b) => a.name.localeCompare(b.name))
+    : [];
+  return { supported, canAct, isGM, jobs: views, activeJobs: views.filter(j => j.active), reservedEp: reservedEpFromJobs(jobs), rejected, options, hasOptions: options.length > 0 };
 }
 
 /** Compact Asset Bay line set derived from the same model. */
