@@ -19,7 +19,7 @@ const catalogRow = (over = {}) => ({ id: 'fx', name: 'Fixture Plating', category
   certification: { status: 'MECHANIC_SPECIFIED', book: 'B', page: 1 }, ...over });
 const catalog = new Map([['fx', catalogRow()], ['fx2', catalogRow({ id: 'fx2' })]]);
 
-function world({ ownerOwns = 'owner1', gm = false } = {}) {
+function world({ ownerOwns = 'owner1', gm = true } = {}) {
   const src = structuredClone(actors.find(a => a.system.vehicleSourceEntryKey === XW));
   src.system.ownedByActorId = ownerOwns;
   const vehicle = { ...src, id: 'veh1', name: 'Red Five', isOwner: true, toObject() { return structuredClone(src); } };
@@ -51,7 +51,7 @@ test('install: credits and ledger settle in one transaction, charged exactly onc
   const { vehicle, owner } = world();
   const p = patchEngines(); VehicleInstallationService.rules = fixtureRules;
   try {
-    const r = await VehicleInstallationService.install({ ownerActor: owner, vehicle, catalogId: 'fx', catalog });
+    const r = await VehicleInstallationService.gmInstantInstall({ reason: 'test override', ownerActor: owner, vehicle, catalogId: 'fx', catalog });
     assert.equal(r.success, true, JSON.stringify(r));
     assert.equal(owner.system.credits, 4000);
     const assetWrites = p.log.applied.filter(a => a.actor === 'veh1');
@@ -66,7 +66,7 @@ test('rollback: a failed asset write restores both actors and reports failure; n
   const { vehicle, owner } = world();
   const p = patchEngines({ failAsset: true }); VehicleInstallationService.rules = fixtureRules;
   try {
-    const r = await VehicleInstallationService.install({ ownerActor: owner, vehicle, catalogId: 'fx', catalog });
+    const r = await VehicleInstallationService.gmInstantInstall({ reason: 'test override', ownerActor: owner, vehicle, catalogId: 'fx', catalog });
     assert.equal(r.success, false);
     assert.deepEqual(r.reasons, ['TRANSACTION_FAILED']);
     assert.equal(owner.system.credits, 5000, 'wallet restored to its pre-transaction value');
@@ -82,7 +82,7 @@ test('denied plans write nothing and charge nothing', async () => {
   const p = patchEngines();
   try {
     // default rules: EP budget unruled
-    const r = await VehicleInstallationService.install({ ownerActor: owner, vehicle, catalogId: 'fx', catalog });
+    const r = await VehicleInstallationService.gmInstantInstall({ reason: 'test override', ownerActor: owner, vehicle, catalogId: 'fx', catalog });
     assert.equal(r.success, false);
     assert.ok(r.reasons.includes('EP_BUDGET_UNKNOWN'));
     assert.equal(p.log.applied.length, 0);
@@ -91,15 +91,15 @@ test('denied plans write nothing and charge nothing', async () => {
 });
 
 test('owner/vehicle association: an actor that does not own the vehicle cannot modify it', async () => {
-  const { vehicle, owner } = world({ ownerOwns: 'someone-else' });
+  const { vehicle, owner } = world({ ownerOwns: 'someone-else', gm: false });
   const p = patchEngines(); VehicleInstallationService.rules = fixtureRules;
   try {
-    const r = await VehicleInstallationService.install({ ownerActor: owner, vehicle, catalogId: 'fx', catalog });
+    const r = await VehicleInstallationService.startJob({ ownerActor: owner, vehicle, catalogId: 'fx', catalog });
     assert.deepEqual(r.reasons, ['OWNER_VEHICLE_NOT_ASSOCIATED']);
     assert.equal(p.log.applied.length, 0);
     // a GM may act for the table
     world({ ownerOwns: 'someone-else', gm: true });
-    const gm = await VehicleInstallationService.install({ ownerActor: owner, vehicle, catalogId: 'fx', catalog });
+    const gm = await VehicleInstallationService.gmInstantInstall({ reason: 'test override', ownerActor: owner, vehicle, catalogId: 'fx', catalog });
     assert.equal(gm.success, true);
   } finally { p.restore(); VehicleInstallationService.rules = L.DEFAULT_VEHICLE_INSTALLATION_RULES; }
 });
@@ -109,15 +109,15 @@ test('concurrent requests on one vehicle: the second is refused while the first 
   const p = patchEngines(); VehicleInstallationService.rules = fixtureRules;
   try {
     const [a, b] = await Promise.all([
-      VehicleInstallationService.install({ ownerActor: owner, vehicle, catalogId: 'fx', catalog }),
-      VehicleInstallationService.install({ ownerActor: owner, vehicle, catalogId: 'fx2', catalog })
+      VehicleInstallationService.gmInstantInstall({ reason: 'test override', ownerActor: owner, vehicle, catalogId: 'fx', catalog }),
+      VehicleInstallationService.gmInstantInstall({ reason: 'test override', ownerActor: owner, vehicle, catalogId: 'fx2', catalog })
     ]);
     const results = [a, b];
     assert.equal(results.filter(r => r.success).length, 1);
     assert.deepEqual(results.find(r => !r.success).reasons, ['INSTALLATION_IN_PROGRESS']);
     assert.equal(owner.system.credits, 4000, 'charged once');
     // the lock is released afterwards
-    const c = await VehicleInstallationService.install({ ownerActor: owner, vehicle, catalogId: 'fx2', catalog });
+    const c = await VehicleInstallationService.gmInstantInstall({ reason: 'test override', ownerActor: owner, vehicle, catalogId: 'fx2', catalog });
     assert.notDeepEqual(c.reasons, ['INSTALLATION_IN_PROGRESS']);
   } finally { p.restore(); VehicleInstallationService.rules = L.DEFAULT_VEHICLE_INSTALLATION_RULES; }
 });

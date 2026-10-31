@@ -122,7 +122,7 @@ const deny = (...reasons) => ({ ok: false, reasons });
  * @param {number} p.availableCredits owner funds
  * @param {object} [p.rules]
  */
-export function planVehicleInstallation({ record, flags, catalogEntry, installId, availableCredits, installedAt, rules = DEFAULT_VEHICLE_INSTALLATION_RULES, mount = null, nonstandard = undefined, starshipDesigner = false, workers = null }) {
+export function planVehicleInstallation({ record, flags, catalogEntry, installId, availableCredits, installedAt, rules = DEFAULT_VEHICLE_INSTALLATION_RULES, mount = null, nonstandard = undefined, starshipDesigner = false, workers = null, reservedEp = 0 }) {
   const reasons = [];
   const key = record?.identity?.sourceEntryKey;
   if (!nonEmpty(key)) return deny('VEHICLE_NOT_SOURCE_BACKED');
@@ -172,7 +172,8 @@ export function planVehicleInstallation({ record, flags, catalogEntry, installId
   let quote = null;
   if (budget?.state !== 'known' || !finite(budget.total)) reasons.push('EP_BUDGET_UNKNOWN');
   else if (nsInput.nonstandard !== null && !reasons.some(r => ['EP_COST_UNKNOWN', 'HULL_SIZE_HAS_NO_PUBLISHED_COST_MODIFIER', 'PRICE_UNKNOWN_OR_UNRESOLVED', 'COST_TYPE_NOT_RESOLVED_BY_PUBLISHED_RULES'].includes(r))) {
-    const remaining = Math.max(0, budget.total - summarizeInstallations(entries, budget).epUsed);
+    // EP reserved by pending installation jobs is not available to a conflicting installation.
+    const remaining = Math.max(0, budget.total - summarizeInstallations(entries, budget).epUsed - (finite(reservedEp) ? reservedEp : 0));
     quote = quoteInstallation({ entry: catalogEntry, size: hullSize, unusedEmplacementPoints: remaining, workers, nonstandard: nsInput.nonstandard });
     if (!quote.ok) reasons.push(...quote.reasons);
     else if (quote.shortfall > 0 && rules.allowEpShortfall !== true) reasons.push('EP_EXCEEDED');
@@ -217,17 +218,25 @@ export function planVehicleUninstall({ record, flags, installId, rules = DEFAULT
  * to write for the duration of its transaction, and a preUpdateActor hook rejects any other
  * change to the flag. Guards against accidental/macro writes, not a hostile console.
  */
-const pendingLedgerWrites = new Map();
-export function authorizeLedgerWrite(actorId, ledger) { pendingLedgerWrites.set(actorId, JSON.stringify(ledger)); }
-export function clearLedgerWrite(actorId) { pendingLedgerWrites.delete(actorId); }
+export const VEHICLE_INSTALLATION_JOBS_FLAG = 'vehicleInstallationJobs';
+const GUARDED_FLAGS = [VEHICLE_INSTALLATION_FLAG, VEHICLE_INSTALLATION_JOBS_FLAG];
+const pendingWrites = new Map(); // `${actorId}:${flag}` -> JSON of the exact value authorized
+export function authorizeFlagWrite(actorId, flag, value) { pendingWrites.set(`${actorId}:${flag}`, JSON.stringify(value)); }
+export function authorizeLedgerWrite(actorId, ledger) { authorizeFlagWrite(actorId, VEHICLE_INSTALLATION_FLAG, ledger); }
+export function clearLedgerWrite(actorId) { for (const f of GUARDED_FLAGS) pendingWrites.delete(`${actorId}:${f}`); }
 
-/** @returns {boolean} true when the update does not touch the ledger or the touch is authorized */
+/** @returns {boolean} true when the update does not touch a guarded flag or the touch is authorized */
 export function isLedgerUpdateAllowed(actorId, changes) {
-  const flat = changes && Object.prototype.hasOwnProperty.call(changes, VEHICLE_INSTALLATION_FLAG_PATH);
-  const nested = changes?.flags?.swse && Object.prototype.hasOwnProperty.call(changes.flags.swse, VEHICLE_INSTALLATION_FLAG);
-  const removal = changes?.flags?.swse && Object.prototype.hasOwnProperty.call(changes.flags.swse, '-=' + VEHICLE_INSTALLATION_FLAG);
-  if (!flat && !nested && !removal && !(changes && Object.prototype.hasOwnProperty.call(changes, `flags.swse.-=${VEHICLE_INSTALLATION_FLAG}`))) return true;
-  if (removal || changes?.[`flags.swse.-=${VEHICLE_INSTALLATION_FLAG}`] !== undefined) return false;
-  const proposed = flat ? changes[VEHICLE_INSTALLATION_FLAG_PATH] : changes.flags.swse[VEHICLE_INSTALLATION_FLAG];
-  return pendingLedgerWrites.get(actorId) === JSON.stringify(proposed);
+  for (const flag of GUARDED_FLAGS) {
+    const path = `flags.swse.${flag}`;
+    const has = k => changes && Object.prototype.hasOwnProperty.call(changes, k);
+    const flat = has(path);
+    const nested = changes?.flags?.swse && Object.prototype.hasOwnProperty.call(changes.flags.swse, flag);
+    const removal = changes?.flags?.swse && Object.prototype.hasOwnProperty.call(changes.flags.swse, '-=' + flag);
+    if (!flat && !nested && !removal && !has(`flags.swse.-=${flag}`)) continue;
+    if (removal || changes?.[`flags.swse.-=${flag}`] !== undefined) return false;
+    const proposed = flat ? changes[path] : changes.flags.swse[flag];
+    if (pendingWrites.get(`${actorId}:${flag}`) !== JSON.stringify(proposed)) return false;
+  }
+  return true;
 }
