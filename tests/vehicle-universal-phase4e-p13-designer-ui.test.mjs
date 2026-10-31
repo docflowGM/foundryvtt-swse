@@ -31,6 +31,7 @@ test('preview text shows unresolved values as unresolved and lists blocks', () =
 test('Asset Bay exposes the designer entry points; review is GM-only', () => {
   const t = readFileSync('templates/shell/partials/surface-asset-bay.hbs', 'utf8');
   assert.match(t, /data-asset-bay-action="design-ship"/);
+  assert.match(t, /data-asset-bay-action="ship-projects"/);
   assert.match(t, /\{\{#if vm\.isGM\}\}<button[^>]*review-designs/);
-  assert.match(readFileSync('scripts/ui/shell/ShellHost.js', 'utf8'), /action === 'design-ship' \|\| action === 'review-designs'/);
+  assert.match(readFileSync('scripts/ui/shell/ShellHost.js', 'utf8'), /action === 'design-ship' \|\| action === 'review-designs' \|\| action === 'ship-projects'/);
 });

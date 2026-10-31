@@ -27,7 +27,8 @@ export function validateVehicleCreation(document, data) {
 
 /** preUpdateActor: the install ledger changes only through VehicleInstallationService. */
 export function guardVehicleInstallationLedger(actor, changes) {
-  if (actor?.type !== 'vehicle') return undefined;
+  // Applies to every Actor type: construction projects live on the designer character.
+  if (!actor) return undefined;
   if (isLedgerUpdateAllowed(actor.id, changes)) return undefined;
   console.error('[foundryvtt-swse] Vehicle installation ledger write denied: UNAUTHORIZED_LEDGER_WRITE');
   return false;

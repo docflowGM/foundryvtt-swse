@@ -507,6 +507,26 @@ Appended. Owner authorization: implement unambiguous published effects first (mo
 | Decision authority | Project owner |
 | Resolution | |
 
+### V-P6-06 - Failed Starship Designer design check
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6-06 |
+| Rules domain | Vehicle construction |
+| Feature | Starship Designer (designing a starship from scratch) |
+| Source | *Starships of the Galaxy*, Starship Designer feat; Stock Ships section |
+| Evidence | Designing takes a minimum of 30 days and a DC 25 Mechanics check, +1 DC and +1 day per additional 100,000 credits beyond the first 100,000; others may aid the check. The custom-modification paragraph gives a failure rule (half again time and money, +2) for custom modifications only. The Stock Ships section says a designer normally needs the aid of a shipyard to build the ship. |
+| Confirmed behavior | Design time and design DC; aid another applies. |
+| Unresolved question | What happens when the design Mechanics check fails (retry cost/time, bonus, or loss), and whether any build time follows the design time. |
+| Options | None supported by the sources searched (the custom-modification failure rule is a different activity). |
+| Recommended ruling | None |
+| Implementation impact | A failed design check sets the project to CHECK_FAILED; no retry is automated; only a recorded GM adjudication delivers the ship. No build time beyond the design time is applied. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+Owner direction recorded 2026-10-31 (not a rules question): construction credits are charged when the GM approves and funds the project; approval does not complete construction.
+
 ---
 
 ## Revision log
@@ -518,3 +538,4 @@ Appended. Owner authorization: implement unambiguous published effects first (mo
 - **Revision 5 (2026-10-30):** appended the source examination log for V-P2-01..04 and V-P4-01 and new entries V-P5-01..04. No existing entry was changed.
 - **Revision 6 (2026-10-30):** appended PDF-review results and owner directions for V-P2-01/02/03, V-P4-01, V-P5-01 and V-P5-04. No existing entry was changed.
 - **Revision 7 (2026-10-31):** appended V-P6-01..05 (Shipyard modification effects). No existing entry changed.
+- **Revision 8 (2026-10-31):** appended V-P6-06 (failed design check) and the owner's construction-funding direction. No existing entry changed.

@@ -222,7 +222,9 @@ export function planVehicleUninstall({ record, flags, installId, rules = DEFAULT
  * change to the flag. Guards against accidental/macro writes, not a hostile console.
  */
 export const VEHICLE_INSTALLATION_JOBS_FLAG = 'vehicleInstallationJobs';
-const GUARDED_FLAGS = [VEHICLE_INSTALLATION_FLAG, VEHICLE_INSTALLATION_JOBS_FLAG];
+export const VEHICLE_DESIGN_PROJECTS_FLAG = 'vehicleDesignProposals';
+// Guarded on every Actor: the two vehicle stores, and the construction projects kept on a designer character.
+const GUARDED_FLAGS = [VEHICLE_INSTALLATION_FLAG, VEHICLE_INSTALLATION_JOBS_FLAG, VEHICLE_DESIGN_PROJECTS_FLAG];
 const pendingWrites = new Map(); // `${actorId}:${flag}` -> JSON of the exact value authorized
 export function authorizeFlagWrite(actorId, flag, value) { pendingWrites.set(`${actorId}:${flag}`, JSON.stringify(value)); }
 export function authorizeLedgerWrite(actorId, ledger) { authorizeFlagWrite(actorId, VEHICLE_INSTALLATION_FLAG, ledger); }

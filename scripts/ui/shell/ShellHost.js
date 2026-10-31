@@ -636,10 +636,11 @@ export function ShellHostMixin(BaseClass) {
             return;
           }
 
-          if (action === 'design-ship' || action === 'review-designs') {
+          if (action === 'design-ship' || action === 'review-designs' || action === 'ship-projects') {
             // Custom starship construction: the dialogs collect input; CustomVehicleConstructionService decides.
             const ui = await import('/systems/foundryvtt-swse/scripts/ui/shell/construction-designer-ui.js');
-            const result = action === 'design-ship' ? await ui.openShipDesigner(this.actor) : await ui.openDesignReview();
+            const result = action === 'design-ship' ? await ui.openShipDesigner(this.actor)
+              : action === 'ship-projects' ? await ui.openShipProjects(this.actor) : await ui.openDesignReview();
             if (result?.success) await this.requestSurfaceRender({ reason: `asset-bay-${action}`, surfaceId: 'asset-bay' });
             return;
           }
