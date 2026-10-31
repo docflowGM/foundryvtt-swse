@@ -38,3 +38,6 @@ INCORRECT (was) / INTENTIONALLY_HIDDEN. "Was" = state before this change; "Now" 
 - Invalid published provenance: `buildVehicleSheetContext` returns a verification-failure context (no publication view, no tabs, no rule contexts, no edit controls) and the template renders only the failure notice and schema panel.
 - Handlebars is a test-only dependency of `tools/release`; the vehicle workflow installs it and sets `SWSE_REQUIRE_HANDLEBARS=1` (missing = failure). The rolling workflow's zero-npm policy is kept: there the rendering test skips.
 - Live Foundry V13 rendering remains `LIVE_RUNTIME_PENDING`.
+
+## Future hardening items
+- `vehicleOwnerMatchesActor()` (AssetBaySurfaceService) still falls back to matching owner NAMES when no id matches. Characters that share a name could be shown another character's vehicle, or pass the Modify UI gate (`assetModifyAuthorization`). Display/UI only: `VehicleInstallationService` owner association remains the authoritative gate. Candidate fix: id/uuid-only matching once all acquisition paths write `ownedByActorId`.
