@@ -110,6 +110,7 @@ test('evidence file is reproducible from the committed sourcebook text', () => {
   assert.equal(r.status, 0, r.stdout + r.stderr);
 });
 
+import { IMPLEMENTED_EFFECT_IDS as IMPLEMENTED } from '../scripts/domain/vehicles/vehicle-modification-effects.js';
 test('catalog certification: text-verified and PDF-reviewed movement/defense rows only; every id exists', () => {
   const ids = new Set(catalog.map(c => c.id));
   for (const id of Object.keys(overlay.rows)) assert.ok(ids.has(id), id);
@@ -117,7 +118,7 @@ test('catalog certification: text-verified and PDF-reviewed movement/defense row
   for (const [id, row] of Object.entries(overlay.rows)) {
     assert.ok(['SOURCE_VERIFIED_TEXT', 'PDF_REVIEWED'].includes(status[id]), id);
     assert.equal(row.evidence, status[id] === 'PDF_REVIEWED' ? 'PDF_REVIEWED' : 'OCR_TEXT');
-    assert.equal(row.status, 'SOURCE_VERIFIED');
+    assert.equal(row.status, IMPLEMENTED.includes(id) ? 'MECHANIC_SPECIFIED' : 'SOURCE_VERIFIED');
     assert.equal(row.book, 'Starships of the Galaxy');
     assert.ok(['movement', 'defense'].includes(row.table), id + ' table ' + row.table);
     assert.equal(row.pageResolution, 'pdf-table-page');

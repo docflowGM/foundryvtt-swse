@@ -14,6 +14,7 @@ import { classifyVehicleActorRuntime, getVehicleRuntimeProjection } from '../../
 import { CREW_QUALITY, makeUnusedEmplacementResolver } from '../../../domain/vehicles/vehicle-modification-rules.js';
 import { summarizeInstallations } from '../../../domain/vehicles/vehicle-installation-ledger.js';
 import { verifyConstructionRecord, DEFAULT_CONSTRUCTION_RULES } from '../../../domain/vehicles/custom-vehicle-construction.js';
+import { computeEffectiveStatistics } from '../../../domain/vehicles/vehicle-modification-effects.js';
 import { describeShield, SOURCE_UNKNOWN } from './vehicle-publication-view-model.js';
 
 const finite = v => typeof v === 'number' && Number.isFinite(v);
@@ -133,11 +134,37 @@ function presence(effective, current) {
 }
 const creditsLabel = n => (finite(n) ? `${n} cr` : UNRESOLVED);
 
-function statRow(label, base, modification, current = null) {
+const signed = n => (n < 0 ? String(n) : '+' + n);
+const NONE_AUTOMATED = 'No automated modification effects';
+function modLabel(st) {
+  if (!st || !st.delta) return NONE_AUTOMATED;
+  return `${signed(st.delta)} (${st.sources.map(x => x.name).join(', ')})`;
+}
+
+/** Effective-statistics rows from the certified effects module (baseline untouched; recomputed from the ledger). */
+function effectiveRows({ record, entries, hp, hpBase, fortitude, extra = [] }) {
+  const fx = computeEffectiveStatistics({ record, entries });
+  const rows = [statRow('Hit Points', hpBase, NONE_AUTOMATED, hp.value)];
+  rows.push(statRow('Reflex Defense', fx.reflex.base, modLabel(fx.reflex), null, fx.reflex.effective));
+  if (finite(fortitude)) rows.push(statRow('Fortitude Defense', fortitude, NONE_AUTOMATED));
+  if (finite(fx.initiative.base) && fx.initiative.delta) rows.push(statRow('Initiative', fx.initiative.base, modLabel(fx.initiative), null, fx.initiative.effective));
+  rows.push(...extra);
+  for (const m of fx.movement.filter(m => m.sources.length)) {
+    rows.push({ label: `Atmospheric ${m.mode} speed`, base: m.baseSquares, baseLabel: `${m.baseSquares ?? SOURCE_UNKNOWN} sq / ${m.baseKmh ?? '—'} km/h`,
+      modification: `${m.sources.map(x => x.name).join(', ')} (${m.conditional})`, effective: m.effectiveSquares,
+      effectiveLabel: `${m.effectiveSquares ?? SOURCE_UNKNOWN} sq / ${m.effectiveKmh ?? '—'} km/h`, current: null, hasCurrent: false, currentLabel: '' });
+  }
+  if (fx.hyperdrive.effectiveClass !== null)
+    rows.push({ label: 'Hyperdrive', base: null, baseLabel: 'None', modification: fx.hyperdrive.sources.map(x => x.name).join(', '), effective: fx.hyperdrive.effectiveClass,
+      effectiveLabel: `Class ${fx.hyperdrive.effectiveClass}`, current: null, hasCurrent: false, currentLabel: '' });
+  return { rows, fx };
+}
+
+function statRow(label, base, modification, current = null, effective = base) {
   return {
     label, base: finite(base) ? base : null, baseLabel: finite(base) ? String(base) : SOURCE_UNKNOWN,
-    modification, effective: finite(base) ? base : null, current: finite(current) ? current : null,
-    ...presence(base, current)
+    modification, effective: finite(effective) ? effective : null, current: finite(current) ? current : null,
+    ...presence(effective, current)
   };
 }
 
@@ -178,12 +205,11 @@ export function buildVehicleSchemaViewModel(actor, options = {}) {
       ep: epView({ supported, record, entries: installed.modifications, rules: DEFAULT_CONSTRUCTION_RULES, epTable: options.epTable ?? null, constructed: false }),
       installed: { entries, count: entries.length, certification: installed.certification, rejected: installed.rejectedLedgerEntries,
         equipmentItemCount: installed.equipmentItemCount, uncertifiedWeaponItems: installed.uncertifiedWeaponItems },
-      effective: [
-        statRow('Hit Points', published.hitPoints.value, 'No automated modification effects', hp.value),
-        statRow('Reflex Defense', published.defenses.reflex, 'No automated modification effects'),
-        statRow('Fortitude Defense', published.defenses.fortitude, 'No automated modification effects'),
-        { label: 'Shield Rating', base: shield.max, baseLabel: shield.label, modification: 'No automated modification effects', effective: shield.max, current: shield.current, ...presence(shield.max, shield.current) }
-      ],
+      effective: (() => {
+        const shieldFx = computeEffectiveStatistics({ record, entries: installed.modifications }).shield;
+        const shieldRow = { label: 'Shield Rating', base: shield.max, baseLabel: shield.label, modification: modLabel(shieldFx), effective: shieldFx.sources.length ? shieldFx.effective : shield.max, current: shield.current, ...presence(shieldFx.sources.length ? shieldFx.effective : shield.max, shield.current) };
+        return effectiveRows({ record, entries: installed.modifications, hp, hpBase: published.hitPoints.value, fortitude: published.defenses.fortitude, extra: [shieldRow] }).rows;
+      })(),
       reasons: supported ? [] : ['STARSHIP_MODIFICATION_RULES_UNSUPPORTED'],
       summaryLabel: 'Published'
     };
@@ -206,13 +232,15 @@ export function buildVehicleSchemaViewModel(actor, options = {}) {
       ep: epView({ supported: true, record: null, entries: c.installedSystems ?? [], rules: DEFAULT_CONSTRUCTION_RULES, epTable: null, constructed: true }),
       installed: { entries, count: entries.length, certification: entries.length ? 'CONSTRUCTION_RECORD' : 'NONE', rejected: 0, equipmentItemCount: 0, uncertifiedWeaponItems: 0 },
       construction: constructionView(c),
-      effective: [
-        statRow('Hit Points', d.hitPoints, 'No automated modification effects', hp.value),
-        statRow('Reflex Defense', d.reflexDefense, 'No automated modification effects'),
-        statRow('Fortitude Defense', d.fortitudeDefense, 'No automated modification effects'),
-        statRow('Damage Threshold', d.damageThreshold, 'No automated modification effects'),
-        statRow('Damage Reduction', d.damageReduction, 'No automated modification effects')
-      ],
+      effective: (() => {
+        const synthetic = { defenses: { reflex: d.reflexDefense, shieldRating: 0 }, abilities: { initiativePrinted: d.initiative }, hyperspace: { capability: 'unavailable' }, movement: {} };
+        const fxShield = computeEffectiveStatistics({ record: synthetic, entries: c.installedSystems ?? [] }).shield;
+        const shieldRow = fxShield.sources.length
+          ? { label: 'Shield Rating', base: 0, baseLabel: '0', modification: modLabel(fxShield), effective: fxShield.effective, current: null, hasCurrent: false, currentLabel: '', effectiveLabel: String(fxShield.effective) }
+          : null;
+        return effectiveRows({ record: synthetic, entries: c.installedSystems ?? [], hp, hpBase: d.hitPoints, fortitude: d.fortitudeDefense,
+          extra: [...(shieldRow ? [shieldRow] : []), statRow('Damage Threshold', d.damageThreshold, NONE_AUTOMATED), statRow('Damage Reduction', d.damageReduction, NONE_AUTOMATED)] }).rows;
+      })(),
       summaryLabel: c.approval?.status === 'APPROVED' ? 'Custom-built' : 'Custom-built (awaiting GM approval)'
     };
   }

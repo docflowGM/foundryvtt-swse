@@ -1,12 +1,14 @@
 {
  "schema": "swse.vehicle.p2.modification-certification.v1",
- "note": "SOURCE_VERIFIED = every table cell of the catalog row matches the cited Starships of the Galaxy table (clean OCR, or cells read from the PDF by the project owner: evidence PDF_REVIEWED). It is NOT MECHANIC_SPECIFIED: a row becomes installable only when its effect is implemented.",
+ "note": "SOURCE_VERIFIED = every table cell of the catalog row matches the cited Starships of the Galaxy table (clean OCR, or cells read from the PDF by the project owner: evidence PDF_REVIEWED). MECHANIC_SPECIFIED = additionally, its effect is implemented in vehicle-modification-effects.js and regression-tested; only those rows are installable.",
  "evidenceFile": "data/audits/vehicles/swse-p2-sotg-modification-evidence.json",
  "pdfReviewFile": "data/audits/vehicles/swse-p2-pdf-review.json",
  "sourceSha256": "04fc2297996f2370d4e183dfe33df0b885215cb84c2f1602f60e227f3d853ad3",
  "rows": {
   "armor-1": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "PDF_REVIEWED",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -19,7 +21,9 @@
    "pageResolution": "pdf-table-page"
   },
   "armor-2": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -32,7 +36,9 @@
    "pageResolution": "pdf-table-page"
   },
   "armor-3": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -45,7 +51,9 @@
    "pageResolution": "pdf-table-page"
   },
   "armor-4": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "PDF_REVIEWED",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -136,7 +144,9 @@
    "pageResolution": "pdf-table-page"
   },
   "shields-10": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "PDF_REVIEWED",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -149,7 +159,9 @@
    "pageResolution": "pdf-table-page"
   },
   "shields-15": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -162,7 +174,9 @@
    "pageResolution": "pdf-table-page"
   },
   "shields-20": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -175,7 +189,9 @@
    "pageResolution": "pdf-table-page"
   },
   "shields-25": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -188,7 +204,9 @@
    "pageResolution": "pdf-table-page"
   },
   "shields-30": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -201,7 +219,9 @@
    "pageResolution": "pdf-table-page"
   },
   "shields-35": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -214,7 +234,9 @@
    "pageResolution": "pdf-table-page"
   },
   "shields-40": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "PDF_REVIEWED",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -227,7 +249,9 @@
    "pageResolution": "pdf-table-page"
   },
   "shields-45": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -240,7 +264,9 @@
    "pageResolution": "pdf-table-page"
   },
   "shields-50": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "PDF_REVIEWED",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -253,7 +279,9 @@
    "pageResolution": "pdf-table-page"
   },
   "shields-55": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -266,7 +294,9 @@
    "pageResolution": "pdf-table-page"
   },
   "shields-60": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "PDF_REVIEWED",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -279,7 +309,9 @@
    "pageResolution": "pdf-table-page"
   },
   "shields-70": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -292,7 +324,9 @@
    "pageResolution": "pdf-table-page"
   },
   "shields-80": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -305,7 +339,9 @@
    "pageResolution": "pdf-table-page"
   },
   "shields-90": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -318,7 +354,9 @@
    "pageResolution": "pdf-table-page"
   },
   "shields-100": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -331,7 +369,9 @@
    "pageResolution": "pdf-table-page"
   },
   "shields-125": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -344,7 +384,9 @@
    "pageResolution": "pdf-table-page"
   },
   "shields-150": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "PDF_REVIEWED",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -357,7 +399,9 @@
    "pageResolution": "pdf-table-page"
   },
   "shields-175": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -370,7 +414,9 @@
    "pageResolution": "pdf-table-page"
   },
   "shields-200": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -383,7 +429,9 @@
    "pageResolution": "pdf-table-page"
   },
   "atmospheric-thrusters": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 41,
@@ -396,7 +444,9 @@
    "pageResolution": "pdf-table-page"
   },
   "atmospheric-thrusters-advanced": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 41,
@@ -422,7 +472,9 @@
    "pageResolution": "pdf-table-page"
   },
   "hyperdrive-075": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 41,
@@ -435,7 +487,9 @@
    "pageResolution": "pdf-table-page"
   },
   "hyperdrive-1": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 41,
@@ -448,7 +502,9 @@
    "pageResolution": "pdf-table-page"
   },
   "hyperdrive-15": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 41,
@@ -461,7 +517,9 @@
    "pageResolution": "pdf-table-page"
   },
   "hyperdrive-2": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 41,
@@ -474,7 +532,9 @@
    "pageResolution": "pdf-table-page"
   },
   "hyperdrive-3": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 41,
@@ -487,7 +547,9 @@
    "pageResolution": "pdf-table-page"
   },
   "hyperdrive-4": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 41,
@@ -500,7 +562,9 @@
    "pageResolution": "pdf-table-page"
   },
   "hyperdrive-5": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 41,
@@ -513,7 +577,9 @@
    "pageResolution": "pdf-table-page"
   },
   "hyperdrive-6": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 41,
@@ -526,7 +592,9 @@
    "pageResolution": "pdf-table-page"
   },
   "hyperdrive-8": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 41,
@@ -539,7 +607,9 @@
    "pageResolution": "pdf-table-page"
   },
   "hyperdrive-10": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 41,
@@ -552,7 +622,9 @@
    "pageResolution": "pdf-table-page"
   },
   "hyperdrive-15-class": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 41,
@@ -565,7 +637,9 @@
    "pageResolution": "pdf-table-page"
   },
   "maneuvering-jets-2": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "PDF_REVIEWED",
    "book": "Starships of the Galaxy",
    "printedPage": 41,
@@ -578,7 +652,9 @@
    "pageResolution": "pdf-table-page"
   },
   "maneuvering-jets-4": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 41,
@@ -591,7 +667,9 @@
    "pageResolution": "pdf-table-page"
   },
   "maneuvering-jets-6": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 41,

@@ -68,7 +68,8 @@ test('job input is validated', () => {
 
 // ---- planner with the published unused-EP table and the owner-directed shortfall rule ----
 const cert = { status: 'MECHANIC_SPECIFIED', book: 'Starships of the Galaxy', printedPage: 41 };
-const fixture = (id, over = {}) => ({ ...catalog.find(c => c.id === id), certification: cert, ...over });
+// cost/quote fixtures: real table rows under a fixture id so hull-specific EFFECT limits (p10 tests) do not apply
+const fixture = (id, over = {}) => ({ ...catalog.find(c => c.id === id), id: 'fixture-' + id, certification: cert, ...over });
 const plan = (key, entry, over = {}) => {
   const a = keyed(key);
   return planVehicleInstallation({ record: a.flags.swse.universalVehicleSource.source, flags: a.flags, catalogEntry: entry, installId: 'i1',
@@ -110,7 +111,8 @@ test('nonstandard: a hyperdrive on a starfighter doubles EP and costs 5x; the sa
 });
 
 test('installability: a text-verified/PDF-reviewed row is still denied until its effect is implemented', () => {
-  const real = { ...catalog.find(c => c.id === 'shields-20'), certification: overlay.rows['shields-20'] };
+  // a row whose effect is not implemented stays denied (jamming suite: roll/action integration not encoded)
+  const real = { ...catalog.find(c => c.id === 'jamming-suite'), certification: overlay.rows['jamming-suite'] };
   assert.equal(real.certification.status, 'SOURCE_VERIFIED');
   const r = plan('core-incom-t-65b-x-wing-starfighter', real);
   assert.deepEqual(r.reasons, ['MODIFICATION_EFFECT_NOT_IMPLEMENTED']);

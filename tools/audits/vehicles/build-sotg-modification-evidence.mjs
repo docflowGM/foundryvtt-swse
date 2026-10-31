@@ -13,6 +13,7 @@
  *
  *   node tools/audits/vehicles/build-sotg-modification-evidence.mjs --write|--check
  */
+import { IMPLEMENTED_EFFECT_IDS } from '../../../scripts/domain/vehicles/vehicle-modification-effects.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
@@ -282,11 +283,14 @@ const body = JSON.stringify(evidence, null, 1) + '\n';
 const SECTION_PAGES = { movement: [40, 43], defense: [43, 44], weapon: [44, 48] };
 const certification = {
   schema: 'swse.vehicle.p2.modification-certification.v1',
-  note: 'SOURCE_VERIFIED = every table cell of the catalog row matches the cited Starships of the Galaxy table (clean OCR, or cells read from the PDF by the project owner: evidence PDF_REVIEWED). It is NOT MECHANIC_SPECIFIED: a row becomes installable only when its effect is implemented.',
+  note: 'SOURCE_VERIFIED = every table cell of the catalog row matches the cited Starships of the Galaxy table (clean OCR, or cells read from the PDF by the project owner: evidence PDF_REVIEWED). MECHANIC_SPECIFIED = additionally, its effect is implemented in vehicle-modification-effects.js and regression-tested; only those rows are installable.',
   evidenceFile: OUT, pdfReviewFile: 'data/audits/vehicles/swse-p2-pdf-review.json', sourceSha256: sha256,
   // The weapon and accessory tables have not been PDF-reviewed: their rows are evidence only and are never certified here.
   rows: Object.fromEntries(comparison.filter(c => c.table !== 'weapon' && ['SOURCE_VERIFIED_TEXT', 'PDF_REVIEWED'].includes(c.status)).map(c => [c.catalogId, {
-    status: 'SOURCE_VERIFIED', evidence: c.status === 'PDF_REVIEWED' ? 'PDF_REVIEWED' : 'OCR_TEXT', book: BOOK,
+    // MECHANIC_SPECIFIED only when the effect is implemented (vehicle-modification-effects.js), source-supported and tested.
+    status: IMPLEMENTED_EFFECT_IDS.includes(c.catalogId) ? 'MECHANIC_SPECIFIED' : 'SOURCE_VERIFIED',
+    ...(IMPLEMENTED_EFFECT_IDS.includes(c.catalogId) ? { effectModule: 'scripts/domain/vehicles/vehicle-modification-effects.js', effectTest: 'tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs' } : {}),
+    evidence: c.status === 'PDF_REVIEWED' ? 'PDF_REVIEWED' : 'OCR_TEXT', book: BOOK,
     printedPage: c.printedPage ?? null, printedPageRange: c.printedPage ? [c.printedPage, c.printedPage] : SECTION_PAGES[c.table],
     table: c.table, ocrLine: c.printedLine ?? null, pageResolution: c.printedPage ? 'pdf-table-page' : 'toc-section-range'
   }]))

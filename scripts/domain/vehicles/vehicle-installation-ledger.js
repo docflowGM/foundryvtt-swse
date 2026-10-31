@@ -12,6 +12,7 @@
  */
 import { digestUniversalVehicleSource } from './vehicle-source-digest.js';
 import { VEHICLE_FIRING_ARCS } from './vehicle-firing-arc-geometry.js';
+import { hasEffect, effectInstallability } from './vehicle-modification-effects.js';
 import { costModifierForSize, nonstandardAssessment, quoteInstallation, systemCost } from './vehicle-modification-rules.js';
 
 export const VEHICLE_INSTALLATION_FLAG = 'vehicleInstallations';
@@ -133,6 +134,8 @@ export function planVehicleInstallation({ record, flags, catalogEntry, installId
   if (cert?.status === 'SOURCE_VERIFIED') reasons.push('MODIFICATION_EFFECT_NOT_IMPLEMENTED'); // table text verified, effect not encoded
   else if (cert?.status !== 'MECHANIC_SPECIFIED' || !nonEmpty(cert?.book) || certPage == null)
     reasons.push('CATALOG_ENTRY_UNCERTIFIED');
+  // A row with a registered certified effect is also limited by what the book rules for this hull.
+  if (hasEffect(catalogEntry.id)) reasons.push(...effectInstallability({ catalogEntry, record, entries: readCertifiedInstallations(flags, key).entries }));
   if (!finite(catalogEntry.emplacementPoints) || catalogEntry.emplacementPoints < 0)
     reasons.push('EP_COST_UNKNOWN');
   if (!nonEmpty(catalogEntry.availability)) reasons.push('AVAILABILITY_UNKNOWN');

@@ -181,7 +181,9 @@ export function validateDesign({ designId, name, frame, systems = [], authorship
   const record = {
     identity: { sourceEntryKey: `custom-construction:${designId}`, name },
     classification: { printedSize: frame.size },
-    hyperspace: { capability: 'unavailable' }, defenses: { shieldRating: 0 }
+    hyperspace: { capability: 'unavailable' },
+    defenses: { shieldRating: 0, reflex: preview.ok ? preview.derived.reflexDefense : null },
+    abilities: { dex: frame.dexterity ?? null, initiativePrinted: preview.ok ? preview.derived.initiative : null }
   };
   let flags = { swse: { vehicleInstallations: [] } };
   const quotes = [];
