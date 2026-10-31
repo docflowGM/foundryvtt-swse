@@ -413,6 +413,100 @@ Appended. Records the project owner's PDF readings (`data/audits/vehicles/swse-p
 | V-P5-01 | Owner direction: distinguish a frame's printed stock EP allocation from the unused EP of a constructed ship; a new design's spendable pool is the unused EP (general rule). |
 | V-P5-04 | Closed: Core Rulebook p. 174 Crew Quality table read from the PDF. |
 
+## Shipyard modification effects (2026-10-31)
+
+Appended. Owner authorization: implement unambiguous published effects first (movement/defense); defer ambiguity. 39 of 56 certified rows now have implemented effects (armor x4, shields x19, maneuvering jets x3, hyperdrives x11, atmospheric thrusters x2). The rest stay `SOURCE_VERIFIED` and cannot be installed.
+
+### V-P6-01 - Reinforced Bulkheads +10% / +20% / +30%
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6-01 |
+| Rules domain | Vehicle modifications |
+| Feature | Reinforced Bulkheads +10% / +20% / +30% |
+| Source | *Starships of the Galaxy*, Armor / Shields / Movement Systems sections and Tables 3-3 (p. 41) and 3-4 (p. 43) |
+| Evidence | Prints that the improvement increases the starship's hit points by 10%, 20% or 30%, and that these improvements do not stack. |
+| Confirmed behavior | A percentage increase; the three improvements do not stack with each other. |
+| Unresolved question | How the increased hit-point total is rounded; the printed text does not say. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | `reinforced-bulkheads-10/20/30` stay SOURCE_VERIFIED and uninstallable. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6-02 - Shield / hyperdrive / sublight drive on a hull that already has one
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6-02 |
+| Rules domain | Vehicle modifications |
+| Feature | Shield / hyperdrive / sublight drive on a hull that already has one |
+| Source | *Starships of the Galaxy*, Armor / Shields / Movement Systems sections and Tables 3-3 (p. 41) and 3-4 (p. 43) |
+| Evidence | The tables list shields, hyperdrives and sublight drives as systems with a rating, class or speed; the Shields text calls shields a popular addition for ships that lack them. |
+| Confirmed behavior | Installing shields on a hull printed with SR 0, or a hyperdrive on a hull printed without one, sets that value. |
+| Unresolved question | Whether a new shield generator, hyperdrive or sublight drive replaces, adds to, or is capped by the hull's printed system; and, for sublight drives, the 'only military vessels' restriction. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Planner denies with SHIELD_REPLACEMENT_OR_ADDITION_UNRULED / HYPERDRIVE_REPLACEMENT_UNRULED; `sublight-drive-*` stay SOURCE_VERIFIED. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6-03 - Stacking of two systems of the same kind (armor, maneuvering jets, shields, hyperdrive, atmospheric thrusters)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6-03 |
+| Rules domain | Vehicle modifications |
+| Feature | Stacking of two systems of the same kind (armor, maneuvering jets, shields, hyperdrive, atmospheric thrusters) |
+| Source | *Starships of the Galaxy*, Armor / Shields / Movement Systems sections and Tables 3-3 (p. 41) and 3-4 (p. 43); Core Rulebook equipment-bonus wording |
+| Evidence | Bulkhead improvements are stated not to stack; no stacking text was found for armor, jets or atmospheric thrusters. |
+| Confirmed behavior | Each system's own bonus when it is the only one of its kind. |
+| Unresolved question | Whether and how two equipment bonuses of the same kind combine on one starship. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Planner denies a second system of the same effect group (EFFECT_STACKING_UNRULED). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6-04 - Starship Armor versus the pilot character-level substitution
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6-04 |
+| Rules domain | Vehicle modifications |
+| Feature | Starship Armor versus the pilot character-level substitution |
+| Source | *Starships of the Galaxy*, Armor / Shields / Movement Systems sections and Tables 3-3 (p. 41) and 3-4 (p. 43), Armor |
+| Evidence | Armor is bought as an equipment bonus to the armor the ship adds to Reflex Defense; skilled pilots may use their character level in place of the ship's armor bonus. |
+| Confirmed behavior | The equipment bonus adds to the ship's armor bonus; the static Reflex Defense shown includes it. |
+| Unresolved question | Whether the equipment bonus still applies when a pilot substitutes character level for the ship's armor bonus. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | The sheet shows the static ship-armor-bonus basis only; no per-pilot substitution is applied. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6-05 - Effects needing roll or action integration (Jamming Suite/Array, Regenerating Shields, Combat Thrusters, Navicomputers, SLAM)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6-05 |
+| Rules domain | Vehicle modifications |
+| Feature | Effects needing roll or action integration (Jamming Suite/Array, Regenerating Shields, Combat Thrusters, Navicomputers, SLAM) |
+| Source | *Starships of the Galaxy*, Armor / Shields / Movement Systems sections and Tables 3-3 (p. 41) and 3-4 (p. 43) |
+| Evidence | The effects are bonuses or penalties to checks or actions rather than statistics. |
+| Confirmed behavior | The printed bonuses and penalties. |
+| Unresolved question | No rules question: engineering scope. The rows are not marked MECHANIC_SPECIFIED until roll/action integration exists. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Rows stay SOURCE_VERIFIED. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
 ---
 
 ## Revision log
@@ -423,3 +517,4 @@ Appended. Records the project owner's PDF readings (`data/audits/vehicles/swse-p
 - **Revision 4 (2026-10-29):** appended V-P4-01 (vehicle size modifier vs printed Initiative). No existing entry changed.
 - **Revision 5 (2026-10-30):** appended the source examination log for V-P2-01..04 and V-P4-01 and new entries V-P5-01..04. No existing entry was changed.
 - **Revision 6 (2026-10-30):** appended PDF-review results and owner directions for V-P2-01/02/03, V-P4-01, V-P5-01 and V-P5-04. No existing entry was changed.
+- **Revision 7 (2026-10-31):** appended V-P6-01..05 (Shipyard modification effects). No existing entry changed.
