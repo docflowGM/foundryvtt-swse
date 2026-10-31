@@ -14,7 +14,7 @@ import { classifyVehicleActorRuntime, getVehicleRuntimeProjection } from '../../
 import { CREW_QUALITY, makeUnusedEmplacementResolver } from '../../../domain/vehicles/vehicle-modification-rules.js';
 import { summarizeInstallations } from '../../../domain/vehicles/vehicle-installation-ledger.js';
 import { verifyConstructionRecord, DEFAULT_CONSTRUCTION_RULES } from '../../../domain/vehicles/custom-vehicle-construction.js';
-import { computeEffectiveStatistics, effectInstallability } from '../../../domain/vehicles/vehicle-modification-effects.js';
+import { EFFECTS, computeEffectiveStatistics, effectInstallability } from '../../../domain/vehicles/vehicle-modification-effects.js';
 import { readJobs, describeJob, reservedEpFromJobs } from '../../../domain/vehicles/vehicle-installation-jobs.js';
 import { describeShield, SOURCE_UNKNOWN } from './vehicle-publication-view-model.js';
 
@@ -62,7 +62,9 @@ function entryView(e) {
     standard: e.quote?.nonstandard === true ? 'Nonstandard' : e.quote?.nonstandard === false ? 'Standard' : UNRESOLVED,
     shortfall: finite(e.quote?.shortfall) ? e.quote.shortfall : null,
     effectStatus: effectCertified ? 'EFFECT_CERTIFIED' : 'EFFECT_NOT_AUTOMATED',
-    effectLabel: effectCertified ? 'Effect certified' : 'Effect not automated',
+    effectLabel: !effectCertified ? 'Effect not automated'
+      : EFFECTS[e.catalogId]?.kind === 'atmospheric' ? 'Effect certified; conditional (in atmosphere), not applied automatically'
+      : EFFECTS[e.catalogId] ? 'Effect certified and applied in play' : 'Effect certified',
     weapon,
     mountLabel: weapon ? (e.mount ? `${e.mount.mountKey} (${e.mount.arc}, ${e.mount.operatorRole})` : 'No certified mount') : null,
     weaponStatus: weapon ? (e.executable === true ? 'AUTHORIZED' : 'NOT_AUTHORIZED') : null,

@@ -5,7 +5,7 @@ import { runInNewContext } from 'node:vm';
 import { buildUniversalVehiclePackSources } from '../tools/build-universal-vehicle-pack-sources.mjs';
 import { classifyVehicleActorSource, getVehicleRuntimeProjection } from '../scripts/domain/vehicles/vehicle-runtime-contract.js';
 import { collectSourceIdentityErrors, getVerifiedPublishedRecord, claimsPublishedSource, checkProvenanceUpdate } from '../scripts/domain/vehicles/vehicle-source-identity.js';
-import { getPublishedDerivedBase, getPublishedVehicleInitiative } from '../scripts/domain/vehicles/vehicle-published-derived.js';
+import { getPublishedDerivedBase, getEffectiveVehicleDerived, getPublishedVehicleInitiative } from '../scripts/domain/vehicles/vehicle-published-derived.js';
 import { classifyInstalledVehicleWeapon } from '../scripts/domain/vehicles/vehicle-attack-provenance.js';
 
 const actors = [...buildUniversalVehiclePackSources().output.values()].flat();
@@ -114,7 +114,7 @@ test('a bare identity mirror is a publication claim and cannot masquerade as a c
 test('derived builder flags an invalid claim instead of treating it as a plain custom vehicle', () => {
   const code = readFileSync('scripts/actors/v2/vehicle-derived-builder.js', 'utf8')
     .replace(/^import[\s\S]*?;\s*$/gm, '').replace(/^export\s+\{[^}]*\};?/gm, '').replace(/\bexport\s+/g, '');
-  const ctx = { getPublishedDerivedBase, claimsPublishedSource };
+  const ctx = { getPublishedDerivedBase, getEffectiveVehicleDerived, claimsPublishedSource };
   runInNewContext(code + '\nglobalThis.b = buildVehicleDerived;', ctx);
   const bad = base(); bad.flags.swse.universalVehicleSource.source.durability.hitPoints = 1;
   ctx.b(bad, bad.system);

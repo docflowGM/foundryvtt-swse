@@ -7,6 +7,7 @@
  */
 import { collectSourceIdentityErrors } from './vehicle-source-identity.js';
 import { readCertifiedInstallations } from './vehicle-installation-ledger.js';
+import { EFFECTS } from './vehicle-modification-effects.js';
 
 const finite = value => typeof value === 'number' && Number.isFinite(value);
 const own = (value, key) => Object.prototype.hasOwnProperty.call(value ?? {}, key);
@@ -207,11 +208,14 @@ export function classifyVehicleActorSource(document, data = undefined, options =
     issue(errors, 'PUBLISHED_DEFENSE_DRIFT');
 
   const shieldStatus = finite(printedSR) && printedSR >= 0 ? 'published' : 'unknown';
+  // The stored maximum mirrors the PRINTED rating; the current pool may reach the EFFECTIVE maximum when a
+  // certified shield installation is in the sealed ledger (only installable on a hull printed with SR 0).
+  const effectiveSR = shieldStatus === 'published' ? Math.max(printedSR, installedShieldRating(flags, key)) : printedSR;
   if (sys.vehiclePublishedShieldStatus !== shieldStatus ||
       (shieldStatus === 'published' && (
         sys.shieldRating !== printedSR || sys.shields?.max !== printedSR ||
         !finite(sys.shields?.value) || sys.shields.value < 0 ||
-        sys.shields.value > printedSR)) ||
+        sys.shields.value > effectiveSR)) ||
       (shieldStatus === 'unknown' && (
         (own(sys, 'shieldRating') && sys.shieldRating !== 0) ||
         (own(sys, 'shields') && (
@@ -323,6 +327,11 @@ export function getVehicleRuntimeProjection(actor) {
     unverifiedModificationClaims: copy(sys.vehicleModifications ?? [])
 
   });
+}
+
+function installedShieldRating(flags, key) {
+  const { entries } = readCertifiedInstallations({ swse: flags }, key);
+  return entries.reduce((m, e) => (EFFECTS[e.catalogId]?.kind === 'shield' ? Math.max(m, EFFECTS[e.catalogId].value) : m), 0);
 }
 
 const WEAPON_ITEM_TYPES = new Set(['weapon', 'vehicle-weapon', 'vehicleWeapon', 'vehicleWeaponRange']);

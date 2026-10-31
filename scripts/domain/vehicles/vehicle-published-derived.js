@@ -9,6 +9,8 @@
  * No Foundry globals: Node-testable.
  */
 import { getVerifiedPublishedRecord, claimsPublishedSource } from './vehicle-source-identity.js';
+import { readCertifiedInstallations } from './vehicle-installation-ledger.js';
+import { computeEffectiveStatistics } from './vehicle-modification-effects.js';
 
 const finite = v => typeof v === 'number' && Number.isFinite(v);
 
@@ -61,4 +63,53 @@ export function summarizeMovement(speedModes) {
     primaryStarship: starship[0] ?? null,
     walking: character.find(m => m.mode === 'walking') ?? null
   };
+}
+
+/* ------------------------------------------------------------------ */
+/* Effective statistics: published base + certified installed effects  */
+/* ------------------------------------------------------------------ */
+
+/**
+ * The ONE effective-statistics authority for source-backed vehicles (sheet, derived data, combat).
+ * effective = verified published record + effects of the sealed, certified installation ledger
+ * (vehicle-modification-effects.js). The published record is never rewritten; removing an installation
+ * restores the published values because this is recomputed every time. null = no verified record.
+ *
+ * Applied to gameplay: Reflex Defense, Initiative, Shield Rating maximum, hyperdrive availability.
+ * Exposed but not auto-applied: the Dexterity-modifier delta for Pilot checks (no vehicle Pilot roller exists
+ * yet) and atmospheric speed (conditional on being in an atmosphere; no atmosphere state exists).
+ */
+export function getEffectiveVehicleDerived(actor) {
+  const base = getPublishedDerivedBase(actor);
+  if (!base) return null;
+  const record = getVerifiedPublishedRecord(actor);
+  const raw = typeof actor?.toObject === 'function' ? actor.toObject() : actor;
+  const { entries } = readCertifiedInstallations(raw?.flags, record.identity.sourceEntryKey);
+  const fx = computeEffectiveStatistics({ record, entries });
+  const printedSR = record.defenses?.shieldRating;
+  const shieldMax = fx.shield.sources.length ? fx.shield.effective : (finite(printedSR) ? printedSR : null);
+  return {
+    ...base,
+    published: base,
+    reflex: fx.reflex.effective ?? base.reflex,
+    initiative: fx.initiative.effective ?? base.initiative,
+    shieldMax,
+    shieldFromInstallation: fx.shield.sources.length > 0,
+    hyperdrive: fx.hyperdrive.effectiveClass !== null
+      ? { capability: 'equipped', class: fx.hyperdrive.effectiveClass, fromInstallation: true }
+      : { capability: record.hyperspace?.capability ?? null, class: record.hyperspace?.primaryMultiplier ?? null, fromInstallation: false },
+    pilotDexModifierDelta: fx.initiative.delta,
+    atmosphericMovement: fx.movement.filter(m => m.sources.length),
+    contributions: { reflex: fx.reflex, initiative: fx.initiative, shield: fx.shield },
+    unimplemented: fx.unimplemented
+  };
+}
+
+/** Effective Initiative (printed + certified effects) or null when the actor has no verified record. */
+export function getEffectiveVehicleInitiative(actor) {
+  if (actor?.type !== 'vehicle') return null;
+  const eff = getEffectiveVehicleDerived(actor);
+  if (eff) return eff.initiative;
+  if (claimsPublishedSource(actor)) throw new Error('UNIVERSAL_VEHICLE_SOURCE_INVALID: initiative');
+  return null;
 }

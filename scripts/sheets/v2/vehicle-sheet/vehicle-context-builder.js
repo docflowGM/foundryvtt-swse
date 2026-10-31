@@ -7,6 +7,7 @@
  */
 
 import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
+import { getEffectiveVehicleDerived } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-published-derived.js";
 import { getVehicleRuntimeProjection, classifyVehicleActorRuntime } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
 import { buildVehicleSchemaViewModel } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-schema-view-model.js";
 import { buildVehiclePublicationViewModel, buildPublishedCrewSummary, describeShield, SOURCE_UNKNOWN } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-publication-view-model.js";
@@ -1185,13 +1186,18 @@ function buildTurnPhasePanel(turnPhaseData) {
   };
 }
 
-function buildPublishedDefensesPanel(view) {
+function buildPublishedDefensesPanel(view, effective = null) {
   const d = view.defenses;
   const row = (key, label, fact) => ({ key, label, total: fact.display, known: fact.known });
+  // Reflex in play = printed + certified installed effects (same authority as derived data and combat).
+  const reflexDelta = effective?.contributions?.reflex?.delta ?? 0;
+  const reflex = reflexDelta && d.reflex.known
+    ? { ...row('ref', 'Reflex', { display: String(effective.reflex), known: true }), printed: d.reflex.display, modified: true }
+    : row('ref', 'Reflex', d.reflex);
   return {
-    title: 'Defenses (printed)',
+    title: reflexDelta ? 'Defenses (printed + certified modifications)' : 'Defenses (printed)',
     defenses: [
-      row('ref', 'Reflex', d.reflex), row('fort', 'Fortitude', d.fortitude),
+      reflex, row('fort', 'Fortitude', d.fortitude),
       row('flatFooted', 'Flat-Footed', d.flatFooted), row('armor', 'Armor Bonus', d.armorBonus)
     ],
     damageThreshold: d.damageThreshold.value
@@ -1271,7 +1277,8 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
   });
   const publicationView = source ? buildVehiclePublicationViewModel(actor, vehicleRuntimeProjection) : null;
   if (publicationView) {
-    vehicleTypeFlags.supportsHyperdrive = publicationView.hyperdrive.capability === 'equipped';
+    // effective: a certified hyperdrive installation makes a hull without one hyperdrive-capable
+    vehicleTypeFlags.supportsHyperdrive = publicationView.hyperdrive.capability === 'equipped' || getEffectiveVehicleDerived(actor)?.hyperdrive?.fromInstallation === true;
     vehicleTypeFlags.supportsBackupHyperdrive = false;
   }
   const shieldFact = published?.defenses?.shield;
@@ -1292,12 +1299,14 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
   } : null;
   if (source) vehicleTypeFlags.supportsShields =
     (shieldFact?.state === 'known' && shieldFact?.value > 0) ||
+    (getEffectiveVehicleDerived(actor)?.shieldMax > 0) ||
     (vehicleRuntimeProjection.current?.shields?.max > 0);
   const parsedCargo = parseCargoString(actor?.system?.cargo);
   const parsedSpeed = parseVehicleSpeed(actor?.system ?? {});
 
   const headerSummaryPanel = buildVehicleHeaderSummaryPanel(actor, { sourceModelName: options.sourceModelName });
-  const defensesPanel = publicationView ? buildPublishedDefensesPanel(publicationView) : buildVehicleDefensesPanel(actor);
+  const effectiveDerived = publicationView ? getEffectiveVehicleDerived(actor) : null;
+  const defensesPanel = publicationView ? buildPublishedDefensesPanel(publicationView, effectiveDerived) : buildVehicleDefensesPanel(actor);
   const hpConditionPanel = publicationView ? buildPublishedHpPanel(actor, publicationView) : buildVehicleHpConditionPanel(actor);
   const weaponMountPanel = buildVehicleWeaponMountPanel(actor);
   const crewSummaryPanel = publicationView

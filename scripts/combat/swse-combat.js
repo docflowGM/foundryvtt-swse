@@ -1,5 +1,5 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { getPublishedVehicleInitiative } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-published-derived.js";
+import { getEffectiveVehicleInitiative } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-published-derived.js";
 import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 
@@ -9,7 +9,7 @@ function numeric(value, fallback = 0) {
 }
 
 function getInitiativeSkillTotal(actor) {
-  const printed = getPublishedVehicleInitiative(actor);
+  const printed = getEffectiveVehicleInitiative(actor);
   if (printed !== null) return printed;
   const derivedSkills = actor?.system?.derived?.skills;
   const fromList = Array.isArray(derivedSkills?.list)
@@ -73,7 +73,7 @@ export class SWSECombatDocument extends Combat {
     // published statblock Initiative already includes the size modifier and the crew modifier
     // (Initiative = Dex modifier + size modifier + crew check modifier; this fits 343 of the 375
     // published vehicles whose parts are printed), so adding it again would double-apply it.
-    if (actor.type === 'vehicle' && getPublishedVehicleInitiative(actor) === null) {
+    if (actor.type === 'vehicle' && getEffectiveVehicleInitiative(actor) === null) {
       const sizeMod = this._getVehicleSizeModifier(actor);
       initTotal += sizeMod;
     }

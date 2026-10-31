@@ -9,7 +9,7 @@
  * vehicle-specific field shapes (defenses, hull/hp coercion, identity labels).
  */
 
-import { getPublishedDerivedBase, claimsPublishedSource } from "../../domain/vehicles/vehicle-published-derived.js";
+import { getEffectiveVehicleDerived, claimsPublishedSource } from "../../domain/vehicles/vehicle-published-derived.js";
 
 /**
  * Safe numeric coercion with fallback
@@ -142,7 +142,8 @@ export function buildVehicleDerived(actor, system) {
   // preserve those defaults over imported or GM-edited statblock values.
   // Source-backed vehicles: printed values (digest-verified record) win over the
   // mutable system mirrors; unknown printed values are flagged, not invented.
-  const published = getPublishedDerivedBase(actor);
+  // Effective = printed (digest-verified) + certified installed effects; the printed record itself is untouched.
+  const published = getEffectiveVehicleDerived(actor);
   // A claim that fails verification is flagged, never silently treated as an ordinary
   // custom vehicle (the sheet, Store and attack gate all refuse it).
   system.derived.sourceInvalid = !published && claimsPublishedSource(actor);
@@ -238,6 +239,25 @@ export function buildVehicleDerived(actor, system) {
       known: mv.known,
       published: true
     };
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // EFFECTIVE MODIFICATIONS + SHIELD POOL (source-backed vehicles)
+  // derived.shield feeds ShieldMitigationResolver / ActorEngine (stored:true => depletion persists to
+  // system.shields.value). Only a known positive effective SR is projected: unknown, conditional or
+  // conflicting printed shields never become a number.
+  // ════════════════════════════════════════════════════════════════════════════
+  if (published) {
+    system.derived.vehicleModifications = {
+      reflex: published.contributions.reflex, initiative: published.contributions.initiative, shield: published.contributions.shield,
+      hyperdrive: published.hyperdrive, pilotDexModifierDelta: published.pilotDexModifierDelta,
+      atmosphericMovement: published.atmosphericMovement, unimplemented: published.unimplemented
+    };
+    if (Number.isFinite(published.shieldMax) && published.shieldMax > 0) {
+      const stored = Number(system.shields?.value);
+      const current = Math.max(0, Math.min(published.shieldMax, Number.isFinite(stored) ? stored : 0));
+      system.derived.shield = { current, max: published.shieldMax, source: published.shieldFromInstallation ? 'Installed shields' : 'Shield', stored: true };
+    }
   }
 
   // Timestamp for derived computation

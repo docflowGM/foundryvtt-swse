@@ -14,7 +14,7 @@
 import { RollCore } from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { getPublishedVehicleInitiative } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-published-derived.js";
+import { getEffectiveVehicleInitiative } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-published-derived.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 function numeric(value, fallback = 0) {
@@ -24,7 +24,7 @@ function numeric(value, fallback = 0) {
 
 export function getActorInitiativeSkillTotal(actor) {
   // Source-backed vehicles roll their printed Initiative, not a character-style Dex formula.
-  const printed = getPublishedVehicleInitiative(actor);
+  const printed = getEffectiveVehicleInitiative(actor);
   if (printed !== null) return printed;
   const derivedSkills = actor?.system?.derived?.skills;
   const fromList = Array.isArray(derivedSkills?.list)

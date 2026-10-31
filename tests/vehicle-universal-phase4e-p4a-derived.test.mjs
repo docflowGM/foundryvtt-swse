@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
 import { buildUniversalVehiclePackSources } from '../tools/build-universal-vehicle-pack-sources.mjs';
-import { getPublishedDerivedBase, claimsPublishedSource } from '../scripts/domain/vehicles/vehicle-published-derived.js';
+import { getPublishedDerivedBase, getEffectiveVehicleDerived, claimsPublishedSource } from '../scripts/domain/vehicles/vehicle-published-derived.js';
 
 const actors = [...buildUniversalVehiclePackSources().output.values()].flat();
 const rec = a => a.flags.swse.universalVehicleSource.source;
@@ -13,7 +13,7 @@ const byKey = key => actors.find(a => a.system.vehicleSourceEntryKey === key);
 const builder = (() => {
   const code = readFileSync('scripts/actors/v2/vehicle-derived-builder.js', 'utf8')
     .replace(/^import[\s\S]*?;\s*$/gm, '').replace(/^export\s+\{[^}]*\};?/gm, '').replace(/\bexport\s+/g, '');
-  const ctx = { getPublishedDerivedBase, claimsPublishedSource };
+  const ctx = { getPublishedDerivedBase, getEffectiveVehicleDerived, claimsPublishedSource };
   runInNewContext(code + '\nglobalThis.build = buildVehicleDerived;', ctx);
   return ctx.build;
 })();
@@ -116,11 +116,11 @@ test('printed Initiative (negative, zero, positive) is the vehicle Initiative au
   assert.equal(getPublishedVehicleInitiative({ type: 'vehicle', flags: {}, system: {} }), null);
 });
 
-test('Initiative consumers prefer the printed value for source-backed vehicles', () => {
+test('Initiative consumers prefer the printed value (plus certified effects) for source-backed vehicles', () => {
   const init = readFileSync('scripts/engine/combat/SWSEInitiative.js', 'utf8');
   const combat = readFileSync('scripts/combat/swse-combat.js', 'utf8');
   for (const code of [init, combat]) {
-    assert.match(code, /getPublishedVehicleInitiative\(actor\)/);
-    assert.ok(code.indexOf('getPublishedVehicleInitiative(actor)') < code.indexOf('derivedSkills'));
+    assert.match(code, /getEffectiveVehicleInitiative\(actor\)/);
+    assert.ok(code.indexOf('getEffectiveVehicleInitiative(actor)') < code.indexOf('derivedSkills'));
   }
 });
