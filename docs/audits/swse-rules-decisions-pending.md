@@ -661,6 +661,25 @@ Appended. Evidence: `data/audits/vehicles/p6a/print-verified-components-v2.json`
 | Decision authority | Project owner |
 | Resolution | |
 
+## P6A open vehicle rulings - blocker classification (2026-11-01)
+
+Appended; the entries above are unchanged. Blocker: SOURCE = published evidence missing; AMBIGUITY = the printed rule admits more than one reading; ENGINEERING = rule is clear, implementation incomplete (not a rules question).
+
+| ID | Topic | Blocker | Fail-closed behavior |
+|---|---|---|---|
+| V-P6-01 | Reinforced bulkheads HP rounding | AMBIGUITY | rows not installable |
+| V-P6-02 | Replacing an existing shield/hyperdrive/sublight drive | AMBIGUITY | planner denies replacement |
+| V-P6-03 | Stacking same-kind systems | AMBIGUITY | second system denied |
+| V-P6-04 | Armor vs pilot-level substitution | AMBIGUITY | static ship armor basis only |
+| V-P6-05 | Roll/action effects (jammers, regenerating shields, combat thrusters, navicomputers, SLAM) | ENGINEERING | rows not installable |
+| V-P6-06 | Failed design check | SOURCE | GM adjudication only |
+| V-P6A-01 | Triple cannon cost/EP | AMBIGUITY | alias only, no catalog row |
+| V-P6A-02 | Armor-piercing concussion missile price | SOURCE | not in catalog |
+| V-P6A-03 | Launcher capacity EP and cost basis | SOURCE / AMBIGUITY | not in catalog |
+| V-P6A-04 | Galaxy at War weapon availability | SOURCE | availability unknown |
+| V-P6A-07 | Gravity well errata scope | AMBIGUITY | generic component keeps 4x4 |
+| V-P2-04 | Installed-weapon firing arcs | SOURCE | no executable weapon |
+
 ---
 
 ## Revision log
@@ -677,3 +696,4 @@ Appended. Evidence: `data/audits/vehicles/p6a/print-verified-components-v2.json`
 - **Revision 10 (2026-11-01):** appended V-P6A-05 and V-P6A-06 (PDF source authority). No existing entry changed.
 - **Revision 11 (2026-11-01):** recorded the owner's resolutions of V-P6A-05 and V-P6A-06 (status and Resolution fields only; questions unchanged).
 - **Revision 12 (2026-11-01):** appended V-P6A-07 (gravity well errata scope). No existing entry changed.
+- **Revision 13 (2026-11-01):** appended the P6A blocker classification table. No existing entry changed.

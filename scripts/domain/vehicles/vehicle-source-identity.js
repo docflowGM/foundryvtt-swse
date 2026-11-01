@@ -126,7 +126,8 @@ function expandDotted(update) {
   for (const [path, value] of Object.entries(update ?? {})) {
     const keys = path.split('.'); let node = out;
     for (const k of keys.slice(0, -1)) node = node[k] ??= {};
-    node[keys.at(-1)] = value;
+    // copy: a later dotted key may descend into this value, and the caller's update must never be mutated
+    node[keys.at(-1)] = value && typeof value === 'object' ? JSON.parse(JSON.stringify(value)) : value;
   }
   return out;
 }
@@ -139,6 +140,7 @@ export function checkProvenanceUpdate(actor, changes) {
   for (const [path, value] of leaves(changes)) {
     const marker = path.match(/^(.*?)(?:^|\.)(-=|==)([^.]+)$/);
     if (marker) {
+      if (authorized && authorized.get(path) === JSON.stringify(value)) continue;
       const stripped = path.replace(/(^|\.)(-=|==)/, '$1');
       if (protectedPath(stripped) || isPrefixOfProtected(stripped)) denied.push(path);
       continue;

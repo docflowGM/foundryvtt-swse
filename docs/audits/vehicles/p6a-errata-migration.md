@@ -20,6 +20,25 @@ Nothing changes in a world on its own. A pre-errata Actor stays a valid source-b
 3. For each READY Actor choose whether to migrate it. Shields: by default the **current shield value is kept** and only the maximum changes (for example 4/10 becomes 4/25). Tick "ship is undamaged" only if you know it is; that sets the current value to the corrected maximum. Being at 10/10 is not treated as proof of being undamaged.
 4. Authorize. For each Actor the service writes a backup (`flags.swse.errataMigrationBackups.p6a-sotg-errata-v1`), then the migration through a one-shot provenance write-authorization, and records `flags.swse.errataMigrations` (version, errata id, original and corrected values, time, GM).
 
-**Safety:** only Actors whose source claim verifies and whose record still has the exact printed values are migrated; invalid or tampered claims and unknown versions are REJECTED. The provenance guard re-validates the migrated Actor. Running it again skips migrated Actors. A failed write is restored from the backup and reported. Recovery at any time: `game.swse.migrations.VehicleErrataMigrationService.restore(actorId)` (GM).
+**Integrity (final stabilization):** duplicate Actor ids are collapsed; a per-Actor lock refuses a second concurrent run on the same client; the dialog passes each Actor's preview fingerprint and the service refuses an Actor that changed since the preview (`STALE_PREVIEW`, which also catches another GM's change); the backup must verifiably persist before anything protected changes; the correction and the migration record are one update; success is reported only after the persisted Actor is verified against the planned correction (catches writes Foundry refused without throwing and recalculations that altered protected state). Any failure triggers recovery to the exact backup, and the recovery itself is verified; an unsuccessful recovery is reported as such, never as success. Only invalid or tampered claims and unknown source versions are REJECTED.
 
-**Limitations:** Actors whose source claim already fails verification cannot be migrated (fix the claim first). Unlinked token Actors are not scanned (only world Actors). The migration does not touch installed equipment or construction records.
+**Two different restore operations:**
+- *Immediate failed-write recovery* (automatic, inside `apply`): exact backup state, verified, reported with `recovered: true|false`.
+- *Manual GM restoration* (`game.swse.migrations.VehicleErrataMigrationService.previewRestore(actorId)` then `.restore(actorId, { gmConfirmed: true, expectedFingerprint })`): restores the pre-errata record, its digest, the shield maximum mirrors and the printed-groups mirror; **keeps the current shield value** and reports post-migration gameplay changes; if current shields exceed the restored maximum it refuses unless the GM passes `shieldDecision: 'clamp-to-restored-max'`; refuses with no active migration, an invalid backup, or a source that no longer equals what the migration wrote; records `flags.swse.errataMigrationRestorations`.
+
+Two defects found and fixed in this pass: a restore left `publication.errataApplied` on the record (Foundry merges object updates), which would have broken the digest - restores now delete it explicitly; and the provenance write-authorization mutated the caller's update object - it now copies.
+
+**Unlinked tokens:** `VehicleErrataMigrationService.scanUnlinkedTokens()` lists unlinked token Actors on scenes that use an affected publication; the dialog shows the count. They are never migrated: V13 exposes them as token delta Actors, and changing them would need a separately authorized operation with the same preview, backup, provenance, rollback and idempotence guarantees (not implemented).
+
+**Limitations:** Actors whose source claim already fails verification cannot be migrated (fix the claim first). The migration does not touch installed equipment, construction records or custom-built ships (they make no publication claim and are never affected).
+
+## Live Foundry V13 checklist (LIVE_RUNTIME_PENDING - not run in this environment)
+1. As GM, load a world containing a pre-errata BTL-S3 Y-wing at SR 4/10 and an Interdictor: the ready notice appears; as a player, `game.swse.migrations.vehicleErrata()` only warns.
+2. Open the dialog: statuses READY / ALREADY_MIGRATED / REJECTED are correct; cancel changes nothing.
+3. Migrate the damaged Y-wing with "undamaged" unticked: sheet and Asset Bay show 4/25; a second Y-wing at 10/10 ticked "undamaged" shows 25/25.
+4. Run the migration again: both are ALREADY_MIGRATED, no new records.
+5. Damage the Y-wing: mitigation absorbs up to the current SR; recharge restores up to 25.
+6. Interdictor: Stats tab shows the 3x3 note; no attack button becomes active.
+7. Manual restore after more damage: preview lists the change; restore keeps current shields and sets the maximum back to 10; a second restore is refused.
+8. Corrupt a backup flag in the console and attempt restore: refused.
+9. Verify each migrated Actor's sheet has no source-verification error (digest valid).

@@ -2,15 +2,16 @@
   "schema": "swse.errata-inventory.v1",
   "note": "Inventory of published errata per sourcebook. Only entries with a recorded verification are authoritative. Existence of errata for other books is NOT asserted from memory: the errata hosts are outside this session's network allowance, so those books remain NOT_INVENTORIED until a source is supplied. Community corrections are never promoted to published-rule authority.",
   "categories": {
-    "OFFICIAL_PUBLISHED_VERIFIED": "official Wizards of the Coast errata, content verified",
-    "OFFICIAL_PUBLISHED_UNVERIFIED": "official release identified, content not yet verified",
-    "UNOFFICIAL_COMMUNITY": "community clarification (never rule authority)",
-    "NOT_INVENTORIED": "not yet searched / source not accessible"
+    "OFFICIAL_PUBLISHED_VERIFIED": "official published errata, content verified",
+    "OFFICIAL_IDENTIFIED_UNVERIFIED": "official errata identified, content not yet verified",
+    "UNOFFICIAL_COMMUNITY": "unofficial community correction (never rule authority)",
+    "NO_AUTHORITATIVE_SOURCE_LOCATED": "searched; no authoritative source found",
+    "NOT_YET_INVESTIGATED": "not yet searched"
   },
   "books": [
     {
       "book": "Core Rulebook",
-      "status": "NOT_INVENTORIED",
+      "status": "NOT_YET_INVESTIGATED",
       "componentRelevance": "unknown"
     },
     {
@@ -22,63 +23,78 @@
     },
     {
       "book": "Threats of the Galaxy",
-      "status": "NOT_INVENTORIED",
+      "status": "NOT_YET_INVESTIGATED",
       "componentRelevance": "unknown"
     },
     {
       "book": "Knights of the Old Republic Campaign Guide",
-      "status": "NOT_INVENTORIED",
+      "status": "NOT_YET_INVESTIGATED",
       "componentRelevance": "unknown"
     },
     {
       "book": "Force Unleashed Campaign Guide",
-      "status": "NOT_INVENTORIED",
+      "status": "NOT_YET_INVESTIGATED",
       "componentRelevance": "unknown"
     },
     {
       "book": "Scavenger's Guide to Droids",
-      "status": "NOT_INVENTORIED",
+      "status": "NOT_YET_INVESTIGATED",
       "componentRelevance": "unknown"
     },
     {
       "book": "Clone Wars Campaign Guide",
-      "status": "NOT_INVENTORIED",
+      "status": "NOT_YET_INVESTIGATED",
       "componentRelevance": "unknown"
     },
     {
       "book": "Legacy Era Campaign Guide",
-      "status": "NOT_INVENTORIED",
+      "status": "NOT_YET_INVESTIGATED",
       "componentRelevance": "unknown"
     },
     {
       "book": "Jedi Academy Training Manual",
-      "status": "NOT_INVENTORIED",
+      "status": "NOT_YET_INVESTIGATED",
       "componentRelevance": "unknown"
     },
     {
       "book": "Rebellion Era Campaign Guide",
-      "status": "NOT_INVENTORIED",
+      "status": "NOT_YET_INVESTIGATED",
       "componentRelevance": "unknown"
     },
     {
       "book": "Galaxy at War",
-      "status": "NOT_INVENTORIED",
+      "status": "NOT_YET_INVESTIGATED",
       "componentRelevance": "unknown"
     },
     {
       "book": "Unknown Regions",
-      "status": "NOT_INVENTORIED",
+      "status": "NOT_YET_INVESTIGATED",
       "componentRelevance": "unknown"
     },
     {
       "book": "Scum and Villainy",
-      "status": "NOT_INVENTORIED",
+      "status": "NOT_YET_INVESTIGATED",
       "componentRelevance": "unknown"
     },
     {
       "book": "Galaxy of Intrigue",
-      "status": "NOT_INVENTORIED",
+      "status": "NOT_YET_INVESTIGATED",
       "componentRelevance": "unknown"
     }
+  ],
+  "evidenceLimitations": [
+    {
+      "date": "2026-11-01",
+      "limitation": "the errata hosts (rpg.fandom.com, scribd.com) are outside this session's network allowance; no other book's errata could be searched from the session",
+      "effect": "13 books NOT_YET_INVESTIGATED; existence of their errata is neither assumed nor denied"
+    }
+  ],
+  "priorityForVehicleComponents": [
+    "Scum and Villainy (Table 2-10 starship systems)",
+    "Galaxy at War (Table 2-7 vehicle weapons)",
+    "Legacy Era Campaign Guide (gravity mines)",
+    "Threats of the Galaxy (discord missile)",
+    "Clone Wars Campaign Guide / Rebellion Era Campaign Guide (weapon prose)",
+    "Core Rulebook (vehicle rules, Crew Quality)"
   ]
 }

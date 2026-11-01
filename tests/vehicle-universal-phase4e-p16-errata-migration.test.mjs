@@ -110,56 +110,153 @@ test('plan: preview, preserved current shields by default, GM confirmation for i
   assert.match(JSON.stringify(ic.update['system.sourceAttackGroups']), /3x3/);
 });
 
-function world(actors, { gm = true, failOn = null } = {}) {
+// fake world: ActorEngine.updateActor runs the real provenance guard; hooks let a test refuse/alter writes
+function world(actors, { gm = true, onWrite = null } = {}) {
   const map = new Map(actors.map(a => [a.id, a]));
-  globalThis.game = { user: { id: gm ? 'gm1' : 'u1', name: 'GM', isGM: gm }, actors: { contents: actors, get: id => map.get(id) } };
+  globalThis.game = { user: { id: gm ? 'gm1' : 'u1', name: 'GM', isGM: gm }, actors: { contents: actors, get: id => map.get(id) }, scenes: { contents: [] } };
   const writes = [];
   ActorEngine.updateActor = async (actor, update) => {
-    // the real guard runs on every write: protected provenance changes need the one-shot authorization
     if (guardVehicleProvenance(actor, update) === false) throw new Error('PROVENANCE_GUARD_DENIED');
-    if (failOn === actor.id && update['flags.swse.errataMigrations']?.length > 0) throw new Error('simulated write failure'); // the migration write, not the restore
-    const next = applyChangesToCopy(actor.toObject(), update);
-    Object.assign(actor, next);
+    const verdict = onWrite?.(actor, update, writes.length);
+    if (verdict === 'throw') throw new Error('simulated write failure');
+    if (verdict === 'ignore') { writes.push({ id: actor.id, keys: Object.keys(update), ignored: true }); return; }
+    Object.assign(actor, applyChangesToCopy(actor.toObject(), update));
+    if (typeof verdict === 'function') verdict(actor);
     writes.push({ id: actor.id, keys: Object.keys(update) });
   };
   return writes;
 }
+const fp = a => ({ [a.id]: M.migrationFingerprint(a) });
+const isMigrationWrite = u => u['flags.swse.errataMigrations']?.length > 0;
 
 test('service: GM only; backup then authorized migration; record; idempotent; unauthorized writes still denied', async () => {
   const a = oldActor(YW, { shieldsValue: 4 });
   world([a], { gm: false });
   assert.deepEqual((await S.apply({ actorIds: [a.id] })).reasons, ['GM_REQUIRED']);
   assert.deepEqual(S.preview().reasons, ['GM_REQUIRED']);
+  assert.deepEqual((await S.restore(a.id, { gmConfirmed: true })).reasons, ['GM_REQUIRED']);
   const writes = world([a]);
   const pv = S.preview();
   assert.equal(pv.counts.READY, 1);
-  const r = await S.apply({ actorIds: [a.id] });
-  assert.deepEqual(r.migrated, [a.id]);
+  const r = await S.apply({ actorIds: [a.id, a.id], expectedFingerprints: { [a.id]: pv.plans[0].fingerprint } });
+  assert.deepEqual(r.migrated, [a.id], 'duplicate ids collapsed');
   assert.deepEqual([a.system.shieldRating, a.system.shields.value, a.system.shields.max], [25, 4, 25]);
   assert.equal(a.flags.swse.universalVehicleSource.source.defenses.shieldRating, 25);
   const rec = a.flags.swse.errataMigrations[0];
   assert.deepEqual([rec.version, rec.errataId, rec.gmUserId, rec.original.shieldsMax, rec.corrected.shieldsMax], [M.ERRATA_MIGRATION_VERSION, 'SOTG-E1-Y-WING-SHIELDS', 'gm1', 10, 25]);
   assert.equal(a.flags.swse.errataMigrationBackups[M.ERRATA_MIGRATION_VERSION].shields.max, 10);
   assert.ok(writes[0].keys[0].startsWith('flags.swse.errataMigrationBackups'), 'backup written first');
-  // idempotent
-  const again = await S.apply({ actorIds: [a.id] });
-  assert.deepEqual(again.skipped.map(s => s.status), ['ALREADY_MIGRATED']);
-  // without the authorization, a provenance write is still refused by the guard
+  const again = await S.apply({ actorIds: [a.id], expectedFingerprints: fp(a) });
+  assert.deepEqual(again.skipped.map(x => x.status), ['ALREADY_MIGRATED']);
   assert.equal(guardVehicleProvenance(a, { 'flags.swse.universalVehicleSource.source.defenses.shieldRating': 10 }), false);
-  // damage mitigation and recharge use the corrected maximum
   builder(a, a.system);
-  assert.deepEqual([a.system.derived.shield.current, a.system.derived.shield.max], [4, 25]);
+  assert.deepEqual([a.system.derived.shield.current, a.system.derived.shield.max], [4, 25], 'mitigation and recharge use the corrected maximum');
 });
 
-test('service: a failed migration write is restored from the backup and reported', async () => {
-  const a = oldActor(YW, { shieldsValue: 7 });
-  world([a], { failOn: a.id });
-  const r = await S.apply({ actorIds: [a.id] });
-  assert.equal(r.ok, false);
-  assert.equal(r.failed[0].restored, true);
-  assert.deepEqual([a.system.shieldRating, a.system.shields.value, a.system.shields.max], [10, 7, 10]);
+test('integrity: stale preview, concurrent request, missing fingerprint', async () => {
+  const a = oldActor(YW, { shieldsValue: 6 });
+  world([a]);
+  const stale = M.migrationFingerprint(a);
+  Object.assign(a, applyChangesToCopy(a.toObject(), { 'system.shields.value': 3 })); // changed (e.g. by another GM) after preview
+  assert.deepEqual((await S.apply({ actorIds: [a.id], expectedFingerprints: { [a.id]: stale } })).skipped.map(x => x.status), ['STALE_PREVIEW']);
+  assert.deepEqual((await S.apply({ actorIds: [a.id] })).skipped.map(x => x.status), ['STALE_PREVIEW'], 'a fingerprint is required');
+  const [r1, r2] = await Promise.all([S.apply({ actorIds: [a.id], expectedFingerprints: fp(a) }), S.apply({ actorIds: [a.id], expectedFingerprints: fp(a) })]);
+  assert.equal(r1.migrated.length + r2.migrated.length, 1);
+  assert.ok([...r1.skipped, ...r2.skipped].some(x => x.status === 'IN_PROGRESS'));
+  assert.equal(a.flags.swse.errataMigrations.length, 1, 'one migration record');
+});
+
+test('integrity: refused write, altered persisted state, unpersisted backup and failed recovery are all reported', async () => {
+  // 1. Foundry refuses the migration write without throwing -> verification fails -> recovered
+  let a = oldActor(YW, { shieldsValue: 5 });
+  world([a], { onWrite: (_x, u) => (isMigrationWrite(u) ? 'ignore' : null) });
+  let r = await S.apply({ actorIds: [a.id], expectedFingerprints: fp(a) });
+  assert.ok(r.failed[0].reasons.includes('SOURCE_NOT_PERSISTED'));
+  assert.equal(r.failed[0].recovered, true);
+  assert.deepEqual([a.system.shields.value, a.system.shields.max], [5, 10]);
+  // 2. a recalculation changes protected state after the write -> CURRENT_SHIELDS_CHANGED -> recovered
+  a = oldActor(YW, { shieldsValue: 5 });
+  world([a], { onWrite: (_x, u) => (isMigrationWrite(u) ? actor => { actor.system.shields.value = 25; } : null) });
+  r = await S.apply({ actorIds: [a.id], expectedFingerprints: fp(a) });
+  assert.ok(r.failed[0].reasons.includes('CURRENT_SHIELDS_CHANGED'));
+  assert.equal(r.failed[0].recovered, true);
+  assert.equal(a.system.shields.value, 5);
+  assert.equal((a.flags.swse.errataMigrations ?? []).length, 0, 'no migration record survives a failed correction');
+  // 3. backup not persisted -> no migration attempted
+  a = oldActor(YW, { shieldsValue: 5 });
+  const w = world([a], { onWrite: (_x, u) => (Object.keys(u)[0].startsWith('flags.swse.errataMigrationBackups') ? 'ignore' : null) });
+  r = await S.apply({ actorIds: [a.id], expectedFingerprints: fp(a) });
+  assert.deepEqual(r.failed[0].reasons, ['BACKUP_NOT_PERSISTED']);
+  assert.equal(w.filter(x => !x.ignored).length, 0);
+  // 4. the migration write throws and so does the recovery -> reported as not recovered
+  a = oldActor(YW, { shieldsValue: 5 });
+  world([a], { onWrite: (_x, u, n) => (n >= 1 ? 'throw' : null) });
+  r = await S.apply({ actorIds: [a.id], expectedFingerprints: fp(a) });
+  assert.equal(r.failed[0].recovered, false);
+  assert.ok(r.failed[0].recoveryProblems.includes('RECOVERY_WRITE_FAILED'));
+});
+
+test('manual restoration keeps post-migration gameplay, needs a GM decision for conflicts, and is audited', async () => {
+  const a = oldActor(YW, { shieldsValue: 4 });
+  world([a]);
+  await S.apply({ actorIds: [a.id], expectedFingerprints: fp(a) });
+  // gameplay after migration: more damage
+  Object.assign(a, applyChangesToCopy(a.toObject(), { 'system.shields.value': 2 }));
+  const pv = S.previewRestore(a.id);
+  assert.equal(pv.status, 'READY');
+  assert.deepEqual(pv.gameplayChanges, [{ field: 'system.shields.value', atMigration: 4, now: 2 }]);
+  assert.deepEqual((await S.restore(a.id, { expectedFingerprint: pv.fingerprint })).reasons, ['GM_CONFIRMATION_REQUIRED']);
+  const r = await S.restore(a.id, { gmConfirmed: true, expectedFingerprint: pv.fingerprint });
+  assert.equal(r.ok, true);
+  assert.deepEqual([a.system.shields.value, a.system.shields.max, a.system.shieldRating], [2, 10, 10], 'current shields preserved, maximum restored');
   assert.equal(a.flags.swse.universalVehicleSource.source.defenses.shieldRating, 10);
+  assert.equal(a.flags.swse.errataMigrationRestorations[0].gameplayChangesKept[0].now, 2);
   assert.equal(classifyVehicleActorSource(a.toObject(), undefined, { mode: 'runtime' }).kind, 'canonical');
+  assert.deepEqual(S.previewRestore(a.id).reasons, ['NO_ACTIVE_MIGRATION'], 'repeated restoration refused');
+});
+
+test('manual restoration: recharge above the old maximum needs an explicit clamp decision; stale preview refused', async () => {
+  const a = oldActor(YW, { shieldsValue: 4 });
+  world([a]);
+  await S.apply({ actorIds: [a.id], expectedFingerprints: fp(a) });
+  Object.assign(a, applyChangesToCopy(a.toObject(), { 'system.shields.value': 20 })); // recharged / repaired after migration
+  const pv = S.previewRestore(a.id);
+  assert.equal(pv.status, 'NEEDS_GM_DECISION');
+  assert.deepEqual((await S.restore(a.id, { gmConfirmed: true, expectedFingerprint: pv.fingerprint })).reasons, ['CURRENT_SHIELDS_EXCEED_RESTORED_MAXIMUM']);
+  Object.assign(a, applyChangesToCopy(a.toObject(), { 'system.shields.value': 19 }));
+  assert.deepEqual((await S.restore(a.id, { gmConfirmed: true, expectedFingerprint: pv.fingerprint, shieldDecision: 'clamp-to-restored-max' })).reasons, ['ACTOR_CHANGED_SINCE_PREVIEW']);
+  const pv2 = S.previewRestore(a.id, { shieldDecision: 'clamp-to-restored-max' });
+  const r = await S.restore(a.id, { gmConfirmed: true, expectedFingerprint: pv2.fingerprint, shieldDecision: 'clamp-to-restored-max' });
+  assert.equal(r.ok, true);
+  assert.deepEqual([a.system.shields.value, a.system.shields.max], [10, 10]);
+  assert.equal(a.flags.swse.errataMigrationRestorations[0].shieldDecision, 'clamp-to-restored-max');
+});
+
+test('Interdictor migrates and restores its reference text; custom-built ships and unrelated vehicles are never touched', async () => {
+  const ic = oldActor(IC);
+  world([ic]);
+  const r = await S.apply({ actorIds: [ic.id], expectedFingerprints: fp(ic) });
+  assert.deepEqual(r.migrated, [ic.id]);
+  assert.match(JSON.stringify(ic.system.sourceAttackGroups), /3x3/);
+  assert.deepEqual(ic.system.weapons, []);
+  const pv = S.previewRestore(ic.id);
+  assert.equal((await S.restore(ic.id, { gmConfirmed: true, expectedFingerprint: pv.fingerprint })).ok, true);
+  assert.match(JSON.stringify(ic.system.sourceAttackGroups), /4x4 starship squares/);
+  // custom-built ship (construction record, no publication claim)
+  const custom = { _id: 'c1', id: 'c1', type: 'vehicle', name: 'Custom', system: { hp: { value: 30, max: 30 }, shields: { value: 10, max: 10 } }, flags: { swse: { vehicleConstruction: { schema: 'x' } } } };
+  custom.toObject = function () { const { toObject, ...rest } = this; return structuredClone(rest); };
+  assert.equal(M.planErrataMigration(custom).status, 'NOT_AFFECTED');
+  world([custom, ic]);
+  assert.equal(S.preview().plans.some(p => p.actorId === 'c1'), false);
+});
+
+test('unlinked token Actors are reported, never migrated', () => {
+  const a = oldActor(YW);
+  world([]);
+  globalThis.game.scenes = { contents: [{ id: 's1', name: 'Space', tokens: { contents: [{ id: 't1', name: 'Gold 2', actorLink: false, actor: a }, { id: 't2', name: 'Linked', actorLink: true, actor: a }] } }] };
+  const scan = S.scanUnlinkedTokens();
+  assert.deepEqual(scan.tokens.map(t => [t.tokenId, t.status]), [['t1', 'READY']]);
+  assert.match(scan.note, /reported only/);
 });
 
 const builder = (() => {
@@ -169,3 +266,13 @@ const builder = (() => {
   runInNewContext(code + '\nglobalThis.build = buildVehicleDerived;', ctx);
   return ctx.build;
 })();
+
+test('provenance write-authorization never mutates the caller update (regression: restore deletion key leaked into the backup)', async () => {
+  const I = await import('../scripts/domain/vehicles/vehicle-source-identity.js');
+  const update = { 'flags.swse.universalVehicleSource': { source: { publication: { book: 'B' } } }, 'flags.swse.universalVehicleSource.source.publication.-=errataApplied': null };
+  const before = JSON.stringify(update);
+  I.authorizeProvenanceMigration('x', update);
+  I.clearProvenanceMigration('x');
+  assert.equal(JSON.stringify(update), before);
+  assert.deepEqual(M.restoreDeletions({ universalVehicleSource: { source: { publication: {} } } }), { 'flags.swse.universalVehicleSource.source.publication.-=errataApplied': null });
+});

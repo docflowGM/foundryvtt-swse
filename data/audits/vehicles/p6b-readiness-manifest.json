@@ -1,0 +1,119 @@
+{
+  "schema": "swse.vehicle.p6b.readiness-manifest.v1",
+  "baselineCommit": "P6A final stabilization checkpoint",
+  "statusVocabulary": [
+    "SOURCE_VERIFIED",
+    "MECHANIC_SPECIFIED",
+    "OPERATIONALLY_INTEGRATED",
+    "LIVE_RUNTIME_VERIFIED",
+    "LIVE_RUNTIME_PENDING",
+    "DEFERRED_RULES_REVIEW"
+  ],
+  "baselineCounts": {
+    "catalogRecords": 187,
+    "reconciledMatches": 174,
+    "unresolvedSource": 7,
+    "notInstallableOptions": 6,
+    "sourceVerified": 174,
+    "mechanicSpecified": 39,
+    "operationallyIntegratedOffline": 37,
+    "liveRuntimeVerified": 0,
+    "installable": 39,
+    "combatAuthorizedWeapons": 0,
+    "p6aOverlaySourceVerified": 118,
+    "note": "overlay was 115 at checkpoint 2; +3 after V-P6A-05 adopted the printed prices of cloaking device (stygium), hangar bay and concealed hangar bay"
+  },
+  "workstreams": [
+    {
+      "id": "P6B-1",
+      "title": "Deferred movement/defense effects",
+      "scope": [
+        "reinforced-bulkheads-10/20/30 (V-P6-01 rounding)",
+        "sublight-drive-1..6 (V-P6-02 replacement, military-only)",
+        "jamming-suite, jamming-array, regenerating-shields, combat-thrusters, navicomputer x3, sublight-accelerator (roll/action integration, V-P6-05)"
+      ],
+      "count": 17,
+      "blockers": {
+        "rulings": [
+          "V-P6-01",
+          "V-P6-02"
+        ],
+        "engineering": [
+          "vehicle Pilot/Use Computer roll integration",
+          "recharge-shields action integration"
+        ]
+      },
+      "gate": "ruling recorded or published rule unambiguous; effect in vehicle-modification-effects.js; certification generator marks MECHANIC_SPECIFIED; regression tests"
+    },
+    {
+      "id": "P6B-2",
+      "title": "Weapon systems",
+      "scope": "38 SOURCE_VERIFIED weapons + 9 ammunition + 4 consumable ammunition (V-P6A-06)",
+      "dependsOn": [
+        "mount certification (V-P2-04 arcs unruled)",
+        "attack gate CERTIFIED_INSTALLATION path",
+        "ammunition quantity/loading model"
+      ],
+      "rules": [
+        "V-P6A-01 triple cannon",
+        "V-P6A-02 armor-piercing missiles",
+        "V-P6A-03 launcher capacity",
+        "V-P6A-07 gravity well scope"
+      ],
+      "gate": "no executable attack until a sealed ledger entry with a certified mount and an owned weapon Item pass the existing attack preflight; combatAuthorizedWeapons stays 0 until then"
+    },
+    {
+      "id": "P6B-3",
+      "title": "Accessories and special systems",
+      "scope": "62 SOURCE_VERIFIED accessories + 5 Scum and Villainy defense rows",
+      "order": [
+        "static-stat accessories (cargo pods: Dex -2 / cargo; sensor array computer bonuses)",
+        "capacity accessories (hangar bay units, passenger conversion, cryogenic chambers)",
+        "action-based (cargo jettison, droid repair team, slave circuits, transponders, cloaking device)"
+      ],
+      "gate": "published effect encoded and tested; conditional effects exposed, not auto-applied, until their state exists"
+    },
+    {
+      "id": "P6B-4",
+      "title": "Effective statistics and runtime consumers",
+      "scope": [
+        "extend getEffectiveVehicleDerived to new effect kinds",
+        "Pilot check consumer (none exists today)",
+        "atmosphere state for conditional movement"
+      ]
+    },
+    {
+      "id": "P6B-5",
+      "title": "Custom starship compatibility",
+      "scope": [
+        "Installation Work panel for custom-built ships",
+        "construction systems from the same certified effects",
+        "re-check of custom ships built on the five errata-corrected frames"
+      ]
+    },
+    {
+      "id": "P6B-6",
+      "title": "Live Foundry V13 verification",
+      "scope": [
+        "P6A migration checklist (docs/audits/vehicles/p6a-errata-migration.md)",
+        "installation jobs, construction projects, shield pool, sheet, Asset Bay"
+      ],
+      "status": "LIVE_RUNTIME_PENDING"
+    }
+  ],
+  "implementationOrder": [
+    "P6B-4 consumers needed by the next effects",
+    "P6B-1 rows whose rulings exist",
+    "P6B-3 static accessories",
+    "P6B-2 weapons (after mount/arc ruling and ammunition model)",
+    "P6B-3 action-based accessories",
+    "P6B-5",
+    "P6B-6 throughout"
+  ],
+  "invariants": [
+    "no unresolved mechanic becomes installable",
+    "no catalog certification grants weapon firing authority",
+    "the 429 publication records change only through approved amendments",
+    "effective = published + certified ledger, recomputed"
+  ]
+}

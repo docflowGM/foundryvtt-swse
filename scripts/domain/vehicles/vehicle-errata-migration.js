@@ -104,3 +104,106 @@ export function planErrataMigration(actor, options = {}) {
     update, backup: { universalVehicleSource: clone(flags.universalVehicleSource), shieldRating: sys.shieldRating ?? null, shields: clone(sys.shields ?? null),
       sourceAttackGroups: Array.isArray(sys.sourceAttackGroups) ? clone(sys.sourceAttackGroups) : null } };
 }
+
+/**
+ * State fingerprint for preview-vs-authorization freshness: the source record digest, the shield mirrors and the
+ * printed groups mirror. A different fingerprint at authorization time means the Actor changed since the preview.
+ */
+export function migrationFingerprint(actor) {
+  const raw = typeof actor?.toObject === 'function' ? actor.toObject() : actor;
+  const sys = raw?.system ?? {};
+  return digestUniversalVehicleSource({ recordDigest: raw?.flags?.swse?.universalVehicleSource?.recordDigest ?? null, shieldRating: sys.shieldRating ?? null,
+    shields: sys.shields ?? null, sourceAttackGroups: sys.sourceAttackGroups ?? null, migrations: raw?.flags?.swse?.errataMigrations ?? [] });
+}
+
+/** After a migration write: does the PERSISTED Actor hold exactly the planned correction (and still verify)? */
+export function verifyMigratedState(actor, plan) {
+  const raw = typeof actor?.toObject === 'function' ? actor.toObject() : actor;
+  const problems = [];
+  const src = raw?.flags?.swse?.universalVehicleSource;
+  const want = plan.update['flags.swse.universalVehicleSource'];
+  if (src?.recordDigest !== want.recordDigest || JSON.stringify(src?.source) !== JSON.stringify(want.source)) problems.push('SOURCE_NOT_PERSISTED');
+  for (const path of ['system.shieldRating', 'system.shields.max', 'system.shields.value', 'system.sourceAttackGroups']) {
+    if (!(path in plan.update)) continue;
+    const got = path.split('.').reduce((o, k) => o?.[k], raw);
+    if (JSON.stringify(got) !== JSON.stringify(plan.update[path])) problems.push('MIRROR_NOT_PERSISTED:' + path);
+  }
+  if ('system.shieldRating' in plan.update && !('system.shields.value' in plan.update) && raw?.system?.shields?.value !== plan.preview.original.shieldsValue)
+    problems.push('CURRENT_SHIELDS_CHANGED');
+  if (!(raw?.flags?.swse?.errataMigrations ?? []).some(m => m.version === ERRATA_MIGRATION_VERSION && m.errataId === plan.errataId)) problems.push('MIGRATION_RECORD_MISSING');
+  if (classifyVehicleActorSource(raw, undefined, { mode: 'runtime' }).kind !== 'canonical') problems.push('MIGRATED_ACTOR_INVALID');
+  return { ok: problems.length === 0, problems };
+}
+
+/** Does the persisted Actor exactly match the backup (immediate failed-write recovery check)? */
+export function verifyRestoredState(actor, backup) {
+  const raw = typeof actor?.toObject === 'function' ? actor.toObject() : actor;
+  const problems = [];
+  if (JSON.stringify(raw?.flags?.swse?.universalVehicleSource) !== JSON.stringify(backup.universalVehicleSource)) problems.push('SOURCE_NOT_RESTORED');
+  if (backup.shields && JSON.stringify(raw?.system?.shields) !== JSON.stringify(backup.shields)) problems.push('SHIELDS_NOT_RESTORED');
+  if (backup.shieldRating !== null && raw?.system?.shieldRating !== backup.shieldRating) problems.push('SHIELD_RATING_NOT_RESTORED');
+  if (backup.sourceAttackGroups && JSON.stringify(raw?.system?.sourceAttackGroups) !== JSON.stringify(backup.sourceAttackGroups)) problems.push('GROUPS_NOT_RESTORED');
+  return { ok: problems.length === 0, problems };
+}
+
+/**
+ * GM-requested MANUAL restoration (after gameplay may have happened). Restores the pre-errata publication record,
+ * its digest, the shield MAXIMUM mirrors and the printed groups mirror, but never blindly the current shield value:
+ *   - current shields <= the restored maximum: kept as they are (post-migration damage/recharge/repairs preserved);
+ *   - current shields > the restored maximum: refused unless the GM chooses shieldDecision 'clamp-to-restored-max'.
+ * Refuses when there is no active migration, the source no longer equals what the migration wrote (re-migrated,
+ * tampered or otherwise changed), or the backup does not verify.
+ * @param {{shieldDecision?: 'clamp-to-restored-max'}} [options]
+ */
+/** Deletion keys that undo what a migration ADDED to the source record (merge semantics never remove keys). */
+export function restoreDeletions(backup) {
+  return backup.universalVehicleSource?.source?.publication?.errataApplied ? {} : { 'flags.swse.universalVehicleSource.source.publication.-=errataApplied': null };
+}
+
+export function planManualRestore(actor, options = {}) {
+  const raw = typeof actor?.toObject === 'function' ? actor.toObject() : actor;
+  const flags = raw?.flags?.swse ?? {};
+  const base = { actorId: raw?._id ?? actor?.id ?? null, name: raw?.name ?? null };
+  const record = (flags.errataMigrations ?? []).find(m => m.version === ERRATA_MIGRATION_VERSION);
+  const backup = flags.errataMigrationBackups?.[ERRATA_MIGRATION_VERSION];
+  if (!record) return { ...base, status: 'REJECTED', reasons: ['NO_ACTIVE_MIGRATION'] };
+  if (!backup) return { ...base, status: 'REJECTED', reasons: ['NO_BACKUP'] };
+  const key = backup.universalVehicleSource?.source?.identity?.sourceEntryKey;
+  const entry = errataEntryFor(key);
+  const expected = entry && applyErrataToRecord(backup.universalVehicleSource.source, entry);
+  if (!expected?.ok || digestUniversalVehicleSource(backup.universalVehicleSource.source) !== backup.universalVehicleSource.recordDigest)
+    return { ...base, status: 'REJECTED', reasons: ['BACKUP_INVALID'] };
+  if (JSON.stringify(flags.universalVehicleSource?.source) !== JSON.stringify(expected.record))
+    return { ...base, status: 'REJECTED', reasons: ['CURRENT_SOURCE_DIFFERS_FROM_MIGRATED_STATE'] };
+
+  const sys = raw.system ?? {};
+  // Foundry merges object updates: keys the backup lacks (publication.errataApplied) must be deleted explicitly.
+  const update = { 'flags.swse.universalVehicleSource': clone(backup.universalVehicleSource), ...restoreDeletions(backup) };
+  const gameplayChanges = [];
+  const shieldChange = entry.changes.find(c => c.path.join('.') === 'defenses.shieldRating');
+  let shields = null;
+  if (shieldChange) {
+    const current = sys.shields?.value, restoredMax = backup.shields?.max ?? shieldChange.from;
+    if (current !== record.corrected?.shieldsValue) gameplayChanges.push({ field: 'system.shields.value', atMigration: record.corrected?.shieldsValue ?? null, now: current });
+    let value = current;
+    if (Number.isFinite(current) && current > restoredMax) {
+      if (options.shieldDecision !== 'clamp-to-restored-max')
+        return { ...base, status: 'NEEDS_GM_DECISION', reasons: ['CURRENT_SHIELDS_EXCEED_RESTORED_MAXIMUM'], gameplayChanges, current, restoredMax };
+      value = restoredMax;
+    }
+    update['system.shieldRating'] = backup.shieldRating ?? restoredMax;
+    update['system.shields.max'] = restoredMax;
+    if (value !== current) update['system.shields.value'] = value;
+    shields = { before: { value: current, max: sys.shields?.max }, after: { value, max: restoredMax } };
+  }
+  if (backup.sourceAttackGroups) update['system.sourceAttackGroups'] = clone(backup.sourceAttackGroups);
+  update['flags.swse.errataMigrations'] = (flags.errataMigrations ?? []).filter(m => m.version !== ERRATA_MIGRATION_VERSION);
+  // the restored Actor must verify too
+  const after = clone(raw);
+  after.flags.swse.universalVehicleSource = clone(update['flags.swse.universalVehicleSource']);
+  if ('system.shieldRating' in update) after.system = { ...after.system, shieldRating: update['system.shieldRating'], shields: { ...(after.system.shields ?? {}), max: update['system.shields.max'], value: update['system.shields.value'] ?? after.system.shields?.value } };
+  if ('system.sourceAttackGroups' in update) after.system.sourceAttackGroups = update['system.sourceAttackGroups'];
+  const post = classifyVehicleActorSource(after, undefined, { mode: 'runtime' });
+  if (post.kind !== 'canonical') return { ...base, status: 'REJECTED', reasons: ['RESTORE_RESULT_INVALID', ...post.errors] };
+  return { ...base, status: 'READY', reasons: [], errataId: record.errataId, gameplayChanges, shields, shieldDecision: options.shieldDecision ?? null, update };
+}
