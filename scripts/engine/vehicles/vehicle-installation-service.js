@@ -50,7 +50,9 @@ export class VehicleInstallationService {
     // a catalog row without an entry there has no certification.
     const certRes = await fetch('systems/foundryvtt-swse/data/vehicle-modifications/certification.json');
     if (!certRes.ok) throw new Error('VEHICLE_MODIFICATION_CERTIFICATION_LOAD_FAILED');
-    const cert = (await certRes.json()).rows ?? {};
+    // P6A overlay: PDF-reviewed SOURCE_VERIFIED rows (never MECHANIC_SPECIFIED). certification.json wins.
+    const p6aRes = await fetch('systems/foundryvtt-swse/data/vehicle-modifications/certification-p6a.json');
+    const cert = { ...(p6aRes.ok ? (await p6aRes.json()).rows ?? {} : {}), ...((await certRes.json()).rows ?? {}) };
     this._catalog = new Map(lists.flat().map(e => [e.id, cert[e.id] ? { ...e, certification: cert[e.id] } : e]));
     return this._catalog;
   }

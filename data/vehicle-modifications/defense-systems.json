@@ -756,12 +756,20 @@
     "category": "Defense",
     "emplacementPoints": 2,
     "availability": "Military",
-    "sizeRestriction": "Colossal or Larger",
+    "sizeRestriction": "Gargantuan or Larger",
     "cost": 4000,
     "costType": "base",
     "description": "Strengthened keel structure.",
     "effect": "+2 to resist ramming and collision damage",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal or Larger",
+          "correctedFrom": "Scum and Villainy p. 58 Table 2-10"
+        }
+      }
+    }
   },
   {
     "id": "reinforced-keel-boarding",
@@ -769,12 +777,20 @@
     "category": "Defense",
     "emplacementPoints": 4,
     "availability": "Military",
-    "sizeRestriction": "Colossal or Larger",
+    "sizeRestriction": "Gargantuan or Larger",
     "cost": 10000,
     "costType": "base",
     "description": "Keel designed for ramming attacks.",
     "effect": "+5 to ramming attacks, +2 to resist ramming",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal or Larger",
+          "correctedFrom": "Scum and Villainy p. 58 Table 2-10"
+        }
+      }
+    }
   },
   {
     "id": "security-bracing",
@@ -782,11 +798,23 @@
     "category": "Defense",
     "emplacementPoints": 2,
     "availability": "Common",
-    "sizeRestriction": null,
-    "cost": 5000,
+    "sizeRestriction": "Gargantuan or Larger",
+    "cost": 2000,
     "costType": "base",
     "description": "Internal security systems and structural bracing.",
     "effect": "+2 to resist internal sabotage",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": null,
+          "correctedFrom": "Scum and Villainy p. 58 Table 2-10"
+        },
+        "cost": {
+          "value": 5000,
+          "correctedFrom": "Scum and Villainy p. 58 Table 2-10 (printed \"2000 base\")"
+        }
+      }
+    }
   }
 ]

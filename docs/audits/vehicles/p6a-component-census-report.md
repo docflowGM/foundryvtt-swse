@@ -49,3 +49,26 @@ The 56 movement/defense rows re-match their tables (27 + 29 MATCHED_CANONICAL). 
 - PDF values for 91 worksheet items (weapons, accessories, Scum and Villainy, Clone Wars/Rebellion Era tables).
 - No missing component is added to production data until its printed values are certified.
 - The per-book commits were combined into one checkpoint because the census sources are one file; each book has its own section and status.
+
+---
+
+# Checkpoint 2 - PDF source authority incorporated (2026-11-01)
+
+Input: `data/audits/vehicles/p6a/print-verified-components-v2.json` (172 PDF-reviewed table rows in 7 tables, 91 worksheet dispositions, prose-only options) and its handoff. The generator reconciles identities itself (`suggestedCatalogId` is only checked for conflicts; none) and writes `pdf-reconciliation.json`; `apply-p6a-corrections.mjs` applies only `APPLY` corrections with legacy values and page citations.
+
+| Result | Count |
+|---|---|
+| Printed rows mapped to catalog identities | 172 / 172 (0 unmapped) |
+| MATCHED_CANONICAL (every printed cell equals the catalog) | 171 |
+| UNRESOLVED_SOURCE (Clone Wars / Rebellion Era weapon prose without a purchase table: EP, availability, cost now unknown) | 7 |
+| CORRECTION_REQUIRED, not applied (V-P6A-05, errata check) | 3 |
+| NOT_FOUND_IN_SOURCE (statblock-only: harpoon gun, energy bomblet generator, heavy ordnance launcher, ion pulse cannon, microtractor-pressor; launch bay not located) | 6 |
+| Worksheet items | 91 / 91 with a PDF disposition and reconciliation outcome |
+
+**Corrections applied (37 field changes, legacy kept):** printed dash -> unknown EP (ion bomb, gravity mines standard/magnetic, defoliator shell; V-P6A-06); unsourced EP/availability/cost removed from the seven Clone Wars / Rebellion Era weapons; point-defense weapon and gravity mines print no damage; Scum and Villainy: reinforced keel (both) and plasma torch Gargantuan or larger, security bracing Gargantuan or larger and 2,000 base, holding cells 75% 4,000 base, cofferdam 3,000 flat, interrogation chamber 10,000 base; SotG: extended range 2 EP.
+
+**Baffled drive:** reclassified - Scum and Villainy Table 2-10 p. 58 (1 EP, Military, Colossal or larger, 100,000 base); matched; not installable (no effect).
+
+**Certification:** the production `certification.json` is unchanged. A separate overlay `data/vehicle-modifications/certification-p6a.json` marks 115 PDF-matched weapon/accessory/Scum/Galaxy at War/Legacy/Threats rows SOURCE_VERIFIED with book and printed page (never MECHANIC_SPECIFIED); `VehicleInstallationService.loadCatalog` merges it under `certification.json`. Ledger: source listed 181, source verified 171, mechanic specified 39, operationally integrated 37. Readiness: installable 39 (unchanged), combat-usable 0. Weapon rows remain refused by the planner (effect not implemented) and by the attack gate.
+
+**Prose-only additions** (armor-piercing missiles, four capacity expansions, detachable cargo pod, triple cannon alias) remain outside production data: no separate EP or price is printed (V-P6A-01..03).

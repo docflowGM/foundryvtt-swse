@@ -2,8 +2,8 @@
  "schema": "swse.vehicle.p6a.certification-ledger.v1",
  "note": "Audit dimensions alongside the production certification.json status (unchanged).",
  "counts": {
-  "sourceListed": 180,
-  "sourceVerified": 56,
+  "sourceListed": 181,
+  "sourceVerified": 171,
   "mechanicSpecified": 39,
   "operationallyIntegrated": 37
  },
@@ -14,10 +14,10 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-atmospheric-thrusters"
+    "page": 41
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 41
@@ -35,10 +35,10 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-atmospheric-thrusters-advanced"
+    "page": 41
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 41
@@ -56,7 +56,7 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-combat-thrusters"
+    "page": 41
    },
    "sourceVerified": {
     "status": "SOURCE_VERIFIED",
@@ -74,10 +74,10 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-hyperdrive-075"
+    "page": 41
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 41
@@ -95,10 +95,10 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-hyperdrive-1"
+    "page": 41
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 41
@@ -116,10 +116,10 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-hyperdrive-15"
+    "page": 41
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 41
@@ -137,10 +137,10 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-hyperdrive-2"
+    "page": 41
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 41
@@ -158,10 +158,10 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-hyperdrive-3"
+    "page": 41
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 41
@@ -179,10 +179,10 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-hyperdrive-4"
+    "page": 41
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 41
@@ -200,10 +200,10 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-hyperdrive-5"
+    "page": 41
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 41
@@ -221,10 +221,10 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-hyperdrive-6"
+    "page": 41
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 41
@@ -242,10 +242,10 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-hyperdrive-8"
+    "page": 41
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 41
@@ -263,10 +263,10 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-hyperdrive-10"
+    "page": 41
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 41
@@ -284,10 +284,10 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-hyperdrive-15-class"
+    "page": 41
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 41
@@ -305,10 +305,10 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-maneuvering-jets-2"
+    "page": 41
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "PDF_REVIEWED",
     "book": "Starships of the Galaxy",
     "printedPage": 41
@@ -326,10 +326,10 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-maneuvering-jets-4"
+    "page": 41
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 41
@@ -347,10 +347,10 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-maneuvering-jets-6"
+    "page": 41
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 41
@@ -368,7 +368,7 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-navicomputer-limited"
+    "page": 41
    },
    "sourceVerified": {
     "status": "SOURCE_VERIFIED",
@@ -386,7 +386,7 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-navicomputer"
+    "page": 41
    },
    "sourceVerified": {
     "status": "SOURCE_VERIFIED",
@@ -404,7 +404,7 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-navicomputer-advanced"
+    "page": 41
    },
    "sourceVerified": {
     "status": "SOURCE_VERIFIED",
@@ -422,7 +422,7 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-sublight-accelerator"
+    "page": 41
    },
    "sourceVerified": {
     "status": "SOURCE_VERIFIED",
@@ -440,7 +440,7 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-sublight-drive-1"
+    "page": 41
    },
    "sourceVerified": {
     "status": "SOURCE_VERIFIED",
@@ -458,7 +458,7 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-sublight-drive-2"
+    "page": 41
    },
    "sourceVerified": {
     "status": "SOURCE_VERIFIED",
@@ -476,7 +476,7 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-sublight-drive-3"
+    "page": 41
    },
    "sourceVerified": {
     "status": "SOURCE_VERIFIED",
@@ -494,7 +494,7 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-sublight-drive-4"
+    "page": 41
    },
    "sourceVerified": {
     "status": "SOURCE_VERIFIED",
@@ -512,7 +512,7 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-sublight-drive-5"
+    "page": 41
    },
    "sourceVerified": {
     "status": "SOURCE_VERIFIED",
@@ -530,7 +530,7 @@
    "category": "Movement",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-sublight-drive-6"
+    "page": 41
    },
    "sourceVerified": {
     "status": "SOURCE_VERIFIED",
@@ -548,10 +548,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-armor-1"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "PDF_REVIEWED",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -569,10 +569,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-armor-2"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -590,10 +590,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-armor-3"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -611,10 +611,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-armor-4"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "PDF_REVIEWED",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -632,7 +632,7 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-jamming-suite"
+    "page": 43
    },
    "sourceVerified": {
     "status": "SOURCE_VERIFIED",
@@ -650,7 +650,7 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-jamming-array"
+    "page": 43
    },
    "sourceVerified": {
     "status": "SOURCE_VERIFIED",
@@ -668,7 +668,7 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-regenerating-shields"
+    "page": 43
    },
    "sourceVerified": {
     "status": "SOURCE_VERIFIED",
@@ -686,7 +686,7 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-reinforced-bulkheads-10"
+    "page": 43
    },
    "sourceVerified": {
     "status": "SOURCE_VERIFIED",
@@ -704,7 +704,7 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-reinforced-bulkheads-20"
+    "page": 43
    },
    "sourceVerified": {
     "status": "SOURCE_VERIFIED",
@@ -722,7 +722,7 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-reinforced-bulkheads-30"
+    "page": 43
    },
    "sourceVerified": {
     "status": "SOURCE_VERIFIED",
@@ -740,10 +740,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-shields-10"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "PDF_REVIEWED",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -761,10 +761,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-shields-15"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -782,10 +782,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-shields-20"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -803,10 +803,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-shields-25"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -824,10 +824,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-shields-30"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -845,10 +845,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-shields-35"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -866,10 +866,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-shields-40"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "PDF_REVIEWED",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -887,10 +887,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-shields-45"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -908,10 +908,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-shields-50"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "PDF_REVIEWED",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -929,10 +929,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-shields-55"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -950,10 +950,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-shields-60"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "PDF_REVIEWED",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -971,10 +971,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-shields-70"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -992,10 +992,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-shields-80"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -1013,10 +1013,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-shields-90"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -1034,10 +1034,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-shields-100"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -1055,10 +1055,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-shields-125"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -1076,10 +1076,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-shields-150"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "PDF_REVIEWED",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -1097,10 +1097,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-shields-175"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -1118,10 +1118,10 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-shields-200"
+    "page": 43
    },
    "sourceVerified": {
-    "status": "MECHANIC_SPECIFIED",
+    "status": "SOURCE_VERIFIED",
     "evidence": "OCR_TEXT",
     "book": "Starships of the Galaxy",
     "printedPage": 43
@@ -1139,12 +1139,17 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-anti-boarding-systems"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "com-jammers",
@@ -1152,12 +1157,17 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-com-jammers"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "reinforced-keel",
@@ -1165,12 +1175,17 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-reinforced-keel"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "reinforced-keel-boarding",
@@ -1178,12 +1193,17 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-reinforced-keel"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "security-bracing",
@@ -1191,12 +1211,17 @@
    "category": "Defense",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-security-bracing"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "autoblaster",
@@ -1204,9 +1229,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-autoblaster"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1217,9 +1247,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-blaster-cannon-light"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1230,9 +1265,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-blaster-cannon-medium"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1243,9 +1283,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-blaster-cannon-heavy"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1256,9 +1301,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-cannon-double"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1269,9 +1319,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-cannon-quad"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1282,12 +1337,17 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-cannon-enhancement"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "cannon-enhancement-advanced",
@@ -1295,9 +1355,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-cannon-enhancement-advanced"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1308,12 +1373,17 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-concussion-missile-launcher-light"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "concussion-missile-light",
@@ -1321,9 +1391,14 @@
    "category": "Ammunition",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-concussion-missile-light"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1334,12 +1409,17 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-concussion-missile-launcher-medium"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "concussion-missile-medium",
@@ -1347,9 +1427,14 @@
    "category": "Ammunition",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-concussion-missile-medium"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1360,12 +1445,17 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-concussion-missile-launcher-heavy"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "concussion-missile-heavy",
@@ -1373,9 +1463,14 @@
    "category": "Ammunition",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-concussion-missile-heavy"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1386,9 +1481,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-ion-cannon-light"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1399,9 +1499,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-ion-cannon-medium"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1412,9 +1517,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-ion-cannon-heavy"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1425,9 +1535,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-laser-cannon-light"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1438,9 +1553,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-laser-cannon-medium"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1451,9 +1571,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-laser-cannon-heavy"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1464,9 +1589,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-proton-torpedo-launcher"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1477,12 +1607,17 @@
    "category": "Ammunition",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-proton-torpedo"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "turbolaser-light",
@@ -1490,9 +1625,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-turbolaser-light"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1503,9 +1643,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-turbolaser-medium"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1516,9 +1661,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-turbolaser-heavy"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1529,12 +1679,17 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-tractor-beam"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "point-defense",
@@ -1542,9 +1697,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-point-defense"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1555,9 +1715,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-fire-linked-2"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1568,9 +1733,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-fire-linked-4"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1581,9 +1751,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-space-mine-launcher"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1594,12 +1769,17 @@
    "category": "Ammunition",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-space-mine-standard"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "ion-bomb-rack",
@@ -1607,9 +1787,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-ion-bomb-rack"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1620,12 +1805,17 @@
    "category": "Ammunition",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-ion-bomb"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "shieldbuster-torpedo-launcher",
@@ -1633,9 +1823,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-shieldbuster-torpedo-launcher"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1646,12 +1841,17 @@
    "category": "Ammunition",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-shieldbuster-torpedo"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "discord-missile-launcher",
@@ -1659,9 +1859,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Threats of the Galaxy",
-    "censusId": "tog-discord-missile-launcher"
+    "page": 142
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_PROSE_REVIEWED_P6A",
+    "book": "Threats of the Galaxy",
+    "printedPage": 142
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1672,9 +1877,14 @@
    "category": "Ammunition",
    "sourceListed": {
     "book": "Threats of the Galaxy",
-    "censusId": "tog-discord-missile"
+    "page": 142
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_PROSE_REVIEWED_P6A",
+    "book": "Threats of the Galaxy",
+    "printedPage": 142
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1685,9 +1895,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Legacy Era Campaign Guide",
-    "censusId": "lecg-gravity-mine-launcher"
+    "page": 191
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Legacy Era Campaign Guide",
+    "printedPage": 191
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1698,9 +1913,14 @@
    "category": "Ammunition",
    "sourceListed": {
     "book": "Legacy Era Campaign Guide",
-    "censusId": "lecg-gravity-mine-standard"
+    "page": 191
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Legacy Era Campaign Guide",
+    "printedPage": 191
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1721,9 +1941,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-droid-jammer"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1734,9 +1959,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-gravity-well-projector"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1747,9 +1977,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-docking-gun"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1760,12 +1995,17 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-fire-linked-optional"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "ion-cannon-hapan-triple",
@@ -1773,9 +2013,14 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-ion-cannon-hapan-triple"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1786,12 +2031,17 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-space-mine-launcher-heavy"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "space-mine-advanced",
@@ -1799,9 +2049,14 @@
    "category": "Ammunition",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-space-mine-advanced"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1812,9 +2067,14 @@
    "category": "Ammunition",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-space-mine-heavy"
+    "page": 47
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 47
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1825,9 +2085,14 @@
    "category": "Ammunition",
    "sourceListed": {
     "book": "Legacy Era Campaign Guide",
-    "censusId": "lecg-gravity-mine-magnetic"
+    "page": 191
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Legacy Era Campaign Guide",
+    "printedPage": 191
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1838,7 +2103,7 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Clone Wars Campaign Guide",
-    "censusId": "cwcg-composite-beam-cannon"
+    "page": 162
    },
    "sourceVerified": null,
    "mechanicSpecified": null,
@@ -1881,7 +2146,7 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Clone Wars Campaign Guide",
-    "censusId": "cwcg-mass-driver-cannon"
+    "page": 162
    },
    "sourceVerified": null,
    "mechanicSpecified": null,
@@ -1894,7 +2159,7 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Clone Wars Campaign Guide",
-    "censusId": "cwcg-mass-driver-cannon"
+    "page": 162
    },
    "sourceVerified": null,
    "mechanicSpecified": null,
@@ -1917,7 +2182,7 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Clone Wars Campaign Guide",
-    "censusId": "cwcg-proton-grenade"
+    "page": 162
    },
    "sourceVerified": null,
    "mechanicSpecified": null,
@@ -1930,7 +2195,7 @@
    "category": "Ammunition",
    "sourceListed": {
     "book": "Clone Wars Campaign Guide",
-    "censusId": "cwcg-proton-grenade"
+    "page": 162
    },
    "sourceVerified": null,
    "mechanicSpecified": null,
@@ -1943,7 +2208,7 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Clone Wars Campaign Guide",
-    "censusId": "cwcg-rail-cannon"
+    "page": 162
    },
    "sourceVerified": null,
    "mechanicSpecified": null,
@@ -1956,7 +2221,7 @@
    "category": "Weapon",
    "sourceListed": {
     "book": "Rebellion Era Campaign Guide",
-    "censusId": "recg-anti-aircraft-flak-pod"
+    "page": 130
    },
    "sourceVerified": null,
    "mechanicSpecified": null,
@@ -1968,10 +2233,15 @@
    "name": "Chaff Gun",
    "category": "Weapon",
    "sourceListed": {
-    "book": "Galaxy At War",
-    "censusId": "gaw-chaff-gun"
+    "book": "Galaxy at War",
+    "page": 67
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Galaxy at War",
+    "printedPage": 67
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1981,10 +2251,15 @@
    "name": "Defoliator Launcher",
    "category": "Weapon",
    "sourceListed": {
-    "book": "Galaxy At War",
-    "censusId": "gaw-glowing-defoliator-launcher"
+    "book": "Galaxy at War",
+    "page": 67
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Galaxy at War",
+    "printedPage": 67
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
    "reconciliation": "MATCHED_CANONICAL"
@@ -1994,13 +2269,18 @@
    "name": "Defoliator Shell",
    "category": "Ammunition",
    "sourceListed": {
-    "book": "Galaxy At War",
-    "censusId": "gaw-glowing-defoliator-shell"
+    "book": "Galaxy at War",
+    "page": 67
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Galaxy at War",
+    "printedPage": 67
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "cargo-jettison",
@@ -2008,12 +2288,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-cargo-jettison"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "cargo-pod-light",
@@ -2021,12 +2306,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-cargo-pod-light"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "cargo-pod-medium",
@@ -2034,12 +2324,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-cargo-pod-medium"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "cargo-pod-heavy",
@@ -2047,12 +2342,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-cargo-pod-heavy"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "cloaking-hibridium",
@@ -2060,12 +2360,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-cloaking-hibridium"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "cloaking-stygium",
@@ -2073,7 +2378,7 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-cloaking-stygium"
+    "page": 49
    },
    "sourceVerified": null,
    "mechanicSpecified": null,
@@ -2086,12 +2391,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-cryogenic-chambers"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "docking-clamps",
@@ -2099,12 +2409,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-docking-clamps"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "droid-repair-team",
@@ -2112,12 +2427,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-droid-repair-team"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "escape-pod-small",
@@ -2125,12 +2445,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-escape-pod-small"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "escape-pod-large",
@@ -2138,12 +2463,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-escape-pod-large"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "extended-range",
@@ -2151,12 +2481,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-extended-range"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "hangar-bay",
@@ -2164,7 +2499,7 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-hangar-bay"
+    "page": 49
    },
    "sourceVerified": null,
    "mechanicSpecified": null,
@@ -2177,7 +2512,7 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-hangar-bay-concealed"
+    "page": 49
    },
    "sourceVerified": null,
    "mechanicSpecified": null,
@@ -2190,12 +2525,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-holonet-transceiver"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "hyper-transceiver",
@@ -2203,12 +2543,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-hyper-transceiver"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "luxury-basic",
@@ -2216,12 +2561,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-luxury-basic"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "luxury-advanced",
@@ -2229,12 +2579,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-luxury-advanced"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "luxury-extreme",
@@ -2242,12 +2597,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-luxury-extreme"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "medical-suite",
@@ -2255,12 +2615,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-medical-suite"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "passenger-seating",
@@ -2268,12 +2633,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-passenger-seating"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "passenger-quarters",
@@ -2281,12 +2651,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-passenger-quarters"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "sensor-array-2",
@@ -2294,12 +2669,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-sensor-array-2"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "sensor-array-4",
@@ -2307,12 +2687,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-sensor-array-4"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "sensor-array-6",
@@ -2320,12 +2705,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-sensor-array-6"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "sensor-enhancement",
@@ -2333,12 +2723,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-sensor-enhancement"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "slave-circuits-basic",
@@ -2346,12 +2741,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-slave-circuits-basic"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "slave-circuits-advanced",
@@ -2359,12 +2759,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-slave-circuits-advanced"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "slave-circuits-recall",
@@ -2372,12 +2777,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-slave-circuits-recall"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "smuggler-compartments",
@@ -2385,12 +2795,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-smuggler-compartments"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "transponder-iff",
@@ -2398,12 +2813,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-transponder-iff"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "transponder-masked",
@@ -2411,12 +2831,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-transponder-masked"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "transponder-disguised-1",
@@ -2424,12 +2849,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-transponder-disguised-1"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "transponder-disguised-2",
@@ -2437,12 +2867,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-transponder-disguised-2"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "transponder-disguised-3",
@@ -2450,12 +2885,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Starships of the Galaxy",
-    "censusId": "sotg-transponder-disguised-3"
+    "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "amphibious-seals",
@@ -2463,12 +2903,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-amphibious-seals"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "auxiliary-generators-2",
@@ -2476,12 +2921,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-auxiliary-generators"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "auxiliary-generators-4",
@@ -2489,12 +2939,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-auxiliary-generators"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "auxiliary-generators-6",
@@ -2502,12 +2957,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-auxiliary-generators"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "backup-battery",
@@ -2515,22 +2975,35 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-backup-battery"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "baffled-drive",
    "name": "Baffled Drive",
    "category": "Accessory",
-   "sourceListed": null,
-   "sourceVerified": null,
+   "sourceListed": {
+    "book": "Scum and Villainy",
+    "page": 58
+   },
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "NOT_FOUND_IN_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "cockpit-ejection",
@@ -2538,12 +3011,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-cockpit-ejection-system"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "cofferdam",
@@ -2551,12 +3029,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-cofferdam"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "environmental-filters",
@@ -2564,12 +3047,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-environmental-filters"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "fuel-converters",
@@ -2577,12 +3065,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-fuel-converters"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "grappler-mag",
@@ -2590,12 +3083,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-grappler-mag"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "hardpoint",
@@ -2603,12 +3101,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-hardpoints"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "hidden-cargo-25",
@@ -2616,12 +3119,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-hidden-cargo-hold"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "hidden-cargo-50",
@@ -2629,12 +3137,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-hidden-cargo-hold"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "hidden-cargo-75",
@@ -2642,12 +3155,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-hidden-cargo-hold"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "holding-cells-25",
@@ -2655,12 +3173,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-holding-cells"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "holding-cells-50",
@@ -2668,12 +3191,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-holding-cells"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "holding-cells-75",
@@ -2681,12 +3209,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-holding-cells"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "interrogation-chamber",
@@ -2694,12 +3227,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-interrogation-chamber"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "personalized-controls",
@@ -2707,12 +3245,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-personalized-controls"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "sensor-baffling",
@@ -2720,12 +3263,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-sensor-baffling"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "sensor-decoy",
@@ -2733,12 +3281,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-sensor-decoy"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "sensor-mask",
@@ -2746,12 +3299,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-sensor-mask"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "workshop",
@@ -2759,12 +3317,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-workshop"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "launch-bay",
@@ -2782,12 +3345,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-plasma-punch"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "plasma-torch",
@@ -2795,12 +3363,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-plasma-torch"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "tractor-clamp",
@@ -2808,12 +3381,17 @@
    "category": "Accessory",
    "sourceListed": {
     "book": "Scum and Villainy",
-    "censusId": "sav-tractor-clamp"
+    "page": 58
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Scum and Villainy",
+    "printedPage": 58
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "UNRESOLVED_SOURCE"
+   "reconciliation": "MATCHED_CANONICAL"
   }
  ]
 }

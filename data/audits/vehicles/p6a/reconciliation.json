@@ -3,8 +3,8 @@
  "counts": {
   "catalog": 187,
   "MATCHED_CANONICAL": 95,
-  "UNRESOLVED_SOURCE": 82,
-  "NOT_FOUND_IN_SOURCE": 7,
+  "UNRESOLVED_SOURCE": 83,
+  "NOT_FOUND_IN_SOURCE": 6,
   "CORRECTION_REQUIRED": 3,
   "missingFromCatalog": 6
  },
@@ -2591,14 +2591,17 @@
    "catalogId": "baffled-drive",
    "catalogFile": "accessories",
    "catalogName": "Baffled Drive",
-   "disposition": "NOT_FOUND_IN_SOURCE",
-   "basis": "STATBLOCK_EQUIPMENT_ONLY",
-   "evidence": {
-    "book": "Galaxy of Intrigue",
-    "line": 6514,
-    "text": "naissance vessel. Operating on ion engines and utilizing a baffled drive"
+   "censusId": "sav-baffled-drive",
+   "book": "Scum and Villainy",
+   "page": {
+    "value": null,
+    "resolution": "OCR_UNREADABLE_NEEDS_PDF"
    },
-   "note": "equipment of a specific reconnaissance ship"
+   "disposition": "UNRESOLVED_SOURCE",
+   "unresolved": [
+    "all"
+   ],
+   "matched": []
   },
   {
    "catalogId": "cockpit-ejection",

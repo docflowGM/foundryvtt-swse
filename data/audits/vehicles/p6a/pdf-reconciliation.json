@@ -1,0 +1,2849 @@
+{
+ "schema": "swse.vehicle.p6a.pdf-reconciliation.v1",
+ "note": "Catalog vs independently PDF-reviewed printed tables/prose. MATCHED = every printed cell equals the catalog. Dash = not stated (null), never zero.",
+ "counts": {
+  "catalog": 187,
+  "MATCHED_CANONICAL": 171,
+  "NOT_FOUND_IN_SOURCE": 6,
+  "UNRESOLVED_SOURCE": 7,
+  "CORRECTION_REQUIRED": 3,
+  "pdfRows": 172,
+  "pdfRowsUnmappedToCatalog": 0
+ },
+ "records": [
+  {
+   "catalogId": "atmospheric-thrusters",
+   "catalogFile": "movement-systems",
+   "catalogName": "Atmospheric Thrusters",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 1,
+    "printedName": "Atmospheric thruster"
+   }
+  },
+  {
+   "catalogId": "atmospheric-thrusters-advanced",
+   "catalogFile": "movement-systems",
+   "catalogName": "Atmospheric Thrusters, Advanced",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 2,
+    "printedName": "Atmospheric thruster, advanced"
+   }
+  },
+  {
+   "catalogId": "combat-thrusters",
+   "catalogFile": "movement-systems",
+   "catalogName": "Combat Thrusters",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 3,
+    "printedName": "Combat thruster"
+   }
+  },
+  {
+   "catalogId": "hyperdrive-075",
+   "catalogFile": "movement-systems",
+   "catalogName": "Hyperdrive, Class 0.75",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 4,
+    "printedName": "Hyperdrive, class .75"
+   }
+  },
+  {
+   "catalogId": "hyperdrive-1",
+   "catalogFile": "movement-systems",
+   "catalogName": "Hyperdrive, Class 1",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 5,
+    "printedName": "Hyperdrive, class 1"
+   }
+  },
+  {
+   "catalogId": "hyperdrive-15",
+   "catalogFile": "movement-systems",
+   "catalogName": "Hyperdrive, Class 1.5",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 6,
+    "printedName": "Hyperdrive, class 1.5"
+   }
+  },
+  {
+   "catalogId": "hyperdrive-2",
+   "catalogFile": "movement-systems",
+   "catalogName": "Hyperdrive, Class 2",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 7,
+    "printedName": "Hyperdrive, class 2"
+   }
+  },
+  {
+   "catalogId": "hyperdrive-3",
+   "catalogFile": "movement-systems",
+   "catalogName": "Hyperdrive, Class 3",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 8,
+    "printedName": "Hyperdrive, class 3"
+   }
+  },
+  {
+   "catalogId": "hyperdrive-4",
+   "catalogFile": "movement-systems",
+   "catalogName": "Hyperdrive, Class 4",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 9,
+    "printedName": "Hyperdrive, class 4"
+   }
+  },
+  {
+   "catalogId": "hyperdrive-5",
+   "catalogFile": "movement-systems",
+   "catalogName": "Hyperdrive, Class 5",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 10,
+    "printedName": "Hyperdrive, class 5"
+   }
+  },
+  {
+   "catalogId": "hyperdrive-6",
+   "catalogFile": "movement-systems",
+   "catalogName": "Hyperdrive, Class 6",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 11,
+    "printedName": "Hyperdrive, class 6"
+   }
+  },
+  {
+   "catalogId": "hyperdrive-8",
+   "catalogFile": "movement-systems",
+   "catalogName": "Hyperdrive, Class 8",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 12,
+    "printedName": "Hyperdrive, class 8"
+   }
+  },
+  {
+   "catalogId": "hyperdrive-10",
+   "catalogFile": "movement-systems",
+   "catalogName": "Hyperdrive, Class 10",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 13,
+    "printedName": "Hyperdrive, class 10"
+   }
+  },
+  {
+   "catalogId": "hyperdrive-15-class",
+   "catalogFile": "movement-systems",
+   "catalogName": "Hyperdrive, Class 15",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 14,
+    "printedName": "Hyperdrive, class 15"
+   }
+  },
+  {
+   "catalogId": "maneuvering-jets-2",
+   "catalogFile": "movement-systems",
+   "catalogName": "Maneuvering Jets +2",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 15,
+    "printedName": "Maneuvering jets +2"
+   }
+  },
+  {
+   "catalogId": "maneuvering-jets-4",
+   "catalogFile": "movement-systems",
+   "catalogName": "Maneuvering Jets +4",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 16,
+    "printedName": "Maneuvering jets +4"
+   }
+  },
+  {
+   "catalogId": "maneuvering-jets-6",
+   "catalogFile": "movement-systems",
+   "catalogName": "Maneuvering Jets +6",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 17,
+    "printedName": "Maneuvering jets +6"
+   }
+  },
+  {
+   "catalogId": "navicomputer-limited",
+   "catalogFile": "movement-systems",
+   "catalogName": "Navicomputer, Limited",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 18,
+    "printedName": "Navicomputer, limited"
+   }
+  },
+  {
+   "catalogId": "navicomputer",
+   "catalogFile": "movement-systems",
+   "catalogName": "Navicomputer",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 19,
+    "printedName": "Navicomputer"
+   }
+  },
+  {
+   "catalogId": "navicomputer-advanced",
+   "catalogFile": "movement-systems",
+   "catalogName": "Navicomputer, Advanced",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 20,
+    "printedName": "Navicomputer, advanced"
+   }
+  },
+  {
+   "catalogId": "sublight-accelerator",
+   "catalogFile": "movement-systems",
+   "catalogName": "SubLight Accelerator Motor (SLAM)",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 21,
+    "printedName": "SubLight Accelerator Motor"
+   }
+  },
+  {
+   "catalogId": "sublight-drive-1",
+   "catalogFile": "movement-systems",
+   "catalogName": "Sublight Drive (Speed 1 Square)",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 22,
+    "printedName": "Sublight drive (speed 1 square)"
+   }
+  },
+  {
+   "catalogId": "sublight-drive-2",
+   "catalogFile": "movement-systems",
+   "catalogName": "Sublight Drive (Speed 2 Squares)",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 23,
+    "printedName": "Sublight drive (speed 2 squares)"
+   }
+  },
+  {
+   "catalogId": "sublight-drive-3",
+   "catalogFile": "movement-systems",
+   "catalogName": "Sublight Drive (Speed 3 Squares)",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 24,
+    "printedName": "Sublight drive (speed 3 squares)"
+   }
+  },
+  {
+   "catalogId": "sublight-drive-4",
+   "catalogFile": "movement-systems",
+   "catalogName": "Sublight Drive (Speed 4 Squares)",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 25,
+    "printedName": "Sublight drive (speed 4 squares)"
+   }
+  },
+  {
+   "catalogId": "sublight-drive-5",
+   "catalogFile": "movement-systems",
+   "catalogName": "Sublight Drive (Speed 5 Squares)",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 26,
+    "printedName": "Sublight drive (speed 5 squares)"
+   }
+  },
+  {
+   "catalogId": "sublight-drive-6",
+   "catalogFile": "movement-systems",
+   "catalogName": "Sublight Drive (Speed 6 Squares)",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 41,
+    "pdfPage1Based": 42,
+    "table": "3-3",
+    "row": 27,
+    "printedName": "Sublight drive (speed 6 squares)"
+   }
+  },
+  {
+   "catalogId": "armor-1",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Armor, +1",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 1,
+    "printedName": "Armor, +1"
+   }
+  },
+  {
+   "catalogId": "armor-2",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Armor, +2",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 2,
+    "printedName": "Armor, +2"
+   }
+  },
+  {
+   "catalogId": "armor-3",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Armor, +3",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 3,
+    "printedName": "Armor, +3"
+   }
+  },
+  {
+   "catalogId": "armor-4",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Armor, +4",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 4,
+    "printedName": "Armor, +4"
+   }
+  },
+  {
+   "catalogId": "jamming-suite",
+   "catalogFile": "defense-systems",
+   "catalogName": "Jamming Suite",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 5,
+    "printedName": "Jamming suite"
+   }
+  },
+  {
+   "catalogId": "jamming-array",
+   "catalogFile": "defense-systems",
+   "catalogName": "Jamming Array",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 6,
+    "printedName": "Jamming array"
+   }
+  },
+  {
+   "catalogId": "regenerating-shields",
+   "catalogFile": "defense-systems",
+   "catalogName": "Regenerating Shields",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 7,
+    "printedName": "Regenerating shields"
+   }
+  },
+  {
+   "catalogId": "reinforced-bulkheads-10",
+   "catalogFile": "defense-systems",
+   "catalogName": "Reinforced Bulkheads, +10%",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 8,
+    "printedName": "Reinforced bulkheads +10%"
+   }
+  },
+  {
+   "catalogId": "reinforced-bulkheads-20",
+   "catalogFile": "defense-systems",
+   "catalogName": "Reinforced Bulkheads, +20%",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 9,
+    "printedName": "Reinforced bulkheads +20%"
+   }
+  },
+  {
+   "catalogId": "reinforced-bulkheads-30",
+   "catalogFile": "defense-systems",
+   "catalogName": "Reinforced Bulkheads, +30%",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 10,
+    "printedName": "Reinforced bulkheads +30%"
+   }
+  },
+  {
+   "catalogId": "shields-10",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Shields, SR 10",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 11,
+    "printedName": "Shields, SR 10"
+   }
+  },
+  {
+   "catalogId": "shields-15",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Shields, SR 15",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 12,
+    "printedName": "Shields, SR 15"
+   }
+  },
+  {
+   "catalogId": "shields-20",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Shields, SR 20",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 13,
+    "printedName": "Shields, SR 20"
+   }
+  },
+  {
+   "catalogId": "shields-25",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Shields, SR 25",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 14,
+    "printedName": "Shields, SR 25"
+   }
+  },
+  {
+   "catalogId": "shields-30",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Shields, SR 30",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 15,
+    "printedName": "Shields, SR 30"
+   }
+  },
+  {
+   "catalogId": "shields-35",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Shields, SR 35",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 16,
+    "printedName": "Shields, SR 35"
+   }
+  },
+  {
+   "catalogId": "shields-40",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Shields, SR 40",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 17,
+    "printedName": "Shields, SR 40"
+   }
+  },
+  {
+   "catalogId": "shields-45",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Shields, SR 45",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 18,
+    "printedName": "Shields, SR 45"
+   }
+  },
+  {
+   "catalogId": "shields-50",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Shields, SR 50",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 19,
+    "printedName": "Shields, SR 50"
+   }
+  },
+  {
+   "catalogId": "shields-55",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Shields, SR 55",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 20,
+    "printedName": "Shields, SR 55"
+   }
+  },
+  {
+   "catalogId": "shields-60",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Shields, SR 60",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 21,
+    "printedName": "Shields, SR 60"
+   }
+  },
+  {
+   "catalogId": "shields-70",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Shields, SR 70",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 22,
+    "printedName": "Shields, SR 70"
+   }
+  },
+  {
+   "catalogId": "shields-80",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Shields, SR 80",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 23,
+    "printedName": "Shields, SR 80"
+   }
+  },
+  {
+   "catalogId": "shields-90",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Shields, SR 90",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 24,
+    "printedName": "Shields, SR 90"
+   }
+  },
+  {
+   "catalogId": "shields-100",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Shields, SR 100",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 25,
+    "printedName": "Shields, SR 100"
+   }
+  },
+  {
+   "catalogId": "shields-125",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Shields, SR 125",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 26,
+    "printedName": "Shields, SR 125"
+   }
+  },
+  {
+   "catalogId": "shields-150",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Shields, SR 150",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 27,
+    "printedName": "Shields, SR 150"
+   }
+  },
+  {
+   "catalogId": "shields-175",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Shields, SR 175",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 28,
+    "printedName": "Shields, SR 175"
+   }
+  },
+  {
+   "catalogId": "shields-200",
+   "catalogFile": "defense-systems",
+   "catalogName": "Starship Shields, SR 200",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 43,
+    "pdfPage1Based": 44,
+    "table": "3-4",
+    "row": 29,
+    "printedName": "Shields, SR 200"
+   }
+  },
+  {
+   "catalogId": "anti-boarding-systems",
+   "catalogFile": "defense-systems",
+   "catalogName": "Anti-Boarding Systems",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 2,
+    "printedName": "Anti-boarding systems"
+   }
+  },
+  {
+   "catalogId": "com-jammers",
+   "catalogFile": "defense-systems",
+   "catalogName": "Com Jammers",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 9,
+    "printedName": "Com jammers"
+   }
+  },
+  {
+   "catalogId": "reinforced-keel",
+   "catalogFile": "defense-systems",
+   "catalogName": "Reinforced Keel",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 25,
+    "printedName": "Reinforced keel"
+   }
+  },
+  {
+   "catalogId": "reinforced-keel-boarding",
+   "catalogFile": "defense-systems",
+   "catalogName": "Reinforced Keel, Boarding",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 26,
+    "printedName": "Reinforced keel, boarding"
+   }
+  },
+  {
+   "catalogId": "security-bracing",
+   "catalogFile": "defense-systems",
+   "catalogName": "Security Bracing",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 27,
+    "printedName": "Security bracing"
+   }
+  },
+  {
+   "catalogId": "autoblaster",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Autoblaster",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 1,
+    "printedName": "Autoblaster"
+   }
+  },
+  {
+   "catalogId": "blaster-cannon-light",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Blaster Cannon, Light",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 2,
+    "printedName": "Blaster cannon, light"
+   }
+  },
+  {
+   "catalogId": "blaster-cannon-medium",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Blaster Cannon, Medium",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 3,
+    "printedName": "Blaster cannon, medium"
+   }
+  },
+  {
+   "catalogId": "blaster-cannon-heavy",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Blaster Cannon, Heavy",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 4,
+    "printedName": "Blaster cannon, heavy"
+   }
+  },
+  {
+   "catalogId": "cannon-double",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Cannon, Double",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 5,
+    "printedName": "Cannon, double"
+   }
+  },
+  {
+   "catalogId": "cannon-quad",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Cannon, Quad",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 6,
+    "printedName": "Cannon, quad"
+   }
+  },
+  {
+   "catalogId": "cannon-enhancement",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Cannon Enhancements",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 7,
+    "printedName": "Cannon enhancements"
+   }
+  },
+  {
+   "catalogId": "cannon-enhancement-advanced",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Cannon Enhancements, Advanced",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 8,
+    "printedName": "Cannon enhancements, advanced"
+   }
+  },
+  {
+   "catalogId": "concussion-missile-launcher-light",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Concussion Missile Launcher, Light",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 12,
+    "printedName": "Concussion missile launcher, light"
+   }
+  },
+  {
+   "catalogId": "concussion-missile-light",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Concussion Missile, Light",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 9,
+    "printedName": "Concussion missile, light"
+   }
+  },
+  {
+   "catalogId": "concussion-missile-launcher-medium",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Concussion Missile Launcher, Medium",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 13,
+    "printedName": "Concussion missile launcher, medium"
+   }
+  },
+  {
+   "catalogId": "concussion-missile-medium",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Concussion Missile, Medium",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 10,
+    "printedName": "Concussion missile, medium"
+   }
+  },
+  {
+   "catalogId": "concussion-missile-launcher-heavy",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Concussion Missile Launcher, Heavy",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 14,
+    "printedName": "Concussion missile launcher, heavy"
+   }
+  },
+  {
+   "catalogId": "concussion-missile-heavy",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Concussion Missile, Heavy",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 11,
+    "printedName": "Concussion missile, heavy"
+   }
+  },
+  {
+   "catalogId": "ion-cannon-light",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Ion Cannon, Light",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 23,
+    "printedName": "Ion cannon, light"
+   }
+  },
+  {
+   "catalogId": "ion-cannon-medium",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Ion Cannon, Medium",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 24,
+    "printedName": "Ion cannon, medium"
+   }
+  },
+  {
+   "catalogId": "ion-cannon-heavy",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Ion Cannon, Heavy",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 25,
+    "printedName": "Ion cannon, heavy"
+   }
+  },
+  {
+   "catalogId": "laser-cannon-light",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Laser Cannon, Light",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 27,
+    "printedName": "Laser cannon, light"
+   }
+  },
+  {
+   "catalogId": "laser-cannon-medium",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Laser Cannon, Medium",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 28,
+    "printedName": "Laser cannon, medium"
+   }
+  },
+  {
+   "catalogId": "laser-cannon-heavy",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Laser Cannon, Heavy",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 29,
+    "printedName": "Laser cannon, heavy"
+   }
+  },
+  {
+   "catalogId": "proton-torpedo-launcher",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Proton Torpedo Launcher",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 32,
+    "printedName": "Proton torpedo launcher"
+   }
+  },
+  {
+   "catalogId": "proton-torpedo",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Proton Torpedo",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 31,
+    "printedName": "Proton torpedo"
+   }
+  },
+  {
+   "catalogId": "turbolaser-light",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Turbolaser, Light",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 41,
+    "printedName": "Turbolaser, light"
+   }
+  },
+  {
+   "catalogId": "turbolaser-medium",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Turbolaser, Medium",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 42,
+    "printedName": "Turbolaser, medium"
+   }
+  },
+  {
+   "catalogId": "turbolaser-heavy",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Turbolaser, Heavy",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 43,
+    "printedName": "Turbolaser, heavy"
+   }
+  },
+  {
+   "catalogId": "tractor-beam",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Tractor Beam",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 40,
+    "printedName": "Tractor beam"
+   }
+  },
+  {
+   "catalogId": "point-defense",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Point-Defense System",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 30,
+    "printedName": "Point-defense weapon"
+   }
+  },
+  {
+   "catalogId": "fire-linked-2",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Fire-Linked Weapon, 2",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 17,
+    "printedName": "Fire-linked weapon, 2"
+   }
+  },
+  {
+   "catalogId": "fire-linked-4",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Fire-Linked Weapon, 4",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 18,
+    "printedName": "Fire-linked weapon, 4"
+   }
+  },
+  {
+   "catalogId": "space-mine-launcher",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Space Mine Launcher",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 38,
+    "printedName": "Space mine launcher"
+   }
+  },
+  {
+   "catalogId": "space-mine-standard",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Space Mine, Standard",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 35,
+    "printedName": "Space mine, standard"
+   }
+  },
+  {
+   "catalogId": "ion-bomb-rack",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Ion Bomb Rack",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 22,
+    "printedName": "Ion bomb rack"
+   }
+  },
+  {
+   "catalogId": "ion-bomb",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Ion Bomb",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 21,
+    "printedName": "Ion bomb"
+   }
+  },
+  {
+   "catalogId": "shieldbuster-torpedo-launcher",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Shieldbuster Torpedo Launcher",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 34,
+    "printedName": "Shieldbuster torpedo launcher"
+   }
+  },
+  {
+   "catalogId": "shieldbuster-torpedo",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Shieldbuster Torpedo",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 33,
+    "printedName": "Shieldbuster torpedo"
+   }
+  },
+  {
+   "catalogId": "discord-missile-launcher",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Discord Missile Launcher",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_PROSE_REVIEW",
+   "source": {
+    "book": "Threats of the Galaxy",
+    "printedPage": 142,
+    "pdfPage1Based": 143,
+    "section": "Discord Missile Launcher"
+   },
+   "note": "values from the printed component entry (Threats of the Galaxy)"
+  },
+  {
+   "catalogId": "discord-missile",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Discord Missile",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_PROSE_REVIEW",
+   "source": {
+    "book": "Threats of the Galaxy",
+    "printedPage": 142,
+    "pdfPage1Based": 143,
+    "section": "Discord Missile Launcher"
+   },
+   "note": "values from the printed component entry (Threats of the Galaxy)"
+  },
+  {
+   "catalogId": "gravity-mine-launcher",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Gravity Mine Launcher",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Legacy Era Campaign Guide",
+    "printedPage": 191,
+    "pdfPage1Based": 192,
+    "table": "Gravity Mines sidebar",
+    "row": 1,
+    "printedName": "Gravity mine launcher"
+   }
+  },
+  {
+   "catalogId": "gravity-mine-standard",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Gravity Mine, Standard",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Legacy Era Campaign Guide",
+    "printedPage": 191,
+    "pdfPage1Based": 192,
+    "table": "Gravity Mines sidebar",
+    "row": 2,
+    "printedName": "Gravity mine, standard"
+   }
+  },
+  {
+   "catalogId": "harpoon-gun",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Harpoon Gun",
+   "disposition": "NOT_FOUND_IN_SOURCE",
+   "evidence": "OCR_ONLY",
+   "basis": "STATBLOCK_EQUIPMENT_ONLY",
+   "note": "snowspeeder statblock weapon (grapple via harpoon); not an installable option list entry"
+  },
+  {
+   "catalogId": "droid-jammer",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Droid Jammer",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 16,
+    "printedName": "Droid jammer"
+   }
+  },
+  {
+   "catalogId": "gravity-well-projector",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Gravity Well Projector",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 20,
+    "printedName": "Gravity well projector"
+   }
+  },
+  {
+   "catalogId": "docking-gun",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Docking Gun",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 15,
+    "printedName": "Docking gun"
+   }
+  },
+  {
+   "catalogId": "fire-linked-optional",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Fire-Linked Weapon, Optional",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 19,
+    "printedName": "Fire-linked weapon, optional"
+   }
+  },
+  {
+   "catalogId": "ion-cannon-hapan-triple",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Ion Cannon, Hapan Triple",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 26,
+    "printedName": "Ion cannon, Hapan triple"
+   }
+  },
+  {
+   "catalogId": "space-mine-launcher-heavy",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Space Mine Launcher, Heavy",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 39,
+    "printedName": "Space mine launcher, heavy"
+   }
+  },
+  {
+   "catalogId": "space-mine-advanced",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Space Mine, Advanced",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 36,
+    "printedName": "Space mine, advanced"
+   }
+  },
+  {
+   "catalogId": "space-mine-heavy",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Space Mine, Heavy",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 47,
+    "pdfPage1Based": 48,
+    "table": "3-5",
+    "row": 37,
+    "printedName": "Space mine, heavy"
+   }
+  },
+  {
+   "catalogId": "gravity-mine-magnetic",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Gravity Mine, Magnetic",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Legacy Era Campaign Guide",
+    "printedPage": 191,
+    "pdfPage1Based": 192,
+    "table": "Gravity Mines sidebar",
+    "row": 3,
+    "printedName": "Gravity mine, magnetic"
+   }
+  },
+  {
+   "catalogId": "composite-beam-cannon",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Composite Beam Cannon",
+   "disposition": "UNRESOLVED_SOURCE",
+   "evidence": "PDF_PROSE_REVIEW",
+   "source": {
+    "book": "Clone Wars Campaign Guide",
+    "printedPage": 162,
+    "pdfPage1Based": 163,
+    "section": "Republic Vehicles / Weapon Systems"
+   },
+   "unresolved": [
+    "emplacementPoints",
+    "availability",
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "energy-bomblet-generator",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Energy Bomblet Generator",
+   "disposition": "NOT_FOUND_IN_SOURCE",
+   "evidence": "OCR_ONLY",
+   "basis": "STATBLOCK_EQUIPMENT_ONLY",
+   "note": "Scurrg H-6 / UT-AT statblock equipment"
+  },
+  {
+   "catalogId": "heavy-ordnance-launcher",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Heavy Ordnance Launcher",
+   "disposition": "NOT_FOUND_IN_SOURCE",
+   "evidence": "OCR_ONLY",
+   "basis": "STATBLOCK_EQUIPMENT_ONLY",
+   "note": "vehicle statblock weapon"
+  },
+  {
+   "catalogId": "ion-pulse-cannon",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Ion Pulse Cannon",
+   "disposition": "NOT_FOUND_IN_SOURCE",
+   "evidence": "OCR_ONLY",
+   "basis": "STATBLOCK_EQUIPMENT_ONLY",
+   "note": "Subjugator-class statblock weapon"
+  },
+  {
+   "catalogId": "mass-driver-cannon-standard",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Mass-Driver Cannon, Standard",
+   "disposition": "UNRESOLVED_SOURCE",
+   "evidence": "PDF_PROSE_REVIEW",
+   "source": {
+    "book": "Clone Wars Campaign Guide",
+    "printedPage": 162,
+    "pdfPage1Based": 163,
+    "section": "Republic Vehicles / Weapon Systems"
+   },
+   "unresolved": [
+    "emplacementPoints",
+    "availability",
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "mass-driver-cannon-heavy",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Mass-Driver Cannon, Heavy",
+   "disposition": "UNRESOLVED_SOURCE",
+   "evidence": "PDF_PROSE_REVIEW",
+   "source": {
+    "book": "Clone Wars Campaign Guide",
+    "printedPage": 162,
+    "pdfPage1Based": 163,
+    "section": "Republic Vehicles / Weapon Systems"
+   },
+   "unresolved": [
+    "emplacementPoints",
+    "availability",
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "microtractor-pressor",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Microtractor-Pressor",
+   "disposition": "NOT_FOUND_IN_SOURCE",
+   "evidence": "OCR_ONLY",
+   "basis": "STATBLOCK_EQUIPMENT_ONLY",
+   "note": "vehicle statblock weapon"
+  },
+  {
+   "catalogId": "proton-grenade-launcher",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Proton Grenade Launcher",
+   "disposition": "UNRESOLVED_SOURCE",
+   "evidence": "PDF_PROSE_REVIEW",
+   "source": {
+    "book": "Clone Wars Campaign Guide",
+    "printedPage": 162,
+    "pdfPage1Based": 163,
+    "section": "Republic Vehicles / Weapon Systems"
+   },
+   "unresolved": [
+    "emplacementPoints",
+    "availability",
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "proton-grenade",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Proton Grenade",
+   "disposition": "UNRESOLVED_SOURCE",
+   "evidence": "PDF_PROSE_REVIEW",
+   "source": {
+    "book": "Clone Wars Campaign Guide",
+    "printedPage": 162,
+    "pdfPage1Based": 163,
+    "section": "Republic Vehicles / Weapon Systems"
+   },
+   "unresolved": [
+    "emplacementPoints",
+    "availability",
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "rail-cannon",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Rail Cannon",
+   "disposition": "UNRESOLVED_SOURCE",
+   "evidence": "PDF_PROSE_REVIEW",
+   "source": {
+    "book": "Clone Wars Campaign Guide",
+    "printedPage": 162,
+    "pdfPage1Based": 163,
+    "section": "Republic Vehicles / Weapon Systems"
+   },
+   "unresolved": [
+    "emplacementPoints",
+    "availability",
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "anti-aircraft-flak-pod",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Anti-Aircraft Flak Pod",
+   "disposition": "UNRESOLVED_SOURCE",
+   "evidence": "PDF_PROSE_REVIEW",
+   "source": {
+    "book": "Rebellion Era Campaign Guide",
+    "printedPage": 130,
+    "pdfPage1Based": 131,
+    "section": "Vehicles and Starships / Weapon Systems"
+   },
+   "unresolved": [
+    "emplacementPoints",
+    "availability",
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "chaff-gun",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Chaff Gun",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Galaxy at War",
+    "printedPage": 67,
+    "pdfPage1Based": 68,
+    "table": "2-7",
+    "row": 1,
+    "printedName": "Chaff gun"
+   }
+  },
+  {
+   "catalogId": "defoliator-launcher",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Defoliator Launcher",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Galaxy at War",
+    "printedPage": 67,
+    "pdfPage1Based": 68,
+    "table": "2-7",
+    "row": 2,
+    "printedName": "Glowing defoliator launcher"
+   }
+  },
+  {
+   "catalogId": "defoliator-shell",
+   "catalogFile": "weapon-systems",
+   "catalogName": "Defoliator Shell",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Galaxy at War",
+    "printedPage": 67,
+    "pdfPage1Based": 68,
+    "table": "2-7",
+    "row": 3,
+    "printedName": "Glowing defoliator shell"
+   }
+  },
+  {
+   "catalogId": "cargo-jettison",
+   "catalogFile": "accessories",
+   "catalogName": "Cargo Jettison System",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 1,
+    "printedName": "Cargo jettison system"
+   }
+  },
+  {
+   "catalogId": "cargo-pod-light",
+   "catalogFile": "accessories",
+   "catalogName": "Cargo Pod, Light",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 2,
+    "printedName": "Cargo pod, light"
+   }
+  },
+  {
+   "catalogId": "cargo-pod-medium",
+   "catalogFile": "accessories",
+   "catalogName": "Cargo Pod, Medium",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 3,
+    "printedName": "Cargo pod, medium"
+   }
+  },
+  {
+   "catalogId": "cargo-pod-heavy",
+   "catalogFile": "accessories",
+   "catalogName": "Cargo Pod, Heavy",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 4,
+    "printedName": "Cargo pod, heavy"
+   }
+  },
+  {
+   "catalogId": "cloaking-hibridium",
+   "catalogFile": "accessories",
+   "catalogName": "Cloaking Device, Hibridium",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 5,
+    "printedName": "Cloaking device, hibridium"
+   }
+  },
+  {
+   "catalogId": "cloaking-stygium",
+   "catalogFile": "accessories",
+   "catalogName": "Cloaking Device, Stygium",
+   "disposition": "CORRECTION_REQUIRED",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 6,
+    "printedName": "Cloaking device, stygium"
+   },
+   "differences": [
+    {
+     "field": "cost",
+     "catalog": {
+      "cost": 100000,
+      "costType": "base"
+     },
+     "printed": {
+      "cost": 100000000,
+      "costType": "base"
+     },
+     "printedText": "100000000 base"
+    }
+   ],
+   "applyStatus": "ERRATA_CHECK_REQUIRED"
+  },
+  {
+   "catalogId": "cryogenic-chambers",
+   "catalogFile": "accessories",
+   "catalogName": "Cryogenic Chambers",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 7,
+    "printedName": "Cryogenic chambers"
+   }
+  },
+  {
+   "catalogId": "docking-clamps",
+   "catalogFile": "accessories",
+   "catalogName": "Docking Clamps",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 8,
+    "printedName": "Docking clamp"
+   }
+  },
+  {
+   "catalogId": "droid-repair-team",
+   "catalogFile": "accessories",
+   "catalogName": "Droid Repair Team",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 9,
+    "printedName": "Droid repair team"
+   }
+  },
+  {
+   "catalogId": "escape-pod-small",
+   "catalogFile": "accessories",
+   "catalogName": "Escape Pod, Small Lifeboat",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 10,
+    "printedName": "Escape pod, small lifeboat"
+   }
+  },
+  {
+   "catalogId": "escape-pod-large",
+   "catalogFile": "accessories",
+   "catalogName": "Escape Pod, Large Lifeboat",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 11,
+    "printedName": "Escape pod, large lifeboat"
+   }
+  },
+  {
+   "catalogId": "extended-range",
+   "catalogFile": "accessories",
+   "catalogName": "Extended Range",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 12,
+    "printedName": "Extended range"
+   }
+  },
+  {
+   "catalogId": "hangar-bay",
+   "catalogFile": "accessories",
+   "catalogName": "Hangar Bay",
+   "disposition": "CORRECTION_REQUIRED",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 13,
+    "printedName": "Hangar bay"
+   },
+   "differences": [
+    {
+     "field": "cost",
+     "catalog": {
+      "cost": 10000,
+      "costType": "base"
+     },
+     "printed": {
+      "cost": 10,
+      "costType": "base"
+     },
+     "printedText": "10 base"
+    }
+   ],
+   "applyStatus": "ERRATA_CHECK_REQUIRED"
+  },
+  {
+   "catalogId": "hangar-bay-concealed",
+   "catalogFile": "accessories",
+   "catalogName": "Hangar Bay, Concealed",
+   "disposition": "CORRECTION_REQUIRED",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 14,
+    "printedName": "Hangar bay, concealed"
+   },
+   "differences": [
+    {
+     "field": "cost",
+     "catalog": {
+      "cost": 100000,
+      "costType": "base"
+     },
+     "printed": {
+      "cost": 1000,
+      "costType": "base"
+     },
+     "printedText": "1000 base"
+    }
+   ],
+   "applyStatus": "ERRATA_CHECK_REQUIRED"
+  },
+  {
+   "catalogId": "holonet-transceiver",
+   "catalogFile": "accessories",
+   "catalogName": "Transceiver, HoloNet",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 15,
+    "printedName": "HoloNet transceiver"
+   }
+  },
+  {
+   "catalogId": "hyper-transceiver",
+   "catalogFile": "accessories",
+   "catalogName": "Transceiver, Hyper",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 16,
+    "printedName": "Hypertransceiver"
+   }
+  },
+  {
+   "catalogId": "luxury-basic",
+   "catalogFile": "accessories",
+   "catalogName": "Luxury Upgrade, Basic",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 17,
+    "printedName": "Luxury upgrade, basic"
+   }
+  },
+  {
+   "catalogId": "luxury-advanced",
+   "catalogFile": "accessories",
+   "catalogName": "Luxury Upgrade, Advanced",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 18,
+    "printedName": "Luxury upgrade, advanced"
+   }
+  },
+  {
+   "catalogId": "luxury-extreme",
+   "catalogFile": "accessories",
+   "catalogName": "Luxury Upgrade, Extreme",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 19,
+    "printedName": "Luxury upgrade, extreme"
+   }
+  },
+  {
+   "catalogId": "medical-suite",
+   "catalogFile": "accessories",
+   "catalogName": "Medical Suite",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 20,
+    "printedName": "Medical suite"
+   }
+  },
+  {
+   "catalogId": "passenger-seating",
+   "catalogFile": "accessories",
+   "catalogName": "Passenger Conversion, Seating",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 21,
+    "printedName": "Passenger seating"
+   }
+  },
+  {
+   "catalogId": "passenger-quarters",
+   "catalogFile": "accessories",
+   "catalogName": "Passenger Conversion, Quarters",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 22,
+    "printedName": "Passenger quarters"
+   }
+  },
+  {
+   "catalogId": "sensor-array-2",
+   "catalogFile": "accessories",
+   "catalogName": "Sensor Array Computer +2",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 23,
+    "printedName": "Sensor array computer +2"
+   }
+  },
+  {
+   "catalogId": "sensor-array-4",
+   "catalogFile": "accessories",
+   "catalogName": "Sensor Array Computer +4",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 24,
+    "printedName": "Sensor array computer +4"
+   }
+  },
+  {
+   "catalogId": "sensor-array-6",
+   "catalogFile": "accessories",
+   "catalogName": "Sensor Array Computer +6",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 25,
+    "printedName": "Sensor array computer +6"
+   }
+  },
+  {
+   "catalogId": "sensor-enhancement",
+   "catalogFile": "accessories",
+   "catalogName": "Sensor Enhancement Package",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 26,
+    "printedName": "Sensor enhancement package"
+   }
+  },
+  {
+   "catalogId": "slave-circuits-basic",
+   "catalogFile": "accessories",
+   "catalogName": "Slave Circuits, Basic",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 27,
+    "printedName": "Slave circuits, basic"
+   }
+  },
+  {
+   "catalogId": "slave-circuits-advanced",
+   "catalogFile": "accessories",
+   "catalogName": "Slave Circuits, Advanced",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 28,
+    "printedName": "Slave circuits, advanced"
+   }
+  },
+  {
+   "catalogId": "slave-circuits-recall",
+   "catalogFile": "accessories",
+   "catalogName": "Slave Circuits, Recall",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 29,
+    "printedName": "Slave circuits, recall"
+   }
+  },
+  {
+   "catalogId": "smuggler-compartments",
+   "catalogFile": "accessories",
+   "catalogName": "Smuggler's Compartments",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 30,
+    "printedName": "Smuggler's compartments"
+   }
+  },
+  {
+   "catalogId": "transponder-iff",
+   "catalogFile": "accessories",
+   "catalogName": "Transponder, IFF",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 31,
+    "printedName": "Transponder, IFF"
+   }
+  },
+  {
+   "catalogId": "transponder-masked",
+   "catalogFile": "accessories",
+   "catalogName": "Transponder, Masked",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 32,
+    "printedName": "Transponder, masked"
+   }
+  },
+  {
+   "catalogId": "transponder-disguised-1",
+   "catalogFile": "accessories",
+   "catalogName": "Transponder, Disguised (Basic)",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 33,
+    "printedName": "Transponder, disguised (1)"
+   }
+  },
+  {
+   "catalogId": "transponder-disguised-2",
+   "catalogFile": "accessories",
+   "catalogName": "Transponder, Disguised (Improved)",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 34,
+    "printedName": "Transponder, disguised (2)"
+   }
+  },
+  {
+   "catalogId": "transponder-disguised-3",
+   "catalogFile": "accessories",
+   "catalogName": "Transponder, Disguised (Superior)",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 49,
+    "pdfPage1Based": 50,
+    "table": "3-7",
+    "row": 35,
+    "printedName": "Transponder, disguised (3)"
+   }
+  },
+  {
+   "catalogId": "amphibious-seals",
+   "catalogFile": "accessories",
+   "catalogName": "Amphibious Seals",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 1,
+    "printedName": "Amphibious seals"
+   }
+  },
+  {
+   "catalogId": "auxiliary-generators-2",
+   "catalogFile": "accessories",
+   "catalogName": "Auxiliary Generators +2",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 3,
+    "printedName": "Auxiliary generators +2"
+   }
+  },
+  {
+   "catalogId": "auxiliary-generators-4",
+   "catalogFile": "accessories",
+   "catalogName": "Auxiliary Generators +4",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 4,
+    "printedName": "Auxiliary generators +4"
+   }
+  },
+  {
+   "catalogId": "auxiliary-generators-6",
+   "catalogFile": "accessories",
+   "catalogName": "Auxiliary Generators +6",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 5,
+    "printedName": "Auxiliary generators +6"
+   }
+  },
+  {
+   "catalogId": "backup-battery",
+   "catalogFile": "accessories",
+   "catalogName": "Backup Battery",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 6,
+    "printedName": "Backup battery"
+   }
+  },
+  {
+   "catalogId": "baffled-drive",
+   "catalogFile": "accessories",
+   "catalogName": "Baffled Drive",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 7,
+    "printedName": "Baffled drive"
+   }
+  },
+  {
+   "catalogId": "cockpit-ejection",
+   "catalogFile": "accessories",
+   "catalogName": "Cockpit Ejection System",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 8,
+    "printedName": "Cockpit ejection system"
+   }
+  },
+  {
+   "catalogId": "cofferdam",
+   "catalogFile": "accessories",
+   "catalogName": "Cofferdam",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 10,
+    "printedName": "Cofferdam"
+   }
+  },
+  {
+   "catalogId": "environmental-filters",
+   "catalogFile": "accessories",
+   "catalogName": "Environmental Filters",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 11,
+    "printedName": "Environmental filters"
+   }
+  },
+  {
+   "catalogId": "fuel-converters",
+   "catalogFile": "accessories",
+   "catalogName": "Fuel Converters",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 12,
+    "printedName": "Fuel converters"
+   }
+  },
+  {
+   "catalogId": "grappler-mag",
+   "catalogFile": "accessories",
+   "catalogName": "Grappler Mag",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 13,
+    "printedName": "Grappler mag"
+   }
+  },
+  {
+   "catalogId": "hardpoint",
+   "catalogFile": "accessories",
+   "catalogName": "Hardpoint",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 14,
+    "printedName": "Hardpoint"
+   }
+  },
+  {
+   "catalogId": "hidden-cargo-25",
+   "catalogFile": "accessories",
+   "catalogName": "Hidden Cargo Hold (25% of Cargo)",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 15,
+    "printedName": "Hidden cargo hold (25% of cargo)"
+   }
+  },
+  {
+   "catalogId": "hidden-cargo-50",
+   "catalogFile": "accessories",
+   "catalogName": "Hidden Cargo Hold (50% of Cargo)",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 16,
+    "printedName": "Hidden cargo hold (50% of cargo)"
+   }
+  },
+  {
+   "catalogId": "hidden-cargo-75",
+   "catalogFile": "accessories",
+   "catalogName": "Hidden Cargo Hold (75% of Cargo)",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 17,
+    "printedName": "Hidden cargo hold (75% of cargo)"
+   }
+  },
+  {
+   "catalogId": "holding-cells-25",
+   "catalogFile": "accessories",
+   "catalogName": "Holding Cells (25% of Passengers)",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 18,
+    "printedName": "Holding cells (25% of passengers)"
+   }
+  },
+  {
+   "catalogId": "holding-cells-50",
+   "catalogFile": "accessories",
+   "catalogName": "Holding Cells (50% of Passengers)",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 19,
+    "printedName": "Holding cells (50% of passengers)"
+   }
+  },
+  {
+   "catalogId": "holding-cells-75",
+   "catalogFile": "accessories",
+   "catalogName": "Holding Cells (75% of Passengers)",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 20,
+    "printedName": "Holding cells (75% of passengers)"
+   }
+  },
+  {
+   "catalogId": "interrogation-chamber",
+   "catalogFile": "accessories",
+   "catalogName": "Interrogation Chamber",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 21,
+    "printedName": "Interrogation chamber"
+   }
+  },
+  {
+   "catalogId": "personalized-controls",
+   "catalogFile": "accessories",
+   "catalogName": "Personalized Controls",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 22,
+    "printedName": "Personalized controls"
+   }
+  },
+  {
+   "catalogId": "sensor-baffling",
+   "catalogFile": "accessories",
+   "catalogName": "Sensor Baffling",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 28,
+    "printedName": "Sensor baffling"
+   }
+  },
+  {
+   "catalogId": "sensor-decoy",
+   "catalogFile": "accessories",
+   "catalogName": "Sensor Decoy",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 29,
+    "printedName": "Sensor decoy"
+   }
+  },
+  {
+   "catalogId": "sensor-mask",
+   "catalogFile": "accessories",
+   "catalogName": "Sensor Mask",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 30,
+    "printedName": "Sensor mask"
+   }
+  },
+  {
+   "catalogId": "workshop",
+   "catalogFile": "accessories",
+   "catalogName": "Workshop",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 32,
+    "printedName": "Workshop"
+   }
+  },
+  {
+   "catalogId": "launch-bay",
+   "catalogFile": "accessories",
+   "catalogName": "Launch Bay",
+   "disposition": "NOT_FOUND_IN_SOURCE",
+   "evidence": "OCR_ONLY",
+   "basis": "NO_SOURCE_LOCATED",
+   "note": "not located in any of the 14 OCR texts as an installable option; the Scum and Villainy chapter OCR is corrupted, so a PDF check is still advised"
+  },
+  {
+   "catalogId": "plasma-punch",
+   "catalogFile": "accessories",
+   "catalogName": "Plasma Punch",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 23,
+    "printedName": "Plasma punch"
+   }
+  },
+  {
+   "catalogId": "plasma-torch",
+   "catalogFile": "accessories",
+   "catalogName": "Plasma Torch",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 24,
+    "printedName": "Plasma torch"
+   }
+  },
+  {
+   "catalogId": "tractor-clamp",
+   "catalogFile": "accessories",
+   "catalogName": "Tractor Clamp",
+   "disposition": "MATCHED_CANONICAL",
+   "evidence": "PDF_VISUAL_REVIEW",
+   "source": {
+    "book": "Scum and Villainy",
+    "printedPage": 58,
+    "pdfPage1Based": 59,
+    "table": "2-10",
+    "row": 31,
+    "printedName": "Tractor clamp"
+   }
+  }
+ ],
+ "unmappedPdfRows": []
+}

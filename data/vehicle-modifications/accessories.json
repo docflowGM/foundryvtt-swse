@@ -278,7 +278,7 @@
     "id": "extended-range",
     "name": "Extended Range",
     "category": "Accessory",
-    "emplacementPoints": 1,
+    "emplacementPoints": 2,
     "availability": "Common",
     "sizeRestriction": null,
     "cost": 100,
@@ -287,7 +287,13 @@
     "effect": "Improves the starship's consumables by 10% of the original value (rounded down, minimum 1 day) for each time it is installed.",
     "legacy": {
       "description": "Additional fuel and supplies storage.",
-      "effect": "Double consumables duration"
+      "effect": "Double consumables duration",
+      "p6a": {
+        "emplacementPoints": {
+          "value": 1,
+          "correctedFrom": "Starships of the Galaxy p. 49 Table 3-7"
+        }
+      }
     },
     "effectVerification": "PRINTED_PROSE",
     "effectSource": {
@@ -973,10 +979,18 @@
     "availability": "Licensed",
     "sizeRestriction": "Colossal or Larger",
     "cost": 3000,
-    "costType": "base",
+    "costType": "flat",
     "description": "Airlock for boarding and docking.",
     "effect": "Can dock with ships lacking docking ports",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "costType": {
+          "value": "base",
+          "correctedFrom": "Scum and Villainy p. 58 Table 2-10 (printed \"3000\")"
+        }
+      }
+    }
   },
   {
     "id": "environmental-filters",
@@ -1102,11 +1116,19 @@
     "emplacementPoints": 4,
     "availability": "Military",
     "sizeRestriction": null,
-    "cost": 5000,
+    "cost": 4000,
     "costType": "base",
     "description": "Prison ship configuration.",
     "effect": "Secure cells for 75% of passenger capacity",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "cost": {
+          "value": 5000,
+          "correctedFrom": "Scum and Villainy p. 58 Table 2-10 (printed \"4000 base\")"
+        }
+      }
+    }
   },
   {
     "id": "interrogation-chamber",
@@ -1116,10 +1138,18 @@
     "availability": "Illegal",
     "sizeRestriction": "Colossal or Larger",
     "cost": 10000,
-    "costType": "flat",
+    "costType": "base",
     "description": "Specialized interrogation facility.",
     "effect": "+5 to Persuasion (intimidation) during interrogation",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "costType": {
+          "value": "flat",
+          "correctedFrom": "Scum and Villainy p. 58 Table 2-10 (printed \"10000 base\")"
+        }
+      }
+    }
   },
   {
     "id": "personalized-controls",
@@ -1218,12 +1248,20 @@
     "category": "Accessory",
     "emplacementPoints": 1,
     "availability": "Military",
-    "sizeRestriction": "Colossal or Larger",
+    "sizeRestriction": "Gargantuan or Larger",
     "cost": 6000,
     "costType": "flat",
     "description": "Industrial plasma cutting system for salvage and repairs.",
     "effect": "Can cut through most materials, +2 to salvage operations",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal or Larger",
+          "correctedFrom": "Scum and Villainy p. 58 Table 2-10"
+        }
+      }
+    }
   },
   {
     "id": "tractor-clamp",

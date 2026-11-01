@@ -1,7 +1,7 @@
 {
  "schema": "swse.vehicle.p6a.readiness.v1",
  "counts": {
-  "exposeAsReference": 180,
+  "exposeAsReference": 181,
   "installable": 39,
   "mechanicallyApplied": 37,
   "combatUsable": 0
@@ -650,7 +650,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -662,7 +662,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -674,7 +674,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -686,7 +686,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -698,7 +698,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -710,7 +710,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -722,7 +722,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -734,7 +734,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -746,7 +746,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -758,7 +758,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -770,7 +770,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -782,7 +782,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -794,7 +794,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -806,7 +806,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -818,7 +818,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -830,7 +830,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -842,7 +842,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -854,7 +854,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -866,7 +866,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -878,7 +878,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -890,7 +890,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -902,7 +902,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -914,7 +914,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -926,7 +926,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -938,7 +938,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -950,7 +950,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -962,7 +962,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -974,7 +974,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -986,7 +986,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -998,7 +998,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1010,7 +1010,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1022,7 +1022,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1034,7 +1034,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1046,7 +1046,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1058,7 +1058,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1070,7 +1070,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1082,7 +1082,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1094,7 +1094,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1106,7 +1106,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1118,7 +1118,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1130,7 +1130,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1142,7 +1142,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1154,7 +1154,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1166,7 +1166,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1191,7 +1191,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1203,7 +1203,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1215,7 +1215,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1227,7 +1227,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1239,7 +1239,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1251,7 +1251,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1263,7 +1263,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1275,7 +1275,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1287,7 +1287,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1435,7 +1435,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1447,7 +1447,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1459,7 +1459,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1471,7 +1471,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1483,7 +1483,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1495,7 +1495,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1507,7 +1507,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1519,7 +1519,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1543,7 +1543,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1555,7 +1555,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1567,7 +1567,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1579,7 +1579,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1591,7 +1591,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1603,7 +1603,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1639,7 +1639,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1651,7 +1651,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1663,7 +1663,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1675,7 +1675,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1687,7 +1687,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1699,7 +1699,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1711,7 +1711,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1723,7 +1723,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1735,7 +1735,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1747,7 +1747,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1759,7 +1759,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1771,7 +1771,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1783,7 +1783,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1795,7 +1795,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1807,7 +1807,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1819,7 +1819,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1831,7 +1831,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1843,7 +1843,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1855,7 +1855,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1867,7 +1867,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1879,7 +1879,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1891,7 +1891,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1903,7 +1903,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1915,7 +1915,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1927,7 +1927,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1939,20 +1939,19 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
   {
    "catalogId": "baffled-drive",
    "name": "Baffled Drive",
-   "exposeAsReference": false,
+   "exposeAsReference": true,
    "installable": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_FOUND_IN_SOURCE",
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1964,7 +1963,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1976,7 +1975,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1988,7 +1987,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -2000,7 +1999,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -2012,7 +2011,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -2024,7 +2023,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -2036,7 +2035,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -2048,7 +2047,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -2060,7 +2059,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -2072,7 +2071,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -2084,7 +2083,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -2096,7 +2095,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -2108,7 +2107,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -2120,7 +2119,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -2132,7 +2131,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -2144,7 +2143,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -2156,7 +2155,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -2168,7 +2167,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -2193,7 +2192,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -2205,7 +2204,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -2217,7 +2216,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   }

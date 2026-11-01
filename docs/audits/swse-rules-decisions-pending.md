@@ -603,6 +603,46 @@ Appended. Evidence: `data/audits/vehicles/p6a/`.
 | Decision authority | Project owner |
 | Resolution | |
 
+## P6A PDF source authority (2026-11-01)
+
+Appended. Evidence: `data/audits/vehicles/p6a/print-verified-components-v2.json` (independent PDF review) and `pdf-reconciliation.json`.
+
+### V-P6A-05 - Unusual printed accessory prices (stygium cloaking device, hangar bay, concealed hangar bay)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6A-05 |
+| Rules domain | Vehicle modifications |
+| Feature | Unusual printed accessory prices (stygium cloaking device, hangar bay, concealed hangar bay) |
+| Source | *Starships of the Galaxy*, Table 3-7 Starship Accessories, p. 49 |
+| Evidence | Printed: cloaking device (stygium) 100,000,000 credits base; hangar bay 10 credits base; concealed hangar bay 1,000 credits base. The catalog has 100,000 / 10,000 / 100,000. |
+| Confirmed behavior | The printed cells (PDF visual review). |
+| Unresolved question | Whether to adopt the printed values as published or treat them as misprints awaiting errata (no errata source is in the repository). |
+| Options | (a) adopt the printed value; (b) keep the current catalog value pending published errata. Both are source-related; no recommendation. |
+| Recommended ruling | None |
+| Implementation impact | Reconciliation marks them ERRATA_CHECK_REQUIRED; catalog values unchanged; rows are not source-verified. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6A-06 - Emplacement-point accounting for ammunition printed with a dash
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6A-06 |
+| Rules domain | Vehicle modifications |
+| Feature | Ion bomb; gravity mines (standard, magnetic); glowing defoliator shell |
+| Source | *Starships of the Galaxy* Table 3-5 p. 47; *Legacy Era Campaign Guide* gravity-mine sidebar p. 191; *Galaxy at War* Table 2-7 p. 67 |
+| Evidence | These rows print a dash in the Emplacement Points column, while missiles, torpedoes and space mines print 0. |
+| Confirmed behavior | A dash is not a printed zero. |
+| Unresolved question | Whether dash-EP ammunition consumes no emplacement points (like printed-0 ammunition) or is not separately installable. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Catalog EP is null (unknown); the planner refuses them with EP_COST_UNKNOWN. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
 ---
 
 ## Revision log
@@ -616,3 +656,4 @@ Appended. Evidence: `data/audits/vehicles/p6a/`.
 - **Revision 7 (2026-10-31):** appended V-P6-01..05 (Shipyard modification effects). No existing entry changed.
 - **Revision 8 (2026-10-31):** appended V-P6-06 (failed design check) and the owner's construction-funding direction. No existing entry changed.
 - **Revision 9 (2026-10-31):** appended V-P6A-01..04 (component census). No existing entry changed.
+- **Revision 10 (2026-11-01):** appended V-P6A-05 and V-P6A-06 (PDF source authority). No existing entry changed.

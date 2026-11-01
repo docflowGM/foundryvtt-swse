@@ -24,6 +24,7 @@ const read = p => JSON.parse(fs.readFileSync(p, 'utf8'));
 const sources = read(`${OUT}/census-sources.json`);
 const evidence = read('data/audits/vehicles/swse-p2-sotg-modification-evidence.json');
 const certification = read('data/vehicle-modifications/certification.json').rows;
+const pdf = read(`${OUT}/print-verified-components-v2.json`);
 const CATALOG_FILES = ['movement-systems', 'defense-systems', 'weapon-systems', 'accessories'];
 const catalog = CATALOG_FILES.flatMap(f => read(`data/vehicle-modifications/${f}.json`).map(e => ({ ...e, _file: f })));
 const byId = new Map(catalog.map(e => [e.id, e]));
@@ -151,16 +152,91 @@ const reconciliation = catalog.map(cat => {
 const missing = registry.filter(r => r.installable && !(r.catalogIds ?? []).length)
   .map(r => ({ censusId: r.censusId, name: r.name, book: r.book, category: r.category, subtype: r.subtype ?? null, aliasOf: r.aliasOf ?? null, effectSummary: r.effectSummary ?? null, disposition: r.aliasOf ? 'ALIAS_OF_EXISTING' : 'MISSING_FROM_CATALOG' }));
 
+/* ---------- PDF source authority (independent owner review, print-verified-components-v2.json) ---------- */
+// Identity is reconciled HERE: suggestedCatalogId is only a lookup aid. Rows map by explicit alias, then by
+// normalized printed name; anything unmapped is reported as missing from the catalog.
+const nameKey = v => String(v ?? '').toLowerCase().replace(/[^a-z0-9%+]+/g, ' ').trim();
+const catalogByName = new Map(catalog.map(c => [nameKey(c.name), c.id]));
+const PDF_ALIASES = { 'point defense weapon': 'point-defense', 'docking clamp': 'docking-clamps', 'hypertransceiver': 'hyper-transceiver', 'holonet transceiver': 'holonet-transceiver',
+  'passenger seating': 'passenger-seating', 'passenger quarters': 'passenger-quarters', 'transponder disguised 1': 'transponder-disguised-1', 'transponder disguised 2': 'transponder-disguised-2',
+  'transponder disguised 3': 'transponder-disguised-3', 'glowing defoliator launcher': 'defoliator-launcher', 'glowing defoliator shell': 'defoliator-shell', 'gravity mine launcher': 'gravity-mine-launcher',
+  'hidden cargo hold 25% of cargo': 'hidden-cargo-25', 'hidden cargo hold 50% of cargo': 'hidden-cargo-50', 'hidden cargo hold 75% of cargo': 'hidden-cargo-75',
+  'holding cells 25% of passengers': 'holding-cells-25', 'holding cells 50% of passengers': 'holding-cells-50', 'holding cells 75% of passengers': 'holding-cells-75' };
+for (const [printed, id] of Object.entries(sources.books[SOTG].accessoryCatalogMap)) PDF_ALIASES[nameKey(printed)] = id;
+for (const r of evidence.catalogComparison.rows.filter(x => x.printedName)) PDF_ALIASES[nameKey(r.printedName)] ??= r.catalogId;
+for (const c of catalog.filter(c => /^shields-\d+$/.test(c.id))) PDF_ALIASES[`shields sr ${c.id.split('-')[1]}`] = c.id;
+const SIZE = v => (v == null ? null : String(v).toLowerCase().replace(/\s*(starships)?\s*only\s*$/, '').replace(/^none$/, '').trim() || null);
+const DMG = v => (v == null ? null : String(v).toLowerCase().replace(/[\s()]/g, ''));
+const DMG_PLACEHOLDER = new Set(['seeammunition']); // catalog display label for a launcher; the table prints a dash
+function pdfCompare(cat, row) {
+  const d = [];
+  const ep = row.emplacementPoints ?? null;
+  if ((cat.emplacementPoints ?? null) !== ep) d.push({ field: 'emplacementPoints', catalog: cat.emplacementPoints ?? null, printed: ep, printedText: row.emplacementPointsPrinted ?? null, ...(ep === null ? { note: 'printed dash: not stated, not zero' } : {}) });
+  if (nameKey(cat.availability ?? '') !== nameKey(row.availability ?? '')) d.push({ field: 'availability', catalog: cat.availability ?? null, printed: row.availability ?? null, ...(row.availabilityState ? { note: row.availabilityState } : {}) });
+  if (SIZE(cat.sizeRestriction) !== SIZE(row.sizeRestriction)) d.push({ field: 'sizeRestriction', catalog: cat.sizeRestriction ?? null, printed: row.sizeRestriction ?? null });
+  if ('damage' in row || 'damageStatus' in row) {
+    const c = DMG(cat.damage), p = DMG(row.damage);
+    if (c !== p && !(p === null && DMG_PLACEHOLDER.has(c))) d.push({ field: 'damage', catalog: cat.damage ?? null, printed: row.damage ?? null, printedText: row.damagePrinted ?? null });
+  }
+  const k = row.cost?.kind;
+  if (k === 'base' || k === 'flat') { if (cat.cost !== row.cost.credits || cat.costType !== k) d.push({ field: 'cost', catalog: { cost: cat.cost ?? null, costType: cat.costType }, printed: { cost: row.cost.credits, costType: k }, printedText: row.cost.printed }); }
+  else if (k === 'multiplier') { if (cat.costType !== 'multiplier' || cat.costMultiplier !== row.cost.value) d.push({ field: 'costMultiplier', catalog: { costType: cat.costType, costMultiplier: cat.costMultiplier ?? null }, printed: { costType: 'multiplier', costMultiplier: row.cost.value }, printedText: row.cost.printed }); }
+  else if (k === 'addition') { if (cat.costType !== 'modifier' || cat.cost !== row.cost.value) d.push({ field: 'cost', catalog: { cost: cat.cost ?? null, costType: cat.costType }, printed: { cost: row.cost.value, costType: 'modifier' }, printedText: row.cost.printed }); }
+  return d;
+}
+const pdfRows = pdf.reviewedTables.flatMap(t => t.rows.map(r => ({ ...r, tableId: t.id })));
+const pdfByCatalog = new Map(), pdfUnmapped = [];
+for (const r of pdfRows) {
+  const id = PDF_ALIASES[nameKey(r.printedName)] ?? catalogByName.get(nameKey(r.printedName));
+  if (!id || !byId.has(id)) { pdfUnmapped.push(r); continue; }
+  if (r.suggestedCatalogId && r.suggestedCatalogId !== id) fail(`PDF_IDENTITY_CONFLICT ${r.printedName}: suggested ${r.suggestedCatalogId}, reconciled ${id}`);
+  if (pdfByCatalog.has(id)) fail(`PDF_DUPLICATE_IDENTITY ${id}`);
+  pdfByCatalog.set(id, r);
+}
+const pdfProse = new Map(pdf.supplementalProseOnlySystems.map(p => [p.id, p]));
+const ERRATA_CHECK = new Set(pdf.reviewedTables.flatMap(t => t.rows).filter(r => r.requiresErrataCheck).map(r => PDF_ALIASES[nameKey(r.printedName)]));
+const pdfReconciliation = catalog.map(cat => {
+  const row = pdfByCatalog.get(cat.id), prose = pdfProse.get(cat.id);
+  const base = { catalogId: cat.id, catalogFile: cat._file, catalogName: cat.name };
+  if (row) {
+    const src = { book: row.source.book, printedPage: row.source.printedPage, pdfPage1Based: row.source.pdfPage1Based, table: row.source.table, row: row.row, printedName: row.printedName };
+    const differences = pdfCompare(cat, row);
+    if (!differences.length) return { ...base, disposition: 'MATCHED_CANONICAL', evidence: 'PDF_VISUAL_REVIEW', source: src };
+    return { ...base, disposition: 'CORRECTION_REQUIRED', evidence: 'PDF_VISUAL_REVIEW', source: src, differences,
+      applyStatus: ERRATA_CHECK.has(cat.id) ? 'ERRATA_CHECK_REQUIRED' : 'APPLY' };
+  }
+  if (prose) {
+    // Weapon prose without a purchase table: the catalog's economic values have no source.
+    const unsourced = ['emplacementPoints', 'availability', 'cost'].filter(f => cat[f] !== null && cat[f] !== undefined)
+      .map(f => ({ field: f, catalog: cat[f], printed: null, note: prose.evidenceClass }));
+    const src = { book: prose.source.book, printedPage: prose.source.printedPage, pdfPage1Based: prose.source.pdfPage1Based, section: prose.source.section };
+    if (prose.evidenceClass === 'PRINTED_COMPONENT_PROSE') return { ...base, disposition: 'MATCHED_CANONICAL', evidence: 'PDF_PROSE_REVIEW', source: src, note: 'values from the printed component entry (Threats of the Galaxy)' };
+    return unsourced.length ? { ...base, disposition: 'CORRECTION_REQUIRED', evidence: 'PDF_PROSE_REVIEW', source: src, differences: unsourced, applyStatus: 'APPLY' }
+      : { ...base, disposition: 'UNRESOLVED_SOURCE', evidence: 'PDF_PROSE_REVIEW', source: src, unresolved: ['emplacementPoints', 'availability', 'cost'] };
+  }
+  const prior = reconciliation.find(r => r.catalogId === cat.id);
+  return { ...base, disposition: prior.disposition, evidence: 'OCR_ONLY', basis: prior.basis ?? null, note: prior.note ?? null };
+});
+const worksheetResolution = pdf.reviewedWorksheetItems.map(w => {
+  const id = w.requestedCatalogOrCensusId;
+  const rec = pdfReconciliation.find(r => r.catalogId === id);
+  return { worksheetIndex: w.worksheetIndex, id, pdfDisposition: w.disposition, reconciliation: rec ? rec.disposition : (missing.some(m => m.censusId === id) ? 'MISSING_FROM_CATALOG_PROSE_RULE' : 'NOT_A_CATALOG_ID'),
+    applyStatus: rec?.applyStatus ?? null, evidence: w.evidenceRef ?? w.source ?? null, unresolved: w.unresolved ?? null };
+});
+
 /* ---------- certification ledger and readiness ---------- */
 const OPERATIONAL_KINDS = new Set(['armor', 'shield', 'dexterity', 'hyperdrive']);
+const certificationP6a = Object.fromEntries(pdfReconciliation.filter(r => r.disposition === 'MATCHED_CANONICAL' && r.evidence.startsWith('PDF') && !certification[r.catalogId])
+  .map(r => [r.catalogId, { status: 'SOURCE_VERIFIED', evidence: r.evidence === 'PDF_VISUAL_REVIEW' ? 'PDF_REVIEWED_P6A' : 'PDF_PROSE_REVIEWED_P6A', book: r.source.book,
+    printedPage: r.source.printedPage, printedPageRange: [r.source.printedPage, r.source.printedPage], table: r.source.table ?? r.source.section, pageResolution: 'pdf-table-page' }]));
 const ledger = catalog.map(cat => {
-  const rec = reconciliation.find(r => r.catalogId === cat.id);
-  const cert = certification[cat.id];
+  const rec = pdfReconciliation.find(r => r.catalogId === cat.id);
+  const cert = certification[cat.id] ?? certificationP6a[cat.id];
   const fx = EFFECTS[cat.id];
   return {
     catalogId: cat.id, name: cat.name, category: cat.category,
-    sourceListed: rec.disposition !== 'NOT_FOUND_IN_SOURCE' ? { book: rec.book, censusId: rec.censusId } : null,
-    sourceVerified: cert ? { status: cert.status, evidence: cert.evidence, book: cert.book, printedPage: cert.printedPage } : null,
+    sourceListed: rec.disposition !== 'NOT_FOUND_IN_SOURCE' ? { book: rec.source?.book ?? reconciliation.find(r => r.catalogId === cat.id).book, page: rec.source?.printedPage ?? null } : null,
+    sourceVerified: cert ? { status: cert.status === 'MECHANIC_SPECIFIED' ? 'SOURCE_VERIFIED' : cert.status, evidence: cert.evidence, book: cert.book, printedPage: cert.printedPage } : null,
     mechanicSpecified: cert?.status === 'MECHANIC_SPECIFIED' ? { effectKind: fx?.kind ?? null, test: cert.effectTest } : null,
     operationallyIntegrated: fx && OPERATIONAL_KINDS.has(fx.kind) ? 'OFFLINE_INTEGRATED_LIVE_PENDING' : fx ? 'EXPOSED_NOT_APPLIED' : null,
     reconciliation: rec.disposition
@@ -194,9 +270,17 @@ const files = {
     sourceListed: ledger.filter(l => l.sourceListed).length, sourceVerified: ledger.filter(l => l.sourceVerified).length, mechanicSpecified: ledger.filter(l => l.mechanicSpecified).length,
     operationallyIntegrated: ledger.filter(l => l.operationallyIntegrated === 'OFFLINE_INTEGRATED_LIVE_PENDING').length }, rows: ledger },
   'readiness-manifest.json': { schema: 'swse.vehicle.p6a.readiness.v1', counts: { exposeAsReference: readiness.filter(r => r.exposeAsReference).length, installable: readiness.filter(r => r.installable).length, mechanicallyApplied: readiness.filter(r => r.mechanicallyApplied).length, combatUsable: 0 }, rows: readiness },
-  'pdf-review-worksheet.json': { schema: 'swse.vehicle.p6a.pdf-review-worksheet.v1', note: 'Cells the OCR cannot settle. Fill from the printed PDF; the generator then updates the census sources.', items: worksheet }
+  'pdf-review-worksheet.json': { schema: 'swse.vehicle.p6a.pdf-review-worksheet.v2', note: 'The 91 OCR review requests and their PDF dispositions (print-verified-components-v2.json), reconciled against the catalog.', items: worksheet, resolution: worksheetResolution,
+    counts: count(worksheetResolution, 'reconciliation') },
+  'pdf-reconciliation.json': { schema: 'swse.vehicle.p6a.pdf-reconciliation.v1', note: 'Catalog vs independently PDF-reviewed printed tables/prose. MATCHED = every printed cell equals the catalog. Dash = not stated (null), never zero.',
+    counts: { catalog: catalog.length, ...count(pdfReconciliation, 'disposition'), pdfRows: pdfRows.length, pdfRowsUnmappedToCatalog: pdfUnmapped.length },
+    records: pdfReconciliation, unmappedPdfRows: pdfUnmapped.map(r => ({ printedName: r.printedName, table: r.tableId, page: r.source.printedPage })) },
 };
 if (failures.length) { console.error(failures.join('\n')); process.exit(1); }
+const CERT_P6A = 'data/vehicle-modifications/certification-p6a.json';
+files['../../../vehicle-modifications/certification-p6a.json'] = { schema: 'swse.vehicle.p6a.modification-certification-overlay.v1',
+  note: 'SOURCE_VERIFIED rows from the independent P6A PDF review whose catalog values equal every printed cell. Never MECHANIC_SPECIFIED: no effect is implemented by this overlay. certification.json wins where both exist.',
+  rows: certificationP6a };
 let stale = 0;
 for (const [name, body] of Object.entries(files)) {
   const path = `${OUT}/${name}`, text = JSON.stringify(body, null, 1) + '\n';
@@ -204,4 +288,4 @@ for (const [name, body] of Object.entries(files)) {
   else if (!fs.existsSync(path) || fs.readFileSync(path, 'utf8') !== text) { console.error('STALE ' + path); stale++; }
 }
 if (stale) process.exit(1);
-console.log(MODE === '--write' ? 'wrote' : 'up to date', JSON.stringify(files['reconciliation.json'].counts));
+console.log(MODE === '--write' ? 'wrote' : 'up to date', JSON.stringify(files['pdf-reconciliation.json'].counts));

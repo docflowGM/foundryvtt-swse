@@ -471,7 +471,7 @@
     "name": "Point-Defense System",
     "category": "Weapon",
     "weaponType": "Defense",
-    "damage": "Special",
+    "damage": null,
     "emplacementPoints": 0,
     "availability": "Restricted",
     "sizeRestriction": "Colossal or Larger",
@@ -486,6 +486,10 @@
         "sizeRestriction": {
           "value": null,
           "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
+        },
+        "damage": {
+          "value": "Special",
+          "correctedFrom": "Starships of the Galaxy p. 47 Table 3-5"
         }
       }
     },
@@ -584,14 +588,22 @@
     "category": "Ammunition",
     "weaponType": "Bomb",
     "damage": "5d10 (Ion)",
-    "emplacementPoints": 0,
+    "emplacementPoints": null,
     "availability": "Military",
     "sizeRestriction": null,
     "cost": 500,
     "costType": "flat",
     "description": "Ion bomb for disabling ground installations.",
     "effect": "Ion damage vs ground targets",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "emplacementPoints": {
+          "value": 0,
+          "correctedFrom": "Starships of the Galaxy p. 47 Table 3-5: printed dash: not stated, not zero (printed \"—\")"
+        }
+      }
+    }
   },
   {
     "id": "shieldbuster-torpedo-launcher",
@@ -696,15 +708,27 @@
     "name": "Gravity Mine, Standard",
     "category": "Ammunition",
     "weaponType": "Mine",
-    "damage": "Special",
-    "emplacementPoints": 0,
+    "damage": null,
+    "emplacementPoints": null,
     "availability": "Military",
     "sizeRestriction": null,
     "cost": 1000,
     "costType": "flat",
     "description": "Mine that prevents hyperspace jumps in area.",
     "effect": "Prevents hyperspace in 5 square radius",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "emplacementPoints": {
+          "value": 0,
+          "correctedFrom": "Legacy Era Campaign Guide p. 191 Table Gravity Mines sidebar: printed dash: not stated, not zero (printed \"—\")"
+        },
+        "damage": {
+          "value": "Special",
+          "correctedFrom": "Legacy Era Campaign Guide p. 191 Table Gravity Mines sidebar (printed \"—\")"
+        }
+      }
+    }
   },
   {
     "id": "harpoon-gun",
@@ -905,15 +929,27 @@
     "name": "Gravity Mine, Magnetic",
     "category": "Ammunition",
     "weaponType": "Mine",
-    "damage": "Special",
-    "emplacementPoints": 0,
+    "damage": null,
+    "emplacementPoints": null,
     "availability": "Military",
     "sizeRestriction": null,
     "cost": 4000,
     "costType": "flat",
     "description": "Magnetic gravity mine that attaches to hulls.",
     "effect": "Attaches to ship, prevents hyperspace",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "emplacementPoints": {
+          "value": 0,
+          "correctedFrom": "Legacy Era Campaign Guide p. 191 Table Gravity Mines sidebar: printed dash: not stated, not zero (printed \"—\")"
+        },
+        "damage": {
+          "value": "Special",
+          "correctedFrom": "Legacy Era Campaign Guide p. 191 Table Gravity Mines sidebar (printed \"—\")"
+        }
+      }
+    }
   },
   {
     "id": "composite-beam-cannon",
@@ -921,14 +957,30 @@
     "category": "Weapon",
     "weaponType": "Energy",
     "damage": "8d10",
-    "emplacementPoints": 3,
-    "availability": "Military",
+    "emplacementPoints": null,
+    "availability": null,
     "sizeRestriction": null,
-    "cost": 15000,
+    "cost": null,
     "costType": "flat",
     "description": "Experimental composite energy weapon.",
     "effect": "Combined energy beam weapon",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "emplacementPoints": {
+          "value": 3,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "availability": {
+          "value": "Military",
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "cost": {
+          "value": 15000,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        }
+      }
+    }
   },
   {
     "id": "energy-bomblet-generator",
@@ -981,10 +1033,10 @@
     "category": "Weapon",
     "weaponType": "Kinetic",
     "damage": "6d10x2",
-    "emplacementPoints": 3,
-    "availability": "Military",
+    "emplacementPoints": null,
+    "availability": null,
     "sizeRestriction": "Gargantuan or Larger",
-    "cost": 8000,
+    "cost": null,
     "costType": "flat",
     "description": "Magnetic accelerator cannon firing solid projectiles.",
     "effect": "Kinetic weapon, bypasses some defenses",
@@ -994,6 +1046,18 @@
         "sizeRestriction": {
           "value": "Colossal or Larger",
           "correctedFrom": "Clone Wars Campaign Guide"
+        },
+        "emplacementPoints": {
+          "value": 3,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "availability": {
+          "value": "Military",
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "cost": {
+          "value": 8000,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
         }
       }
     }
@@ -1004,10 +1068,10 @@
     "category": "Weapon",
     "weaponType": "Kinetic",
     "damage": "7d10x2",
-    "emplacementPoints": 5,
-    "availability": "Military",
+    "emplacementPoints": null,
+    "availability": null,
     "sizeRestriction": "Gargantuan or Larger",
-    "cost": 15000,
+    "cost": null,
     "costType": "flat",
     "description": "Heavy magnetic accelerator weapon.",
     "effect": "Heavy kinetic weapon, bypasses some defenses",
@@ -1017,6 +1081,18 @@
         "sizeRestriction": {
           "value": "Colossal (Frigate) or Larger",
           "correctedFrom": "Clone Wars Campaign Guide"
+        },
+        "emplacementPoints": {
+          "value": 5,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "availability": {
+          "value": "Military",
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "cost": {
+          "value": 15000,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
         }
       }
     }
@@ -1042,15 +1118,31 @@
     "category": "Weapon",
     "weaponType": "Grenade",
     "damage": "See Ammunition",
-    "emplacementPoints": 1,
-    "availability": "Military",
+    "emplacementPoints": null,
+    "availability": null,
     "sizeRestriction": null,
-    "cost": 3000,
+    "cost": null,
     "costType": "flat",
     "description": "Launches proton grenades at ground targets.",
     "effect": "Fires proton grenades",
     "ammunition": "proton-grenade",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "emplacementPoints": {
+          "value": 1,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "availability": {
+          "value": "Military",
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "cost": {
+          "value": 3000,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        }
+      }
+    }
   },
   {
     "id": "proton-grenade",
@@ -1058,14 +1150,30 @@
     "category": "Ammunition",
     "weaponType": "Grenade",
     "damage": "8d6",
-    "emplacementPoints": 0,
-    "availability": "Military",
+    "emplacementPoints": null,
+    "availability": null,
     "sizeRestriction": null,
-    "cost": 200,
+    "cost": null,
     "costType": "flat",
     "description": "Anti-personnel proton grenade.",
     "effect": "Area damage vs ground targets",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "emplacementPoints": {
+          "value": 0,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "availability": {
+          "value": "Military",
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "cost": {
+          "value": 200,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        }
+      }
+    }
   },
   {
     "id": "rail-cannon",
@@ -1073,10 +1181,10 @@
     "category": "Weapon",
     "weaponType": "Kinetic",
     "damage": "5d10x5",
-    "emplacementPoints": 6,
-    "availability": "Military",
+    "emplacementPoints": null,
+    "availability": null,
     "sizeRestriction": "Gargantuan or Larger",
-    "cost": 25000,
+    "cost": null,
     "costType": "flat",
     "description": "Electromagnetic rail gun for capital ships.",
     "effect": "Capital scale kinetic weapon",
@@ -1086,6 +1194,18 @@
         "sizeRestriction": {
           "value": "Colossal (Frigate) or Larger",
           "correctedFrom": "Clone Wars Campaign Guide"
+        },
+        "emplacementPoints": {
+          "value": 6,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "availability": {
+          "value": "Military",
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "cost": {
+          "value": 25000,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
         }
       }
     }
@@ -1096,14 +1216,30 @@
     "category": "Weapon",
     "weaponType": "Flak",
     "damage": "5d10x5",
-    "emplacementPoints": 3,
-    "availability": "Military",
+    "emplacementPoints": null,
+    "availability": null,
     "sizeRestriction": "Colossal (Frigate) or Larger",
-    "cost": 12000,
+    "cost": null,
     "costType": "flat",
     "description": "Anti-aircraft flak battery.",
     "effect": "+4 vs fighters and small craft",
-    "effectVerification": "UNVERIFIED"
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "emplacementPoints": {
+          "value": 3,
+          "correctedFrom": "Rebellion Era Campaign Guide p. 130 (Vehicles and Starships / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "availability": {
+          "value": "Military",
+          "correctedFrom": "Rebellion Era Campaign Guide p. 130 (Vehicles and Starships / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "cost": {
+          "value": 12000,
+          "correctedFrom": "Rebellion Era Campaign Guide p. 130 (Vehicles and Starships / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        }
+      }
+    }
   },
   {
     "id": "chaff-gun",
@@ -1162,7 +1298,7 @@
     "category": "Ammunition",
     "weaponType": "Special",
     "damage": "4d10x2",
-    "emplacementPoints": 0,
+    "emplacementPoints": null,
     "availability": null,
     "sizeRestriction": null,
     "cost": 3500,
@@ -1175,6 +1311,10 @@
         "availability": {
           "value": "Illegal",
           "correctedFrom": "Galaxy At War: the source prints no value; catalog value has no source"
+        },
+        "emplacementPoints": {
+          "value": 0,
+          "correctedFrom": "Galaxy at War p. 67 Table 2-7: printed dash: not stated, not zero (printed \"—\")"
         }
       }
     }

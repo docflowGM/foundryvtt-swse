@@ -66,3 +66,65 @@ test('certification ledger and readiness manifest never overstate operation', ()
   // atmospheric thrusters: certified but conditional -> not mechanically applied
   assert.equal(ready.rows.find(r => r.catalogId === 'atmospheric-thrusters').mechanicallyApplied, false);
 });
+
+test('PDF authority: all 172 printed rows reconciled to catalog identities; corrections applied except errata checks', () => {
+  const r = load(`${DIR}/pdf-reconciliation.json`);
+  assert.equal(r.counts.pdfRows, 172);
+  assert.equal(r.counts.pdfRowsUnmappedToCatalog, 0);
+  assert.equal(r.records.length, 187);
+  const by = id => r.records.find(x => x.catalogId === id);
+  // three unusual printed SotG prices: recorded, not applied until errata is checked
+  for (const id of ['cloaking-stygium', 'hangar-bay', 'hangar-bay-concealed']) { assert.equal(by(id).disposition, 'CORRECTION_REQUIRED'); assert.equal(by(id).applyStatus, 'ERRATA_CHECK_REQUIRED'); }
+  const acc = load('data/vehicle-modifications/accessories.json');
+  assert.equal(acc.find(a => a.id === 'hangar-bay').cost, 10000, 'not changed without an errata decision');
+  // everything else that differed is now equal to the print
+  for (const x of r.records.filter(x => x.disposition === 'CORRECTION_REQUIRED')) assert.equal(x.applyStatus, 'ERRATA_CHECK_REQUIRED', x.catalogId);
+  // Baffled Drive is a table-listed Scum and Villainy system, not statblock-only
+  assert.equal(by('baffled-drive').disposition, 'MATCHED_CANONICAL');
+  assert.deepEqual([by('baffled-drive').source.book, by('baffled-drive').source.printedPage], ['Scum and Villainy', 58]);
+  // Clone Wars / Rebellion Era weapon prose has no purchase table: economics unknown, never invented
+  const w = load('data/vehicle-modifications/weapon-systems.json');
+  for (const id of ['composite-beam-cannon', 'mass-driver-cannon-standard', 'rail-cannon', 'anti-aircraft-flak-pod']) {
+    const row = w.find(x => x.id === id);
+    assert.deepEqual([row.emplacementPoints, row.availability, row.cost], [null, null, null], id);
+    assert.equal(by(id).disposition, 'UNRESOLVED_SOURCE');
+    assert.ok(row.legacy.p6a.cost.value > 0, 'old value kept as legacy evidence');
+  }
+  assert.equal(w.find(x => x.id === 'mass-driver-cannon-standard').sizeRestriction, 'Gargantuan or Larger');
+});
+
+test('printed dash is unknown, not zero; legacy values and citations are preserved', () => {
+  const w = load('data/vehicle-modifications/weapon-systems.json');
+  for (const id of ['ion-bomb', 'gravity-mine-standard', 'gravity-mine-magnetic', 'defoliator-shell']) {
+    const row = w.find(x => x.id === id);
+    assert.equal(row.emplacementPoints, null, id);
+    assert.equal(row.legacy.p6a.emplacementPoints.value, 0);
+    assert.match(row.legacy.p6a.emplacementPoints.correctedFrom, /printed "—"/);
+  }
+  const d = load('data/vehicle-modifications/defense-systems.json');
+  assert.deepEqual([d.find(x => x.id === 'security-bracing').cost, d.find(x => x.id === 'security-bracing').sizeRestriction], [2000, 'Gargantuan or Larger']);
+});
+
+test('certification overlay: PDF-verified rows are SOURCE_VERIFIED only, never installable, and the loader keeps certification.json precedence', () => {
+  const overlay = load('data/vehicle-modifications/certification-p6a.json').rows;
+  const base = load('data/vehicle-modifications/certification.json').rows;
+  assert.ok(Object.keys(overlay).length > 100);
+  for (const [id, row] of Object.entries(overlay)) {
+    assert.equal(row.status, 'SOURCE_VERIFIED', id);
+    assert.ok(row.book && Number.isInteger(row.printedPage), id);
+    assert.equal(base[id], undefined, 'no overlap with certification.json');
+  }
+  assert.equal(overlay['turbolaser-heavy'].printedPage, 47);
+  const svc = readFileSync('scripts/engine/vehicles/vehicle-installation-service.js', 'utf8');
+  assert.match(svc, /certification-p6a\.json/);
+  assert.match(svc, /\.\.\.\(p6aRes\.ok[^;]*\.\.\.\(\(await certRes\.json\(\)\)\.rows/);
+  const ready = load(`${DIR}/readiness-manifest.json`);
+  assert.equal(ready.counts.installable, 39);
+  assert.equal(ready.counts.combatUsable, 0);
+});
+
+test('all 91 worksheet items carry a PDF disposition and a reconciliation outcome', () => {
+  const ws = load(`${DIR}/pdf-review-worksheet.json`);
+  assert.equal(ws.resolution.length, 91);
+  for (const x of ws.resolution) { assert.ok(x.pdfDisposition, x.id); assert.ok(x.reconciliation, x.id); }
+});
