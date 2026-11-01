@@ -1531,7 +1531,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1615,7 +1615,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1627,7 +1627,7 @@
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "NOT_SOURCE_VERIFIED",
+    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },

@@ -120,6 +120,15 @@ for (const f of frames) {
   f.noisy = f.noisy.filter(n => !Object.keys(r.cells).some(c => n.cell === c || (c === 'stockEmplacementPoints' && n.cell === 'stockEmplacementPoints') || (c === 'damageReduction' && n.cell === 'damageReduction') || (c === 'crew' && n.cell === 'crew')));
   f.pdfReviewedCells = Object.keys(r.cells);
 }
+// Published errata supersede printed cells (precedence: source -> errata -> owner ruling). The printed value is kept.
+const ERRATA = JSON.parse(fs.readFileSync('data/audits/vehicles/errata/sotg-errata-1.0.json', 'utf8'));
+for (const c of ERRATA.corrections.filter(c => c.frames)) for (const [id, e] of Object.entries(c.frames)) {
+  const f = frames.find(x => x.class.toLowerCase().replace(/\s+/g, '-') === id);
+  if (!f) throw new Error('errata frame not found: ' + id);
+  if (f.strength !== e.printed) throw new Error(`errata printed value mismatch for ${id}: OCR ${f.strength}, errata printed ${e.printed}`);
+  f.strength = e.corrected;
+  f.errataApplied = [...(f.errataApplied ?? []), { field: 'strength', printed: e.printed, corrected: e.corrected, errata: c.id, source: ERRATA.errata, sessionVerification: ERRATA.provenance.sessionVerification }];
+}
 
 /* --------------------------- Table 3-2 unused emplacement points --------------------------- */
 const uIdx = lines.findIndex(l => l.trim() === 'UNUSED POINTS');

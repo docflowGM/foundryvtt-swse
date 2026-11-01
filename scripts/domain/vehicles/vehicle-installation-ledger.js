@@ -128,6 +128,8 @@ export function planVehicleInstallation({ record, flags, catalogEntry, installId
   const key = record?.identity?.sourceEntryKey;
   if (!nonEmpty(key)) return deny('VEHICLE_NOT_SOURCE_BACKED');
   if (!catalogEntry || !nonEmpty(catalogEntry.id)) return deny('CATALOG_ENTRY_MISSING');
+  // V-P6A-06: ammunition printed with a dash EP is a consumable loaded into a launcher, not an installed system.
+  if (catalogEntry.installationKind === 'consumable-ammunition') return deny('CONSUMABLE_AMMUNITION_NOT_AN_INSTALLATION');
 
   const cert = catalogEntry.certification;
   const certPage = cert?.page ?? cert?.printedPage ?? (Array.isArray(cert?.printedPageRange) ? cert.printedPageRange.join('-') : null);

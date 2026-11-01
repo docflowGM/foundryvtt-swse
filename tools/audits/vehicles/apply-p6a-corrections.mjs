@@ -9,11 +9,15 @@
 import fs from 'node:fs';
 const MODE = process.argv[2];
 const load = p => JSON.parse(fs.readFileSync(p, 'utf8'));
-const records = [...load('data/audits/vehicles/p6a/reconciliation.json').records, ...load('data/audits/vehicles/p6a/pdf-reconciliation.json').records]
+// The PDF reconciliation (published source + errata + owner rulings) supersedes the OCR reconciliation.
+const pdfRecords = load('data/audits/vehicles/p6a/pdf-reconciliation.json').records;
+const pdfEvidenced = new Set(pdfRecords.filter(r => String(r.evidence).startsWith('PDF')).map(r => r.catalogId));
+const records = [...load('data/audits/vehicles/p6a/reconciliation.json').records.filter(r => !pdfEvidenced.has(r.catalogId)), ...pdfRecords]
   .filter(r => r.applyStatus === 'APPLY');
+const rulings = load('data/audits/vehicles/p6a/owner-rulings.json').rulings;
 const FILES = ['movement-systems', 'defense-systems', 'weapon-systems', 'accessories'];
 // catalog convention: capitalized "Larger"/"Smaller"
-const sizeCase = v => (typeof v === 'string' ? v.replace(/\s*(starships)?\s*only\s*$/i, '').replace(/\b(larger|smaller)\b/, w => w[0].toUpperCase() + w.slice(1)) : v);
+const sizeCase = v => (typeof v === 'string' ? v.replace(/\s*(starships)?\s*only\s*$/i, '').replace(/\b(larger|smaller)\b/, w => w[0].toUpperCase() + w.slice(1)).replace(/\((frigate|cruiser|station)\)/, (_, t) => `(${t[0].toUpperCase()}${t.slice(1)})`) : v);
 const cite = r => r.source ? `${r.source.book} p. ${r.source.printedPage}${r.source.table ? ' Table ' + r.source.table : r.source.section ? ' (' + r.source.section + ')' : ''}` : r.book;
 let pending = 0;
 for (const f of FILES) {
@@ -24,7 +28,10 @@ for (const f of FILES) {
     if (JSON.stringify(row[field] ?? null) === JSON.stringify(value ?? null)) return;
     pending++; changed = true;
     const prior = row.legacy?.p6a?.[field];
-    row.legacy = { ...(row.legacy ?? {}), p6a: { ...(row.legacy?.p6a ?? {}), [field]: prior ?? { value: row[field] ?? null, correctedFrom: `${cite(r)}${d.note ? ': ' + d.note : ''}${d.printedText ? ' (printed "' + d.printedText + '")' : ''}` } } };
+    const basis = `${cite(r)}${r.authority && r.authority !== 'PUBLISHED_SOURCE' ? ' [' + r.authority + (r.errata ? ' ' + r.errata.id : '') + (r.ownerRuling ? ' ' + r.ownerRuling : '') + ']' : ''}${d.note ? ': ' + d.note : ''}${d.printedText ? ' (printed "' + d.printedText + '")' : ''}`;
+    // legacy.p6a keeps the ORIGINAL catalog value; legacy.p6aHistory records every change (including reversals).
+    row.legacy = { ...(row.legacy ?? {}), p6a: { ...(row.legacy?.p6a ?? {}), [field]: prior ?? { value: row[field] ?? null, correctedFrom: basis } },
+      p6aHistory: [...(row.legacy?.p6aHistory ?? []), { field, from: row[field] ?? null, to: value ?? null, authority: r.authority ?? 'PUBLISHED_SOURCE', basis }] };
     row[field] = value;
   };
   for (const row of rows) {
@@ -34,6 +41,13 @@ for (const f of FILES) {
       else if (d.field === 'sizeRestriction') set(row, 'sizeRestriction', sizeCase(d.printed ?? null), r, d);
       else set(row, d.field, d.printed ?? null, r, d);
     }
+  }
+  // V-P6A-06: dash-EP ammunition is consumable, not an installed modification (EP stays unknown, never 0).
+  for (const row of rows) for (const ru of rulings.filter(x => x.effect === 'CONSUMABLE_AMMUNITION' && x.catalogIds.includes(row.id))) {
+    if (row.installationKind === 'consumable-ammunition' && row.emplacementPoints === null) continue;
+    pending++; changed = true;
+    row.installationKind = 'consumable-ammunition'; row.emplacementPointsPrinted = '\u2014'; row.emplacementPoints = null;
+    row.legacy = { ...(row.legacy ?? {}), p6aHistory: [...(row.legacy?.p6aHistory ?? []), { field: 'installationKind', from: null, to: 'consumable-ammunition', authority: 'OWNER_RULING', basis: ru.id }] };
   }
   if (changed && MODE === '--write') fs.writeFileSync(path, JSON.stringify(rows, null, 2) + '\n');
 }

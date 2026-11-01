@@ -25,6 +25,10 @@ const sources = read(`${OUT}/census-sources.json`);
 const evidence = read('data/audits/vehicles/swse-p2-sotg-modification-evidence.json');
 const certification = read('data/vehicle-modifications/certification.json').rows;
 const pdf = read(`${OUT}/print-verified-components-v2.json`);
+// Authority precedence: published source -> published errata -> explicit project-owner ruling -> implementation.
+const errata = read('data/audits/vehicles/errata/sotg-errata-1.0.json');
+const rulings = read(`${OUT}/owner-rulings.json`).rulings;
+const rulingFor = id => rulings.find(r => r.catalogIds.includes(id));
 const CATALOG_FILES = ['movement-systems', 'defense-systems', 'weapon-systems', 'accessories'];
 const catalog = CATALOG_FILES.flatMap(f => read(`data/vehicle-modifications/${f}.json`).map(e => ({ ...e, _file: f })));
 const byId = new Map(catalog.map(e => [e.id, e]));
@@ -185,6 +189,17 @@ function pdfCompare(cat, row) {
   return d;
 }
 const pdfRows = pdf.reviewedTables.flatMap(t => t.rows.map(r => ({ ...r, tableId: t.id })));
+// Published errata correct the printed cells (the printed value is kept beside the correction).
+for (const c of errata.corrections.filter(c => c.appliesTo)) for (const r of pdfRows) {
+  if (r.source.book !== errata.book || r.source.table !== c.appliesTo.table) continue;
+  if (c.appliesTo.printedSizeRestriction && SIZE(r.sizeRestriction) === SIZE(c.appliesTo.printedSizeRestriction)) {
+    r.errata = { id: c.id, field: 'sizeRestriction', printed: r.sizeRestriction }; r.sizeRestriction = c.corrected;
+  } else if (c.appliesTo.printedName && nameKey(r.printedName) === nameKey(c.appliesTo.printedName)) {
+    if (r[c.appliesTo.field] !== c.printed) fail(`ERRATA_PRINTED_VALUE_MISMATCH ${c.id}: PDF ${r[c.appliesTo.field]}, errata says printed ${c.printed}`);
+    r.errata = { id: c.id, field: c.appliesTo.field, printed: r[c.appliesTo.field] }; r[c.appliesTo.field] = c.corrected;
+  }
+}
+for (const c of errata.corrections.filter(c => c.appliesTo)) if (!pdfRows.some(r => r.errata?.id === c.id)) fail(`ERRATA_NOT_APPLIED ${c.id}`);
 const pdfByCatalog = new Map(), pdfUnmapped = [];
 for (const r of pdfRows) {
   const id = PDF_ALIASES[nameKey(r.printedName)] ?? catalogByName.get(nameKey(r.printedName));
@@ -201,9 +216,12 @@ const pdfReconciliation = catalog.map(cat => {
   if (row) {
     const src = { book: row.source.book, printedPage: row.source.printedPage, pdfPage1Based: row.source.pdfPage1Based, table: row.source.table, row: row.row, printedName: row.printedName };
     const differences = pdfCompare(cat, row);
-    if (!differences.length) return { ...base, disposition: 'MATCHED_CANONICAL', evidence: 'PDF_VISUAL_REVIEW', source: src };
-    return { ...base, disposition: 'CORRECTION_REQUIRED', evidence: 'PDF_VISUAL_REVIEW', source: src, differences,
-      applyStatus: ERRATA_CHECK.has(cat.id) ? 'ERRATA_CHECK_REQUIRED' : 'APPLY' };
+    const ruling = rulingFor(cat.id);
+    const authority = row.errata ? 'PUBLISHED_ERRATA' : (ERRATA_CHECK.has(cat.id) && ruling ? 'OWNER_RULING' : 'PUBLISHED_SOURCE');
+    const extra = { authority, ...(row.errata ? { errata: row.errata } : {}), ...(ruling ? { ownerRuling: ruling.id } : {}) };
+    if (!differences.length) return { ...base, disposition: 'MATCHED_CANONICAL', evidence: 'PDF_VISUAL_REVIEW', source: src, ...extra };
+    return { ...base, disposition: 'CORRECTION_REQUIRED', evidence: 'PDF_VISUAL_REVIEW', source: src, differences, ...extra,
+      applyStatus: ERRATA_CHECK.has(cat.id) && !(ruling && ruling.effect === 'APPLY_PRINTED_VALUES') ? 'ERRATA_CHECK_REQUIRED' : 'APPLY' };
   }
   if (prose) {
     // Weapon prose without a purchase table: the catalog's economic values have no source.
@@ -217,6 +235,11 @@ const pdfReconciliation = catalog.map(cat => {
   const prior = reconciliation.find(r => r.catalogId === cat.id);
   return { ...base, disposition: prior.disposition, evidence: 'OCR_ONLY', basis: prior.basis ?? null, note: prior.note ?? null };
 });
+// The OCR reconciliation is kept as discovery evidence; where the PDF review covers a record it is superseded.
+for (const r of reconciliation) {
+  const p = pdfReconciliation.find(x => x.catalogId === r.catalogId);
+  if (r.applyStatus && String(p?.evidence).startsWith('PDF')) { r.applyStatus = 'SUPERSEDED_BY_PDF_RECONCILIATION'; r.supersededBy = { disposition: p.disposition, authority: p.authority ?? null }; }
+}
 const worksheetResolution = pdf.reviewedWorksheetItems.map(w => {
   const id = w.requestedCatalogOrCensusId;
   const rec = pdfReconciliation.find(r => r.catalogId === id);

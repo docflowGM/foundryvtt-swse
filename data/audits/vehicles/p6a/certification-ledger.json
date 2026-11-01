@@ -3,7 +3,7 @@
  "note": "Audit dimensions alongside the production certification.json status (unchanged).",
  "counts": {
   "sourceListed": 181,
-  "sourceVerified": 171,
+  "sourceVerified": 174,
   "mechanicSpecified": 39,
   "operationallyIntegrated": 37
  },
@@ -2380,10 +2380,15 @@
     "book": "Starships of the Galaxy",
     "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "CORRECTION_REQUIRED"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "cryogenic-chambers",
@@ -2501,10 +2506,15 @@
     "book": "Starships of the Galaxy",
     "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "CORRECTION_REQUIRED"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "hangar-bay-concealed",
@@ -2514,10 +2524,15 @@
     "book": "Starships of the Galaxy",
     "page": 49
    },
-   "sourceVerified": null,
+   "sourceVerified": {
+    "status": "SOURCE_VERIFIED",
+    "evidence": "PDF_REVIEWED_P6A",
+    "book": "Starships of the Galaxy",
+    "printedPage": 49
+   },
    "mechanicSpecified": null,
    "operationallyIntegrated": null,
-   "reconciliation": "CORRECTION_REQUIRED"
+   "reconciliation": "MATCHED_CANONICAL"
   },
   {
    "catalogId": "holonet-transceiver",

@@ -131,13 +131,28 @@
     "emplacementPoints": 1,
     "availability": "Military",
     "sizeRestriction": "Huge or Larger",
-    "cost": 100000,
+    "cost": 100000000,
     "costType": "base",
     "description": "The starship has total concealment and may always make a Stealth check to sneak (a -10 penalty applies to notice it). Noticing it does not negate the concealment but allows attacks against it with the normal concealment penalty.",
     "effect": "The starship has total concealment and may always make a Stealth check to sneak (a -10 penalty applies to notice it). Noticing it does not negate the concealment but allows attacks against it with the normal concealment penalty.",
     "legacy": {
       "description": "Perfect cloaking device, extremely rare.",
-      "effect": "Perfect invisibility, undetectable"
+      "effect": "Perfect invisibility, undetectable",
+      "p6a": {
+        "cost": {
+          "value": 100000,
+          "correctedFrom": "Starships of the Galaxy p. 49 Table 3-7 [OWNER_RULING V-P6A-05] (printed \"100000000 base\")"
+        }
+      },
+      "p6aHistory": [
+        {
+          "field": "cost",
+          "from": 100000,
+          "to": 100000000,
+          "authority": "OWNER_RULING",
+          "basis": "Starships of the Galaxy p. 49 Table 3-7 [OWNER_RULING V-P6A-05] (printed \"100000000 base\")"
+        }
+      ]
     },
     "effectVerification": "PRINTED_PROSE",
     "effectSource": {
@@ -278,7 +293,7 @@
     "id": "extended-range",
     "name": "Extended Range",
     "category": "Accessory",
-    "emplacementPoints": 2,
+    "emplacementPoints": 1,
     "availability": "Common",
     "sizeRestriction": null,
     "cost": 100,
@@ -293,7 +308,16 @@
           "value": 1,
           "correctedFrom": "Starships of the Galaxy p. 49 Table 3-7"
         }
-      }
+      },
+      "p6aHistory": [
+        {
+          "field": "emplacementPoints",
+          "from": 2,
+          "to": 1,
+          "authority": "PUBLISHED_ERRATA",
+          "basis": "Starships of the Galaxy p. 49 Table 3-7 [PUBLISHED_ERRATA SOTG-E1-EXTENDED-RANGE-EP]"
+        }
+      ]
     },
     "effectVerification": "PRINTED_PROSE",
     "effectSource": {
@@ -312,13 +336,28 @@
     "emplacementPoints": 8,
     "availability": "Common",
     "sizeRestriction": "Colossal (Frigate) or Larger",
-    "cost": 10000,
+    "cost": 10,
     "costType": "base",
     "description": "Ships of Colossal (frigate) size or larger. Each bay has (the starship's cost modifier)/50 units of hangar space (Huge craft take 1 unit, Gargantuan 5, Colossal 20); a vehicle enters or exits with two move actions.",
     "effect": "Ships of Colossal (frigate) size or larger. Each bay has (the starship's cost modifier)/50 units of hangar space (Huge craft take 1 unit, Gargantuan 5, Colossal 20); a vehicle enters or exits with two move actions.",
     "legacy": {
       "description": "Internal hangar for small craft.",
-      "effect": "1 hangar space (1 fighter or equivalent)"
+      "effect": "1 hangar space (1 fighter or equivalent)",
+      "p6a": {
+        "cost": {
+          "value": 10000,
+          "correctedFrom": "Starships of the Galaxy p. 49 Table 3-7 [OWNER_RULING V-P6A-05] (printed \"10 base\")"
+        }
+      },
+      "p6aHistory": [
+        {
+          "field": "cost",
+          "from": 10000,
+          "to": 10,
+          "authority": "OWNER_RULING",
+          "basis": "Starships of the Galaxy p. 49 Table 3-7 [OWNER_RULING V-P6A-05] (printed \"10 base\")"
+        }
+      ]
     },
     "effectVerification": "PRINTED_PROSE",
     "effectSource": {
@@ -337,13 +376,28 @@
     "emplacementPoints": 40,
     "availability": "Restricted",
     "sizeRestriction": "Colossal (Frigate) or Larger",
-    "cost": 100000,
+    "cost": 1000,
     "costType": "base",
     "description": "As a hangar bay, but recognizing a concealed bay from outside takes a DC 30 Perception check (a thorough internal search finds it), and entering or exiting takes two full rounds.",
     "effect": "As a hangar bay, but recognizing a concealed bay from outside takes a DC 30 Perception check (a thorough internal search finds it), and entering or exiting takes two full rounds.",
     "legacy": {
       "description": "Hidden hangar bay.",
-      "effect": "1 concealed hangar space, DC 25 Perception to detect"
+      "effect": "1 concealed hangar space, DC 25 Perception to detect",
+      "p6a": {
+        "cost": {
+          "value": 100000,
+          "correctedFrom": "Starships of the Galaxy p. 49 Table 3-7 [OWNER_RULING V-P6A-05] (printed \"1000 base\")"
+        }
+      },
+      "p6aHistory": [
+        {
+          "field": "cost",
+          "from": 100000,
+          "to": 1000,
+          "authority": "OWNER_RULING",
+          "basis": "Starships of the Galaxy p. 49 Table 3-7 [OWNER_RULING V-P6A-05] (printed \"1000 base\")"
+        }
+      ]
     },
     "effectVerification": "PRINTED_PROSE",
     "effectSource": {

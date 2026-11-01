@@ -1,0 +1,25 @@
+{
+  "schema": "swse.vehicle.published-errata.v1",
+  "book": "Starships of the Galaxy",
+  "errata": "Starships of the Galaxy Errata 1.0 (Wizards of the Coast, 2008-01-29)",
+  "references": ["https://www.scribd.com/doc/40506092/Starships-of-the-Galaxy-Errata-1", "https://rpg.fandom.com/wiki/Star_Wars_Saga_Edition_Official_Errata"],
+  "provenance": {
+    "reportedBy": "project owner (2026-11-01)",
+    "sessionVerification": "NOT_VERIFIED_IN_SESSION",
+    "reason": "the errata hosts are not reachable from this session's network; the corrections below are the owner's transcription and are applied on the owner's instruction"
+  },
+  "precedence": ["published source", "published errata", "explicit project-owner ruling", "implementation"],
+  "corrections": [
+    { "id": "SOTG-E1-TABLE-3-5-FOOTNOTE", "target": "Table 3-5 Weapon Systems, footnote (1)", "printed": "Colossal or larger starships only", "corrected": "Colossal (frigate) or larger",
+      "appliesTo": { "table": "3-5", "printedSizeRestriction": "Colossal or larger starships only" } },
+    { "id": "SOTG-E1-EXTENDED-RANGE-EP", "target": "Table 3-7 Starship Accessories, Extended range, Emplacement Points", "printed": 2, "corrected": 1,
+      "appliesTo": { "table": "3-7", "printedName": "Extended range", "field": "emplacementPoints" } },
+    { "id": "SOTG-E1-STOCK-STRENGTH", "target": "Stock Ships table, Strength", "frames": {
+      "heavy-freighter": { "printed": 106, "corrected": 56 }, "corvette": { "printed": 110, "corrected": 58 }, "frigate": { "printed": 114, "corrected": 60 },
+      "cruiser": { "printed": 118, "corrected": 94 }, "battlecruiser": { "printed": 124, "corrected": 100 } } }
+  ],
+  "reportedNotTranscribed": [
+    { "id": "SOTG-E1-GRAVITY-WELL-AREA", "target": "Gravity well projector area", "status": "REVIEW_PENDING_WORDING", "note": "The owner reports an area correction; its wording is not in the repository. Current text: SotG p. 45 prose 4x4-square area (starship scale), attack vs Reflex 10. No change made." },
+    { "id": "SOTG-E1-Y-WING-SHIELDS", "target": "Y-wing shield ratings", "status": "REVIEW_PENDING_WORDING", "note": "The owner reports Y-wing shield corrections; wording not in the repository. Published vehicle records are not modified automatically." }
+  ]
+}

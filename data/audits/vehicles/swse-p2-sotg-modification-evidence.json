@@ -1272,7 +1272,7 @@
    "class": "Battlecruiser",
    "noisy": [],
    "size": "Colossal (cruiser)",
-   "strength": 124,
+   "strength": 100,
    "dexterity": 12,
    "intelligence": 18,
    "speed": "-/2",
@@ -1287,13 +1287,23 @@
    "stockEmplacementPoints": 200,
    "pdfReviewedCells": [
     "damageReduction"
+   ],
+   "errataApplied": [
+    {
+     "field": "strength",
+     "printed": 124,
+     "corrected": 100,
+     "errata": "SOTG-E1-STOCK-STRENGTH",
+     "source": "Starships of the Galaxy Errata 1.0 (Wizards of the Coast, 2008-01-29)",
+     "sessionVerification": "NOT_VERIFIED_IN_SESSION"
+    }
    ]
   },
   {
    "class": "Cruiser",
    "noisy": [],
    "size": "Colossal (cruiser)",
-   "strength": 118,
+   "strength": 94,
    "dexterity": 14,
    "intelligence": 16,
    "speed": "-/2",
@@ -1305,13 +1315,23 @@
    "passengers": 1000,
    "cargo": "10,000 tons",
    "consumables": "2 years",
-   "stockEmplacementPoints": 100
+   "stockEmplacementPoints": 100,
+   "errataApplied": [
+    {
+     "field": "strength",
+     "printed": 118,
+     "corrected": 94,
+     "errata": "SOTG-E1-STOCK-STRENGTH",
+     "source": "Starships of the Galaxy Errata 1.0 (Wizards of the Coast, 2008-01-29)",
+     "sessionVerification": "NOT_VERIFIED_IN_SESSION"
+    }
+   ]
   },
   {
    "class": "Frigate",
    "noisy": [],
    "size": "Colossal (frigate)",
-   "strength": 114,
+   "strength": 60,
    "dexterity": 16,
    "intelligence": 16,
    "speed": "-/2",
@@ -1323,13 +1343,23 @@
    "passengers": 200,
    "cargo": "5,000 tons",
    "consumables": "1 year",
-   "stockEmplacementPoints": 50
+   "stockEmplacementPoints": 50,
+   "errataApplied": [
+    {
+     "field": "strength",
+     "printed": 114,
+     "corrected": 60,
+     "errata": "SOTG-E1-STOCK-STRENGTH",
+     "source": "Starships of the Galaxy Errata 1.0 (Wizards of the Coast, 2008-01-29)",
+     "sessionVerification": "NOT_VERIFIED_IN_SESSION"
+    }
+   ]
   },
   {
    "class": "Corvette",
    "noisy": [],
    "size": "Colossal (frigate)",
-   "strength": 110,
+   "strength": 58,
    "dexterity": 18,
    "intelligence": 16,
    "speed": "-/3",
@@ -1341,13 +1371,23 @@
    "passengers": 200,
    "cargo": "2,000 tons",
    "consumables": "1 year",
-   "stockEmplacementPoints": 20
+   "stockEmplacementPoints": 20,
+   "errataApplied": [
+    {
+     "field": "strength",
+     "printed": 110,
+     "corrected": 58,
+     "errata": "SOTG-E1-STOCK-STRENGTH",
+     "source": "Starships of the Galaxy Errata 1.0 (Wizards of the Coast, 2008-01-29)",
+     "sessionVerification": "NOT_VERIFIED_IN_SESSION"
+    }
+   ]
   },
   {
    "class": "Heavy freighter",
    "noisy": [],
    "size": "Colossal (frigate)",
-   "strength": 106,
+   "strength": 56,
    "dexterity": 10,
    "intelligence": 12,
    "speed": "-/1",
@@ -1359,7 +1399,17 @@
    "passengers": 10,
    "cargo": "100,000 tons",
    "consumables": "6 months",
-   "stockEmplacementPoints": 5
+   "stockEmplacementPoints": 5,
+   "errataApplied": [
+    {
+     "field": "strength",
+     "printed": 106,
+     "corrected": 56,
+     "errata": "SOTG-E1-STOCK-STRENGTH",
+     "source": "Starships of the Galaxy Errata 1.0 (Wizards of the Coast, 2008-01-29)",
+     "sessionVerification": "NOT_VERIFIED_IN_SESSION"
+    }
+   ]
   },
   {
    "class": "Gunship",
@@ -1580,10 +1630,11 @@
   "counts": {
    "TABLE_NOT_PARSED_NEEDS_PDF": 84,
    "PDF_REVIEWED": 8,
-   "SOURCE_VERIFIED_TEXT": 80,
+   "SOURCE_VERIFIED_TEXT": 72,
    "IN_OTHER_BOOK_OCR_UNREADABLE_NEEDS_PDF": 4,
    "NO_PRINTED_ROW_FOUND_IN_PARSED_TABLES": 1,
-   "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF": 10
+   "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF": 9,
+   "OCR_ROW_DIFFERS_FROM_CATALOG": 9
   },
   "rows": [
    {
@@ -2749,14 +2800,21 @@
     "catalogName": "Concussion Missile Launcher, Heavy",
     "printedName": "Concussion missile launcher, heavy (1)",
     "table": "weapon",
-    "status": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
+    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
+    "differences": [
+     {
+      "field": "sizeRestriction",
+      "printed": "Colossal or larger",
+      "catalog": "Colossal (Frigate) or Larger",
+      "note": "table footnote (1): \"Colossal or larger starships only\""
+     }
+    ],
     "noisy": [
      {
       "cell": "damage",
       "ocr": "."
      }
-    ],
-    "certifiable": false
+    ]
    },
    {
     "catalogId": "concussion-missile-heavy",
@@ -2764,9 +2822,16 @@
     "catalogName": "Concussion Missile, Heavy",
     "printedName": "Concussion missile, heavy (1)",
     "table": "weapon",
-    "status": "SOURCE_VERIFIED_TEXT",
-    "certifiable": false,
-    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
+    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
+    "differences": [
+     {
+      "field": "sizeRestriction",
+      "printed": "Colossal or larger",
+      "catalog": "Colossal (Frigate) or Larger",
+      "note": "table footnote (1): \"Colossal or larger starships only\""
+     }
+    ],
+    "noisy": []
    },
    {
     "catalogId": "ion-cannon-light",
@@ -2794,9 +2859,16 @@
     "catalogName": "Ion Cannon, Heavy",
     "printedName": "Ion cannon, heavy (1)",
     "table": "weapon",
-    "status": "SOURCE_VERIFIED_TEXT",
-    "certifiable": false,
-    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
+    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
+    "differences": [
+     {
+      "field": "sizeRestriction",
+      "printed": "Colossal or larger",
+      "catalog": "Colossal (Frigate) or Larger",
+      "note": "table footnote (1): \"Colossal or larger starships only\""
+     }
+    ],
+    "noisy": []
    },
    {
     "catalogId": "laser-cannon-light",
@@ -2859,9 +2931,16 @@
     "catalogName": "Turbolaser, Light",
     "printedName": "Turbolaser, light (1)",
     "table": "weapon",
-    "status": "SOURCE_VERIFIED_TEXT",
-    "certifiable": false,
-    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
+    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
+    "differences": [
+     {
+      "field": "sizeRestriction",
+      "printed": "Colossal or larger",
+      "catalog": "Colossal (Frigate) or Larger",
+      "note": "table footnote (1): \"Colossal or larger starships only\""
+     }
+    ],
+    "noisy": []
    },
    {
     "catalogId": "turbolaser-medium",
@@ -2869,9 +2948,16 @@
     "catalogName": "Turbolaser, Medium",
     "printedName": "Turbolaser, medium (1)",
     "table": "weapon",
-    "status": "SOURCE_VERIFIED_TEXT",
-    "certifiable": false,
-    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
+    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
+    "differences": [
+     {
+      "field": "sizeRestriction",
+      "printed": "Colossal or larger",
+      "catalog": "Colossal (Frigate) or Larger",
+      "note": "table footnote (1): \"Colossal or larger starships only\""
+     }
+    ],
+    "noisy": []
    },
    {
     "catalogId": "turbolaser-heavy",
@@ -2879,9 +2965,16 @@
     "catalogName": "Turbolaser, Heavy",
     "printedName": "Turbolaser, heavy (1)",
     "table": "weapon",
-    "status": "SOURCE_VERIFIED_TEXT",
-    "certifiable": false,
-    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
+    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
+    "differences": [
+     {
+      "field": "sizeRestriction",
+      "printed": "Colossal or larger",
+      "catalog": "Colossal (Frigate) or Larger",
+      "note": "table footnote (1): \"Colossal or larger starships only\""
+     }
+    ],
+    "noisy": []
    },
    {
     "catalogId": "tractor-beam",
@@ -2908,9 +3001,16 @@
     "catalogName": "Point-Defense System",
     "printedName": "Point-defense weapon (1)",
     "table": "weapon",
-    "status": "SOURCE_VERIFIED_TEXT",
-    "certifiable": false,
-    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
+    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
+    "differences": [
+     {
+      "field": "sizeRestriction",
+      "printed": "Colossal or larger",
+      "catalog": "Colossal (Frigate) or Larger",
+      "note": "table footnote (1): \"Colossal or larger starships only\""
+     }
+    ],
+    "noisy": []
    },
    {
     "catalogId": "fire-linked-2",
@@ -3057,9 +3157,16 @@
     "catalogName": "Gravity Well Projector",
     "printedName": "Gravity well projector (1)",
     "table": "weapon",
-    "status": "SOURCE_VERIFIED_TEXT",
-    "certifiable": false,
-    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
+    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
+    "differences": [
+     {
+      "field": "sizeRestriction",
+      "printed": "Colossal or larger",
+      "catalog": "Colossal (Frigate) or Larger",
+      "note": "table footnote (1): \"Colossal or larger starships only\""
+     }
+    ],
+    "noisy": []
    },
    {
     "catalogId": "docking-gun",
@@ -3092,9 +3199,16 @@
     "catalogName": "Ion Cannon, Hapan Triple",
     "printedName": "Ion cannon, Hapan triple (1)",
     "table": "weapon",
-    "status": "SOURCE_VERIFIED_TEXT",
-    "certifiable": false,
-    "certificationNote": "weapon table not yet PDF-reviewed; transcription evidence only"
+    "status": "OCR_ROW_DIFFERS_FROM_CATALOG",
+    "differences": [
+     {
+      "field": "sizeRestriction",
+      "printed": "Colossal or larger",
+      "catalog": "Colossal (Frigate) or Larger",
+      "note": "table footnote (1): \"Colossal or larger starships only\""
+     }
+    ],
+    "noisy": []
    },
    {
     "catalogId": "space-mine-launcher-heavy",

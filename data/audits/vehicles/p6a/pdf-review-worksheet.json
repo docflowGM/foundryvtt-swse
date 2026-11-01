@@ -3,30 +3,6 @@
  "note": "The 91 OCR review requests and their PDF dispositions (print-verified-components-v2.json), reconciled against the catalog.",
  "items": [
   {
-   "catalogId": "cloaking-stygium",
-   "book": "Starships of the Galaxy",
-   "fields": [
-    "cost"
-   ],
-   "reason": "OCR column value disagrees with the catalog: [{\"field\":\"cost\",\"catalog\":\"100000 base\",\"printed\":\"100000000 base\"}]"
-  },
-  {
-   "catalogId": "hangar-bay",
-   "book": "Starships of the Galaxy",
-   "fields": [
-    "cost"
-   ],
-   "reason": "OCR column value disagrees with the catalog: [{\"field\":\"cost\",\"catalog\":\"10000 base\",\"printed\":\"10 base\"}]"
-  },
-  {
-   "catalogId": "hangar-bay-concealed",
-   "book": "Starships of the Galaxy",
-   "fields": [
-    "cost"
-   ],
-   "reason": "OCR column value disagrees with the catalog: [{\"field\":\"cost\",\"catalog\":\"100000 base\",\"printed\":\"1000 base\"}]"
-  },
-  {
    "catalogId": "anti-boarding-systems",
    "book": "Scum and Villainy",
    "fields": [
@@ -83,13 +59,6 @@
    ]
   },
   {
-   "catalogId": "concussion-missile-launcher-heavy",
-   "book": "Starships of the Galaxy",
-   "fields": [
-    "damage"
-   ]
-  },
-  {
    "catalogId": "proton-torpedo",
    "book": "Starships of the Galaxy",
    "fields": [
@@ -128,13 +97,6 @@
   },
   {
    "catalogId": "fire-linked-optional",
-   "book": "Starships of the Galaxy",
-   "fields": [
-    "emplacementPoints"
-   ]
-  },
-  {
-   "catalogId": "space-mine-launcher-heavy",
    "book": "Starships of the Galaxy",
    "fields": [
     "emplacementPoints"
@@ -247,6 +209,14 @@
    ]
   },
   {
+   "catalogId": "cloaking-stygium",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
    "catalogId": "cryogenic-chambers",
    "book": "Starships of the Galaxy",
    "fields": [
@@ -288,6 +258,22 @@
   },
   {
    "catalogId": "extended-range",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "hangar-bay",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "hangar-bay-concealed",
    "book": "Starships of the Galaxy",
    "fields": [
     "emplacementPoints",
@@ -705,8 +691,8 @@
    "worksheetIndex": 1,
    "id": "cloaking-stygium",
    "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
-   "reconciliation": "CORRECTION_REQUIRED",
-   "applyStatus": "ERRATA_CHECK_REQUIRED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
    "evidence": {
     "table": "3-7",
     "printedPage": 49,
@@ -719,8 +705,8 @@
    "worksheetIndex": 2,
    "id": "hangar-bay",
    "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
-   "reconciliation": "CORRECTION_REQUIRED",
-   "applyStatus": "ERRATA_CHECK_REQUIRED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
    "evidence": {
     "table": "3-7",
     "printedPage": 49,
@@ -733,8 +719,8 @@
    "worksheetIndex": 3,
    "id": "hangar-bay-concealed",
    "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
-   "reconciliation": "CORRECTION_REQUIRED",
-   "applyStatus": "ERRATA_CHECK_REQUIRED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
    "evidence": {
     "table": "3-7",
     "printedPage": 49,
@@ -1977,8 +1963,7 @@
   }
  ],
  "counts": {
-  "CORRECTION_REQUIRED": 3,
-  "MATCHED_CANONICAL": 75,
+  "MATCHED_CANONICAL": 78,
   "UNRESOLVED_SOURCE": 7,
   "MISSING_FROM_CATALOG_PROSE_RULE": 6
  }

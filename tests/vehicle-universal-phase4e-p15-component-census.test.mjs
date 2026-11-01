@@ -27,7 +27,7 @@ test('every one of the 187 catalog records has exactly one documented dispositio
   const allowed = ['MATCHED_CANONICAL', 'CORRECTION_REQUIRED', 'DUPLICATE_OR_ALIAS', 'WRONG_SOURCE_IDENTITY', 'NOT_FOUND_IN_SOURCE', 'UNRESOLVED_SOURCE', 'NONCANONICAL_HOMEBREW'];
   for (const x of r.records) assert.ok(allowed.includes(x.disposition), x.catalogId);
   // what remains CORRECTION_REQUIRED is only what needs the PDF (never auto-applied)
-  for (const x of r.records.filter(x => x.disposition === 'CORRECTION_REQUIRED')) assert.equal(x.applyStatus, 'PDF_CONFIRMATION_REQUIRED', x.catalogId);
+  for (const x of r.records.filter(x => x.disposition === 'CORRECTION_REQUIRED')) assert.ok(['PDF_CONFIRMATION_REQUIRED', 'SUPERSEDED_BY_PDF_RECONCILIATION'].includes(x.applyStatus), x.catalogId);
   for (const x of r.records.filter(x => x.disposition === 'NOT_FOUND_IN_SOURCE')) assert.ok(x.basis, x.catalogId);
 });
 
@@ -73,12 +73,14 @@ test('PDF authority: all 172 printed rows reconciled to catalog identities; corr
   assert.equal(r.counts.pdfRowsUnmappedToCatalog, 0);
   assert.equal(r.records.length, 187);
   const by = id => r.records.find(x => x.catalogId === id);
-  // three unusual printed SotG prices: recorded, not applied until errata is checked
-  for (const id of ['cloaking-stygium', 'hangar-bay', 'hangar-bay-concealed']) { assert.equal(by(id).disposition, 'CORRECTION_REQUIRED'); assert.equal(by(id).applyStatus, 'ERRATA_CHECK_REQUIRED'); }
+  // V-P6A-05 (owner ruling): the three unusual printed SotG prices are adopted; old values kept in history
   const acc = load('data/vehicle-modifications/accessories.json');
-  assert.equal(acc.find(a => a.id === 'hangar-bay').cost, 10000, 'not changed without an errata decision');
-  // everything else that differed is now equal to the print
-  for (const x of r.records.filter(x => x.disposition === 'CORRECTION_REQUIRED')) assert.equal(x.applyStatus, 'ERRATA_CHECK_REQUIRED', x.catalogId);
+  const price = id => acc.find(a => a.id === id);
+  assert.deepEqual(['cloaking-stygium', 'hangar-bay', 'hangar-bay-concealed'].map(id => price(id).cost), [100000000, 10, 1000]);
+  assert.equal(price('hangar-bay').legacy.p6a.cost.value, 10000);
+  assert.equal(price('hangar-bay').legacy.p6aHistory.at(-1).authority, 'OWNER_RULING');
+  assert.equal(by('hangar-bay').ownerRuling, 'V-P6A-05');
+  assert.equal(r.records.filter(x => x.disposition === 'CORRECTION_REQUIRED').length, 0, 'every printed/errata difference is applied');
   // Baffled Drive is a table-listed Scum and Villainy system, not statblock-only
   assert.equal(by('baffled-drive').disposition, 'MATCHED_CANONICAL');
   assert.deepEqual([by('baffled-drive').source.book, by('baffled-drive').source.printedPage], ['Scum and Villainy', 58]);
@@ -127,4 +129,36 @@ test('all 91 worksheet items carry a PDF disposition and a reconciliation outcom
   const ws = load(`${DIR}/pdf-review-worksheet.json`);
   assert.equal(ws.resolution.length, 91);
   for (const x of ws.resolution) { assert.ok(x.pdfDisposition, x.id); assert.ok(x.reconciliation, x.id); }
+});
+
+test('V-P6A-06: dash-EP ammunition is consumable (no invented EP) and never becomes an installation job', async () => {
+  const L = await import('../scripts/domain/vehicles/vehicle-installation-ledger.js');
+  const w = load('data/vehicle-modifications/weapon-systems.json');
+  for (const id of ['ion-bomb', 'gravity-mine-standard', 'gravity-mine-magnetic', 'defoliator-shell']) {
+    const row = w.find(x => x.id === id);
+    assert.deepEqual([row.installationKind, row.emplacementPoints, row.emplacementPointsPrinted], ['consumable-ammunition', null, '—'], id);
+    const plan = L.planVehicleInstallation({ record: { identity: { sourceEntryKey: 'k' } }, flags: {}, catalogEntry: row, installId: 'i', availableCredits: 1e9 });
+    assert.deepEqual(plan.reasons, ['CONSUMABLE_AMMUNITION_NOT_AN_INSTALLATION']);
+  }
+  // printed 0 is a real zero: a missile row is not reclassified
+  assert.equal(w.find(x => x.id === 'proton-torpedo').emplacementPoints, 0);
+  assert.equal(w.find(x => x.id === 'proton-torpedo').installationKind, undefined);
+});
+
+test('Errata 1.0 layer: precedence recorded; footnote, Extended Range and stock-frame Strength corrected with the printed value kept', () => {
+  const e = load('data/audits/vehicles/errata/sotg-errata-1.0.json');
+  assert.deepEqual(e.precedence, ['published source', 'published errata', 'explicit project-owner ruling', 'implementation']);
+  const w = load('data/vehicle-modifications/weapon-systems.json');
+  const footnoted = w.filter(x => x.legacy?.p6aHistory?.some(h => h.authority === 'PUBLISHED_ERRATA' && h.field === 'sizeRestriction'));
+  assert.equal(footnoted.length, 10);
+  for (const x of footnoted) assert.equal(x.sizeRestriction, 'Colossal (Frigate) or Larger', x.id);
+  assert.equal(load('data/vehicle-modifications/accessories.json').find(x => x.id === 'extended-range').emplacementPoints, 1);
+  const frames = load('data/canonical/vehicles/construction/stock-frames.json').frames;
+  const f = id => frames.find(x => x.id === id);
+  assert.deepEqual(['heavy-freighter', 'corvette', 'frigate', 'cruiser', 'battlecruiser'].map(id => f(id).strength), [56, 58, 60, 94, 100]);
+  assert.deepEqual(f('cruiser').errataApplied[0], { field: 'strength', printed: 118, corrected: 94, errata: 'SOTG-E1-STOCK-STRENGTH', source: e.errata, sessionVerification: 'NOT_VERIFIED_IN_SESSION' });
+  assert.equal(f('superiority-fighter').errataApplied, undefined);
+  const rec = load(`${DIR}/pdf-reconciliation.json`).records.find(x => x.catalogId === 'turbolaser-heavy');
+  assert.equal(rec.authority, 'PUBLISHED_ERRATA');
+  assert.equal(rec.errata.printed, 'Colossal or larger starships only');
 });

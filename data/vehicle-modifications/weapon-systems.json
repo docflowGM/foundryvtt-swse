@@ -202,7 +202,7 @@
     "damage": "See Ammunition",
     "emplacementPoints": 20,
     "availability": "Military",
-    "sizeRestriction": "Colossal or Larger",
+    "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 30000,
     "costType": "flat",
     "description": "Capital ship missile launcher.",
@@ -215,7 +215,16 @@
           "value": "Colossal (Frigate) or Larger",
           "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
         }
-      }
+      },
+      "p6aHistory": [
+        {
+          "field": "sizeRestriction",
+          "from": "Colossal or Larger",
+          "to": "Colossal (Frigate) or Larger",
+          "authority": "PUBLISHED_ERRATA",
+          "basis": "Starships of the Galaxy p. 47 Table 3-5 [PUBLISHED_ERRATA SOTG-E1-TABLE-3-5-FOOTNOTE]"
+        }
+      ]
     }
   },
   {
@@ -226,7 +235,7 @@
     "damage": "9d10x5",
     "emplacementPoints": 0,
     "availability": "Military",
-    "sizeRestriction": "Colossal or Larger",
+    "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 2000,
     "costType": "flat",
     "description": "Heavy capital ship missile.",
@@ -238,7 +247,16 @@
           "value": null,
           "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
         }
-      }
+      },
+      "p6aHistory": [
+        {
+          "field": "sizeRestriction",
+          "from": "Colossal or Larger",
+          "to": "Colossal (Frigate) or Larger",
+          "authority": "PUBLISHED_ERRATA",
+          "basis": "Starships of the Galaxy p. 47 Table 3-5 [PUBLISHED_ERRATA SOTG-E1-TABLE-3-5-FOOTNOTE]"
+        }
+      ]
     }
   },
   {
@@ -279,7 +297,7 @@
     "damage": "3d10x5 (Ion)",
     "emplacementPoints": 5,
     "availability": "Military",
-    "sizeRestriction": "Colossal or Larger",
+    "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 6000,
     "costType": "flat",
     "description": "Heavy capital ship ion cannon.",
@@ -291,7 +309,16 @@
           "value": "Colossal (Frigate) or Larger",
           "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
         }
-      }
+      },
+      "p6aHistory": [
+        {
+          "field": "sizeRestriction",
+          "from": "Colossal or Larger",
+          "to": "Colossal (Frigate) or Larger",
+          "authority": "PUBLISHED_ERRATA",
+          "basis": "Starships of the Galaxy p. 47 Table 3-5 [PUBLISHED_ERRATA SOTG-E1-TABLE-3-5-FOOTNOTE]"
+        }
+      ]
     }
   },
   {
@@ -378,7 +405,7 @@
     "damage": "3d10x5",
     "emplacementPoints": 2,
     "availability": "Military",
-    "sizeRestriction": "Colossal or Larger",
+    "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 5000,
     "costType": "flat",
     "description": "Light capital ship turbolaser.",
@@ -390,7 +417,16 @@
           "value": "Colossal (Frigate) or Larger",
           "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
         }
-      }
+      },
+      "p6aHistory": [
+        {
+          "field": "sizeRestriction",
+          "from": "Colossal or Larger",
+          "to": "Colossal (Frigate) or Larger",
+          "authority": "PUBLISHED_ERRATA",
+          "basis": "Starships of the Galaxy p. 47 Table 3-5 [PUBLISHED_ERRATA SOTG-E1-TABLE-3-5-FOOTNOTE]"
+        }
+      ]
     }
   },
   {
@@ -401,7 +437,7 @@
     "damage": "5d10x5",
     "emplacementPoints": 5,
     "availability": "Military",
-    "sizeRestriction": "Colossal or Larger",
+    "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 10000,
     "costType": "flat",
     "description": "Standard capital ship turbolaser.",
@@ -413,7 +449,16 @@
           "value": "Colossal (Frigate) or Larger",
           "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
         }
-      }
+      },
+      "p6aHistory": [
+        {
+          "field": "sizeRestriction",
+          "from": "Colossal or Larger",
+          "to": "Colossal (Frigate) or Larger",
+          "authority": "PUBLISHED_ERRATA",
+          "basis": "Starships of the Galaxy p. 47 Table 3-5 [PUBLISHED_ERRATA SOTG-E1-TABLE-3-5-FOOTNOTE]"
+        }
+      ]
     }
   },
   {
@@ -424,7 +469,7 @@
     "damage": "7d10x5",
     "emplacementPoints": 10,
     "availability": "Military",
-    "sizeRestriction": "Colossal or Larger",
+    "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 20000,
     "costType": "flat",
     "description": "Heavy turbolaser for battleships.",
@@ -436,7 +481,16 @@
           "value": "Colossal (Frigate) or Larger",
           "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
         }
-      }
+      },
+      "p6aHistory": [
+        {
+          "field": "sizeRestriction",
+          "from": "Colossal or Larger",
+          "to": "Colossal (Frigate) or Larger",
+          "authority": "PUBLISHED_ERRATA",
+          "basis": "Starships of the Galaxy p. 47 Table 3-5 [PUBLISHED_ERRATA SOTG-E1-TABLE-3-5-FOOTNOTE]"
+        }
+      ]
     }
   },
   {
@@ -474,7 +528,7 @@
     "damage": null,
     "emplacementPoints": 0,
     "availability": "Restricted",
-    "sizeRestriction": "Colossal or Larger",
+    "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 4000,
     "costType": "modifier",
     "description": "Only blaster cannons, laser cannons and light ion cannons can be point-defense weapons. The modification costs 4,000 credits per weapon with no emplacement point requirement beyond mounting the weapon; a point-defense weapon takes no penalty for attacking targets smaller than Colossal.",
@@ -491,7 +545,16 @@
           "value": "Special",
           "correctedFrom": "Starships of the Galaxy p. 47 Table 3-5"
         }
-      }
+      },
+      "p6aHistory": [
+        {
+          "field": "sizeRestriction",
+          "from": "Colossal or Larger",
+          "to": "Colossal (Frigate) or Larger",
+          "authority": "PUBLISHED_ERRATA",
+          "basis": "Starships of the Galaxy p. 47 Table 3-5 [PUBLISHED_ERRATA SOTG-E1-TABLE-3-5-FOOTNOTE]"
+        }
+      ]
     },
     "effectVerification": "PRINTED_PROSE",
     "effectSource": {
@@ -602,8 +665,19 @@
           "value": 0,
           "correctedFrom": "Starships of the Galaxy p. 47 Table 3-5: printed dash: not stated, not zero (printed \"—\")"
         }
-      }
-    }
+      },
+      "p6aHistory": [
+        {
+          "field": "installationKind",
+          "from": null,
+          "to": "consumable-ammunition",
+          "authority": "OWNER_RULING",
+          "basis": "V-P6A-06"
+        }
+      ]
+    },
+    "installationKind": "consumable-ammunition",
+    "emplacementPointsPrinted": "—"
   },
   {
     "id": "shieldbuster-torpedo-launcher",
@@ -727,8 +801,19 @@
           "value": "Special",
           "correctedFrom": "Legacy Era Campaign Guide p. 191 Table Gravity Mines sidebar (printed \"—\")"
         }
-      }
-    }
+      },
+      "p6aHistory": [
+        {
+          "field": "installationKind",
+          "from": null,
+          "to": "consumable-ammunition",
+          "authority": "OWNER_RULING",
+          "basis": "V-P6A-06"
+        }
+      ]
+    },
+    "installationKind": "consumable-ammunition",
+    "emplacementPointsPrinted": "—"
   },
   {
     "id": "harpoon-gun",
@@ -780,7 +865,7 @@
     "damage": "Special",
     "emplacementPoints": 5,
     "availability": "Military",
-    "sizeRestriction": "Colossal or Larger",
+    "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 50000,
     "costType": "flat",
     "description": "Treated as an area attack: choose a 4x4-square (starship scale) area within range and make an attack roll against Reflex Defense 10. On a hit it creates a hyperspace interdiction field; a starship starting its turn in it may not activate its hyperdrive that turn.",
@@ -793,7 +878,16 @@
           "value": "Colossal (Frigate) or Larger",
           "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
         }
-      }
+      },
+      "p6aHistory": [
+        {
+          "field": "sizeRestriction",
+          "from": "Colossal or Larger",
+          "to": "Colossal (Frigate) or Larger",
+          "authority": "PUBLISHED_ERRATA",
+          "basis": "Starships of the Galaxy p. 47 Table 3-5 [PUBLISHED_ERRATA SOTG-E1-TABLE-3-5-FOOTNOTE]"
+        }
+      ]
     },
     "effectVerification": "PRINTED_PROSE",
     "effectSource": {
@@ -855,7 +949,7 @@
     "damage": "5d10x5 (Ion)",
     "emplacementPoints": 3,
     "availability": "Illegal",
-    "sizeRestriction": "Colossal or Larger",
+    "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 12000,
     "costType": "flat",
     "description": "Illegal Hapan triple ion cannon design.",
@@ -867,7 +961,16 @@
           "value": "Colossal (Frigate) or Larger",
           "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
         }
-      }
+      },
+      "p6aHistory": [
+        {
+          "field": "sizeRestriction",
+          "from": "Colossal or Larger",
+          "to": "Colossal (Frigate) or Larger",
+          "authority": "PUBLISHED_ERRATA",
+          "basis": "Starships of the Galaxy p. 47 Table 3-5 [PUBLISHED_ERRATA SOTG-E1-TABLE-3-5-FOOTNOTE]"
+        }
+      ]
     }
   },
   {
@@ -878,7 +981,7 @@
     "damage": "See Ammunition",
     "emplacementPoints": 4,
     "availability": "Military",
-    "sizeRestriction": "Colossal or Larger",
+    "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 5000,
     "costType": "flat",
     "description": "Capital ship mine deployment system.",
@@ -891,7 +994,16 @@
           "value": "Colossal (Frigate) or Larger",
           "correctedFrom": "Starships of the Galaxy: table footnote (1)"
         }
-      }
+      },
+      "p6aHistory": [
+        {
+          "field": "sizeRestriction",
+          "from": "Colossal or Larger",
+          "to": "Colossal (Frigate) or Larger",
+          "authority": "PUBLISHED_ERRATA",
+          "basis": "Starships of the Galaxy p. 47 Table 3-5 [PUBLISHED_ERRATA SOTG-E1-TABLE-3-5-FOOTNOTE]"
+        }
+      ]
     }
   },
   {
@@ -948,8 +1060,19 @@
           "value": "Special",
           "correctedFrom": "Legacy Era Campaign Guide p. 191 Table Gravity Mines sidebar (printed \"—\")"
         }
-      }
-    }
+      },
+      "p6aHistory": [
+        {
+          "field": "installationKind",
+          "from": null,
+          "to": "consumable-ammunition",
+          "authority": "OWNER_RULING",
+          "basis": "V-P6A-06"
+        }
+      ]
+    },
+    "installationKind": "consumable-ammunition",
+    "emplacementPointsPrinted": "—"
   },
   {
     "id": "composite-beam-cannon",
@@ -1316,7 +1439,18 @@
           "value": 0,
           "correctedFrom": "Galaxy at War p. 67 Table 2-7: printed dash: not stated, not zero (printed \"—\")"
         }
-      }
-    }
+      },
+      "p6aHistory": [
+        {
+          "field": "installationKind",
+          "from": null,
+          "to": "consumable-ammunition",
+          "authority": "OWNER_RULING",
+          "basis": "V-P6A-06"
+        }
+      ]
+    },
+    "installationKind": "consumable-ammunition",
+    "emplacementPointsPrinted": "—"
   }
 ]

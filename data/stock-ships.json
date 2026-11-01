@@ -158,7 +158,7 @@
   {
     "name": "Heavy Freighter",
     "size": "Colossal (Frigate)",
-    "strength": 106,
+    "strength": 56,
     "dexterity": 10,
     "intelligence": 12,
     "speedCharacter": null,
@@ -187,6 +187,12 @@
           "original": 56,
           "corrected": 106,
           "basis": "SotG Stock Ships table, printed pp. 53-54"
+        },
+        {
+          "field": "strength",
+          "original": 106,
+          "corrected": 56,
+          "basis": "Starships of the Galaxy Errata 1.0 (Wizards of the Coast, 2008-01-29) (SOTG-E1-STOCK-STRENGTH); reverses the printed-table correction (printed 106)"
         }
       ]
     }
@@ -194,7 +200,7 @@
   {
     "name": "Corvette",
     "size": "Colossal (Frigate)",
-    "strength": 110,
+    "strength": 58,
     "dexterity": 18,
     "intelligence": 16,
     "speedCharacter": null,
@@ -229,6 +235,12 @@
           "original": 5,
           "corrected": 1,
           "basis": "SotG p. 39: a standard stock design generally has 1 unused emplacement point; named-design exceptions (Table 3-2, YT-series 10, Corellian Engineering Corporation 5) do not apply to the generic frame"
+        },
+        {
+          "field": "strength",
+          "original": 110,
+          "corrected": 58,
+          "basis": "Starships of the Galaxy Errata 1.0 (Wizards of the Coast, 2008-01-29) (SOTG-E1-STOCK-STRENGTH); reverses the printed-table correction (printed 110)"
         }
       ]
     }
@@ -236,7 +248,7 @@
   {
     "name": "Frigate",
     "size": "Colossal (Frigate)",
-    "strength": 114,
+    "strength": 60,
     "dexterity": 16,
     "intelligence": 16,
     "speedCharacter": null,
@@ -265,6 +277,12 @@
           "original": 60,
           "corrected": 114,
           "basis": "SotG Stock Ships table, printed pp. 53-54"
+        },
+        {
+          "field": "strength",
+          "original": 114,
+          "corrected": 60,
+          "basis": "Starships of the Galaxy Errata 1.0 (Wizards of the Coast, 2008-01-29) (SOTG-E1-STOCK-STRENGTH); reverses the printed-table correction (printed 114)"
         }
       ]
     }
@@ -272,7 +290,7 @@
   {
     "name": "Cruiser",
     "size": "Colossal (Cruiser)",
-    "strength": 118,
+    "strength": 94,
     "dexterity": 14,
     "intelligence": 16,
     "speedCharacter": null,
@@ -301,6 +319,12 @@
           "original": 94,
           "corrected": 118,
           "basis": "SotG Stock Ships table, printed pp. 53-54"
+        },
+        {
+          "field": "strength",
+          "original": 118,
+          "corrected": 94,
+          "basis": "Starships of the Galaxy Errata 1.0 (Wizards of the Coast, 2008-01-29) (SOTG-E1-STOCK-STRENGTH); reverses the printed-table correction (printed 118)"
         }
       ]
     }
@@ -308,7 +332,7 @@
   {
     "name": "Battlecruiser",
     "size": "Colossal (Cruiser)",
-    "strength": 124,
+    "strength": 100,
     "dexterity": 12,
     "intelligence": 18,
     "speedCharacter": null,
@@ -337,6 +361,12 @@
           "original": 100,
           "corrected": 124,
           "basis": "SotG Stock Ships table, printed pp. 53-54"
+        },
+        {
+          "field": "strength",
+          "original": 124,
+          "corrected": 100,
+          "basis": "Starships of the Galaxy Errata 1.0 (Wizards of the Coast, 2008-01-29) (SOTG-E1-STOCK-STRENGTH); reverses the printed-table correction (printed 124)"
         }
       ]
     }

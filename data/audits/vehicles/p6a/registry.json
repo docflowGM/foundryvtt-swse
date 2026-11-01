@@ -1416,8 +1416,15 @@
     "value": null,
     "resolution": "WEAPON_SECTION_PP_44_48"
    },
-   "evidenceStatus": "MATCH_BUT_OCR_CELL_NOISY_NEEDS_PDF",
-   "differences": [],
+   "evidenceStatus": "OCR_ROW_DIFFERS_FROM_CATALOG",
+   "differences": [
+    {
+     "field": "sizeRestriction",
+     "printed": "Colossal or larger",
+     "catalog": "Colossal (Frigate) or Larger",
+     "note": "table footnote (1): \"Colossal or larger starships only\""
+    }
+   ],
    "noisy": [
     {
      "cell": "damage",
@@ -1440,8 +1447,15 @@
     "value": null,
     "resolution": "WEAPON_SECTION_PP_44_48"
    },
-   "evidenceStatus": "SOURCE_VERIFIED_TEXT",
-   "differences": [],
+   "evidenceStatus": "OCR_ROW_DIFFERS_FROM_CATALOG",
+   "differences": [
+    {
+     "field": "sizeRestriction",
+     "printed": "Colossal or larger",
+     "catalog": "Colossal (Frigate) or Larger",
+     "note": "table footnote (1): \"Colossal or larger starships only\""
+    }
+   ],
    "noisy": [],
    "installable": true,
    "catalogIds": [
@@ -1497,8 +1511,15 @@
     "value": null,
     "resolution": "WEAPON_SECTION_PP_44_48"
    },
-   "evidenceStatus": "SOURCE_VERIFIED_TEXT",
-   "differences": [],
+   "evidenceStatus": "OCR_ROW_DIFFERS_FROM_CATALOG",
+   "differences": [
+    {
+     "field": "sizeRestriction",
+     "printed": "Colossal or larger",
+     "catalog": "Colossal (Frigate) or Larger",
+     "note": "table footnote (1): \"Colossal or larger starships only\""
+    }
+   ],
    "noisy": [],
    "installable": true,
    "catalogIds": [
@@ -1616,8 +1637,15 @@
     "value": null,
     "resolution": "WEAPON_SECTION_PP_44_48"
    },
-   "evidenceStatus": "SOURCE_VERIFIED_TEXT",
-   "differences": [],
+   "evidenceStatus": "OCR_ROW_DIFFERS_FROM_CATALOG",
+   "differences": [
+    {
+     "field": "sizeRestriction",
+     "printed": "Colossal or larger",
+     "catalog": "Colossal (Frigate) or Larger",
+     "note": "table footnote (1): \"Colossal or larger starships only\""
+    }
+   ],
    "noisy": [],
    "installable": true,
    "catalogIds": [
@@ -1635,8 +1663,15 @@
     "value": null,
     "resolution": "WEAPON_SECTION_PP_44_48"
    },
-   "evidenceStatus": "SOURCE_VERIFIED_TEXT",
-   "differences": [],
+   "evidenceStatus": "OCR_ROW_DIFFERS_FROM_CATALOG",
+   "differences": [
+    {
+     "field": "sizeRestriction",
+     "printed": "Colossal or larger",
+     "catalog": "Colossal (Frigate) or Larger",
+     "note": "table footnote (1): \"Colossal or larger starships only\""
+    }
+   ],
    "noisy": [],
    "installable": true,
    "catalogIds": [
@@ -1654,8 +1689,15 @@
     "value": null,
     "resolution": "WEAPON_SECTION_PP_44_48"
    },
-   "evidenceStatus": "SOURCE_VERIFIED_TEXT",
-   "differences": [],
+   "evidenceStatus": "OCR_ROW_DIFFERS_FROM_CATALOG",
+   "differences": [
+    {
+     "field": "sizeRestriction",
+     "printed": "Colossal or larger",
+     "catalog": "Colossal (Frigate) or Larger",
+     "note": "table footnote (1): \"Colossal or larger starships only\""
+    }
+   ],
    "noisy": [],
    "installable": true,
    "catalogIds": [
@@ -1701,8 +1743,15 @@
     "value": null,
     "resolution": "WEAPON_SECTION_PP_44_48"
    },
-   "evidenceStatus": "SOURCE_VERIFIED_TEXT",
-   "differences": [],
+   "evidenceStatus": "OCR_ROW_DIFFERS_FROM_CATALOG",
+   "differences": [
+    {
+     "field": "sizeRestriction",
+     "printed": "Colossal or larger",
+     "catalog": "Colossal (Frigate) or Larger",
+     "note": "table footnote (1): \"Colossal or larger starships only\""
+    }
+   ],
    "noisy": [],
    "installable": true,
    "catalogIds": [
@@ -1910,8 +1959,15 @@
     "value": null,
     "resolution": "WEAPON_SECTION_PP_44_48"
    },
-   "evidenceStatus": "SOURCE_VERIFIED_TEXT",
-   "differences": [],
+   "evidenceStatus": "OCR_ROW_DIFFERS_FROM_CATALOG",
+   "differences": [
+    {
+     "field": "sizeRestriction",
+     "printed": "Colossal or larger",
+     "catalog": "Colossal (Frigate) or Larger",
+     "note": "table footnote (1): \"Colossal or larger starships only\""
+    }
+   ],
    "noisy": [],
    "installable": true,
    "catalogIds": [
@@ -1972,8 +2028,15 @@
     "value": null,
     "resolution": "WEAPON_SECTION_PP_44_48"
    },
-   "evidenceStatus": "SOURCE_VERIFIED_TEXT",
-   "differences": [],
+   "evidenceStatus": "OCR_ROW_DIFFERS_FROM_CATALOG",
+   "differences": [
+    {
+     "field": "sizeRestriction",
+     "printed": "Colossal or larger",
+     "catalog": "Colossal (Frigate) or Larger",
+     "note": "table footnote (1): \"Colossal or larger starships only\""
+    }
+   ],
    "noisy": [],
    "installable": true,
    "catalogIds": [

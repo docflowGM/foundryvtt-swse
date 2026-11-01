@@ -734,6 +734,18 @@
    "table": "3-7",
    "pageResolution": "pdf-table-page"
   },
+  "cloaking-stygium": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
   "cryogenic-chambers": {
    "status": "SOURCE_VERIFIED",
    "evidence": "PDF_REVIEWED_P6A",
@@ -795,6 +807,30 @@
    "pageResolution": "pdf-table-page"
   },
   "extended-range": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "hangar-bay": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "hangar-bay-concealed": {
    "status": "SOURCE_VERIFIED",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",

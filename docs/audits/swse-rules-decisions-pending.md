@@ -621,9 +621,9 @@ Appended. Evidence: `data/audits/vehicles/p6a/print-verified-components-v2.json`
 | Options | (a) adopt the printed value; (b) keep the current catalog value pending published errata. Both are source-related; no recommendation. |
 | Recommended ruling | None |
 | Implementation impact | Reconciliation marks them ERRATA_CHECK_REQUIRED; catalog values unchanged; rows are not source-verified. |
-| Status | `DEFERRED_RULES_REVIEW` |
+| Status | `RESOLVED` |
 | Decision authority | Project owner |
-| Resolution | |
+| Resolution | Owner ruling 2026-11-01: adopt the printed prices (100,000,000 / 10 / 1,000 credits base) as published rules as written; previous catalog values kept in legacy.p6a and p6aHistory. Implemented in the P6A errata checkpoint (data/audits/vehicles/p6a/owner-rulings.json). |
 
 ### V-P6A-06 - Emplacement-point accounting for ammunition printed with a dash
 
@@ -639,9 +639,9 @@ Appended. Evidence: `data/audits/vehicles/p6a/print-verified-components-v2.json`
 | Options | None supported by the sources searched. |
 | Recommended ruling | None |
 | Implementation impact | Catalog EP is null (unknown); the planner refuses them with EP_COST_UNKNOWN. |
-| Status | `DEFERRED_RULES_REVIEW` |
+| Status | `RESOLVED` |
 | Decision authority | Project owner |
-| Resolution | |
+| Resolution | Owner ruling 2026-11-01: a printed dash is not numeric zero; dash-EP ammunition is consumable ammunition loaded into a compatible launcher, not an installed modification. Catalog: installationKind consumable-ammunition, EP null; planner refuses with CONSUMABLE_AMMUNITION_NOT_AN_INSTALLATION. Launcher compatibility, loading and firing remain gated. |
 
 ---
 
@@ -657,3 +657,4 @@ Appended. Evidence: `data/audits/vehicles/p6a/print-verified-components-v2.json`
 - **Revision 8 (2026-10-31):** appended V-P6-06 (failed design check) and the owner's construction-funding direction. No existing entry changed.
 - **Revision 9 (2026-10-31):** appended V-P6A-01..04 (component census). No existing entry changed.
 - **Revision 10 (2026-11-01):** appended V-P6A-05 and V-P6A-06 (PDF source authority). No existing entry changed.
+- **Revision 11 (2026-11-01):** recorded the owner's resolutions of V-P6A-05 and V-P6A-06 (status and Resolution fields only; questions unchanged).

@@ -72,3 +72,27 @@ Input: `data/audits/vehicles/p6a/print-verified-components-v2.json` (172 PDF-rev
 **Certification:** the production `certification.json` is unchanged. A separate overlay `data/vehicle-modifications/certification-p6a.json` marks 115 PDF-matched weapon/accessory/Scum/Galaxy at War/Legacy/Threats rows SOURCE_VERIFIED with book and printed page (never MECHANIC_SPECIFIED); `VehicleInstallationService.loadCatalog` merges it under `certification.json`. Ledger: source listed 181, source verified 171, mechanic specified 39, operationally integrated 37. Readiness: installable 39 (unchanged), combat-usable 0. Weapon rows remain refused by the planner (effect not implemented) and by the attack gate.
 
 **Prose-only additions** (armor-piercing missiles, four capacity expansions, detachable cargo pod, triple cannon alias) remain outside production data: no separate EP or price is printed (V-P6A-01..03).
+
+---
+
+# Checkpoint 3 - Published errata layer and owner rulings (2026-11-01)
+
+**Authority precedence (now encoded):** published source -> published errata -> explicit project-owner ruling -> implementation. An unofficial clarification is never promoted to published-rule authority. Every corrected field records its authority (`PUBLISHED_SOURCE`, `PUBLISHED_ERRATA`, `OWNER_RULING`) in `legacy.p6aHistory`; `legacy.p6a` keeps the original catalog value.
+
+**Errata source:** *Starships of the Galaxy Errata 1.0* (2008-01-29), transcribed by the project owner into `data/audits/vehicles/errata/sotg-errata-1.0.json`. **The errata text could not be checked in this session** (the hosting sites are blocked by the session's network policy); the file records `sessionVerification: NOT_VERIFIED_IN_SESSION`. The generators also check that each errata "printed" value equals the value the PDF/OCR shows before correcting it.
+
+| Errata | Before | After | Records |
+|---|---|---|---|
+| Table 3-5 footnote (1) | Colossal or larger (P6A checkpoint 1, from the printed footnote) | Colossal (frigate) or larger | 10 weapons; this **reverses** the checkpoint-1 change and restores the original catalog value |
+| Extended range EP | 2 (checkpoint 2, from the printed table) | 1 | 1 accessory; also a reversal |
+| Stock-frame Strength | 106 / 110 / 114 / 118 / 124 | 56 / 58 / 60 / 94 / 100 | heavy freighter, corvette, frigate, cruiser, battlecruiser (`stock-frames.json`); legacy `data/stock-ships.json` returns to its original values (the P2/P5 printed-table change is reversed in its provenance) |
+
+**Stock-frame Strength consumers checked:** `previewFrame` (Fortitude = 10 + Str modifier; Damage Threshold = Fortitude + size modifier) and `buildCustomVehicleActorData` (attributes) via `stock-frames.json`; the retired `VehicleFactory` stock-ship path and the GM approvals editor via `data/stock-ships.json`. Effect on new designs: heavy freighter Fort 58 -> 33, DT 158 -> 133; corvette 60 -> 34 / 160 -> 134; frigate 62 -> 35 / 162 -> 135; cruiser 64 -> 52 / 264 -> 252; battlecruiser 67 -> 55 / 267 -> 255. **Existing custom Actors and funded construction projects are not migrated:** their sealed records keep the statistics derived at approval (no world migration). A GM should re-check any custom ship built from these five frames before this checkpoint.
+
+**Owner rulings:** V-P6A-05 adopts the printed SotG prices (stygium cloaking device 100,000,000; hangar bay 10; concealed hangar bay 1,000 credits base). V-P6A-06 marks dash-EP ammunition (ion bomb, gravity mines standard/magnetic, glowing defoliator shell) as `installationKind: consumable-ammunition` with EP unknown; the planner refuses to install it (`CONSUMABLE_AMMUNITION_NOT_AN_INSTALLATION`). Launcher compatibility, quantity, loading and firing stay gated.
+
+**Reviewed, not changed:** the owner reports errata on the gravity well projector area and Y-wing shield ratings, but their wording is not in the repository. Current data: gravity well projector 4x4-square area, attack vs Reflex 10 (SotG prose); Y-wing records Core Rulebook p. 178 SR 25, Clone Wars Campaign Guide p. 173 BTL-S1 SR 10, SotG p. 158 BTL-S3 SR 10. The 429 published vehicle records are untouched; both items are listed as `REVIEW_PENDING_WORDING` in the errata file.
+
+**Errata for the other books:** not searched. The errata sources are outside the session's network allowance; the registry is not declared authoritative for errata until they are reviewed.
+
+**Result:** 187 records: 174 matched (source + errata + rulings), 7 unresolved (Clone Wars / Rebellion Era weapon prose without purchase tables), 6 not found as installable options, 0 corrections pending. Installable 39 and combat-usable 0 unchanged.

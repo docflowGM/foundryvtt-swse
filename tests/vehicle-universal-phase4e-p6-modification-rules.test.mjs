@@ -150,11 +150,12 @@ test('weapon table transcription is machine-checked; footnote corrections (P6A) 
   const w = evidence.catalogComparison.rows.filter(r => r.table === 'weapon');
   assert.ok(w.length >= 40);
   const turbo = w.find(r => r.catalogId === 'turbolaser-heavy');
-  // P6A applied the footnote (1) size restriction, keeping the old value as legacy evidence
-  assert.equal(turbo.status, 'SOURCE_VERIFIED_TEXT');
+  // the OCR shows the printed footnote; SotG Errata 1.0 corrects it to Colossal (frigate) or larger (P6A errata layer)
+  assert.equal(turbo.status, 'OCR_ROW_DIFFERS_FROM_CATALOG');
+  assert.equal(turbo.differences[0].printed, 'Colossal or larger');
   const row = JSON.parse(readFileSync('data/vehicle-modifications/weapon-systems.json', 'utf8')).find(r => r.id === 'turbolaser-heavy');
-  assert.equal(row.sizeRestriction, 'Colossal or Larger');
-  assert.equal(row.legacy.p6a.sizeRestriction.value, 'Colossal (Frigate) or Larger');
+  assert.equal(row.sizeRestriction, 'Colossal (Frigate) or Larger');
+  assert.equal(row.legacy.p6aHistory.at(-1).authority, 'PUBLISHED_ERRATA');
   assert.equal(Object.keys(overlay.rows).includes('turbolaser-heavy'), false, 'weapon rows stay uncertified');
 });
 
@@ -232,17 +233,19 @@ test('unused EP table is reproducible', () => {
 });
 
 // ---- legacy stock-ships.json corrections ----
-test('stock-ships.json now matches the published Stock Ships tables field by field', async () => {
+test('stock-ships.json matches the published Stock Ships tables with Errata 1.0 applied', async () => {
   const audit = await import('../tools/audits/vehicles/audit-legacy-stock-ships.mjs');
   const rows = audit.compareFrames();
   assert.equal(rows.filter(r => r.status === 'DISCREPANCY').length, 0, JSON.stringify(rows.filter(r => r.status === 'DISCREPANCY')));
   const legacy = JSON.parse(readFileSync('data/stock-ships.json', 'utf8'));
   const by = Object.fromEntries(legacy.map(s => [s.name, s]));
-  assert.deepEqual(['Heavy Freighter', 'Corvette', 'Frigate', 'Cruiser', 'Battlecruiser'].map(n => by[n].strength), [106, 110, 114, 118, 124]);
+  // SotG Errata 1.0 (2008-01-29) supersedes the printed table: the original lower scores are restored
+  assert.deepEqual(['Heavy Freighter', 'Corvette', 'Frigate', 'Cruiser', 'Battlecruiser'].map(n => by[n].strength), [56, 58, 60, 94, 100]);
   assert.equal(by['Light Freighter'].unusedEmplacementPoints, 1);
   assert.equal(by['Corvette'].unusedEmplacementPoints, 1);
   assert.equal(by['Light Freighter'].provenance.corrections.find(c => c.field === 'unusedEmplacementPoints').original, 10);
-  assert.deepEqual(by['Battlecruiser'].provenance.corrections.map(c => [c.field, c.original, c.corrected]), [['strength', 100, 124]]);
+  assert.deepEqual(by['Battlecruiser'].provenance.corrections.map(c => [c.field, c.original, c.corrected]), [['strength', 100, 124], ['strength', 124, 100]]);
+  assert.match(by['Battlecruiser'].provenance.corrections[1].basis, /Errata 1\.0/);
 });
 
 test('the field-by-field comparison detects a regression of any corrected value', async () => {
@@ -250,12 +253,12 @@ test('the field-by-field comparison detects a regression of any corrected value'
   const { mkdtempSync, writeFileSync } = await import('node:fs');
   const { tmpdir } = await import('node:os');
   const legacy = JSON.parse(readFileSync('data/stock-ships.json', 'utf8'));
-  legacy.find(s => s.name === 'Frigate').strength = 60;
+  legacy.find(s => s.name === 'Frigate').strength = 114; // the uncorrected printed value
   const file = `${mkdtempSync(`${tmpdir()}/stock-`)}/stock.json`;
   writeFileSync(file, JSON.stringify(legacy));
   const out = execFileSync(process.execPath, ['tools/audits/vehicles/audit-legacy-stock-ships.mjs', '--json'], { env: { ...process.env, LEGACY_STOCK_SHIPS_FILE: file }, encoding: 'utf8' });
   const bad = JSON.parse(out).rows.filter(r => r.status === 'DISCREPANCY');
-  assert.deepEqual(bad.map(r => [r.frame, r.field, r.legacy, r.published]), [['Frigate', 'strength', 60, 114]]);
+  assert.deepEqual(bad.map(r => [r.frame, r.field, r.legacy, r.published]), [['Frigate', 'strength', 114, 60]]);
 });
 
 // ---- catalog effect text ----

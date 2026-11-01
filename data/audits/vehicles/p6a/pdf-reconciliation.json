@@ -3,10 +3,9 @@
  "note": "Catalog vs independently PDF-reviewed printed tables/prose. MATCHED = every printed cell equals the catalog. Dash = not stated (null), never zero.",
  "counts": {
   "catalog": 187,
-  "MATCHED_CANONICAL": 171,
+  "MATCHED_CANONICAL": 174,
   "NOT_FOUND_IN_SOURCE": 6,
   "UNRESOLVED_SOURCE": 7,
-  "CORRECTION_REQUIRED": 3,
   "pdfRows": 172,
   "pdfRowsUnmappedToCatalog": 0
  },
@@ -24,7 +23,8 @@
     "table": "3-3",
     "row": 1,
     "printedName": "Atmospheric thruster"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "atmospheric-thrusters-advanced",
@@ -39,7 +39,8 @@
     "table": "3-3",
     "row": 2,
     "printedName": "Atmospheric thruster, advanced"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "combat-thrusters",
@@ -54,7 +55,8 @@
     "table": "3-3",
     "row": 3,
     "printedName": "Combat thruster"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "hyperdrive-075",
@@ -69,7 +71,8 @@
     "table": "3-3",
     "row": 4,
     "printedName": "Hyperdrive, class .75"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "hyperdrive-1",
@@ -84,7 +87,8 @@
     "table": "3-3",
     "row": 5,
     "printedName": "Hyperdrive, class 1"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "hyperdrive-15",
@@ -99,7 +103,8 @@
     "table": "3-3",
     "row": 6,
     "printedName": "Hyperdrive, class 1.5"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "hyperdrive-2",
@@ -114,7 +119,8 @@
     "table": "3-3",
     "row": 7,
     "printedName": "Hyperdrive, class 2"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "hyperdrive-3",
@@ -129,7 +135,8 @@
     "table": "3-3",
     "row": 8,
     "printedName": "Hyperdrive, class 3"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "hyperdrive-4",
@@ -144,7 +151,8 @@
     "table": "3-3",
     "row": 9,
     "printedName": "Hyperdrive, class 4"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "hyperdrive-5",
@@ -159,7 +167,8 @@
     "table": "3-3",
     "row": 10,
     "printedName": "Hyperdrive, class 5"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "hyperdrive-6",
@@ -174,7 +183,8 @@
     "table": "3-3",
     "row": 11,
     "printedName": "Hyperdrive, class 6"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "hyperdrive-8",
@@ -189,7 +199,8 @@
     "table": "3-3",
     "row": 12,
     "printedName": "Hyperdrive, class 8"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "hyperdrive-10",
@@ -204,7 +215,8 @@
     "table": "3-3",
     "row": 13,
     "printedName": "Hyperdrive, class 10"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "hyperdrive-15-class",
@@ -219,7 +231,8 @@
     "table": "3-3",
     "row": 14,
     "printedName": "Hyperdrive, class 15"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "maneuvering-jets-2",
@@ -234,7 +247,8 @@
     "table": "3-3",
     "row": 15,
     "printedName": "Maneuvering jets +2"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "maneuvering-jets-4",
@@ -249,7 +263,8 @@
     "table": "3-3",
     "row": 16,
     "printedName": "Maneuvering jets +4"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "maneuvering-jets-6",
@@ -264,7 +279,8 @@
     "table": "3-3",
     "row": 17,
     "printedName": "Maneuvering jets +6"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "navicomputer-limited",
@@ -279,7 +295,8 @@
     "table": "3-3",
     "row": 18,
     "printedName": "Navicomputer, limited"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "navicomputer",
@@ -294,7 +311,8 @@
     "table": "3-3",
     "row": 19,
     "printedName": "Navicomputer"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "navicomputer-advanced",
@@ -309,7 +327,8 @@
     "table": "3-3",
     "row": 20,
     "printedName": "Navicomputer, advanced"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "sublight-accelerator",
@@ -324,7 +343,8 @@
     "table": "3-3",
     "row": 21,
     "printedName": "SubLight Accelerator Motor"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "sublight-drive-1",
@@ -339,7 +359,8 @@
     "table": "3-3",
     "row": 22,
     "printedName": "Sublight drive (speed 1 square)"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "sublight-drive-2",
@@ -354,7 +375,8 @@
     "table": "3-3",
     "row": 23,
     "printedName": "Sublight drive (speed 2 squares)"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "sublight-drive-3",
@@ -369,7 +391,8 @@
     "table": "3-3",
     "row": 24,
     "printedName": "Sublight drive (speed 3 squares)"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "sublight-drive-4",
@@ -384,7 +407,8 @@
     "table": "3-3",
     "row": 25,
     "printedName": "Sublight drive (speed 4 squares)"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "sublight-drive-5",
@@ -399,7 +423,8 @@
     "table": "3-3",
     "row": 26,
     "printedName": "Sublight drive (speed 5 squares)"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "sublight-drive-6",
@@ -414,7 +439,8 @@
     "table": "3-3",
     "row": 27,
     "printedName": "Sublight drive (speed 6 squares)"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "armor-1",
@@ -429,7 +455,8 @@
     "table": "3-4",
     "row": 1,
     "printedName": "Armor, +1"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "armor-2",
@@ -444,7 +471,8 @@
     "table": "3-4",
     "row": 2,
     "printedName": "Armor, +2"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "armor-3",
@@ -459,7 +487,8 @@
     "table": "3-4",
     "row": 3,
     "printedName": "Armor, +3"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "armor-4",
@@ -474,7 +503,8 @@
     "table": "3-4",
     "row": 4,
     "printedName": "Armor, +4"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "jamming-suite",
@@ -489,7 +519,8 @@
     "table": "3-4",
     "row": 5,
     "printedName": "Jamming suite"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "jamming-array",
@@ -504,7 +535,8 @@
     "table": "3-4",
     "row": 6,
     "printedName": "Jamming array"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "regenerating-shields",
@@ -519,7 +551,8 @@
     "table": "3-4",
     "row": 7,
     "printedName": "Regenerating shields"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "reinforced-bulkheads-10",
@@ -534,7 +567,8 @@
     "table": "3-4",
     "row": 8,
     "printedName": "Reinforced bulkheads +10%"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "reinforced-bulkheads-20",
@@ -549,7 +583,8 @@
     "table": "3-4",
     "row": 9,
     "printedName": "Reinforced bulkheads +20%"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "reinforced-bulkheads-30",
@@ -564,7 +599,8 @@
     "table": "3-4",
     "row": 10,
     "printedName": "Reinforced bulkheads +30%"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "shields-10",
@@ -579,7 +615,8 @@
     "table": "3-4",
     "row": 11,
     "printedName": "Shields, SR 10"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "shields-15",
@@ -594,7 +631,8 @@
     "table": "3-4",
     "row": 12,
     "printedName": "Shields, SR 15"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "shields-20",
@@ -609,7 +647,8 @@
     "table": "3-4",
     "row": 13,
     "printedName": "Shields, SR 20"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "shields-25",
@@ -624,7 +663,8 @@
     "table": "3-4",
     "row": 14,
     "printedName": "Shields, SR 25"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "shields-30",
@@ -639,7 +679,8 @@
     "table": "3-4",
     "row": 15,
     "printedName": "Shields, SR 30"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "shields-35",
@@ -654,7 +695,8 @@
     "table": "3-4",
     "row": 16,
     "printedName": "Shields, SR 35"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "shields-40",
@@ -669,7 +711,8 @@
     "table": "3-4",
     "row": 17,
     "printedName": "Shields, SR 40"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "shields-45",
@@ -684,7 +727,8 @@
     "table": "3-4",
     "row": 18,
     "printedName": "Shields, SR 45"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "shields-50",
@@ -699,7 +743,8 @@
     "table": "3-4",
     "row": 19,
     "printedName": "Shields, SR 50"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "shields-55",
@@ -714,7 +759,8 @@
     "table": "3-4",
     "row": 20,
     "printedName": "Shields, SR 55"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "shields-60",
@@ -729,7 +775,8 @@
     "table": "3-4",
     "row": 21,
     "printedName": "Shields, SR 60"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "shields-70",
@@ -744,7 +791,8 @@
     "table": "3-4",
     "row": 22,
     "printedName": "Shields, SR 70"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "shields-80",
@@ -759,7 +807,8 @@
     "table": "3-4",
     "row": 23,
     "printedName": "Shields, SR 80"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "shields-90",
@@ -774,7 +823,8 @@
     "table": "3-4",
     "row": 24,
     "printedName": "Shields, SR 90"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "shields-100",
@@ -789,7 +839,8 @@
     "table": "3-4",
     "row": 25,
     "printedName": "Shields, SR 100"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "shields-125",
@@ -804,7 +855,8 @@
     "table": "3-4",
     "row": 26,
     "printedName": "Shields, SR 125"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "shields-150",
@@ -819,7 +871,8 @@
     "table": "3-4",
     "row": 27,
     "printedName": "Shields, SR 150"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "shields-175",
@@ -834,7 +887,8 @@
     "table": "3-4",
     "row": 28,
     "printedName": "Shields, SR 175"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "shields-200",
@@ -849,7 +903,8 @@
     "table": "3-4",
     "row": 29,
     "printedName": "Shields, SR 200"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "anti-boarding-systems",
@@ -864,7 +919,8 @@
     "table": "2-10",
     "row": 2,
     "printedName": "Anti-boarding systems"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "com-jammers",
@@ -879,7 +935,8 @@
     "table": "2-10",
     "row": 9,
     "printedName": "Com jammers"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "reinforced-keel",
@@ -894,7 +951,8 @@
     "table": "2-10",
     "row": 25,
     "printedName": "Reinforced keel"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "reinforced-keel-boarding",
@@ -909,7 +967,8 @@
     "table": "2-10",
     "row": 26,
     "printedName": "Reinforced keel, boarding"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "security-bracing",
@@ -924,7 +983,8 @@
     "table": "2-10",
     "row": 27,
     "printedName": "Security bracing"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "autoblaster",
@@ -939,7 +999,8 @@
     "table": "3-5",
     "row": 1,
     "printedName": "Autoblaster"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "blaster-cannon-light",
@@ -954,7 +1015,8 @@
     "table": "3-5",
     "row": 2,
     "printedName": "Blaster cannon, light"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "blaster-cannon-medium",
@@ -969,7 +1031,8 @@
     "table": "3-5",
     "row": 3,
     "printedName": "Blaster cannon, medium"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "blaster-cannon-heavy",
@@ -984,7 +1047,8 @@
     "table": "3-5",
     "row": 4,
     "printedName": "Blaster cannon, heavy"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "cannon-double",
@@ -999,7 +1063,8 @@
     "table": "3-5",
     "row": 5,
     "printedName": "Cannon, double"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "cannon-quad",
@@ -1014,7 +1079,8 @@
     "table": "3-5",
     "row": 6,
     "printedName": "Cannon, quad"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "cannon-enhancement",
@@ -1029,7 +1095,8 @@
     "table": "3-5",
     "row": 7,
     "printedName": "Cannon enhancements"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "cannon-enhancement-advanced",
@@ -1044,7 +1111,8 @@
     "table": "3-5",
     "row": 8,
     "printedName": "Cannon enhancements, advanced"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "concussion-missile-launcher-light",
@@ -1059,7 +1127,8 @@
     "table": "3-5",
     "row": 12,
     "printedName": "Concussion missile launcher, light"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "concussion-missile-light",
@@ -1074,7 +1143,8 @@
     "table": "3-5",
     "row": 9,
     "printedName": "Concussion missile, light"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "concussion-missile-launcher-medium",
@@ -1089,7 +1159,8 @@
     "table": "3-5",
     "row": 13,
     "printedName": "Concussion missile launcher, medium"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "concussion-missile-medium",
@@ -1104,7 +1175,8 @@
     "table": "3-5",
     "row": 10,
     "printedName": "Concussion missile, medium"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "concussion-missile-launcher-heavy",
@@ -1119,6 +1191,12 @@
     "table": "3-5",
     "row": 14,
     "printedName": "Concussion missile launcher, heavy"
+   },
+   "authority": "PUBLISHED_ERRATA",
+   "errata": {
+    "id": "SOTG-E1-TABLE-3-5-FOOTNOTE",
+    "field": "sizeRestriction",
+    "printed": "Colossal or larger starships only"
    }
   },
   {
@@ -1134,6 +1212,12 @@
     "table": "3-5",
     "row": 11,
     "printedName": "Concussion missile, heavy"
+   },
+   "authority": "PUBLISHED_ERRATA",
+   "errata": {
+    "id": "SOTG-E1-TABLE-3-5-FOOTNOTE",
+    "field": "sizeRestriction",
+    "printed": "Colossal or larger starships only"
    }
   },
   {
@@ -1149,7 +1233,8 @@
     "table": "3-5",
     "row": 23,
     "printedName": "Ion cannon, light"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "ion-cannon-medium",
@@ -1164,7 +1249,8 @@
     "table": "3-5",
     "row": 24,
     "printedName": "Ion cannon, medium"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "ion-cannon-heavy",
@@ -1179,6 +1265,12 @@
     "table": "3-5",
     "row": 25,
     "printedName": "Ion cannon, heavy"
+   },
+   "authority": "PUBLISHED_ERRATA",
+   "errata": {
+    "id": "SOTG-E1-TABLE-3-5-FOOTNOTE",
+    "field": "sizeRestriction",
+    "printed": "Colossal or larger starships only"
    }
   },
   {
@@ -1194,7 +1286,8 @@
     "table": "3-5",
     "row": 27,
     "printedName": "Laser cannon, light"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "laser-cannon-medium",
@@ -1209,7 +1302,8 @@
     "table": "3-5",
     "row": 28,
     "printedName": "Laser cannon, medium"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "laser-cannon-heavy",
@@ -1224,7 +1318,8 @@
     "table": "3-5",
     "row": 29,
     "printedName": "Laser cannon, heavy"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "proton-torpedo-launcher",
@@ -1239,7 +1334,8 @@
     "table": "3-5",
     "row": 32,
     "printedName": "Proton torpedo launcher"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "proton-torpedo",
@@ -1254,7 +1350,8 @@
     "table": "3-5",
     "row": 31,
     "printedName": "Proton torpedo"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "turbolaser-light",
@@ -1269,6 +1366,12 @@
     "table": "3-5",
     "row": 41,
     "printedName": "Turbolaser, light"
+   },
+   "authority": "PUBLISHED_ERRATA",
+   "errata": {
+    "id": "SOTG-E1-TABLE-3-5-FOOTNOTE",
+    "field": "sizeRestriction",
+    "printed": "Colossal or larger starships only"
    }
   },
   {
@@ -1284,6 +1387,12 @@
     "table": "3-5",
     "row": 42,
     "printedName": "Turbolaser, medium"
+   },
+   "authority": "PUBLISHED_ERRATA",
+   "errata": {
+    "id": "SOTG-E1-TABLE-3-5-FOOTNOTE",
+    "field": "sizeRestriction",
+    "printed": "Colossal or larger starships only"
    }
   },
   {
@@ -1299,6 +1408,12 @@
     "table": "3-5",
     "row": 43,
     "printedName": "Turbolaser, heavy"
+   },
+   "authority": "PUBLISHED_ERRATA",
+   "errata": {
+    "id": "SOTG-E1-TABLE-3-5-FOOTNOTE",
+    "field": "sizeRestriction",
+    "printed": "Colossal or larger starships only"
    }
   },
   {
@@ -1314,7 +1429,8 @@
     "table": "3-5",
     "row": 40,
     "printedName": "Tractor beam"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "point-defense",
@@ -1329,6 +1445,12 @@
     "table": "3-5",
     "row": 30,
     "printedName": "Point-defense weapon"
+   },
+   "authority": "PUBLISHED_ERRATA",
+   "errata": {
+    "id": "SOTG-E1-TABLE-3-5-FOOTNOTE",
+    "field": "sizeRestriction",
+    "printed": "Colossal or larger starships only"
    }
   },
   {
@@ -1344,7 +1466,8 @@
     "table": "3-5",
     "row": 17,
     "printedName": "Fire-linked weapon, 2"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "fire-linked-4",
@@ -1359,7 +1482,8 @@
     "table": "3-5",
     "row": 18,
     "printedName": "Fire-linked weapon, 4"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "space-mine-launcher",
@@ -1374,7 +1498,8 @@
     "table": "3-5",
     "row": 38,
     "printedName": "Space mine launcher"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "space-mine-standard",
@@ -1389,7 +1514,8 @@
     "table": "3-5",
     "row": 35,
     "printedName": "Space mine, standard"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "ion-bomb-rack",
@@ -1404,7 +1530,8 @@
     "table": "3-5",
     "row": 22,
     "printedName": "Ion bomb rack"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "ion-bomb",
@@ -1419,7 +1546,9 @@
     "table": "3-5",
     "row": 21,
     "printedName": "Ion bomb"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE",
+   "ownerRuling": "V-P6A-06"
   },
   {
    "catalogId": "shieldbuster-torpedo-launcher",
@@ -1434,7 +1563,8 @@
     "table": "3-5",
     "row": 34,
     "printedName": "Shieldbuster torpedo launcher"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "shieldbuster-torpedo",
@@ -1449,7 +1579,8 @@
     "table": "3-5",
     "row": 33,
     "printedName": "Shieldbuster torpedo"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "discord-missile-launcher",
@@ -1492,7 +1623,8 @@
     "table": "Gravity Mines sidebar",
     "row": 1,
     "printedName": "Gravity mine launcher"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "gravity-mine-standard",
@@ -1507,7 +1639,9 @@
     "table": "Gravity Mines sidebar",
     "row": 2,
     "printedName": "Gravity mine, standard"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE",
+   "ownerRuling": "V-P6A-06"
   },
   {
    "catalogId": "harpoon-gun",
@@ -1531,7 +1665,8 @@
     "table": "3-5",
     "row": 16,
     "printedName": "Droid jammer"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "gravity-well-projector",
@@ -1546,6 +1681,12 @@
     "table": "3-5",
     "row": 20,
     "printedName": "Gravity well projector"
+   },
+   "authority": "PUBLISHED_ERRATA",
+   "errata": {
+    "id": "SOTG-E1-TABLE-3-5-FOOTNOTE",
+    "field": "sizeRestriction",
+    "printed": "Colossal or larger starships only"
    }
   },
   {
@@ -1561,7 +1702,8 @@
     "table": "3-5",
     "row": 15,
     "printedName": "Docking gun"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "fire-linked-optional",
@@ -1576,7 +1718,8 @@
     "table": "3-5",
     "row": 19,
     "printedName": "Fire-linked weapon, optional"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "ion-cannon-hapan-triple",
@@ -1591,6 +1734,12 @@
     "table": "3-5",
     "row": 26,
     "printedName": "Ion cannon, Hapan triple"
+   },
+   "authority": "PUBLISHED_ERRATA",
+   "errata": {
+    "id": "SOTG-E1-TABLE-3-5-FOOTNOTE",
+    "field": "sizeRestriction",
+    "printed": "Colossal or larger starships only"
    }
   },
   {
@@ -1606,6 +1755,12 @@
     "table": "3-5",
     "row": 39,
     "printedName": "Space mine launcher, heavy"
+   },
+   "authority": "PUBLISHED_ERRATA",
+   "errata": {
+    "id": "SOTG-E1-TABLE-3-5-FOOTNOTE",
+    "field": "sizeRestriction",
+    "printed": "Colossal or larger starships only"
    }
   },
   {
@@ -1621,7 +1776,8 @@
     "table": "3-5",
     "row": 36,
     "printedName": "Space mine, advanced"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "space-mine-heavy",
@@ -1636,7 +1792,8 @@
     "table": "3-5",
     "row": 37,
     "printedName": "Space mine, heavy"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "gravity-mine-magnetic",
@@ -1651,7 +1808,9 @@
     "table": "Gravity Mines sidebar",
     "row": 3,
     "printedName": "Gravity mine, magnetic"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE",
+   "ownerRuling": "V-P6A-06"
   },
   {
    "catalogId": "composite-beam-cannon",
@@ -1828,7 +1987,8 @@
     "table": "2-7",
     "row": 1,
     "printedName": "Chaff gun"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "defoliator-launcher",
@@ -1843,7 +2003,8 @@
     "table": "2-7",
     "row": 2,
     "printedName": "Glowing defoliator launcher"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "defoliator-shell",
@@ -1858,7 +2019,9 @@
     "table": "2-7",
     "row": 3,
     "printedName": "Glowing defoliator shell"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE",
+   "ownerRuling": "V-P6A-06"
   },
   {
    "catalogId": "cargo-jettison",
@@ -1873,7 +2036,8 @@
     "table": "3-7",
     "row": 1,
     "printedName": "Cargo jettison system"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "cargo-pod-light",
@@ -1888,7 +2052,8 @@
     "table": "3-7",
     "row": 2,
     "printedName": "Cargo pod, light"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "cargo-pod-medium",
@@ -1903,7 +2068,8 @@
     "table": "3-7",
     "row": 3,
     "printedName": "Cargo pod, medium"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "cargo-pod-heavy",
@@ -1918,7 +2084,8 @@
     "table": "3-7",
     "row": 4,
     "printedName": "Cargo pod, heavy"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "cloaking-hibridium",
@@ -1933,13 +2100,14 @@
     "table": "3-7",
     "row": 5,
     "printedName": "Cloaking device, hibridium"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "cloaking-stygium",
    "catalogFile": "accessories",
    "catalogName": "Cloaking Device, Stygium",
-   "disposition": "CORRECTION_REQUIRED",
+   "disposition": "MATCHED_CANONICAL",
    "evidence": "PDF_VISUAL_REVIEW",
    "source": {
     "book": "Starships of the Galaxy",
@@ -1949,21 +2117,8 @@
     "row": 6,
     "printedName": "Cloaking device, stygium"
    },
-   "differences": [
-    {
-     "field": "cost",
-     "catalog": {
-      "cost": 100000,
-      "costType": "base"
-     },
-     "printed": {
-      "cost": 100000000,
-      "costType": "base"
-     },
-     "printedText": "100000000 base"
-    }
-   ],
-   "applyStatus": "ERRATA_CHECK_REQUIRED"
+   "authority": "OWNER_RULING",
+   "ownerRuling": "V-P6A-05"
   },
   {
    "catalogId": "cryogenic-chambers",
@@ -1978,7 +2133,8 @@
     "table": "3-7",
     "row": 7,
     "printedName": "Cryogenic chambers"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "docking-clamps",
@@ -1993,7 +2149,8 @@
     "table": "3-7",
     "row": 8,
     "printedName": "Docking clamp"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "droid-repair-team",
@@ -2008,7 +2165,8 @@
     "table": "3-7",
     "row": 9,
     "printedName": "Droid repair team"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "escape-pod-small",
@@ -2023,7 +2181,8 @@
     "table": "3-7",
     "row": 10,
     "printedName": "Escape pod, small lifeboat"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "escape-pod-large",
@@ -2038,7 +2197,8 @@
     "table": "3-7",
     "row": 11,
     "printedName": "Escape pod, large lifeboat"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "extended-range",
@@ -2053,13 +2213,19 @@
     "table": "3-7",
     "row": 12,
     "printedName": "Extended range"
+   },
+   "authority": "PUBLISHED_ERRATA",
+   "errata": {
+    "id": "SOTG-E1-EXTENDED-RANGE-EP",
+    "field": "emplacementPoints",
+    "printed": 2
    }
   },
   {
    "catalogId": "hangar-bay",
    "catalogFile": "accessories",
    "catalogName": "Hangar Bay",
-   "disposition": "CORRECTION_REQUIRED",
+   "disposition": "MATCHED_CANONICAL",
    "evidence": "PDF_VISUAL_REVIEW",
    "source": {
     "book": "Starships of the Galaxy",
@@ -2069,27 +2235,14 @@
     "row": 13,
     "printedName": "Hangar bay"
    },
-   "differences": [
-    {
-     "field": "cost",
-     "catalog": {
-      "cost": 10000,
-      "costType": "base"
-     },
-     "printed": {
-      "cost": 10,
-      "costType": "base"
-     },
-     "printedText": "10 base"
-    }
-   ],
-   "applyStatus": "ERRATA_CHECK_REQUIRED"
+   "authority": "OWNER_RULING",
+   "ownerRuling": "V-P6A-05"
   },
   {
    "catalogId": "hangar-bay-concealed",
    "catalogFile": "accessories",
    "catalogName": "Hangar Bay, Concealed",
-   "disposition": "CORRECTION_REQUIRED",
+   "disposition": "MATCHED_CANONICAL",
    "evidence": "PDF_VISUAL_REVIEW",
    "source": {
     "book": "Starships of the Galaxy",
@@ -2099,21 +2252,8 @@
     "row": 14,
     "printedName": "Hangar bay, concealed"
    },
-   "differences": [
-    {
-     "field": "cost",
-     "catalog": {
-      "cost": 100000,
-      "costType": "base"
-     },
-     "printed": {
-      "cost": 1000,
-      "costType": "base"
-     },
-     "printedText": "1000 base"
-    }
-   ],
-   "applyStatus": "ERRATA_CHECK_REQUIRED"
+   "authority": "OWNER_RULING",
+   "ownerRuling": "V-P6A-05"
   },
   {
    "catalogId": "holonet-transceiver",
@@ -2128,7 +2268,8 @@
     "table": "3-7",
     "row": 15,
     "printedName": "HoloNet transceiver"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "hyper-transceiver",
@@ -2143,7 +2284,8 @@
     "table": "3-7",
     "row": 16,
     "printedName": "Hypertransceiver"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "luxury-basic",
@@ -2158,7 +2300,8 @@
     "table": "3-7",
     "row": 17,
     "printedName": "Luxury upgrade, basic"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "luxury-advanced",
@@ -2173,7 +2316,8 @@
     "table": "3-7",
     "row": 18,
     "printedName": "Luxury upgrade, advanced"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "luxury-extreme",
@@ -2188,7 +2332,8 @@
     "table": "3-7",
     "row": 19,
     "printedName": "Luxury upgrade, extreme"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "medical-suite",
@@ -2203,7 +2348,8 @@
     "table": "3-7",
     "row": 20,
     "printedName": "Medical suite"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "passenger-seating",
@@ -2218,7 +2364,8 @@
     "table": "3-7",
     "row": 21,
     "printedName": "Passenger seating"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "passenger-quarters",
@@ -2233,7 +2380,8 @@
     "table": "3-7",
     "row": 22,
     "printedName": "Passenger quarters"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "sensor-array-2",
@@ -2248,7 +2396,8 @@
     "table": "3-7",
     "row": 23,
     "printedName": "Sensor array computer +2"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "sensor-array-4",
@@ -2263,7 +2412,8 @@
     "table": "3-7",
     "row": 24,
     "printedName": "Sensor array computer +4"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "sensor-array-6",
@@ -2278,7 +2428,8 @@
     "table": "3-7",
     "row": 25,
     "printedName": "Sensor array computer +6"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "sensor-enhancement",
@@ -2293,7 +2444,8 @@
     "table": "3-7",
     "row": 26,
     "printedName": "Sensor enhancement package"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "slave-circuits-basic",
@@ -2308,7 +2460,8 @@
     "table": "3-7",
     "row": 27,
     "printedName": "Slave circuits, basic"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "slave-circuits-advanced",
@@ -2323,7 +2476,8 @@
     "table": "3-7",
     "row": 28,
     "printedName": "Slave circuits, advanced"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "slave-circuits-recall",
@@ -2338,7 +2492,8 @@
     "table": "3-7",
     "row": 29,
     "printedName": "Slave circuits, recall"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "smuggler-compartments",
@@ -2353,7 +2508,8 @@
     "table": "3-7",
     "row": 30,
     "printedName": "Smuggler's compartments"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "transponder-iff",
@@ -2368,7 +2524,8 @@
     "table": "3-7",
     "row": 31,
     "printedName": "Transponder, IFF"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "transponder-masked",
@@ -2383,7 +2540,8 @@
     "table": "3-7",
     "row": 32,
     "printedName": "Transponder, masked"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "transponder-disguised-1",
@@ -2398,7 +2556,8 @@
     "table": "3-7",
     "row": 33,
     "printedName": "Transponder, disguised (1)"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "transponder-disguised-2",
@@ -2413,7 +2572,8 @@
     "table": "3-7",
     "row": 34,
     "printedName": "Transponder, disguised (2)"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "transponder-disguised-3",
@@ -2428,7 +2588,8 @@
     "table": "3-7",
     "row": 35,
     "printedName": "Transponder, disguised (3)"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "amphibious-seals",
@@ -2443,7 +2604,8 @@
     "table": "2-10",
     "row": 1,
     "printedName": "Amphibious seals"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "auxiliary-generators-2",
@@ -2458,7 +2620,8 @@
     "table": "2-10",
     "row": 3,
     "printedName": "Auxiliary generators +2"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "auxiliary-generators-4",
@@ -2473,7 +2636,8 @@
     "table": "2-10",
     "row": 4,
     "printedName": "Auxiliary generators +4"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "auxiliary-generators-6",
@@ -2488,7 +2652,8 @@
     "table": "2-10",
     "row": 5,
     "printedName": "Auxiliary generators +6"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "backup-battery",
@@ -2503,7 +2668,8 @@
     "table": "2-10",
     "row": 6,
     "printedName": "Backup battery"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "baffled-drive",
@@ -2518,7 +2684,8 @@
     "table": "2-10",
     "row": 7,
     "printedName": "Baffled drive"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "cockpit-ejection",
@@ -2533,7 +2700,8 @@
     "table": "2-10",
     "row": 8,
     "printedName": "Cockpit ejection system"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "cofferdam",
@@ -2548,7 +2716,8 @@
     "table": "2-10",
     "row": 10,
     "printedName": "Cofferdam"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "environmental-filters",
@@ -2563,7 +2732,8 @@
     "table": "2-10",
     "row": 11,
     "printedName": "Environmental filters"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "fuel-converters",
@@ -2578,7 +2748,8 @@
     "table": "2-10",
     "row": 12,
     "printedName": "Fuel converters"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "grappler-mag",
@@ -2593,7 +2764,8 @@
     "table": "2-10",
     "row": 13,
     "printedName": "Grappler mag"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "hardpoint",
@@ -2608,7 +2780,8 @@
     "table": "2-10",
     "row": 14,
     "printedName": "Hardpoint"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "hidden-cargo-25",
@@ -2623,7 +2796,8 @@
     "table": "2-10",
     "row": 15,
     "printedName": "Hidden cargo hold (25% of cargo)"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "hidden-cargo-50",
@@ -2638,7 +2812,8 @@
     "table": "2-10",
     "row": 16,
     "printedName": "Hidden cargo hold (50% of cargo)"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "hidden-cargo-75",
@@ -2653,7 +2828,8 @@
     "table": "2-10",
     "row": 17,
     "printedName": "Hidden cargo hold (75% of cargo)"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "holding-cells-25",
@@ -2668,7 +2844,8 @@
     "table": "2-10",
     "row": 18,
     "printedName": "Holding cells (25% of passengers)"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "holding-cells-50",
@@ -2683,7 +2860,8 @@
     "table": "2-10",
     "row": 19,
     "printedName": "Holding cells (50% of passengers)"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "holding-cells-75",
@@ -2698,7 +2876,8 @@
     "table": "2-10",
     "row": 20,
     "printedName": "Holding cells (75% of passengers)"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "interrogation-chamber",
@@ -2713,7 +2892,8 @@
     "table": "2-10",
     "row": 21,
     "printedName": "Interrogation chamber"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "personalized-controls",
@@ -2728,7 +2908,8 @@
     "table": "2-10",
     "row": 22,
     "printedName": "Personalized controls"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "sensor-baffling",
@@ -2743,7 +2924,8 @@
     "table": "2-10",
     "row": 28,
     "printedName": "Sensor baffling"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "sensor-decoy",
@@ -2758,7 +2940,8 @@
     "table": "2-10",
     "row": 29,
     "printedName": "Sensor decoy"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "sensor-mask",
@@ -2773,7 +2956,8 @@
     "table": "2-10",
     "row": 30,
     "printedName": "Sensor mask"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "workshop",
@@ -2788,7 +2972,8 @@
     "table": "2-10",
     "row": 32,
     "printedName": "Workshop"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "launch-bay",
@@ -2812,7 +2997,8 @@
     "table": "2-10",
     "row": 23,
     "printedName": "Plasma punch"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "plasma-torch",
@@ -2827,7 +3013,8 @@
     "table": "2-10",
     "row": 24,
     "printedName": "Plasma torch"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   },
   {
    "catalogId": "tractor-clamp",
@@ -2842,7 +3029,8 @@
     "table": "2-10",
     "row": 31,
     "printedName": "Tractor clamp"
-   }
+   },
+   "authority": "PUBLISHED_SOURCE"
   }
  ],
  "unmappedPdfRows": []
