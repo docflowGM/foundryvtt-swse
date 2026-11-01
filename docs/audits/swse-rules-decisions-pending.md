@@ -643,6 +643,24 @@ Appended. Evidence: `data/audits/vehicles/p6a/print-verified-components-v2.json`
 | Decision authority | Project owner |
 | Resolution | Owner ruling 2026-11-01: a printed dash is not numeric zero; dash-EP ammunition is consumable ammunition loaded into a compatible launcher, not an installed modification. Catalog: installationKind consumable-ammunition, EP null; planner refuses with CONSUMABLE_AMMUNITION_NOT_AN_INSTALLATION. Launcher compatibility, loading and firing remain gated. |
 
+### V-P6A-07 - Scope of the gravity well area errata
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6A-07 |
+| Rules domain | Vehicle weapons |
+| Feature | Gravity well projector area |
+| Source | *Starships of the Galaxy* p. 45 (Gravity Well Projectors prose: 4x4-square area); p. 100 (Interdictor cruiser); Errata 1.0 (2008-01-29) |
+| Evidence | The errata correct the Interdictor cruiser's area to 3x3 squares (starship scale). The generic component prose on p. 45 says 4x4. |
+| Confirmed behavior | The Interdictor cruiser (p. 100) uses 3x3. |
+| Unresolved question | Whether the correction also applies to the gravity well projector component (catalog row `gravity-well-projector`) or only to the Interdictor statblock. |
+| Options | (a) Interdictor only (component keeps 4x4); (b) all gravity well projectors use 3x3. |
+| Recommended ruling | None |
+| Implementation impact | Catalog component text unchanged (4x4); the Interdictor publication-record change is recorded as a proposal, not applied. The component is not installable and not executable either way. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
 ---
 
 ## Revision log
@@ -658,3 +676,4 @@ Appended. Evidence: `data/audits/vehicles/p6a/print-verified-components-v2.json`
 - **Revision 9 (2026-10-31):** appended V-P6A-01..04 (component census). No existing entry changed.
 - **Revision 10 (2026-11-01):** appended V-P6A-05 and V-P6A-06 (PDF source authority). No existing entry changed.
 - **Revision 11 (2026-11-01):** recorded the owner's resolutions of V-P6A-05 and V-P6A-06 (status and Resolution fields only; questions unchanged).
+- **Revision 12 (2026-11-01):** appended V-P6A-07 (gravity well errata scope). No existing entry changed.

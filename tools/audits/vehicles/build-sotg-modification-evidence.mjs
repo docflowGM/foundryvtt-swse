@@ -127,7 +127,7 @@ for (const c of ERRATA.corrections.filter(c => c.frames)) for (const [id, e] of 
   if (!f) throw new Error('errata frame not found: ' + id);
   if (f.strength !== e.printed) throw new Error(`errata printed value mismatch for ${id}: OCR ${f.strength}, errata printed ${e.printed}`);
   f.strength = e.corrected;
-  f.errataApplied = [...(f.errataApplied ?? []), { field: 'strength', printed: e.printed, corrected: e.corrected, errata: c.id, source: ERRATA.errata, sessionVerification: ERRATA.provenance.sessionVerification }];
+  f.errataApplied = [...(f.errataApplied ?? []), { field: 'strength', printed: e.printed, corrected: e.corrected, errata: c.id, source: ERRATA.errata, verification: ERRATA.provenance.status }];
 }
 
 /* --------------------------- Table 3-2 unused emplacement points --------------------------- */

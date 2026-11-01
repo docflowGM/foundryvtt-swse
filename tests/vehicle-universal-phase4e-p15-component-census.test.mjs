@@ -156,9 +156,35 @@ test('Errata 1.0 layer: precedence recorded; footnote, Extended Range and stock-
   const frames = load('data/canonical/vehicles/construction/stock-frames.json').frames;
   const f = id => frames.find(x => x.id === id);
   assert.deepEqual(['heavy-freighter', 'corvette', 'frigate', 'cruiser', 'battlecruiser'].map(id => f(id).strength), [56, 58, 60, 94, 100]);
-  assert.deepEqual(f('cruiser').errataApplied[0], { field: 'strength', printed: 118, corrected: 94, errata: 'SOTG-E1-STOCK-STRENGTH', source: e.errata, sessionVerification: 'NOT_VERIFIED_IN_SESSION' });
+  assert.deepEqual(f('cruiser').errataApplied[0], { field: 'strength', printed: 118, corrected: 94, errata: 'SOTG-E1-STOCK-STRENGTH', source: e.errata, verification: 'INDEPENDENTLY_VERIFIED' });
   assert.equal(f('superiority-fighter').errataApplied, undefined);
   const rec = load(`${DIR}/pdf-reconciliation.json`).records.find(x => x.catalogId === 'turbolaser-heavy');
   assert.equal(rec.authority, 'PUBLISHED_ERRATA');
   assert.equal(rec.errata.printed, 'Colossal or larger starships only');
+});
+
+test('errata publication proposals target real sealed records, pin current values, and are not applied', () => {
+  const p = load('data/audits/vehicles/errata/sotg-errata-1.0-publication-proposals.json');
+  const records = new Map(readFileSync('data/canonical/vehicles/vehicles.json', 'utf8').trim().split('\n').map(JSON.parse).map(r => [r.identity.sourceEntryKey, r]));
+  const e = load('data/audits/vehicles/errata/sotg-errata-1.0.json');
+  assert.equal(e.provenance.status, 'INDEPENDENTLY_VERIFIED');
+  assert.deepEqual(e.provenance.verificationHistory.map(h => h.status), ['NOT_VERIFIED_IN_SESSION', 'INDEPENDENTLY_VERIFIED'], 'history preserved');
+  const ywings = p.proposals.filter(x => x.errataId === 'SOTG-E1-Y-WING-SHIELDS');
+  assert.equal(ywings.length, 3);
+  for (const x of ywings) {
+    const r = records.get(x.sourceEntryKey);
+    assert.ok(r, x.sourceEntryKey);
+    assert.equal(r.publication.book, 'Starships of the Galaxy');
+    assert.equal(r.publication.page, x.page);
+    assert.equal(r.defenses.shieldRating, x.current, 'proposal not yet applied to the sealed record');
+    assert.equal(x.proposed, 25);
+  }
+  const gw = p.proposals.find(x => x.errataId === 'SOTG-E1-GRAVITY-WELL-AREA');
+  assert.match(JSON.stringify(records.get(gw.sourceEntryKey).armament.firingGroups), /4x4 starship squares/);
+  for (const u of p.explicitlyUnchanged) assert.equal(records.get(u.sourceEntryKey).defenses.shieldRating, u.shieldRating, u.sourceEntryKey);
+  // the generic component row keeps its own printed prose until V-P6A-07 is ruled
+  assert.match(load('data/vehicle-modifications/weapon-systems.json').find(x => x.id === 'gravity-well-projector').effect, /4x4/);
+  const inv = load('data/audits/vehicles/errata/errata-inventory.json');
+  assert.equal(inv.books.length, 14);
+  assert.equal(inv.books.filter(b => b.status === 'OFFICIAL_PUBLISHED_VERIFIED').length, 1);
 });

@@ -1,0 +1,59 @@
+{
+  "schema": "swse.vehicle.errata-publication-proposals.v1",
+  "note": "Proposed changes to SEALED published vehicle records (data/canonical/vehicles/vehicles.json, digest-verified). NOT applied: the 429 publication records are changed only with explicit project-owner approval of these proposals; the regression test pins the current values and the proposal targets.",
+  "errata": "Starships of the Galaxy Errata 1.0 (2008-01-29)",
+  "proposals": [
+    {
+      "errataId": "SOTG-E1-GRAVITY-WELL-AREA",
+      "sourceEntryKey": "sotg-immobilizer-418-interdictor-class-heavy-cruiser",
+      "page": 100,
+      "field": "armament.firingGroups[gravity well projector].specialNotes (areaPrintedWeaponRow) and rules summary (statblockAreaSquares)",
+      "current": "statblock 4x4 starship squares; the same record already notes a 3x3 rules callout (internal conflict)",
+      "proposed": "3x3 starship squares",
+      "gameplayImpact": "reference text only: printed attack groups are never executable; the component catalog row (gravity-well-projector, p. 45 prose 4x4) is out of this entry's stated scope (V-P6A-07)"
+    },
+    {
+      "errataId": "SOTG-E1-Y-WING-SHIELDS",
+      "sourceEntryKey": "sotg-koensayr-btl-s3-y-wing",
+      "page": 158,
+      "field": "defenses.shieldRating (+ system.shieldRating / shields.max mirrors)",
+      "current": 10,
+      "proposed": 25,
+      "gameplayImpact": "live shield pool (derived.shield) and damage mitigation; creation/runtime classifier mirrors; existing world Actors would need a GM-approved migration (none performed)"
+    },
+    {
+      "errataId": "SOTG-E1-Y-WING-SHIELDS",
+      "sourceEntryKey": "sotg-koensayr-btl-s3-courier",
+      "page": 159,
+      "field": "defenses.shieldRating (+ mirrors)",
+      "current": 10,
+      "proposed": 25,
+      "gameplayImpact": "as above"
+    },
+    {
+      "errataId": "SOTG-E1-Y-WING-SHIELDS",
+      "sourceEntryKey": "sotg-koensayr-btl-a4-lp-longprobe",
+      "page": 159,
+      "field": "defenses.shieldRating (+ mirrors)",
+      "current": 10,
+      "proposed": 25,
+      "gameplayImpact": "as above"
+    }
+  ],
+  "explicitlyUnchanged": [
+    {
+      "sourceEntryKey": "core-koensayr-y-wing-starfighter",
+      "book": "Core Rulebook",
+      "page": 178,
+      "shieldRating": 25,
+      "reason": "separately published; not in the errata's scope"
+    },
+    {
+      "sourceEntryKey": "cw-koensayr-btl-s1-y-wing",
+      "book": "Clone Wars Campaign Guide",
+      "page": 173,
+      "shieldRating": 10,
+      "reason": "separately published; not in the errata's scope"
+    }
+  ]
+}

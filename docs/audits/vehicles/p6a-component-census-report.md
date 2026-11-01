@@ -96,3 +96,14 @@ Input: `data/audits/vehicles/p6a/print-verified-components-v2.json` (172 PDF-rev
 **Errata for the other books:** not searched. The errata sources are outside the session's network allowance; the registry is not declared authoritative for errata until they are reviewed.
 
 **Result:** 187 records: 174 matched (source + errata + rulings), 7 unresolved (Clone Wars / Rebellion Era weapon prose without purchase tables), 6 not found as installable options, 0 corrections pending. Installable 39 and combat-usable 0 unchanged.
+
+---
+
+# Checkpoint 4 - Errata source confirmation (2026-11-01)
+
+- **Provenance:** `sotg-errata-1.0.json` now has `provenance.status: INDEPENDENTLY_VERIFIED` with a preserved `verificationHistory` (Claude session: not verifiable from the session network; project owner: verified against the published 2008-01-29 errata). Generated stock frames carry `verification: INDEPENDENTLY_VERIFIED`.
+- **Confirmed and already applied:** Table 3-5 footnote (10 weapons), Extended Range 1 EP, five stock-frame Strength scores.
+- **SOTG-E1-GRAVITY-WELL-AREA:** source-confirmed. The Interdictor cruiser record (`sotg-immobilizer-418-interdictor-class-heavy-cruiser`, p. 100) already records the conflict (statblock 4x4 vs rules callout 3x3); the errata resolves it to 3x3. Proposed, not applied to the sealed record. Whether the generic component (p. 45, 4x4) changes too is V-P6A-07; the catalog row keeps its printed 4x4.
+- **SOTG-E1-Y-WING-SHIELDS:** source-confirmed for the three SotG models on pp. 158-159 - `sotg-koensayr-btl-s3-y-wing` (p. 158), `sotg-koensayr-btl-s3-courier` and `sotg-koensayr-btl-a4-lp-longprobe` (p. 159): SR 10 -> 25. Proposed, not applied. Core Rulebook Y-wing (SR 25) and Clone Wars BTL-S1 (SR 10) are explicitly out of scope.
+- **Proposals file:** `data/audits/vehicles/errata/sotg-errata-1.0-publication-proposals.json` (identities, fields, current and proposed values, gameplay impact). A regression test pins the current values; applying them to the sealed 429 records needs your approval (the shield change also affects the live shield pool, the creation/runtime mirrors and existing world Actors).
+- **Errata inventory:** `data/audits/vehicles/errata/errata-inventory.json` lists all 14 books. Only SotG is `OFFICIAL_PUBLISHED_VERIFIED`; the other 13 are `NOT_INVENTORIED` - I did not assert from memory which official errata exist, and the errata hosts remain outside this session's network allowance.
