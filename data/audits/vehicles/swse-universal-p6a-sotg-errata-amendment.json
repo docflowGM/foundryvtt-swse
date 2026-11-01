@@ -1,0 +1,23 @@
+{
+  "schema": "swse.vehicle.universal.p6a.published-errata-amendment.v1",
+  "id": "P6A-SOTG-ERRATA-1.0-PUBLICATION-001",
+  "disposition": "APPROVED_PUBLISHED_ERRATA_CORRECTION",
+  "approvedBy": "project owner (2026-11-01)",
+  "errata": "Starships of the Galaxy Errata 1.0 (Wizards of the Coast, 2008-01-29)",
+  "errataEvidence": "data/audits/vehicles/errata/sotg-errata-1.0.json",
+  "proposals": "data/audits/vehicles/errata/sotg-errata-1.0-publication-proposals.json",
+  "unchanged": { "sourceEntryKeys": true, "recordCount429": true, "otherRecords": true, "sourceAttackGroupsExecutable": false },
+  "records": [
+    { "sourceEntryKey": "sotg-immobilizer-418-interdictor-class-heavy-cruiser", "errataId": "SOTG-E1-GRAVITY-WELL-AREA", "page": 100,
+      "changes": [
+        { "path": ["armament", "firingGroups", 1, "specialNotes"], "kind": "substring", "from": "\"areaPrintedWeaponRow\":\"4x4 starship squares\"", "to": "\"areaPrintedWeaponRow\":\"3x3 starship squares (Errata 1.0; printed 4x4)\"" },
+        { "path": ["exceptions", "specialRules", 0, "summary"], "kind": "substring", "from": "\"statblockAreaSquares\":\"4x4\"", "to": "\"statblockAreaSquares\":\"3x3\",\"statblockAreaSquaresPrinted\":\"4x4\",\"errata\":\"SOTG-E1-GRAVITY-WELL-AREA\"" }
+      ] },
+    { "sourceEntryKey": "sotg-koensayr-btl-s3-y-wing", "errataId": "SOTG-E1-Y-WING-SHIELDS", "page": 158,
+      "changes": [{ "path": ["defenses", "shieldRating"], "kind": "value", "from": 10, "to": 25 }] },
+    { "sourceEntryKey": "sotg-koensayr-btl-s3-courier", "errataId": "SOTG-E1-Y-WING-SHIELDS", "page": 159,
+      "changes": [{ "path": ["defenses", "shieldRating"], "kind": "value", "from": 10, "to": 25 }] },
+    { "sourceEntryKey": "sotg-koensayr-btl-a4-lp-longprobe", "errataId": "SOTG-E1-Y-WING-SHIELDS", "page": 159,
+      "changes": [{ "path": ["defenses", "shieldRating"], "kind": "value", "from": 10, "to": 25 }] }
+  ]
+}

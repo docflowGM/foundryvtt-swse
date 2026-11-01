@@ -10,6 +10,7 @@ import {readFileSync, writeFileSync} from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {buildPhase3AcceptedSourcePreview, UNIVERSAL_BOOK_STAGES} from './build-universal-vehicle-phase3-source-preview.mjs';
+import {applyErrataToRecord} from '../scripts/domain/vehicles/vehicle-errata-migration.js';
 
 export const UNIVERSAL_CANONICAL_PATH = 'data/canonical/vehicles/vehicles.json';
 export const UNIVERSAL_CANONICAL_MANIFEST_PATH = 'data/canonical/vehicles/vehicles.manifest.json';
@@ -62,6 +63,17 @@ export function assembleUniversalVehicleCanonical(repoRoot=process.cwd()) {
     || !records.some(r=>r.identity.sourceEntryKey==='cw-tx-130t-saber-class-fighter-tank')
     || !records.some(r=>r.identity.sourceEntryKey==='fucg-tx-130t-fighter-tank'))
     fail('supplemental or separate publication identity missing');
+  // P6A: approved published-errata corrections (SotG Errata 1.0) applied to exactly the named records. Each change
+  // checks the printed value before replacing it, and the record carries the errata provenance.
+  const errata=JSON.parse(readFileSync(path.join(repoRoot,'data/audits/vehicles/swse-universal-p6a-sotg-errata-amendment.json'),'utf8'));
+  if(errata.disposition!=='APPROVED_PUBLISHED_ERRATA_CORRECTION'||errata.records.length!==4)fail('published errata amendment changed');
+  for(const a of errata.records){
+    const i=records.findIndex(x=>x.identity.sourceEntryKey===a.sourceEntryKey);
+    if(i<0)fail('errata target missing: '+a.sourceEntryKey);
+    const applied=applyErrataToRecord(records[i],a,errata);
+    if(!applied.ok)fail('errata not applicable: '+a.sourceEntryKey+' '+applied.reason);
+    records[i]=applied.record;
+  }
   const ndjson=records.map(r=>JSON.stringify(r)).join('\n')+'\n';
   const bytes=Buffer.byteLength(ndjson,'utf8');
   const sourceFileGitBlobSha1=createHash('sha1').update('blob '+bytes+'\0').update(ndjson,'utf8').digest('hex');
@@ -72,7 +84,7 @@ export function assembleUniversalVehicleCanonical(repoRoot=process.cwd()) {
     generationMethod:'tools/build-universal-vehicle-canonical.mjs --write (Phase 3 effective accepted preview)',
     sourcePreview:'tools/build-universal-vehicle-phase3-source-preview.mjs',
     provenanceResolver:'tools/lib/universal-vehicle-source-provenance.mjs',
-    provenanceAmendmentIds:[amendment.id],
+    provenanceAmendmentIds:[amendment.id,errata.id],
     sourceBooks:books.size,
     publicationClaims:records.length,
     pdfFieldQAVerified:qa.pdfFieldQA.verified,

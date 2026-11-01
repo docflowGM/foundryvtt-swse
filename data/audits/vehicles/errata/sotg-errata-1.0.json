@@ -88,7 +88,8 @@
       "printed": "4x4 squares (starship scale)",
       "corrected": "3x3 squares (starship scale)",
       "scope": "The errata entry names the Interdictor cruiser on p. 100. Whether it also changes the generic gravity well projector component prose (p. 45, 4x4) is not stated (V-P6A-07).",
-      "status": "SOURCE_CONFIRMED_PROPOSAL_RECORDED"
+      "status": "APPLIED_TO_CANONICAL",
+      "amendment": "P6A-SOTG-ERRATA-1.0-PUBLICATION-001"
     },
     {
       "id": "SOTG-E1-Y-WING-SHIELDS",
@@ -96,7 +97,8 @@
       "printed": "SR 10",
       "corrected": "SR 25",
       "scope": "The three Starships of the Galaxy Y-wing models on pp. 158-159. Separately published Y-wings (Core Rulebook p. 178, Clone Wars Campaign Guide p. 173) are not covered.",
-      "status": "SOURCE_CONFIRMED_PROPOSAL_RECORDED"
+      "status": "APPLIED_TO_CANONICAL",
+      "amendment": "P6A-SOTG-ERRATA-1.0-PUBLICATION-001"
     }
   ]
 }

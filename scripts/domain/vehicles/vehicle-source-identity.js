@@ -113,10 +113,29 @@ const isPrefixOfProtected = path => PROTECTED_FLAG_ROOTS.some(r => r === path ||
  * replacing a parent key that contains protected data is refused.
  * @returns {{ok:boolean, paths:string[]}}
  */
+/**
+ * One-shot write authorization for a GM-authorized published-errata migration (vehicle-errata-migration-service):
+ * the exact leaf values it is about to write. Any other change to a protected path is still denied, and the
+ * provenance guard still re-validates the post-update Actor.
+ */
+const pendingProvenanceWrites = new Map();
+export function authorizeProvenanceMigration(actorId, update) { pendingProvenanceWrites.set(actorId, new Map(leaves(expandDotted(update)).map(([p, v]) => [p, JSON.stringify(v)]))); }
+export function clearProvenanceMigration(actorId) { pendingProvenanceWrites.delete(actorId); }
+function expandDotted(update) {
+  const out = {};
+  for (const [path, value] of Object.entries(update ?? {})) {
+    const keys = path.split('.'); let node = out;
+    for (const k of keys.slice(0, -1)) node = node[k] ??= {};
+    node[keys.at(-1)] = value;
+  }
+  return out;
+}
+
 export function checkProvenanceUpdate(actor, changes) {
   if (actor?.type !== 'vehicle' || !claimsPublishedSource(actor)) return { ok: true, paths: [] };
   const current = actor._source ?? actor;
   const denied = [];
+  const authorized = pendingProvenanceWrites.get(actor.id);
   for (const [path, value] of leaves(changes)) {
     const marker = path.match(/^(.*?)(?:^|\.)(-=|==)([^.]+)$/);
     if (marker) {
@@ -125,6 +144,7 @@ export function checkProvenanceUpdate(actor, changes) {
       continue;
     }
     if (!protectedPath(path)) continue;
+    if (authorized && authorized.get(path) === JSON.stringify(value)) continue;
     if (JSON.stringify(byPath(current, path)) !== JSON.stringify(value)) denied.push(path);
   }
   return { ok: denied.length === 0, paths: denied };

@@ -163,7 +163,7 @@ test('Errata 1.0 layer: precedence recorded; footnote, Extended Range and stock-
   assert.equal(rec.errata.printed, 'Colossal or larger starships only');
 });
 
-test('errata publication proposals target real sealed records, pin current values, and are not applied', () => {
+test('errata publication proposals are applied to exactly the named sealed records', () => {
   const p = load('data/audits/vehicles/errata/sotg-errata-1.0-publication-proposals.json');
   const records = new Map(readFileSync('data/canonical/vehicles/vehicles.json', 'utf8').trim().split('\n').map(JSON.parse).map(r => [r.identity.sourceEntryKey, r]));
   const e = load('data/audits/vehicles/errata/sotg-errata-1.0.json');
@@ -173,14 +173,13 @@ test('errata publication proposals target real sealed records, pin current value
   assert.equal(ywings.length, 3);
   for (const x of ywings) {
     const r = records.get(x.sourceEntryKey);
-    assert.ok(r, x.sourceEntryKey);
-    assert.equal(r.publication.book, 'Starships of the Galaxy');
     assert.equal(r.publication.page, x.page);
-    assert.equal(r.defenses.shieldRating, x.current, 'proposal not yet applied to the sealed record');
-    assert.equal(x.proposed, 25);
+    assert.equal(x.status, 'APPLIED');
+    assert.equal(r.defenses.shieldRating, x.proposed);
+    assert.equal(r.publication.errataApplied[0].changes[0].printed, x.printed);
   }
   const gw = p.proposals.find(x => x.errataId === 'SOTG-E1-GRAVITY-WELL-AREA');
-  assert.match(JSON.stringify(records.get(gw.sourceEntryKey).armament.firingGroups), /4x4 starship squares/);
+  assert.match(JSON.stringify(records.get(gw.sourceEntryKey).armament.firingGroups), /3x3 starship squares \(Errata 1\.0; printed 4x4\)/);
   for (const u of p.explicitlyUnchanged) assert.equal(records.get(u.sourceEntryKey).defenses.shieldRating, u.shieldRating, u.sourceEntryKey);
   // the generic component row keeps its own printed prose until V-P6A-07 is ruled
   assert.match(load('data/vehicle-modifications/weapon-systems.json').find(x => x.id === 'gravity-well-projector').effect, /4x4/);

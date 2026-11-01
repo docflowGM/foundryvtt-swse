@@ -4,6 +4,7 @@ import { HookInvestigator } from "/systems/foundryvtt-swse/scripts/governance/se
  */
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 import { registerVehiclePreCreateHooks } from "/systems/foundryvtt-swse/scripts/actors/vehicle/vehicle-precreate-hooks.js";
+import { registerVehicleErrataMigration } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-errata-migration-service.js";
 import { initSidebarSentinelTrace } from "/systems/foundryvtt-swse/scripts/core/sidebar-sentinel-trace.js";
 import { initSidebarIconComparison } from "/systems/foundryvtt-swse/scripts/core/sidebar-icon-comparison.js";
 import { initSidebarIconClassAudit } from "/systems/foundryvtt-swse/scripts/core/sidebar-icon-class-audit.js";
@@ -66,6 +67,7 @@ Hooks.once("init", () => {
 // Register vehicle preCreate hooks
 Hooks.once("init", () => {
   registerVehiclePreCreateHooks();
+  registerVehicleErrataMigration(); // GM-controlled; never migrates on its own
   SWSELogger.log('Vehicle preCreate hooks registered');
 });
 
