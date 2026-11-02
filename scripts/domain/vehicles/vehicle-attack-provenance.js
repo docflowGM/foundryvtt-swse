@@ -8,7 +8,7 @@
 import { getVerifiedPublishedRecord, claimsPublishedSource } from './vehicle-source-identity.js';
 import { readCertifiedInstallations } from './vehicle-installation-ledger.js';
 import { EFFECTS } from './vehicle-modification-effects.js';
-import { resolveCertifiedInstalledWeapon } from './vehicle-weapon-damage.js';
+import { resolveCertifiedInstalledWeapon, resolveStockWeapon, isStockVehicleWeaponItem } from './vehicle-weapon-damage.js';
 
 function validKey(x) { return typeof x === 'string' && x.trim().length > 0; }
 function sameWeaponLabel(a, b) {
@@ -67,6 +67,13 @@ function classifySourceBackedWeapon(vehicle, weapon) {
   if (owned !== weapon) return { kind:'UNRESOLVED', reason:'WEAPON_NOT_OWNED_BY_VEHICLE' };
   const record = getVerifiedPublishedRecord(vehicle);
   if (!record) return { kind:'UNRESOLVED', reason:'SOURCE_BACKED_CLAIM_UNVERIFIED' };
+  // PUBLISHED STOCK weapon: a factory group of the verified source record, represented by a managed Item. It is a
+  // candidate here; the trusted stock authority (re-derived from the record) decides in the attack preflight.
+  if (isStockVehicleWeaponItem(weapon)) {
+    if (weapon.actor !== vehicle) return { kind:'UNRESOLVED', reason:'WEAPON_NOT_OWNED_BY_VEHICLE' };
+    const stock = resolveStockWeapon(weapon);
+    return stock.ok ? { kind:'STOCK_CANDIDATE', itemId:weapon.id, stock:true } : { kind:'UNRESOLVED', reason:stock.reason };
+  }
   const key = record.identity?.sourceEntryKey;
   const installId = weapon.system?.vehicleMount?.installId;
   const entry = validKey(installId)

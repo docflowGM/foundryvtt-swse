@@ -27,6 +27,7 @@ import { AttackRollDiagnostics } from "/systems/foundryvtt-swse/scripts/engine/c
 import { resolveVehicleAttackBonus, resolveAbstractCrewAttackBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle-attack-math.js";
 import { resolveAttackDomain } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-domain-router.js";
 import { authorizeVehicleAttackBeforeCosts } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-attack-preflight.js";
+import { resolveTrustedStockAttackGroup } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-attack-authority.js";
 import { classifyInstalledVehicleWeapon } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-attack-provenance.js";
 import { resolveVehicleCrewStationEvidence } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-crew-station-evidence.js";
 import { GrappleStateEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-engine.js";
@@ -724,9 +725,18 @@ export async function rollAttack(actor, weapon, options = {}) {
       ? await resolveVehicleCrewStationEvidence({
           vehicle, weapon, domainResolution: vehicleDomain,
           requestedCrewStation: rollOptions.crewStation ?? null,
-          certifiedStation: installedProvenance.kind === 'CERTIFIED_INSTALLATION' ? installedProvenance.mount?.operatorRole : null
+          // the station comes from the sealed mount (installed) or the verified source group (stock), never Item fields
+          certifiedStation: installedProvenance.kind === 'CERTIFIED_INSTALLATION' ? installedProvenance.mount?.operatorRole
+            : (resolveTrustedStockAttackGroup(vehicle, weapon)?.operator ?? null)
         })
       : { crewStationResolved: false };
+    // Autofire / burst are character-weapon mechanics; the printed vehicle autofire bonuses are not automated, so a
+    // vehicle-managed weapon (installed or stock) refuses them instead of misapplying the character rules.
+    if ((installedProvenance.kind === 'STOCK_CANDIDATE' || installedProvenance.kind === 'CERTIFIED_INSTALLATION')
+        && (rollOptions.autofire === true || rollOptions.attackMode === 'autofire' || rollOptions.fireMode === 'autofire' || rollOptions.fireMode === 'burst' || optionActive(rollOptions, 'burstFire'))) {
+      ui?.notifications?.warn?.('Vehicle attack blocked: autofire and burst fire are not automated for vehicle weapons.');
+      return null;
+    }
     const sourceGate = await authorizeVehicleAttackBeforeCosts({
       vehicle, weapon, target, attackId,
       crewStationResolved: stationEvidence.crewStationResolved === true,

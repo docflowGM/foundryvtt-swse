@@ -17,7 +17,7 @@
  * - Initiative orchestration (CombatEngine)
  */
 
-import { isInstalledVehicleWeaponItem } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
+import { isVehicleManagedWeaponItem } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { DamageSystem } from "/systems/foundryvtt-swse/scripts/combat/damage-system.js";
 import { registerChatInteractionBridge } from "/systems/foundryvtt-swse/scripts/ui/chat/chat-interaction-bridge.js";
@@ -228,7 +228,7 @@ export class CombatUIAdapter {
     const { computeDamageBonus } = await import("/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js");
     const { RollEngine } = globalThis.SWSE;
 
-    if (isInstalledVehicleWeaponItem(weapon)) { ui?.notifications?.warn?.(`${weapon.name}: roll vehicle weapon damage from the attack result.`); return null; }
+    if (isVehicleManagedWeaponItem(weapon)) { ui?.notifications?.warn?.(`${weapon.name}: roll vehicle weapon damage from the attack result.`); return null; }
     const dmgBonus = computeDamageBonus(attacker, weapon);
     const base = weapon.system?.damage ?? '1d6';
     const formula = `${base} + ${dmgBonus}`;

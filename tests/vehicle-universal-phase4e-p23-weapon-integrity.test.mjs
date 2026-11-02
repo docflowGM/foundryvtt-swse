@@ -7,7 +7,7 @@ import { installFoundryStubs } from './helpers/foundry-stubs.mjs';
 import * as L from '../scripts/domain/vehicles/vehicle-installation-ledger.js';
 import { buildInstalledWeaponItemData, planInstalledWeaponItemSync } from '../scripts/domain/vehicles/vehicle-installed-weapon-items.js';
 import { classifyInstalledVehicleWeapon } from '../scripts/domain/vehicles/vehicle-attack-provenance.js';
-import { resolveCertifiedInstalledWeapon, resolveInstalledVehicleWeaponDamage } from '../scripts/domain/vehicles/vehicle-weapon-damage.js';
+import { resolveCertifiedInstalledWeapon, resolveVehicleWeaponDamage } from '../scripts/domain/vehicles/vehicle-weapon-damage.js';
 
 installSystemsResolver(); installFoundryStubs();
 const { guardShipyardWeaponItem, updateTouchesShipyardWeaponItem } = await import('../scripts/actors/vehicle/vehicle-precreate-hooks.js');
@@ -54,7 +54,7 @@ test('an untouched installed weapon resolves to its certified identity and damag
   const id = resolveCertifiedInstalledWeapon(weapon);
   assert.equal(id.ok, true);
   assert.equal(id.spec.damage, '3d10x2');
-  assert.deepEqual(resolveInstalledVehicleWeaponDamage(weapon), { ok: true, formula: '3d10', multiplier: 2, damageType: null, printed: '3d10x2' });
+  assert.deepEqual(resolveVehicleWeaponDamage(weapon), { ok: true, formula: '3d10', multiplier: 2, damageType: null, printed: '3d10x2' });
 });
 
 test('tampering with the owned Item cannot change attack or damage (every field refused)', async () => {
@@ -107,7 +107,7 @@ test('legacy direct damage readers refuse installed vehicle weapons', async () =
   const { SWSECombat } = await import('../scripts/combat/systems/enhanced-combat-system.js');
   assert.equal(await SWSECombat.rollDamage({ id: 'a', getRollData: () => ({}) }, weapon), null);
   for (const f of ['scripts/combat/systems/enhanced-combat-system.js', 'scripts/engine/combat/ui/CombatUIAdapter.js', 'scripts/combat/rolls/enhanced-rolls.js'])
-    assert.match(readFileSync(f, 'utf8'), /isInstalledVehicleWeaponItem/, f);
+    assert.match(readFileSync(f, 'utf8'), /isVehicleManagedWeaponItem/, f);
 });
 
 test('Item update guard: authority fields of a managed weapon cannot be edited by anyone', () => {
@@ -169,7 +169,8 @@ test('reconcile creates the missing Item, is idempotent, and never touches unrel
   const { vehicle, calls, store } = liveVehicle();
   store.set('mine', { id: 'mine', name: 'Hold-out blaster', flags: {}, system: { damage: '3d4' }, actor: vehicle });
   const first = await Svc.reconcileWeaponItems({ vehicle });
-  assert.deepEqual([first.success, first.operational, first.weaponItems.created, first.weaponItems.deleted], [true, true, 1, 0]);
+  // Resync arms BOTH kinds of managed weapon: the aftermarket laser cannon and the X-wing's published stock laser cannons
+  assert.deepEqual([first.success, first.operational, first.weaponItems.created, first.weaponItems.deleted], [true, true, 2, 0]);
   const second = await Svc.reconcileWeaponItems({ vehicle });
   assert.deepEqual([second.success, second.operational, second.weaponItems.created, second.weaponItems.deleted], [true, true, 0, 0], 'repeat changes nothing');
   assert.equal(calls.create, 1);

@@ -81,7 +81,9 @@ test('P0 pre-create hook validates source and cannot auto-install published firi
  assert.match(hooks,/assessment\.kind === 'invalid-canonical'/);
  assert.match(hooks,/return false;/);
  assert.doesNotMatch(hooks,/Hooks\.on\('preCreateItem'/);
- assert.doesNotMatch(hooks,/Hooks\.on\('createActor'/);
+ // Only verified published stock groups are armed after creation; nothing imports or hydrates printed/legacy rows.
+ assert.equal((hooks.match(/Hooks\.on\('createActor'/g)||[]).length,1);
+ assert.match(hooks,/Hooks\.on\('createActor', armStockWeaponsOnCreate\)/);
  assert.doesNotMatch(hooks,/normalizeVehicleImportData|normalizeVehicleWeaponImportData|createVehicleWeaponItems/);
 });
 test('new code does not create a second vehicle attack formula or bypass action costs',()=>{

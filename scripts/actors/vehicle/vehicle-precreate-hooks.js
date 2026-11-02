@@ -6,7 +6,7 @@
 import { classifyVehicleActorSource } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
 import { isLedgerUpdateAllowed } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-installation-ledger.js";
 import { checkProvenanceUpdate, claimsPublishedSource } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-source-identity.js";
-import { isShipyardManagedWeaponItem } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
+import { hasManagedWeaponFlag } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
 import { UNIVERSAL_VEHICLE_PACKS } from "/systems/foundryvtt-swse/scripts/domain/vehicles/universal-vehicle-pack-registry.js";
 
 let registered = false;
@@ -133,7 +133,7 @@ export function guardVehicleProvenance(actor, changes) {
 /* ------------------------------------------------------------------------------------------------------------------ */
 /* Shipyard-managed weapon Items are representations of sealed installations: their authority fields are not editable. */
 /* ------------------------------------------------------------------------------------------------------------------ */
-const PROTECTED_WEAPON_ITEM_PATHS = ['name', 'system.damage', 'system.vehicleMount', 'system.arc', 'flags.swse.vehicleInstalledWeapon'];
+const PROTECTED_WEAPON_ITEM_PATHS = ['name', 'system.damage', 'system.vehicleMount', 'system.arc', 'flags.swse.vehicleInstalledWeapon', 'flags.swse.vehicleStockWeapon'];
 
 /** Every dotted path an update touches, with '-=' / '==' markers resolved to the key they act on. */
 function touchedPaths(changes, prefix = '', out = []) {
@@ -156,10 +156,21 @@ export function updateTouchesShipyardWeaponItem(changes) {
 
 /** Refuse edits to the authority fields of a Shipyard-managed weapon Item (damage, name, mount, identity flag). */
 export function guardShipyardWeaponItem(item, changes) {
-  if (item?.parent?.type !== 'vehicle' || !isShipyardManagedWeaponItem(item)) return undefined;
+  if (item?.parent?.type !== 'vehicle' || !hasManagedWeaponFlag(item)) return undefined;
   if (!updateTouchesShipyardWeaponItem(changes)) return undefined;
   console.error('[foundryvtt-swse] Shipyard weapon Item update denied: SHIPYARD_WEAPON_ITEM_IS_MANAGED (reconcile through the Shipyard instead)');
   return false;
+}
+
+/** Arms the published stock weapons of a newly created source-backed vehicle (runs only on the creating client). */
+export async function armStockWeaponsOnCreate(actor, _options, userId) {
+  if (actor?.type !== 'vehicle' || userId !== globalThis.game?.user?.id) return;
+  if (!claimsPublishedSource(actor)) return;
+  try {
+    const { VehicleInstallationService } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-installation-service.js');
+    const r = await VehicleInstallationService.syncWeaponItems(actor);
+    if (!r.success) console.warn('[foundryvtt-swse] Stock weapon arming incomplete; use "Resync weapons" on the vehicle sheet:', r.reasons);
+  } catch (err) { console.warn('[foundryvtt-swse] Stock weapon arming failed; use "Resync weapons" on the vehicle sheet:', err); }
 }
 
 export function registerVehiclePreCreateHooks() {
@@ -170,8 +181,11 @@ export function registerVehiclePreCreateHooks() {
   Hooks.on('preUpdateActor', guardVehicleProvenance);
   Hooks.on('preUpdateActor', guardVehicleEnvironment);
   Hooks.on('preUpdateItem', guardShipyardWeaponItem);
-  // Intentionally no createActor weapon hydration. Source firing groups are
-  // reference evidence, not permissions or physical mounted weapons.
+  // Published factory weapons: when a source-backed vehicle is created, its creating user arms the executable stock
+  // groups (owned Items that merely represent verified source groups; no purchase, no ledger entry).
+  Hooks.on('createActor', armStockWeaponsOnCreate);
+  // Printed firing groups are still reference evidence on their own: only executable, verified groups become Items,
+  // and what they may do is re-derived from the source record at every use (never from the Item).
 }
 
 /**

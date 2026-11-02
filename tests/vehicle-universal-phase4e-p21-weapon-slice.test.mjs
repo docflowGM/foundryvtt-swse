@@ -115,7 +115,7 @@ test('owned Item: created from the certified spec for an executable entry; remov
   a.items = new (class extends Map { [Symbol.iterator]() { return this.values(); } })();   // iterates documents like Foundry
   ActorEngine.createEmbeddedDocuments = async (actor, name, d) => { calls.push(['create', name, d.length]); d.forEach((x, i) => a.items.set('n' + i, { id: 'n' + i, ...structuredClone(x), actor: a })); };
   ActorEngine.deleteEmbeddedDocuments = async (actor, name, ids) => { calls.push(['delete', name, ids]); };
-  const r = await Svc.syncInstalledWeaponItems(a);
+  const r = await Svc.syncWeaponItems(a, { stock: false });   // aftermarket Items only (stock arming is covered by p25)
   assert.equal(r.success, true, JSON.stringify(r));
   assert.deepEqual(calls, [['create', 'Item', 1]]);
 });

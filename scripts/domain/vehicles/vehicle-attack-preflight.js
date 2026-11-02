@@ -9,6 +9,7 @@ import { classifyInstalledVehicleWeapon } from './vehicle-attack-provenance.js';
 import { resolveTrustedStockAttackGroup } from './vehicle-stock-attack-authority.js';
 import { authorizeVehicleArcEvidence } from './vehicle-evidence-runtime-gate.js';
 import { isTargetWithinVehicleArc } from './vehicle-firing-arc-geometry.js';
+import { STOCK_ARC_POLICY, getStockSilentArcPolicy } from './vehicle-stock-arc-policy.js';
 
 const block = reason => ({ok:false,reason,strictStockEnforcement:true});
 const nonempty = x => typeof x === 'string' && x.trim().length > 0;
@@ -44,7 +45,7 @@ function userMayOperate(user, vehicle, operatorActor) {
   return owns(vehicle) && (!operatorActor || owns(operatorActor));
 }
 
-export async function authorizeVehicleAttackBeforeCosts({vehicle,weapon,target,attackId,crewStationResolved,gmDecision=null,user=globalThis.game?.user ?? null,operatorActor=null}) {
+export async function authorizeVehicleAttackBeforeCosts({vehicle,weapon,target,attackId,crewStationResolved,gmDecision=null,user=globalThis.game?.user ?? null,operatorActor=null,stockArcPolicy=getStockSilentArcPolicy()}) {
   const base = classifyVehicleAttackPreflight({vehicle,weapon});
   if (!base.ok) return base;
   if (base.kind==='CUSTOM_MODIFICATION') return base;
@@ -60,6 +61,8 @@ export async function authorizeVehicleAttackBeforeCosts({vehicle,weapon,target,a
   }
 
   const source = base.source;
+  // Published stock weapons: the same operator permission applies as for installed weapons.
+  if (!userMayOperate(user, vehicle, operatorActor)) return block('ATTACK_USER_NOT_AUTHORIZED');
   if (!target || !nonempty(target.id)) return block('TARGET_UNRESOLVED');
   if (crewStationResolved !== true) return block('CREW_STATION_UNRESOLVED');
   if (!nonempty(attackId) || !nonempty(vehicle?.id)) return block('ATTACK_SCOPE_UNRESOLVED');
@@ -70,6 +73,11 @@ export async function authorizeVehicleAttackBeforeCosts({vehicle,weapon,target,a
     // reconciled; no GM choice may be silently treated as a flat modifier.
     return block('PUBLISHED_ATTACK_CONFLICT_REQUIRES_FORMULA_RECONCILIATION');
   }
+  // The source never states a stock weapon's firing arc. Under the 'unrestricted' policy (owner decision V-P6C-01) a
+  // source-silent arc restricts nothing; under the default policy only an explicit GM adjudication can allow the attack.
+  if (source.arcEvidence?.state==='SOURCE_SILENT_CONFIRMED' && stockArcPolicy===STOCK_ARC_POLICY.UNRESTRICTED)
+    return {ok:true,kind:'TRUSTED_STOCK',sourceEntryKey:source.sourceEntryKey,weaponGroupKey:source.weaponGroupKey,
+      operator:source.operator,arcAuthority:'POLICY_SOURCE_SILENT_UNRESTRICTED',receiptDocumentId:null};
   const arc=await authorizeVehicleArcEvidence({
     ...scope,sourceComplete:true,crewStationResolved:true,targetResolved:true,
     arcEvidence:source.arcEvidence?.state,arc:source.arcEvidence?.value,
@@ -80,5 +88,5 @@ export async function authorizeVehicleAttackBeforeCosts({vehicle,weapon,target,a
   const effectiveArc=arc.selectedArc ?? arc.arc;
   if (!isTargetWithinVehicleArc(vehicle,target,effectiveArc)) return block('TARGET_OUTSIDE_VERIFIED_FIRE_ARC');
   return {ok:true,kind:'TRUSTED_STOCK',sourceEntryKey:source.sourceEntryKey,
-    weaponGroupKey:source.weaponGroupKey,receiptDocumentId:arc.receiptDocumentId ?? null};
+    weaponGroupKey:source.weaponGroupKey,operator:source.operator,arcAuthority:arc.status,receiptDocumentId:arc.receiptDocumentId ?? null};
 }

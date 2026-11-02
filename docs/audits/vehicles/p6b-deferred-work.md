@@ -9,11 +9,11 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | Category | Count |
 |---|---|
 | RULES_DECISION_REQUIRED | 6 |
-| SOURCE_EVIDENCE_MISSING | 5 |
-| ENGINEERING_COMPLEXITY | 10 |
+| SOURCE_EVIDENCE_MISSING | 7 |
+| ENGINEERING_COMPLEXITY | 13 |
 | LIVE_RUNTIME_PENDING | 1 |
-| NONCRITICAL_DEFECT | 3 |
-| DEPENDENCY_BLOCKED | 7 |
+| NONCRITICAL_DEFECT | 4 |
+| DEPENDENCY_BLOCKED | 8 |
 
 ## Items (by severity)
 
@@ -25,6 +25,10 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | P6B-D-019 | P6B-3 | remaining weapon systems, launchers and ammunition (laser cannons light/medium/heavy are certified and executable since the weapon slice) | DEPENDENCY_BLOCKED | IMPORTANT | no | V-P2-04, V-P6A-01, V-P6A-02, V-P6A-03, V-P6A-04 |
 | P6B-D-026 | P6B-W | ion cannons (light/medium/heavy, Hapan triple) | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-032 | P6B-W | launchers: loading, expenditure and capacity expansion | DEPENDENCY_BLOCKED | IMPORTANT | yes | V-P6A-03 |
+| P6B-D-033 | STOCK | published stock groups whose printed attack total does not reconcile with crew Base Attack + vehicle Int (564 groups) | SOURCE_EVIDENCE_MISSING | IMPORTANT | no | - |
+| P6B-D-034 | STOCK | published stock weapon batteries and multi-gunner stations (291 groups) | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
+| P6B-D-036 | STOCK | published stock splash, ion and ammunition-limited groups (torpedoes, missiles, ion cannons; 71 splash + 71 ion groups) | DEPENDENCY_BLOCKED | IMPORTANT | no | V-P6A-03 |
+| P6B-D-037 | STOCK | published stock groups whose firing arc was never reviewed (345 groups) | SOURCE_EVIDENCE_MISSING | IMPORTANT | no | - |
 | P6B-D-003 | P6B-1 | jamming-suite, jamming-array | ENGINEERING_COMPLEXITY | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-004 | P6B-1 | combat-thrusters | DEPENDENCY_BLOCKED | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-005 | P6B-1 | navicomputer-limited | RULES_DECISION_REQUIRED | MINOR | yes | V-P6B-01 |
@@ -51,6 +55,9 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | P6B-D-029 | P6B-W | vehicle weapon damage types (laser cannons) | SOURCE_EVIDENCE_MISSING | MINOR | yes | V-P6B-04 |
 | P6B-D-030 | P6B-W | copilot as weapon operator | ENGINEERING_COMPLEXITY | MINOR | no | - |
 | P6B-D-031 | P6B-W | weapon mount key uniqueness across pending jobs | NONCRITICAL_DEFECT | MINOR | no | - |
+| P6B-D-035 | STOCK | published stock groups with capital-scale (x5 or other) multipliers (192 groups) and turbolasers | ENGINEERING_COMPLEXITY | MINOR | no | - |
+| P6B-D-038 | STOCK | legacy abstract-crew attack tier table (CREW_QUALITY_BONUS) for actors that are not source-backed or constructed | NONCRITICAL_DEFECT | MINOR | no | - |
+| P6B-D-039 | STOCK | point-defense weapon modification (catalog row "point-defense", +4,000 credits) | ENGINEERING_COMPLEXITY | MINOR | no | - |
 
 ## Details
 
@@ -379,3 +386,73 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 - **Owner ruling needed:** yes (V-P6A-03)
 - **Impact:** Launchers and ammunition are not installable; capacity is reference data only.
 - **Recommended action:** Build the magazine authority on top of the existing AmmoSystem once one launcher family is certified for attack.
+
+### P6B-D-033 - published stock groups whose printed attack total does not reconcile with crew Base Attack + vehicle Int (564 groups)
+
+- **Source:** canonical records, armament.firingGroups
+- **Category / severity:** SOURCE_EVIDENCE_MISSING / IMPORTANT
+- **Reason:** The Core vehicle attack formula (crew BAB + vehicle Int + range) reproduces the printed total for 272 of 838 groups with a total. The other groups print a total that includes something the record does not state (fire-linking, battery size, size or range adjustments). Applying the formula there could contradict the statblock, so they are refused (STOCK_ATTACK_TOTAL_DOES_NOT_RECONCILE_WITH_BAB_PLUS_INT).
+- **Missing:** The source of the difference per group (a PDF check of the statblock attack lines).
+- **Owner ruling needed:** no
+- **Impact:** Largest single reason (564 groups) stock weapons are not yet playable.
+- **Recommended action:** Classify the differences (fire-linked, double/quad, battery, size) from the PDFs, then reconcile them as published modifiers.
+
+### P6B-D-034 - published stock weapon batteries and multi-gunner stations (291 groups)
+
+- **Source:** canonical records
+- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
+- **Reason:** Capital-ship batteries are operated by several gunners with a battery size and autofire/fire-linked rules that no vehicle mechanic consumes. They are refused rather than treated as one cannon.
+- **Missing:** A battery model (members, gunners, linked fire).
+- **Owner ruling needed:** no
+- **Impact:** Capital-ship stock weapons are reference-only.
+- **Recommended action:** Design the battery model on top of the stock group authority once single-weapon groups are live-verified.
+
+### P6B-D-035 - published stock groups with capital-scale (x5 or other) multipliers (192 groups) and turbolasers
+
+- **Source:** canonical records; Core vehicle damage
+- **Category / severity:** ENGINEERING_COMPLEXITY / MINOR
+- **Reason:** Weapon damage x multiplier is the Core rule, but capital-scale damage against smaller-scale targets and starship-scale ranges are not verified end to end, so only the x2 multiplier is executable.
+- **Missing:** Verified capital-scale damage application and range cells.
+- **Owner ruling needed:** no
+- **Impact:** Capital weapons reference-only.
+- **Recommended action:** Verify with the same PDF check as turbolasers (P6B-D-023).
+
+### P6B-D-036 - published stock splash, ion and ammunition-limited groups (torpedoes, missiles, ion cannons; 71 splash + 71 ion groups)
+
+- **Source:** canonical records
+- **Category / severity:** DEPENDENCY_BLOCKED / IMPORTANT
+- **Reason:** Area/splash attacks, ion damage against vehicles, and finite payloads (e.g. the X-wing's proton torpedoes) need the area attack path, an ion damage audit and the launcher/magazine authority. They are refused by name.
+- **Missing:** Area attack integration, ion-vs-vehicle audit, magazine authority.
+- **Owner ruling needed:** no (V-P6A-03)
+- **Impact:** X-wing proton torpedoes stay reference-only; its laser cannons fire.
+- **Recommended action:** Build the magazine authority first (one launcher family), then splash.
+
+### P6B-D-037 - published stock groups whose firing arc was never reviewed (345 groups)
+
+- **Source:** canonical records, fieldStates armament.firingArcs
+- **Category / severity:** SOURCE_EVIDENCE_MISSING / IMPORTANT
+- **Reason:** The attack preflight can reason about an arc only when the source confirms it is silent. 345 groups sit on records whose arc field is "not-yet-reviewed".
+- **Missing:** Source review confirming the arc is not stated.
+- **Owner ruling needed:** no
+- **Impact:** Those groups are not executable.
+- **Recommended action:** Run the arc review for the remaining records; a confirmed-silent record immediately qualifies its other executable groups.
+
+### P6B-D-038 - legacy abstract-crew attack tier table (CREW_QUALITY_BONUS) for actors that are not source-backed or constructed
+
+- **Source:** docs/audits/rolling-system-alignment-phase-4.md
+- **Category / severity:** NONCRITICAL_DEFECT / MINOR
+- **Reason:** The tier table (normal 2, skilled 5, expert 8, ace 10) was an unsourced stand-in (the Phase 4 audit says so) and disagrees with the published crew Base Attack in the corpus (Core: skilled +2, expert +5, ace +10). Source-backed and constructed ships now use their verified crew Base Attack; only legacy/unrecorded vehicles still use the table (and the crew skill router for non-attack checks).
+- **Missing:** A decision on whether to retire the legacy table for legacy actors.
+- **Owner ruling needed:** no
+- **Impact:** Legacy vehicle attacks only.
+- **Recommended action:** Replace with the Core crew quality attack column when legacy vehicles are migrated.
+
+### P6B-D-039 - point-defense weapon modification (catalog row "point-defense", +4,000 credits)
+
+- **Source:** Starships of the Galaxy p. 45
+- **Category / severity:** ENGINEERING_COMPLEXITY / MINOR
+- **Reason:** Point-defense is a modification OF an installed weapon (exempting it from the capital-ship penalty), not a weapon. The Shipyard has no weapon-modification model, so no weapon can be classified point-defense; stock groups labelled point-defense are refused rather than inferred.
+- **Missing:** A weapon-modification (modifier) model on installations.
+- **Owner ruling needed:** no
+- **Impact:** Capital ships cannot field point-defense weapons yet.
+- **Recommended action:** Add modifier entries targeting an installed weapon to the sealed ledger.

@@ -835,3 +835,25 @@ The owner located the printed standard capacities (*Starships of the Galaxy* pp.
 The project owner verified Core Rulebook printed p. 171 (PDF p. 172): a vehicle of Colossal (frigate) size or larger takes -20 on attack rolls against targets smaller than Colossal (point-defense weapons exempt), and a character trained in Pilot gains +2 on attacks with vehicle weapons crewed by the pilot. Both are published rules, implemented in the vehicle attack math (P6B-D-023, P6B-D-024). No decision register entry is affected.
 
 - **Revision 20 (2026-11-02):** appended this status note. No existing entry changed.
+
+## Published stock vehicle weapons (2026-11-02)
+
+### V-P6C-01 - Firing arcs of published stock vehicle weapons
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-01 |
+| Rules domain | Vehicle weapons (published stock) |
+| Feature | Firing arc of a published factory weapon group |
+| Source | Canonical vehicle records (`armament.firingArcs`: "not-stated" or "not-yet-reviewed"); register V-P2-04 (no published firing-arc rule for vehicle weapons found in any searched book) |
+| Evidence | Published statblocks do not state weapon firing arcs. The existing evidence policy (`vehicle-evidence-authority.js`) lets an arc-dependent attack proceed on a source-silent arc only with a per-attack GM adjudication and receipt. |
+| Confirmed behavior | Stock weapon damage, operator and attack total are established for the executable groups; the arc is unstated. |
+| Unresolved question | May a published stock weapon fire when the source states no arc? |
+| Options | (a) Keep per-attack GM adjudication (current default, fail-closed). (b) A source-silent arc imposes no restriction (no published rule restricts it); targets, crew station, permissions and every other check still apply. (c) A GM sets the arc once per vehicle. |
+| Recommended ruling | None |
+| Implementation impact | World setting `vehicleStockSilentArcPolicy` (default `gm-per-attack`) selects (a) or (b); (c) is not implemented. Under the default no stock weapon attack succeeds through the sheet (the Fire action carries no GM adjudication), so the stock weapons exist and are armed but are blocked until this is ruled. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 21 (2026-11-02):** appended V-P6C-01. No existing entry changed.

@@ -12,13 +12,23 @@
  * (Foundry reads "x2" as "explode on 2"). Nothing else (ability, half heroic level) is part of that formula.
  *
  * Damage type is taken only when the printed string states it ("(Ion)"); a name-based guess is never used.
+ *
+ * Two provenance paths feed ONE combat runtime and ONE damage rule:
+ *   - INSTALLED: a certified aftermarket installation (sealed ledger entry + certified weapon specification);
+ *   - STOCK: a published factory weapon group of a digest-verified source record (strictly parsed, see
+ *     vehicle-stock-weapon-groups.js). Stock weapons never pass through the ledger and are never turned into
+ *     installations.
+ * resolveVehicleWeaponAuthority() returns the same shape for both; everything downstream (provenance, preflight,
+ * attack math, damage) reads that shape, never the Item.
  */
 import { parseVehicleWeaponDamageSpec } from '../../engine/combat/vehicle-weapon-damage-parser.js';
 import { getVerifiedPublishedRecord } from './vehicle-source-identity.js';
 import { readCertifiedInstallations } from './vehicle-installation-ledger.js';
 import { EFFECTS } from './vehicle-modification-effects.js';
+import { assessStockWeaponGroups } from './vehicle-stock-weapon-groups.js';
 
 export const INSTALLED_WEAPON_FLAG = 'vehicleInstalledWeapon';
+export const STOCK_WEAPON_FLAG = 'vehicleStockWeapon';
 
 const text = v => (typeof v === 'string' ? v.trim() : '');
 const sameLabel = (a, b) => text(a) !== '' && text(a).toLowerCase() === text(b).toLowerCase();
@@ -29,10 +39,22 @@ export function isInstalledVehicleWeaponItem(weapon) {
   return weapon?.actor?.type === 'vehicle' && text(weapon?.system?.vehicleMount?.installId) !== '';
 }
 
-/** A Shipyard-managed weapon Item (created by the installation service). */
+const flagOf = (weapon, name) => weapon?.flags?.swse?.[name] ?? weapon?.getFlag?.('swse', name) ?? null;
+
+/** A Shipyard-managed (aftermarket) weapon Item: created by the installation service. */
 export function isShipyardManagedWeaponItem(weapon) {
-  return text(weapon?.flags?.swse?.[INSTALLED_WEAPON_FLAG]?.installId) !== '' || text(weapon?.getFlag?.('swse', INSTALLED_WEAPON_FLAG)?.installId) !== '';
+  return text(flagOf(weapon, INSTALLED_WEAPON_FLAG)?.installId) !== '';
 }
+
+/** A published stock (factory) weapon Item: created from a verified source firing group. */
+export function isStockVehicleWeaponItem(weapon) {
+  return weapon?.actor?.type === 'vehicle' && text(flagOf(weapon, STOCK_WEAPON_FLAG)?.groupKey) !== '';
+}
+
+/** Any weapon Item whose mechanics belong to a vehicle authority (aftermarket or stock). */
+export const isVehicleManagedWeaponItem = weapon => isInstalledVehicleWeaponItem(weapon) || isStockVehicleWeaponItem(weapon);
+/** Flagged as managed (either kind) regardless of owner; used by the edit guard. */
+export const hasManagedWeaponFlag = weapon => isShipyardManagedWeaponItem(weapon) || text(flagOf(weapon, STOCK_WEAPON_FLAG)?.groupKey) !== '';
 
 /**
  * Resolve the certified identity of an installed vehicle weapon Item.
@@ -65,15 +87,58 @@ export function resolveCertifiedInstalledWeapon(weapon) {
 }
 
 /**
- * Executable damage of an installed vehicle weapon: the CERTIFIED specification of its sealed installation.
+ * Resolve a STOCK (published factory) weapon Item against its digest-verified source record.
+ * @returns {null | {ok:true, origin:'stock', operator:string, group:object, record:object, spec:{damage:string}, arcState:string} | {ok:false, reason:string}}
+ */
+export function resolveStockWeapon(weapon) {
+  if (!isStockVehicleWeaponItem(weapon)) return null;
+  const vehicle = weapon.actor;
+  const record = getVerifiedPublishedRecord(vehicle);
+  if (!record) return { ok: false, reason: 'STOCK_WEAPON_VEHICLE_UNVERIFIED' };
+  const key = record.identity?.sourceEntryKey;
+  const flag = flagOf(weapon, STOCK_WEAPON_FLAG);
+  if (flag.sourceEntryKey !== key) return { ok: false, reason: 'STOCK_WEAPON_ITEM_SOURCE_MISMATCH' };
+  const group = assessStockWeaponGroups(record).groups.find(g => g.groupKey === flag.groupKey);
+  if (!group) return { ok: false, reason: 'STOCK_WEAPON_GROUP_NOT_IN_SOURCE' };
+  if (!group.executable) return { ok: false, reason: `STOCK_WEAPON_GROUP_NOT_EXECUTABLE:${group.reasons[0]}` };
+  const vm = weapon.system?.vehicleMount ?? {};
+  if (text(vm.installId) !== '') return { ok: false, reason: 'STOCK_WEAPON_ITEM_CLAIMS_AN_INSTALLATION' };
+  if (!sameLabel(group.label, weapon.name)) return { ok: false, reason: 'STOCK_WEAPON_ITEM_NAME_MISMATCH' };
+  if (vm.stockGroupKey !== group.groupKey || vm.mountKey !== `stock:${group.groupKey}` || vm.crewRole !== group.operator)
+    return { ok: false, reason: 'STOCK_WEAPON_ITEM_MOUNT_MISMATCH' };
+  if (text(weapon.system?.damage) !== group.damage.raw) return { ok: false, reason: 'STOCK_WEAPON_ITEM_DAMAGE_DIVERGES_FROM_SOURCE' };
+  const arcSilent = group.evidence?.firingArc === 'SOURCE_SILENT_CONFIRMED' || record.fieldStates?.['armament.firingArcs'] === 'not-stated';
+  return { ok: true, origin: 'stock', operator: group.operator, group, record, spec: { damage: group.damage.raw },
+    arcState: arcSilent ? 'SOURCE_SILENT_CONFIRMED' : 'NOT_REVIEWED' };
+}
+
+/**
+ * ONE authority shape for every Item-backed vehicle weapon, whichever provenance path produced it.
+ * @returns {null | {ok:true, origin:'installed'|'stock', operator:string, damageRaw:string} | {ok:false, reason:string}}
+ *   null = not a vehicle-managed weapon Item.
+ */
+export function resolveVehicleWeaponAuthority(weapon) {
+  if (isStockVehicleWeaponItem(weapon)) {
+    if (isInstalledVehicleWeaponItem(weapon)) return { ok: false, reason: 'WEAPON_CLAIMS_BOTH_STOCK_AND_INSTALLED_PROVENANCE' };
+    const s = resolveStockWeapon(weapon);
+    return s.ok ? { ok: true, origin: 'stock', operator: s.operator, damageRaw: s.spec.damage, stock: s } : s;
+  }
+  const i = resolveCertifiedInstalledWeapon(weapon);
+  if (!i) return null;
+  return i.ok ? { ok: true, origin: 'installed', operator: i.mount.operatorRole, damageRaw: i.spec.damage, installed: i } : i;
+}
+
+/**
+ * Executable damage of a vehicle-managed weapon: the CERTIFIED specification (installed) or the PUBLISHED source group
+ * (stock), never the Item's own damage field.
  * @returns {null|{ok:true, formula:string, multiplier:number, damageType:string|null, printed:string}|{ok:false, reason:string}}
  */
-export function resolveInstalledVehicleWeaponDamage(weapon) {
-  const id = resolveCertifiedInstalledWeapon(weapon);
-  if (!id) return null;
-  if (!id.ok) return id;
+export function resolveVehicleWeaponDamage(weapon) {
+  const a = resolveVehicleWeaponAuthority(weapon);
+  if (!a) return null;
+  if (!a.ok) return a;
   // no weapon name passed: the parser's name-based type guess is never used for mechanics
-  const p = parseVehicleWeaponDamageSpec(id.spec.damage);
+  const p = parseVehicleWeaponDamageSpec(a.damageRaw);
   if (!p.formula || p.special || p.modifierOnly || p.byWeapon || p.noDamage)
     return { ok: false, reason: 'VEHICLE_WEAPON_DAMAGE_NOT_ORDINARY' };
   return { ok: true, formula: p.formula, multiplier: Number.isFinite(p.multiplier) && p.multiplier > 1 ? p.multiplier : 1,

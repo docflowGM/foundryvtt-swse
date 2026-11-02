@@ -49,7 +49,7 @@ import { ResolutionContext } from "/systems/foundryvtt-swse/scripts/engine/resol
 import { RULES } from "/systems/foundryvtt-swse/scripts/engine/execution/rules/rule-enum.js";
 import { resolveTalentDamageContributions } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-talent-contributions.js";
 import { collectSharedDamageDiceTerms } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-item-dice-contributions.js";
-import { resolveInstalledVehicleWeaponDamage } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
+import { resolveVehicleWeaponDamage } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
 import { canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1029,7 +1029,7 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
   // are consumed HERE, in the one composition -- never by a second damage engine. A stock-statblock flat contract is untouched.
   // P6B: a weapon installed on a vehicle through the sealed Shipyard ledger uses the Core vehicle formula
   // (weapon damage dice x damage multiplier) -- never the printed "NdMxK" string as dice, and no ability/half-level terms.
-  const vehicleDamage = (canonicalBase === null && !bonus.flags?.stockDamageFormula) ? resolveInstalledVehicleWeaponDamage(weapon) : null;
+  const vehicleDamage = (canonicalBase === null && !bonus.flags?.stockDamageFormula) ? resolveVehicleWeaponDamage(weapon) : null;
   if (vehicleDamage && !vehicleDamage.ok)
     throw new WeaponRuntimeError(ERROR_CODES.NO_ORDINARY_DAMAGE, `${weapon?.name ?? 'vehicle weapon'} has no ordinary damage roll (${vehicleDamage.reason})`, { reason: vehicleDamage.reason });
   if (vehicleDamage) bonus = { total: 0, components: {}, flags: { damageBaseOnly: true, vehicleWeaponFormula: true }, typedModifierLedger: [] };

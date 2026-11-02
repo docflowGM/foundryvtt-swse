@@ -66,7 +66,9 @@ function safeNumber(value, fallback = 0) {
  * @returns {Array}
  */
 function safeArray(value) {
-  return Array.isArray(value) ? value : [];
+  if (Array.isArray(value)) return value;
+  // A live Foundry actor's `items` is an EmbeddedCollection, not an Array: read its documents.
+  return Array.isArray(value?.contents) ? value.contents : [];
 }
 
 /**

@@ -201,7 +201,7 @@ test('intentionally blank Phase 4D shell and explicit custom vehicles remain sep
   assert.equal(classifyVehicleActorSource({ type: 'character', system: {} }).kind, 'not-vehicle');
 });
 
-test('Foundry hooks register once; no hidden importer or post-create weapon hydration', async () => {
+test('Foundry hooks register once; no hidden importer; post-create arming is limited to verified stock groups', async () => {
   const { readFileSync } = await import('node:fs');
   const { runInNewContext } = await import('node:vm');
   const source = readFileSync('scripts/actors/vehicle/vehicle-precreate-hooks.js', 'utf8');
@@ -219,7 +219,11 @@ test('Foundry hooks register once; no hidden importer or post-create weapon hydr
   runInNewContext(code + '\nglobalThis.register=registerVehiclePreCreateHooks;', context);
   context.register(); context.register();
   assert.equal(callbacks.get('preCreateActor').length, 1);
-  assert.equal(callbacks.has('createActor'), false);
+  // The ONLY post-create hook arms executable, digest-verified published stock groups (armStockWeaponsOnCreate); it never
+  // imports, normalizes or hydrates printed/legacy weapon rows (asserted above), and it runs once per registration.
+  assert.equal(callbacks.get('createActor').length, 1);
+  assert.match(source, /Hooks\.on\('createActor', armStockWeaponsOnCreate\)/);
+  assert.match(source, /export async function armStockWeaponsOnCreate[\s\S]*?claimsPublishedSource\(actor\)[\s\S]*?syncWeaponItems\(actor\)/);
   const gate = callbacks.get('preCreateActor')[0];
   const good = pick(() => true);
   const bad = clone(good); bad.system.weapons = [{ name: 'uncertified' }];

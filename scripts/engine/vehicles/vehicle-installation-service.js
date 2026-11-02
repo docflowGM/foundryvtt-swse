@@ -19,6 +19,7 @@ import { makeUnusedEmplacementResolver } from "/systems/foundryvtt-swse/scripts/
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 import { readCertifiedInstallations } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-installation-ledger.js";
 import { planInstalledWeaponItemSync } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-installed-weapon-items.js";
+import { planStockWeaponItemSync } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-weapon-items.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 
@@ -139,25 +140,32 @@ export class VehicleInstallationService {
   }
 
   /**
-   * Owned weapon Items follow the sealed ledger: one Item per executable weapon installation; managed Items that are
-   * stale, duplicated or edited are replaced. Idempotent; through ActorEngine; never charges anything and never
-   * touches an Item that is not Shipyard-managed. After writing, the result is VERIFIED against the vehicle's Items:
-   * `synced` is true only when no further change is needed.
+   * Owned weapon Items follow their authorities: one Item per executable aftermarket installation (sealed ledger) and one
+   * per executable published stock group (verified source record). Managed Items that are stale, duplicated or edited
+   * are replaced; Items that are not managed are never touched. Idempotent; through ActorEngine; never charges anything.
+   * After writing, the result is VERIFIED against the vehicle's Items: `synced` is true only when nothing more is needed.
+   * `stock: false` limits the sync to aftermarket installations (used after ledger changes, so an install is never
+   * entangled with arming factory weapons; stock arming happens at creation and in the explicit Resync).
    * @returns {{success:boolean, synced:boolean, created:number, deleted:number, reasons?:string[], error?:string}}
    */
-  static async syncInstalledWeaponItems(vehicle) {
+  static async syncWeaponItems(vehicle, { stock = true } = {}) {
     const src = this.#source(vehicle);
     if (src.error) return { success: false, synced: false, created: 0, deleted: 0, reasons: [src.error] };
     const { entries } = readCertifiedInstallations(src.flags, src.record.identity.sourceEntryKey);
-    const plan = planInstalledWeaponItemSync({ items: Array.from(vehicle.items ?? []), entries });
+    const plan = () => {
+      const items = Array.from(vehicle.items ?? []);
+      const a = planInstalledWeaponItemSync({ items, entries }), b = stock ? planStockWeaponItemSync({ items, record: src.record }) : { create: [], deleteIds: [] };
+      return { create: [...a.create, ...b.create], deleteIds: [...a.deleteIds, ...b.deleteIds] };
+    };
+    const first = plan();
     let deleted = 0, created = 0;
     try {
-      if (plan.deleteIds.length) { await ActorEngine.deleteEmbeddedDocuments(vehicle, 'Item', plan.deleteIds); deleted = plan.deleteIds.length; }
-      if (plan.create.length) { await ActorEngine.createEmbeddedDocuments(vehicle, 'Item', plan.create); created = plan.create.length; }
+      if (first.deleteIds.length) { await ActorEngine.deleteEmbeddedDocuments(vehicle, 'Item', first.deleteIds); deleted = first.deleteIds.length; }
+      if (first.create.length) { await ActorEngine.createEmbeddedDocuments(vehicle, 'Item', first.create); created = first.create.length; }
     } catch (err) {
       return { success: false, synced: false, created, deleted, reasons: ['WEAPON_ITEM_SYNC_FAILED'], error: err?.message ?? String(err) };
     }
-    const after = planInstalledWeaponItemSync({ items: Array.from(vehicle.items ?? []), entries });
+    const after = plan();
     const synced = after.create.length === 0 && after.deleteIds.length === 0;
     return synced ? { success: true, synced: true, created, deleted }
       : { success: false, synced: false, created, deleted, reasons: ['WEAPON_ITEM_SYNC_UNVERIFIED'] };
@@ -170,14 +178,14 @@ export class VehicleInstallationService {
   static async reconcileWeaponItems(args) { return this.#exclusive(args?.vehicle, () => this.#reconcile(args)); }
   static async #reconcile({ vehicle }) {
     if (!(this.#isGM() || vehicle?.isOwner === true)) return { success: false, reasons: ['NOT_AUTHORIZED'] };
-    const w = await this.syncInstalledWeaponItems(vehicle);
+    const w = await this.syncWeaponItems(vehicle);
     return { success: w.success, operational: w.synced, weaponItems: w, reasons: w.success ? [] : w.reasons };
   }
 
   /** Items are synchronized after any ledger change; a failure never undoes the committed installation. */
   static async #afterLedgerChange(vehicle, tx) {
     if (!tx?.success) return null;
-    try { return await this.syncInstalledWeaponItems(vehicle); }
+    try { return await this.syncWeaponItems(vehicle, { stock: false }); }
     catch (err) { return { success: false, synced: false, created: 0, deleted: 0, reasons: ['WEAPON_ITEM_SYNC_FAILED'], error: err?.message ?? String(err) }; }
   }
 

@@ -40,7 +40,7 @@
 import { resolveAttackBonus, getTargetActorFromOptions } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
 import { getEffectiveVehicleSource } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-published-derived.js";
 import { capitalShipAttackPenalty } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-capital-penalty.js";
-import { resolveCertifiedInstalledWeapon } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
+import { resolveVehicleWeaponAuthority } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
 import { resolveVehicleCrewActor } from "/systems/foundryvtt-swse/scripts/engine/crew/vehicle-crew-actor-authority.js";
 import { getWeaponAttackAbility, getRangePenalty, getWeaponFlatAttackBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
@@ -114,8 +114,8 @@ function actorSize(actor) {
  * @returns {{entry:object|null, error:string|null, warnings:string[]}}
  */
 function capitalShipPenaltyEntry(vehicleActor, weapon, context) {
-  const certified = resolveCertifiedInstalledWeapon(weapon);
-  const pointDefense = certified?.ok === true && certified.spec.pointDefense === true;
+  const authority = resolveVehicleWeaponAuthority(weapon);
+  const pointDefense = authority?.ok === true && authority.installed?.spec?.pointDefense === true;
   const target = getTargetActorFromOptions(context);
   const r = capitalShipAttackPenalty({ attackerSize: actorSize(vehicleActor), targetSize: actorSize(target), pointDefense });
   const base = { id: 'capital-ship-attack-penalty', label: 'Capital ship vs. target smaller than Colossal', category: 'vehicle',
@@ -128,7 +128,7 @@ function capitalShipPenaltyEntry(vehicleActor, weapon, context) {
       return target ? { entry: null, error: 'capital-ship-target-size-unknown', warnings: [] }
         : { entry: null, error: null, warnings: ['Capital ship attack has no target yet; the -20 penalty against targets smaller than Colossal cannot be evaluated.'] };
     case 'ATTACKER_SIZE_UNKNOWN':
-      return certified?.ok ? { entry: null, error: 'capital-ship-attacker-size-unknown', warnings: [] }
+      return authority?.ok ? { entry: null, error: 'capital-ship-attacker-size-unknown', warnings: [] }
         : { entry: null, error: null, warnings: ['Attacking vehicle size is unknown; the capital-ship attack penalty was not evaluated.'] };
     default:
       return { entry: null, error: null, warnings: [] };
@@ -137,13 +137,13 @@ function capitalShipPenaltyEntry(vehicleActor, weapon, context) {
 
 /**
  * Core Vehicle Combat: "If you are trained in the Pilot skill, you gain a +2 bonus on attack rolls made with any
- * vehicle weapon identified as being crewed by the pilot." Applied only when ALL hold: the weapon is a sealed,
- * certified installation whose operator is the pilot; the resolved gunner Actor IS the vehicle's assigned pilot-station
+ * vehicle weapon identified as being crewed by the pilot." Applied only when ALL hold: the weapon is a sealed certified
+ * installation or a verified published stock group whose operator is the pilot; the resolved gunner Actor IS the vehicle's assigned pilot-station
  * Actor; that Actor is trained in Pilot; and no Pilot component is already in the ledger. Never for abstract crew.
  */
 async function trainedPilotWeaponEntry(gunnerActor, vehicleActor, weapon, ledger) {
-  const certified = resolveCertifiedInstalledWeapon(weapon);
-  if (!certified?.ok || certified.mount?.operatorRole !== 'pilot') return null;
+  const authority = resolveVehicleWeaponAuthority(weapon);
+  if (!authority?.ok || authority.operator !== 'pilot') return null;
   const pilot = await resolveVehicleCrewActor(vehicleActor, 'pilot');
   if (pilot.source !== 'actor' || !pilot.actor || (pilot.actor !== gunnerActor && !(pilot.actor.id && pilot.actor.id === gunnerActor.id))) return null;
   const row = gunnerActor.system?.derived?.skills?.pilot ?? gunnerActor.system?.skills?.pilot;
@@ -151,7 +151,7 @@ async function trainedPilotWeaponEntry(gunnerActor, vehicleActor, weapon, ledger
   if (ledger.some(e => /pilot/i.test(`${e.id} ${e.label}`))) return null;
   return ledgerEntry({ id: 'pilot-trained-weapon-crew', label: 'Trained Pilot (pilot-crewed weapon)', value: 2, category: 'operator',
     sourceId: gunnerActor.id ?? null, sourceName: gunnerActor.name ?? null,
-    reason: 'Core Rulebook, Vehicle Combat (Pilot): +2 on attack rolls with a vehicle weapon crewed by the pilot, when trained in Pilot. Weapon operator taken from the sealed installation; pilot from the vehicle\'s pilot station.' });
+    reason: 'Core Rulebook, Vehicle Combat (Pilot): +2 on attack rolls with a vehicle weapon crewed by the pilot, when trained in Pilot. Weapon operator taken from the sealed installation or the verified source group; pilot from the vehicle\'s pilot station.' });
 }
 
 function slugify(label) {
@@ -308,7 +308,23 @@ export async function resolveAbstractCrewAttackBonus(vehicleActor, weapon, crewQ
     // records that may have stray/legacy crewQuality text.
     warnings.push(`Unrecognized crew quality "${rawQuality}" on ${vehicleActor.name ?? 'vehicle'}; defaulting to "normal".`);
   }
-  const crewQualityBonus = CREW_QUALITY_BONUS[recognizedQuality];
+  // Generic crew Base Attack. For a source-backed ship the statblock prints the crew's Base Attack (it matches the Core crew
+  // quality attack column in 365 of 427 published records), and a constructed ship derives it from the Core crew quality
+  // table; both are verified sources and replace the unsourced legacy tier table below. Legacy actors keep the tier.
+  const crewSource = getEffectiveVehicleSource(vehicleActor);
+  let crewBab = CREW_QUALITY_BONUS[recognizedQuality], crewBabLabel = `Crew Quality (${recognizedQuality})`, crewBabReason = null;
+  if (crewSource?.origin === 'published') {
+    const printed = crewSource.record.combat?.baseAttackBonusPrinted;
+    if (!Number.isFinite(printed)) return { total: 0, ledger: [], warnings, error: 'published-crew-bab-unknown' };
+    crewBab = printed; crewBabLabel = 'Crew Base Attack (published statblock)';
+    crewBabReason = `Published statblock Base Atk of ${crewSource.record.identity?.name ?? 'the vehicle'} (${crewSource.record.publication?.book ?? 'source'} p. ${crewSource.record.publication?.page ?? '?'}): the generic crew's Base Attack Bonus.`;
+  } else if (crewSource?.origin === 'custom-constructed') {
+    const derived = crewSource.construction.derived?.baseAttackBonus;
+    if (!Number.isFinite(derived)) return { total: 0, ledger: [], warnings, error: 'constructed-crew-bab-unknown' };
+    crewBab = derived; crewBabLabel = `Crew Base Attack (${crewSource.construction.crewQuality} crew, Core crew quality)`;
+    crewBabReason = 'Constructed ship: Base Attack from the chosen crew quality (Core Rulebook crew quality table).';
+  }
+  const crewQualityBonus = crewBab;
 
   const vehicleIntModifier = SchemaAdapters.getAbilityMod(vehicleActor, 'int');
   const rangeModifier = getRangePenalty(weapon, context);
@@ -317,9 +333,9 @@ export async function resolveAbstractCrewAttackBonus(vehicleActor, weapon, crewQ
 
   const ledger = [
     ledgerEntry({
-      id: 'crew-quality-bab', label: `Crew Quality (${recognizedQuality})`, value: crewQualityBonus, category: 'gunner',
+      id: 'crew-quality-bab', label: crewBabLabel, value: crewQualityBonus, category: 'gunner',
       sourceId: vehicleActor.id ?? null, sourceName: `${vehicleActor.name ?? 'Vehicle'} — abstract crew`,
-      reason: 'CREW_QUALITY_BONUS tier value used as a direct Gunner-BAB-equivalent substitute — the only decomposable component abstract crew data provides; not a combined total (no ability/proficiency/condition components exist to source, since no gunner Actor exists).'
+      reason: crewBabReason ?? 'CREW_QUALITY_BONUS tier value used as a direct Gunner-BAB-equivalent substitute — the only decomposable component abstract crew data provides; not a combined total (no ability/proficiency/condition components exist to source, since no gunner Actor exists).'
     }),
     ledgerEntry({
       id: 'vehicle-int', label: 'Vehicle INT', value: vehicleIntModifier, category: 'vehicle',

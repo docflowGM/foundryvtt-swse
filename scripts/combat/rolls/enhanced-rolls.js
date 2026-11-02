@@ -1,4 +1,4 @@
-import { isInstalledVehicleWeaponItem } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
+import { isVehicleManagedWeaponItem } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
@@ -51,7 +51,7 @@ import { AttackOutcomeResolver } from "/systems/foundryvtt-swse/scripts/engine/c
 
 function getWeaponDamageFormula(weapon) {
   // Installed vehicle weapons never take damage from the editable Item field (certified installation only).
-  if (isInstalledVehicleWeaponItem(weapon)) return '';
+  if (isVehicleManagedWeaponItem(weapon)) return '';
   const system = weapon?.system ?? {};
   const candidates = [
     system.damage,
