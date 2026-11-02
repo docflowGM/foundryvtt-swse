@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "sourceBaselineCommit": "9275da66c21b917acbed628f9dcaf3e070aaa14f",
-  "reason": "Frozen original class records; skills, trained-skill counts, BAB metadata excepted; only six exact source-certified class feature progressions accepted by their approved fingerprints. Other fields and all other 31 class progression records remain protected.",
+  "reason": "Frozen 37 original class records; skills/count/BAB metadata excepted, with seven exact source-certified class-feature progression replacements accepted by their approved fingerprints. No wildcard progression exemption.",
   "exemptFields": [
     "system.trainedSkills",
     "system.class_skills",
@@ -225,6 +225,11 @@
       "name": "Infiltrator",
       "approvedFingerprint": "2056:4cfb64d7a88450dc",
       "reason": "Force Unleashed p. 49: Unarmed Stun dice labels at class levels 2, 6, 10"
+    },
+    "61876f91a1633cdf": {
+      "name": "Enforcer",
+      "approvedFingerprint": "1814:efe24d8e68b8b351",
+      "reason": "Force Unleashed p. 44: Resources granted at level 1, then provides a per-level equipment allowance"
     }
   }
 }
