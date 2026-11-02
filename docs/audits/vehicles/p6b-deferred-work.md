@@ -9,10 +9,10 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | Category | Count |
 |---|---|
 | RULES_DECISION_REQUIRED | 6 |
-| SOURCE_EVIDENCE_MISSING | 6 |
+| SOURCE_EVIDENCE_MISSING | 5 |
 | ENGINEERING_COMPLEXITY | 10 |
 | LIVE_RUNTIME_PENDING | 1 |
-| NONCRITICAL_DEFECT | 2 |
+| NONCRITICAL_DEFECT | 3 |
 | DEPENDENCY_BLOCKED | 7 |
 
 ## Items (by severity)
@@ -23,8 +23,6 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | P6B-D-002 | P6B-1 | sublight-drive-1 .. sublight-drive-6 | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6-02 |
 | P6B-D-008 | P6B-1 | all 51 offline-integrated effects (P6B-0..3); P6B-0 environment and Pilot check; custom-ship effects | LIVE_RUNTIME_PENDING | IMPORTANT | no | - |
 | P6B-D-019 | P6B-3 | remaining weapon systems, launchers and ammunition (laser cannons light/medium/heavy are certified and executable since the weapon slice) | DEPENDENCY_BLOCKED | IMPORTANT | no | V-P2-04, V-P6A-01, V-P6A-02, V-P6A-03, V-P6A-04 |
-| P6B-D-023 | P6B-W | all weapons on Colossal (frigate) or larger hulls; turbolasers; capital ship weapons | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
-| P6B-D-024 | P6B-W | pilot-crewed vehicle weapons fired by a named pilot | SOURCE_EVIDENCE_MISSING | IMPORTANT | no | - |
 | P6B-D-026 | P6B-W | ion cannons (light/medium/heavy, Hapan triple) | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-032 | P6B-W | launchers: loading, expenditure and capacity expansion | DEPENDENCY_BLOCKED | IMPORTANT | yes | V-P6A-03 |
 | P6B-D-003 | P6B-1 | jamming-suite, jamming-array | ENGINEERING_COMPLEXITY | MINOR | no | V-P6-05, V-P2-04 |
@@ -45,6 +43,8 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | P6B-D-020 | P6B-3 | printed stock payloads (e.g. "Printed payload: 6 proton torpedoes") | DEPENDENCY_BLOCKED | MINOR | no | V-P2-04 |
 | P6B-D-021 | P6B-3 | custom ships: cargo-dependent and consumables-dependent accessories | DEPENDENCY_BLOCKED | MINOR | no | V-P6B-02 |
 | P6B-D-022 | P6B-3 | custom ships: speed and movement effects | ENGINEERING_COMPLEXITY | MINOR | no | - |
+| P6B-D-023 | P6B-W | turbolasers and capital-scale (x5) weapons | ENGINEERING_COMPLEXITY | MINOR | no | - |
+| P6B-D-024 | P6B-W | pilot +2 for weapons not covered by the sealed installation path | NONCRITICAL_DEFECT | MINOR | no | - |
 | P6B-D-025 | P6B-W | blaster-cannon-light/medium/heavy, autoblaster | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
 | P6B-D-027 | P6B-W | vehicle weapon range bands | ENGINEERING_COMPLEXITY | MINOR | no | - |
 | P6B-D-028 | P6B-W | player-requested weapon mounts | ENGINEERING_COMPLEXITY | MINOR | no | - |
@@ -280,31 +280,31 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 - **Impact:** Atmospheric thrusters not installable on custom designs.
 - **Recommended action:** Parse frame speed into character/starship speed modes in the frame builder.
 
-### P6B-D-023 - all weapons on Colossal (frigate) or larger hulls; turbolasers; capital ship weapons
+### P6B-D-023 - turbolasers and capital-scale (x5) weapons
 
 - **Source:** Core Rulebook, Vehicle Combat (Capital Ships); SotG p. 45 (point-defense)
-- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
-- **Reason:** Core: a vehicle of Colossal (frigate) size or larger takes -20 on attack rolls against targets smaller than Colossal; point-defense weapons are exempt. The vehicle attack math has no target-size consumer for this, so certified weapons are refused on frigate+ hulls (CAPITAL_SHIP_TARGETING_PENALTY_NOT_IMPLEMENTED) rather than firing with a wrong bonus.
-- **Missing:** Target-size-aware attack component in vehicle-attack-math (and point-defense exemption).
+- **Category / severity:** ENGINEERING_COMPLEXITY / MINOR
+- **Reason:** The Core -20 against targets smaller than Colossal is implemented (vehicle-capital-penalty.js, in the vehicle attack math) and weapons may now be installed on frigate-size and larger hulls. Turbolasers stay uncertified: capital-scale (x5) damage against smaller-scale targets and their starship-scale ranges have not been verified end to end (the Core range cells are unreadable in the OCR).
+- **Missing:** Verified starship-scale range cells and capital-scale damage application for turbolasers.
 - **Owner ruling needed:** no
-- **Impact:** No weapon installable on frigate, cruiser or station hulls; turbolasers uncertified.
-- **Recommended action:** Add the -20 component (target size known; unknown size refuses) then lift the refusal and certify turbolasers.
+- **Impact:** Turbolasers (light/medium/heavy, Hapan triple ion) are reference-only.
+- **Recommended action:** PDF check of Table 10-2 turbolaser range cells and of damage application of x5 weapons to non-capital targets, then certify.
 
-### P6B-D-024 - pilot-crewed vehicle weapons fired by a named pilot
+### P6B-D-024 - pilot +2 for weapons not covered by the sealed installation path
 
 - **Source:** Core Rulebook, Vehicle Combat (attack modifiers)
-- **Category / severity:** SOURCE_EVIDENCE_MISSING / IMPORTANT
-- **Reason:** Core grants a pilot trained in Pilot a +2 bonus on attacks with vehicle weapons crewed by the pilot. The repository OCR of that line is partly unreadable, and the bonus is not applied anywhere today (pre-existing gap for every named-pilot vehicle attack, not introduced by the slice).
-- **Missing:** PDF confirmation of the exact wording (attack rolls vs checks).
+- **Category / severity:** NONCRITICAL_DEFECT / MINOR
+- **Reason:** Core Rulebook printed p. 171 (owner-verified): +2 attack bonus for a character trained in Pilot with a vehicle weapon crewed by the pilot. Implemented in the vehicle attack math for certified installed weapons whose sealed mount operator is the pilot, fired by the vehicle's assigned, Pilot-trained pilot-station Actor. NOT applied to abstract crew (no evidence the printed totals omit it) or to stock/printed attack groups and legacy weapons (their pilot-crewed designation is not authoritative).
+- **Missing:** Authoritative pilot-crewed designation for stock printed attacks.
 - **Owner ruling needed:** no
 - **Impact:** Named pilots firing pilot-crewed weapons may be 2 low; abstract crew unaffected.
-- **Recommended action:** Confirm the wording against the PDF, then add the component in vehicle-attack-math for the gunner domain.
+- **Recommended action:** Revisit when stock attack groups become executable.
 
 ### P6B-D-025 - blaster-cannon-light/medium/heavy, autoblaster
 
 - **Source:** Core Rulebook Table 10-2; SotG pp. 44-47
 - **Category / severity:** SOURCE_EVIDENCE_MISSING / MINOR
-- **Reason:** The starship-scale range cells for blaster cannons are unreadable in the OCR (blasters are described as short-ranged, mostly on airspeeders); certifying them without the range row could allow starship-scale shots they cannot make. Autoblaster has a cost multiplier and autofire behaviour.
+- **Reason:** Blaster cannon rows are PDF-verified (damage, EP, cost, availability). The starship-scale range cells of Core Table 10-2 are unreadable in the OCR. No weapon's maximum range is enforced today (range penalties follow the band the attacker states, P6B-D-027), so range cells do not change any certified calculation; the blaster's shorter range is therefore a documented limitation, not a guess.
 - **Missing:** Table 10-2 blaster cannon starship-scale ranges from the PDF.
 - **Owner ruling needed:** no
 - **Impact:** Blaster cannons not installable.

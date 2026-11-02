@@ -30,7 +30,6 @@ const REASON_TEXT = {
   WEAPON_MOUNT_KEY_IN_USE: 'Another installed weapon already uses that mount.',
   MOUNT_CERTIFICATION_REASON_REQUIRED: 'The GM must give a reason when certifying a weapon mount.',
   MOUNT_PROVENANCE_SET_BY_SERVICE_ONLY: 'Mount provenance is recorded by the system, not supplied by the request.',
-  CAPITAL_SHIP_TARGETING_PENALTY_NOT_IMPLEMENTED: 'Weapons cannot be installed on frigate-size or larger ships yet (the capital-ship attack penalty is not automated).',
   WEAPON_ITEM_SYNC_FAILED: 'The weapon item could not be written.',
   WEAPON_ITEM_SYNC_UNVERIFIED: 'The weapon items could not be verified after writing.',
   WEAPON_ITEMS_NOT_SYNCHRONIZED: 'The installation is complete and paid for, but the weapon is not operational yet: its weapon item is not in sync. Use "Resync weapons".',

@@ -37,7 +37,11 @@
  * the evidence behind which formula components apply.
  */
 
-import { resolveAttackBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
+import { resolveAttackBonus, getTargetActorFromOptions } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
+import { getEffectiveVehicleSource } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-published-derived.js";
+import { capitalShipAttackPenalty } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-capital-penalty.js";
+import { resolveCertifiedInstalledWeapon } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
+import { resolveVehicleCrewActor } from "/systems/foundryvtt-swse/scripts/engine/crew/vehicle-crew-actor-authority.js";
 import { getWeaponAttackAbility, getRangePenalty, getWeaponFlatAttackBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
@@ -93,6 +97,61 @@ function ledgerEntry({ id, label, value, category, sourceId = null, sourceName =
     applied,
     reason
   };
+}
+
+
+/** Size of a vehicle (verified record / construction frame) or of any actor (system.size). null = unknown. */
+function actorSize(actor) {
+  if (!actor) return null;
+  const src = actor.type === 'vehicle' ? getEffectiveVehicleSource(actor) : null;
+  return src?.record?.classification?.printedSize ?? actor.system?.size ?? null;
+}
+
+/**
+ * Core Vehicle Combat, Capital Ships: a vehicle of Colossal (frigate) size or larger takes -20 on attack rolls against
+ * targets smaller than Colossal; point-defense weapons are exempt. Point-defense status comes ONLY from the certified
+ * weapon specification of a sealed installation (never from an Item name or editable field).
+ * @returns {{entry:object|null, error:string|null, warnings:string[]}}
+ */
+function capitalShipPenaltyEntry(vehicleActor, weapon, context) {
+  const certified = resolveCertifiedInstalledWeapon(weapon);
+  const pointDefense = certified?.ok === true && certified.spec.pointDefense === true;
+  const target = getTargetActorFromOptions(context);
+  const r = capitalShipAttackPenalty({ attackerSize: actorSize(vehicleActor), targetSize: actorSize(target), pointDefense });
+  const base = { id: 'capital-ship-attack-penalty', label: 'Capital ship vs. target smaller than Colossal', category: 'vehicle',
+    sourceId: vehicleActor.id ?? null, sourceName: vehicleActor.name ?? null };
+  switch (r.status) {
+    case 'APPLIES':
+      return { entry: ledgerEntry({ ...base, value: r.value, reason: 'Core Rulebook, Vehicle Combat (Capital Ships): a vehicle of Colossal (frigate) size or larger takes -20 on attack rolls against targets smaller than Colossal.' }), error: null, warnings: [] };
+    case 'TARGET_SIZE_UNKNOWN':
+      // a capital-size attacker with a target of unknown size: refuse rather than guess the target is not small
+      return target ? { entry: null, error: 'capital-ship-target-size-unknown', warnings: [] }
+        : { entry: null, error: null, warnings: ['Capital ship attack has no target yet; the -20 penalty against targets smaller than Colossal cannot be evaluated.'] };
+    case 'ATTACKER_SIZE_UNKNOWN':
+      return certified?.ok ? { entry: null, error: 'capital-ship-attacker-size-unknown', warnings: [] }
+        : { entry: null, error: null, warnings: ['Attacking vehicle size is unknown; the capital-ship attack penalty was not evaluated.'] };
+    default:
+      return { entry: null, error: null, warnings: [] };
+  }
+}
+
+/**
+ * Core Vehicle Combat: "If you are trained in the Pilot skill, you gain a +2 bonus on attack rolls made with any
+ * vehicle weapon identified as being crewed by the pilot." Applied only when ALL hold: the weapon is a sealed,
+ * certified installation whose operator is the pilot; the resolved gunner Actor IS the vehicle's assigned pilot-station
+ * Actor; that Actor is trained in Pilot; and no Pilot component is already in the ledger. Never for abstract crew.
+ */
+async function trainedPilotWeaponEntry(gunnerActor, vehicleActor, weapon, ledger) {
+  const certified = resolveCertifiedInstalledWeapon(weapon);
+  if (!certified?.ok || certified.mount?.operatorRole !== 'pilot') return null;
+  const pilot = await resolveVehicleCrewActor(vehicleActor, 'pilot');
+  if (pilot.source !== 'actor' || !pilot.actor || (pilot.actor !== gunnerActor && !(pilot.actor.id && pilot.actor.id === gunnerActor.id))) return null;
+  const row = gunnerActor.system?.derived?.skills?.pilot ?? gunnerActor.system?.skills?.pilot;
+  if (row?.trained !== true) return null;
+  if (ledger.some(e => /pilot/i.test(`${e.id} ${e.label}`))) return null;
+  return ledgerEntry({ id: 'pilot-trained-weapon-crew', label: 'Trained Pilot (pilot-crewed weapon)', value: 2, category: 'operator',
+    sourceId: gunnerActor.id ?? null, sourceName: gunnerActor.name ?? null,
+    reason: 'Core Rulebook, Vehicle Combat (Pilot): +2 on attack rolls with a vehicle weapon crewed by the pilot, when trained in Pilot. Weapon operator taken from the sealed installation; pilot from the vehicle\'s pilot station.' });
 }
 
 function slugify(label) {
@@ -170,6 +229,13 @@ export async function resolveVehicleAttackBonus(gunnerActor, vehicleActor, weapo
       reason: 'Reused verbatim from resolveAttackBonus(gunnerActor, weapon) — a gunner-scoped component unaffected by the vehicle ability-modifier substitution.'
     }));
   }
+
+  const pilotBonus = await trainedPilotWeaponEntry(gunnerActor, vehicleActor, weapon, ledger);
+  if (pilotBonus) ledger.push(pilotBonus);
+  const capital = capitalShipPenaltyEntry(vehicleActor, weapon, context);
+  if (capital.error) { warnings.push(...capital.warnings); return { total: 0, ledger: [], warnings, error: capital.error }; }
+  warnings.push(...capital.warnings);
+  if (capital.entry) ledger.push(capital.entry);
 
   // Registered effect/feat/talent modifiers explicitly targeting the
   // 'vehicle.attack' domain — distinct from 'combat.attack' (already
@@ -274,6 +340,11 @@ export async function resolveAbstractCrewAttackBonus(vehicleActor, weapon, crewQ
       reason: 'getWeaponFlatAttackBonus(weapon) — weapon item flat attack bonus, same source as the named-gunner formula.'
     }));
   }
+
+  const capital = capitalShipPenaltyEntry(vehicleActor, weapon, context);
+  if (capital.error) { warnings.push(...capital.warnings); return { total: 0, ledger: [], warnings, error: capital.error }; }
+  warnings.push(...capital.warnings);
+  if (capital.entry) ledger.push(capital.entry);
 
   // No gunner Actor exists for abstract crew, so registered-modifier
   // resolution targets the vehicle actor itself rather than an operator —

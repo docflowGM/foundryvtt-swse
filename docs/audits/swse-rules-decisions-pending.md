@@ -829,3 +829,9 @@ The owner located the printed standard capacities (*Starships of the Galaxy* pp.
 | Resolution | |
 
 - **Revision 19 (2026-11-02):** appended V-P6B-05 and V-P6B-06. No existing entry changed.
+
+### Engineering status note: capital-ship attack penalty and trained-Pilot bonus (2026-11-02; not a ruling)
+
+The project owner verified Core Rulebook printed p. 171 (PDF p. 172): a vehicle of Colossal (frigate) size or larger takes -20 on attack rolls against targets smaller than Colossal (point-defense weapons exempt), and a character trained in Pilot gains +2 on attacks with vehicle weapons crewed by the pilot. Both are published rules, implemented in the vehicle attack math (P6B-D-023, P6B-D-024). No decision register entry is affected.
+
+- **Revision 20 (2026-11-02):** appended this status note. No existing entry changed.

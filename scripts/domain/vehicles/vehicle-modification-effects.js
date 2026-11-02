@@ -55,10 +55,8 @@ const PLAIN_WEAPONS = Object.freeze({
   'laser-cannon-medium': { family: 'laser', damage: '4d10x2' },
   'laser-cannon-heavy': { family: 'laser', damage: '5d10x2' }
 });
-// Core (Vehicle Combat, Capital Ships): a vehicle of Colossal (frigate) size or larger takes -20 on attacks against
-// targets smaller than Colossal (point-defense weapons excepted). That penalty has no runtime consumer yet, so weapons
-// are not certified for those hulls rather than firing with a wrong bonus.
-const CAPITAL_HULL = /^colossal \((frigate|cruiser|station)\)$/i;
+// Capital ships (Colossal (frigate) or larger) take the Core -20 against targets smaller than Colossal in the vehicle attack
+// math (vehicle-capital-penalty.js); weapons may be installed on those hulls.
 
 const SHIELD_RATINGS = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 70, 80, 90, 100, 125, 150, 175, 200];
 const HYPERDRIVES = { 'hyperdrive-075': 0.75, 'hyperdrive-1': 1, 'hyperdrive-15': 1.5, 'hyperdrive-2': 2, 'hyperdrive-3': 3, 'hyperdrive-4': 4,
@@ -117,7 +115,6 @@ export function effectInstallability({ catalogEntry, record, entries = [] }) {
     case 'weapon':
       // the printed damage must be what the effect certifies (a changed catalog row is not silently trusted)
       if (catalogEntry.damage !== effect.damage) reasons.push('WEAPON_DAMAGE_DIFFERS_FROM_CERTIFIED_ROW');
-      if (CAPITAL_HULL.test(String(record?.classification?.printedSize ?? '').trim())) reasons.push('CAPITAL_SHIP_TARGETING_PENALTY_NOT_IMPLEMENTED');
       break;
     case 'intelligence': if (!finite(record?.abilities?.int)) reasons.push('INTELLIGENCE_UNKNOWN'); break;
     case 'cargo-pod': {

@@ -83,9 +83,9 @@ test('installation: GM-certified mount + certified row -> executable sealed entr
   assert.ok(plan(a, 'laser-cannon-light', { ...GM_MOUNT, operatorRole: 'cook' }).reasons.includes('WEAPON_MOUNT_OPERATOR_INVALID'));
   // a GM mount does not certify an uncertified weapon row
   assert.ok(plan(a, 'blaster-cannon-light').reasons.includes('MODIFICATION_EFFECT_NOT_IMPLEMENTED'));
-  // capital hulls: the Core -20 vs targets smaller than Colossal has no consumer yet -> refused, never fired wrong
+  // capital hulls accept weapons now: the Core -20 is applied at attack time (p24)
   const capital = structuredClone(docs.find(d => d.flags.swse.universalVehicleSource.source.classification.printedSize === 'Colossal (frigate)'));
-  assert.ok(L.planVehicleInstallation({ record: capital.flags.swse.universalVehicleSource.source, flags: capital.flags, catalogEntry: row('laser-cannon-light'), installId: 'c1', availableCredits: 1e9, rules, mount: GM_MOUNT, nonstandard: false }).reasons.includes('CAPITAL_SHIP_TARGETING_PENALTY_NOT_IMPLEMENTED'));
+  assert.equal(L.planVehicleInstallation({ record: capital.flags.swse.universalVehicleSource.source, flags: capital.flags, catalogEntry: row('laser-cannon-light'), installId: 'c1', availableCredits: 1e9, rules, mount: GM_MOUNT, nonstandard: false }).ok, true);
   // cost, EP, mount uniqueness and duplicate ids
   a.flags.swse.vehicleInstallations = ok.nextLedger;
   assert.ok(plan(a, 'laser-cannon-light', GM_MOUNT, 'w2').reasons.includes('WEAPON_MOUNT_KEY_IN_USE'));

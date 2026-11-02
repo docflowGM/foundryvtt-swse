@@ -857,7 +857,9 @@ export async function rollAttack(actor, weapon, options = {}) {
       await actionOptionSpend?.rollback?.();
       ui?.notifications?.error?.(composition.reason === 'invalid-vehicle-actor'
         ? 'Vehicle attack could not be resolved: the vehicle actor is missing or invalid, so its Intelligence modifier cannot be sourced.'
-        : 'Vehicle attack could not be resolved: no valid gunner/operator actor.');
+        : String(composition.reason).startsWith('capital-ship-')
+          ? 'Vehicle attack could not be resolved: a capital-size ship needs the size of its target (and its own size) to apply the attack penalty against targets smaller than Colossal.'
+          : 'Vehicle attack could not be resolved: no valid gunner/operator actor.');
       return null;
     }
     if (composition.weaponRuntimeError) {
