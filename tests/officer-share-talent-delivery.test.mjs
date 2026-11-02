@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {buildOfficerShareTalentGrant,ownOfficerTalentItem} from '../scripts/engine/combat/officer-share-talent-service.js';
+import {buildOfficerShareTalentGrant,ownOfficerTalentItem} from '../scripts/engine/combat/officer-share-talent-grant-plan.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
