@@ -39,12 +39,12 @@ export function planForceDiscipleProphetDestinyGrant({
 
   const previousLevel = nonnegativeInteger(actor?.system?.level, 'existing character level');
   const nextLevel = nonnegativeInteger(targetLevel, 'new character level');
+  if (actor?.system?.progression?.lastProphetDestinyGrant?.targetLevel === nextLevel) {
+    // Reopening a committed level must not re-award two more points.
+    return null;
+  }
   if (nextLevel !== previousLevel + 1) {
     throw new Error('Prophet Destiny grant requires exactly one new character level');
-  }
-  if (actor?.system?.progression?.lastProphetDestinyGrant?.targetLevel === nextLevel) {
-    // Do not repeat a committed grant when a stale session is reopened.
-    return null;
   }
 
   const previousValue = nonnegativeInteger(actor?.system?.destinyPoints?.value, 'current points');
