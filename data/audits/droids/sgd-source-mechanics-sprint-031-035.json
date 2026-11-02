@@ -1,0 +1,191 @@
+{
+  "schema": "swse.droids.sgd.source-mechanics-sprint/0.1",
+  "date": "2026-11-02",
+  "bookId": "SGD",
+  "scope": "Source-only second pass of printed pp.128-137, PDF pages 129-138.",
+  "sourcePdf": "SW Saga - Scavenger's Guide to Droids (optimized).pdf",
+  "records": [
+    {
+      "sourceEntryKey": "SGD-DROID-031",
+      "printedName": "R8-Series Astromech Droid",
+      "pages": [
+        128,
+        129
+      ],
+      "pdfPages1Based": [
+        129,
+        130
+      ],
+      "protocolActionIds": [
+        "SGD-DROID-031-ACTION-COPILOT",
+        "SGD-DROID-031-ACTION-ISSUE-ROUTINE-COMMAND",
+        "SGD-DROID-031-ACTION-NAVIGATION-CHARTS",
+        "SGD-DROID-031-ACTION-RECHARGE-SHIELDS",
+        "SGD-DROID-031-ACTION-REGULATE-POWER"
+      ],
+      "variantIds": [
+        "SGD-DROID-031-VARIANT-SMUGGLERS-ASSISTANT",
+        "SGD-DROID-031-VARIANT-SIGNAL-HUB"
+      ],
+      "constraintIds": [
+        "SGD-DROID-031-CONSTRAINT-NAVIGATION-TIME",
+        "SGD-DROID-031-CONSTRAINT-OPTIONAL-HIDDEN-STORAGE",
+        "SGD-DROID-031-CONSTRAINT-HEROIC-STARTING-TRADE"
+      ],
+      "newDivergences": [],
+      "mechanicalStatus": "partial",
+      "executionStatus": "source-only"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-032",
+      "printedName": "RWW-Series Protocol Droid",
+      "pages": [
+        130,
+        131
+      ],
+      "pdfPages1Based": [
+        131,
+        132
+      ],
+      "protocolActionIds": [
+        "SGD-DROID-032-ACTION-DATABANK",
+        "SGD-DROID-032-ACTION-MIMIC",
+        "SGD-DROID-032-ACTION-TRANSLATOR"
+      ],
+      "variantIds": [
+        "SGD-DROID-032-VARIANT-COMBAT-TRAINING-OPPONENT",
+        "SGD-DROID-032-VARIANT-ESPIONAGE-DROID",
+        "SGD-DROID-032-VARIANT-MEDICAL-ASSISTANT-DROID"
+      ],
+      "constraintIds": [
+        "SGD-DROID-032-CONSTRAINT-MIMIC-UNRESOLVED-EFFECT",
+        "SGD-DROID-032-CONSTRAINT-REVERSE-POLARITY-ONE-USE",
+        "SGD-DROID-032-CONSTRAINT-HEROIC-CHASSIS-DESIGN"
+      ],
+      "newDivergences": [],
+      "mechanicalStatus": "partial",
+      "executionStatus": "source-only"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-033",
+      "printedName": "RX-Series Pilot Droid",
+      "pages": [
+        132,
+        133
+      ],
+      "pdfPages1Based": [
+        133,
+        134
+      ],
+      "protocolActionIds": [
+        "SGD-DROID-033-ACTION-ENGAGE-THE-ENEMY",
+        "SGD-DROID-033-ACTION-HOT-SHOT-PILOT",
+        "SGD-DROID-033-ACTION-INCREASE-VEHICLE-SPEED",
+        "SGD-DROID-033-ACTION-RECHARGE-SHIELDS",
+        "SGD-DROID-033-ACTION-REGULATE-POWER"
+      ],
+      "variantIds": [
+        "SGD-DROID-033-VARIANT-ASTROGATION-DROID",
+        "SGD-DROID-033-VARIANT-COMMUNICATIONS-DROID",
+        "SGD-DROID-033-VARIANT-TACTICAL-SYSTEMS-DROID"
+      ],
+      "constraintIds": [
+        "SGD-DROID-033-CONSTRAINT-HOT-SHOT-ENCOUNTER-BOUND",
+        "SGD-DROID-033-CONSTRAINT-TACTICAL-REPLACEMENT",
+        "SGD-DROID-033-CONSTRAINT-HEROIC-PROBE-CHASSIS"
+      ],
+      "newDivergences": [],
+      "mechanicalStatus": "partial",
+      "executionStatus": "source-only"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-034",
+      "printedName": "S19 Astromech Droid",
+      "pages": [
+        134,
+        135
+      ],
+      "pdfPages1Based": [
+        135,
+        136
+      ],
+      "protocolActionIds": [
+        "SGD-DROID-034-ACTION-FOCUSED-REPAIRS",
+        "SGD-DROID-034-ACTION-JURY-RIG",
+        "SGD-DROID-034-ACTION-RECHARGE-SHIELDS",
+        "SGD-DROID-034-ACTION-REGULATE-POWER",
+        "SGD-DROID-034-ACTION-RUN-DIAGNOSTICS"
+      ],
+      "variantIds": [
+        "SGD-DROID-034-VARIANT-GRAVITY-WELL-PROJECTOR",
+        "SGD-DROID-034-VARIANT-MOBILE-SHIELD-GENERATOR",
+        "SGD-DROID-034-VARIANT-TRAILBLAZER"
+      ],
+      "constraintIds": [
+        "SGD-DROID-034-CONSTRAINT-FOCUSED-REPAIRS-TWO-CLAIMS",
+        "SGD-DROID-034-CONSTRAINT-GRAVITY-WELL-DISMANTLES-BASE",
+        "SGD-DROID-034-CONSTRAINT-MOBILE-SHIELD-TIERED-LOSSES"
+      ],
+      "newDivergences": [
+        "SGD-034-FOCUSED-REPAIRS-EFFECT-DIVERGENCE"
+      ],
+      "mechanicalStatus": "partial",
+      "executionStatus": "source-only"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-035",
+      "printedName": "SD-9-Series Battle Droid",
+      "pages": [
+        136,
+        137
+      ],
+      "pdfPages1Based": [
+        137,
+        138
+      ],
+      "protocolActionIds": [
+        "SGD-DROID-035-ACTION-DEFENSE-MODE",
+        "SGD-DROID-035-ACTION-DELAY-DAMAGE",
+        "SGD-DROID-035-ACTION-HEAVY-REPEATING-BLASTER-ATTACK",
+        "SGD-DROID-035-ACTION-PLASMA-BURST-CANNON-ATTACK"
+      ],
+      "variantIds": [
+        "SGD-DROID-035-VARIANT-ASSAULT-UNIT",
+        "SGD-DROID-035-VARIANT-BACKSEAT-DRIVER"
+      ],
+      "constraintIds": [
+        "SGD-DROID-035-CONSTRAINT-ION-SHIELD-NOT-UNIVERSAL",
+        "SGD-DROID-035-CONSTRAINT-INTEGRATED-WEAPON-CHOICES",
+        "SGD-DROID-035-CONSTRAINT-PLASMA-THRESHOLD-GATE",
+        "SGD-DROID-035-CONSTRAINT-HERO-ELIGIBILITY-PROHIBITED"
+      ],
+      "newDivergences": [],
+      "mechanicalStatus": "partial",
+      "executionStatus": "source-only"
+    }
+  ],
+  "totals": {
+    "models": 5,
+    "protocolActions": 22,
+    "optionalVariants": 13,
+    "constraints": 16,
+    "heroicRouteNotes": 4,
+    "newUnresolvedDivergences": 1,
+    "hydratedSGD": 46,
+    "strictMechanicalCertifications": 0,
+    "existingRWWMimicConflictPreserved": true
+  },
+  "validation": {
+    "visualPageInspection": "performed with rendered PDF pages 129-138 and layout text extraction",
+    "identityNamePage": "PASS",
+    "newClaimCitations": "PASS",
+    "newClaimsSourceOnly": "PASS",
+    "allPrintedAttackGroupsNonExecutable": "PASS",
+    "RWWExistingConflictPreserved": "PASS",
+    "sourceCertifications": "0/46",
+    "pythonDraft202012": "NOT RUN",
+    "foundryRuntime": "NOT RUN",
+    "productionMutations": 0
+  },
+  "next": "SGD-DROID-036-040 second source mechanical pass and eventual canonical-identity certifications."
+}
