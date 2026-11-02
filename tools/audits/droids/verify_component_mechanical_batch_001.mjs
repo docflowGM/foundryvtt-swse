@@ -13,7 +13,7 @@ assert.equal(a.records.filter(r=>r.group==='SENSOR').length,2);
 assert.equal(a.records.filter(r=>!['BUILT_IN_ARMOR','APPENDAGE','SENSOR'].includes(r.group)).length,5);
 assert.deepEqual(Object.values(a.sourceAuthority.costFactorTable.factors),[20,10,5,2,1,2,5,10,20]);
 for(const r of a.records){
- assert(r.sourcePages.length>0&&r.sourcePages.every(s=>s.pdfPage1Based===s.printedPage+1));
+ assert(r.sourcePages.length>0&&r.sourcePages.every(s=>Number.isInteger(s.printedPage)&&Number.isInteger(s.pdfPage1Based)&&s.pdfPage1Based===s.printedPage+1));
  assert(r.sourcePages.every(s=>s.verification==='PDF_RENDERED_VISUAL_2026_11_02'));
  assert(r.price&&r.weight&&r.availability!==undefined&&r.host&&r.installation&&r.mechanics);
  assert(Object.values({p:r.certification.printedIdentity,n:r.certification.sourceNumericFacts,h:r.certification.sourcePrerequisitesAndHost,a:r.certification.sourceActionAndResourceRules,e:r.certification.sourceEffectsAndExceptions}).every(Boolean));

@@ -112,18 +112,6 @@
         "verification": "PDF_RENDERED_VISUAL_2026_11_02"
       },
       {
-        "book": "Scavenger's Guide to Droids",
-        "printedPage": "Star Wars Saga Edition Core Rulebook",
-        "pdfPage1Based": "Star Wars Saga Edition Core Rulebook1",
-        "verification": "PDF_RENDERED_VISUAL_2026_11_02"
-      },
-      {
-        "book": "Scavenger's Guide to Droids",
-        "printedPage": 193,
-        "pdfPage1Based": 194,
-        "verification": "PDF_RENDERED_VISUAL_2026_11_02"
-      },
-      {
         "book": "Star Wars Saga Edition Core Rulebook",
         "printedPage": 189,
         "pdfPage1Based": 190,
@@ -1220,13 +1208,7 @@
           "verification": "PDF_RENDERED_VISUAL_2026_11_02"
         },
         {
-          "book": "Scavenger's Guide to Droids",
-          "printedPage": "Star Wars Saga Edition Core Rulebook",
-          "pdfPage1Based": "Star Wars Saga Edition Core Rulebook1",
-          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
-        },
-        {
-          "book": "Scavenger's Guide to Droids",
+          "book": "Star Wars Saga Edition Core Rulebook",
           "printedPage": 193,
           "pdfPage1Based": 194,
           "verification": "PDF_RENDERED_VISUAL_2026_11_02"
@@ -1323,13 +1305,7 @@
           "verification": "PDF_RENDERED_VISUAL_2026_11_02"
         },
         {
-          "book": "Scavenger's Guide to Droids",
-          "printedPage": "Star Wars Saga Edition Core Rulebook",
-          "pdfPage1Based": "Star Wars Saga Edition Core Rulebook1",
-          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
-        },
-        {
-          "book": "Scavenger's Guide to Droids",
+          "book": "Star Wars Saga Edition Core Rulebook",
           "printedPage": 193,
           "pdfPage1Based": 194,
           "verification": "PDF_RENDERED_VISUAL_2026_11_02"
