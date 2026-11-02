@@ -36,6 +36,8 @@ import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progre
 import { calculateMaxForcePointsForBuildPlan } from '/systems/foundryvtt-swse/scripts/data/force-points.js';
 import { buildLevelUpEntitlementManifest } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-entitlement-manifest.js';
 import { planScalingClassFeatureUpdate } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-scaling-feature-upsert.js';
+import { getHeroicLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
+import { pendingEnforcerResources, planEnforcerResourceEntitlement } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/enforcer-resources-entitlement.js';
 import { ChargenRules } from '/systems/foundryvtt-swse/scripts/engine/chargen/ChargenRules.js';
 import {
   auditLevelUpActorAfterFinalization,
@@ -1724,6 +1726,21 @@ export class ProgressionFinalizer {
         ...persistedOfficerShareTalents(actor),
         verified.selection,
       ];
+    }
+
+    // Enforcer Resources are restricted/military EQUIPMENT entitlements, not
+    // spendable credits. Every Enforcer class level earns a distinct, audited
+    // allowance based on the NEW heroic level. Never auto-create unselected
+    // equipment or make ordinary currency spendable.
+    if (sessionState.mode === 'levelup' && levelUpManifest?.className === 'Enforcer') {
+      const heroicAfter = getHeroicLevel(actor) + 1;
+      const planned = planEnforcerResourceEntitlement({
+        existing: pendingEnforcerResources(actor),
+        classLevel: levelUpManifest.classLevel,
+        heroicLevel: heroicAfter,
+        sessionId: sessionState.sessionId,
+      });
+      set['flags.swse.classFeatures.enforcer.resources'] = planned.entries;
     }
 
     await ProgressionContentAuthority.initialize?.();
