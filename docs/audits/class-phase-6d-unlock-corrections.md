@@ -34,6 +34,30 @@ The supplemental **Scum & Villainy clarifications, printed p. 21**, explicitly a
 - `data/audits/class-mechanics-protected-baseline.json` preserves all 37 original class identities/fields, with only the three previously approved skills/BAB fields exempt and **seven exact approved class-record fingerprints** for source-certified level-row replacements. No wildcard exemption for all class progression records.
 - Older Phase 3D class-byte-frozen test now delegates to the same protected identity/field check; Phase 5C classification includes the three added audit files. No talent/weapon SSOT content was altered.
 
+## Phase 6E follow-on checkpoint — Resources, Command Cover, Share Talent action preflight
+
+### Enforcer Resources: recurring EQUIPMENT entitlement accounting (implemented)
+
+- Printed authority: *The Force Unleashed Campaign Guide* p. 44. At **each** Enforcer class level the actor has access to restricted or military equipment worth **2,000 × new heroic level** credits, delivered to a civilized accessible location. A player may elect to defer the equipment allotment so its value combines with the next Enforcer-level allotment.
+- `scripts/engine/progression/utils/enforcer-resources-entitlement.js` creates an exact-once resource entitlement entry per Enforcer class level, and carries forward **only explicitly deferred** value from the preceding Enforcer level. It records amount, heroic level, restriction, source session, and pending delivery status.
+- `ProgressionFinalizer` computes new heroic level through the existing `getHeroicLevel` authority and saves the entries in `flags.swse.classFeatures.enforcer.resources` through the transaction. The post-finalization audit refuses a missing or malformed entitlement.
+- **Not yet implemented:** class resource equipment chooser, restricted/military price and eligibility checks, GM approval/delivery workflow, and a player deferral control that changes the ledger status to `deferred-to-next-level`. The pending record is **NOT actor credits** and **NOT automatically issued equipment**. Previously leveled Enforcers need migration decisions.
+
+### Crime Lord / Officer Command Cover: contextual cover defense (implemented, live check pending)
+
+- Printed authority: Core Rulebook Command Cover text for Crime Lord and Officer. Each adjacent ally supplies a **+1 cover bonus** to **Reflex Defense**, up to **floor(class level/2)** (maximum +5). Two prestige classes granting Command Cover do not stack the same cover type.
+- `scripts/engine/combat/class-command-cover.js` checks actual source-tagged class-feature ownership, current class levels and allied token adjacency on square-grid scenes. It fails closed with no unambiguous token, invalid/neutral disposition, or unsupported grid.
+- `scripts/combat/rolls/attacks.js` applies the contextual Command Cover value through the existing target-defense authority, rather than modifying the actor's permanent derived Reflex. Ordinary cover and Command Cover combine by the higher cover bonus **within this resolver**; attack context-specific suppression, unusual token topology and alternate combat resolution paths need a live Foundry review.
+- **Not yet certified:** Foundry v13 scene/elevation tests, tactical ally/disposition rules for multiple factions, hex-grid adjacency, cover-suppression attack options, and every alternate combat caller. Do not claim full runtime coverage from pure tests.
+
+### Officer Share Talent combat use: strict planner (implemented as rules-only preflight)
+
+- Core Rulebook p. 222: each permanently selected talent can be shared **once per day as a standard action**, with up to half Officer class level allies within 10 squares who can see and hear the Officer. The talent remains effective through encounter end, and recipients need not meet its prerequisites.
+- `scripts/engine/combat/officer-share-talent-action-rules.js` validates the action budget, exact selected talent, daily-use history, encounter identity, recipient count, range and eligibility. `tests/officer-share-talent-action-rules.test.mjs` probes success and refusal scenarios.
+- **Not yet implemented:** scene-measured sight/range/hearing proof, an action button/controller, transaction-safe daily-use spending, temporary talent benefits through the canonical talent-effects owner, encounter-end cleanup and UI readout. The planner does not mutate actors or give them abilities. **Do not present this as a usable Share Talent combat action.**
+
+**Test files**: `tests/enforcer-resources-entitlement.test.mjs`, `tests/class-command-cover.test.mjs`, `tests/officer-share-talent-action-rules.test.mjs`. Exact-head CI and Foundry scene testing required before merge.
+
 ## Verification
 
 - `tests/class-phase-6d-officer-improviser-unlocks.test.mjs` — Officer Share Talent class-level cadence and Improviser exact credit values.
