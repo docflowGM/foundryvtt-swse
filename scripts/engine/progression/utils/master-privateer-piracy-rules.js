@@ -1,35 +1,32 @@
 /**
- * Master Privateer — Piracy, The Force Unleashed Campaign Guide p. 52.
+ * Master Privateer — Piracy (The Force Unleashed Campaign Guide p. 52).
  *
- * After falling to the dark side, an EXISTING Master Privateer cannot gain
- * further levels in that class. The feature does not revoke owned levels,
- * and does not itself prohibit entering Master Privateer for the first time.
- *
- * Pure and conservative: the dark-side authority supplies the canonical
- * current/max score, and an actually owned class Item proves prior levels.
- * Callers must pass the original Actor, not untrusted picker display text.
+ * GM ADJUDICATION POLICY: "fallen to the dark side" is a narrative state,
+ * NOT equivalent to a Dark Side Points threshold. DSP can surface a caution,
+ * but neither automatic eligibility nor finalization is allowed to deny the
+ * class level on that basis. The GM determines whether the printed restriction
+ * applies and how to handle the advancement.
  */
-const normalized = value => String(value ?? '').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
-const actorItems = actor => Array.from(actor?.items?.contents || actor?.items || []);
+const normalized=value=>String(value??'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+const itemsOf=actor=>Array.from(actor?.items?.contents||actor?.items||[]);
 
 export const MASTER_PRIVATEER_PIRACY_REASON =
-  'Piracy: a Master Privateer lost to the dark side cannot take further levels in Master Privateer';
+  'Piracy (Force Unleashed p. 52): a Master Privateer who has fallen to the dark side cannot advance further in this class under the printed rule. The GM determines whether the character has fallen and adjudicates this restriction.';
 
 export function evaluateMasterPrivateerPiracy({actor,className,darkSideScore,darkSideMax}={}) {
-  if(normalized(className)!=='master privateer')return {blocked:false,applies:false};
-  const owned = actorItems(actor).filter(item =>
-    item?.type==='class' && normalized(item?.name || item?.system?.className)==='master privateer');
-  const priorLevel = owned.reduce((max,item)=>{
-    const level=Number(item?.system?.level);
-    return Number.isInteger(level) && level>0 ? Math.max(max,level) : max;
+  if(normalized(className)!=='master privateer')
+    return {applies:false,advisory:false,blocked:false};
+  const owned=itemsOf(actor).filter(item=>item?.type==='class'
+    && normalized(item?.name||item?.system?.className)==='master privateer');
+  const priorLevel=owned.reduce((max,item)=>{
+    const n=Number(item?.system?.level);
+    return Number.isInteger(n)&&n>0?Math.max(max,n):max;
   },0);
-  if(priorLevel<1)return {blocked:false,applies:true,priorLevel:0};
-  const score=Number(darkSideScore),max=Number(darkSideMax);
-  if(!Number.isFinite(score) || !Number.isFinite(max) || max<=0){
-    return {blocked:true,applies:true,priorLevel,indeterminate:true,
-      reason:'Piracy: dark-side status cannot be verified for continuing Master Privateer'};
-  }
-  const blocked=score>=max;
-  return {blocked,applies:true,priorLevel,darkSideScore:score,darkSideMax:max,
-    ...(blocked?{reason:MASTER_PRIVATEER_PIRACY_REASON}:{})};
+  if(priorLevel<1) return {applies:false,advisory:false,blocked:false,priorLevel:0};
+  // An observed threshold is a prompt for a GM discussion, never a verdict.
+  const validScore=typeof darkSideScore==='number'&&Number.isFinite(darkSideScore);
+  const validMax=typeof darkSideMax==='number'&&Number.isFinite(darkSideMax)&&darkSideMax>0;
+  const thresholdReached=validScore&&validMax ? darkSideScore>=darkSideMax : null;
+  return {applies:true,advisory:true,blocked:false,requiresGMAdjudication:true,
+    priorLevel,thresholdReached,reason:MASTER_PRIVATEER_PIRACY_REASON};
 }
