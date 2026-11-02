@@ -18,6 +18,12 @@
 
 The Core and Rebellion PDF tables were visually compared directly with the user's uploaded scans; the Force Unleashed Enforcer page was checked against the supplied source text, and the remaining corrections were checked against earlier PDF-certified Phase 6B claims and sourcebook text.
 
+## Bonus-feat source correction — Wicked Strike
+
+The supplemental **Scum & Villainy clarifications, printed p. 21**, explicitly add **Wicked Strike** to the **Jedi** and **Noble** class bonus-feat lists (not Scoundrel, Scout or Soldier). The existing production feat is canonical ID `5bef5e65e532ba7c`; the class-owned `featNames` already included the feat for Jedi and Noble, but both `featIds` arrays omitted its identity. Inserted that same ID exactly once into those two canonical pools, without editing the feat itself. The two list sizes are now Jedi 80 and Noble 56. `tests/class-bonus-feat-wicked-strike-authority.test.mjs` verifies printed eligibility, full ID integrity and no accidental eligibility in the other three classes.
+
+**Separate outstanding issue:** A generic Weapon Proficiency or Weapon Focus feat ID covers several class-specific named group choices. `FeatSlotValidator` checks the feat ID, not the chosen weapon group. A targeted specialization restriction audit is still required.
+
 ## Guard and entitlement boundary
 
 - `packs/classes.db` is the operational class SSOT. No additional class pack was introduced.
