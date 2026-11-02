@@ -3376,6 +3376,78 @@
             "operationStatus": "source-only",
             "attackBonus": 9
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-006-ACTION-DIVERSION",
+            "statement": "One swift/turn; Deception to distract opponent and hide.",
+            "scope": "Create Diversion to Hide",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 78,
+              "pdfPage1Based": 79,
+              "sourceEntryKey": "SGD-DROID-006",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-DIVERSION"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-006-ACTION-PENETRATE-HULL",
+            "statement": "Two swift/turn; melee +13 2d6+4, max 16 damage only versus vehicle hull/solid walls/doors.",
+            "scope": "Penetrate Hull",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 78,
+              "pdfPage1Based": 79,
+              "sourceEntryKey": "SGD-DROID-006",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-PENETRATE-HULL"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-006-ACTION-RAPID-SHOT",
+            "statement": "One swift/turn ranged +9, damage 4d8.",
+            "scope": "Rapid Shot",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 78,
+              "pdfPage1Based": 79,
+              "sourceEntryKey": "SGD-DROID-006",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-RAPID-SHOT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-006-ACTION-SNEAK",
+            "statement": "One swift/turn Stealth opposed by Perception.",
+            "scope": "Sneak",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 78,
+              "pdfPage1Based": 79,
+              "sourceEntryKey": "SGD-DROID-006",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-SNEAK"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-006-ACTION-SNIPE",
+            "statement": "One swift/turn try hiding after firing from hiding.",
+            "scope": "Snipe",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 78,
+              "pdfPage1Based": 79,
+              "sourceEntryKey": "SGD-DROID-006",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-SNIPE"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -3612,6 +3684,64 @@
               "citationLabel": "SGD-DROID-006-LOADOUT-CONSTRAINT"
             },
             "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-006-CONSTRAINT-LOADOUT",
+            "statement": "4 tool appendages are physical; 2 vibroblades, 2 rifles, climbing claws, disguiser, cable dispenser, silence generator separate possessions; variants change equipment occupancy, no extra actions.",
+            "scope": "Infiltrator loadout",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 79,
+              "pdfPage1Based": 80,
+              "sourceEntryKey": "SGD-DROID-006",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-LOADOUT"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-006-VARIANT-COMMUNICATIONS-BEACON",
+            "statement": "Remove holographic disguiser and silence generator; install long-range comlink DC15 Mechanics 30m, pocket scrambler DC15 Mechanics 15m, comlink relay DC15 Mechanics 1h. Retrain Stealth training/focus to Use Computer. Completed variant boosts multiple comlink signals to 500km.",
+            "scope": "Communications beacon",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 79,
+              "pdfPage1Based": 80,
+              "sourceEntryKey": "SGD-DROID-006",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-COMMUNICATIONS-BEACON"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-006-VARIANT-HEAVY-WEAPONS-TURRET",
+            "statement": "Remove vibroblades/climbing claws. Swap rifles for 2 heavy repeating blasters, 2 blaster cannons, 1 E-Web or up to 4 missile launchers. >2 launchers require removing disguiser and silence generator; only 4 missile shots before allied manual reload. Each weapon DC15 Mechanics 15m; retrain proficiency advanced melee to heavy.",
+            "scope": "Heavy weapons turret",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 79,
+              "pdfPage1Based": 80,
+              "sourceEntryKey": "SGD-DROID-006",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-HEAVY-WEAPONS-TURRET"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-006-VARIANT-WALKING-THRONE",
+            "statement": "Reform body as rider platform DC20 Mechanics 4h; immobilize arms, remove vibroblades, point rifles forward DC15 Mechanics 2h; seat installed DC15 Mechanics 30m. Passenger/mount control not implied.",
+            "scope": "Walking throne",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 79,
+              "pdfPage1Based": 80,
+              "sourceEntryKey": "SGD-DROID-006",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-WALKING-THRONE"
+            },
+            "executionStatus": "source-only"
           }
         ]
       },
@@ -3652,11 +3782,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 78-79 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 78-79 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge. M6 detailed paired-source PDF review completed 2026-11-02; all variants, protocol and cross-domain constraints source-only; full mechanical certification and runtime untested.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p78:PDF-page-79",
           "SGD-CENSUS:SGD-DROID-006",
-          "SGD:p78:PDF-p79:visual-statblock-field-review"
+          "SGD:p78:PDF-p79:visual-statblock-field-review",
+          "SGD:p78-79:rendered-source-mechanics-M6"
         ]
       }
     },
@@ -3911,6 +4042,64 @@
             "operationStatus": "source-only",
             "attackBonus": 0
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-007-ACTION-COMLINK-JAMMER",
+            "statement": "Protocol one swift action once/turn: jams all comlinks including encrypted within 12 squares until owner's next turn; main prose instead standard action until droid's next turn; two unresolved conflicts.",
+            "scope": "Comlink Jammer",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 80,
+              "pdfPage1Based": 81,
+              "sourceEntryKey": "SGD-DROID-007",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-COMLINK-JAMMER"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-007-ACTION-IMPROVE-ACCESS",
+            "statement": "Two swift/turn, Use Computer versus computer Will to improve attitude.",
+            "scope": "Improve Access",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 80,
+              "pdfPage1Based": 81,
+              "sourceEntryKey": "SGD-DROID-007",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-IMPROVE-ACCESS"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-007-ACTION-ISSUE-COMMAND",
+            "statement": "One swift/turn, routine command to friendly computer.",
+            "scope": "Issue Routine Command",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 80,
+              "pdfPage1Based": 81,
+              "sourceEntryKey": "SGD-DROID-007",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-ISSUE-COMMAND"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-007-ACTION-TRANSLATOR",
+            "statement": "One free action to translate known language; protocol Vital Systems lists translator DC10 but main Systems list omits it; do not infer stock installed translator.",
+            "scope": "Translator",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 80,
+              "pdfPage1Based": 81,
+              "sourceEntryKey": "SGD-DROID-007",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-TRANSLATOR"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -4020,9 +4209,100 @@
         ]
       },
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-007-VARIANT-IDENTITY-THIEF",
+            "statement": "Retrain Knowledge galactic lore to Deception, Skill Focus bureaucracy to Deception; DC25 Mechanics 8h. LOSES Comlink Jammer. Can mimic a previously contacted individual by remote comlink/hologram only, Deception treated two difficulty steps simpler.",
+            "scope": "Identity Thief",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 81,
+              "pdfPage1Based": 82,
+              "sourceEntryKey": "SGD-DROID-007",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-IDENTITY-THIEF"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-007-VARIANT-PIRATE-HOLONET",
+            "statement": "Transceiver costs 50,000 credits plus 3,000 connectors/buffers; DC30 Mechanics 2 days. Pirate HoloNet connection; real-time holo conversation needs separate projector/recorder.",
+            "scope": "Pirate HoloNet Transceiver",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 81,
+              "pdfPage1Based": 82,
+              "sourceEntryKey": "SGD-DROID-007",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-PIRATE-HOLONET"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-007-VARIANT-SLICERS-PROXY",
+            "statement": "External slicer programs droid via Use Computer vs droid Will Defense, 30m; stores slicer's actual Use Computer check results/talents in designated order for later network connection, using computer attitude toward droid; max number of stored commands equals droid Intelligence modifier; each command still takes normal time.",
+            "scope": "Slicer's Proxy",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 81,
+              "pdfPage1Based": 82,
+              "sourceEntryKey": "SGD-DROID-007",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-SLICERS-PROXY"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "constraints": [
+          {
+            "ruleId": "SGD-DROID-007-CONSTRAINT-THIEF-JAMMER-REMOVAL",
+            "statement": "Identity Thief explicitly displaces Comlink Jammer.",
+            "scope": "Thief variant",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 81,
+              "pdfPage1Based": 82,
+              "sourceEntryKey": "SGD-DROID-007",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-THIEF-JAMMER-REMOVAL"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-007-CONSTRAINT-SLICER-STORED-CHECKS",
+            "statement": "Uses stored EXTERNAL slicer results and droid's relation to computer, not independent droid trained skills.",
+            "scope": "Slicer Proxy control",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 81,
+              "pdfPage1Based": 82,
+              "sourceEntryKey": "SGD-DROID-007",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-SLICER-STORED-CHECKS"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
-        "heroEligibility": "allowed"
+        "heroEligibility": "allowed",
+        "startingSelections": [
+          {
+            "ruleId": "SGD-DROID-007-PC-CZ-HERO-CHASSIS",
+            "statement": "Stock protocol chassis; noble/Linguist recommended; Comlink Jammer/Relay in lieu of default translator, not alongside. Purchase long-range encrypted comlink and Locked Access.",
+            "scope": "CZ heroic route",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 81,
+              "pdfPage1Based": 82,
+              "sourceEntryKey": "SGD-DROID-007",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "PC-CZ-HERO-CHASSIS"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "vehicleLink": {},
       "economics": {
@@ -4032,7 +4312,91 @@
       "text": {
         "mechanicsNotes": "Source language line preserved in sidecar evidence; speaking vs understanding remains unverified."
       },
-      "exceptions": {},
+      "exceptions": {
+        "sourceContradictions": [
+          {
+            "issueId": "SGD-007-COMLINK-JAMMER-ACTION-CONFLICT",
+            "fieldPointers": [
+              "/systems/installed",
+              "/rules/conditionalMechanics",
+              "/combat/specialActions"
+            ],
+            "statements": [
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 80,
+                "pdfPage1Based": 81,
+                "sourceEntryKey": "SGD-DROID-007",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "Main Jammer standard action"
+              },
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 80,
+                "pdfPage1Based": 81,
+                "sourceEntryKey": "SGD-DROID-007",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "Protocol Jammer 1 swift action"
+              }
+            ],
+            "resolutionStatus": "unresolved"
+          },
+          {
+            "issueId": "SGD-007-COMLINK-JAMMER-DURATION-CONFLICT",
+            "fieldPointers": [
+              "/systems/installed",
+              "/rules/conditionalMechanics",
+              "/combat/specialActions"
+            ],
+            "statements": [
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 80,
+                "pdfPage1Based": 81,
+                "sourceEntryKey": "SGD-DROID-007",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "Main Jammer until end droid next turn"
+              },
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 80,
+                "pdfPage1Based": 81,
+                "sourceEntryKey": "SGD-DROID-007",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "Protocol Jammer until end owner next turn"
+              }
+            ],
+            "resolutionStatus": "unresolved"
+          },
+          {
+            "issueId": "SGD-007-TRANSLATOR-PRESENCE-CONFLICT",
+            "fieldPointers": [
+              "/systems/installed",
+              "/rules/conditionalMechanics",
+              "/combat/specialActions"
+            ],
+            "statements": [
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 80,
+                "pdfPage1Based": 81,
+                "sourceEntryKey": "SGD-DROID-007",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "Main Systems no translator"
+              },
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 80,
+                "pdfPage1Based": 81,
+                "sourceEntryKey": "SGD-DROID-007",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "Protocol Vital Systems lists translator DC 10"
+              }
+            ],
+            "resolutionStatus": "unresolved"
+          }
+        ]
+      },
       "fieldStates": {
         "/abilities/con": "explicitly-none"
       },
@@ -4071,11 +4435,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 80-81 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 80-81 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge. M6 detailed paired-source PDF review completed 2026-11-02; all variants, protocol and cross-domain constraints source-only; full mechanical certification and runtime untested.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p80:PDF-page-81",
           "SGD-CENSUS:SGD-DROID-007",
-          "SGD:p80:PDF-p81:visual-statblock-field-review"
+          "SGD:p80:PDF-p81:visual-statblock-field-review",
+          "SGD:p80-81:rendered-source-mechanics-M6"
         ]
       }
     },
@@ -4121,7 +4486,10 @@
       "challenge": {
         "challengeLevel": 6
       },
-      "geometry": {},
+      "geometry": {
+        "fightingSpace": "2x2 character scale or 1 square starship scale",
+        "cover": "none"
+      },
       "abilities": {
         "str": 18,
         "dex": 14,
@@ -4190,19 +4558,202 @@
       "progression": {},
       "defenses": {},
       "durability": {},
-      "movement": {},
+      "movement": {
+        "speedLineRaw": "fly 12 squares (max 575 km/h); fly 3 squares (starship scale)",
+        "specialMovement": [
+          {
+            "ruleId": "SGD-DROID-008-VEHICLE-FLIGHT-SOURCE",
+            "statement": "Print fly 12 character scale, fly 3 starship scale and max 575 km/h, belongs to vehicle authority only.",
+            "scope": "Vehicle-primary DP-2 movement",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 82,
+              "pdfPage1Based": 83,
+              "sourceEntryKey": "SGD-DROID-008",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VEHICLE-FLIGHT-SOURCE"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "anatomy": {},
       "processor": {},
       "programming": {},
-      "combat": {},
-      "capacity": {},
+      "combat": {
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-008-ACTION-EXTENDED-SENSOR",
+            "statement": "One swift/turn, through telemetry master rerolls Perception when using vehicle sensors.",
+            "scope": "Extended Sensor Range",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 82,
+              "pdfPage1Based": 83,
+              "sourceEntryKey": "SGD-DROID-008",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-EXTENDED-SENSOR"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-008-ACTION-EXTENDED-WEAPON",
+            "statement": "One swift/turn reduce master's range penalties up to 2 categories only when both DP-2 and master have line of effect.",
+            "scope": "Extended Weapon Range",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 82,
+              "pdfPage1Based": 83,
+              "sourceEntryKey": "SGD-DROID-008",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-EXTENDED-WEAPON"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-008-ACTION-PATCH-JOB",
+            "statement": "One swift/turn, temporary repair of disabled device: restores HP equal to droid Mechanics check total.",
+            "scope": "Patch Job",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 82,
+              "pdfPage1Based": 83,
+              "sourceEntryKey": "SGD-DROID-008",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-PATCH-JOB"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-008-ACTION-RECONNOITER",
+            "statement": "One swift/turn +2 circumstance to master's Perception using vehicle sensors for location.",
+            "scope": "Reconnoiter",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 82,
+              "pdfPage1Based": 83,
+              "sourceEntryKey": "SGD-DROID-008",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-RECONNOITER"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-008-ACTION-TELEMETRY",
+            "statement": "One swift/turn send what DP-2 sees and hears to master's display/vehicle; printed especially useful at 30+ squares, not hard cutoff.",
+            "scope": "Telemetry",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 82,
+              "pdfPage1Based": 83,
+              "sourceEntryKey": "SGD-DROID-008",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-TELEMETRY"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {
+        "externalCargo": {
+          "amount": 15,
+          "unit": "kg",
+          "context": "printed vehicle cargo, placement unverified",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "page": 82,
+            "pdfPage1Based": 83,
+            "sourceEntryKey": "SGD-DROID-008",
+            "verifiedBy": "pdf-visual",
+            "citationLabel": "Cargo 15 kg"
+          }
+        },
+        "passengers": 0,
+        "consumables": "2 days",
+        "payload": {
+          "amount": 16,
+          "unit": "space beacons",
+          "context": "printed vehicle payload",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "page": 82,
+            "pdfPage1Based": 83,
+            "sourceEntryKey": "SGD-DROID-008",
+            "verifiedBy": "pdf-visual",
+            "citationLabel": "Payload 16 space beacons"
+          }
+        }
+      },
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-008-VARIANT-BLOCKADE-BREAKER",
+            "statement": "Vehicle-only: remove beacon launcher; starship SR25 shield generator DC35 Mechanics 4h and 1500 credits materials; dedicated backup battery 4h and 1000 credits materials; maneuver jets 8h and 2000 credits grants +2 Dexterity.",
+            "scope": "DP-2 Blockade Breaker",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 83,
+              "pdfPage1Based": 84,
+              "sourceEntryKey": "SGD-DROID-008",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-BLOCKADE-BREAKER"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-008-VARIANT-COURIER",
+            "statement": "Vehicle-only: remove beacon launcher for 20kg internal storage, upgrade sublight drive, add holographic disguiser and x8 hyperdrive. Printed result speed 4 squares STARSHIP scale; complete package 31,300 credits, 2 days, one DC35 Mechanics check.",
+            "scope": "DP-2 Courier",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 83,
+              "pdfPage1Based": 84,
+              "sourceEntryKey": "SGD-DROID-008",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-COURIER"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "constraints": [
+          {
+            "ruleId": "SGD-DROID-008-CONSTRAINT-VEHICLE-PRIMARY",
+            "statement": "Large starfighter/ground speeder with fly 12 character scale, fly 3 starship, max velocity 575 km/h, cargo 15kg, consumables 2 days, 16 beacons, blaster cannon, claw; no duplicate droid actor.",
+            "scope": "DP-2 vehicle identity",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 82,
+              "pdfPage1Based": 83,
+              "sourceEntryKey": "SGD-DROID-008",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-VEHICLE-PRIMARY"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-008-CONSTRAINT-COURIER-NONSTOCK",
+            "statement": "x8 hyperdrive, new sublight drive and 20kg storage exist only on Courier modification, not baseline DP-2.",
+            "scope": "DP-2 optional equipment",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 83,
+              "pdfPage1Based": 84,
+              "sourceEntryKey": "SGD-DROID-008",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-COURIER-NONSTOCK"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
-      "vehicleLink": {},
+      "vehicleLink": {
+        "relationKind": "primary-vehicle-only"
+      },
       "economics": {
         "availability": "Licensed",
         "newCredits": 36500
@@ -4279,11 +4830,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 vehicle-primary DP-2 printed p.82-83 checked; vehicle actor authority must own HP, movement, crew and attacks. Runtime not tested.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 vehicle-primary DP-2 printed p.82-83 checked; vehicle actor authority must own HP, movement, crew and attacks. Runtime not tested. M6 detailed paired-source PDF review completed 2026-11-02; all variants, protocol and cross-domain constraints source-only; full mechanical certification and runtime untested.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p82:PDF-page-83",
           "SGD-CENSUS:SGD-DROID-008",
-          "SGD:p82:PDF-p83:visual-statblock-field-review"
+          "SGD:p82:PDF-p83:visual-statblock-field-review",
+          "SGD:p82-83:rendered-source-mechanics-M6"
         ]
       }
     },
@@ -4694,6 +5246,78 @@
             },
             "executionStatus": "source-only"
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-009-ACTION-MOVE",
+            "statement": "One swift move walking 2; two swift moves same turn convert to wheeled mode and move 10.",
+            "scope": "Move",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 84,
+              "pdfPage1Based": 85,
+              "sourceEntryKey": "SGD-DROID-009",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-MOVE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-009-ACTION-AVOID-SURPRISE",
+            "statement": "Free action Perception at start of battle; master avoids surprise on success.",
+            "scope": "Avoid Surprise",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 84,
+              "pdfPage1Based": 85,
+              "sourceEntryKey": "SGD-DROID-009",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-AVOID-SURPRISE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-009-ACTION-BLASTER-BARRAGE",
+            "statement": "Two swift/turn, two +10 attacks each 5d8+2 when successful.",
+            "scope": "Blaster Barrage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 84,
+              "pdfPage1Based": 85,
+              "sourceEntryKey": "SGD-DROID-009",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-BLASTER-BARRAGE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-009-ACTION-RAPID-SHOT",
+            "statement": "One swift/turn ranged +15 4d8+2.",
+            "scope": "Rapid Shot",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 84,
+              "pdfPage1Based": 85,
+              "sourceEntryKey": "SGD-DROID-009",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-RAPID-SHOT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-009-ACTION-TWIN-BURST",
+            "statement": "One swift/turn ranged +17 3d8+2.",
+            "scope": "Twin Blaster Burst",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 84,
+              "pdfPage1Based": 85,
+              "sourceEntryKey": "SGD-DROID-009",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-TWIN-BURST"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -4830,7 +5454,68 @@
           }
         ]
       },
-      "modifications": {},
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-009-VARIANT-MAGNETIC-TURRET",
+            "statement": "Remove SR20 shield DC20 Mechanics 30min; fit magnetic hull coupler DC25 Mechanics 1h. GM may allow failed installation, in which case Acrobatics vs pilot's Pilot DC is required on each Pilot check; failure detaches droid from hull.",
+            "scope": "Magnetic Starship Turret",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 85,
+              "pdfPage1Based": 86,
+              "sourceEntryKey": "SGD-DROID-009",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-MAGNETIC-TURRET"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-009-VARIANT-SITH-JEDI-HUNTER",
+            "statement": "Gyroscope DC20 Mechanics 1h: wheeled speed 3, +2 defense against Force push/pull/slam. Linked blasters DC25 Use Computer 30m: full-round attack, Block/Deflect Use the Force DC +10. Replace ion cannons with two high-frequency emitters DC25 Mechanics 1h: reduce lightsaber damage by 1d8 per attack but active emitters set droid shield to 0.",
+            "scope": "Sith Jedi Hunter",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 85,
+              "pdfPage1Based": 86,
+              "sourceEntryKey": "SGD-DROID-009",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-SITH-JEDI-HUNTER"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "constraints": [
+          {
+            "ruleId": "SGD-DROID-009-CONSTRAINT-ION-MOUNT",
+            "statement": "2 laser cannons treated as blaster rifles and 2 ion cannons as ion rifles, protocol Vital Systems only links 2 tool appendages to laser cannons. Ion mounts and alternating rights unproven.",
+            "scope": "Droideka weapon mounts",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 84,
+              "pdfPage1Based": 85,
+              "sourceEntryKey": "SGD-DROID-009",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-ION-MOUNT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-009-CONSTRAINT-EMITTER-SHIELD",
+            "statement": "While anti-lightsaber high-frequency emitters work, droid SR is zero; cannot simultaneously enjoy baseline SR20.",
+            "scope": "Sith Hunter tradeoff",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 85,
+              "pdfPage1Based": 86,
+              "sourceEntryKey": "SGD-DROID-009",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-EMITTER-SHIELD"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -4881,11 +5566,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 84-85 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 84-85 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge. M6 detailed paired-source PDF review completed 2026-11-02; all variants, protocol and cross-domain constraints source-only; full mechanical certification and runtime untested.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p84:PDF-page-85",
           "SGD-CENSUS:SGD-DROID-009",
-          "SGD:p84:PDF-p85:visual-statblock-field-review"
+          "SGD:p84:PDF-p85:visual-statblock-field-review",
+          "SGD:p84-85:rendered-source-mechanics-M6"
         ]
       }
     },
@@ -5154,6 +5840,50 @@
             },
             "executionStatus": "source-only"
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-010-ACTION-BARRAGE",
+            "statement": "Three swift actions once/turn, fires 3 frag grenades at 3 adjacent opponents, allies within 3 squares gain +2 circumstance Reflex against those foes until start of droid next turn; resource and areas not executable.",
+            "scope": "Barrage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 86,
+              "pdfPage1Based": 87,
+              "sourceEntryKey": "SGD-DROID-010",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-BARRAGE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-010-ACTION-PATROL-DUTY",
+            "statement": "One swift/turn Perception opposed by target Stealth.",
+            "scope": "Patrol Duty",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 86,
+              "pdfPage1Based": 87,
+              "sourceEntryKey": "SGD-DROID-010",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-PATROL-DUTY"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-010-ACTION-RAPID-SHOT",
+            "statement": "One swift/turn ranged +2 4d8 on hit.",
+            "scope": "Rapid Shot",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 86,
+              "pdfPage1Based": 87,
+              "sourceEntryKey": "SGD-DROID-010",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-RAPID-SHOT"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -5323,6 +6053,78 @@
               "citationLabel": "SGD-DROID-010-CONCEALED-WEAPON-COUNT"
             },
             "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-010-CONSTRAINT-CONCEALED-MOUNTS",
+            "statement": "2 concealed rifles in 2 hand appendages plus tool appendage grenade launcher 12 frag; no duplicated 2 extra arms.",
+            "scope": "DT-16 baseline weapons",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 86,
+              "pdfPage1Based": 87,
+              "sourceEntryKey": "SGD-DROID-010",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-CONCEALED-MOUNTS"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-010-CONSTRAINT-BARRAGE-AMMO",
+            "statement": "Barrage expends three grenade units out of 12 printed; no infinite ammunition or a single abstract consumption unit.",
+            "scope": "DT-16 three grenades",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 86,
+              "pdfPage1Based": 87,
+              "sourceEntryKey": "SGD-DROID-010",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-BARRAGE-AMMO"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-010-VARIANT-SENTRY",
+            "statement": "Add darkvision, glowrod DC15 Mechanics 1h, internal comlink DC15 Mechanics 1h; exchange frag grenades for stun, Toughness feat for Skill Focus (Perception).",
+            "scope": "DT-16 Sentry",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 87,
+              "pdfPage1Based": 88,
+              "sourceEntryKey": "SGD-DROID-010",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-SENTRY"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-010-VARIANT-ANTIVEHICLE-DEFENSE",
+            "statement": "Add 2 shoulder tool mounts (not hand appendages) DC20 Mechanics 2h; fit 2 missile launchers, 10kg additional storage/two missile magazines; automated reload DC25 Mechanics 1 day shifts magazine change from full-round to standard action; swap Toughness for Far Shot.",
+            "scope": "DT-16 Antivehicle Defense",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 87,
+              "pdfPage1Based": 88,
+              "sourceEntryKey": "SGD-DROID-010",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-ANTIVEHICLE-DEFENSE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-010-VARIANT-LIGHT-CONSTRUCTION",
+            "statement": "Remove rifles and grenade launcher; storage at least 10kg; replace hands with claws DC20 Mechanics 2h; add second tool appendage DC20 Mechanics 1h; install laser cutter, electric arc welder, diagnostics package; replace trained Perception with Mechanics.",
+            "scope": "DT-16 Light Construction",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 87,
+              "pdfPage1Based": 88,
+              "sourceEntryKey": "SGD-DROID-010",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-LIGHT-CONSTRUCTION"
+            },
+            "executionStatus": "source-only"
           }
         ]
       },
@@ -5363,11 +6165,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 86-87 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 86-87 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge. M6 detailed paired-source PDF review completed 2026-11-02; all variants, protocol and cross-domain constraints source-only; full mechanical certification and runtime untested.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p86:PDF-page-87",
           "SGD-CENSUS:SGD-DROID-010",
-          "SGD:p86:PDF-p87:visual-statblock-field-review"
+          "SGD:p86:PDF-p87:visual-statblock-field-review",
+          "SGD:p86-87:rendered-source-mechanics-M6"
         ]
       }
     },
