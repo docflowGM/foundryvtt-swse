@@ -179,6 +179,48 @@
         "navicomputer-limited"
       ],
       "deferredRegister": "data/audits/vehicles/p6b-deferred-work.json"
+    },
+    {
+      "id": "P6B-2",
+      "status": "OFFLINE_COMPLETE_LIVE_PENDING",
+      "delivered": [
+        "cargo pods (light/medium): +cost modifier x 1/5 tons cargo, Dexterity -2 each through Reflex/Initiative/Pilot, refused below Dexterity 1; stackable; heavy pod keeps its printed size restriction",
+        "Dexterity changes accumulate on the score (jets and pods), not on separately rounded modifiers",
+        "sensor arrays +2/+4/+6 Intelligence (effective score shown; no consumer yet)",
+        "sensor enhancement package +5 on Perception/Use Computer sensor checks via VehicleOperatingContextService.rollSensorCheck",
+        "extended range +10% consumables (minimum 1 day) per installation on days-printed hulls",
+        "hangar bays / concealed hangar bays (cost modifier/50 units) and cryogenic chambers (cost modifier/5) capacities; fractional capacities refused",
+        "P6A certification overlay may now carry MECHANIC_SPECIFIED for registered, tested effects"
+      ],
+      "countChanges": {
+        "mechanicSpecified": {
+          "from": 43,
+          "to": 54
+        },
+        "installable": {
+          "from": 43,
+          "to": 54
+        },
+        "operationallyIntegratedOffline": {
+          "from": 43,
+          "to": 51
+        },
+        "identities": [
+          "cargo-pod-light",
+          "cargo-pod-medium",
+          "cargo-pod-heavy",
+          "sensor-array-2",
+          "sensor-array-4",
+          "sensor-array-6",
+          "sensor-enhancement",
+          "extended-range",
+          "cryogenic-chambers",
+          "hangar-bay",
+          "hangar-bay-concealed"
+        ],
+        "reason": "P6B-2 accessories; sensor arrays are specified/installable but not applied (no Intelligence consumer)"
+      },
+      "deferredRegister": "data/audits/vehicles/p6b-deferred-work.json"
     }
   ],
   "currentCounts": {
@@ -187,12 +229,12 @@
     "unresolvedSource": 7,
     "notInstallableOptions": 6,
     "sourceVerified": 174,
-    "mechanicSpecified": 43,
-    "operationallyIntegratedOffline": 43,
+    "mechanicSpecified": 54,
+    "operationallyIntegratedOffline": 51,
     "liveRuntimeVerified": 0,
-    "installable": 43,
+    "installable": 54,
     "combatAuthorizedWeapons": 0,
     "p6aOverlaySourceVerified": 118,
-    "note": "after P6B-1"
+    "note": "after P6B-2"
   }
 }

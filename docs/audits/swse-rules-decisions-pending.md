@@ -725,3 +725,41 @@ Appended; the entries above are unchanged.
 V-P6-05 was engineering scope, not a rules question. P6B-1 delivered the runtime consumers for regenerating shields (recharge shields action restores 10), the SubLight Accelerator Motor (+5/+10 Pilot to increase speed) and the standard/advanced navicomputers (+5/+10 astrogation). Jamming suite/array and combat thrusters remain undelivered (P6B-D-003, P6B-D-004). The V-P6-05 entry above is unchanged.
 
 - **Revision 14 (2026-11-02):** appended V-P6B-01 and the V-P6-05 engineering status note. No existing entry changed.
+
+### V-P6B-02 - Unit conversions for capacity accessories (cargo pods, extended range, smuggler compartments)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6B-02 |
+| Rules domain | Vehicle modifications |
+| Feature | Cargo Pods; Extended Range; Smuggler Compartments |
+| Source | *Starships of the Galaxy*, Accessories (pp. 48-53) |
+| Evidence | Cargo pods add (cost modifier) x 1/5/10 tons of cargo. Extended range improves consumables by 10% of the original value, rounded down, minimum 1 day, per installation. Smuggler compartments hold (cost modifier) x 200 kg, and no more than 5% of the original cargo capacity may be hidden. |
+| Confirmed behavior | The arithmetic for hulls whose printed cargo is in tons and whose printed consumables are in days. |
+| Unresolved question | (1) For hulls printing cargo in kg, may tons and kg be combined at 1 ton = 1,000 kg? (2) For consumables printed in weeks, months or years, is the 10% rounded down in days (and what day length is a month/year) or in the printed unit? |
+| Options | (1) combine at 1,000 kg per ton / keep units separate and refuse; (2) convert to days then round down / round in the printed unit with a 1-day minimum. |
+| Recommended ruling | None |
+| Implementation impact | Planner refuses cargo pods on non-ton hulls (CARGO_UNIT_NOT_TONS) and extended range on non-day hulls (CONSUMABLES_UNIT_CONVERSION_UNRULED); smuggler compartments not installable (P6B-D-010). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6B-03 - Slave circuits: rounding of the reduced crew requirement
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6B-03 |
+| Rules domain | Vehicle modifications |
+| Feature | Slave Circuits (basic, advanced) |
+| Source | *Starships of the Galaxy*, Accessories (pp. 48-53) |
+| Evidence | Basic slave circuits reduce the crew requirement by 1/3, advanced by 2/3, never below 1; crew quality is based on the remaining crew. |
+| Confirmed behavior | The fractions and the minimum of 1. |
+| Unresolved question | How is a fractional crew requirement rounded (e.g. crew 10 reduced by 1/3)? |
+| Options | Round the remaining crew up; round it down; round to nearest. |
+| Recommended ruling | None |
+| Implementation impact | Slave circuits not installable (P6B-D-013). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 15 (2026-11-02):** appended V-P6B-02 and V-P6B-03. No existing entry changed.

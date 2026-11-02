@@ -249,9 +249,13 @@ const worksheetResolution = pdf.reviewedWorksheetItems.map(w => {
 
 /* ---------- certification ledger and readiness ---------- */
 // P6B-0: atmospheric thrusters apply through the GM-set environment authority (vehicle-operating-context.js).
-const OPERATIONAL_KINDS = new Set(['armor', 'shield', 'dexterity', 'hyperdrive', 'atmospheric', 'recharge', 'skill-bonus']);
+// P6B-2: cargo pods (Dex -> Reflex/Initiative/Pilot, cargo), consumables and capacities (effective statistics).
+// 'intelligence' (sensor arrays) is NOT operational: no runtime consumer reads a vehicle's Intelligence yet.
+const OPERATIONAL_KINDS = new Set(['armor', 'shield', 'dexterity', 'hyperdrive', 'atmospheric', 'recharge', 'skill-bonus', 'cargo-pod', 'consumables', 'capacity']);
 const certificationP6a = Object.fromEntries(pdfReconciliation.filter(r => r.disposition === 'MATCHED_CANONICAL' && r.evidence.startsWith('PDF') && !certification[r.catalogId])
-  .map(r => [r.catalogId, { status: 'SOURCE_VERIFIED', evidence: r.evidence === 'PDF_VISUAL_REVIEW' ? 'PDF_REVIEWED_P6A' : 'PDF_PROSE_REVIEWED_P6A', book: r.source.book,
+  .map(r => [r.catalogId, { status: EFFECTS[r.catalogId] ? 'MECHANIC_SPECIFIED' : 'SOURCE_VERIFIED',
+    ...(EFFECTS[r.catalogId] ? { effectModule: 'scripts/domain/vehicles/vehicle-modification-effects.js', effectTest: 'tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs' } : {}),
+    evidence: r.evidence === 'PDF_VISUAL_REVIEW' ? 'PDF_REVIEWED_P6A' : 'PDF_PROSE_REVIEWED_P6A', book: r.source.book,
     printedPage: r.source.printedPage, printedPageRange: [r.source.printedPage, r.source.printedPage], table: r.source.table ?? r.source.section, pageResolution: 'pdf-table-page' }]));
 const ledger = catalog.map(cat => {
   const rec = pdfReconciliation.find(r => r.catalogId === cat.id);
@@ -303,7 +307,7 @@ const files = {
 if (failures.length) { console.error(failures.join('\n')); process.exit(1); }
 const CERT_P6A = 'data/vehicle-modifications/certification-p6a.json';
 files['../../../vehicle-modifications/certification-p6a.json'] = { schema: 'swse.vehicle.p6a.modification-certification-overlay.v1',
-  note: 'SOURCE_VERIFIED rows from the independent P6A PDF review whose catalog values equal every printed cell. Never MECHANIC_SPECIFIED: no effect is implemented by this overlay. certification.json wins where both exist.',
+  note: 'Rows from the independent P6A PDF review whose catalog values equal every printed cell: SOURCE_VERIFIED, or MECHANIC_SPECIFIED when the effect is registered in vehicle-modification-effects.js and tested (P6B-2). certification.json wins where both exist.',
   rows: certificationP6a };
 let stale = 0;
 for (const [name, body] of Object.entries(files)) {

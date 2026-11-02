@@ -8,12 +8,12 @@ Side bucket for P6B items that could not be implemented safely. Items here are N
 
 | Category | Count |
 |---|---|
-| RULES_DECISION_REQUIRED | 3 |
-| SOURCE_EVIDENCE_MISSING | 1 |
-| ENGINEERING_COMPLEXITY | 1 |
+| RULES_DECISION_REQUIRED | 5 |
+| SOURCE_EVIDENCE_MISSING | 4 |
+| ENGINEERING_COMPLEXITY | 4 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 1 |
-| DEPENDENCY_BLOCKED | 1 |
+| DEPENDENCY_BLOCKED | 3 |
 
 ## Items (by severity)
 
@@ -22,11 +22,21 @@ Side bucket for P6B items that could not be implemented safely. Items here are N
 | P6B-D-001 | P6B-1 | reinforced-bulkheads-10, reinforced-bulkheads-20, reinforced-bulkheads-30 | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6-01 |
 | P6B-D-002 | P6B-1 | sublight-drive-1 .. sublight-drive-6 | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6-02 |
 | P6B-D-008 | P6B-1 | all 43 integrated effects; P6B-0 environment and Pilot check | LIVE_RUNTIME_PENDING | IMPORTANT | no | - |
+| P6B-D-010 | P6B-2 | cargo pods / extended range / smuggler compartments on hulls whose printed unit needs conversion | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6B-02 |
 | P6B-D-003 | P6B-1 | jamming-suite, jamming-array | ENGINEERING_COMPLEXITY | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-004 | P6B-1 | combat-thrusters | DEPENDENCY_BLOCKED | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-005 | P6B-1 | navicomputer-limited | RULES_DECISION_REQUIRED | MINOR | yes | V-P6B-01 |
 | P6B-D-006 | P6B-1 | navicomputer (training clause) | NONCRITICAL_DEFECT | MINOR | no | V-P6-05 |
 | P6B-D-007 | P6B-1 | com-jammers | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
+| P6B-D-009 | P6B-2 | sensor-array-2, sensor-array-4, sensor-array-6 | DEPENDENCY_BLOCKED | MINOR | no | V-P2-04 |
+| P6B-D-011 | P6B-2 | escape-pod-small, escape-pod-large | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
+| P6B-D-012 | P6B-2 | passenger-seating, passenger-quarters, medical-suite | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
+| P6B-D-013 | P6B-2 | slave-circuits-basic, slave-circuits-advanced, slave-circuits-recall | RULES_DECISION_REQUIRED | MINOR | yes | V-P6B-03 |
+| P6B-D-014 | P6B-2 | droid-repair-team | ENGINEERING_COMPLEXITY | MINOR | no | - |
+| P6B-D-015 | P6B-2 | cargo-jettison, transponders (IFF, masked, disguised x3), cloaking (hibridium, stygium), docking clamps, holonet/hyper transceivers, luxury upgrades | DEPENDENCY_BLOCKED | MINOR | no | - |
+| P6B-D-016 | P6B-2 | 25 legacy accessory rows with UNVERIFIED effect text (amphibious seals, auxiliary generators, baffled drive, hidden cargo, holding cells, sensor baffling/decoy/mask, workshop, etc.) | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
+| P6B-D-017 | P6B-2 | hangar bays / cryogenic chambers (contents) | ENGINEERING_COMPLEXITY | MINOR | no | - |
+| P6B-D-018 | P6B-2 | cargo pods (detachable option) | ENGINEERING_COMPLEXITY | MINOR | no | - |
 
 ## Details
 
@@ -112,3 +122,105 @@ Side bucket for P6B items that could not be implemented safely. Items here are N
 - **Owner ruling needed:** no
 - **Impact:** Status stays OFFLINE_INTEGRATED_LIVE_PENDING; nothing is marked LIVE_RUNTIME_VERIFIED.
 - **Recommended action:** Run the live checklist in a V13 world.
+
+### P6B-D-009 - sensor-array-2, sensor-array-4, sensor-array-6
+
+- **Source:** Starships of the Galaxy pp. 48-53 (Accessories)
+- **Category / severity:** DEPENDENCY_BLOCKED / MINOR
+- **Reason:** Installed and certified: the effective Intelligence score and modifier are computed and shown. No runtime consumer reads a vehicle's Intelligence yet (vehicle weapon attack rolls are disabled under V-P2-04; printed crew skill modifiers are not recomputed from Intelligence).
+- **Missing:** A vehicle attack-roll consumer (fire control) and a source-backed rule for which checks use the vehicle Intelligence modifier.
+- **Owner ruling needed:** no (V-P2-04)
+- **Impact:** Ledger status EXPOSED_NOT_APPLIED (mechanicallyApplied false) while installable.
+- **Recommended action:** Read getEffectiveVehicleDerived().intelligence in P6B-3 weapon attack resolution once V-P2-04 is resolved.
+
+### P6B-D-010 - cargo pods / extended range / smuggler compartments on hulls whose printed unit needs conversion
+
+- **Source:** Starships of the Galaxy pp. 48-53 (Accessories)
+- **Category / severity:** RULES_DECISION_REQUIRED / IMPORTANT
+- **Reason:** Cargo pods add tons; 181 hulls print cargo in kg (and some in annotated units). Extended range adds 10% rounded down with a 1-day minimum; 279 hulls print consumables in weeks/months/years, and rounding in days or in the printed unit gives different results. Smuggler compartments cap hidden cargo at 5% of original cargo, again in kg vs tons.
+- **Missing:** Whether 1 ton = 1,000 kg for cargo arithmetic; which unit the extended-range rounding uses and the day length of a month/year.
+- **Owner ruling needed:** yes (V-P6B-02)
+- **Source-supported options:** convert to days (week 7, month 30, year 365) then round down; round in the printed unit, minimum 1 day
+- **Impact:** Fail-closed: planner refuses with CARGO_UNIT_NOT_TONS / CONSUMABLES_UNIT_CONVERSION_UNRULED; smuggler compartments not installable.
+- **Recommended action:** Owner rules on V-P6B-02; then the refusals become conversions.
+
+### P6B-D-011 - escape-pod-small, escape-pod-large
+
+- **Source:** Starships of the Galaxy pp. 48-53 (Accessories)
+- **Category / severity:** SOURCE_EVIDENCE_MISSING / MINOR
+- **Reason:** The catalog size restriction (Colossal or larger / Colossal (frigate) or larger) disagrees with the paraphrased prose (frigate or larger / cruiser or larger), and the per-bay lifeboat count (cost modifier/50, /100) is fractional for the smaller sizes the catalog allows.
+- **Missing:** PDF confirmation of the size restriction and the per-bay count.
+- **Owner ruling needed:** no
+- **Impact:** Not installable.
+- **Recommended action:** Confirm against the PDF; then a capacity effect like hangar bays.
+
+### P6B-D-012 - passenger-seating, passenger-quarters, medical-suite
+
+- **Source:** Starships of the Galaxy pp. 48-53 (Accessories)
+- **Category / severity:** SOURCE_EVIDENCE_MISSING / MINOR
+- **Reason:** The catalog paraphrase computes capacity from the ship's "size modifier" (a negative number for starships), which cannot be a passenger count; the printed basis is likely the cost modifier but this was not confirmed.
+- **Missing:** PDF wording of the capacity basis.
+- **Owner ruling needed:** no
+- **Impact:** Not installable.
+- **Recommended action:** Confirm against the PDF and correct the paraphrase; then a capacity effect.
+
+### P6B-D-013 - slave-circuits-basic, slave-circuits-advanced, slave-circuits-recall
+
+- **Source:** Starships of the Galaxy pp. 48-53 (Accessories)
+- **Category / severity:** RULES_DECISION_REQUIRED / MINOR
+- **Reason:** Crew requirement is reduced by 1/3 or 2/3 (never below 1); the rounding of fractional crew is not stated. Recall circuits also need a summon action and an untrained-crew override with no consumer.
+- **Missing:** Rounding rule for crew reduction; recall action consumer.
+- **Owner ruling needed:** yes (V-P6B-03)
+- **Source-supported options:** round down the reduction (crew rounds up); round the remaining crew down; round to nearest
+- **Impact:** Not installable.
+- **Recommended action:** Owner rules on V-P6B-03.
+
+### P6B-D-014 - droid-repair-team
+
+- **Source:** Starships of the Galaxy pp. 48-53 (Accessories)
+- **Category / severity:** ENGINEERING_COMPLEXITY / MINOR
+- **Reason:** Automatic deployment when the ship moves down the condition track, a +13 Mechanics jury-rig of 1 step, and a 25% destruction chance when damage exceeds SR. This automates condition-track and damage application (runtime-risky) and depends on the Core jury-rig DC and duration, which the accessory text does not restate.
+- **Missing:** Condition-track change hook for vehicles with a safe automation path; Core jury-rig DC/duration reference.
+- **Owner ruling needed:** no
+- **Impact:** Not installable.
+- **Recommended action:** Implement as a GM-prompted (not automatic) roll first, after live testing of vehicle condition track.
+
+### P6B-D-015 - cargo-jettison, transponders (IFF, masked, disguised x3), cloaking (hibridium, stygium), docking clamps, holonet/hyper transceivers, luxury upgrades
+
+- **Source:** Starships of the Galaxy pp. 48-53 (Accessories)
+- **Category / severity:** DEPENDENCY_BLOCKED / MINOR
+- **Reason:** Action or narrative components with no consumer: no cargo-bay inventory to jettison; no sensor identification/IFF model; no concealment/Stealth consumer for starship combat; no docking state; communications are narrative; luxury maintenance and crew-quality step changes would require recomputing printed statblocks. Masked/disguised transponders also have special installation-failure outcomes (sublight engines destroyed) not modeled by the installation job.
+- **Missing:** Consumers listed; installation-failure side effects for transponders.
+- **Owner ruling needed:** no
+- **Impact:** Not installable; shown as reference only.
+- **Recommended action:** Revisit per component when the consuming system exists; transceivers could be enabled as narrative capabilities if the owner wants installable non-mechanical components.
+
+### P6B-D-016 - 25 legacy accessory rows with UNVERIFIED effect text (amphibious seals, auxiliary generators, baffled drive, hidden cargo, holding cells, sensor baffling/decoy/mask, workshop, etc.)
+
+- **Source:** Starships of the Galaxy pp. 48-53 (Accessories)
+- **Category / severity:** SOURCE_EVIDENCE_MISSING / MINOR
+- **Reason:** P6A verified their printed cost/EP, but the effect strings are legacy text not matched to printed prose.
+- **Missing:** Printed effect wording for each row.
+- **Owner ruling needed:** no
+- **Impact:** Reference only; not installable.
+- **Recommended action:** PDF prose review per row, then classify like the 11 P6B-2 rows.
+
+### P6B-D-017 - hangar bays / cryogenic chambers (contents)
+
+- **Source:** Starships of the Galaxy pp. 48-53 (Accessories)
+- **Category / severity:** ENGINEERING_COMPLEXITY / MINOR
+- **Reason:** Capacity is computed and shown; nothing assigns carried craft or stasis occupants against it (carriedCraft is printed data only).
+- **Missing:** A carried-craft/occupant assignment model.
+- **Owner ruling needed:** no
+- **Impact:** Capacity is informational; no over-capacity enforcement.
+- **Recommended action:** Add when a hangar roster UI is built.
+
+### P6B-D-018 - cargo pods (detachable option)
+
+- **Source:** Starships of the Galaxy pp. 48-53 (Accessories)
+- **Category / severity:** ENGINEERING_COMPLEXITY / MINOR
+- **Reason:** A pod may be made detachable to act as an escape pod for five times the cost; the Shipyard has no purchase-option mechanism.
+- **Missing:** Catalog purchase options with cost multipliers.
+- **Owner ruling needed:** no
+- **Impact:** Only fixed pods can be installed.
+- **Recommended action:** Add an option field to catalog rows and the quote.

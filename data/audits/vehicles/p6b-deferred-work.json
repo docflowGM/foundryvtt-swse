@@ -1,75 +1,327 @@
 {
   "schema": "swse.vehicle.p6b.deferred-work.v1",
   "purpose": "Side bucket for P6B items that could not be implemented safely. Items here are NOT certified and stay fail-closed (not installable / not executable). Rendered to docs/audits/vehicles/p6b-deferred-work.md by tools/audits/vehicles/build-p6b-deferred-work.mjs.",
-  "categories": ["RULES_DECISION_REQUIRED", "SOURCE_EVIDENCE_MISSING", "ENGINEERING_COMPLEXITY", "LIVE_RUNTIME_PENDING", "NONCRITICAL_DEFECT", "DEPENDENCY_BLOCKED"],
-  "severities": ["BLOCKING", "IMPORTANT", "MINOR"],
+  "categories": [
+    "RULES_DECISION_REQUIRED",
+    "SOURCE_EVIDENCE_MISSING",
+    "ENGINEERING_COMPLEXITY",
+    "LIVE_RUNTIME_PENDING",
+    "NONCRITICAL_DEFECT",
+    "DEPENDENCY_BLOCKED"
+  ],
+  "severities": [
+    "BLOCKING",
+    "IMPORTANT",
+    "MINOR"
+  ],
   "items": [
     {
-      "id": "P6B-D-001", "workstream": "P6B-1", "component": "reinforced-bulkheads-10, reinforced-bulkheads-20, reinforced-bulkheads-30",
-      "source": "Starships of the Galaxy pp. 43-44", "status": "RULES_DECISION_REQUIRED",
+      "id": "P6B-D-001",
+      "workstream": "P6B-1",
+      "component": "reinforced-bulkheads-10, reinforced-bulkheads-20, reinforced-bulkheads-30",
+      "source": "Starships of the Galaxy pp. 43-44",
+      "status": "RULES_DECISION_REQUIRED",
       "reason": "Hit points increase by a percentage; the book gives no rounding rule, and it is unruled whether the percentage applies to printed HP only or also to other HP increases.",
-      "missing": "Rounding direction and percentage basis.", "ownerRulingNeeded": true, "linkedDecisions": ["V-P6-01"],
-      "options": ["round down (Core general rounding)", "round to nearest", "percentage of printed HP only vs current maximum"],
-      "impact": "3 rows stay SOURCE_VERIFIED and not installable.", "severity": "IMPORTANT",
+      "missing": "Rounding direction and percentage basis.",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6-01"
+      ],
+      "options": [
+        "round down (Core general rounding)",
+        "round to nearest",
+        "percentage of printed HP only vs current maximum"
+      ],
+      "impact": "3 rows stay SOURCE_VERIFIED and not installable.",
+      "severity": "IMPORTANT",
       "recommendedAction": "Owner rules on V-P6-01; the effect is a one-line hp kind in the effects registry once ruled."
     },
     {
-      "id": "P6B-D-002", "workstream": "P6B-1", "component": "sublight-drive-1 .. sublight-drive-6",
-      "source": "Starships of the Galaxy p. 41, Table 3-3", "status": "RULES_DECISION_REQUIRED",
+      "id": "P6B-D-002",
+      "workstream": "P6B-1",
+      "component": "sublight-drive-1 .. sublight-drive-6",
+      "source": "Starships of the Galaxy p. 41, Table 3-3",
+      "status": "RULES_DECISION_REQUIRED",
       "reason": "Every published hull already has a sublight speed; installing a drive is a replacement, which is unruled (same question as shields/hyperdrives). The 'military vessels only' clause for the fastest drives has no hull 'military' attribute in canonical data.",
-      "missing": "Replacement rule (refund, EP of the old drive); a source-backed military-hull classification.", "ownerRulingNeeded": true, "linkedDecisions": ["V-P6-02"],
-      "options": ["replacement frees the old drive's EP", "replacement keeps the old EP consumed", "replacement not allowed on stock hulls"],
-      "impact": "6 rows stay SOURCE_VERIFIED and not installable; starship-scale speed is never changed by the Shipyard.", "severity": "IMPORTANT",
+      "missing": "Replacement rule (refund, EP of the old drive); a source-backed military-hull classification.",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6-02"
+      ],
+      "options": [
+        "replacement frees the old drive's EP",
+        "replacement keeps the old EP consumed",
+        "replacement not allowed on stock hulls"
+      ],
+      "impact": "6 rows stay SOURCE_VERIFIED and not installable; starship-scale speed is never changed by the Shipyard.",
+      "severity": "IMPORTANT",
       "recommendedAction": "Owner rules on V-P6-02; then decide how a hull is classified as military (data field) before enabling the fastest drives."
     },
     {
-      "id": "P6B-D-003", "workstream": "P6B-1", "component": "jamming-suite, jamming-array",
-      "source": "Starships of the Galaxy p. 43", "status": "ENGINEERING_COMPLEXITY",
+      "id": "P6B-D-003",
+      "workstream": "P6B-1",
+      "component": "jamming-suite, jamming-array",
+      "source": "Starships of the Galaxy p. 43",
+      "status": "ENGINEERING_COMPLEXITY",
       "reason": "The rule is printed clearly, but applying it needs an effect on ANOTHER vehicle: a swift action that picks a target within 6 starship squares, a per-target size-based penalty on Use Computer (communications/sensors) and on fire control (not reducing the Intelligence modifier below +0), and an opposed Use Computer check. None of these consumers exists: no starship-scale range measurement, no cross-actor temporary condition store, and fire control is not used by any executable weapon (V-P2-04).",
-      "missing": "Cross-vehicle temporary effect state, starship-scale range check, opposed-check flow, fire-control penalty consumer.", "ownerRulingNeeded": false, "linkedDecisions": ["V-P6-05", "V-P2-04"],
-      "options": [], "impact": "2 rows stay SOURCE_VERIFIED and not installable.", "severity": "MINOR",
+      "missing": "Cross-vehicle temporary effect state, starship-scale range check, opposed-check flow, fire-control penalty consumer.",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6-05",
+        "V-P2-04"
+      ],
+      "options": [],
+      "impact": "2 rows stay SOURCE_VERIFIED and not installable.",
+      "severity": "MINOR",
       "recommendedAction": "Build after weapon execution (V-P2-04) exists, using the combat ActiveEffect path for the target condition."
     },
     {
-      "id": "P6B-D-004", "workstream": "P6B-1", "component": "combat-thrusters",
-      "source": "Starships of the Galaxy p. 41", "status": "DEPENDENCY_BLOCKED",
+      "id": "P6B-D-004",
+      "workstream": "P6B-1",
+      "component": "combat-thrusters",
+      "source": "Starships of the Galaxy p. 41",
+      "status": "DEPENDENCY_BLOCKED",
       "reason": "Effects are 'treated as one size smaller when targeted by capital-ship weapons' and 'treated as a starfighter for dogfighting and starship combat maneuvers'. The system has no dogfight eligibility check, no starship-maneuver eligibility by size, and no executable capital-ship weapon targeting.",
-      "missing": "Dogfight / starship maneuver eligibility consumer; capital-weapon targeting (blocked by V-P2-04).", "ownerRulingNeeded": false, "linkedDecisions": ["V-P6-05", "V-P2-04"],
-      "options": [], "impact": "Row stays SOURCE_VERIFIED and not installable.", "severity": "MINOR",
+      "missing": "Dogfight / starship maneuver eligibility consumer; capital-weapon targeting (blocked by V-P2-04).",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6-05",
+        "V-P2-04"
+      ],
+      "options": [],
+      "impact": "Row stays SOURCE_VERIFIED and not installable.",
+      "severity": "MINOR",
       "recommendedAction": "Implement as a size-category override read by the dogfight and capital-weapon targeting code once those exist."
     },
     {
-      "id": "P6B-D-005", "workstream": "P6B-1", "component": "navicomputer-limited",
-      "source": "Starships of the Galaxy p. 41", "status": "RULES_DECISION_REQUIRED",
+      "id": "P6B-D-005",
+      "workstream": "P6B-1",
+      "component": "navicomputer-limited",
+      "source": "Starships of the Galaxy p. 41",
+      "status": "RULES_DECISION_REQUIRED",
       "reason": "The printed text says only that it stores two jumps' worth of information. It does not state whether it grants the navicomputer's +5 astrogation bonus, or what happens on a third jump.",
-      "missing": "Bonus value (if any) and the consequence of exceeding two stored jumps.", "ownerRulingNeeded": true, "linkedDecisions": ["V-P6B-01"],
-      "options": ["no astrogation bonus; storage limit only", "same +5 as a standard navicomputer while within its two stored jumps"],
-      "impact": "Row stays SOURCE_VERIFIED and not installable.", "severity": "MINOR",
+      "missing": "Bonus value (if any) and the consequence of exceeding two stored jumps.",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6B-01"
+      ],
+      "options": [
+        "no astrogation bonus; storage limit only",
+        "same +5 as a standard navicomputer while within its two stored jumps"
+      ],
+      "impact": "Row stays SOURCE_VERIFIED and not installable.",
+      "severity": "MINOR",
       "recommendedAction": "Owner rules on V-P6B-01."
     },
     {
-      "id": "P6B-D-006", "workstream": "P6B-1", "component": "navicomputer (training clause)",
-      "source": "Starships of the Galaxy p. 41", "status": "NONCRITICAL_DEFECT",
+      "id": "P6B-D-006",
+      "workstream": "P6B-1",
+      "component": "navicomputer (training clause)",
+      "source": "Starships of the Galaxy p. 41",
+      "status": "NONCRITICAL_DEFECT",
       "reason": "The +5 bonus is integrated. Any trained-only gate for astrogation in the skill roller is not vehicle-aware, so a navicomputer clause about untrained astrogation has no consumer; the roll is never blocked by the vehicle code either way.",
-      "missing": "A trained-only check consumer for Use Computer (astrogate) that can see the vehicle.", "ownerRulingNeeded": false, "linkedDecisions": ["V-P6-05"],
-      "options": [], "impact": "No incorrect mechanic: the bonus applies; the training permission is not enforced either way.", "severity": "MINOR",
+      "missing": "A trained-only check consumer for Use Computer (astrogate) that can see the vehicle.",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6-05"
+      ],
+      "options": [],
+      "impact": "No incorrect mechanic: the bonus applies; the training permission is not enforced either way.",
+      "severity": "MINOR",
       "recommendedAction": "Wire when the skill roller gains trained-only enforcement for skill uses."
     },
     {
-      "id": "P6B-D-007", "workstream": "P6B-1", "component": "com-jammers",
-      "source": "legacy catalog row (effectVerification UNVERIFIED)", "status": "SOURCE_EVIDENCE_MISSING",
+      "id": "P6B-D-007",
+      "workstream": "P6B-1",
+      "component": "com-jammers",
+      "source": "legacy catalog row (effectVerification UNVERIFIED)",
+      "status": "SOURCE_EVIDENCE_MISSING",
       "reason": "The row's effect text is legacy and unverified; the census does not match it to a printed SotG row.",
-      "missing": "A printed source for the component and its effect.", "ownerRulingNeeded": false, "linkedDecisions": [],
-      "options": [], "impact": "Row stays reference-only; not installable.", "severity": "MINOR",
+      "missing": "A printed source for the component and its effect.",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "impact": "Row stays reference-only; not installable.",
+      "severity": "MINOR",
       "recommendedAction": "Locate a printed source or retire the legacy row."
     },
     {
-      "id": "P6B-D-008", "workstream": "P6B-1", "component": "all 43 integrated effects; P6B-0 environment and Pilot check",
-      "source": "-", "status": "LIVE_RUNTIME_PENDING",
+      "id": "P6B-D-008",
+      "workstream": "P6B-1",
+      "component": "all 43 integrated effects; P6B-0 environment and Pilot check",
+      "source": "-",
+      "status": "LIVE_RUNTIME_PENDING",
       "reason": "Verified offline (Node tests with Handlebars). Foundry V13 runtime is not available in this environment.",
-      "missing": "Live V13 session run of docs/audits/vehicles/p6a-final-acceptance-report.md checklist plus P6B-1 items (recharge shields restores 10 with regenerating shields; SLAM bonus in speed Pilot check; astrogation roll bonus).", "ownerRulingNeeded": false, "linkedDecisions": [],
-      "options": [], "impact": "Status stays OFFLINE_INTEGRATED_LIVE_PENDING; nothing is marked LIVE_RUNTIME_VERIFIED.", "severity": "IMPORTANT",
+      "missing": "Live V13 session run of docs/audits/vehicles/p6a-final-acceptance-report.md checklist plus P6B-1 items (recharge shields restores 10 with regenerating shields; SLAM bonus in speed Pilot check; astrogation roll bonus).",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "impact": "Status stays OFFLINE_INTEGRATED_LIVE_PENDING; nothing is marked LIVE_RUNTIME_VERIFIED.",
+      "severity": "IMPORTANT",
       "recommendedAction": "Run the live checklist in a V13 world."
+    },
+    {
+      "workstream": "P6B-2",
+      "source": "Starships of the Galaxy pp. 48-53 (Accessories)",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P2-04"
+      ],
+      "options": [],
+      "id": "P6B-D-009",
+      "component": "sensor-array-2, sensor-array-4, sensor-array-6",
+      "status": "DEPENDENCY_BLOCKED",
+      "reason": "Installed and certified: the effective Intelligence score and modifier are computed and shown. No runtime consumer reads a vehicle's Intelligence yet (vehicle weapon attack rolls are disabled under V-P2-04; printed crew skill modifiers are not recomputed from Intelligence).",
+      "missing": "A vehicle attack-roll consumer (fire control) and a source-backed rule for which checks use the vehicle Intelligence modifier.",
+      "impact": "Ledger status EXPOSED_NOT_APPLIED (mechanicallyApplied false) while installable.",
+      "severity": "MINOR",
+      "recommendedAction": "Read getEffectiveVehicleDerived().intelligence in P6B-3 weapon attack resolution once V-P2-04 is resolved."
+    },
+    {
+      "workstream": "P6B-2",
+      "source": "Starships of the Galaxy pp. 48-53 (Accessories)",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6B-02"
+      ],
+      "options": [
+        "convert to days (week 7, month 30, year 365) then round down",
+        "round in the printed unit, minimum 1 day"
+      ],
+      "id": "P6B-D-010",
+      "component": "cargo pods / extended range / smuggler compartments on hulls whose printed unit needs conversion",
+      "status": "RULES_DECISION_REQUIRED",
+      "reason": "Cargo pods add tons; 181 hulls print cargo in kg (and some in annotated units). Extended range adds 10% rounded down with a 1-day minimum; 279 hulls print consumables in weeks/months/years, and rounding in days or in the printed unit gives different results. Smuggler compartments cap hidden cargo at 5% of original cargo, again in kg vs tons.",
+      "missing": "Whether 1 ton = 1,000 kg for cargo arithmetic; which unit the extended-range rounding uses and the day length of a month/year.",
+      "impact": "Fail-closed: planner refuses with CARGO_UNIT_NOT_TONS / CONSUMABLES_UNIT_CONVERSION_UNRULED; smuggler compartments not installable.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Owner rules on V-P6B-02; then the refusals become conversions."
+    },
+    {
+      "workstream": "P6B-2",
+      "source": "Starships of the Galaxy pp. 48-53 (Accessories)",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-011",
+      "component": "escape-pod-small, escape-pod-large",
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "reason": "The catalog size restriction (Colossal or larger / Colossal (frigate) or larger) disagrees with the paraphrased prose (frigate or larger / cruiser or larger), and the per-bay lifeboat count (cost modifier/50, /100) is fractional for the smaller sizes the catalog allows.",
+      "missing": "PDF confirmation of the size restriction and the per-bay count.",
+      "impact": "Not installable.",
+      "severity": "MINOR",
+      "recommendedAction": "Confirm against the PDF; then a capacity effect like hangar bays."
+    },
+    {
+      "workstream": "P6B-2",
+      "source": "Starships of the Galaxy pp. 48-53 (Accessories)",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-012",
+      "component": "passenger-seating, passenger-quarters, medical-suite",
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "reason": "The catalog paraphrase computes capacity from the ship's \"size modifier\" (a negative number for starships), which cannot be a passenger count; the printed basis is likely the cost modifier but this was not confirmed.",
+      "missing": "PDF wording of the capacity basis.",
+      "impact": "Not installable.",
+      "severity": "MINOR",
+      "recommendedAction": "Confirm against the PDF and correct the paraphrase; then a capacity effect."
+    },
+    {
+      "workstream": "P6B-2",
+      "source": "Starships of the Galaxy pp. 48-53 (Accessories)",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6B-03"
+      ],
+      "options": [
+        "round down the reduction (crew rounds up)",
+        "round the remaining crew down",
+        "round to nearest"
+      ],
+      "id": "P6B-D-013",
+      "component": "slave-circuits-basic, slave-circuits-advanced, slave-circuits-recall",
+      "status": "RULES_DECISION_REQUIRED",
+      "reason": "Crew requirement is reduced by 1/3 or 2/3 (never below 1); the rounding of fractional crew is not stated. Recall circuits also need a summon action and an untrained-crew override with no consumer.",
+      "missing": "Rounding rule for crew reduction; recall action consumer.",
+      "impact": "Not installable.",
+      "severity": "MINOR",
+      "recommendedAction": "Owner rules on V-P6B-03."
+    },
+    {
+      "workstream": "P6B-2",
+      "source": "Starships of the Galaxy pp. 48-53 (Accessories)",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-014",
+      "component": "droid-repair-team",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "Automatic deployment when the ship moves down the condition track, a +13 Mechanics jury-rig of 1 step, and a 25% destruction chance when damage exceeds SR. This automates condition-track and damage application (runtime-risky) and depends on the Core jury-rig DC and duration, which the accessory text does not restate.",
+      "missing": "Condition-track change hook for vehicles with a safe automation path; Core jury-rig DC/duration reference.",
+      "impact": "Not installable.",
+      "severity": "MINOR",
+      "recommendedAction": "Implement as a GM-prompted (not automatic) roll first, after live testing of vehicle condition track."
+    },
+    {
+      "workstream": "P6B-2",
+      "source": "Starships of the Galaxy pp. 48-53 (Accessories)",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-015",
+      "component": "cargo-jettison, transponders (IFF, masked, disguised x3), cloaking (hibridium, stygium), docking clamps, holonet/hyper transceivers, luxury upgrades",
+      "status": "DEPENDENCY_BLOCKED",
+      "reason": "Action or narrative components with no consumer: no cargo-bay inventory to jettison; no sensor identification/IFF model; no concealment/Stealth consumer for starship combat; no docking state; communications are narrative; luxury maintenance and crew-quality step changes would require recomputing printed statblocks. Masked/disguised transponders also have special installation-failure outcomes (sublight engines destroyed) not modeled by the installation job.",
+      "missing": "Consumers listed; installation-failure side effects for transponders.",
+      "impact": "Not installable; shown as reference only.",
+      "severity": "MINOR",
+      "recommendedAction": "Revisit per component when the consuming system exists; transceivers could be enabled as narrative capabilities if the owner wants installable non-mechanical components."
+    },
+    {
+      "workstream": "P6B-2",
+      "source": "Starships of the Galaxy pp. 48-53 (Accessories)",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-016",
+      "component": "25 legacy accessory rows with UNVERIFIED effect text (amphibious seals, auxiliary generators, baffled drive, hidden cargo, holding cells, sensor baffling/decoy/mask, workshop, etc.)",
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "reason": "P6A verified their printed cost/EP, but the effect strings are legacy text not matched to printed prose.",
+      "missing": "Printed effect wording for each row.",
+      "impact": "Reference only; not installable.",
+      "severity": "MINOR",
+      "recommendedAction": "PDF prose review per row, then classify like the 11 P6B-2 rows."
+    },
+    {
+      "workstream": "P6B-2",
+      "source": "Starships of the Galaxy pp. 48-53 (Accessories)",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-017",
+      "component": "hangar bays / cryogenic chambers (contents)",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "Capacity is computed and shown; nothing assigns carried craft or stasis occupants against it (carriedCraft is printed data only).",
+      "missing": "A carried-craft/occupant assignment model.",
+      "impact": "Capacity is informational; no over-capacity enforcement.",
+      "severity": "MINOR",
+      "recommendedAction": "Add when a hangar roster UI is built."
+    },
+    {
+      "workstream": "P6B-2",
+      "source": "Starships of the Galaxy pp. 48-53 (Accessories)",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-018",
+      "component": "cargo pods (detachable option)",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "A pod may be made detachable to act as an escape pod for five times the cost; the Shipyard has no purchase-option mechanism.",
+      "missing": "Catalog purchase options with cost multipliers.",
+      "impact": "Only fixed pods can be installed.",
+      "severity": "MINOR",
+      "recommendedAction": "Add an option field to catalog rows and the quote."
     }
   ]
 }

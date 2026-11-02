@@ -106,6 +106,11 @@ export function getEffectiveVehicleDerived(actor) {
     environment,
     rechargeShieldsAmount: fx.rechargeShields.effective,
     skillBonuses: fx.skillBonuses,
+    intelligence: fx.intelligence,
+    dexterity: fx.dexterity,
+    cargo: fx.cargo,
+    consumables: fx.consumables,
+    capacities: fx.capacities,
     contributions: { reflex: fx.reflex, initiative: fx.initiative, shield: fx.shield },
     unimplemented: fx.unimplemented
   };

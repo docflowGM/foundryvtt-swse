@@ -12,7 +12,9 @@ const { buildVehicleSchemaViewModel } = await import('../scripts/sheets/v2/vehic
 
 const load = f => JSON.parse(readFileSync(`data/vehicle-modifications/${f}.json`, 'utf8'));
 const catalog = [...load('defense-systems'), ...load('movement-systems'), ...load('accessories'), ...load('weapon-systems')];
-const overlay = JSON.parse(readFileSync('data/vehicle-modifications/certification.json', 'utf8')).rows;
+const baseCert = JSON.parse(readFileSync('data/vehicle-modifications/certification.json', 'utf8')).rows;
+// Same precedence as VehicleInstallationService.loadCatalog: certification.json wins over the P6A overlay.
+const overlay = { ...JSON.parse(readFileSync('data/vehicle-modifications/certification-p6a.json', 'utf8')).rows, ...baseCert };
 const actors = [...buildUniversalVehiclePackSources().output.values()].flat();
 const byKey = k => structuredClone(actors.find(a => a.system.vehicleSourceEntryKey === k));
 const rules = { ...L.DEFAULT_VEHICLE_INSTALLATION_RULES, resolveEpBudget: () => ({ state: 'known', total: 40 }), resolveNonstandard: () => ({ nonstandard: false, basis: 'TEST' }) };
@@ -31,13 +33,13 @@ test('registry and certification agree exactly: MECHANIC_SPECIFIED <=> implement
   const certified = Object.entries(overlay).filter(([, r]) => r.status === 'MECHANIC_SPECIFIED').map(([id]) => id).sort();
   assert.deepEqual(certified, [...E.IMPLEMENTED_EFFECT_IDS].sort());
   assert.equal(certified.length, Object.keys(E.EFFECTS).length);
-  assert.equal(certified.length, 43, 'P6B-1 added regenerating shields, SLAM, navicomputer and advanced navicomputer');
+  assert.equal(certified.length, 54, 'P6B-1 added 4 (regenerating shields, SLAM, navicomputers); P6B-2 added 11 accessories');
   for (const id of E.IMPLEMENTED_EFFECT_IDS) {
     assert.ok(catalog.some(c => c.id === id), id);
     assert.match(E.EFFECTS[id].citation, /Starships of the Galaxy/);
-    assert.equal(overlay[id].effectTest, 'tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs');
+    assert.equal(overlay[id].effectTest, baseCert[id] ? 'tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs' : 'tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs');
   }
-  for (const id of ['reinforced-bulkheads-10', 'jamming-suite', 'combat-thrusters', 'navicomputer-limited', 'sublight-drive-3'])
+  for (const id of ['reinforced-bulkheads-10', 'jamming-suite', 'combat-thrusters', 'navicomputer-limited', 'sublight-drive-3', 'escape-pod-small', 'slave-circuits-basic', 'droid-repair-team', 'smuggler-compartments'])
     assert.equal(overlay[id].status, 'SOURCE_VERIFIED', id + ' stays deferred');
 });
 

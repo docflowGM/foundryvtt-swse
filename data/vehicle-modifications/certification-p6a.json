@@ -1,6 +1,6 @@
 {
  "schema": "swse.vehicle.p6a.modification-certification-overlay.v1",
- "note": "SOURCE_VERIFIED rows from the independent P6A PDF review whose catalog values equal every printed cell. Never MECHANIC_SPECIFIED: no effect is implemented by this overlay. certification.json wins where both exist.",
+ "note": "Rows from the independent P6A PDF review whose catalog values equal every printed cell: SOURCE_VERIFIED, or MECHANIC_SPECIFIED when the effect is registered in vehicle-modification-effects.js and tested (P6B-2). certification.json wins where both exist.",
  "rows": {
   "anti-boarding-systems": {
    "status": "SOURCE_VERIFIED",
@@ -687,7 +687,9 @@
    "pageResolution": "pdf-table-page"
   },
   "cargo-pod-light": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 49,
@@ -699,7 +701,9 @@
    "pageResolution": "pdf-table-page"
   },
   "cargo-pod-medium": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 49,
@@ -711,7 +715,9 @@
    "pageResolution": "pdf-table-page"
   },
   "cargo-pod-heavy": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 49,
@@ -747,7 +753,9 @@
    "pageResolution": "pdf-table-page"
   },
   "cryogenic-chambers": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 49,
@@ -807,7 +815,9 @@
    "pageResolution": "pdf-table-page"
   },
   "extended-range": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 49,
@@ -819,7 +829,9 @@
    "pageResolution": "pdf-table-page"
   },
   "hangar-bay": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 49,
@@ -831,7 +843,9 @@
    "pageResolution": "pdf-table-page"
   },
   "hangar-bay-concealed": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 49,
@@ -939,7 +953,9 @@
    "pageResolution": "pdf-table-page"
   },
   "sensor-array-2": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 49,
@@ -951,7 +967,9 @@
    "pageResolution": "pdf-table-page"
   },
   "sensor-array-4": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 49,
@@ -963,7 +981,9 @@
    "pageResolution": "pdf-table-page"
   },
   "sensor-array-6": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 49,
@@ -975,7 +995,9 @@
    "pageResolution": "pdf-table-page"
   },
   "sensor-enhancement": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 49,

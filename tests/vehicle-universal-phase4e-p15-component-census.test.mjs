@@ -55,12 +55,17 @@ test('missing canonical components are recorded separately (not added to product
 
 test('certification ledger and readiness manifest never overstate operation', () => {
   const ledger = load(`${DIR}/certification-ledger.json`), ready = load(`${DIR}/readiness-manifest.json`);
-  const cert = load('data/vehicle-modifications/certification.json').rows;
+  const cert = { ...load('data/vehicle-modifications/certification-p6a.json').rows, ...load('data/vehicle-modifications/certification.json').rows };
   for (const l of ledger.rows) {
     if (l.mechanicSpecified) { assert.ok(l.sourceVerified?.book && l.sourceVerified?.printedPage, l.catalogId); assert.equal(cert[l.catalogId].status, 'MECHANIC_SPECIFIED'); }
     if (l.operationallyIntegrated) assert.ok(l.mechanicSpecified, l.catalogId);
   }
-  assert.equal(ledger.counts.mechanicSpecified, 43);
+  assert.equal(ledger.counts.mechanicSpecified, 54);
+  // sensor arrays: specified and installable, but no runtime consumer reads vehicle Intelligence yet -> not applied
+  for (const id of ['sensor-array-2', 'sensor-array-4', 'sensor-array-6']) {
+    assert.equal(ready.rows.find(r => r.catalogId === id).installable, true, id);
+    assert.equal(ready.rows.find(r => r.catalogId === id).mechanicallyApplied, false, id);
+  }
   assert.equal(ready.counts.combatUsable, 0);
   for (const r of ready.rows) { assert.equal(r.combatUsable, false); if (r.installable) assert.ok(cert[r.catalogId]?.status === 'MECHANIC_SPECIFIED'); }
   // atmospheric thrusters: applied since P6B-0 through the GM-set environment (only in an explicit atmosphere)
@@ -107,12 +112,14 @@ test('printed dash is unknown, not zero; legacy values and citations are preserv
   assert.deepEqual([d.find(x => x.id === 'security-bracing').cost, d.find(x => x.id === 'security-bracing').sizeRestriction], [2000, 'Gargantuan or Larger']);
 });
 
-test('certification overlay: PDF-verified rows are SOURCE_VERIFIED only, never installable, and the loader keeps certification.json precedence', () => {
+test('certification overlay: PDF-verified rows are SOURCE_VERIFIED unless a tested effect is registered, and the loader keeps certification.json precedence', async () => {
+  const { EFFECTS } = await import('../scripts/domain/vehicles/vehicle-modification-effects.js');
   const overlay = load('data/vehicle-modifications/certification-p6a.json').rows;
   const base = load('data/vehicle-modifications/certification.json').rows;
   assert.ok(Object.keys(overlay).length > 100);
   for (const [id, row] of Object.entries(overlay)) {
-    assert.equal(row.status, 'SOURCE_VERIFIED', id);
+    assert.equal(row.status, EFFECTS[id] ? 'MECHANIC_SPECIFIED' : 'SOURCE_VERIFIED', id);
+    if (EFFECTS[id]) assert.equal(row.effectTest, 'tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs', id);
     assert.ok(row.book && Number.isInteger(row.printedPage), id);
     assert.equal(base[id], undefined, 'no overlap with certification.json');
   }
@@ -121,7 +128,7 @@ test('certification overlay: PDF-verified rows are SOURCE_VERIFIED only, never i
   assert.match(svc, /certification-p6a\.json/);
   assert.match(svc, /\.\.\.\(p6aRes\.ok[^;]*\.\.\.\(\(await certRes\.json\(\)\)\.rows/);
   const ready = load(`${DIR}/readiness-manifest.json`);
-  assert.equal(ready.counts.installable, 43);
+  assert.equal(ready.counts.installable, 54);
   assert.equal(ready.counts.combatUsable, 0);
 });
 

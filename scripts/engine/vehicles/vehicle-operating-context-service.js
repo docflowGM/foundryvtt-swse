@@ -56,4 +56,18 @@ export class VehicleOperatingContextService {
       vehicleContext: { vehicleId: vehicle.id, vehicleName: vehicle.name, equipment: eq.sources } });
     return { success: !!result, result, equipmentBonus: eq };
   }
+
+  /**
+   * A crew Actor's Perception or Use Computer check made to operate the ship's sensors, with the certified installed
+   * equipment bonus (Sensor Enhancement Package +5). Other uses of those skills never get it.
+   */
+  static async rollSensorCheck(vehicle, { crewActor, skill, user = globalThis.game?.user, ...options } = {}) {
+    if (!['perception', 'useComputer'].includes(skill)) return { success: false, reasons: ['SENSOR_SKILL_INVALID'] };
+    if (!crewActor || crewActor.type === 'vehicle') return { success: false, reasons: ['CREW_ACTOR_REQUIRED'] };
+    if (!(user?.isGM === true || crewActor.isOwner === true)) return { success: false, reasons: ['CREW_ROLL_NOT_AUTHORIZED'] };
+    const eq = vehicleSkillEquipmentBonus(vehicle, { skill, use: 'sensors' });
+    const result = await rollSkill(crewActor, skill, { ...options, customModifier: Number(options.customModifier || 0) + eq.total,
+      vehicleContext: { vehicleId: vehicle.id, vehicleName: vehicle.name, purpose: 'sensors', equipment: eq.sources } });
+    return { success: !!result, result, equipmentBonus: eq };
+  }
 }

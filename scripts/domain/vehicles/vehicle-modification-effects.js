@@ -10,11 +10,14 @@
  * docs/audits/vehicles/p6b-deferred-work.md): hit-point percentage rounding (Reinforced Bulkheads),
  * sublight-drive replacement, jammers, combat thrusters, the limited navicomputer, and replacement-vs-addition
  * when a hull already has the system. Those rows stay SOURCE_VERIFIED and cannot be installed.
+ * P6B-2 added sensor arrays (Intelligence), cargo pods, the sensor enhancement package, extended range (printed-in-days
+ * consumables only) and per-bay capacities (cryogenic chambers, hangar bays).
  * P6B-1 added regenerating shields (recharge action), SLAM and navicomputers (check equipment bonuses).
  *
  * No Foundry globals: Node-testable.
  */
 import { getVehiclePublishedFieldState } from './vehicle-runtime-contract.js';
+import { costModifierForSize } from './vehicle-modification-rules.js';
 
 const finite = v => typeof v === 'number' && Number.isFinite(v);
 const abilityMod = score => Math.floor((score - 10) / 2);
@@ -33,6 +36,15 @@ const CITE2 = Object.freeze({
   navicomputer: 'Starships of the Galaxy, Navicomputer: +5 bonus on Use Computer checks made for astrogation (advanced navicomputer +10 instead of +5)'
 });
 
+const CITE3 = Object.freeze({
+  sensorArray: 'Starships of the Galaxy, Accessories, Sensor Array Computers: equipment bonus to the starship\'s Intelligence score',
+  cargoPod: 'Starships of the Galaxy, Accessories, Cargo Pods: adds (cost modifier) x 1/5/10 tons of cargo; each pod reduces Dexterity by 2 and cannot drop it below 1',
+  sensorEnhancement: 'Starships of the Galaxy, Accessories, Sensor Enhancement Package: +5 bonus on Perception and Use Computer checks made to operate the ship\'s sensors',
+  extendedRange: 'Starships of the Galaxy, Accessories, Extended Range: consumables improve by 10% of the original value (rounded down, minimum 1 day) for each installation',
+  cryogenic: 'Starships of the Galaxy, Accessories, Cryogenic Chambers: each unit carries (cost modifier)/5 Medium or smaller creatures in stasis',
+  hangar: 'Starships of the Galaxy, Accessories, Hangar Bay: each bay has (cost modifier)/50 units of hangar space'
+});
+
 const SHIELD_RATINGS = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 70, 80, 90, 100, 125, 150, 175, 200];
 const HYPERDRIVES = { 'hyperdrive-075': 0.75, 'hyperdrive-1': 1, 'hyperdrive-15': 1.5, 'hyperdrive-2': 2, 'hyperdrive-3': 3, 'hyperdrive-4': 4,
   'hyperdrive-5': 5, 'hyperdrive-6': 6, 'hyperdrive-8': 8, 'hyperdrive-10': 10, 'hyperdrive-15-class': 15 };
@@ -46,6 +58,13 @@ export const EFFECTS = Object.freeze({
   'sublight-accelerator': { kind: 'skill-bonus', skill: 'pilot', purpose: 'increase-speed', value: 5, allOutValue: 10, group: 'slam', citation: CITE2.slam },
   'navicomputer': { kind: 'skill-bonus', skill: 'useComputer', use: 'astrogate', value: 5, group: 'navicomputer', citation: CITE2.navicomputer },
   'navicomputer-advanced': { kind: 'skill-bonus', skill: 'useComputer', use: 'astrogate', value: 10, group: 'navicomputer', citation: CITE2.navicomputer },
+  ...Object.fromEntries([2, 4, 6].map(n => [`sensor-array-${n}`, { kind: 'intelligence', value: n, group: 'sensor-array', citation: CITE3.sensorArray }])),
+  ...Object.fromEntries([['light', 1], ['medium', 5], ['heavy', 10]].map(([k, t]) => [`cargo-pod-${k}`, { kind: 'cargo-pod', tonsPerCostModifier: t, dexterity: -2, stackable: true, group: 'cargo-pod', citation: CITE3.cargoPod }])),
+  'sensor-enhancement': { kind: 'skill-bonus', bonuses: [{ skill: 'perception', use: 'sensors', value: 5 }, { skill: 'useComputer', use: 'sensors', value: 5 }], group: 'sensor-enhancement', citation: CITE3.sensorEnhancement },
+  'extended-range': { kind: 'consumables', percent: 10, minimumDays: 1, stackable: true, group: 'extended-range', citation: CITE3.extendedRange },
+  'cryogenic-chambers': { kind: 'capacity', capacity: 'cryogenic', divisor: 5, unit: 'Medium or smaller creatures in stasis', stackable: true, group: 'cryogenic', citation: CITE3.cryogenic },
+  'hangar-bay': { kind: 'capacity', capacity: 'hangar', divisor: 50, unit: 'hangar units', stackable: true, group: 'hangar', citation: CITE3.hangar },
+  'hangar-bay-concealed': { kind: 'capacity', capacity: 'hangar', divisor: 50, unit: 'hangar units (concealed)', stackable: true, group: 'hangar', citation: CITE3.hangar },
   'atmospheric-thrusters': { kind: 'atmospheric', percent: 10, group: 'atmospheric', citation: CITE.atmospheric },
   'atmospheric-thrusters-advanced': { kind: 'atmospheric', percent: 25, group: 'atmospheric', citation: CITE.atmospheric }
 });
@@ -65,7 +84,8 @@ export function effectInstallability({ catalogEntry, record, entries = [] }) {
   const effect = EFFECTS[catalogEntry?.id];
   if (!effect) return [];
   const reasons = [];
-  if (entries.some(e => EFFECTS[e.catalogId]?.group === effect.group)) reasons.push('EFFECT_STACKING_UNRULED');
+  // Printed "for each"/"each pod/bay/unit" components stack; everything else denies a second system of the same group.
+  if (!effect.stackable && entries.some(e => EFFECTS[e.catalogId]?.group === effect.group)) reasons.push('EFFECT_STACKING_UNRULED');
   switch (effect.kind) {
     case 'armor': if (!finite(record?.defenses?.reflex)) reasons.push('REFLEX_DEFENSE_UNKNOWN'); break;
     case 'shield': {
@@ -78,6 +98,22 @@ export function effectInstallability({ catalogEntry, record, entries = [] }) {
     case 'hyperdrive': if (record?.hyperspace?.capability !== 'unavailable') reasons.push('HYPERDRIVE_REPLACEMENT_UNRULED'); break;
     case 'atmospheric': if (!flyModes(record).length) reasons.push('NO_ATMOSPHERIC_FLIGHT_MODE'); break;
     case 'recharge': break;
+    case 'intelligence': if (!finite(record?.abilities?.int)) reasons.push('INTELLIGENCE_UNKNOWN'); break;
+    case 'cargo-pod': {
+      if (!finite(record?.abilities?.dex) || !finite(record?.defenses?.reflex) || !finite(record?.abilities?.initiativePrinted)) { reasons.push('DEXTERITY_BASIS_UNKNOWN'); break; }
+      if (costModifierForSize(record?.classification?.printedSize) === null) reasons.push('HULL_SIZE_HAS_NO_PUBLISHED_COST_MODIFIER');
+      const dexAfter = record.abilities.dex + installedDexterityChange(entries) + effect.dexterity;
+      if (dexAfter < 1) reasons.push('CARGO_POD_DEXTERITY_BELOW_1');
+      if (!cargoTons(record)) reasons.push('CARGO_UNIT_NOT_TONS');
+      break;
+    }
+    case 'consumables': if (!consumablesDays(record)) reasons.push('CONSUMABLES_UNIT_CONVERSION_UNRULED'); break;
+    case 'capacity': {
+      const m = costModifierForSize(record?.classification?.printedSize);
+      if (m === null) reasons.push('HULL_SIZE_HAS_NO_PUBLISHED_COST_MODIFIER');
+      else if (!Number.isInteger(m / effect.divisor) || m / effect.divisor < 1) reasons.push('CAPACITY_FRACTIONAL_FOR_HULL_SIZE');
+      break;
+    }
     case 'skill-bonus':
       // a hull printed with an installed navicomputer already has the standard one: a second is a duplicate (stacking unruled)
       if (catalogEntry.id === 'navicomputer' && record?.hyperspace?.navComputer === 'installed') reasons.push('NAVICOMPUTER_ALREADY_PRESENT');
@@ -85,6 +121,23 @@ export function effectInstallability({ catalogEntry, record, entries = [] }) {
     default: reasons.push('EFFECT_KIND_UNKNOWN');
   }
   return reasons;
+}
+
+/** Dexterity score change already made by installed entries (jets add, cargo pods subtract). */
+function installedDexterityChange(entries) {
+  let d = 0;
+  for (const e of entries) { const fx = EFFECTS[e.catalogId]; if (fx?.kind === 'dexterity') d += fx.value; else if (fx?.kind === 'cargo-pod') d += fx.dexterity; }
+  return d;
+}
+/** Printed cargo in tons, or null when the printed unit is not plain tons (kg, million tons, annotated units). */
+function cargoTons(record) {
+  const c = record?.capacity?.cargo;
+  return finite(c?.value) && ['ton', 'tons', 'metric tons'].includes(c.unit) ? { value: c.value, unit: c.unit } : null;
+}
+/** Printed consumables in days, only when printed in days (week/month conversions are unruled: rounding unit differs). */
+function consumablesDays(record) {
+  const c = record?.capacity?.consumables;
+  return finite(c?.value) && ['day', 'days'].includes(c.unit) ? c.value : null;
 }
 
 const stat = (base) => ({ base: finite(base) ? base : null, effective: finite(base) ? base : null, delta: 0, sources: [] });
@@ -103,6 +156,11 @@ export function computeEffectiveStatistics({ record, entries = [], environment =
       baseKmh: m.maxVelocityKmh ?? null, effectiveKmh: m.maxVelocityKmh ?? null, conditional: null, sources: [] })),
     rechargeShields: { base: 5, effective: 5, sources: [] },
     skillBonuses: [],
+    intelligence: { base: finite(record?.abilities?.int) ? record.abilities.int : null, effective: finite(record?.abilities?.int) ? record.abilities.int : null, modifierDelta: 0, sources: [] },
+    dexterity: { base: finite(record?.abilities?.dex) ? record.abilities.dex : null, effective: finite(record?.abilities?.dex) ? record.abilities.dex : null, sources: [] },
+    cargo: { base: record?.capacity?.cargo ?? null, addedTons: 0, effective: null, sources: [] },
+    consumables: { base: record?.capacity?.consumables ?? null, addedDays: 0, effectiveDays: null, sources: [] },
+    capacities: {},
     unimplemented: []
   };
   // A hull printed with an installed navicomputer carries the standard +5 (SotG Navicomputer).
@@ -119,15 +177,44 @@ export function computeEffectiveStatistics({ record, entries = [], environment =
       case 'shield':
         out.shield.effective = fx.value; out.shield.delta = fx.value - (out.shield.base ?? 0); out.shield.sources.push({ ...src, delta: fx.value });
         break;
-      case 'dexterity': {
-        const dex = record.abilities.dex, d = abilityMod(dex + fx.value) - abilityMod(dex);
+      case 'dexterity':
+      case 'cargo-pod': {
+        // Dexterity changes accumulate on the score; each source is credited with the modifier change it adds in order.
+        const change = fx.kind === 'dexterity' ? fx.value : fx.dexterity;
+        const before = out.dexterity.effective;
+        if (!finite(before)) { out.unimplemented.push({ installId: e.installId, name: e.name }); break; }
+        const d = abilityMod(before + change) - abilityMod(before);
+        out.dexterity.effective = before + change; out.dexterity.sources.push({ ...src, delta: change });
         out.reflex.delta += d; out.initiative.delta += d;
         out.reflex.sources.push({ ...src, delta: d }); out.initiative.sources.push({ ...src, delta: d });
+        if (fx.kind === 'cargo-pod') {
+          const tons = fx.tonsPerCostModifier * (costModifierForSize(record?.classification?.printedSize) ?? 0);
+          out.cargo.addedTons += tons; out.cargo.sources.push({ ...src, tons });
+        }
+        break;
+      }
+      case 'intelligence': {
+        const before = out.intelligence.effective;
+        if (finite(before)) { out.intelligence.effective = before + fx.value; out.intelligence.sources.push({ ...src, delta: fx.value }); }
+        break;
+      }
+      case 'consumables': {
+        const days = consumablesDays(record);
+        if (days !== null) { const add = Math.max(fx.minimumDays, Math.floor(days * fx.percent / 100)); out.consumables.addedDays += add; out.consumables.sources.push({ ...src, days: add }); }
+        break;
+      }
+      case 'capacity': {
+        const m = costModifierForSize(record?.classification?.printedSize);
+        if (m === null) break;
+        const c = out.capacities[fx.capacity] ??= { unit: fx.unit, total: 0, sources: [] };
+        c.total += m / fx.divisor; c.sources.push({ ...src, amount: m / fx.divisor, unit: fx.unit });
         break;
       }
       case 'hyperdrive': out.hyperdrive.effectiveClass = fx.value; out.hyperdrive.sources.push(src); break;
       case 'recharge': out.rechargeShields.effective = fx.value; out.rechargeShields.sources.push(src); break;
-      case 'skill-bonus': out.skillBonuses.push({ skill: fx.skill, use: fx.use ?? null, purpose: fx.purpose ?? null, value: fx.value, allOutValue: fx.allOutValue ?? null, sources: [src] }); break;
+      case 'skill-bonus':
+        for (const b of fx.bonuses ?? [fx]) out.skillBonuses.push({ skill: b.skill, use: b.use ?? null, purpose: b.purpose ?? null, value: b.value, allOutValue: b.allOutValue ?? null, sources: [src] });
+        break;
       case 'atmospheric':
         for (const m of out.movement) {
           if (finite(m.baseSquares)) m.effectiveSquares = Math.floor(m.baseSquares * (100 + fx.percent) / 100);
@@ -147,6 +234,9 @@ export function computeEffectiveStatistics({ record, entries = [], environment =
     out.skillBonuses = [...best.values()];
   }
   for (const s of [out.reflex, out.initiative]) if (finite(s.base)) s.effective = s.base + s.delta;
+  if (finite(out.intelligence.base)) out.intelligence.modifierDelta = abilityMod(out.intelligence.effective) - abilityMod(out.intelligence.base);
+  { const t = cargoTons(record); if (t && out.cargo.sources.length) out.cargo.effective = { value: t.value + out.cargo.addedTons, unit: 'tons' }; }
+  { const d = consumablesDays(record); if (d !== null && out.consumables.sources.length) out.consumables.effectiveDays = d + out.consumables.addedDays; }
   // Atmosphere-only effects apply only in an explicit 'atmosphere' environment (unknown never activates them).
   for (const m of out.movement) m.applies = m.sources.length > 0 && environment === 'atmosphere';
   out.environment = environment;

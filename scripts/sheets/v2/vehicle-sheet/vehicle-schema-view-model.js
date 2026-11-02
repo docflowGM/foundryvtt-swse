@@ -153,6 +153,10 @@ function effectiveRows({ record, entries, hp, hpBase, fortitude, extra = [], env
   rows.push(statRow('Reflex Defense', fx.reflex.base, modLabel(fx.reflex), null, fx.reflex.effective));
   if (finite(fortitude)) rows.push(statRow('Fortitude Defense', fortitude, NONE_AUTOMATED));
   if (finite(fx.initiative.base) && fx.initiative.delta) rows.push(statRow('Initiative', fx.initiative.base, modLabel(fx.initiative), null, fx.initiative.effective));
+  // P6B-2: ability scores changed by equipment (jets, cargo pods, sensor arrays)
+  const scoreRow = (label, st) => { if (st.sources.length && finite(st.base)) rows.push(statRow(label, st.base, `${signed(st.effective - st.base)} (${st.sources.map(x => x.name).join(', ')})`, null, st.effective)); };
+  scoreRow('Dexterity', fx.dexterity);
+  scoreRow('Intelligence', fx.intelligence);
   rows.push(...extra);
   for (const m of fx.movement.filter(m => m.sources.length)) {
     // Availability (what the equipment grants in an atmosphere) is shown apart from what is ACTIVE now.
@@ -169,9 +173,22 @@ function effectiveRows({ record, entries, hp, hpBase, fortitude, extra = [], env
   const plain = (label, baseLabel, modification, effectiveLabel) => rows.push({ label, base: null, baseLabel, modification, effective: null, effectiveLabel, current: null, hasCurrent: false, currentLabel: '' });
   if (fx.rechargeShields.sources.length) plain('Recharge shields action', `+${fx.rechargeShields.base}`, fx.rechargeShields.sources.map(x => x.name).join(', '), `+${fx.rechargeShields.effective} (up to the maximum)`);
   for (const b of fx.skillBonuses) {
-    const what = b.skill === 'pilot' ? `Pilot (${b.purpose})` : `Use Computer (${b.use})`;
+    const SKILL = { pilot: 'Pilot', useComputer: 'Use Computer', perception: 'Perception' };
+    const what = `${SKILL[b.skill] ?? b.skill} (${b.purpose ?? b.use})`;
     plain(`${what} equipment bonus`, 'none', b.sources.map(x => x.name).join(', '), `+${b.value}${b.allOutValue ? ` (+${b.allOutValue} all-out)` : ''}`);
   }
+  // P6B-2: capacities (printed values untouched; additions recomputed from the ledger)
+  if (fx.cargo.sources.length) {
+    const b = fx.cargo.base;
+    plain('Cargo', b?.raw ?? (finite(b?.value) ? `${b.value} ${b.unit ?? ''}`.trim() : SOURCE_UNKNOWN), `+${fx.cargo.addedTons} tons (${fx.cargo.sources.map(x => x.name).join(', ')})`,
+      fx.cargo.effective ? `${fx.cargo.effective.value} tons` : SOURCE_UNKNOWN);
+  }
+  if (fx.consumables.sources.length)
+    plain('Consumables', fx.consumables.base?.raw ?? SOURCE_UNKNOWN, `+${fx.consumables.addedDays} days (${fx.consumables.sources.map(x => x.name).join(', ')})`,
+      finite(fx.consumables.effectiveDays) ? `${fx.consumables.effectiveDays} days` : SOURCE_UNKNOWN);
+  const CAPACITY_LABEL = { hangar: 'Hangar space (units)', cryogenic: 'Cryogenic stasis (Medium or smaller creatures)' };
+  for (const [key, c] of Object.entries(fx.capacities))
+    plain(CAPACITY_LABEL[key] ?? key, 'none', c.sources.map(x => `${x.name} (${x.amount})`).join(', '), String(c.total));
   if (fx.hyperdrive.effectiveClass !== null)
     rows.push({ label: 'Hyperdrive', base: null, baseLabel: 'None', modification: fx.hyperdrive.sources.map(x => x.name).join(', '), effective: fx.hyperdrive.effectiveClass,
       effectiveLabel: `Class ${fx.hyperdrive.effectiveClass}`, current: null, hasCurrent: false, currentLabel: '' });

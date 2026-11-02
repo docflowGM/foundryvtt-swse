@@ -4,8 +4,8 @@
  "counts": {
   "sourceListed": 181,
   "sourceVerified": 174,
-  "mechanicSpecified": 43,
-  "operationallyIntegrated": 43
+  "mechanicSpecified": 54,
+  "operationallyIntegrated": 51
  },
  "rows": [
   {
@@ -2326,8 +2326,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 49
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "cargo-pod",
+    "test": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -2344,8 +2347,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 49
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "cargo-pod",
+    "test": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -2362,8 +2368,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 49
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "cargo-pod",
+    "test": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -2416,8 +2425,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 49
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "capacity",
+    "test": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -2506,8 +2518,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 49
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "consumables",
+    "test": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -2524,8 +2539,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 49
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "capacity",
+    "test": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -2542,8 +2560,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 49
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "capacity",
+    "test": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -2704,8 +2725,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 49
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "intelligence",
+    "test": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs"
+   },
+   "operationallyIntegrated": "EXPOSED_NOT_APPLIED",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -2722,8 +2746,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 49
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "intelligence",
+    "test": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs"
+   },
+   "operationallyIntegrated": "EXPOSED_NOT_APPLIED",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -2740,8 +2767,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 49
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "intelligence",
+    "test": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs"
+   },
+   "operationallyIntegrated": "EXPOSED_NOT_APPLIED",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -2758,8 +2788,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 49
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "skill-bonus",
+    "test": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
