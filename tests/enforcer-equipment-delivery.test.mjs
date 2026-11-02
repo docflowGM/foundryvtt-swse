@@ -63,6 +63,13 @@ test('GM may defer full untouched resources once, preserving next-level carry ac
  assert.equal(result.current.amountCredits,18000);
  assert.equal(ledger[0].status,'awaiting-equipment-selection');
  assert.throws(()=>planEnforcerEquipmentDeferral({entries:result.entries,classLevel:2}),/already resolved/);
+ assert.throws(()=>planEnforcerEquipmentDeferral({
+  entries:[...ledger,{enforcerClassLevel:3,status:'awaiting-equipment-selection',amountCredits:20000}],
+  classLevel:2,
+ }),/only be deferred/);
+ assert.throws(()=>planEnforcerEquipmentDeferral({
+  entries:[{...ledger[0],enforcerClassLevel:10}],classLevel:10,
+ }),/only be deferred/);
 });
 test('GM dialog and public API route equipment decisions to governed class feature actions',()=>{
  // Keep application wiring explicit; the data plan is independently tested.
