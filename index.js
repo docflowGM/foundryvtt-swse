@@ -29,6 +29,8 @@ import { initializeSentinelGovernance } from "./scripts/governance/sentinel/sent
 import { MutationInterceptor } from "./scripts/governance/mutation/MutationInterceptor.js";
 import { ActorEngine } from "./scripts/governance/actor-engine/actor-engine.js";
 import { openEnforcerResourceDelivery } from "./scripts/apps/enforcer-resource-delivery-dialog.js";
+import { openOfficerShareTalentAction } from "./scripts/apps/officer-share-talent-dialog.js";
+import { registerOfficerShareTalentCleanup } from "./scripts/engine/combat/officer-share-talent-service.js";
 import { ConditionTrackFeatActions } from "./scripts/engine/feats/condition-track-feat-actions.js";
 import { SystemInitHooks } from "./scripts/engine/progression/hooks/system-init-hooks.js";
 import { registerHandlebarsHelpers as registerSystemHandlebarsHelpers } from "./helpers/handlebars/index.js";
@@ -120,7 +122,8 @@ Hooks.once("init", async () => {
     openEntityCreateBrowser,
     openForceAlchemyWorkbench,
     classFeatures: {
-      enforcerResources: { open: openEnforcerResourceDelivery }
+      enforcerResources: { open: openEnforcerResourceDelivery },
+      officerShareTalent: { open: openOfficerShareTalentAction }
     }
   };
 
@@ -197,6 +200,7 @@ Hooks.once("init", async () => {
   registerNpcDamageHydrationHooks();
   registerForceExecutorChatHooks();
   registerActionEconomyHooks();
+  registerOfficerShareTalentCleanup();
   registerFeatHousekeepingRuntimePatches();
   registerConsularTalentActions();
   registerSentinelTalentActions();
