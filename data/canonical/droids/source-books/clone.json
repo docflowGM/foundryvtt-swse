@@ -7529,7 +7529,9 @@
               "book": "Clone Wars Campaign Guide",
               "page": 188,
               "verifiedBy": "pdf-visual",
-              "sourceEntryKey": "CLONE-DROID-018"
+              "sourceEntryKey": "CLONE-DROID-018",
+              "pdfPage1Based": 189,
+              "citationLabel": "Corrected printed p188 / PDF p189 visual source rule"
             },
             "executionStatus": "source-only"
           }
@@ -11664,13 +11666,15 @@
         "conditionalMechanics": [
           {
             "ruleId": "CLONE-DROID-027-SOURCE-LOCAL-01",
-            "statement": "Reducing a target to 0 HP triggers +2 rage bonus on melee attack and damage and permits Use the Force checks; attacks nearest target until raging droid is destroyed.",
+            "statement": "Killing Rage triggers when the JK-13 ITSELF is reduced to 0 HP: it gains +2 on melee attack rolls and damage rolls, LOSES the ability to make Use the Force checks, and attacks the nearest target (friend or foe) until destroyed.",
             "scope": "CLONE-DROID-027",
             "source": {
               "book": "Clone Wars Campaign Guide",
               "page": 194,
               "verifiedBy": "pdf-visual",
-              "sourceEntryKey": "CLONE-DROID-027"
+              "sourceEntryKey": "CLONE-DROID-027",
+              "pdfPage1Based": 195,
+              "citationLabel": "Corrected printed p194 / PDF p195 visual source rule"
             },
             "executionStatus": "source-only"
           }
@@ -11680,7 +11684,7 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p194 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified. M6 grouped printed feat/talent claims and skill totals transcribed from visually separated statblock column p194. Each feat/weapon proficiency group remains source-only, not yet mapped to certified canonical registry IDs or level-legal progression.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p194 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified. M6 grouped printed feat/talent claims and skill totals transcribed from visually separated statblock column p194. Each feat/weapon proficiency group remains source-only, not yet mapped to certified canonical registry IDs or level-legal progression. M7 correction: earlier SOURCE-LOCAL-01 wrongly said killing rage permitted Use the Force; actual primary printed p194 states it LOSES Use the Force, and activation occurs when JK-13 itself drops to 0 HP, not when it defeats an enemy.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-027",
           "Clone Wars Campaign Guide:printed-p194:TXT-line-18778",
@@ -12937,13 +12941,15 @@
         "conditionalMechanics": [
           {
             "ruleId": "CLONE-DROID-030-SOURCE-LOCAL-01",
-            "statement": "Alternate version releases virus affecting living creatures in a burst; failed Fortitude hit imposes persistent condition-step effect and repeats daily until treated (DC 15 Treat Injury).",
+            "statement": "Optional virus-filled Octuptarra self-destruct replaces the explosive: make an attack against Fortitude Defense of EACH living creature in burst. Hit inflicts 2 persistent condition steps; miss still inflicts 1 persistent step; persistent effect repeats daily until treated by DC15 Treat Injury (see printed p196). The destructive event is not a reusable action.",
             "scope": "CLONE-DROID-030",
             "source": {
               "book": "Clone Wars Campaign Guide",
               "page": 196,
               "verifiedBy": "pdf-visual",
-              "sourceEntryKey": "CLONE-DROID-030"
+              "sourceEntryKey": "CLONE-DROID-030",
+              "pdfPage1Based": 197,
+              "citationLabel": "Corrected printed p196 / PDF p197 visual source rule"
             },
             "executionStatus": "source-only"
           }
@@ -12953,7 +12959,7 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p196 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified. M6 grouped printed feat/talent claims and skill totals transcribed from visually separated statblock column p196. Each feat/weapon proficiency group remains source-only, not yet mapped to certified canonical registry IDs or level-legal progression.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p196 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified. M6 grouped printed feat/talent claims and skill totals transcribed from visually separated statblock column p196. Each feat/weapon proficiency group remains source-only, not yet mapped to certified canonical registry IDs or level-legal progression. M7 clarified virus alternative's opposed Fortitude attack and hit/miss outcomes from p196.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-030",
           "Clone Wars Campaign Guide:printed-p196:TXT-line-19035",

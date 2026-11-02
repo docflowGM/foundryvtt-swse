@@ -1,0 +1,136 @@
+{
+  "schema": "swse.droids.clone.published-source-mechanical-closeout/0.1",
+  "date": "2026-11-02",
+  "branch": "audit/droid-publication-census-2026-10-29",
+  "sourceBook": "Clone Wars Campaign Guide",
+  "sourcePdf": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+  "sourceTxt": "Clone Wars Campaign Guide_djvu.txt",
+  "scope": "All 40 published droid publication identities have a detailed visual-source mechanical second pass. Not field-by-field strict certification and not V13 runtime implementation.",
+  "progress": {
+    "complete": 40,
+    "total": 40,
+    "structuralVisualFirstPass": 40
+  },
+  "categories": {
+    "individualDroids": 32,
+    "squadAggregations": 1,
+    "vehiclePrimary": 7
+  },
+  "totals": {
+    "sourceIdentities": 40,
+    "sourceDeepReviewed": 40,
+    "individualDroids": 32,
+    "squads": 1,
+    "vehiclePrimary": 7,
+    "sourceSystemInstancesOrTokens": 211,
+    "printedPossessions": 54,
+    "groupedFeats": 179,
+    "groupedTalents": 29,
+    "skillEntries": 94,
+    "sourceConstraints": 144,
+    "sourceConditionalRules": 9,
+    "optionalNarrativeVariants": 1,
+    "vehicleWeaponGroups": 15,
+    "actorAttackRows": 162,
+    "unresolvedContradictions": 2,
+    "strictlyMechanicallyCertified": 0
+  },
+  "sourceSections": [
+    {
+      "recordRange": "001-013",
+      "printedPages": "66-73",
+      "category": "model"
+    },
+    {
+      "recordRange": "014",
+      "printedPages": "94",
+      "category": "B1 squad source aggregation"
+    },
+    {
+      "recordRange": "015-017",
+      "printedPages": "160-162",
+      "category": "Republic medical/pilot/remote models"
+    },
+    {
+      "recordRange": "018-033",
+      "printedPages": "188-198",
+      "category": "Separatist factory combat models"
+    },
+    {
+      "recordRange": "034-039",
+      "printedPages": "198-202",
+      "category": "vehicle-primary"
+    },
+    {
+      "recordRange": "040",
+      "printedPages": "208",
+      "category": "starfighter-primary"
+    }
+  ],
+  "committedBatches": [
+    "001-005",
+    "006-010",
+    "011-017",
+    "018-033",
+    "034-040",
+    "feat-scope-018-033",
+    "book-closeout"
+  ],
+  "evidenceCorrections": [
+    {
+      "id": "CLONE-DROID-019",
+      "issue": "Earlier same-page column contamination with A-DSD systems corrected to A-Series systems printed p189",
+      "status": "corrected"
+    },
+    {
+      "id": "CLONE-DROID-027",
+      "issue": "Killing Rage was previously misstated as permitting Use the Force; actual p194 says loses ability when JK-13 itself reaches 0 HP",
+      "status": "corrected"
+    },
+    {
+      "id": "CLONE-DROID-030",
+      "issue": "Virus self-destruct uses Fortitude hit/miss to assign two/one persistent condition steps",
+      "status": "clarified"
+    },
+    {
+      "id": "CLONE-DROID-037",
+      "issue": "OG-9 leg critical rule located printed p201, not p200",
+      "status": "corrected"
+    }
+  ],
+  "unresolvedSourceDiscrepancies": [
+    {
+      "id": "CLONE-009-CLAW-APPENDAGE-OMISSION",
+      "sourceEntryKey": "CLONE-DROID-009",
+      "reason": "Printed claw attack but no listed factory claw appendage."
+    },
+    {
+      "id": "CLONE-010-BLASTER-CARBINE-RIFLE-CONFLICT",
+      "sourceEntryKey": "CLONE-DROID-010",
+      "reason": "Printed ranged attack refers to carbine; Possessions list rifle."
+    }
+  ],
+  "hardGuards": {
+    "uniquePublicationIdentities": true,
+    "all40DeepReviewRefs": true,
+    "vehicleAndSquadAuthorityPreserved": true,
+    "allSourceRulesCitationBacked": true,
+    "allPrintedAttackRowsRemainNonExecutable": true,
+    "allVehicleWeaponGroupsNonExecutable": true,
+    "allContradictionsUnresolved": true,
+    "noStrictCertifications": true,
+    "noRuntimeCertification": true
+  },
+  "notRun": [
+    "Full repository canonical schema and negative mutation tests",
+    "Canonical feat/talent/equipment matching and strict field-level certification",
+    "Foundry V13 live runtime tests"
+  ],
+  "next": [
+    "Exact canonical feat/talent identity matching including printed compound feat scopes",
+    "Weapon mount and system parts/consumables authority",
+    "Vehicle and squad mechanics separated from individual actor templates",
+    "Two unresolved printed inventory/attack discrepancies",
+    "Independent strict mechanical certification after all mechanical relationships resolved"
+  ]
+}
