@@ -7520,7 +7520,7 @@
           },
           {
             "instanceId": "CLONE-DROID-019-COMP-002",
-            "name": "basic processor",
+            "name": "heuristic processor",
             "componentCategory": "processor",
             "source": {
               "book": "Clone Wars Campaign Guide",
@@ -7528,28 +7528,14 @@
               "pdfPage1Based": 190,
               "sourceEntryKey": "CLONE-DROID-019",
               "verifiedBy": "pdf-visual",
-              "citationLabel": "Printed Systems: basic processor"
+              "citationLabel": "Printed Systems: heuristic processor"
             },
             "identityStatus": "source-only"
           },
           {
             "instanceId": "CLONE-DROID-019-COMP-003",
-            "name": "claw",
-            "componentCategory": "appendage-or-mount-unresolved",
-            "source": {
-              "book": "Clone Wars Campaign Guide",
-              "page": 189,
-              "pdfPage1Based": 190,
-              "sourceEntryKey": "CLONE-DROID-019",
-              "verifiedBy": "pdf-visual",
-              "citationLabel": "Printed Systems: claw"
-            },
-            "identityStatus": "source-only"
-          },
-          {
-            "instanceId": "CLONE-DROID-019-COMP-004",
             "name": "improved sensor package",
-            "componentCategory": "other",
+            "componentCategory": "sensor",
             "source": {
               "book": "Clone Wars Campaign Guide",
               "page": 189,
@@ -7561,22 +7547,78 @@
             "identityStatus": "source-only"
           },
           {
-            "instanceId": "CLONE-DROID-019-COMP-005",
-            "name": "darkvision sensors",
-            "componentCategory": "other",
+            "instanceId": "CLONE-DROID-019-COMP-004",
+            "name": "darkvision",
+            "componentCategory": "sensor",
             "source": {
               "book": "Clone Wars Campaign Guide",
               "page": 189,
               "pdfPage1Based": 190,
               "sourceEntryKey": "CLONE-DROID-019",
               "verifiedBy": "pdf-visual",
-              "citationLabel": "Printed Systems: darkvision sensors"
+              "citationLabel": "Printed Systems: darkvision"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "CLONE-DROID-019-COMP-005",
+            "name": "synchronized fire circuits",
+            "componentCategory": "control",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 189,
+              "pdfPage1Based": 190,
+              "sourceEntryKey": "CLONE-DROID-019",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems: synchronized fire circuits"
             },
             "identityStatus": "source-only"
           },
           {
             "instanceId": "CLONE-DROID-019-COMP-006",
-            "name": "self-destruct system (8d6 damage)",
+            "name": "2 hand appendages",
+            "componentCategory": "appendage-or-mount-unresolved",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 189,
+              "pdfPage1Based": 190,
+              "sourceEntryKey": "CLONE-DROID-019",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems: 2 hand appendages"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "CLONE-DROID-019-COMP-007",
+            "name": "1 stabilized weapon mount",
+            "componentCategory": "appendage-or-mount-unresolved",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 189,
+              "pdfPage1Based": 190,
+              "sourceEntryKey": "CLONE-DROID-019",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems: 1 stabilized weapon mount"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "CLONE-DROID-019-COMP-008",
+            "name": "vocabulator",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 189,
+              "pdfPage1Based": 190,
+              "sourceEntryKey": "CLONE-DROID-019",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems: vocabulator"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "CLONE-DROID-019-COMP-009",
+            "name": "locked access",
             "componentCategory": "other",
             "source": {
               "book": "Clone Wars Campaign Guide",
@@ -7584,7 +7626,7 @@
               "pdfPage1Based": 190,
               "sourceEntryKey": "CLONE-DROID-019",
               "verifiedBy": "pdf-visual",
-              "citationLabel": "Printed Systems: self-destruct system (8d6 damage)"
+              "citationLabel": "Printed Systems: locked access"
             },
             "identityStatus": "source-only"
           }
@@ -7718,7 +7760,7 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p189 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p189 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified. M5 correction: p189 A-Series Systems were mistakenly overlaid with p188 A-DSD list in M4; corrected to nine separately printed p189 tokens. No source attestation of any self-destruct system on A-Series.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-019",
           "Clone Wars Campaign Guide:printed-p189:TXT-line-18169",
@@ -11913,10 +11955,123 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "CLONE-DROID-034-CONSTRAINT-01",
+            "statement": "Vehicle brain (expert) controls this GAT; passenger count none. Do not convert it into a droid-actor with species feats or handheld weapons.",
+            "scope": "Ground Armored Tank",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 198,
+              "pdfPage1Based": 199,
+              "sourceEntryKey": "CLONE-DROID-034",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle rules 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-034-CONSTRAINT-02",
+            "statement": "Main ranged attack lines and pilot weapon table may differ in displayed bonuses; preserve separate fields and require canonical vehicle-weapon adjudication.",
+            "scope": "Ground Armored Tank",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 198,
+              "pdfPage1Based": 199,
+              "sourceEntryKey": "CLONE-DROID-034",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle rules 2"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-034-CONSTRAINT-03",
+            "statement": "Payload is 24 missiles, not inexhaustible attacks.",
+            "scope": "Ground Armored Tank",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 198,
+              "pdfPage1Based": 199,
+              "sourceEntryKey": "CLONE-DROID-034",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle rules 3"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {},
-      "vehicleLink": {},
-      "economics": {},
+      "vehicleLink": {
+        "printedVehicleStatblock": {
+          "type": "ground-vehicle",
+          "locomotionMode": "speeder",
+          "challengeLevel": 10,
+          "hitPoints": 175,
+          "damageReduction": 10,
+          "damageThreshold": 33,
+          "speedSquares": 8,
+          "speedRaw": "8 squares (max velocity 130 km/h)",
+          "source": {
+            "book": "Clone Wars Campaign Guide",
+            "page": 198,
+            "pdfPage1Based": 199,
+            "sourceEntryKey": "CLONE-DROID-034",
+            "verifiedBy": "pdf-visual",
+            "citationLabel": "Vehicle statblock header and defensive/movement fields"
+          },
+          "provenanceStatus": "source-only",
+          "scope": "vehicle-primary (not droid actor)"
+        },
+        "sourcePayload": {
+          "printedCount": 24,
+          "printedName": "missiles",
+          "source": {
+            "book": "Clone Wars Campaign Guide",
+            "page": 198,
+            "pdfPage1Based": 199,
+            "sourceEntryKey": "CLONE-DROID-034",
+            "verifiedBy": "pdf-visual",
+            "citationLabel": "Vehicle payload line"
+          },
+          "executionStatus": "source-only"
+        },
+        "vehicleWeapons": [
+          {
+            "attackId": "CLONE-DROID-034-WEAPON-01",
+            "name": "Medium laser cannons",
+            "operatedBy": "pilot",
+            "printedAttack": "Atk +6, Dmg 4d10x2",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 198,
+              "pdfPage1Based": 199,
+              "sourceEntryKey": "CLONE-DROID-034",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle weapon table: Medium laser cannons"
+            },
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "CLONE-DROID-034-WEAPON-02",
+            "name": "Missile launchers",
+            "operatedBy": "pilot",
+            "printedAttack": "Atk +6, Dmg 8d6, 4-square splash",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 198,
+              "pdfPage1Based": 199,
+              "sourceEntryKey": "CLONE-DROID-034",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle weapon table: Missile launchers"
+            },
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "economics": {
+        "newCredits": 17500
+      },
       "text": {
         "sourceWarnings": [
           "Vehicle/starship primary actor authority. Printed vehicle stats and weapon firing groups retained in evidence only; no duplicated droid actor mechanics."
@@ -11933,11 +12088,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M5 full visually inspected vehicle-format printed page p198; source-only vehicle fields, distinct payload, weapon groups and authority constraints. No actor chassis or automatic weapon options, never mechanical certified.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-034",
           "Clone Wars Campaign Guide:printed-p198:TXT-line-19329",
-          "CLONE:printed-p198:PDF-page-199:selected-visual-fields"
+          "CLONE:printed-p198:PDF-page-199:selected-visual-fields",
+          "CLONE:printed-p198:PDF-p199:M5-vehicle-layout-visual-source-review"
         ]
       }
     },
@@ -11980,10 +12136,123 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "CLONE-DROID-035-CONSTRAINT-01",
+            "statement": "Two enormous wheeled locomotion units and vehicle brain are vehicle mechanics, not personal droid appendages.",
+            "scope": "IG-227 Hailfire-class Droid Tank",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 199,
+              "pdfPage1Based": 200,
+              "sourceEntryKey": "CLONE-DROID-035",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle rules 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-035-CONSTRAINT-02",
+            "statement": "30 Hailfire missiles printed payload. Respect finite missile inventory and weapon fire-link rather than arbitrary repeating fire.",
+            "scope": "IG-227 Hailfire-class Droid Tank",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 199,
+              "pdfPage1Based": 200,
+              "sourceEntryKey": "CLONE-DROID-035",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle rules 2"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-035-CONSTRAINT-03",
+            "statement": "Passenger and cargo none; Crew droid brain (skilled).",
+            "scope": "IG-227 Hailfire-class Droid Tank",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 199,
+              "pdfPage1Based": 200,
+              "sourceEntryKey": "CLONE-DROID-035",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle rules 3"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {},
-      "vehicleLink": {},
-      "economics": {},
+      "vehicleLink": {
+        "printedVehicleStatblock": {
+          "type": "ground-vehicle",
+          "locomotionMode": "wheeled",
+          "challengeLevel": 12,
+          "hitPoints": 60,
+          "damageReduction": 10,
+          "damageThreshold": 29,
+          "speedSquares": 8,
+          "speedRaw": "8 squares (max velocity 45 km/h)",
+          "source": {
+            "book": "Clone Wars Campaign Guide",
+            "page": 199,
+            "pdfPage1Based": 200,
+            "sourceEntryKey": "CLONE-DROID-035",
+            "verifiedBy": "pdf-visual",
+            "citationLabel": "Vehicle statblock header and defensive/movement fields"
+          },
+          "provenanceStatus": "source-only",
+          "scope": "vehicle-primary (not droid actor)"
+        },
+        "sourcePayload": {
+          "printedCount": 30,
+          "printedName": "hailfire missiles",
+          "source": {
+            "book": "Clone Wars Campaign Guide",
+            "page": 199,
+            "pdfPage1Based": 200,
+            "sourceEntryKey": "CLONE-DROID-035",
+            "verifiedBy": "pdf-visual",
+            "citationLabel": "Vehicle payload line"
+          },
+          "executionStatus": "source-only"
+        },
+        "vehicleWeapons": [
+          {
+            "attackId": "CLONE-DROID-035-WEAPON-01",
+            "name": "Missile launchers",
+            "operatedBy": "pilot",
+            "printedAttack": "Atk +5, Dmg 6d10x2, 4-square splash",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 199,
+              "pdfPage1Based": 200,
+              "sourceEntryKey": "CLONE-DROID-035",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle weapon table: Missile launchers"
+            },
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "CLONE-DROID-035-WEAPON-02",
+            "name": "Laser cannon",
+            "operatedBy": "pilot",
+            "printedAttack": "Atk +5, Dmg 4d10x2",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 199,
+              "pdfPage1Based": 200,
+              "sourceEntryKey": "CLONE-DROID-035",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle weapon table: Laser cannon"
+            },
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "economics": {
+        "newCredits": 60000
+      },
       "text": {
         "sourceWarnings": [
           "Vehicle/starship primary actor authority. Printed vehicle stats and weapon firing groups retained in evidence only; no duplicated droid actor mechanics."
@@ -12000,11 +12269,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M5 full visually inspected vehicle-format printed page p199; source-only vehicle fields, distinct payload, weapon groups and authority constraints. No actor chassis or automatic weapon options, never mechanical certified.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-035",
           "Clone Wars Campaign Guide:printed-p199:TXT-line-19395",
-          "CLONE:printed-p199:PDF-page-200:selected-visual-fields:batch2"
+          "CLONE:printed-p199:PDF-page-200:selected-visual-fields:batch2",
+          "CLONE:printed-p199:PDF-p200:M5-vehicle-layout-visual-source-review"
         ]
       }
     },
@@ -12047,10 +12317,123 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "CLONE-DROID-036-CONSTRAINT-01",
+            "statement": "Aquatic subfighter uses swim speed 12 and water-vehicle rules, not an ordinary hovering or walking actor.",
+            "scope": "Manta Droid Subfighter",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 200,
+              "pdfPage1Based": 201,
+              "sourceEntryKey": "CLONE-DROID-036",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle rules 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-036-CONSTRAINT-02",
+            "statement": "Torpedo payload exactly 12; fire-linked launchers do not create unlimited torpedoes.",
+            "scope": "Manta Droid Subfighter",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 200,
+              "pdfPage1Based": 201,
+              "sourceEntryKey": "CLONE-DROID-036",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle rules 2"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-036-CONSTRAINT-03",
+            "statement": "Droid brain normal and no passengers; all attacks under vehicle pilot/weapon ownership.",
+            "scope": "Manta Droid Subfighter",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 200,
+              "pdfPage1Based": 201,
+              "sourceEntryKey": "CLONE-DROID-036",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle rules 3"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {},
-      "vehicleLink": {},
-      "economics": {},
+      "vehicleLink": {
+        "printedVehicleStatblock": {
+          "type": "water-vehicle",
+          "locomotionMode": "speeder",
+          "challengeLevel": 9,
+          "hitPoints": 75,
+          "damageReduction": 10,
+          "damageThreshold": 27,
+          "speedSquares": 12,
+          "speedRaw": "swim 12 squares (max velocity 160 km/h)",
+          "source": {
+            "book": "Clone Wars Campaign Guide",
+            "page": 200,
+            "pdfPage1Based": 201,
+            "sourceEntryKey": "CLONE-DROID-036",
+            "verifiedBy": "pdf-visual",
+            "citationLabel": "Vehicle statblock header and defensive/movement fields"
+          },
+          "provenanceStatus": "source-only",
+          "scope": "vehicle-primary (not droid actor)"
+        },
+        "sourcePayload": {
+          "printedCount": 12,
+          "printedName": "torpedoes",
+          "source": {
+            "book": "Clone Wars Campaign Guide",
+            "page": 200,
+            "pdfPage1Based": 201,
+            "sourceEntryKey": "CLONE-DROID-036",
+            "verifiedBy": "pdf-visual",
+            "citationLabel": "Vehicle payload line"
+          },
+          "executionStatus": "source-only"
+        },
+        "vehicleWeapons": [
+          {
+            "attackId": "CLONE-DROID-036-WEAPON-01",
+            "name": "Laser cannons",
+            "operatedBy": "pilot",
+            "printedAttack": "Atk +3, Dmg 4d10x2",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 200,
+              "pdfPage1Based": 201,
+              "sourceEntryKey": "CLONE-DROID-036",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle weapon table: Laser cannons"
+            },
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "CLONE-DROID-036-WEAPON-02",
+            "name": "Torpedo launchers",
+            "operatedBy": "pilot",
+            "printedAttack": "Atk +3, Dmg 8d6, 4-square burst",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 200,
+              "pdfPage1Based": 201,
+              "sourceEntryKey": "CLONE-DROID-036",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle weapon table: Torpedo launchers"
+            },
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "economics": {
+        "newCredits": 22000
+      },
       "text": {
         "sourceWarnings": [
           "Vehicle/starship primary actor authority. Printed vehicle stats and weapon firing groups retained in evidence only; no duplicated droid actor mechanics."
@@ -12067,11 +12450,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M5 full visually inspected vehicle-format printed page p200; source-only vehicle fields, distinct payload, weapon groups and authority constraints. No actor chassis or automatic weapon options, never mechanical certified.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-036",
           "Clone Wars Campaign Guide:printed-p200:TXT-line-19475",
-          "CLONE:printed-p200:PDF-page-201:selected-visual-fields:batch2"
+          "CLONE:printed-p200:PDF-page-201:selected-visual-fields:batch2",
+          "CLONE:printed-p200:PDF-p201:M5-vehicle-layout-visual-source-review"
         ]
       }
     },
@@ -12114,10 +12498,123 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "CLONE-DROID-037-CONSTRAINT-01",
+            "statement": "A critical hit that equals/exceeds damage threshold can destroy legs and reduce speed to ZERO until repaired, while droid can continue firing; do not treat as automatic droid death.",
+            "scope": "OG-9 Homing Spider Droid",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 201,
+              "pdfPage1Based": 202,
+              "sourceEntryKey": "CLONE-DROID-037",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle rules 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-037-CONSTRAINT-02",
+            "statement": "Dwarf spider droid spotters grant targeting assistance as separate cooperators; no unrestricted always-on +9 attack bonus.",
+            "scope": "OG-9 Homing Spider Droid",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 201,
+              "pdfPage1Based": 202,
+              "sourceEntryKey": "CLONE-DROID-037",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle rules 2"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-037-CONSTRAINT-03",
+            "statement": "Heavy repeating blaster is autofire-only. Droid crew and starship weapons are vehicle authority.",
+            "scope": "OG-9 Homing Spider Droid",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 201,
+              "pdfPage1Based": 202,
+              "sourceEntryKey": "CLONE-DROID-037",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle rules 3"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {},
-      "vehicleLink": {},
-      "economics": {},
+      "vehicleLink": {
+        "printedVehicleStatblock": {
+          "type": "ground-vehicle",
+          "locomotionMode": "walker",
+          "challengeLevel": 7,
+          "hitPoints": 70,
+          "damageReduction": 10,
+          "damageThreshold": 27,
+          "speedSquares": 8,
+          "speedRaw": "8 squares (max velocity 50 km/h)",
+          "source": {
+            "book": "Clone Wars Campaign Guide",
+            "page": 201,
+            "pdfPage1Based": 202,
+            "sourceEntryKey": "CLONE-DROID-037",
+            "verifiedBy": "pdf-visual",
+            "citationLabel": "Vehicle statblock header and defensive/movement fields"
+          },
+          "provenanceStatus": "source-only",
+          "scope": "vehicle-primary (not droid actor)"
+        },
+        "sourcePayload": {
+          "printedCount": null,
+          "printedName": null,
+          "source": {
+            "book": "Clone Wars Campaign Guide",
+            "page": 201,
+            "pdfPage1Based": 202,
+            "sourceEntryKey": "CLONE-DROID-037",
+            "verifiedBy": "pdf-visual",
+            "citationLabel": "Vehicle payload line"
+          },
+          "executionStatus": "source-only"
+        },
+        "vehicleWeapons": [
+          {
+            "attackId": "CLONE-DROID-037-WEAPON-01",
+            "name": "Laser cannon",
+            "operatedBy": "pilot",
+            "printedAttack": "Atk +6, Dmg 5d10",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 201,
+              "pdfPage1Based": 202,
+              "sourceEntryKey": "CLONE-DROID-037",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle weapon table: Laser cannon"
+            },
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "CLONE-DROID-037-WEAPON-02",
+            "name": "Heavy repeating blaster",
+            "operatedBy": "pilot",
+            "printedAttack": "Atk -1, autofire only, Dmg 3d10",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 201,
+              "pdfPage1Based": 202,
+              "sourceEntryKey": "CLONE-DROID-037",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle weapon table: Heavy repeating blaster"
+            },
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "economics": {
+        "newCredits": 70000
+      },
       "text": {
         "sourceWarnings": [
           "Vehicle/starship primary actor authority. Printed vehicle stats and weapon firing groups retained in evidence only; no duplicated droid actor mechanics."
@@ -12136,9 +12633,10 @@
             "scope": "CLONE-DROID-037",
             "source": {
               "book": "Clone Wars Campaign Guide",
-              "page": 200,
+              "page": 201,
               "verifiedBy": "pdf-visual",
-              "sourceEntryKey": "CLONE-DROID-037"
+              "sourceEntryKey": "CLONE-DROID-037",
+              "pdfPage1Based": 202
             },
             "executionStatus": "source-only"
           }
@@ -12148,11 +12646,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M5 corrected existing leg-damage claim locator from printed p200 to actual p201 (PDF p202). M5 full visually inspected vehicle-format printed page p201; source-only vehicle fields, distinct payload, weapon groups and authority constraints. No actor chassis or automatic weapon options, never mechanical certified.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-037",
           "Clone Wars Campaign Guide:printed-p201:TXT-line-19615",
-          "CLONE:printed-p201:PDF-page-202:selected-visual-fields:batch2"
+          "CLONE:printed-p201:PDF-page-202:selected-visual-fields:batch2",
+          "CLONE:printed-p201:PDF-p202:M5-vehicle-layout-visual-source-review"
         ]
       }
     },
@@ -12195,10 +12694,138 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "CLONE-DROID-038-CONSTRAINT-01",
+            "statement": "Payload categories are FINITE and distinct: 48 thermal detonators, 12 concussion missiles, four homing missiles, two dumbfire torpedoes.",
+            "scope": "Persuader-class Droid Enforcer",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 201,
+              "pdfPage1Based": 202,
+              "sourceEntryKey": "CLONE-DROID-038",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle rules 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-038-CONSTRAINT-02",
+            "statement": "Vehicle Ion Cannon has ion type; heavy repeating blaster is autofire-only; missile launcher requires ammunition-type selection.",
+            "scope": "Persuader-class Droid Enforcer",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 201,
+              "pdfPage1Based": 202,
+              "sourceEntryKey": "CLONE-DROID-038",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle rules 2"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-038-CONSTRAINT-03",
+            "statement": "Ground tracked enforcer is a vehicle crewed by skilled droid brain, not a droid actor with free held guns.",
+            "scope": "Persuader-class Droid Enforcer",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 201,
+              "pdfPage1Based": 202,
+              "sourceEntryKey": "CLONE-DROID-038",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle rules 3"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {},
-      "vehicleLink": {},
-      "economics": {},
+      "vehicleLink": {
+        "printedVehicleStatblock": {
+          "type": "ground-vehicle",
+          "locomotionMode": "tracked",
+          "challengeLevel": 14,
+          "hitPoints": 120,
+          "damageReduction": 15,
+          "damageThreshold": 34,
+          "speedSquares": 6,
+          "speedRaw": "6 squares (max velocity 50 km/h)",
+          "source": {
+            "book": "Clone Wars Campaign Guide",
+            "page": 201,
+            "pdfPage1Based": 202,
+            "sourceEntryKey": "CLONE-DROID-038",
+            "verifiedBy": "pdf-visual",
+            "citationLabel": "Vehicle statblock header and defensive/movement fields"
+          },
+          "provenanceStatus": "source-only",
+          "scope": "vehicle-primary (not droid actor)"
+        },
+        "sourcePayload": {
+          "printedCount": 48,
+          "printedName": "thermal detonators (plus 12 concussion missiles, 4 homing missiles, 2 dumbfire torpedoes)",
+          "source": {
+            "book": "Clone Wars Campaign Guide",
+            "page": 201,
+            "pdfPage1Based": 202,
+            "sourceEntryKey": "CLONE-DROID-038",
+            "verifiedBy": "pdf-visual",
+            "citationLabel": "Vehicle payload line"
+          },
+          "executionStatus": "source-only"
+        },
+        "vehicleWeapons": [
+          {
+            "attackId": "CLONE-DROID-038-WEAPON-01",
+            "name": "Ion cannon",
+            "operatedBy": "pilot",
+            "printedAttack": "Atk +5, Dmg 4d10x2 ion",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 201,
+              "pdfPage1Based": 202,
+              "sourceEntryKey": "CLONE-DROID-038",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle weapon table: Ion cannon"
+            },
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "CLONE-DROID-038-WEAPON-02",
+            "name": "Heavy repeating blaster",
+            "operatedBy": "pilot",
+            "printedAttack": "Atk +0, autofire only, Dmg 3d10",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 201,
+              "pdfPage1Based": 202,
+              "sourceEntryKey": "CLONE-DROID-038",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle weapon table: Heavy repeating blaster"
+            },
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "CLONE-DROID-038-WEAPON-03",
+            "name": "Missile launchers",
+            "operatedBy": "pilot",
+            "printedAttack": "Printed attack table distinguishes thermal, concussion, homing and dumbfire munitions, separate payload and damage.",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 201,
+              "pdfPage1Based": 202,
+              "sourceEntryKey": "CLONE-DROID-038",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle weapon table: Missile launchers"
+            },
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "economics": {
+        "newCredits": 49000
+      },
       "text": {
         "sourceWarnings": [
           "Vehicle/starship primary actor authority. Printed vehicle stats and weapon firing groups retained in evidence only; no duplicated droid actor mechanics."
@@ -12215,11 +12842,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M5 full visually inspected vehicle-format printed page p201; source-only vehicle fields, distinct payload, weapon groups and authority constraints. No actor chassis or automatic weapon options, never mechanical certified.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-038",
           "Clone Wars Campaign Guide:printed-p201:TXT-line-19662",
-          "CLONE:printed-p201:PDF-page-202:selected-visual-fields:batch2"
+          "CLONE:printed-p201:PDF-page-202:selected-visual-fields:batch2",
+          "CLONE:printed-p201:PDF-p202:M5-vehicle-layout-visual-source-review"
         ]
       }
     },
@@ -12262,10 +12890,108 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "CLONE-DROID-039-CONSTRAINT-01",
+            "statement": "Printed gargantuan walker uses ground-vehicle scale and climb 4; the visible three arms do not create three independent free actor attacks.",
+            "scope": "Tri-Droid",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 202,
+              "pdfPage1Based": 203,
+              "sourceEntryKey": "CLONE-DROID-039",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle rules 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-039-CONSTRAINT-02",
+            "statement": "Payload 48 heavy ordnance shells is finite; distinct crew/gunner action ownership from NPC droid feats.",
+            "scope": "Tri-Droid",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 202,
+              "pdfPage1Based": 203,
+              "sourceEntryKey": "CLONE-DROID-039",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle rules 2"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-039-CONSTRAINT-03",
+            "statement": "Tri-Droid is a separately published vehicle and must not be conflated with the Octuptarra Combat Tri-Droid droid actor on printed p196.",
+            "scope": "Tri-Droid",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 202,
+              "pdfPage1Based": 203,
+              "sourceEntryKey": "CLONE-DROID-039",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle rules 3"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {},
-      "vehicleLink": {},
-      "economics": {},
+      "vehicleLink": {
+        "printedVehicleStatblock": {
+          "type": "ground-vehicle",
+          "locomotionMode": "walker",
+          "challengeLevel": 9,
+          "hitPoints": 160,
+          "damageReduction": 15,
+          "damageThreshold": 32,
+          "speedSquares": 8,
+          "speedRaw": "8 squares (max velocity 50 km/h), climb 4 squares",
+          "source": {
+            "book": "Clone Wars Campaign Guide",
+            "page": 202,
+            "pdfPage1Based": 203,
+            "sourceEntryKey": "CLONE-DROID-039",
+            "verifiedBy": "pdf-visual",
+            "citationLabel": "Vehicle statblock header and defensive/movement fields"
+          },
+          "provenanceStatus": "source-only",
+          "scope": "vehicle-primary (not droid actor)"
+        },
+        "sourcePayload": {
+          "printedCount": 48,
+          "printedName": "heavy ordnance shells",
+          "source": {
+            "book": "Clone Wars Campaign Guide",
+            "page": 202,
+            "pdfPage1Based": 203,
+            "sourceEntryKey": "CLONE-DROID-039",
+            "verifiedBy": "pdf-visual",
+            "citationLabel": "Vehicle payload line"
+          },
+          "executionStatus": "source-only"
+        },
+        "vehicleWeapons": [
+          {
+            "attackId": "CLONE-DROID-039-WEAPON-01",
+            "name": "Heavy ordnance launcher",
+            "operatedBy": "gunner",
+            "printedAttack": "Atk +4, Dmg 5d10x5, 4-square burst",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 202,
+              "pdfPage1Based": 203,
+              "sourceEntryKey": "CLONE-DROID-039",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle weapon table: Heavy ordnance launcher"
+            },
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "economics": {
+        "newCredits": 100000
+      },
       "text": {
         "sourceWarnings": [
           "Vehicle/starship primary actor authority. Printed vehicle stats and weapon firing groups retained in evidence only; no duplicated droid actor mechanics."
@@ -12282,11 +13008,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M5 full visually inspected vehicle-format printed page p202; source-only vehicle fields, distinct payload, weapon groups and authority constraints. No actor chassis or automatic weapon options, never mechanical certified.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-039",
           "Clone Wars Campaign Guide:printed-p202:TXT-line-19825",
-          "CLONE:printed-p202:PDF-page-203:selected-visual-fields:batch2"
+          "CLONE:printed-p202:PDF-page-203:selected-visual-fields:batch2",
+          "CLONE:printed-p202:PDF-p203:M5-vehicle-layout-visual-source-review"
         ]
       }
     },
@@ -12329,10 +13056,138 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "CLONE-DROID-040-CONSTRAINT-01",
+            "statement": "Two independent movement scales: fly 16 squares tactical and fly 4 squares starship; cannot apply 16 as starship flight.",
+            "scope": "Hyena-class Bomber",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 208,
+              "pdfPage1Based": 209,
+              "sourceEntryKey": "CLONE-DROID-040",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle rules 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-040-CONSTRAINT-02",
+            "statement": "Droid bomber may use all its weapons in the same attack sequence as its own gunner under published source prose, subject to vehicle action authority; not ordinary individual hero multiattack.",
+            "scope": "Hyena-class Bomber",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 208,
+              "pdfPage1Based": 209,
+              "sourceEntryKey": "CLONE-DROID-040",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle rules 2"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-040-CONSTRAINT-03",
+            "statement": "Payload 6 proton torpedoes and 6 concussion missiles, finite. Cargo none, passengers none, consumables two days.",
+            "scope": "Hyena-class Bomber",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 208,
+              "pdfPage1Based": 209,
+              "sourceEntryKey": "CLONE-DROID-040",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle rules 3"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {},
-      "vehicleLink": {},
-      "economics": {},
+      "vehicleLink": {
+        "printedVehicleStatblock": {
+          "type": "starfighter",
+          "locomotionMode": "starship",
+          "challengeLevel": 7,
+          "hitPoints": 70,
+          "damageReduction": 5,
+          "damageThreshold": 32,
+          "speedSquares": 16,
+          "speedRaw": "fly 16 squares (max velocity 1150 km/h), fly 4 squares (starship scale)",
+          "source": {
+            "book": "Clone Wars Campaign Guide",
+            "page": 208,
+            "pdfPage1Based": 209,
+            "sourceEntryKey": "CLONE-DROID-040",
+            "verifiedBy": "pdf-visual",
+            "citationLabel": "Vehicle statblock header and defensive/movement fields"
+          },
+          "provenanceStatus": "source-only",
+          "scope": "vehicle-primary (not droid actor)"
+        },
+        "sourcePayload": {
+          "printedCount": 6,
+          "printedName": "proton torpedoes, plus 6 concussion missiles",
+          "source": {
+            "book": "Clone Wars Campaign Guide",
+            "page": 208,
+            "pdfPage1Based": 209,
+            "sourceEntryKey": "CLONE-DROID-040",
+            "verifiedBy": "pdf-visual",
+            "citationLabel": "Vehicle payload line"
+          },
+          "executionStatus": "source-only"
+        },
+        "vehicleWeapons": [
+          {
+            "attackId": "CLONE-DROID-040-WEAPON-01",
+            "name": "Light laser cannons",
+            "operatedBy": "pilot",
+            "printedAttack": "Atk +7, Dmg 3d10x2",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 208,
+              "pdfPage1Based": 209,
+              "sourceEntryKey": "CLONE-DROID-040",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle weapon table: Light laser cannons"
+            },
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "CLONE-DROID-040-WEAPON-02",
+            "name": "Proton torpedoes",
+            "operatedBy": "pilot",
+            "printedAttack": "Atk +7, Dmg 9d10x2",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 208,
+              "pdfPage1Based": 209,
+              "sourceEntryKey": "CLONE-DROID-040",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle weapon table: Proton torpedoes"
+            },
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "CLONE-DROID-040-WEAPON-03",
+            "name": "Light concussion missiles",
+            "operatedBy": "pilot",
+            "printedAttack": "Atk +7, Dmg 7d10x2",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 208,
+              "pdfPage1Based": 209,
+              "sourceEntryKey": "CLONE-DROID-040",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed vehicle weapon table: Light concussion missiles"
+            },
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "economics": {
+        "newCredits": 23000
+      },
       "text": {
         "sourceWarnings": [
           "Vehicle/starship primary actor authority. Printed vehicle stats and weapon firing groups retained in evidence only; no duplicated droid actor mechanics."
@@ -12349,11 +13204,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M5 full visually inspected vehicle-format printed page p208; source-only vehicle fields, distinct payload, weapon groups and authority constraints. No actor chassis or automatic weapon options, never mechanical certified.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-040",
           "Clone Wars Campaign Guide:printed-p208:TXT-line-20483",
-          "CLONE:printed-p208:PDF-page-209:selected-visual-fields"
+          "CLONE:printed-p208:PDF-page-209:selected-visual-fields",
+          "CLONE:printed-p208:PDF-p209:M5-vehicle-layout-visual-source-review"
         ]
       }
     }
