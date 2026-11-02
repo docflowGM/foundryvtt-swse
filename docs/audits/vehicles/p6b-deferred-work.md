@@ -10,15 +10,16 @@ Side bucket for P6B items that could not be implemented safely. Items here are N
 |---|---|
 | RULES_DECISION_REQUIRED | 5 |
 | SOURCE_EVIDENCE_MISSING | 4 |
-| ENGINEERING_COMPLEXITY | 4 |
+| ENGINEERING_COMPLEXITY | 5 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 1 |
-| DEPENDENCY_BLOCKED | 3 |
+| DEPENDENCY_BLOCKED | 6 |
 
 ## Items (by severity)
 
 | ID | Workstream | Component | Category | Severity | Owner ruling | Linked |
 |---|---|---|---|---|---|---|
+| P6B-D-019 | P6B-3 | weapon systems, launchers and ammunition (all weapon-systems.json rows) | DEPENDENCY_BLOCKED | BLOCKING | no | V-P2-04, V-P6A-01, V-P6A-02, V-P6A-03, V-P6A-04 |
 | P6B-D-001 | P6B-1 | reinforced-bulkheads-10, reinforced-bulkheads-20, reinforced-bulkheads-30 | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6-01 |
 | P6B-D-002 | P6B-1 | sublight-drive-1 .. sublight-drive-6 | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6-02 |
 | P6B-D-008 | P6B-1 | all 43 integrated effects; P6B-0 environment and Pilot check | LIVE_RUNTIME_PENDING | IMPORTANT | no | - |
@@ -37,6 +38,9 @@ Side bucket for P6B items that could not be implemented safely. Items here are N
 | P6B-D-016 | P6B-2 | 25 legacy accessory rows with UNVERIFIED effect text (amphibious seals, auxiliary generators, baffled drive, hidden cargo, holding cells, sensor baffling/decoy/mask, workshop, etc.) | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
 | P6B-D-017 | P6B-2 | hangar bays / cryogenic chambers (contents) | ENGINEERING_COMPLEXITY | MINOR | no | - |
 | P6B-D-018 | P6B-2 | cargo pods (detachable option) | ENGINEERING_COMPLEXITY | MINOR | no | - |
+| P6B-D-020 | P6B-3 | printed stock payloads (e.g. "Printed payload: 6 proton torpedoes") | DEPENDENCY_BLOCKED | MINOR | no | V-P2-04 |
+| P6B-D-021 | P6B-3 | custom ships: cargo-dependent and consumables-dependent accessories | DEPENDENCY_BLOCKED | MINOR | no | V-P6B-02 |
+| P6B-D-022 | P6B-3 | custom ships: speed and movement effects | ENGINEERING_COMPLEXITY | MINOR | no | - |
 
 ## Details
 
@@ -224,3 +228,43 @@ Side bucket for P6B items that could not be implemented safely. Items here are N
 - **Owner ruling needed:** no
 - **Impact:** Only fixed pods can be installed.
 - **Recommended action:** Add an option field to catalog rows and the quote.
+
+### P6B-D-019 - weapon systems, launchers and ammunition (all weapon-systems.json rows)
+
+- **Source:** Starships of the Galaxy pp. 44-48; Core Rulebook vehicle combat
+- **Category / severity:** DEPENDENCY_BLOCKED / BLOCKING
+- **Reason:** No weapon row is MECHANIC_SPECIFIED, so none is installable, and attack execution is closed (0 trusted stock attack groups; installed-weapon firing arcs unresolved). Building ammunition inventory, loading and expenditure now would be unreachable code: there is no installable launcher to load and no attack to expend ammunition. Launcher capacity is also unpublished/ambiguous.
+- **Missing:** Firing-arc policy (V-P2-04); launcher capacity and cost basis (V-P6A-03); armor-piercing missile price (V-P6A-02); triple cannon (V-P6A-01); weapon attack/damage consumer certification.
+- **Owner ruling needed:** no (V-P2-04, V-P6A-01, V-P6A-02, V-P6A-03, V-P6A-04)
+- **Impact:** Weapons, launchers and ammunition are reference-only; sealed ledger entries keep executable:false; the attack preflight keeps blocking.
+- **Recommended action:** Owner rules on V-P2-04 and V-P6A-03 first (they unlock the most); then certify weapon rows one family at a time (lasers, ion, missiles) with mount, arc, ammunition and attack tests.
+
+### P6B-D-020 - printed stock payloads (e.g. "Printed payload: 6 proton torpedoes")
+
+- **Source:** published statblocks (capacity.storageNotes)
+- **Category / severity:** DEPENDENCY_BLOCKED / MINOR
+- **Reason:** Stock ordnance counts exist only as printed notes. Converting them into a magazine with expenditure needs the attack execution path (P6B-D-019).
+- **Missing:** Executable stock attack groups.
+- **Owner ruling needed:** no (V-P2-04)
+- **Impact:** Payload stays visible as printed text; never decremented.
+- **Recommended action:** Parse into a read-only magazine view when stock attacks become executable.
+
+### P6B-D-021 - custom ships: cargo-dependent and consumables-dependent accessories
+
+- **Source:** Starships of the Galaxy p. 52 (stock frames)
+- **Category / severity:** DEPENDENCY_BLOCKED / MINOR
+- **Reason:** A stock frame includes no cargo space, so cargo pods and extended range have no printed base on a custom design; the planner refuses them (CARGO_UNIT_NOT_TONS / CONSUMABLES_UNIT_CONVERSION_UNRULED) rather than inventing one. Custom ships otherwise use the same effects authority as published hulls (P6B-3).
+- **Missing:** A cargo/consumables base for custom designs (frame table values are listed, but the stock-frame rule says the frame includes no cargo space), and V-P6B-02 for unit conversions.
+- **Owner ruling needed:** no (V-P6B-02)
+- **Impact:** Those accessories are not installable on custom designs.
+- **Recommended action:** Decide whether the frame table cargo/consumables apply to a constructed ship.
+
+### P6B-D-022 - custom ships: speed and movement effects
+
+- **Source:** stock frames (speed printed as "16/4")
+- **Category / severity:** ENGINEERING_COMPLEXITY / MINOR
+- **Reason:** Frame speed is stored as printed text; custom ships keep their own system speed fields, so atmospheric thrusters on a custom design have no structured fly mode to modify (the planner refuses NO_ATMOSPHERIC_FLIGHT_MODE).
+- **Missing:** Structured speed modes for stock frames.
+- **Owner ruling needed:** no
+- **Impact:** Atmospheric thrusters not installable on custom designs.
+- **Recommended action:** Parse frame speed into character/starship speed modes in the frame builder.

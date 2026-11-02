@@ -13,7 +13,7 @@
  *     and Dexterity, plus only the Dexterity-modifier change made by certified installations.
  * Missing values stay unknown (no 0 is invented). Pure; no Foundry globals.
  */
-import { getEffectiveVehicleDerived, getVerifiedPublishedRecord } from './vehicle-published-derived.js';
+import { getEffectiveVehicleDerived, getEffectiveVehicleSource } from './vehicle-published-derived.js';
 
 export const VEHICLE_ENVIRONMENT = Object.freeze({ ATMOSPHERE: 'atmosphere', SPACE: 'space', UNKNOWN: 'unknown' });
 export const VEHICLE_ENVIRONMENT_FLAG_PATH = 'flags.swse.vehicleEnvironment';
@@ -47,10 +47,12 @@ export function vehicleSizeModifier(size) {
 const abilityMod = score => Math.floor((score - 10) / 2);
 
 function vehicleDexterity(actor) {
-  const record = getVerifiedPublishedRecord(actor);
-  if (record) {
+  const src = getEffectiveVehicleSource(actor);
+  if (src) {
+    const record = src.record;
     const eff = getEffectiveVehicleDerived(actor);
-    return finite(record.abilities?.dex) ? { modifier: abilityMod(record.abilities.dex) + (eff?.pilotDexModifierDelta ?? 0), installedDelta: eff?.pilotDexModifierDelta ?? 0, basis: 'PUBLISHED_PLUS_CERTIFIED' } : null;
+    const basis = src.origin === 'published' ? 'PUBLISHED_PLUS_CERTIFIED' : 'CONSTRUCTION_FRAME_PLUS_CERTIFIED';
+    return finite(record.abilities?.dex) ? { modifier: abilityMod(record.abilities.dex) + (eff?.pilotDexModifierDelta ?? 0), installedDelta: eff?.pilotDexModifierDelta ?? 0, basis } : null;
   }
   const d = raw(actor)?.system?.attributes?.dex;
   const score = finite(d?.base) ? d.base + (finite(d.racial) ? d.racial : 0) + (finite(d.temp) ? d.temp : 0) : null;
@@ -90,7 +92,8 @@ export function vehiclePilotCheck(vehicle, { pilotActor = null, purpose = null, 
 
 function basePilotCheck(vehicle, { pilotActor = null } = {}) {
   const r = raw(vehicle);
-  const record = getVerifiedPublishedRecord(vehicle);
+  const src = getEffectiveVehicleSource(vehicle);
+  const record = src?.record ?? null;
   const reasons = [], breakdown = [];
   if (pilotActor) {
     const size = vehicleSizeModifier(record?.classification?.printedSize ?? r?.system?.size);
@@ -99,9 +102,17 @@ function basePilotCheck(vehicle, { pilotActor = null } = {}) {
     if (!dex) reasons.push('VEHICLE_DEXTERITY_UNKNOWN'); else breakdown.push({ label: 'Vehicle Dexterity modifier', value: dex.modifier, basis: dex.basis, installedDelta: dex.installedDelta });
     return { ok: reasons.length === 0, mode: 'CREW_ACTOR', modifier: reasons.length ? null : size + dex.modifier, breakdown, reasons };
   }
+  const delta = getEffectiveVehicleDerived(vehicle)?.pilotDexModifierDelta ?? 0;
+  if (src?.origin === 'custom-constructed') {
+    // Custom design: Pilot = frame Dex modifier + size modifier + crew quality (construction formula, sealed record).
+    const pilot = src.construction.derived?.pilot;
+    if (!finite(pilot)) return { ok: false, mode: 'GENERIC_CREW', modifier: null, breakdown, reasons: ['CONSTRUCTION_PILOT_MODIFIER_UNKNOWN'] };
+    breakdown.push({ label: 'Construction Pilot (generic crew)', value: pilot, source: `Custom design, ${src.construction.frame?.id} frame` });
+    if (delta) breakdown.push({ label: 'Certified installations (Dexterity modifier)', value: delta });
+    return { ok: true, mode: 'GENERIC_CREW', modifier: pilot + delta, breakdown, reasons };
+  }
   const printed = (record?.abilities?.skills ?? []).find(s => /^pilot$/i.test(String(s.name ?? '')))?.printedModifier;
   if (!finite(printed)) return { ok: false, mode: 'GENERIC_CREW', modifier: null, breakdown, reasons: ['PRINTED_PILOT_MODIFIER_UNKNOWN'] };
-  const delta = getEffectiveVehicleDerived(vehicle)?.pilotDexModifierDelta ?? 0;
   breakdown.push({ label: 'Printed Pilot (generic crew)', value: printed, source: `${record.publication.book} p. ${record.publication.page}` });
   if (delta) breakdown.push({ label: 'Certified installations (Dexterity modifier)', value: delta });
   return { ok: true, mode: 'GENERIC_CREW', modifier: printed + delta, breakdown, reasons };

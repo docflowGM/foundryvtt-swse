@@ -15,6 +15,7 @@ import { CREW_QUALITY, makeUnusedEmplacementResolver } from '../../../domain/veh
 import { summarizeInstallations } from '../../../domain/vehicles/vehicle-installation-ledger.js';
 import { verifyConstructionRecord, DEFAULT_CONSTRUCTION_RULES } from '../../../domain/vehicles/custom-vehicle-construction.js';
 import { EFFECTS, computeEffectiveStatistics, effectInstallability } from '../../../domain/vehicles/vehicle-modification-effects.js';
+import { resolveConstructionEffectiveSource } from '../../../domain/vehicles/custom-vehicle-effective.js';
 import { readVehicleEnvironment, vehiclePilotCheck } from '../../../domain/vehicles/vehicle-operating-context.js';
 import { readJobs, describeJob, reservedEpFromJobs } from '../../../domain/vehicles/vehicle-installation-jobs.js';
 import { describeShield, SOURCE_UNKNOWN } from './vehicle-publication-view-model.js';
@@ -64,7 +65,9 @@ function entryView(e) {
     shortfall: finite(e.quote?.shortfall) ? e.quote.shortfall : null,
     effectStatus: effectCertified ? 'EFFECT_CERTIFIED' : 'EFFECT_NOT_AUTOMATED',
     effectLabel: !effectCertified ? 'Effect not automated'
-      : EFFECTS[e.catalogId]?.kind === 'atmospheric' ? 'Effect certified; conditional (in atmosphere), not applied automatically'
+      : EFFECTS[e.catalogId]?.kind === 'atmospheric' ? 'Effect certified; applies only while the GM-set environment is atmosphere'
+      : EFFECTS[e.catalogId]?.kind === 'intelligence' ? 'Effect certified; shown in statistics (no rule consumer yet)'
+      : EFFECTS[e.catalogId]?.kind === 'skill-bonus' || EFFECTS[e.catalogId]?.kind === 'recharge' ? 'Effect certified; applied to the matching check or action'
       : EFFECTS[e.catalogId] ? 'Effect certified and applied in play' : 'Effect certified',
     weapon,
     mountLabel: weapon ? (e.mount ? `${e.mount.mountKey} (${e.mount.arc}, ${e.mount.operatorRole})` : 'No certified mount') : null,
@@ -281,12 +284,15 @@ export function buildVehicleSchemaViewModel(actor, options = {}) {
       installed: { entries, count: entries.length, certification: entries.length ? 'CONSTRUCTION_RECORD' : 'NONE', rejected: 0, equipmentItemCount: 0, uncertifiedWeaponItems: 0 },
       construction: constructionView(c),
       effective: (() => {
-        const synthetic = { defenses: { reflex: d.reflexDefense, shieldRating: 0 }, abilities: { initiativePrinted: d.initiative }, hyperspace: { capability: 'unavailable' }, movement: {} };
-        const fxShield = computeEffectiveStatistics({ record: synthetic, entries: c.installedSystems ?? [] }).shield;
+        // Same basis as the gameplay authority (getEffectiveVehicleDerived): frame abilities + sealed installed systems.
+        const src = resolveConstructionEffectiveSource(c);
+        const synthetic = src?.record ?? { defenses: { reflex: d.reflexDefense, shieldRating: 0 }, abilities: { initiativePrinted: d.initiative }, hyperspace: { capability: 'unavailable' }, movement: {} };
+        const sysEntries = src?.entries ?? [];
+        const fxShield = computeEffectiveStatistics({ record: synthetic, entries: sysEntries }).shield;
         const shieldRow = fxShield.sources.length
           ? { label: 'Shield Rating', base: 0, baseLabel: '0', modification: modLabel(fxShield), effective: fxShield.effective, current: null, hasCurrent: false, currentLabel: '', effectiveLabel: String(fxShield.effective) }
           : null;
-        return effectiveRows({ record: synthetic, entries: c.installedSystems ?? [], environment: readVehicleEnvironment(actor), hp, hpBase: d.hitPoints, fortitude: d.fortitudeDefense,
+        return effectiveRows({ record: synthetic, entries: sysEntries, environment: readVehicleEnvironment(actor), hp, hpBase: d.hitPoints, fortitude: d.fortitudeDefense,
           extra: [...(shieldRow ? [shieldRow] : []), statRow('Damage Threshold', d.damageThreshold, NONE_AUTOMATED), statRow('Damage Reduction', d.damageReduction, NONE_AUTOMATED)] }).rows;
       })(),
       summaryLabel: c.approval?.status === 'APPROVED' ? 'Custom-built' : 'Custom-built (awaiting GM approval)'

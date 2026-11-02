@@ -221,6 +221,22 @@
         "reason": "P6B-2 accessories; sensor arrays are specified/installable but not applied (no Intelligence consumer)"
       },
       "deferredRegister": "data/audits/vehicles/p6b-deferred-work.json"
+    },
+    {
+      "id": "P6B-3",
+      "status": "OFFLINE_COMPLETE_LIVE_PENDING",
+      "delivered": [
+        "custom-starship compatibility: getEffectiveVehicleDerived/getEffectiveVehicleSource accept an APPROVED, digest-verified construction record; frame abilities from the stock-frame table, entries from the sealed construction ledger",
+        "custom ships now apply certified effects in play (derived Reflex, Initiative, shield pool, recharge amount, Pilot/astrogation/sensor bonuses) instead of showing them on the sheet only",
+        "custom-ship Pilot check: construction Pilot for generic crew; crew Actor + frame size + effective Dex",
+        "construction planner record carries frame Intelligence (sensor arrays plannable on custom designs)",
+        "sheet installed-system labels no longer claim \"applied in play\" for atmospheric (conditional) or sensor-array (no consumer) effects",
+        "weapon infrastructure: deliberately not built (unreachable while no weapon is installable and execution is closed); guard test keeps weapons, launchers and ammunition closed"
+      ],
+      "countChanges": {
+        "note": "no catalog count change; custom ships gain the existing 54 specified effects where the frame provides the basis"
+      },
+      "deferredRegister": "data/audits/vehicles/p6b-deferred-work.json"
     }
   ],
   "currentCounts": {

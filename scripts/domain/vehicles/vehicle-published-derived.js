@@ -11,6 +11,7 @@
 import { getVerifiedPublishedRecord, claimsPublishedSource } from './vehicle-source-identity.js';
 import { readCertifiedInstallations } from './vehicle-installation-ledger.js';
 import { computeEffectiveStatistics } from './vehicle-modification-effects.js';
+import { resolveConstructionEffectiveSource } from './custom-vehicle-effective.js';
 
 const finite = v => typeof v === 'number' && Number.isFinite(v);
 
@@ -75,16 +76,41 @@ export function summarizeMovement(speedModes) {
  * (vehicle-modification-effects.js). The published record is never rewritten; removing an installation
  * restores the published values because this is recomputed every time. null = no verified record.
  *
- * Applied to gameplay: Reflex Defense, Initiative, Shield Rating maximum, hyperdrive availability.
- * Exposed but not auto-applied: the Dexterity-modifier delta for Pilot checks (no vehicle Pilot roller exists
- * yet) and atmospheric speed (conditional on being in an atmosphere; no atmosphere state exists).
+ * Applied to gameplay: Reflex Defense, Initiative, Shield Rating maximum, hyperdrive availability, the recharge
+ * shields amount, Pilot checks (Dex delta and SLAM), astrogation and sensor check bonuses, and atmospheric speed in
+ * an explicit GM-set atmosphere. Exposed only: Intelligence (no consumer), capacities (informational).
+ * P6B: custom-constructed vehicles (approved, digest-verified construction record) use the same computation.
  */
-export function getEffectiveVehicleDerived(actor) {
-  const base = getPublishedDerivedBase(actor);
-  if (!base) return null;
-  const record = getVerifiedPublishedRecord(actor);
+/**
+ * The effective-statistics basis of a vehicle: a verified published record with its sealed ledger, or (P6B custom
+ * compatibility) an APPROVED, digest-verified custom construction record with its sealed installed systems.
+ * @returns {null|{origin:'published'|'custom-constructed', record:object, entries:object[]}}
+ */
+export function getEffectiveVehicleSource(actor) {
   const raw = typeof actor?.toObject === 'function' ? actor.toObject() : actor;
-  const { entries } = readCertifiedInstallations(raw?.flags, record.identity.sourceEntryKey);
+  const record = getVerifiedPublishedRecord(actor);
+  if (record) return { origin: 'published', record, entries: readCertifiedInstallations(raw?.flags, record.identity.sourceEntryKey).entries };
+  // A failed publication claim never falls back to a construction record.
+  if (claimsPublishedSource(actor)) return null;
+  const custom = resolveConstructionEffectiveSource(raw?.flags?.swse?.vehicleConstruction);
+  return custom ? { origin: 'custom-constructed', record: custom.record, entries: custom.entries, construction: custom.construction } : null;
+}
+
+function constructionDerivedBase(record) {
+  return {
+    reflex: record.defenses.reflex, fortitude: record.defenses.fortitude, flatFooted: null,
+    damageThreshold: record.durability.damageThreshold, damageReduction: record.defenses.damageReduction, hpMax: record.durability.hitPoints,
+    initiative: record.abilities.initiativePrinted, movement: summarizeMovement([])
+  };
+}
+
+export function getEffectiveVehicleDerived(actor) {
+  const src = getEffectiveVehicleSource(actor);
+  if (!src) return null;
+  const { record, entries, origin } = src;
+  const base = origin === 'published' ? getPublishedDerivedBase(actor) : constructionDerivedBase(record);
+  if (!base) return null;
+  const raw = typeof actor?.toObject === 'function' ? actor.toObject() : actor;
   // Environment is an explicit GM-set flag only (vehicle-operating-context.js); anything else is 'unknown'.
   const envState = raw?.flags?.swse?.vehicleEnvironment?.state;
   const environment = envState === 'atmosphere' || envState === 'space' ? envState : 'unknown';
@@ -93,6 +119,7 @@ export function getEffectiveVehicleDerived(actor) {
   const shieldMax = fx.shield.sources.length ? fx.shield.effective : (finite(printedSR) ? printedSR : null);
   return {
     ...base,
+    origin,
     published: base,
     reflex: fx.reflex.effective ?? base.reflex,
     initiative: fx.initiative.effective ?? base.initiative,

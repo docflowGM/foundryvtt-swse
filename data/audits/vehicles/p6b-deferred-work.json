@@ -322,6 +322,76 @@
       "impact": "Only fixed pods can be installed.",
       "severity": "MINOR",
       "recommendedAction": "Add an option field to catalog rows and the quote."
+    },
+    {
+      "workstream": "P6B-3",
+      "ownerRulingNeeded": false,
+      "options": [],
+      "id": "P6B-D-019",
+      "component": "weapon systems, launchers and ammunition (all weapon-systems.json rows)",
+      "source": "Starships of the Galaxy pp. 44-48; Core Rulebook vehicle combat",
+      "status": "DEPENDENCY_BLOCKED",
+      "reason": "No weapon row is MECHANIC_SPECIFIED, so none is installable, and attack execution is closed (0 trusted stock attack groups; installed-weapon firing arcs unresolved). Building ammunition inventory, loading and expenditure now would be unreachable code: there is no installable launcher to load and no attack to expend ammunition. Launcher capacity is also unpublished/ambiguous.",
+      "missing": "Firing-arc policy (V-P2-04); launcher capacity and cost basis (V-P6A-03); armor-piercing missile price (V-P6A-02); triple cannon (V-P6A-01); weapon attack/damage consumer certification.",
+      "linkedDecisions": [
+        "V-P2-04",
+        "V-P6A-01",
+        "V-P6A-02",
+        "V-P6A-03",
+        "V-P6A-04"
+      ],
+      "impact": "Weapons, launchers and ammunition are reference-only; sealed ledger entries keep executable:false; the attack preflight keeps blocking.",
+      "severity": "BLOCKING",
+      "recommendedAction": "Owner rules on V-P2-04 and V-P6A-03 first (they unlock the most); then certify weapon rows one family at a time (lasers, ion, missiles) with mount, arc, ammunition and attack tests."
+    },
+    {
+      "workstream": "P6B-3",
+      "ownerRulingNeeded": false,
+      "options": [],
+      "id": "P6B-D-020",
+      "component": "printed stock payloads (e.g. \"Printed payload: 6 proton torpedoes\")",
+      "source": "published statblocks (capacity.storageNotes)",
+      "status": "DEPENDENCY_BLOCKED",
+      "reason": "Stock ordnance counts exist only as printed notes. Converting them into a magazine with expenditure needs the attack execution path (P6B-D-019).",
+      "missing": "Executable stock attack groups.",
+      "linkedDecisions": [
+        "V-P2-04"
+      ],
+      "impact": "Payload stays visible as printed text; never decremented.",
+      "severity": "MINOR",
+      "recommendedAction": "Parse into a read-only magazine view when stock attacks become executable."
+    },
+    {
+      "workstream": "P6B-3",
+      "ownerRulingNeeded": false,
+      "options": [],
+      "id": "P6B-D-021",
+      "component": "custom ships: cargo-dependent and consumables-dependent accessories",
+      "source": "Starships of the Galaxy p. 52 (stock frames)",
+      "status": "DEPENDENCY_BLOCKED",
+      "reason": "A stock frame includes no cargo space, so cargo pods and extended range have no printed base on a custom design; the planner refuses them (CARGO_UNIT_NOT_TONS / CONSUMABLES_UNIT_CONVERSION_UNRULED) rather than inventing one. Custom ships otherwise use the same effects authority as published hulls (P6B-3).",
+      "missing": "A cargo/consumables base for custom designs (frame table values are listed, but the stock-frame rule says the frame includes no cargo space), and V-P6B-02 for unit conversions.",
+      "linkedDecisions": [
+        "V-P6B-02"
+      ],
+      "impact": "Those accessories are not installable on custom designs.",
+      "severity": "MINOR",
+      "recommendedAction": "Decide whether the frame table cargo/consumables apply to a constructed ship."
+    },
+    {
+      "workstream": "P6B-3",
+      "ownerRulingNeeded": false,
+      "options": [],
+      "id": "P6B-D-022",
+      "component": "custom ships: speed and movement effects",
+      "source": "stock frames (speed printed as \"16/4\")",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "Frame speed is stored as printed text; custom ships keep their own system speed fields, so atmospheric thrusters on a custom design have no structured fly mode to modify (the planner refuses NO_ATMOSPHERIC_FLIGHT_MODE).",
+      "missing": "Structured speed modes for stock frames.",
+      "linkedDecisions": [],
+      "impact": "Atmospheric thrusters not installable on custom designs.",
+      "severity": "MINOR",
+      "recommendedAction": "Parse frame speed into character/starship speed modes in the frame builder."
     }
   ]
 }

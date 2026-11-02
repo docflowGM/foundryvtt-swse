@@ -187,7 +187,7 @@ export function validateDesign({ designId, name, frame, systems = [], authorship
     classification: { printedSize: frame.size },
     hyperspace: { capability: 'unavailable' },
     defenses: { shieldRating: 0, reflex: preview.ok ? preview.derived.reflexDefense : null },
-    abilities: { dex: frame.dexterity ?? null, initiativePrinted: preview.ok ? preview.derived.initiative : null }
+    abilities: { dex: frame.dexterity ?? null, int: frame.intelligence ?? null, initiativePrinted: preview.ok ? preview.derived.initiative : null }
   };
   let flags = { swse: { vehicleInstallations: [] } };
   const quotes = [];

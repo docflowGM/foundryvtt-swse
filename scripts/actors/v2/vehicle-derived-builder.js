@@ -170,7 +170,7 @@ export function buildVehicleDerived(actor, system) {
   system.derived.damage.reduction = published
     ? (published.damageReduction ?? 0)
     : safeNumber(system.damageReduction ?? system.damageReductionValue, 0);
-  if (published) {
+  if (published?.origin === 'published') {
     // 0 above means "no DR applied", not "printed DR 0", when the source is silent.
     system.derived.damage.reductionPublished = published.damageReduction != null;
     system.derived.damage.thresholdPublished = published.damageThreshold != null;
@@ -225,7 +225,8 @@ export function buildVehicleDerived(actor, system) {
   // MOVEMENT: published modes replace the character default speed (6) that
   // computeCharacterDerived seeds for every actor. Unknown stays null, not 0.
   // ════════════════════════════════════════════════════════════════════════════
-  if (published) {
+  // Custom-constructed ships keep their own speed fields (a stock frame's speed is starship-scale only).
+  if (published?.origin === 'published') {
     const mv = published.movement;
     const primary = mv.primaryCharacter;
     // Certified atmosphere-only movement effects apply only in an explicit atmosphere environment.
