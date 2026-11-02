@@ -35,6 +35,7 @@ import { FeatChoiceResolver } from '/systems/foundryvtt-swse/scripts/engine/prog
 import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js';
 import { calculateMaxForcePointsForBuildPlan } from '/systems/foundryvtt-swse/scripts/data/force-points.js';
 import { buildLevelUpEntitlementManifest } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-entitlement-manifest.js';
+import { planScalingClassFeatureUpdate } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-scaling-feature-upsert.js';
 import { ChargenRules } from '/systems/foundryvtt-swse/scripts/engine/chargen/ChargenRules.js';
 import {
   auditLevelUpActorAfterFinalization,
@@ -1735,7 +1736,7 @@ export class ProgressionFinalizer {
     }));
     add.items.push(...await this._compileClassStarterEquipmentItems(actor, selections, sessionState));
     if (sessionState.mode === 'levelup') {
-      const automaticClassFeatures = await this._compileAutomaticClassFeatureItems(actor, levelUpManifest, sessionState);
+      const automaticClassFeatures = await this._compileAutomaticClassFeatureItems(actor, levelUpManifest, sessionState, update.items);
       add.items.push(...filterDroidForbiddenItemSpecs(automaticClassFeatures, actor, {
         subtype: sessionState.progressionSession?.subtype,
         droidContext: sessionState.progressionSession?.droidContext,
@@ -3151,13 +3152,20 @@ export class ProgressionFinalizer {
     };
   }
 
-  static async _compileAutomaticClassFeatureItems(actor, levelUpManifest, sessionState) {
+  static async _compileAutomaticClassFeatureItems(actor, levelUpManifest, sessionState, updates = []) {
     if (!levelUpManifest?.automaticClassFeatures?.length) return [];
     const existing = new Set((actor?.items || []).map(item => `${String(item.type || '').toLowerCase()}::${String(item.name || '').toLowerCase()}`));
     const out = [];
     for (const feature of levelUpManifest.automaticClassFeatures) {
       const name = feature.name || feature.id;
       if (!name) continue;
+      if (feature.system?.featureKey && feature.system?.progressionFeatureType === 'scaling_feature') {
+        const plan = planScalingClassFeatureUpdate(actor?.items || [], feature);
+        if (plan?.found) {
+          if (plan.update) updates.push(plan.update);
+          continue; // never grant a second copy of this scaling class feature
+        }
+      }
       const dedupeKey = `feat::${String(name).toLowerCase()}`;
       if (existing.has(dedupeKey)) continue;
       existing.add(dedupeKey);
