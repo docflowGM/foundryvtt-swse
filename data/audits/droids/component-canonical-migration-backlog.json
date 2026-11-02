@@ -1,0 +1,362 @@
+{
+  "schema": "swse.droids.catalog.canonical-migration-backlog/0.1",
+  "date": "2026-11-02",
+  "ownerStatus": "AUDIT_AND_SOURCE_CERTIFICATION_NOT_PRODUCTION_WRITE",
+  "sourceDocument": "docs/audits/item-canonicalization-rolling-authority.md Phase 0-3H",
+  "existingAuthority": {
+    "canonicalPublishedIdentitiesCore": 55,
+    "canonicalPublishedIdentitiesSGD": 67,
+    "totalCanonicalIdentities": 122,
+    "represented": 99,
+    "keep": 92,
+    "edit": 7,
+    "missingAdd": 23,
+    "repoOnly": 5,
+    "sourcePresenceOnly": true,
+    "mechanicalCertificationsNotAsserted": true
+  },
+  "queueCount": 35,
+  "addCount": 23,
+  "editCount": 7,
+  "unsupportedOrConvenienceCount": 5,
+  "sourceFactsReviewedForFourMissingAdds": 4,
+  "catalogAuditPacket": "data/audits/droids/component-source-facts-sgd-sprint-001.json",
+  "preconditions": [
+    "Never put structural droid systems into character equipment compendium",
+    "Preserve legacy aliases/world actor references until explicit migration",
+    "Certify source mechanics and cost first",
+    "Do not invent heroic PC chargen restrictions from model statblocks",
+    "Check Store/chargen/Garage pricing parity against same canonical definitions",
+    "Droid installedSystems retains runtime installation authority",
+    "No source-backlog item itself licenses compendium or live app modification"
+  ],
+  "rows": [
+    {
+      "id": "SGD-CAT-ADD-001",
+      "classification": "ADD",
+      "canonicalPrintedName": "Diagnostics Package",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "NOT_YET_SOURCE_REVIEWED",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-ADD-002",
+      "classification": "ADD",
+      "canonicalPrintedName": "Internal Storage",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "NOT_YET_SOURCE_REVIEWED",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-ADD-003",
+      "classification": "ADD",
+      "canonicalPrintedName": "Spring-Loaded Mechanism",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "NOT_YET_SOURCE_REVIEWED",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-ADD-004",
+      "classification": "ADD",
+      "canonicalPrintedName": "Locked Access",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "NOT_YET_SOURCE_REVIEWED",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-ADD-005",
+      "classification": "ADD",
+      "canonicalPrintedName": "Antitheft Comlink Locator",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "SGD-PDF-FACTS-PACKET-001",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-ADD-006",
+      "classification": "ADD",
+      "canonicalPrintedName": "Collapsible Construction",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "SGD-PDF-FACTS-PACKET-001",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-ADD-007",
+      "classification": "ADD",
+      "canonicalPrintedName": "Courier Compartments",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "NOT_YET_SOURCE_REVIEWED",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-ADD-008",
+      "classification": "ADD",
+      "canonicalPrintedName": "Droid Oil Bath",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "NOT_YET_SOURCE_REVIEWED",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-ADD-009",
+      "classification": "ADD",
+      "canonicalPrintedName": "Earphone Binary-to-Basic Translator",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "NOT_YET_SOURCE_REVIEWED",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-ADD-010",
+      "classification": "ADD",
+      "canonicalPrintedName": "Emergency Oxygen Supply",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "NOT_YET_SOURCE_REVIEWED",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-ADD-011",
+      "classification": "ADD",
+      "canonicalPrintedName": "Holographic Game System",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "NOT_YET_SOURCE_REVIEWED",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-ADD-012",
+      "classification": "ADD",
+      "canonicalPrintedName": "Interference Generator",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "NOT_YET_SOURCE_REVIEWED",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-ADD-013",
+      "classification": "ADD",
+      "canonicalPrintedName": "Remote Viewer",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "NOT_YET_SOURCE_REVIEWED",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-ADD-014",
+      "classification": "ADD",
+      "canonicalPrintedName": "Rental Restraining Bolt",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "NOT_YET_SOURCE_REVIEWED",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-ADD-015",
+      "classification": "ADD",
+      "canonicalPrintedName": "Repulsorcam",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "SGD-PDF-FACTS-PACKET-001",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-ADD-016",
+      "classification": "ADD",
+      "canonicalPrintedName": "Silence-Bubble Generator",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "SGD-PDF-FACTS-PACKET-001",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-ADD-017",
+      "classification": "ADD",
+      "canonicalPrintedName": "Space-Beacon Launcher",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "NOT_YET_SOURCE_REVIEWED",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-ADD-018",
+      "classification": "ADD",
+      "canonicalPrintedName": "Video Screen",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "NOT_YET_SOURCE_REVIEWED",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-ADD-019",
+      "classification": "ADD",
+      "canonicalPrintedName": "Voice-Print Command Lock",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "NOT_YET_SOURCE_REVIEWED",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-ADD-020",
+      "classification": "ADD",
+      "canonicalPrintedName": "Droid Battle Station",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "NOT_YET_SOURCE_REVIEWED",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-ADD-021",
+      "classification": "ADD",
+      "canonicalPrintedName": "Droid Command Station",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "NOT_YET_SOURCE_REVIEWED",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-ADD-022",
+      "classification": "ADD",
+      "canonicalPrintedName": "Droid Recharge Station",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "NOT_YET_SOURCE_REVIEWED",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-ADD-023",
+      "classification": "ADD",
+      "canonicalPrintedName": "Droid Socket",
+      "legacyOrCurrentRepresentation": "absent according to Phase 0-3H and existing registry",
+      "sourceMechanicsReviewed": "NOT_YET_SOURCE_REVIEWED",
+      "productionStatus": "NOT_CREATED",
+      "requiresSourceCertification": true
+    },
+    {
+      "id": "SGD-CAT-EDIT-001",
+      "classification": "EDIT",
+      "canonicalPrintedName": "Remote Processor",
+      "legacyOrCurrentRepresentation": "remote / Remote Processor (External)",
+      "proposedAction": "RENAME_OR_ALIAS_TO_CANONICAL_SOURCE_IDENTITY",
+      "sourceMechanicsReviewed": "NOT_YET_INDIVIDUALLY_CERTIFIED",
+      "productionStatus": "UNMIGRATED",
+      "requiresAliasWorldRefReview": true
+    },
+    {
+      "id": "SGD-CAT-EDIT-002",
+      "classification": "EDIT",
+      "canonicalPrintedName": "Secondary Battery",
+      "legacyOrCurrentRepresentation": "battery-backup / Battery Backup System",
+      "proposedAction": "RENAME_OR_ALIAS_TO_CANONICAL_SOURCE_IDENTITY",
+      "sourceMechanicsReviewed": "NOT_YET_INDIVIDUALLY_CERTIFIED",
+      "productionStatus": "UNMIGRATED",
+      "requiresAliasWorldRefReview": true
+    },
+    {
+      "id": "SGD-CAT-EDIT-003",
+      "classification": "EDIT",
+      "canonicalPrintedName": "Translator Unit",
+      "legacyOrCurrentRepresentation": "basic-translator, advanced-translator, universal-translator",
+      "proposedAction": "MERGE_PRINTED_VARIANTS_UNDER_ONE_IDENTITY",
+      "sourceMechanicsReviewed": "NOT_YET_INDIVIDUALLY_CERTIFIED",
+      "productionStatus": "UNMIGRATED",
+      "requiresAliasWorldRefReview": true
+    },
+    {
+      "id": "SGD-CAT-EDIT-004",
+      "classification": "EDIT",
+      "canonicalPrintedName": "Projectile Hand",
+      "legacyOrCurrentRepresentation": "projectile-appendage / Projectile Appendage",
+      "proposedAction": "RENAME_OR_ALIAS_TO_CANONICAL_SOURCE_IDENTITY",
+      "sourceMechanicsReviewed": "NOT_YET_INDIVIDUALLY_CERTIFIED",
+      "productionStatus": "UNMIGRATED",
+      "requiresAliasWorldRefReview": true
+    },
+    {
+      "id": "SGD-CAT-EDIT-005",
+      "classification": "EDIT",
+      "canonicalPrintedName": "Laminanium Plating",
+      "legacyOrCurrentRepresentation": "laminanium-plating, laminanium-heavy-plating",
+      "proposedAction": "MERGE_LIGHT_HEAVY_TABLE_VARIANTS",
+      "sourceMechanicsReviewed": "NOT_YET_INDIVIDUALLY_CERTIFIED",
+      "productionStatus": "UNMIGRATED",
+      "requiresAliasWorldRefReview": true
+    },
+    {
+      "id": "SGD-CAT-EDIT-006",
+      "classification": "EDIT",
+      "canonicalPrintedName": "Communications Countermeasure System",
+      "legacyOrCurrentRepresentation": "communications-countermeasures / Communications Countermeasures",
+      "proposedAction": "RENAME_OR_ALIAS_TO_CANONICAL_SOURCE_IDENTITY",
+      "sourceMechanicsReviewed": "NOT_YET_INDIVIDUALLY_CERTIFIED",
+      "productionStatus": "UNMIGRATED",
+      "requiresAliasWorldRefReview": true
+    },
+    {
+      "id": "SGD-CAT-EDIT-007",
+      "classification": "EDIT",
+      "canonicalPrintedName": "Weapon Detector",
+      "legacyOrCurrentRepresentation": "weapon-detector-package / Weapon-Detector Package",
+      "proposedAction": "RENAME_OR_ALIAS_TO_CANONICAL_SOURCE_IDENTITY",
+      "sourceMechanicsReviewed": "NOT_YET_INDIVIDUALLY_CERTIFIED",
+      "productionStatus": "UNMIGRATED",
+      "requiresAliasWorldRefReview": true
+    },
+    {
+      "id": "SGD-CAT-REPO-ONLY-001",
+      "classification": "REPO_ONLY",
+      "currentId": "military",
+      "name": "Military Processor",
+      "proposedAction": "REMOVE_OR_DEPRECATE_AFTER_PROOF",
+      "sourceMechanicsReviewed": "UNSUPPORTED_OR_UNPROVEN",
+      "productionStatus": "KEPT_UNTIL_DEPENDENCY_REVIEW",
+      "requiresMigrationBeforeRemoval": true
+    },
+    {
+      "id": "SGD-CAT-REPO-ONLY-002",
+      "classification": "REPO_ONLY",
+      "currentId": "manipulator-arm",
+      "name": "Manipulator Arm",
+      "proposedAction": "REMOVE_OR_REMAP_AFTER_PROOF",
+      "sourceMechanicsReviewed": "UNSUPPORTED_OR_UNPROVEN",
+      "productionStatus": "KEPT_UNTIL_DEPENDENCY_REVIEW",
+      "requiresMigrationBeforeRemoval": true
+    },
+    {
+      "id": "SGD-CAT-REPO-ONLY-003",
+      "classification": "REPO_ONLY",
+      "currentId": "repulsor-lift",
+      "name": "Repulsor Lift",
+      "proposedAction": "REMOVE_OR_REMAP_AFTER_PROOF",
+      "sourceMechanicsReviewed": "UNSUPPORTED_OR_UNPROVEN",
+      "productionStatus": "KEPT_UNTIL_DEPENDENCY_REVIEW",
+      "requiresMigrationBeforeRemoval": true
+    },
+    {
+      "id": "SGD-CAT-REPO-ONLY-004",
+      "classification": "REPO_ONLY",
+      "currentId": "self-repair-kit",
+      "name": "Self-Repair Kit",
+      "proposedAction": "REMOVE_OR_DEPRECATE_AFTER_PROOF",
+      "sourceMechanicsReviewed": "UNSUPPORTED_OR_UNPROVEN",
+      "productionStatus": "KEPT_UNTIL_DEPENDENCY_REVIEW",
+      "requiresMigrationBeforeRemoval": true
+    },
+    {
+      "id": "SGD-CAT-REPO-ONLY-005",
+      "classification": "REPO_ONLY",
+      "currentId": "miniaturized-self-destruct-system",
+      "name": "Miniaturized Self-Destruct System",
+      "proposedAction": "LIVE_DAMAGE_RULE_DEPENDENCY_DO_NOT_DELETE",
+      "sourceMechanicsReviewed": "UNSUPPORTED_OR_UNPROVEN",
+      "productionStatus": "KEPT_UNTIL_DEPENDENCY_REVIEW",
+      "requiresMigrationBeforeRemoval": true
+    }
+  ]
+}
