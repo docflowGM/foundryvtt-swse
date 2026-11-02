@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "sourceBaselineCommit": "9275da66c21b917acbed628f9dcaf3e070aaa14f",
-  "reason": "Talent audit frozen class byte hash predates certified mechanics changes. Protect all class fields except skill/count/BAB metadata; separately permit exact source-certified Officer/Improviser level-progression replacements via approved fingerprint exceptions.",
+  "reason": "Frozen original class records; skills, trained-skill counts, BAB metadata excepted; only six exact source-certified class feature progressions accepted by their approved fingerprints. Other fields and all other 31 class progression records remain protected.",
   "exemptFields": [
     "system.trainedSkills",
     "system.class_skills",
@@ -205,6 +205,26 @@
       "name": "Improviser",
       "approvedFingerprint": "2050:38a1192a3cf7c234",
       "reason": "Rebellion Era p.41 Contraband level 2,4,6,8,10 complete amounts"
+    },
+    "324631ca844a88be": {
+      "name": "Crime Lord",
+      "approvedFingerprint": "1814:0006dec085d87435",
+      "reason": "Core pp. 209-210: one Command Cover granted at class level 2"
+    },
+    "ef6fe8fdbbd884b4": {
+      "name": "Force Disciple",
+      "approvedFingerprint": "1291:730dfca5df6716df",
+      "reason": "Core p. 215: one Prophet grant at class level 1"
+    },
+    "fcf8cc428a6eb01a": {
+      "name": "Master Privateer",
+      "approvedFingerprint": "1973:6f0a911b6af69713",
+      "reason": "Force Unleashed p. 52: printed feature called Piracy"
+    },
+    "e647ee8f065e1d19": {
+      "name": "Infiltrator",
+      "approvedFingerprint": "2056:4cfb64d7a88450dc",
+      "reason": "Force Unleashed p. 49: Unarmed Stun dice labels at class levels 2, 6, 10"
     }
   }
 }
