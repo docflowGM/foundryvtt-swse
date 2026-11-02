@@ -102,6 +102,14 @@ export class ShareTalentStep extends ProgressionStepPlugin {
     return {handled:true,changed:true,dirty:[],structural:true,recommendationRelevant:false};
   }
 
+  getSelection() {
+    return {
+      selected: this._selected ? [this._selected] : [],
+      count: this._selected ? 1 : 0,
+      isComplete: !!this._selected && !this._loadError,
+    };
+  }
+
   renderWorkSurface(data) {
     return {template:'systems/foundryvtt-swse/templates/apps/progression-framework/steps/share-talent-work-surface.hbs',data};
   }
