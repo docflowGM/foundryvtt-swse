@@ -11,6 +11,7 @@ import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/en
 import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js';
 import { calculateMaxForcePointsForBuildPlan } from '/systems/foundryvtt-swse/scripts/data/force-points.js';
 import { buildLevelUpEventContext } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-event-context.js';
+import { planForceDiscipleProphetDestinyGrant } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/force-disciple-prophet-destiny.js';
 
 function abilityMod(score) {
   return Math.floor(((Number(score) || 10) - 10) / 2);
@@ -360,6 +361,17 @@ export class ProgressionEconomyPlanBuilder {
     }
 
     const targetLevel = Number(planSet['system.level'] || sessionState.targetLevel || sessionState.progressionSession?.targetLevel || (Number(actor?.system?.level || 1) + 1)) || 1;
+    // Prophet's two points replace the normal per-level Destiny Point gain.
+    // The existing economy builder has no generic Destiny level-up writer,
+    // so grant the full +2 here (NOT an additional +2 over a default grant).
+    // Vision handling remains a GM-led spend through existing actor controls.
+    const prophetGrant=planForceDiscipleProphetDestinyGrant({
+      actor,selectedClass:ProgressionContentAuthority.resolveClass(clazz) || clazz,
+      mode:sessionState.mode,targetLevel,
+      sessionId:sessionState.sessionId || sessionState.progressionSession?.sessionId || null,
+    });
+    if (prophetGrant) Object.assign(set,prophetGrant);
+
     const classLevelsAfter = planSet['system.progression.classLevels'] || actor?.system?.progression?.classLevels || null;
     const nextForcePointMax = calculateMaxForcePointsForBuildPlan({ actor, totalLevel: targetLevel, selectedClass: clazz, classLevels: classLevelsAfter });
     set['system.forcePoints.max'] = nextForcePointMax;
