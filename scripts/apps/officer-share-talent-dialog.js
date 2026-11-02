@@ -5,6 +5,7 @@
 import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
 import { OfficerShareTalentService } from '/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-service.js';
 import { persistedOfficerShareTalents } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/officer-share-talent-authority.js';
+import { officerShareTalentDistanceSquares } from '/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-scene.js';
 
 const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({
   '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;',
@@ -12,14 +13,6 @@ const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({
 const tokenId=t=>String(t?.id||t?.document?.id||'');
 const faction=t=>Number(t?.document?.disposition??t?.disposition);
 const formOf=root=>(root?.[0]??root)?.querySelector?.('form');
-function distanceSquares(scene,grid,officer,other) {
-  if(!grid?.measurePath||!officer?.center||!other?.center)return null;
-  const m=grid.measurePath([officer.center,other.center]);
-  const units=Number(scene?.grid?.distance),distance=Number(m?.distance);
-  if(!Number.isFinite(units)||units<=0||!Number.isFinite(distance))return null;
-  return distance/units;
-}
-
 export async function openOfficerShareTalentAction(officer) {
   const game=globalThis.game;
   if(game?.user?.isGM!==true)throw new Error('GM authorization required for Share Talent');
@@ -37,7 +30,7 @@ export async function openOfficerShareTalentAction(officer) {
       && faction(t)===sourceFaction && sourceFaction!==0 && combatTokenIds.has(tokenId(t)))
     .map(t=>({...{
       token:t,tokenId:tokenId(t),actorId:t.actor.id,
-      name:t.actor.name||t.name, distanceSquares:distanceSquares(scene,canvas.grid,source,t),
+      name:t.actor.name||t.name, distanceSquares:officerShareTalentDistanceSquares(scene,canvas.grid,source,t),
     }}))
     .filter(x=>x.distanceSquares!==null && x.distanceSquares>=0 && x.distanceSquares<=10);
   if(!candidates.length)throw new Error('No measured allied encounter tokens within 10 squares');
@@ -59,7 +52,9 @@ export async function openOfficerShareTalentAction(officer) {
     <label>Owned selected talent <select name="talentId">${officerOptions}</select></label>
     <div style="max-height:280px;overflow:auto"><h4>Allies in range</h4>${people}</div>
     <label style="display:flex;gap:6px"><input type="checkbox" name="confirmedSenses" value="yes" required />
-       As GM, I confirm that each selected ally can see and hear the Officer.</label>
+       As GM, I confirm each selected recipient can see and hear the Officer.</label>
+    <label style="display:flex;gap:6px"><input type="checkbox" name="confirmedAllies" value="yes" required />
+       As GM, I confirm each selected recipient is an ally.</label>
   </form>`;
   const chosen=await SWSEDialogV2.wait({
     title:`Share Talent — ${officer.name}`,content,
@@ -67,7 +62,8 @@ export async function openOfficerShareTalentAction(officer) {
       activate:{icon:'<i class="fas fa-users"></i>',label:'Share Talent (Standard Action)',callback:root=>{
         const form=formOf(root);if(!form)throw new Error('Share Talent form unavailable');
         const data=new FormData(form);
-        if(data.get('confirmedSenses')!=='yes')throw new Error('GM must explicitly verify sight and hearing');
+        if(data.get('confirmedSenses')!=='yes'||data.get('confirmedAllies')!=='yes')
+          throw new Error('GM must explicitly verify sight, hearing and allied status');
         return {talentId:String(data.get('talentId')||''),tokenIds:data.getAll('recipient').map(String)};
       }},
       cancel:{icon:'<i class="fas fa-times"></i>',label:'Cancel',callback:()=>null},
@@ -80,11 +76,7 @@ export async function openOfficerShareTalentAction(officer) {
   }
   const result=await OfficerShareTalentService.activate({
     officer,combat,talentId:chosen.talentId,
-    recipientActors:tokenSelections.map(x=>x.token.actor),
-    recipientProofs:tokenSelections.map(x=>({
-      actorId:x.actorId,isAlly:true,distanceSquares:x.distanceSquares,
-      canSeeOfficer:true,canHearOfficer:true,
-    })),
+    recipientTokenIds:chosen.tokenIds,confirmedSenses:true,confirmedAllies:true,
   });
   globalThis.ui?.notifications?.info?.(`Shared talent with ${result.recipientActorIds.length} allies until encounter end.`);
   return result;
