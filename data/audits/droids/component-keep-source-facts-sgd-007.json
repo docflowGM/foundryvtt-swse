@@ -1,0 +1,616 @@
+{
+  "schema": "swse.droids.catalog.keep-sgd-source-facts/0.1",
+  "date": "2026-11-02",
+  "sprint": "KEEP-007",
+  "branch": "audit/droid-publication-census-2026-10-29",
+  "sourceBook": "Scavenger's Guide to Droids",
+  "pdf": "SW Saga - Scavenger's Guide to Droids (optimized).pdf",
+  "sourceMethod": "Original PDF printed pp51-52,58-63 visually inspected, table 3-2, OCR only index.",
+  "taxonomy": {
+    "reference": [
+      {
+        "book": "Scavenger's Guide to Droids",
+        "printedPage": 51,
+        "pdfPage1Based": 52,
+        "verification": "Original PDF visually inspected 2026-11-02"
+      }
+    ],
+    "rule": "Only accessory equipment integrated directly into the droid chassis is treated as a system; appendage-attached or carried equipment is a possession",
+    "scope": "Host classification independent of printed accessory table inclusion",
+    "implementation": "Not a license to force all appendix entries into system.installedSystems",
+    "status": "PDF_VERIFIED_RULE_NOT_IMPLEMENTED"
+  },
+  "records": [
+    {
+      "id": "burrower-drive",
+      "name": "Burrower Drive",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 52,
+          "pdfPage1Based": 53,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        }
+      ],
+      "host": "CHASSIS_LOCOMOTION_ADDON",
+      "printed": {
+        "costFormulaCredits": "200 * sizeCostFactor * selectedSpeedSquared",
+        "weightFormulaKg": "50 * sizeCostFactor",
+        "availability": "Restricted"
+      },
+      "mechanics": {
+        "undergroundMovement": "Half base speed, horizontal or vertical",
+        "meleeDrillDamage": "Equal to published ordinary Self-Destruct System damage for droid size",
+        "onSuccessfulMeleeAttack": "Move -1 persistent step on condition track per successful attack",
+        "noDamageOnFailedAttack": true
+      },
+      "repo": {
+        "rawPresent": false,
+        "overlayPresent": true,
+        "priceMissing": true,
+        "weightMissing": true
+      },
+      "issues": [
+        "OVERLAY_ONLY_COST",
+        "CONDITION_PERSISTENCE",
+        "COST_FACTOR_AUTHORITY"
+      ],
+      "claimId": "SGD-KEEP-007-001",
+      "sourceFactsVerified": true,
+      "completeMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "garageChargenFollowerStoreParity": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "underwater-drive",
+      "name": "Underwater Drive",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 52,
+          "pdfPage1Based": 53,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        }
+      ],
+      "host": "CHASSIS_LOCOMOTION_ADDON",
+      "printed": {
+        "costFormulaCredits": "20 * sizeCostFactor * selectedSpeedSquared",
+        "weightFormulaKg": "10 * sizeCostFactor",
+        "availability": "Licensed"
+      },
+      "mechanics": {
+        "grants": "Swim speed equal to base land speed",
+        "factoryContext": "Some water-world models come with as standard option; not universal factory-free grant"
+      },
+      "repo": {
+        "rawPresent": false,
+        "overlayPresent": true,
+        "priceMissing": true,
+        "weightMissing": true
+      },
+      "issues": [
+        "OVERLAY_ONLY_COST",
+        "SWIM_SPEED_STATE",
+        "FACTORY_GRANT_CONTEXT"
+      ],
+      "claimId": "SGD-KEEP-007-002",
+      "sourceFactsVerified": true,
+      "completeMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "garageChargenFollowerStoreParity": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "shield-expansion-module",
+      "name": "Shield Expansion Module",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 62,
+          "pdfPage1Based": 63,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        }
+      ],
+      "host": "DROID_SHIELD_EXPANSION_MODULE",
+      "printed": {
+        "costFormulaCredits": "50 * currentShieldRating * sizeCostFactor",
+        "weightFormulaKg": "2 * currentShieldRating * sizeCostFactor",
+        "availability": "Military"
+      },
+      "mechanics": {
+        "requires": "Installed Shield Generator",
+        "minSize": "Small",
+        "activateAction": "standard",
+        "protectedSquare": "One chosen adjacent square per module",
+        "protectedAllyMaxSize": "Medium",
+        "allyDefense": "Uses droid's current SR while remaining in protected adjacent square",
+        "maximumCount": {
+          "small": 1,
+          "medium": 1,
+          "largeOrGreater": 2
+        },
+        "twoModulesProtectTwoSquares": true
+      },
+      "repo": {
+        "rawPresent": true,
+        "overlayPresent": true,
+        "rawCostCallback": "(costFactor, shieldRating = 5)",
+        "rawWeightCallback": "(costFactor, shieldRating = 5)",
+        "sharedCostCallback": "resolveVariantCost passes costFactor only, so rating defaults to SR5",
+        "sharedWeightCallback": "Generic helper passes factor only to weight function",
+        "wrongRatingRisk": true
+      },
+      "issues": [
+        "SHIELD_RATING_CALLBACK_UNTHREADED",
+        "SIZE_COST_FACTOR_AUTHORITY",
+        "ACTOR_STATE_AND_ADJACENCY"
+      ],
+      "claimId": "SGD-KEEP-007-003",
+      "sourceFactsVerified": true,
+      "completeMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "garageChargenFollowerStoreParity": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "radiant-heat-element",
+      "name": "Radiant Heat Element",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 61,
+          "pdfPage1Based": 62,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        }
+      ],
+      "host": "TORSO_WARMING_AND_REACTIVE_HEAT",
+      "printed": {
+        "priceCredits": 200,
+        "weightFormulaKg": "20 * sizeCostFactor",
+        "availability": "-"
+      },
+      "mechanics": {
+        "modes": [
+          "ambient warmth",
+          "heating/cooking",
+          "highest defensive output"
+        ],
+        "damageTrigger": "Any character ends its turn adjacent while highest setting active",
+        "damageToAdjacent": "1d4 fire",
+        "selfDamage": "1 HP each turn while highest setting active",
+        "notBlanketOnEnter": true
+      },
+      "repo": {
+        "rawPresent": false,
+        "overlayPresent": true,
+        "priceMissing": true,
+        "weightMissing": true,
+        "overlayDamage": "1d4",
+        "overlaySelfCostText": true
+      },
+      "issues": [
+        "OVERLAY_ONLY_COST",
+        "TURN_END_TRIGGER",
+        "SELF_DAMAGE_RESOURCE"
+      ],
+      "claimId": "SGD-KEEP-007-004",
+      "sourceFactsVerified": true,
+      "completeMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "garageChargenFollowerStoreParity": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "internal-grapple-gun",
+      "name": "Internal Grapple Gun",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        }
+      ],
+      "host": "CHASSIS_ROPE_AND_GRAPPLE",
+      "printed": {
+        "costFormulaCredits": "100 * sizeCostFactor",
+        "weightFormulaKg": "2 * sizeCostFactor",
+        "availability": "-"
+      },
+      "mechanics": {
+        "fireAction": "standard",
+        "internalCord": {
+          "meters": 15,
+          "squares": 10
+        },
+        "externalMagazineCapacityMeters": 100,
+        "detachCordAction": "free",
+        "weaponDamage": "not specified in this accessory description"
+      },
+      "repo": {
+        "rawPresent": false,
+        "overlayPresent": true,
+        "priceMissing": true,
+        "weightMissing": true,
+        "overlayRangeSquares": 10
+      },
+      "issues": [
+        "OVERLAY_ONLY_COST",
+        "EXTERNAL_MAGAZINE_SOURCE_NOT_PRICED",
+        "ROPE_RESOURCE"
+      ],
+      "claimId": "SGD-KEEP-007-005",
+      "sourceFactsVerified": true,
+      "completeMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "garageChargenFollowerStoreParity": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "mesh-tape-dispenser",
+      "name": "Mesh Tape Dispenser",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        }
+      ],
+      "host": "APPENDAGE_ATTACHED_TOOL_WEAPON",
+      "printed": {
+        "costFormulaCredits": "10 * sizeCostFactor",
+        "weightKg": 5,
+        "availability": "-"
+      },
+      "mechanics": {
+        "reach": "Within manipulating appendage's reach, usually adjacent",
+        "entangleAction": "successful melee attack against adjacent target",
+        "onArmsEntangled": {
+          "attackPenalty": -2,
+          "dexBasedSkillPenalty": -2
+        },
+        "onLegsEntangled": {
+          "speedSquaresDelta": -2,
+          "canRun": false
+        },
+        "pinInteraction": "If droid has Pin feat and succeeds opposed grapple, victim remains pinned until tape removed"
+      },
+      "repo": {
+        "rawPresent": false,
+        "overlayPresent": true,
+        "priceMissing": true,
+        "weightMissing": true,
+        "overlayConditionUnderspecified": true
+      },
+      "issues": [
+        "OVERLAY_ONLY_COST",
+        "ARM_VS_LEG_SELECTION",
+        "PIN_FEAT_INTEGRATION"
+      ],
+      "claimId": "SGD-KEEP-007-006",
+      "sourceFactsVerified": true,
+      "completeMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "garageChargenFollowerStoreParity": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "micro-shield",
+      "name": "Micro Shield",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        }
+      ],
+      "host": "APPENDAGE_ATTACHED_OR_HANDHELD_DISTINCT_VARIANTS",
+      "printed": {
+        "installedCostFormulaCredits": "600 * sizeCostFactor",
+        "installedWeightFormulaKg": "10 * sizeCostFactor",
+        "handheldCostCredits": 400,
+        "handheldWeight": "not separately established here",
+        "availability": "Licensed"
+      },
+      "mechanics": {
+        "installedActivation": "swift action",
+        "defenseBonus": {
+          "value": 1,
+          "type": "equipment",
+          "target": "Reflex Defense"
+        },
+        "handheldPower": {
+          "source": "single energy cell",
+          "operatingHours": 1
+        },
+        "requires": "appendage to mount installed version"
+      },
+      "repo": {
+        "rawPresent": false,
+        "overlayPresent": true,
+        "priceMissing": true,
+        "weightMissing": true,
+        "handheldVariantNotPriced": true
+      },
+      "issues": [
+        "OVERLAY_ONLY_COST",
+        "HANDHELD_VARIANT_SEPARATION",
+        "ACTIVE_EQUIPMENT_BONUS"
+      ],
+      "claimId": "SGD-KEEP-007-007",
+      "sourceFactsVerified": true,
+      "completeMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "garageChargenFollowerStoreParity": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "survival-kit",
+      "name": "Survival Kit",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 63,
+          "pdfPage1Based": 64,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        }
+      ],
+      "host": "DROID_ACCESSORY_OR_CARRIED_EQUIPMENT_TO_CLASSIFY",
+      "printed": {
+        "priceCredits": 100,
+        "weightKg": 1,
+        "availability": "-"
+      },
+      "mechanics": {
+        "contents": [
+          "small refrigerator",
+          "water recycler/dispenser",
+          "rechargeable glow rod",
+          "fire sparker"
+        ],
+        "aidAnother": {
+          "skill": "Survival",
+          "printedTotalBonus": 4,
+          "normalBonus": 2,
+          "bonusNotAdditional": true
+        }
+      },
+      "repo": {
+        "rawPresent": false,
+        "overlayPresent": true,
+        "priceMissing": true,
+        "weightMissing": true,
+        "overlayAidValue": 4
+      },
+      "issues": [
+        "OVERLAY_ONLY_COST",
+        "AID_ANOTHER_NO_DOUBLE_COUNT",
+        "EXTERNAL_VS_CHASSIS_HOST"
+      ],
+      "claimId": "SGD-KEEP-007-008",
+      "sourceFactsVerified": true,
+      "completeMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "garageChargenFollowerStoreParity": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "taser",
+      "name": "Taser",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 63,
+          "pdfPage1Based": 64,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        }
+      ],
+      "host": "WEAPON_CARRIED_OR_INSTALLED_VARIANT_NOT_ESTABLISHED",
+      "printed": {
+        "priceCredits": 250,
+        "weightKg": 2,
+        "availability": "Licensed"
+      },
+      "mechanics": {
+        "organicTarget": "Nonlethal electrical incapacitation",
+        "droidTarget": "Current behaves like ion gun",
+        "alternativeMode": "May be used in melee as electroshock probe",
+        "specificDamageDiceFromSgdParagraph": "NOT_PRINTED"
+      },
+      "repo": {
+        "rawPresent": false,
+        "overlayPresent": true,
+        "priceMissing": true,
+        "weightMissing": true,
+        "overlayDamageDice": "2d6",
+        "damageDiceSourceFromSgd": "NOT_ESTABLISHED"
+      },
+      "issues": [
+        "OVERLAY_ONLY_COST",
+        "WEAPON_DAMAGE_NEEDS_SEPARATE_SOURCE",
+        "WEAPON_MOUNT_AUTHORITY"
+      ],
+      "claimId": "SGD-KEEP-007-009",
+      "sourceFactsVerified": true,
+      "completeMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "garageChargenFollowerStoreParity": false,
+      "foundryRuntimeCertified": false
+    }
+  ],
+  "findings": [
+    {
+      "id": "SGD-K007-SHIELD-RATING-CALLBACK",
+      "severity": "HIGH",
+      "classification": "CONFIRMED_STATIC_API_MISMATCH",
+      "target": "shield-expansion-module",
+      "rule": "Cost 50 * SR * CF, weight 2 * SR * CF; raw callbacks default shieldRating=5, generic part helper passes only costFactor",
+      "example": {
+        "size": "medium",
+        "SR": 20,
+        "correctCredits": 1000,
+        "incorrectDefaultCredits": 250,
+        "correctKg": 40,
+        "incorrectDefaultKg": 10
+      },
+      "fixGate": "Pass authoritative installed current shield maximum/selected generator rating, not arbitrary user-provided number."
+    },
+    {
+      "id": "SGD-K007-MISSING-RAW_PRICES",
+      "severity": "HIGH",
+      "classification": "OVERLAY_ONLY_PRICING_GAP",
+      "targets": [
+        "burrower-drive",
+        "underwater-drive",
+        "radiant-heat-element",
+        "internal-grapple-gun",
+        "mesh-tape-dispenser",
+        "micro-shield",
+        "survival-kit",
+        "taser"
+      ],
+      "rule": "Eight published parts have no raw definitions, no priced overlay. Default quote may be zero; completed sale untested."
+    },
+    {
+      "id": "SGD-K007-TAXONOMY",
+      "severity": "HIGH",
+      "classification": "PRINTED_CLASSIFICATION_AUTHORITY",
+      "target": "hostClass",
+      "rule": "SGD p51 differentiates integrated chassis system from attached or carried equipment. Stop inferring all table rows installable."
+    },
+    {
+      "id": "SGD-K007-BURROWER_CONDITION",
+      "severity": "HIGH",
+      "classification": "RESOURCE_AND_DAMAGE_AUTHORITY",
+      "target": "burrower-drive",
+      "rule": "Use published self-destruct damage by droid size for successful drill melee attack; each success imposes -1 persistent condition step."
+    },
+    {
+      "id": "SGD-K007-SHIELD_EXPANSION_ADJACENCY",
+      "severity": "HIGH",
+      "classification": "PHYSICAL_AND_RUNTIME_AUTHORITY",
+      "target": "shield-expansion-module",
+      "rule": "Standard action selects adjacent square; Medium/smaller recipient; shield provided only while remaining there; Small+ droids and module count caps."
+    },
+    {
+      "id": "SGD-K007-HEAT_TURN_END",
+      "severity": "MEDIUM",
+      "classification": "REACTION_TIMING",
+      "target": "radiant-heat-element",
+      "rule": "Damage triggers when character ends turn adjacent, not when entering; active droid loses 1 HP per turn."
+    },
+    {
+      "id": "SGD-K007-MESH_PIN_DURATION",
+      "severity": "HIGH",
+      "classification": "COMBAT_EFFECT_TIMING",
+      "target": "mesh-tape-dispenser",
+      "rule": "Different arm/leg hindrances; Pin feat with opposed grapple extends pin until tape removed."
+    },
+    {
+      "id": "SGD-K007-MICRO_SHIELD_VARIANT",
+      "severity": "HIGH",
+      "classification": "VARIANT_PRICE_AND_RESOURCE",
+      "target": "micro-shield",
+      "rule": "Installed shield costs 600*CF, weight 10*CF. 400-credit handheld model consumes one cell per hour; do not conflate."
+    },
+    {
+      "id": "SGD-K007-TASER_DAMAGE_UNVERIFIED",
+      "severity": "MEDIUM",
+      "classification": "SOURCE_GAP",
+      "target": "taser",
+      "rule": "SGD source describes modes but not dice; overlay 2d6 requires separate printed attack authority."
+    },
+    {
+      "id": "SGD-K007-SURVIVAL_AID_TOTAL",
+      "severity": "MEDIUM",
+      "classification": "BONUS_REPLACEMENT",
+      "target": "survival-kit",
+      "rule": "Published Aid Another +4 total instead of ordinary +2; do not add +4 to an existing +2."
+    },
+    {
+      "id": "SGD-K007-LOC_DOUBLE_CHARGE",
+      "severity": "MEDIUM",
+      "classification": "CONSTRUCTION_COST",
+      "target": "burrower-drive|underwater-drive",
+      "rule": "SGD calls these add-ons not new basic locomotion types; whether extra locomotion surcharge applies requires cross-rule adjudication rather than automatic charge."
+    }
+  ],
+  "counts": {
+    "sourceFactRowsThisSprint": 9,
+    "cumulativeRows": 99,
+    "keepTrackRows": 72,
+    "overlayOnlyMissingPrices": 8,
+    "sourceFindings": 11,
+    "mechanicalCertificates": 0,
+    "productionMutations": 0,
+    "appTests": 0,
+    "foundryRuntimeCertificates": 0
+  },
+  "dependencies": [
+    "data/audits/droids/component-keep-source-facts-sgd-006.json",
+    "data/audits/droids/component-core-cost-factor-audit.json"
+  ],
+  "guardrails": [
+    "Installed and attached/carried accessories must remain distinct according to p51",
+    "Cost factor source is Core Table 11-2",
+    "Strict source mechanical certification must follow tested grants, counters, state and permissions",
+    "No mutation of actors, packs or production scripts"
+  ]
+}

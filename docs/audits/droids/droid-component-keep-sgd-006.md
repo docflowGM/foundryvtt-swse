@@ -14,7 +14,7 @@ Eight existing component identities reviewed with printed costs, host classifica
 | Remote Receiver Jammer | 2000  | 2 | Military | PORTABLE_BACKPACK_TRANSMITTER_HANDHELD_CONTROLLER_NOT_BODY |
 | Remote Receiver Signal Booster | 500  | 2 | Licensed | RECEIVER_MODIFICATION |
 | Droid Remote Control | 500  | 0.5 | - | DROID_CONTROL_ATTACHMENT_REQUIRES_CALLER |
-| Hidden Core | 200 (protected 400) | 0 or 1 kg | Restricted | PROCESSOR_BACKUP_OR_SEPARATE_DATA_STORE |
+| Hidden Core | 200 (protected 400) | 1 kg or — | Restricted | PROCESSOR_BACKUP_OR_SEPARATE_DATA_STORE |
 | Personality Downloader | 5000 + minimum | 2 | Illegal | EXTERNAL_ILLEGAL_INVASIVE_DATAPORT_TOOL |
 | Remote Starship Starter | 50  | 2 | - | DROID_SHIP_SIGNAL_ACCESSORY |
 | Credit Reader | 50  | 1 | Licensed | DROID_INSTALLED_FINANCIAL_SENSOR |
@@ -56,3 +56,7 @@ node tools/audits/droids/verify_component_keep_source_facts_sgd_006.mjs
 Node validator, CI suite and Foundry V13 runtime **not executed** during this source-only review.
 
 **Next:** Core/SGD inventory crosscheck for duplicate prior rule rows, then SGD remaining shield/locomotion/control components; full 122-identity census must also be extended into other books before claiming authoritative published completeness. Keep the 234 stock-droid actor workstream independent.
+
+### 2026-11-02 source wording correction
+
+The Hidden Core's table weight is **1 kg or a dash (unlisted)** depending on secondary storage versus concealment inside the primary processor. A printed dash is not independent proof of zero kilograms. This correction is audit documentation only; the machine packet already records the distinction.
