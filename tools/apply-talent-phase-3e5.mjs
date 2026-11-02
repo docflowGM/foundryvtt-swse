@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { verifyClassPackProtectedState } from './lib/class-pack-protected-guard.mjs';
 /**
  * Phase 3E-5b — canonical text-defect repair: DRY-RUN (this revision writes no pack).
  *
@@ -152,7 +153,15 @@ export function verifyApplied({ exact = false } = {}) {
     check(`${r.name}: no known defect string remains`, !!t && !RESIDUALS.some(x => allText(t).includes(x)));
   }
   if (!later) check(`the other ${talents.length - ids.size} records are unchanged`, sortedFpOf(talents.filter(t => !ids.has(t._id))) === report.othersFingerprint);
-  for (const [rel, sha] of Object.entries(report.untouchedFiles)) if (!PHASE_5C_OWNED.has(rel) && (!later || !LATER_OWNED.has(rel))) check(`untouched: ${rel}`, fs.existsSync(path.join(ROOT, rel)) && gitBlobSha(read(rel)) === sha);
+  for (const [rel, sha] of Object.entries(report.untouchedFiles)) {
+    if (!(!PHASE_5C_OWNED.has(rel) && (!later || !LATER_OWNED.has(rel)))) continue;
+    if (rel === 'packs/classes.db') {
+      const classIntegrity = verifyClassPackProtectedState(ROOT);
+      check('protected class identities, trees, features, HP and defenses', classIntegrity.ok, classIntegrity.failures.join('; '));
+    } else {
+      check(`untouched: ${rel}`, fs.existsSync(path.join(ROOT, rel)) && gitBlobSha(read(rel)) === sha);
+    }
+  }
   const rec = reconcile(loadInput());
   check('publication reconciliation: zero blocking findings incl. TEXT_DRIFT', rec.blockingFindings.length === 0, rec.blockingFindings.slice(0, 3).map(f => `${f.code} ${f.identity}`).join('; '));
   if (exact && !later) check('packs/talents.db equals the certified post-state blob', gitBlobSha(talentsText) === report.postState.talents);
