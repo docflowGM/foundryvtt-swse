@@ -80,6 +80,7 @@ export class ProgressionSession {
       forceTechniques: [],
       forceSecrets: [],
       medicalSecrets: [],
+      shareTalentSelections: [],
       starshipManeuvers: [],
       survey: null,
       prestigeSurvey: null,
@@ -190,6 +191,7 @@ export class ProgressionSession {
       'force-secrets': 'forceSecrets',
       'force-techniques': 'forceTechniques',
       'medical-secrets': 'medicalSecrets',
+      'share-talent': 'shareTalentSelections',
       'starship-maneuver': 'starshipManeuvers',
       'starship-maneuvers': 'starshipManeuvers',
       'prestige-survey': 'prestigeSurvey',
@@ -384,6 +386,7 @@ export class ProgressionSession {
       forceTechniques: [],
       forceSecrets: [],
       medicalSecrets: [],
+      shareTalentSelections: [],
       starshipManeuvers: [],
       pendingEntitlements: [],
       immediateChoices: [],
@@ -460,6 +463,7 @@ export class ProgressionSession {
       forceTechniques: [],
       forceSecrets: [],
       medicalSecrets: [],
+      shareTalentSelections: [],
       starshipManeuvers: [],
       pendingEntitlements: [],
       immediateChoices: [],
@@ -500,6 +504,7 @@ export class ProgressionSession {
       forceTechniques: this.draftSelections.forceTechniques || [],
       forceSecrets: this.draftSelections.forceSecrets || [],
       medicalSecrets: this.draftSelections.medicalSecrets || [],
+      shareTalentSelections: this.draftSelections.shareTalentSelections || [],
       survey: this.draftSelections.survey?.completed === true ? this.draftSelections.survey : null,
       prestigeSurvey: this.draftSelections.prestigeSurvey?.completed === true ? this.draftSelections.prestigeSurvey : null,
       classSurveys: Object.fromEntries(
@@ -590,6 +595,10 @@ export class ProgressionSession {
       medicalSecrets: {
         type: 'array',
         description: '[{id, source}, ...]',
+      },
+      shareTalentSelections: {
+        type: 'array',
+        description: 'Officer immutable share selection: [{officerLevel, talentId, talentName, treeId, treeName}]',
       },
       classSurveyDrafts: {
         type: 'object',
@@ -756,7 +765,7 @@ export class ProgressionSession {
     // legacy object commits may be merged by id so a single feat/talent choice
     // cannot erase the rest of the draft. Languages intentionally replace: the
     // language step owns the entire bonus-language list.
-    if (selectionKey === 'languages') return this._dedupeSelectionArray(normalizedValue);
+    if (selectionKey === 'languages' || selectionKey === 'shareTalentSelections') return this._dedupeSelectionArray(normalizedValue);
     if (normalizedValue.length !== 1 || !this._isSelectionLikeObject(normalizedValue[0])) {
       return this._dedupeSelectionArray(normalizedValue);
     }
