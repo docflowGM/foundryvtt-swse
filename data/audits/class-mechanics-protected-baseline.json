@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "sourceBaselineCommit": "9275da66c21b917acbed628f9dcaf3e070aaa14f",
-  "reason": "Talent audit frozen byte-level class-pack check predates approved Core skills and BAB corrections. Preserve every other class record field while permitting ONLY these three approved class-mechanics fields.",
+  "reason": "Talent audit frozen class byte hash predates certified mechanics changes. Protect all class fields except skill/count/BAB metadata; separately permit exact source-certified Officer/Improviser level-progression replacements via approved fingerprint exceptions.",
   "exemptFields": [
     "system.trainedSkills",
     "system.class_skills",
@@ -194,5 +194,17 @@
       "name": "Jedi",
       "fingerprint": "3102:c5dbc4ae4790738d"
     }
-  ]
+  ],
+  "approvedProgressionExceptions": {
+    "30b9cd24b80ebf46": {
+      "name": "Officer",
+      "approvedFingerprint": "3147:51a6a7fc5cf8ade3",
+      "reason": "Printed Core p.221 Share Talent/Command Cover choice cadence"
+    },
+    "db019dfbb271cdf6": {
+      "name": "Improviser",
+      "approvedFingerprint": "2050:38a1192a3cf7c234",
+      "reason": "Rebellion Era p.41 Contraband level 2,4,6,8,10 complete amounts"
+    }
+  }
 }
