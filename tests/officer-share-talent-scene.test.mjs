@@ -65,6 +65,21 @@ test('Share Talent refuses different scene, non-encounter targets and duplicate 
   }),/unique allied actor/);
 });
 
+test('distinct synthetic allies sharing a base Actor ID remain separately eligible',()=>{
+ const first=token('one',{id:'template',uuid:'Scene.s1.Token.t1.Actor.template'},300,0);
+ const second=token('two',{id:'template',uuid:'Scene.s1.Token.t2.Actor.template'},600,0);
+ const result=resolveOfficerShareTalentScene({
+   officer,combat:{...combat,combatants:[{tokenId:'source'}]},
+   canvasRef:{...canvasRef,tokens:{placeables:[source,first,second]}},
+   recipientTokenIds:['one','two'],confirmedSenses:true,confirmedAllies:true,
+ });
+ assert.deepEqual(result.recipientProofs.map(x=>x.actorId),[
+   'Scene.s1.Token.t1.Actor.template',
+   'Scene.s1.Token.t2.Actor.template',
+ ]);
+ assert.equal(new Set(result.recipientProofs.map(x=>x.actorId)).size,2);
+});
+
 test('Service enforces turn economy and derives recipients at action time; dialog passes token IDs only',async()=>{
   const fs=await import('node:fs');
   const path=await import('node:path');
