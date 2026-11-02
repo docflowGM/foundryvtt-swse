@@ -4751,9 +4751,7 @@
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
-      "vehicleLink": {
-        "relationKind": "primary-vehicle-only"
-      },
+      "vehicleLink": {},
       "economics": {
         "availability": "Licensed",
         "newCredits": 36500
@@ -4830,7 +4828,7 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 vehicle-primary DP-2 printed p.82-83 checked; vehicle actor authority must own HP, movement, crew and attacks. Runtime not tested. M6 detailed paired-source PDF review completed 2026-11-02; all variants, protocol and cross-domain constraints source-only; full mechanical certification and runtime untested.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 vehicle-primary DP-2 printed p.82-83 checked; vehicle actor authority must own HP, movement, crew and attacks. Runtime not tested. M6 detailed paired-source PDF review completed 2026-11-02; all variants, protocol and cross-domain constraints source-only; full mechanical certification and runtime untested. Vehicle primary classification remains exclusively in classification.primaryActorAuthority; vehicleLink relationKind left unset pending a separately verified matching vehicle-source identity.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p82:PDF-page-83",
           "SGD-CENSUS:SGD-DROID-008",
