@@ -1,0 +1,1478 @@
+{
+  "schemaVersion": 1,
+  "phase": "6B",
+  "auditDate": "2026-10-08",
+  "branch": "audit/class-canonicalization-phase-6a",
+  "method": "Read-only printed sourcebook class-table and requirements comparison against packs/classes.db and data/prestige-class-prerequisites.json. PDFs are primary authority, supplied DJVU text used as search aid. Runtime not executed.",
+  "baseline": {
+    "packBlobSha": "2960a03039604ea06612445bad0673902a8012cc",
+    "prereqBlobSha": "7e7b7c96f8b3024b8ece8982969869ecfeb16cfa"
+  },
+  "totals": {
+    "prestigeClasses": 32,
+    "sourcebooks": 8,
+    "tableBabMatches": 32,
+    "hitDieMatches": 32,
+    "defenseMatches": 32,
+    "metadataBabMismatches": 10,
+    "sourceFindings": 13,
+    "unresolvedPrereqRecordCount": 0
+  },
+  "findings": [
+    {
+      "id": "6B-001",
+      "severity": "CRITICAL",
+      "kind": "PROGRESSION_WRONG_CHOICE",
+      "classes": [
+        "Officer"
+      ],
+      "source": "Core p.221, Table 12-11",
+      "evidence": "Published Officer progression grants Share Talent at levels 2,4,6,8,10 and Command Cover once at level 2; repository instead adds normal talent_choice at even levels and repeated Command Cover +1..+5, without Share Talent.",
+      "recommendation": "Model five typed share-talent selections and one Command Cover grant; preserve normal talent choices only at odd levels."
+    },
+    {
+      "id": "6B-002",
+      "severity": "HIGH",
+      "kind": "MISSING_ENTRY_REQUIREMENT",
+      "classes": [
+        "Jedi Knight"
+      ],
+      "source": "Core p.218, Requirements",
+      "evidence": "Printed special prerequisite requires having built one's own lightsaber; data/prestige-class-prerequisites.json omits it.",
+      "recommendation": "Add a verifiable construction requirement or explicit GM adjudication gate; avoid assuming merely owning a lightsaber is sufficient."
+    },
+    {
+      "id": "6B-003",
+      "severity": "HIGH",
+      "kind": "MISSING_ENTRY_REQUIREMENT",
+      "classes": [
+        "Independent Droid"
+      ],
+      "source": "TFU p.47, Requirements",
+      "evidence": "Printed Special: Droids only; prerequisite JSON includes heuristic processor and Use Computer but not droid-only.",
+      "recommendation": "Add typed droid-only requirement; test organic actor denied."
+    },
+    {
+      "id": "6B-004",
+      "severity": "HIGH",
+      "kind": "INCOMPLETE_ENTRY_REQUIREMENT",
+      "classes": [
+        "Martial Arts Master"
+      ],
+      "source": "Galaxy at War p.32, Requirements",
+      "evidence": "Printed feats require Martial Arts I, Martial Arts II, Melee Defense, and at least one from an enumerated list of martial arts style feats. JSON lacks a structured OR list and only says '1 Martial Arts Feat' in prose.",
+      "recommendation": "Encode all published style feats in a typed OR group and verify Martial Arts I/II prerequisite chain."
+    },
+    {
+      "id": "6B-005",
+      "severity": "HIGH",
+      "kind": "MALFORMED_PROGRESSION",
+      "classes": [
+        "Improviser"
+      ],
+      "source": "Rebellion Era p.41, Table 2-2",
+      "evidence": "Published Contraband is a single feature at levels 2,4,6,8,10 with amounts 2k,4k,6k,8k,10k; repo splits labels around commas into two features and also emits 3k,5k,7k,9k odd-level fragments.",
+      "recommendation": "Fix generator/parser, not just emitted DB; use one typed feature at the five printed levels."
+    },
+    {
+      "id": "6B-006",
+      "severity": "MEDIUM",
+      "kind": "DUPLICATED_ONE_TIME_FEATURE",
+      "classes": [
+        "Force Disciple"
+      ],
+      "source": "Core p.215, Table 12-7",
+      "evidence": "Prophet appears as a first-level class feature in printed table; repo includes Prophet in class_feature entries at levels 1-5. Published ability describes per-level benefit, which must not be confused with repeat grants.",
+      "recommendation": "Grant Prophet once; derive its per-level benefit from class level advancement."
+    },
+    {
+      "id": "6B-007",
+      "severity": "MEDIUM",
+      "kind": "DUPLICATED_SCALING_FEATURE",
+      "classes": [
+        "Crime Lord"
+      ],
+      "source": "Core pp.209-210, Table 12-4 and Command Cover",
+      "evidence": "Command Cover is granted at level 2 and its magnitude is computed from adjacent allies and half class level; repo repeats Command Cover +1..+5 at even levels.",
+      "recommendation": "Represent Command Cover as one scaling feature, not five independently stacking grants; retain Crime Lord talent choices at every level."
+    },
+    {
+      "id": "6B-008",
+      "severity": "MEDIUM",
+      "kind": "MALFORMED_FEATURE_LABEL",
+      "classes": [
+        "Infiltrator"
+      ],
+      "source": "TFU p.49, Table 3-4",
+      "evidence": "Printed Unarmed Stun increases by +1 die, +2 dice, +3 dice; repository labels contain +1d_, +2d_, +3d_ placeholders.",
+      "recommendation": "Use canonical feature labels and typed dice-count scaling."
+    },
+    {
+      "id": "6B-009",
+      "severity": "MEDIUM",
+      "kind": "SOURCE_FEATURE_LABEL",
+      "classes": [
+        "Master Privateer"
+      ],
+      "source": "TFU pp.51-52, Piracy",
+      "evidence": "Printed feature is called Piracy; repo labels the level-1 class feature 'Lure of Piracy'. Both concern loss of further privateer progression after falling to the dark side.",
+      "recommendation": "Canonicalize displayed name; encode ongoing class advancement restriction separately."
+    },
+    {
+      "id": "6B-010",
+      "severity": "HIGH",
+      "kind": "ONGOING_CLASS_ACCESS_CONDITION",
+      "classes": [
+        "Sith Apprentice",
+        "Sith Lord"
+      ],
+      "source": "Core pp.223-224, Requirements",
+      "evidence": "Published classes lose access to their class features if Dark Side Score falls below Wisdom; the prerequisite JSON records full DSP as an entry requirement but not an ongoing class-feature suspension policy.",
+      "recommendation": "Add actor-state-based suspend/resume policy; do not remove earned levels or talents."
+    },
+    {
+      "id": "6B-011",
+      "severity": "MEDIUM",
+      "kind": "ONGOING_CLASS_ACCESS_CONDITION",
+      "classes": [
+        "Corporate Agent"
+      ],
+      "source": "KOTOR p.42, Employment Required",
+      "evidence": "Source prohibits gaining new Corporate Agent levels while not employed by a major interstellar corporation. Entry JSON contains employment as prose but does not itself express an ongoing leveling gate.",
+      "recommendation": "Model eligibility for subsequent levels separately from first-level entry."
+    },
+    {
+      "id": "6B-012",
+      "severity": "MEDIUM",
+      "kind": "ONGOING_CLASS_ACCESS_CONDITION",
+      "classes": [
+        "Master Privateer"
+      ],
+      "source": "TFU p.52, Piracy",
+      "evidence": "Source bars additional Master Privateer levels once lost to the dark side; entry JSON has no typed ongoing condition.",
+      "recommendation": "Enforce at later level-up, without stripping existing levels."
+    },
+    {
+      "id": "6B-013",
+      "severity": "LOW",
+      "kind": "LEGACY_TREE_PROJECTION",
+      "classes": [
+        "Assassin",
+        "Infiltrator"
+      ],
+      "source": "Scum p.29; TFU p.49",
+      "evidence": "Raw talent_trees mixes names GenoHaradan/Bothan SpyNet with IDs, but canonical talentTreeSourceIds resolves both correctly.",
+      "recommendation": "Normalize legacy raw field through generator without disturbing canonical IDs."
+    }
+  ],
+  "classes": [
+    {
+      "classId": "480a290aa128f683",
+      "name": "Martial Arts Master",
+      "source": {
+        "book": "Galaxy at War",
+        "printedPages": "32-33",
+        "tableBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 4,
+          "reflex": 2,
+          "will": 0
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 4,
+          "reflex": 2,
+          "will": 0
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": false,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [
+        "6B-004"
+      ],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "fc815ae3ca4bf726",
+      "name": "Corporate Agent",
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "printedPages": "41-42",
+        "tableBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 2,
+          "will": 4
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 2,
+          "will": 4
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": true,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [
+        "6B-011"
+      ],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "533f1066362655c7",
+      "name": "Gladiator",
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "printedPages": "43-45",
+        "tableBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 2,
+          "reflex": 4,
+          "will": 0
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 2,
+          "reflex": 4,
+          "will": 0
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": false,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "d87c05d2a34f5627",
+      "name": "Melee Duelist",
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "printedPages": "46-47",
+        "tableBabRate": "fast",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 4,
+          "will": 2
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "fast",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 4,
+          "will": 2
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": false,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "ec505163e5647cc6",
+      "name": "Imperial Knight",
+      "source": {
+        "book": "Legacy Era Campaign Guide",
+        "printedPages": "43-45",
+        "tableBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 2,
+          "reflex": 2,
+          "will": 2
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 2,
+          "reflex": 2,
+          "will": 2
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": false,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "557e1a5ec72166fd",
+      "name": "Shaper",
+      "source": {
+        "book": "Legacy Era Campaign Guide",
+        "printedPages": "46-47",
+        "tableBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 2,
+          "reflex": 0,
+          "will": 4
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 2,
+          "reflex": 0,
+          "will": 4
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": true,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "db019dfbb271cdf6",
+      "name": "Improviser",
+      "source": {
+        "book": "Rebellion Era Campaign Guide",
+        "printedPages": "41-43",
+        "tableBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 2,
+          "will": 4
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 2,
+          "will": 4
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": true,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [
+        "6B-005"
+      ],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "4ee81a6708a516cd",
+      "name": "Pathfinder",
+      "source": {
+        "book": "Rebellion Era Campaign Guide",
+        "printedPages": "44-45",
+        "tableBabRate": "medium",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 4,
+          "reflex": 2,
+          "will": 0
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "medium",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 4,
+          "reflex": 2,
+          "will": 0
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": true,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "9c9989c34714f920",
+      "name": "Ace Pilot",
+      "source": {
+        "book": "Saga Edition Core Rulebook",
+        "printedPages": "206-207",
+        "tableBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 2,
+          "reflex": 4,
+          "will": 0
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 2,
+          "reflex": 4,
+          "will": 0
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": true,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "336bba6d1e517c92",
+      "name": "Bounty Hunter",
+      "source": {
+        "book": "Saga Edition Core Rulebook",
+        "printedPages": "207-209",
+        "tableBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 2,
+          "reflex": 4,
+          "will": 0
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "fast",
+        "derivedBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 2,
+          "reflex": 4,
+          "will": 0
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": true,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "324631ca844a88be",
+      "name": "Crime Lord",
+      "source": {
+        "book": "Saga Edition Core Rulebook",
+        "printedPages": "209-210",
+        "tableBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 2,
+          "will": 4
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 2,
+          "will": 4
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": true,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [
+        "6B-007"
+      ],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "c4dbedcf989cb6b2",
+      "name": "Elite Trooper",
+      "source": {
+        "book": "Saga Edition Core Rulebook",
+        "printedPages": "211-212",
+        "tableBabRate": "fast",
+        "hitDie": 12,
+        "defenses": {
+          "fortitude": 4,
+          "reflex": 2,
+          "will": 0
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "fast",
+        "derivedBabRate": "fast",
+        "hitDie": 12,
+        "defenses": {
+          "fortitude": 4,
+          "reflex": 2,
+          "will": 0
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": true,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "289fcf920ef0e184",
+      "name": "Force Adept",
+      "source": {
+        "book": "Saga Edition Core Rulebook",
+        "printedPages": "212-214",
+        "tableBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 2,
+          "reflex": 2,
+          "will": 4
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 2,
+          "reflex": 2,
+          "will": 4
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": true,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "ef6fe8fdbbd884b4",
+      "name": "Force Disciple",
+      "source": {
+        "book": "Saga Edition Core Rulebook",
+        "printedPages": "214-215",
+        "tableBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 3,
+          "reflex": 3,
+          "will": 6
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 3,
+          "reflex": 3,
+          "will": 6
+        },
+        "levelCount": 5,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": true,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [
+        "6B-006"
+      ],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "162d866ba36fce69",
+      "name": "Gunslinger",
+      "source": {
+        "book": "Saga Edition Core Rulebook",
+        "printedPages": "216-217",
+        "tableBabRate": "fast",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 4,
+          "will": 2
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "fast",
+        "derivedBabRate": "fast",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 4,
+          "will": 2
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": true,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "fb5c2644f988e6bf",
+      "name": "Jedi Knight",
+      "source": {
+        "book": "Saga Edition Core Rulebook",
+        "printedPages": "217-219",
+        "tableBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 2,
+          "reflex": 2,
+          "will": 2
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "fast",
+        "derivedBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 2,
+          "reflex": 2,
+          "will": 2
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": true,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [
+        "6B-002"
+      ],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "07a64453f95e04f2",
+      "name": "Jedi Master",
+      "source": {
+        "book": "Saga Edition Core Rulebook",
+        "printedPages": "219-220",
+        "tableBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 3,
+          "reflex": 3,
+          "will": 3
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "fast",
+        "derivedBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 3,
+          "reflex": 3,
+          "will": 3
+        },
+        "levelCount": 5,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": true,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "30b9cd24b80ebf46",
+      "name": "Officer",
+      "source": {
+        "book": "Saga Edition Core Rulebook",
+        "printedPages": "220-221",
+        "tableBabRate": "fast",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 2,
+          "will": 4
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "fast",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 2,
+          "will": 4
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": false,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [
+        "6B-001"
+      ],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "1ba03b2d00245906",
+      "name": "Sith Apprentice",
+      "source": {
+        "book": "Saga Edition Core Rulebook",
+        "printedPages": "222-223",
+        "tableBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 2,
+          "reflex": 2,
+          "will": 2
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 2,
+          "reflex": 2,
+          "will": 2
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": false,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [
+        "6B-010"
+      ],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "2f7cfdc115c640a5",
+      "name": "Sith Lord",
+      "source": {
+        "book": "Saga Edition Core Rulebook",
+        "printedPages": "223-224",
+        "tableBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 3,
+          "reflex": 3,
+          "will": 3
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "fast",
+        "derivedBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 3,
+          "reflex": 3,
+          "will": 3
+        },
+        "levelCount": 5,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": true,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [
+        "6B-010"
+      ],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "74fa04f5afb5f6e1",
+      "name": "Assassin",
+      "source": {
+        "book": "Scum and Villainy",
+        "printedPages": "28-29",
+        "tableBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 2,
+          "reflex": 4,
+          "will": 0
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 2,
+          "reflex": 4,
+          "will": 0
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": false,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [
+        "6B-013"
+      ],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "8da58194b3d58041",
+      "name": "Charlatan",
+      "source": {
+        "book": "Scum and Villainy",
+        "printedPages": "30-31",
+        "tableBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 2,
+          "will": 4
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 2,
+          "will": 4
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": true,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "19ee85a788380256",
+      "name": "Outlaw",
+      "source": {
+        "book": "Scum and Villainy",
+        "printedPages": "34-35",
+        "tableBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 4,
+          "will": 2
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 4,
+          "will": 2
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": true,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "7c7d3aa972d968c8",
+      "name": "Droid Commander",
+      "source": {
+        "book": "The Clone Wars Campaign Guide",
+        "printedPages": "42-43",
+        "tableBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 2,
+          "reflex": 2,
+          "will": 2
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 2,
+          "reflex": 2,
+          "will": 2
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": false,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "b85240cf77cf95eb",
+      "name": "Military Engineer",
+      "source": {
+        "book": "The Clone Wars Campaign Guide",
+        "printedPages": "44-45",
+        "tableBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 2,
+          "reflex": 2,
+          "will": 2
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 2,
+          "reflex": 2,
+          "will": 2
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": true,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "acd10710f000ae70",
+      "name": "Vanguard",
+      "source": {
+        "book": "The Clone Wars Campaign Guide",
+        "printedPages": "46-47",
+        "tableBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 4,
+          "reflex": 2,
+          "will": 0
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 4,
+          "reflex": 2,
+          "will": 0
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": false,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "61876f91a1633cdf",
+      "name": "Enforcer",
+      "source": {
+        "book": "The Force Unleashed Campaign Guide",
+        "printedPages": "43-45",
+        "tableBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 4,
+          "will": 2
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 4,
+          "will": 2
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": true,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "3b1ed5f1038d49fb",
+      "name": "Independent Droid",
+      "source": {
+        "book": "The Force Unleashed Campaign Guide",
+        "printedPages": "46-47",
+        "tableBabRate": "medium",
+        "hitDie": 12,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 2,
+          "will": 4
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "medium",
+        "hitDie": 12,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 2,
+          "will": 4
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": true,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [
+        "6B-003"
+      ],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "e647ee8f065e1d19",
+      "name": "Infiltrator",
+      "source": {
+        "book": "The Force Unleashed Campaign Guide",
+        "printedPages": "48-49",
+        "tableBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 4,
+          "will": 2
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 4,
+          "will": 2
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": true,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [
+        "6B-008",
+        "6B-013"
+      ],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "fcf8cc428a6eb01a",
+      "name": "Master Privateer",
+      "source": {
+        "book": "The Force Unleashed Campaign Guide",
+        "printedPages": "50-52",
+        "tableBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 2,
+          "will": 4
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "fast",
+        "hitDie": 10,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 2,
+          "will": 4
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": false,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [
+        "6B-009",
+        "6B-012"
+      ],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "06f4d9029debf827",
+      "name": "Medic",
+      "source": {
+        "book": "The Force Unleashed Campaign Guide",
+        "printedPages": "52-54",
+        "tableBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 4,
+          "reflex": 0,
+          "will": 2
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 4,
+          "reflex": 0,
+          "will": 2
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": true,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    },
+    {
+      "classId": "de3f367749b82fcf",
+      "name": "Saboteur",
+      "source": {
+        "book": "The Force Unleashed Campaign Guide",
+        "printedPages": "54-56",
+        "tableBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 2,
+          "will": 4
+        },
+        "verification": "PRIMARY_PDF_TABLE_AND_TEXT_REVIEW"
+      },
+      "repository": {
+        "babMetadata": "medium",
+        "derivedBabRate": "medium",
+        "hitDie": 8,
+        "defenses": {
+          "fortitude": 0,
+          "reflex": 2,
+          "will": 4
+        },
+        "levelCount": 10,
+        "prerequisiteRecordPresent": true,
+        "talentChoiceOnAllOddLevels": true
+      },
+      "checks": {
+        "sourceTableBabMatchesRepoTable": true,
+        "sourceHitDieMatches": true,
+        "sourceDefensesMatch": true,
+        "metadataMatchesSourceBab": true,
+        "expectedLevelCountMatches": true,
+        "prerequisitePresence": true
+      },
+      "findingIds": [],
+      "sourceReviewed": true,
+      "mechanicsRuntimeCertified": false
+    }
+  ]
+}
