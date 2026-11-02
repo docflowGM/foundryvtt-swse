@@ -13230,6 +13230,64 @@
             "raw": "Ranged blaster rifle +3/+3 (3d8+4)",
             "operationStatus": "source-only"
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-021-ACTION-AVOID-SURPRISE",
+            "statement": "Free action: Perception check at battle start; success prevents droid master from being surprised.",
+            "scope": "HK-77 Assassin Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 108,
+              "pdfPage1Based": 109,
+              "sourceEntryKey": "SGD-DROID-021",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-AVOID-SURPRISE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-021-ACTION-BLASTER-SURGE",
+            "statement": "Protocol one swift once/turn attack with one blaster rifle at +8 for 5d8+4; main prose instead requires full-round action, five extra rifle shots expended and cooling next round. Cost unresolved.",
+            "scope": "HK-77 Assassin Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 108,
+              "pdfPage1Based": 109,
+              "sourceEntryKey": "SGD-DROID-021",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-BLASTER-SURGE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-021-ACTION-SALVO",
+            "statement": "Two swift once/turn: two separate blaster-rifle attacks +3 each, 3d8+4 each; requires actual two-rifle configuration.",
+            "scope": "HK-77 Assassin Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 108,
+              "pdfPage1Based": 109,
+              "sourceEntryKey": "SGD-DROID-021",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-SALVO"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-021-ACTION-SUPPORT-FIRE",
+            "statement": "One swift once/turn: rifle attack +8, 3d8+4; alternative to other firing protocols.",
+            "scope": "HK-77 Assassin Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 108,
+              "pdfPage1Based": 109,
+              "sourceEntryKey": "SGD-DROID-021",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-SUPPORT-FIRE"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -13374,7 +13432,68 @@
           }
         ]
       },
-      "modifications": {},
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-021-VARIANT-FIREFIGHTER",
+            "statement": "Replace both arm blaster rifles with fire extinguishers and four chemical cartridges per arm; automatic reload costs 75 credits per appendage; DC15 Mechanics and 2 hours for weapon conversion. Coating materials 200 credits and 1 hour grants +2 Fortitude checks against high temperatures, not a general Fortitude bonus.",
+            "scope": "HK-77 Assassin Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 109,
+              "pdfPage1Based": 110,
+              "sourceEntryKey": "SGD-DROID-021",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-FIREFIGHTER"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-021-VARIANT-GAMBLERS-PROXY",
+            "statement": "Replace blaster rifles/tool appendages with hand appendages; game data costs about 50 credits. Optional sensor/darkvision enhancement DC20 Mechanics, 1 hour sees through objects within 3 meters having 2 HP or fewer. After first 10 rounds, each further round Wisdom DC15 increasing +3 per round; failure irreparably burns out improved sensors and darkvision.",
+            "scope": "HK-77 Assassin Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 109,
+              "pdfPage1Based": 110,
+              "sourceEntryKey": "SGD-DROID-021",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-GAMBLERS-PROXY"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "constraints": [
+          {
+            "ruleId": "SGD-DROID-021-CONSTRAINT-SURGE-RESOURCE",
+            "statement": "Printed full-round Surge consumes five extra rifle shots and disables that same rifle for next round; protocol omits these costs and instead says one swift. Do not authorize swift Surge or unbounded ammunition.",
+            "scope": "HK-77 Assassin Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 108,
+              "pdfPage1Based": 109,
+              "sourceEntryKey": "SGD-DROID-021",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-SURGE-RESOURCE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-021-CONSTRAINT-REMOVED-BLASTER-MOUNTS",
+            "statement": "Firefighter and Gambler variants remove rifle mounts; they cannot retain factory blaster attack options absent actual installed replacement arms/weapons.",
+            "scope": "HK-77 Assassin Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 109,
+              "pdfPage1Based": 110,
+              "sourceEntryKey": "SGD-DROID-021",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-REMOVED-BLASTER-MOUNTS"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -13386,7 +13505,36 @@
       "text": {
         "mechanicsNotes": "Source language line preserved in sidecar evidence; speaking vs understanding remains unverified."
       },
-      "exceptions": {},
+      "exceptions": {
+        "sourceContradictions": [
+          {
+            "issueId": "SGD-021-BLASTER-SURGE-ACTION-CONFLICT",
+            "fieldPointers": [
+              "/rules/conditionalMechanics",
+              "/combat/specialActions"
+            ],
+            "statements": [
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 108,
+                "pdfPage1Based": 109,
+                "sourceEntryKey": "SGD-DROID-021",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "SGD-021-BLASTER-SURGE-ACTION-CONFLICT-MAIN: Main: full-round blaster surge, five extra shots and cooldown next round"
+              },
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 108,
+                "pdfPage1Based": 109,
+                "sourceEntryKey": "SGD-DROID-021",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "SGD-021-BLASTER-SURGE-ACTION-CONFLICT-PROTOCOL: Protocol: one swift once per turn Blaster Surge attack, resource/cooldown terms not repeated"
+              }
+            ],
+            "resolutionStatus": "unresolved"
+          }
+        ]
+      },
       "fieldStates": {
         "/abilities/con": "explicitly-none"
       },
@@ -13425,12 +13573,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M3 fifteen-record primary PDF review, printed pp.108-109: structured installed source systems, 9 components, 2 physical appendages, 1 movement modes, printed classes and explicit possessions. HK-77 expressly prohibits heroic PC play. Two rifles and overcharge cooling/five-shot cost must remain separate; no third attack rights. Mechanical status remains partial pending canonical feat/talent IDs, authoritative mount and ammunition rules, all conditional action predicates, and full semantic certification. Runtime deferred.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M3 fifteen-record primary PDF review, printed pp.108-109: structured installed source systems, 9 components, 2 physical appendages, 1 movement modes, printed classes and explicit possessions. HK-77 expressly prohibits heroic PC play. Two rifles and overcharge cooling/five-shot cost must remain separate; no third attack rights. Mechanical status remains partial pending canonical feat/talent IDs, authoritative mount and ammunition rules, all conditional action predicates, and full semantic certification. Runtime deferred. M9 second source-mechanical pass printed pp.108-109; 4 protocol actions, 2 nonfactory variants and 2 constraints. Remains partial.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p108:PDF-page-109",
           "SGD-CENSUS:SGD-DROID-021",
           "SGD:p108:PDF-p109:visual-statblock-field-review",
-          "SGD:p108-p109:PDF-p109-p110:M3-full-primary-review"
+          "SGD:p108-p109:PDF-p109-p110:M3-full-primary-review",
+          "SGD:p108-p109:PDF-p109-p110:M9-source-deepening"
         ]
       }
     },
@@ -13777,6 +13926,50 @@
             "operationStatus": "source-only",
             "attackBonus": 6
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-022-ACTION-BLASTER-RIFLE",
+            "statement": "One swift once/turn: carried rifle +8 for 3d8+4; no integrated rifle inferred.",
+            "scope": "HKB-3 Hunter-Killer Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 110,
+              "pdfPage1Based": 111,
+              "sourceEntryKey": "SGD-DROID-022",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-BLASTER-RIFLE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-022-ACTION-COORDINATED-TRACKING",
+            "statement": "Two swift once/turn: up to four HKB-3s tracking same target, each within 30 squares of another, share highest Survival roll and automatically aid the check.",
+            "scope": "HKB-3 Hunter-Killer Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 110,
+              "pdfPage1Based": 111,
+              "sourceEntryKey": "SGD-DROID-022",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-COORDINATED-TRACKING"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-022-ACTION-SIMULTANEOUS-FIRE",
+            "statement": "Two swift once/turn to aid another HKB-3 attack; on aided hit, +1 damage die for each 5 by which attack exceeded target Reflex, damage rider applies only once even with stacked aid attack bonuses.",
+            "scope": "HKB-3 Hunter-Killer Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 111,
+              "pdfPage1Based": 112,
+              "sourceEntryKey": "SGD-DROID-022",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-SIMULTANEOUS-FIRE"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -13920,9 +14113,86 @@
           }
         ]
       },
-      "modifications": {},
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-022-VARIANT-JAMMER",
+            "statement": "Adds 12-square radius jamming without severing its own remote processor. Initiate standard action, sustain move action; Use Computer check with +10 equipment; communication/scanning attempts opposed by Use Computer, remote-controlled enemy droids can lose functionality. DC15 Mechanics install, DC15 Use Computer program, 6 hours, 4,000 credits materials/software.",
+            "scope": "HKB-3 Hunter-Killer Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 111,
+              "pdfPage1Based": 112,
+              "sourceEntryKey": "SGD-DROID-022",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-JAMMER"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "constraints": [
+          {
+            "ruleId": "SGD-DROID-022-CONSTRAINT-SENSOR-NOT-ATTACK",
+            "statement": "Hunting sensors ignore cover and concealment including total concealment for Perception checks only, not attacks.",
+            "scope": "HKB-3 Hunter-Killer Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 110,
+              "pdfPage1Based": 111,
+              "sourceEntryKey": "SGD-DROID-022",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-SENSOR-NOT-ATTACK"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-022-CONSTRAINT-PROCESSOR-DEPENDENCE",
+            "statement": "Printed factory remote processor has 5km range. Heroic choice to replace it with basic/heuristic releases dependence on remote controller but cannot be treated as default factory processor.",
+            "scope": "HKB-3 Hunter-Killer Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 111,
+              "pdfPage1Based": 112,
+              "sourceEntryKey": "SGD-DROID-022",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-PROCESSOR-DEPENDENCE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-022-CONSTRAINT-JAMMER-OPPOSED-CHECK",
+            "statement": "Jammer field is detectable and limited; initiation/sustain actions and opposed Use Computer gate cannot be bypassed as permanent undetectable interdiction.",
+            "scope": "HKB-3 Hunter-Killer Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 111,
+              "pdfPage1Based": 112,
+              "sourceEntryKey": "SGD-DROID-022",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-JAMMER-OPPOSED-CHECK"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
-        "heroEligibility": "allowed"
+        "heroEligibility": "allowed",
+        "startingSelections": [
+          {
+            "ruleId": "SGD-DROID-022-PC-HEROIC-ROUTE",
+            "statement": "Hero creation uses stock battle-droid chassis, scout or soldier progression. Replacement of factory remote processor with basic or heuristic is a deliberate option; no automatic acquisition of printed nonheroic/scout/soldier levels.",
+            "scope": "HKB-3 Hunter-Killer Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 111,
+              "pdfPage1Based": 112,
+              "sourceEntryKey": "SGD-DROID-022",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "PC-HEROIC-ROUTE"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "vehicleLink": {},
       "economics": {
@@ -13984,12 +14254,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M3 fifteen-record primary PDF review, printed pp.110-111: structured installed source systems, 9 components, 2 physical appendages, 1 movement modes, printed classes and explicit possessions. HKB-3 source says remote processor with 5-km range. Do not infer a heuristic or basic local processor. Combat aid and coordinated tracking are conditional. Mechanical status remains partial pending canonical feat/talent IDs, authoritative mount and ammunition rules, all conditional action predicates, and full semantic certification. Runtime deferred.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M3 fifteen-record primary PDF review, printed pp.110-111: structured installed source systems, 9 components, 2 physical appendages, 1 movement modes, printed classes and explicit possessions. HKB-3 source says remote processor with 5-km range. Do not infer a heuristic or basic local processor. Combat aid and coordinated tracking are conditional. Mechanical status remains partial pending canonical feat/talent IDs, authoritative mount and ammunition rules, all conditional action predicates, and full semantic certification. Runtime deferred. M9 second source-mechanical pass printed pp.110-111; 3 protocol actions, 1 nonfactory variants and 3 constraints. Remains partial.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p110:PDF-page-111",
           "SGD-CENSUS:SGD-DROID-022",
           "SGD:p110:PDF-p111:visual-statblock-field-review",
-          "SGD:p110-p111:PDF-p111-p112:M3-full-primary-review"
+          "SGD:p110-p111:PDF-p111-p112:M3-full-primary-review",
+          "SGD:p110-p111:PDF-p111-p112:M9-source-deepening"
         ]
       }
     },
@@ -14223,6 +14494,64 @@
             "operationStatus": "source-only",
             "attackBonus": 4
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-023-ACTION-ADAPTABLE-PROGRAMMING",
+            "statement": "One free action protocol presentation; reprogramming this model has Use Computer DC reduced by 5, not unrestricted reprogramming.",
+            "scope": "KM1 Mining Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 112,
+              "pdfPage1Based": 113,
+              "sourceEntryKey": "SGD-DROID-023",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-ADAPTABLE-PROGRAMMING"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-023-ACTION-IMPROVISED-FIRE",
+            "statement": "One swift once/turn: mounted laser cutter ranged +4, 3d8 damage, maximum range 12 squares. Requires printed cutter mount and range.",
+            "scope": "KM1 Mining Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 112,
+              "pdfPage1Based": 113,
+              "sourceEntryKey": "SGD-DROID-023",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-IMPROVISED-FIRE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-023-ACTION-SLAMMER",
+            "statement": "One swift once/turn: melee attack +10 for 1d6+18; exceeding damage threshold inflicts persistent condition, not ordinary automatic knockdown.",
+            "scope": "KM1 Mining Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 112,
+              "pdfPage1Based": 113,
+              "sourceEntryKey": "SGD-DROID-023",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-SLAMMER"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-023-ACTION-STABILITY",
+            "statement": "One free action: +5 to avoid being knocked prone; not a general Reflex bonus.",
+            "scope": "KM1 Mining Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 112,
+              "pdfPage1Based": 113,
+              "sourceEntryKey": "SGD-DROID-023",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-STABILITY"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -14353,7 +14682,68 @@
           }
         ]
       },
-      "modifications": {},
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-023-VARIANT-EXCAVATION-DROID",
+            "statement": "Replace KM1 laser cutters with heavy cutters treated as heavy blaster rifles (maximum 12 squares); swap duranium for neutronium plating (+11 armor); choose Improved Damage Threshold and reduce speed to 4 squares. Optional specialized variant not factory armor or speed.",
+            "scope": "KM1 Mining Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 113,
+              "pdfPage1Based": 114,
+              "sourceEntryKey": "SGD-DROID-023",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-EXCAVATION-DROID"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-023-VARIANT-WALL-WALKER",
+            "statement": "Add climbing claws; permits movement on mine walls/ceilings and firm surfaces, and resists dislodging with favorable Strength/grapple outcome as printed; no automatic spider-climb capability granted to base KM1.",
+            "scope": "KM1 Mining Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 113,
+              "pdfPage1Based": 114,
+              "sourceEntryKey": "SGD-DROID-023",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-WALL-WALKER"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "constraints": [
+          {
+            "ruleId": "SGD-DROID-023-CONSTRAINT-SHIELD-ONLY-SR10",
+            "statement": "Factory mining shield generator SR10 plus reroll Endurance to resist environmental damage/effects (take better). It does not grant unrestricted hazard immunity.",
+            "scope": "KM1 Mining Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 112,
+              "pdfPage1Based": 113,
+              "sourceEntryKey": "SGD-DROID-023",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-SHIELD-ONLY-SR10"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-023-CONSTRAINT-LASER-CUTTER-RANGE",
+            "statement": "Two tool-mounted cutters have maximum 12-square range; independent mount/weapon attack authority pending.",
+            "scope": "KM1 Mining Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 112,
+              "pdfPage1Based": 113,
+              "sourceEntryKey": "SGD-DROID-023",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-LASER-CUTTER-RANGE"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -14430,12 +14820,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M3 fifteen-record primary PDF review, printed pp.112-113: structured installed source systems, 8 components, 2 physical appendages, 1 movement modes, printed classes and explicit possessions. KM1 prohibits heroic play. Two laser cutters have 12-square maximum range and source-specific weapon equivalence; not automatic independent attacks. Mechanical status remains partial pending canonical feat/talent IDs, authoritative mount and ammunition rules, all conditional action predicates, and full semantic certification. Runtime deferred.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M3 fifteen-record primary PDF review, printed pp.112-113: structured installed source systems, 8 components, 2 physical appendages, 1 movement modes, printed classes and explicit possessions. KM1 prohibits heroic play. Two laser cutters have 12-square maximum range and source-specific weapon equivalence; not automatic independent attacks. Mechanical status remains partial pending canonical feat/talent IDs, authoritative mount and ammunition rules, all conditional action predicates, and full semantic certification. Runtime deferred. M9 second source-mechanical pass printed pp.112-113; 4 protocol actions, 2 nonfactory variants and 2 constraints. Remains partial.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p112:PDF-page-113",
           "SGD-CENSUS:SGD-DROID-023",
           "SGD:p112:PDF-p113:visual-statblock-field-review",
-          "SGD:p112-p113:PDF-p113-p114:M3-full-primary-review"
+          "SGD:p112-p113:PDF-p113-p114:M3-full-primary-review",
+          "SGD:p112-p113:PDF-p113-p114:M9-source-deepening"
         ]
       }
     },
@@ -14717,6 +15108,64 @@
             "operationStatus": "source-only",
             "attackBonus": 1
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-024-ACTION-ADVANCED-SENSORS",
+            "statement": "Two swift once/turn: successful Perception senses EM energy, radiation and seismic activity within 500m or movement within 12 squares; no automatic map reveal.",
+            "scope": "M38 Explorer Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 114,
+              "pdfPage1Based": 115,
+              "sourceEntryKey": "SGD-DROID-024",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-ADVANCED-SENSORS"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-024-ACTION-AVOID-SURPRISE",
+            "statement": "One free action: battle-start Perception success prevents master from being surprised.",
+            "scope": "M38 Explorer Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 114,
+              "pdfPage1Based": 115,
+              "sourceEntryKey": "SGD-DROID-024",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-AVOID-SURPRISE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-024-ACTION-KNOW-DIRECTION",
+            "statement": "Two swift once/turn: successful Survival identifies correct direction in planetary wilderness.",
+            "scope": "M38 Explorer Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 114,
+              "pdfPage1Based": 115,
+              "sourceEntryKey": "SGD-DROID-024",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-KNOW-DIRECTION"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-024-ACTION-SENSOR-SWEEP",
+            "statement": "Two swift once/turn: successful Perception detects lifeforms within 24 squares; check required.",
+            "scope": "M38 Explorer Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 114,
+              "pdfPage1Based": 115,
+              "sourceEntryKey": "SGD-DROID-024",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-SENSOR-SWEEP"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -14852,9 +15301,114 @@
         ]
       },
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-024-VARIANT-ENGINEER",
+            "statement": "Install three additional torso tool appendages each DC20 Mechanics and 1 hour; attach arc welder, shock probe and laser cutter each DC15 Mechanics and 30 minutes; diagnostics linked to holorecorder allows reroll Mechanics keeping better, retrain Survival to Mechanics and Skill Focus (Perception) to (Mechanics), buy tool kit.",
+            "scope": "M38 Explorer Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 115,
+              "pdfPage1Based": 116,
+              "sourceEntryKey": "SGD-DROID-024",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-ENGINEER"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-024-VARIANT-NAVICOMPUTER",
+            "statement": "Replace holorecorder and 5kg internal storage with astrogation buffer of six memory units DC15 Mechanics 1 hour; add tool appendage and scomp link; text grants Skill Focus (Use Computer) bonus feat only with linked buffer, retrain Survival to Use Computer and change Skill Focus from Perception. Not factory stock.",
+            "scope": "M38 Explorer Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 115,
+              "pdfPage1Based": 116,
+              "sourceEntryKey": "SGD-DROID-024",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-NAVICOMPUTER"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-024-VARIANT-PATROL-DROID",
+            "statement": "Swap at least one hand for tool appendage with rifle; DC15 Mechanics, 1 hour; optionally locked access and glowrod (+2 aid attacks in low light/darkness), retrain pistol proficiency to rifle proficiency, and Knowledge (physical sciences) to Initiative.",
+            "scope": "M38 Explorer Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 115,
+              "pdfPage1Based": 116,
+              "sourceEntryKey": "SGD-DROID-024",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-PATROL-DROID"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "constraints": [
+          {
+            "ruleId": "SGD-DROID-024-CONSTRAINT-ENGINEER-PREREQUISITES",
+            "statement": "Re-roll from diagnostics + holorecorder applies to Mechanics checks; not blanket rerolls and requires specific installed tools, class skill retraining and purchasing tool kit.",
+            "scope": "M38 Explorer Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 115,
+              "pdfPage1Based": 116,
+              "sourceEntryKey": "SGD-DROID-024",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-ENGINEER-PREREQUISITES"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-024-CONSTRAINT-NAVICOMPUTER-REPLACEMENTS",
+            "statement": "Navicomputer removes holorecorder and original storage; six memory units cannot silently coexist with both removed equipment.",
+            "scope": "M38 Explorer Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 115,
+              "pdfPage1Based": 116,
+              "sourceEntryKey": "SGD-DROID-024",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-NAVICOMPUTER-REPLACEMENTS"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-024-CONSTRAINT-HERO-CHASSIS-SEPARATION",
+            "statement": "Heroic M38 uses stock probe chassis with distinct starting selections, not automatically scout 2 and all printed feats/talents.",
+            "scope": "M38 Explorer Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 115,
+              "pdfPage1Based": 116,
+              "sourceEntryKey": "SGD-DROID-024",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-HERO-CHASSIS-SEPARATION"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
-        "heroEligibility": "allowed"
+        "heroEligibility": "allowed",
+        "startingSelections": [
+          {
+            "ruleId": "SGD-DROID-024-PC-HEROIC-ROUTE",
+            "statement": "Heroic M38 uses stock probe chassis, scout suggested; droid cannot take Shake It Off because it lacks Constitution. Replaces starting internal comlink and locked access with advanced sensors, exchanges claw/tool appendages and storage as printed; buy holorecorder.",
+            "scope": "M38 Explorer Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 115,
+              "pdfPage1Based": 116,
+              "sourceEntryKey": "SGD-DROID-024",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "PC-HEROIC-ROUTE"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "vehicleLink": {},
       "economics": {
@@ -14890,12 +15444,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M3 fifteen-record primary PDF review, printed pp.114-115: structured installed source systems, 9 components, 2 physical appendages, 1 movement modes, printed classes and explicit possessions. M38 Advanced Sensors requires a successful Perception check; modification sidebars are not stock systems. Mechanical status remains partial pending canonical feat/talent IDs, authoritative mount and ammunition rules, all conditional action predicates, and full semantic certification. Runtime deferred.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M3 fifteen-record primary PDF review, printed pp.114-115: structured installed source systems, 9 components, 2 physical appendages, 1 movement modes, printed classes and explicit possessions. M38 Advanced Sensors requires a successful Perception check; modification sidebars are not stock systems. Mechanical status remains partial pending canonical feat/talent IDs, authoritative mount and ammunition rules, all conditional action predicates, and full semantic certification. Runtime deferred. M9 second source-mechanical pass printed pp.114-115; 4 protocol actions, 3 nonfactory variants and 3 constraints. Remains partial.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p114:PDF-page-115",
           "SGD-CENSUS:SGD-DROID-024",
           "SGD:p114:PDF-p115:visual-statblock-field-review",
-          "SGD:p114-p115:PDF-p115-p116:M3-full-primary-review"
+          "SGD:p114-p115:PDF-p115-p116:M3-full-primary-review",
+          "SGD:p114-p115:PDF-p115-p116:M9-source-deepening"
         ]
       }
     },
@@ -15193,6 +15748,78 @@
             "operationStatus": "source-only",
             "attackBonus": 5
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-025-ACTION-DIAGNOSIS",
+            "statement": "One free action: Knowledge (life sciences) check to diagnose injury or disease and report to owner.",
+            "scope": "MEV-Series Medical Evacuation Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 116,
+              "pdfPage1Based": 117,
+              "sourceEntryKey": "SGD-DROID-025",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-DIAGNOSIS"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-025-ACTION-FIRST-AID",
+            "statement": "Two swift once/turn: adjacent Treat Injury DC15 heals target level + amount exceeding DC; each target once/day via this first aid.",
+            "scope": "MEV-Series Medical Evacuation Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 116,
+              "pdfPage1Based": 117,
+              "sourceEntryKey": "SGD-DROID-025",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-FIRST-AID"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-025-ACTION-FOLDING-REPULSORLIFT-BED",
+            "statement": "Protocol one swift once/turn deploys bed; main special quality says move action; deployed bed needed for passenger, changing footprint to 1x2 squares.",
+            "scope": "MEV-Series Medical Evacuation Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 116,
+              "pdfPage1Based": 117,
+              "sourceEntryKey": "SGD-DROID-025",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-FOLDING-REPULSORLIFT-BED"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-025-ACTION-QUICK-LOAD",
+            "statement": "Protocol two swift once/turn loads willing/unconscious passenger; main special quality says move action and permits during two-move turn. No action arbitration.",
+            "scope": "MEV-Series Medical Evacuation Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 116,
+              "pdfPage1Based": 117,
+              "sourceEntryKey": "SGD-DROID-025",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-QUICK-LOAD"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-025-ACTION-REVIVIFY",
+            "statement": "Two swift once/turn: DC20 Treat Injury adjacent target currently at 0 HP; on success protocol treats target unconscious rather than dead. Target scope/other recovery mechanics pending.",
+            "scope": "MEV-Series Medical Evacuation Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 116,
+              "pdfPage1Based": 117,
+              "sourceEntryKey": "SGD-DROID-025",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-REVIVIFY"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -15367,9 +15994,114 @@
           }
         ]
       },
-      "modifications": {},
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-025-VARIANT-HIGH-SPEED-BOOSTER",
+            "statement": "Alternative 1: repulsorlift boost +1 speed, DC20 Mechanics with Tech Specialist feat, 1,000 credits, 1 day. Alternative 2: rocket booster adds 2 speed when sled deployed, 10 charges at 2 charges per round; DC25 Mechanics, 5,000 credits, 1 day, DC15 Use Computer programming. Do not stack or grant infinite charges.",
+            "scope": "MEV-Series Medical Evacuation Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 117,
+              "pdfPage1Based": 118,
+              "sourceEntryKey": "SGD-DROID-025",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-HIGH-SPEED-BOOSTER"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-025-VARIANT-IMPROVED-ENCLOSURE",
+            "statement": "DC20 Mechanics, 2,000 credits, 3 days encloses bed sides giving patient cover, but bed can no longer fold, footprint always 1x2. Quick Load -5 penalty while taking two move actions, medpac capacity rises from six to twelve.",
+            "scope": "MEV-Series Medical Evacuation Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 117,
+              "pdfPage1Based": 118,
+              "sourceEntryKey": "SGD-DROID-025",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-IMPROVED-ENCLOSURE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-025-VARIANT-SPECIALIZED-PROCESSOR",
+            "statement": "DC20 Mechanics, 2,000 credits, 2 days adds locomotion subprocesser; permits one move action as a swift each turn but must move at least one square while using it. No unrestricted extra attack or any-action conversion.",
+            "scope": "MEV-Series Medical Evacuation Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 117,
+              "pdfPage1Based": 118,
+              "sourceEntryKey": "SGD-DROID-025",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-SPECIALIZED-PROCESSOR"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "constraints": [
+          {
+            "ruleId": "SGD-DROID-025-CONSTRAINT-BED-ACTION-AND-FOOTPRINT",
+            "statement": "Main bed deploy costs move, protocol swift; deployment required to carry at most Medium passenger, footprint 1x2 while open; no always-on 1x2 factory footprint.",
+            "scope": "MEV-Series Medical Evacuation Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 116,
+              "pdfPage1Based": 117,
+              "sourceEntryKey": "SGD-DROID-025",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-BED-ACTION-AND-FOOTPRINT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-025-CONSTRAINT-QUICK-LOAD-ACTION",
+            "statement": "Main Quick Load requires move, protocol two swift; recipient must be willing/unconscious and loaded onto deployed bed; conflicting cost unresolved.",
+            "scope": "MEV-Series Medical Evacuation Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 116,
+              "pdfPage1Based": 117,
+              "sourceEntryKey": "SGD-DROID-025",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-QUICK-LOAD-ACTION"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-025-CONSTRAINT-CAPACITY-AND-ROCKET-CHARGES",
+            "statement": "Improved Enclosure loses folding and increases medpac stock capacity to 12; booster rockets consume two of 10 charges per round when activated, neither variant is factory.",
+            "scope": "MEV-Series Medical Evacuation Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 117,
+              "pdfPage1Based": 118,
+              "sourceEntryKey": "SGD-DROID-025",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-CAPACITY-AND-ROCKET-CHARGES"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
-        "heroEligibility": "allowed"
+        "heroEligibility": "allowed",
+        "startingSelections": [
+          {
+            "ruleId": "SGD-DROID-025-PC-HEROIC-ROUTE",
+            "statement": "Heroic MEV uses stock medical chassis; choose noble or soldier with actual class/feat grants, purchase any extra tool appendage, medical kit, surgery kit and medpacs as appropriate; published nonheroic 5 not automatic.",
+            "scope": "MEV-Series Medical Evacuation Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 117,
+              "pdfPage1Based": 118,
+              "sourceEntryKey": "SGD-DROID-025",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "PC-HEROIC-ROUTE"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "vehicleLink": {},
       "economics": {
@@ -15379,7 +16111,62 @@
       "text": {
         "mechanicsNotes": "Source language line preserved in sidecar evidence; speaking vs understanding remains unverified."
       },
-      "exceptions": {},
+      "exceptions": {
+        "sourceContradictions": [
+          {
+            "issueId": "SGD-025-FOLDING-BED-ACTION-CONFLICT",
+            "fieldPointers": [
+              "/rules/conditionalMechanics",
+              "/combat/specialActions"
+            ],
+            "statements": [
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 116,
+                "pdfPage1Based": 117,
+                "sourceEntryKey": "SGD-DROID-025",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "SGD-025-FOLDING-BED-ACTION-CONFLICT-MAIN: Main folding bed: move action to deploy"
+              },
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 116,
+                "pdfPage1Based": 117,
+                "sourceEntryKey": "SGD-DROID-025",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "SGD-025-FOLDING-BED-ACTION-CONFLICT-PROTOCOL: Protocol folding bed: one swift action once per turn"
+              }
+            ],
+            "resolutionStatus": "unresolved"
+          },
+          {
+            "issueId": "SGD-025-QUICK-LOAD-ACTION-CONFLICT",
+            "fieldPointers": [
+              "/rules/conditionalMechanics",
+              "/combat/specialActions"
+            ],
+            "statements": [
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 116,
+                "pdfPage1Based": 117,
+                "sourceEntryKey": "SGD-DROID-025",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "SGD-025-QUICK-LOAD-ACTION-CONFLICT-MAIN: Main Quick Load: move action, possible during two-move turn"
+              },
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 116,
+                "pdfPage1Based": 117,
+                "sourceEntryKey": "SGD-DROID-025",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "SGD-025-QUICK-LOAD-ACTION-CONFLICT-PROTOCOL: Protocol Quick Load: two swift actions once per turn"
+              }
+            ],
+            "resolutionStatus": "unresolved"
+          }
+        ]
+      },
       "fieldStates": {
         "/abilities/con": "explicitly-none"
       },
@@ -15404,12 +16191,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M3 fifteen-record primary PDF review, printed pp.116-117: structured installed source systems, 10 components, 4 physical appendages, 1 movement modes, printed classes and explicit possessions. MEV six medpacs are limited consumables; bed deployment changes fighting space to 1 x 2 and is a move action; passenger loading is separate. Mechanical status remains partial pending canonical feat/talent IDs, authoritative mount and ammunition rules, all conditional action predicates, and full semantic certification. Runtime deferred.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M3 fifteen-record primary PDF review, printed pp.116-117: structured installed source systems, 10 components, 4 physical appendages, 1 movement modes, printed classes and explicit possessions. MEV six medpacs are limited consumables; bed deployment changes fighting space to 1 x 2 and is a move action; passenger loading is separate. Mechanical status remains partial pending canonical feat/talent IDs, authoritative mount and ammunition rules, all conditional action predicates, and full semantic certification. Runtime deferred. M9 second source-mechanical pass printed pp.116-117; 5 protocol actions, 3 nonfactory variants and 3 constraints. Remains partial.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p116:PDF-page-117",
           "SGD-CENSUS:SGD-DROID-025",
           "SGD:p116:PDF-p117:visual-statblock-field-review",
-          "SGD:p116-p117:PDF-p117-p118:M3-full-primary-review"
+          "SGD:p116-p117:PDF-p117-p118:M3-full-primary-review",
+          "SGD:p116-p117:PDF-p117-p118:M9-source-deepening"
         ]
       }
     },

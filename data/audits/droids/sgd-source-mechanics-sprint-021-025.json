@@ -1,0 +1,184 @@
+{
+  "schema": "swse.droids.sgd.source-mechanics-sprint/0.1",
+  "date": "2026-11-02",
+  "bookId": "SGD",
+  "scope": "Second pass source-only, printed pp.108-117 (PDF pp.109-118). 46 records still structurally hydrated; zero strict mechanical certification.",
+  "sourcePdf": "SW Saga - Scavenger's Guide to Droids (optimized).pdf",
+  "records": [
+    {
+      "sourceEntryKey": "SGD-DROID-021",
+      "printedName": "HK-77 Assassin Droid",
+      "pages": [
+        108,
+        109
+      ],
+      "pdfPages1Based": [
+        109,
+        110
+      ],
+      "protocolActions": [
+        "SGD-DROID-021-ACTION-AVOID-SURPRISE",
+        "SGD-DROID-021-ACTION-BLASTER-SURGE",
+        "SGD-DROID-021-ACTION-SALVO",
+        "SGD-DROID-021-ACTION-SUPPORT-FIRE"
+      ],
+      "publishedVariants": [
+        "SGD-DROID-021-VARIANT-FIREFIGHTER",
+        "SGD-DROID-021-VARIANT-GAMBLERS-PROXY"
+      ],
+      "constraints": [
+        "SGD-DROID-021-CONSTRAINT-SURGE-RESOURCE",
+        "SGD-DROID-021-CONSTRAINT-REMOVED-BLASTER-MOUNTS"
+      ],
+      "newContradictions": [
+        "SGD-021-BLASTER-SURGE-ACTION-CONFLICT"
+      ],
+      "mechanicalStatus": "partial",
+      "executionStatus": "source-only"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-022",
+      "printedName": "HKB-3 Hunter-Killer Droid",
+      "pages": [
+        110,
+        111
+      ],
+      "pdfPages1Based": [
+        111,
+        112
+      ],
+      "protocolActions": [
+        "SGD-DROID-022-ACTION-BLASTER-RIFLE",
+        "SGD-DROID-022-ACTION-COORDINATED-TRACKING",
+        "SGD-DROID-022-ACTION-SIMULTANEOUS-FIRE"
+      ],
+      "publishedVariants": [
+        "SGD-DROID-022-VARIANT-JAMMER"
+      ],
+      "constraints": [
+        "SGD-DROID-022-CONSTRAINT-SENSOR-NOT-ATTACK",
+        "SGD-DROID-022-CONSTRAINT-PROCESSOR-DEPENDENCE",
+        "SGD-DROID-022-CONSTRAINT-JAMMER-OPPOSED-CHECK"
+      ],
+      "newContradictions": [],
+      "mechanicalStatus": "partial",
+      "executionStatus": "source-only"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-023",
+      "printedName": "KM1 Mining Droid",
+      "pages": [
+        112,
+        113
+      ],
+      "pdfPages1Based": [
+        113,
+        114
+      ],
+      "protocolActions": [
+        "SGD-DROID-023-ACTION-ADAPTABLE-PROGRAMMING",
+        "SGD-DROID-023-ACTION-IMPROVISED-FIRE",
+        "SGD-DROID-023-ACTION-SLAMMER",
+        "SGD-DROID-023-ACTION-STABILITY"
+      ],
+      "publishedVariants": [
+        "SGD-DROID-023-VARIANT-EXCAVATION-DROID",
+        "SGD-DROID-023-VARIANT-WALL-WALKER"
+      ],
+      "constraints": [
+        "SGD-DROID-023-CONSTRAINT-SHIELD-ONLY-SR10",
+        "SGD-DROID-023-CONSTRAINT-LASER-CUTTER-RANGE"
+      ],
+      "newContradictions": [],
+      "mechanicalStatus": "partial",
+      "executionStatus": "source-only"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-024",
+      "printedName": "M38 Explorer Droid",
+      "pages": [
+        114,
+        115
+      ],
+      "pdfPages1Based": [
+        115,
+        116
+      ],
+      "protocolActions": [
+        "SGD-DROID-024-ACTION-ADVANCED-SENSORS",
+        "SGD-DROID-024-ACTION-AVOID-SURPRISE",
+        "SGD-DROID-024-ACTION-KNOW-DIRECTION",
+        "SGD-DROID-024-ACTION-SENSOR-SWEEP"
+      ],
+      "publishedVariants": [
+        "SGD-DROID-024-VARIANT-ENGINEER",
+        "SGD-DROID-024-VARIANT-NAVICOMPUTER",
+        "SGD-DROID-024-VARIANT-PATROL-DROID"
+      ],
+      "constraints": [
+        "SGD-DROID-024-CONSTRAINT-ENGINEER-PREREQUISITES",
+        "SGD-DROID-024-CONSTRAINT-NAVICOMPUTER-REPLACEMENTS",
+        "SGD-DROID-024-CONSTRAINT-HERO-CHASSIS-SEPARATION"
+      ],
+      "newContradictions": [],
+      "mechanicalStatus": "partial",
+      "executionStatus": "source-only"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-025",
+      "printedName": "MEV-Series Medical Evacuation Droid",
+      "pages": [
+        116,
+        117
+      ],
+      "pdfPages1Based": [
+        117,
+        118
+      ],
+      "protocolActions": [
+        "SGD-DROID-025-ACTION-DIAGNOSIS",
+        "SGD-DROID-025-ACTION-FIRST-AID",
+        "SGD-DROID-025-ACTION-FOLDING-REPULSORLIFT-BED",
+        "SGD-DROID-025-ACTION-QUICK-LOAD",
+        "SGD-DROID-025-ACTION-REVIVIFY"
+      ],
+      "publishedVariants": [
+        "SGD-DROID-025-VARIANT-HIGH-SPEED-BOOSTER",
+        "SGD-DROID-025-VARIANT-IMPROVED-ENCLOSURE",
+        "SGD-DROID-025-VARIANT-SPECIALIZED-PROCESSOR"
+      ],
+      "constraints": [
+        "SGD-DROID-025-CONSTRAINT-BED-ACTION-AND-FOOTPRINT",
+        "SGD-DROID-025-CONSTRAINT-QUICK-LOAD-ACTION",
+        "SGD-DROID-025-CONSTRAINT-CAPACITY-AND-ROCKET-CHARGES"
+      ],
+      "newContradictions": [
+        "SGD-025-FOLDING-BED-ACTION-CONFLICT",
+        "SGD-025-QUICK-LOAD-ACTION-CONFLICT"
+      ],
+      "mechanicalStatus": "partial",
+      "executionStatus": "source-only"
+    }
+  ],
+  "totals": {
+    "models": 5,
+    "protocolActions": 20,
+    "optionalVariants": 11,
+    "modelConstraints": 13,
+    "heroConstructionRoutes": 3,
+    "unresolvedPrintedContradictionsNew": 3,
+    "hydrated": 46,
+    "mechanicallyCertified": 0
+  },
+  "validation": {
+    "sourcePagesRendered": true,
+    "identityAndNamePageMatched": true,
+    "claimCitationsComplete": true,
+    "attackSourceOnly": true,
+    "noCertificationPromotion": true,
+    "originalPythonSchema": "NOT_RUN",
+    "foundryRuntime": "NOT_RUN",
+    "productionMutations": 0
+  },
+  "next": "SGD-DROID-026-030 deep source-mechanical second pass."
+}
