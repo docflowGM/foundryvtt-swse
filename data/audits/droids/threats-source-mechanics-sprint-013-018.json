@@ -1,0 +1,102 @@
+{
+  "schema": "swse.droids.threats.source-mechanics-sprint/0.1",
+  "date": "2026-11-02",
+  "branch": "audit/droid-publication-census-2026-10-29",
+  "bookId": "THREATS",
+  "scope": "Second pass six droids printed pp.144-149 (PDF 145-150). Source-only rules and asset ownership; no automation.",
+  "records": [
+    {
+      "id": "THREATS-DROID-013",
+      "name": "GRZ-6B Demolitions Droid",
+      "printedPage": 144,
+      "components": 6,
+      "printedFeatGroups": 8,
+      "printedTalentGroups": 0,
+      "sourceConstraints": 4,
+      "conflictIds": [
+        "THREATS-013-PLASMA-WEAPON-NAME"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "THREATS-DROID-014",
+      "name": "3PX Espionage Droid",
+      "printedPage": 145,
+      "components": 9,
+      "printedFeatGroups": 9,
+      "printedTalentGroups": 3,
+      "sourceConstraints": 4,
+      "conflictIds": [],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "THREATS-DROID-015",
+      "name": "TO-D Interrogation Droid",
+      "printedPage": 146,
+      "components": 9,
+      "printedFeatGroups": 6,
+      "printedTalentGroups": 1,
+      "sourceConstraints": 4,
+      "conflictIds": [],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "THREATS-DROID-016",
+      "name": "GH-7 Medical Droid",
+      "printedPage": 147,
+      "components": 10,
+      "printedFeatGroups": 5,
+      "printedTalentGroups": 0,
+      "sourceConstraints": 3,
+      "conflictIds": [],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "THREATS-DROID-017",
+      "name": "EG-6 Series Power Droid",
+      "printedPage": 148,
+      "components": 6,
+      "printedFeatGroups": 2,
+      "printedTalentGroups": 0,
+      "sourceConstraints": 3,
+      "conflictIds": [],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "THREATS-DROID-018",
+      "name": "DRK-1 Probe Droid",
+      "printedPage": 149,
+      "components": 8,
+      "printedFeatGroups": 5,
+      "printedTalentGroups": 0,
+      "sourceConstraints": 4,
+      "conflictIds": [],
+      "mechanicalStatus": "partial"
+    }
+  ],
+  "totals": {
+    "models": 6,
+    "components": 48,
+    "appendages": 11,
+    "possessions": 13,
+    "feats": 35,
+    "talents": 4,
+    "skills": 26,
+    "constraints": 22,
+    "attacks": 12,
+    "conflicts": 1,
+    "bookIdentities": 29,
+    "deepSourceReviewed": 18,
+    "mechanicallyCertified": 0
+  },
+  "acceptance": {
+    "all29SourceKeysUnchanged": true,
+    "noAttackPromotion": true,
+    "sourceOnly": true,
+    "oneNewWeaponNameDiscrepancy": true,
+    "fullSchemaNotRun": true,
+    "foundryRuntimeNotRun": true,
+    "productionChanges": 0
+  },
+  "next": "THREATS-DROID-019-024 printed pp.150-155"
+}
