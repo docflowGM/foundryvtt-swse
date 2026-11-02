@@ -1,5 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 import { planEnforcerResourceEntitlement } from '../scripts/engine/progression/utils/enforcer-resources-entitlement.js';
 import { auditLevelUpActorAfterFinalization } from '../scripts/engine/progression/utils/levelup-finalization-audit.js';
 
@@ -50,4 +54,12 @@ test('finalization audit requires Enforcer resource ledger and rejects currency-
   existing:[],classLevel:1,heroicLevel:8,sessionId:'test'
  }).entries;
  assert.deepEqual(auditLevelUpActorAfterFinalization(a,m,draft).errors,[]);
+});
+
+test('Enforcer finalizer depends on existing class-level split, not an unverified total level',()=>{
+ const source=fs.readFileSync(path.join(root,'scripts/apps/progression-framework/shell/progression-finalizer.js'),'utf8');
+ assert.match(source,/const split = getLevelSplit\(actor\)/);
+ assert.match(source,/split\.totalLevel \+ 1 !== Number\(levelUpManifest\.characterLevel\)/);
+ assert.match(source,/const heroicAfter = split\.heroicLevel \+ 1/);
+ assert.match(source,/set\['flags\.swse\.classFeatures\.enforcer\.resources'\]/);
 });
