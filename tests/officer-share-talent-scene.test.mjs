@@ -13,10 +13,12 @@ const second = actor('second');
 const source = token('source',officer,0,0);
 const target = token('target',ally,500,0);
 const other = token('other',second,300,0);
+// Foundry v13 measurePath().distance is measured in SCENE DISTANCE UNITS,
+// not canvas pixels. Here 100px represents one 5-unit square.
 const grid = {measurePath: points => ({distance:Math.hypot(
   points[1].x-points[0].x,points[1].y-points[0].y,
-)})};
-const scene = {id:'scene-1',grid:{distance:100}};
+) / 100 * 5})};
+const scene = {id:'scene-1',grid:{distance:5}};
 const canvasRef = {scene,grid,tokens:{placeables:[source,target,other]}};
 const combat = {id:'combat-1',started:true,scene:'scene-1',combatants:[
   {tokenId:'source'},{tokenId:'target'},{tokenId:'other'},
