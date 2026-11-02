@@ -45,6 +45,8 @@ import {
   mergeLedgerIntoPending,
 } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 import { hasPrerequisites as classHasPrerequisites } from '/systems/foundryvtt-swse/scripts/data/prestige-prerequisites.js';
+import { DSPEngine } from '/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js';
+import { evaluateMasterPrivateerPiracy } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/master-privateer-piracy-rules.js';
 
 /**
  * Item domains that carry player-facing prerequisites and must be re-checked.
@@ -198,6 +200,16 @@ async function resolveCandidate(domain, entry) {
 function evaluateClassSelection(actor, classSelection, pending, details) {
   const name = entryName(classSelection);
   if (!name) return null;
+  // Piracy is an ONGOING restriction, not the initial prestige-entry table.
+  // Validate it against the current Actor again immediately before finalization.
+  const piracy = evaluateMasterPrivateerPiracy({
+    actor,className:name,
+    darkSideScore:DSPEngine.getValue(actor),darkSideMax:DSPEngine.getMax(actor),
+  });
+  if (piracy.blocked) {
+    details.push({domain:'class',name,legal:false,missing:[piracy.reason],unresolved:[]});
+    return {error:`Progression finalization blocked: ${piracy.reason}.`};
+  }
   // Base classes carry no prerequisites in SWSE — only prestige classes do. Gating
   // on the prestige prerequisite table avoids any chance of spuriously blocking a
   // base-class chargen/level-up and scopes this check to where drift can occur.
