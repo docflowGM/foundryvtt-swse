@@ -42,3 +42,36 @@ export function planOfficerShareTalentExpiry({actor,encounterId}={}) {
   }
   return {items:[...itemIds],effects:effects.map(idOf)};
 }
+
+/**
+ * Attempt cleanup for all reachable recipient Actors, even if one actor's
+ * document or restoration is malformed. A failed actor is NEVER reported as
+ * cleaned, and cannot suppress independent cleanup on other actors.
+ * The caller must notify the GM whenever failures.length > 0.
+ */
+export async function executeOfficerShareTalentExpiry({
+  actors, encounterId, applyMutationPlan,
+}={}) {
+  if(!Array.isArray(actors) || typeof applyMutationPlan!=='function'
+    || typeof encounterId!=='string' || !encounterId.trim()) {
+    throw new Error('Incomplete Share Talent cleanup authority');
+  }
+  const expired=[],failures=[];
+  for(const actor of actors) {
+    try {
+      const plan=planOfficerShareTalentExpiry({actor,encounterId});
+      if(!plan.items.length)continue;
+      await applyMutationPlan(actor,{
+        delete:{effects:plan.effects,items:plan.items},
+      },{source:'OfficerShareTalentService.expireEncounter',transactional:true});
+      expired.push({actorId:actor.id,actorUuid:actor.uuid||null,
+        removed:plan.items.length,effectsRemoved:plan.effects.length});
+    } catch(error) {
+      failures.push({
+        actorId:actor?.id||null,actorUuid:actor?.uuid||null,
+        reason:String(error?.message||error),
+      });
+    }
+  }
+  return {expired,failures,success:failures.length===0};
+}
