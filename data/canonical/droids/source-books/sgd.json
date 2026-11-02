@@ -270,6 +270,36 @@
             "operationStatus": "source-only",
             "attackBonus": 0
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-001-ACTION-MIGHTY-SWING-PROTOCOL",
+            "statement": "One swift action, once per turn; next melee attack in same round gains one damage die; source-only action, not an extra free attack.",
+            "scope": "Protocol: Mighty Swing",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 68,
+              "pdfPage1Based": 69,
+              "sourceEntryKey": "SGD-DROID-001",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-MIGHTY-SWING-PROTOCOL"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-001-ACTION-HEAT-RESISTANT-SOURCE",
+            "statement": "Upon extreme heat/fire successful attack, half damage; on failed attack, no damage; no fire/heat-related condition track movement. Special quality linked in heroic route to separately purchased duravlex shell.",
+            "scope": "8D heat resistant, printed special quality",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 68,
+              "pdfPage1Based": 69,
+              "sourceEntryKey": "SGD-DROID-001",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-HEAT-RESISTANT-SOURCE"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -408,7 +438,68 @@
         ]
       },
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-001-VARIANT-DAMAGE-CONTROL",
+            "statement": "Upgrade movement to speed 6; retrain Knowledge (physical sciences) to Mechanics and preferably Skill Focus (Endurance) to Skill Focus (Mechanics); install fire extinguisher and give tool kit; full package permits jury-rigging damaged ship system to restore 2d8 ship HP and move ship +2 condition steps. Not baseline stock; does not waive vehicle repair action requirements.",
+            "scope": "Damage control variant (starship systems only)",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 69,
+              "pdfPage1Based": 70,
+              "sourceEntryKey": "SGD-DROID-001",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-DAMAGE-CONTROL"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-001-VARIANT-MASTERS-DECOY",
+            "statement": "Replace both claws with hands; reprogram vocabulator to master's voice; add cosmetic disguise and retrain a skill to Deception; when an observer is at least 3 squares away, may reroll Deception twice and keep best of three rolls. Only the completed variant gains this, not stock 8D.",
+            "scope": "Master's Decoy variant",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 69,
+              "pdfPage1Based": 70,
+              "sourceEntryKey": "SGD-DROID-001",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-MASTERS-DECOY"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-001-VARIANT-SURVIVALIST",
+            "statement": "Chassis change costs 1,000 credits, DC 20 Mechanics and 4 hours; retrain Knowledge (physical sciences) to Survival, Skill Focus (Endurance) to Skill Training (Knowledge [life sciences]); may reroll any Survival check. With duravlex shell, automatically succeeds using Endure Extreme Temperatures and needs no field kit. Do not project automatic success to shell-less models.",
+            "scope": "Survivalist variant",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 69,
+              "pdfPage1Based": 70,
+              "sourceEntryKey": "SGD-DROID-001",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-SURVIVALIST"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "constraints": [
+          {
+            "ruleId": "SGD-DROID-001-CONSTRAINT-SURVIVALIST-CONSTRUCTION",
+            "statement": "1,000 credits; DC 20 Mechanics; 4 hours; includes feat/skill retraining, not freely installable on unrelated chassis.",
+            "scope": "Survivalist variant gate",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 69,
+              "pdfPage1Based": 70,
+              "sourceEntryKey": "SGD-DROID-001",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-SURVIVALIST-CONSTRUCTION"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "allowed",
         "creationRoute": "stock-chassis",
@@ -438,6 +529,20 @@
               "sourceEntryKey": "SGD-DROID-001",
               "verifiedBy": "pdf-visual",
               "citationLabel": "SGD-DROID-001-PC-EXTRA-EQUIPMENT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-001-PC-HEROIC-SCOUT-CHOICE",
+            "statement": "Labor chassis; scout recommended starting class, options for Mighty Swing/Extra Second Wind/Armor Proficiency (light), with Armor Proficiency prerequisite for using duravlex shell without check penalty; purchase duravlex shell, darkvision, improved sensor pack and secondary battery separately.",
+            "scope": "Heroic 8D construction",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 69,
+              "pdfPage1Based": 70,
+              "sourceEntryKey": "SGD-DROID-001",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "PC-HEROIC-SCOUT-CHOICE"
             },
             "executionStatus": "source-only"
           }
@@ -477,11 +582,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 68-69 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 68-69 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge. Source-mechanical second pass (2026-11-02): printed paired pages 68-69 visually checked; variant procedures, PC creation, protocol action rules hydrated, all source-only. No executable rights or complete source-mechanical certificate.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p68:PDF-page-69",
           "SGD-CENSUS:SGD-DROID-001",
-          "SGD:p68:PDF-p69:visual-statblock-field-review"
+          "SGD:p68:PDF-p69:visual-statblock-field-review",
+          "SGD:68-69:PDF_RENDERED_2026-11-02:source-mechanical-pass-M5"
         ]
       }
     },
@@ -717,6 +823,64 @@
             "operationStatus": "source-only",
             "attackBonus": 1
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-002-ACTION-ARCHIVE-PROTOCOL",
+            "statement": "Two swift actions, once per turn, to reroll Gather Information/Knowledge while connected to computer, retaining second roll. Competes with main text full-round action; no active decision.",
+            "scope": "A9G Archive Processor protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 70,
+              "pdfPage1Based": 71,
+              "sourceEntryKey": "SGD-DROID-002",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-ARCHIVE-PROTOCOL"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-002-ACTION-IMPROVE-ACCESS",
+            "statement": "Two swift actions, once per turn, Use Computer vs computer Will Defense to improve its attitude.",
+            "scope": "A9G Improve Access protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 70,
+              "pdfPage1Based": 71,
+              "sourceEntryKey": "SGD-DROID-002",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-IMPROVE-ACCESS"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-002-ACTION-ISSUE-ROUTINE-COMMAND",
+            "statement": "One swift action, once per turn, to give routine command to computer already friendly.",
+            "scope": "A9G Issue Routine Command protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 70,
+              "pdfPage1Based": 71,
+              "sourceEntryKey": "SGD-DROID-002",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-ISSUE-ROUTINE-COMMAND"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-002-ACTION-TRANSLATOR-PROTOCOL",
+            "statement": "One free action; DC 10 translation check; only languages the droid knows.",
+            "scope": "A9G Translator protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 70,
+              "pdfPage1Based": 71,
+              "sourceEntryKey": "SGD-DROID-002",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-TRANSLATOR-PROTOCOL"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -828,7 +992,52 @@
           }
         ]
       },
-      "modifications": {},
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-002-VARIANT-FIELD-MEDIC",
+            "statement": "Archive processor redirected to onboard medical database; replaces Knowledge (bureaucracy) and Use Computer trained skills with Knowledge (life sciences) and Treat Injury; archive processor rerolls only Knowledge (life sciences), not all Knowledge; code cylinder replaced by medical kit. Optional integrated head scanners: DC 20 Mechanics and 2 hours; scanners grant +2 equipment Treat Injury stacking with medical kit's +2 for first aid; kit scanner removal frees space for two extra medpacs. All are modifications, not stock.",
+            "scope": "Field Medic variant",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 71,
+              "pdfPage1Based": 72,
+              "sourceEntryKey": "SGD-DROID-002",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-FIELD-MEDIC"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-002-VARIANT-RECONNAISSANCE",
+            "statement": "Covert recorder built into photoreceptors using video recorder or holorecorder; DC 20 Mechanics, 2 hours; optional storage supports sending or locally holding intelligence; suggested skill retraining Knowledge (bureaucracy) to Perception, plus Stealth for security. No unprinted auto-Stealth effect.",
+            "scope": "Reconnaissance variant",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 71,
+              "pdfPage1Based": 72,
+              "sourceEntryKey": "SGD-DROID-002",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-RECONNAISSANCE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-002-VARIANT-SLICERS-COMPUTER",
+            "statement": "Portable computer installed into upper back, DC 20 Mechanics, 1 hour. Optional processor sync: DC 20 Mechanics, DC 20 Use Computer, 2 hours; after sync, cooperating slicer rerolls their Use Computer check once per encounter and keeps better result. Bonus belongs to slicer, not automatically the droid.",
+            "scope": "Slicer's Computer variant",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 71,
+              "pdfPage1Based": 72,
+              "sourceEntryKey": "SGD-DROID-002",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-SLICERS-COMPUTER"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "allowed",
         "startingSelections": [
@@ -843,6 +1052,20 @@
               "sourceEntryKey": "SGD-DROID-002",
               "verifiedBy": "pdf-visual",
               "citationLabel": "SGD-DROID-002-PC-PROTOCOL-CHASSIS"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-002-PC-ARCHIVE-INSTEAD-OF-TRANSLATOR",
+            "statement": "Stock protocol chassis and scoundrel suggested; gains archive processor special quality in lieu of translator unit, not in addition; suggested Skill Focus (Use Computer), trained Gather Information/Use Computer, purchased code cylinder.",
+            "scope": "A9G heroic PC construction",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 70,
+              "pdfPage1Based": 71,
+              "sourceEntryKey": "SGD-DROID-002",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "PC-ARCHIVE-INSTEAD-OF-TRANSLATOR"
             },
             "executionStatus": "source-only"
           }
@@ -911,11 +1134,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 70-71 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 70-71 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge. Source-mechanical second pass (2026-11-02): printed paired pages 70-71 visually checked; variant procedures, PC creation, protocol action rules hydrated, all source-only. No executable rights or complete source-mechanical certificate.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p70:PDF-page-71",
           "SGD-CENSUS:SGD-DROID-002",
-          "SGD:p70:PDF-p71:visual-statblock-field-review"
+          "SGD:p70:PDF-p71:visual-statblock-field-review",
+          "SGD:70-71:PDF_RENDERED_2026-11-02:source-mechanical-pass-M5"
         ]
       }
     },
@@ -1212,6 +1436,64 @@
             "operationStatus": "source-only",
             "attackBonus": 3
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-003-ACTION-AVOID-SURPRISE",
+            "statement": "Free action at start of battle: Perception success allows master to avoid surprise; target and success conditions must use correct master relationship.",
+            "scope": "AD Avoid Surprise protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "SGD-DROID-003",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-AVOID-SURPRISE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-003-ACTION-DISABLE-DEVICE",
+            "statement": "Two swift actions, once per turn, Mechanics to disable trap; this is protocol action, not generalized standard-action exemption.",
+            "scope": "AD Disable Device protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "SGD-DROID-003",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-DISABLE-DEVICE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-003-ACTION-IMPROVE-ACCESS",
+            "statement": "Two swift actions, once per turn, Use Computer vs target computer's Will Defense to improve its attitude.",
+            "scope": "AD Improve Access protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "SGD-DROID-003",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-IMPROVE-ACCESS"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-003-ACTION-PATROL-DUTY",
+            "statement": "One swift action, once per turn, Perception vs target Stealth to detect; source-only.",
+            "scope": "AD Patrol Duty protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "SGD-DROID-003",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-PATROL-DUTY"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -1335,10 +1617,73 @@
           }
         ]
       },
-      "equipment": {},
-      "modifications": {},
+      "equipment": {
+        "possessions": []
+      },
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-003-VARIANT-POLICE",
+            "statement": "Remove factory internal weapons-maintenance tool kit and replace with law-enforcement storage; DC 20 Mechanics, 20 minutes. Typically carries binders, secure datapad, glowrod. Replace Knowledge (tactics) with Persuasion: DC 20 Use Computer, 30 minutes. Optional integrated blaster or ordinary carried blaster carbine; mounting is not granted automatically.",
+            "scope": "Police variant",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 73,
+              "pdfPage1Based": 74,
+              "sourceEntryKey": "SGD-DROID-003",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-POLICE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-003-VARIANT-SNIPER",
+            "statement": "Tailor internal toolkit to one specific selected weapon: DC 20 Mechanics, 1 hour; +2 when USING that specific weapon, -2 when using ANY other weapon, including similar model. Optional replace Mechanics with Persuasion: DC 25 Use Computer, 30 minutes. This is weapon-choice scoped, not a universal attack bonus.",
+            "scope": "Sniper variant",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 73,
+              "pdfPage1Based": 74,
+              "sourceEntryKey": "SGD-DROID-003",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-SNIPER"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-003-VARIANT-SPEAKEASY",
+            "statement": "Vocabulator upgrade to intimidate, DC 20 Mechanics, 30 minutes; reprogram Persuasion and Skill Focus (Persuasion). Separate pattern-recognition upgrade grants Skill Focus (Perception), DC 20 Mechanics, 30 minutes. Weapon detector installation is optional, not baseline.",
+            "scope": "Speakeasy variant",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 73,
+              "pdfPage1Based": 74,
+              "sourceEntryKey": "SGD-DROID-003",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-SPEAKEASY"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
-        "heroEligibility": "allowed"
+        "heroEligibility": "allowed",
+        "startingSelections": [
+          {
+            "ruleId": "SGD-DROID-003-PC-CLASS-CHOICE",
+            "statement": "Scoundrel or Soldier class recommended for AD-series heroic droid, rather than automatic grant of printed soldier 1 class and Harm's Way.",
+            "scope": "AD heroic PC advice",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 73,
+              "pdfPage1Based": 74,
+              "sourceEntryKey": "SGD-DROID-003",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "PC-CLASS-CHOICE"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "vehicleLink": {},
       "economics": {
@@ -1359,11 +1704,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 72-73 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 72-73 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge. Source-mechanical second pass (2026-11-02): printed paired pages 72-73 visually checked; variant procedures, PC creation, protocol action rules hydrated, all source-only. No executable rights or complete source-mechanical certificate.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p72:PDF-page-73",
           "SGD-CENSUS:SGD-DROID-003",
-          "SGD:p72:PDF-p73:visual-statblock-field-review"
+          "SGD:p72:PDF-p73:visual-statblock-field-review",
+          "SGD:72-73:PDF_RENDERED_2026-11-02:source-mechanical-pass-M5"
         ]
       }
     },
@@ -1815,6 +2161,94 @@
             },
             "executionStatus": "source-only"
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-004-ACTION-TRANSFORM-MOVEMENT",
+            "statement": "One swift move gives 2 squares walking; two swift moves same turn transform to exclusive wheeled mode, moving 10 squares. Do not grant 10-square wheel speed on a lone swift move.",
+            "scope": "Annihilator locomotion protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 74,
+              "pdfPage1Based": 75,
+              "sourceEntryKey": "SGD-DROID-004",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-TRANSFORM-MOVEMENT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-004-ACTION-AVOID-SURPRISE",
+            "statement": "Free action, Perception check at combat start; on successful check, master avoids surprise.",
+            "scope": "Annihilator Avoid Surprise",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 74,
+              "pdfPage1Based": 75,
+              "sourceEntryKey": "SGD-DROID-004",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-AVOID-SURPRISE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-004-ACTION-BLASTER-BARRAGE",
+            "statement": "Two swift actions once per turn; two ranged attacks at +13 each, 5d8+4 on success; two physical cannons treated as blaster rifles, unresolved exact mounts/attack ownership.",
+            "scope": "Annihilator Blaster Barrage protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 74,
+              "pdfPage1Based": 75,
+              "sourceEntryKey": "SGD-DROID-004",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-BLASTER-BARRAGE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-004-ACTION-RAPID-SHOT",
+            "statement": "One swift action once per turn; ranged +18 for 4d8+4 if successful; alternate to full statblock Rapid Shot, not automatic extra attack.",
+            "scope": "Annihilator Rapid Shot protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 74,
+              "pdfPage1Based": 75,
+              "sourceEntryKey": "SGD-DROID-004",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-RAPID-SHOT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-004-ACTION-TWIN-BLASTER-BURST",
+            "statement": "One swift action once per turn; ranged +20 for 3d8+4 if successful; cannot infer both weapons fire from action title alone.",
+            "scope": "Annihilator Twin Blaster Burst protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 74,
+              "pdfPage1Based": 75,
+              "sourceEntryKey": "SGD-DROID-004",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-TWIN-BLASTER-BURST"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "firingDelegation": [
+          {
+            "ruleId": "SGD-DROID-004-FIRING-DELEGATION-GATE",
+            "statement": "Protocol identifies 2 laser cannons with tool appendages, but does not establish current runtime host slots/mounts or permit derived attacks before separate weapon-source and equipment-capability certification.",
+            "scope": "Annihilator cannons tied to tool appendages",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 74,
+              "pdfPage1Based": 75,
+              "sourceEntryKey": "SGD-DROID-004",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "FIRING-DELEGATION-GATE"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -1959,7 +2393,82 @@
           }
         ]
       },
-      "modifications": {},
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-004-VARIANT-CAPITAL-SHIP-SCRAPPER",
+            "statement": "Remove shield generator: DC 20 Mechanics 1 hour. Reconfigure power to magnetic coupler legs: DC 25 Mechanics 2 hours, permits crawling on non-gravity-controlled ship surfaces. Convert one laser cannon to welding device: DC 25 Mechanics 30 minutes; damage remains printed cannon amount but weld-attack is melee, not ranged. Replace other tool appendage with large pincer: DC 30 Mechanics 2 hours. Each requires separate verified equipment/mount removal and source actions.",
+            "scope": "Capital Ship Scrapper variant",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 75,
+              "pdfPage1Based": 76,
+              "sourceEntryKey": "SGD-DROID-004",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-CAPITAL-SHIP-SCRAPPER"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-004-VARIANT-CARGO-HAULER",
+            "statement": "Install each 200 kg cargo pod: DC 20 Mechanics, 1 hour per pod. Each pod independently imposes -1 to either attack rolls OR Reflex Defense, chosen at installation; do not impose both or assume free slots. Fire-link droids with DC 20 Use Computer for each linked droid; connected droids grant +4 when aiding another linked droid, not universal +4 attack bonus.",
+            "scope": "Cargo Hauler variant",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 75,
+              "pdfPage1Based": 76,
+              "sourceEntryKey": "SGD-DROID-004",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-CARGO-HAULER"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-004-VARIANT-SPACE-SENTRY",
+            "statement": "Install lateral maneuvering thrusters DC 30 Mechanics 2 hours; allows tracking targets but NOT displacement from deployment space. Realign fire-control buffers DC 20 Use Computer (time not stated). Replace one laser cannon with projectile launcher DC 25 Mechanics 1 hour; optional second cannon replacement. No arbitrary starship speed, weapon capacity, mount rights or free missiles inferred.",
+            "scope": "Space Sentry variant",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 75,
+              "pdfPage1Based": 76,
+              "sourceEntryKey": "SGD-DROID-004",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-SPACE-SENTRY"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "constraints": [
+          {
+            "ruleId": "SGD-DROID-004-CONSTRAINT-REMOTE-RECEIVER-HOST",
+            "statement": "Printed remote receiver, not onboard processor; no remote processor or radius can be invented and installed by default.",
+            "scope": "Annihilator remote receiver controller",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 74,
+              "pdfPage1Based": 75,
+              "sourceEntryKey": "SGD-DROID-004",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-REMOTE-RECEIVER-HOST"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-004-CONSTRAINT-WEAPON-PHYSICAL-LINK",
+            "statement": "Protocol Vital Systems explicitly lists two tool appendages WITH laser cannons treated as blaster rifles. Mount identity/effective grip and simultaneous attack legality remain separately uncertified.",
+            "scope": "Annihilator two cannons / appendages",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 74,
+              "pdfPage1Based": 75,
+              "sourceEntryKey": "SGD-DROID-004",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-WEAPON-PHYSICAL-LINK"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -1997,11 +2506,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 74-75 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 74-75 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge. Source-mechanical second pass (2026-11-02): printed paired pages 74-75 visually checked; variant procedures, PC creation, protocol action rules hydrated, all source-only. No executable rights or complete source-mechanical certificate.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p74:PDF-page-75",
           "SGD-CENSUS:SGD-DROID-004",
-          "SGD:p74:PDF-p75:visual-statblock-field-review"
+          "SGD:p74:PDF-p75:visual-statblock-field-review",
+          "SGD:74-75:PDF_RENDERED_2026-11-02:source-mechanical-pass-M5"
         ]
       }
     },
@@ -2231,6 +2741,64 @@
             "operationStatus": "source-only",
             "attackBonus": 1
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-005-ACTION-IMPROVE-ACCESS",
+            "statement": "Two swift actions once per turn, Use Computer vs computer Will Defense for attitude improvement.",
+            "scope": "BLX Improve Access protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 76,
+              "pdfPage1Based": 77,
+              "sourceEntryKey": "SGD-DROID-005",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-IMPROVE-ACCESS"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-005-ACTION-ISSUE-ROUTINE-COMMAND",
+            "statement": "One swift action once per turn; routine command to friendly computer.",
+            "scope": "BLX Issue Routine Command protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 76,
+              "pdfPage1Based": 77,
+              "sourceEntryKey": "SGD-DROID-005",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-ISSUE-ROUTINE-COMMAND"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-005-ACTION-JACK-OF-ALL-TRADES-PROTOCOL",
+            "statement": "One swift action, once per turn and once per encounter, make any skill check as trained. Main character writeup says standard action once per encounter. Unresolved action-cost conflict.",
+            "scope": "BLX Jack of All Trades protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 76,
+              "pdfPage1Based": 77,
+              "sourceEntryKey": "SGD-DROID-005",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-JACK-OF-ALL-TRADES-PROTOCOL"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-005-ACTION-JURY-RIG",
+            "statement": "Two swift actions once per turn, DC 25 Mechanics to temporarily repair disabled mechanical/electronic device; Core p70 Mechanics authority still needed.",
+            "scope": "BLX Jury Rig protocol",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 76,
+              "pdfPage1Based": 77,
+              "sourceEntryKey": "SGD-DROID-005",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-JURY-RIG"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -2354,9 +2922,114 @@
         ]
       },
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-005-VARIANT-ATTACHE",
+            "statement": "Internal comlink installed (prefer encrypted) and optional restraining bolt. Adding translator unit (DC 5/10) REMOVES Jack of All Trades special quality. Replace trained Endurance/Mechanics with Knowledge (bureaucracy)/chosen Knowledge, replace Skill Focus (Endurance) to matching Knowledge. Do not retain Jack of All Trades by default.",
+            "scope": "Attaché variant",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 77,
+              "pdfPage1Based": 78,
+              "sourceEntryKey": "SGD-DROID-005",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-ATTACHE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-005-VARIANT-LONG-RANGE-SENSOR",
+            "statement": "Install standard sensor pack in BLX chest storage, thereby REMOVING 10 kg internal storage; DC 15 Mechanics 1 hour. Install sensor booster separately DC 15 Mechanics 1 hour; retrain Skill Focus (Endurance) to Skill Focus (Use Computer). This BLX-specific combination extends scan range to 5 km, not global Sensor Booster range.",
+            "scope": "Long-Range Sensor variant",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 77,
+              "pdfPage1Based": 78,
+              "sourceEntryKey": "SGD-DROID-005",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-LONG-RANGE-SENSOR"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-005-VARIANT-PORTABLE-GENERATOR",
+            "statement": "Remove BLX internal storage and magnetic feet; replace heuristic processor with BASIC processor; add internal shielding, +1,000 credits, DC 20 Mechanics and 1 day. Chassis then supplies external power and can recharge power packs/energy cells; no unlimited output or free creation is implied.",
+            "scope": "Portable Generator variant",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 77,
+              "pdfPage1Based": 78,
+              "sourceEntryKey": "SGD-DROID-005",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-PORTABLE-GENERATOR"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "constraints": [
+          {
+            "ruleId": "SGD-DROID-005-CONSTRAINT-ATTACHE-JACK-REMOVAL",
+            "statement": "Attache translator addition removes Jack of All Trades; distinct printed transformation, not permission to retain both.",
+            "scope": "BLX Attache translator swap",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 77,
+              "pdfPage1Based": 78,
+              "sourceEntryKey": "SGD-DROID-005",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-ATTACHE-JACK-REMOVAL"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-005-CONSTRAINT-LONG-RANGE-LOST-STORAGE",
+            "statement": "Standard sensor pack takes place of original 10 kg internal storage; the chassis does not retain both storage and sensor pack in the same space.",
+            "scope": "BLX Long-Range Sensor swap",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 77,
+              "pdfPage1Based": 78,
+              "sourceEntryKey": "SGD-DROID-005",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-LONG-RANGE-LOST-STORAGE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-005-CONSTRAINT-PORTABLE-GENERATOR-REPLACE",
+            "statement": "Generator requires basic-processor swap plus removal of storage and magnetic feet; not additive to all original stock systems.",
+            "scope": "BLX generator swap",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 77,
+              "pdfPage1Based": 78,
+              "sourceEntryKey": "SGD-DROID-005",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-PORTABLE-GENERATOR-REPLACE"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
-        "heroEligibility": "allowed"
+        "heroEligibility": "allowed",
+        "startingSelections": [
+          {
+            "ruleId": "SGD-DROID-005-PC-HEROIC-LABOR-CHASSIS",
+            "statement": "Stock labor chassis, scout recommended; replace basic processor with heuristic, claws with hands, replace heavy lifting special quality with Jack of All Trades. Buy magnetic feet and 10 kg internal storage separately; cannot grant both heavy lifting and Jack of All Trades freely.",
+            "scope": "BLX heroic PC construction",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 76,
+              "pdfPage1Based": 77,
+              "sourceEntryKey": "SGD-DROID-005",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "PC-HEROIC-LABOR-CHASSIS"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "vehicleLink": {},
       "economics": {
@@ -2366,7 +3039,36 @@
       "text": {
         "mechanicsNotes": "Source language line preserved in sidecar evidence; speaking vs understanding remains unverified."
       },
-      "exceptions": {},
+      "exceptions": {
+        "sourceContradictions": [
+          {
+            "issueId": "SGD-005-JACK-ACTION-COST-CONFLICT",
+            "fieldPointers": [
+              "/rules/conditionalMechanics",
+              "/combat/specialActions"
+            ],
+            "statements": [
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 76,
+                "pdfPage1Based": 77,
+                "sourceEntryKey": "SGD-DROID-005",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "Main Jack of All Trades: standard action, once per encounter"
+              },
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 76,
+                "pdfPage1Based": 77,
+                "sourceEntryKey": "SGD-DROID-005",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "Protocol Jack of All Trades: one swift action, once per turn, once per encounter"
+              }
+            ],
+            "resolutionStatus": "unresolved"
+          }
+        ]
+      },
       "fieldStates": {
         "/abilities/con": "explicitly-none"
       },
@@ -2392,11 +3094,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 76-77 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 76-77 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge. Source-mechanical second pass (2026-11-02): printed paired pages 76-77 visually checked; variant procedures, PC creation, protocol action rules hydrated, all source-only. No executable rights or complete source-mechanical certificate.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p76:PDF-page-77",
           "SGD-CENSUS:SGD-DROID-005",
-          "SGD:p76:PDF-p77:visual-statblock-field-review"
+          "SGD:p76:PDF-p77:visual-statblock-field-review",
+          "SGD:76-77:PDF_RENDERED_2026-11-02:source-mechanical-pass-M5"
         ]
       }
     },
