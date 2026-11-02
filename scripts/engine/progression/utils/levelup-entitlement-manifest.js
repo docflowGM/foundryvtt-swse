@@ -218,6 +218,8 @@ function normalizeAutomaticFeature(feature, classModel, context) {
       grantedClassLevel: context.selectedClassNextLevel,
       progressionFeatureType: type,
       value: feature?.value ?? feature?.rank ?? null,
+      featureKey: feature?.featureKey || null,
+      unit: feature?.unit || null,
       locked: true,
       choiceEditable: false,
     },
