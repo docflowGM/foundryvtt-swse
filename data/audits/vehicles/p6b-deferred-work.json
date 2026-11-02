@@ -865,6 +865,23 @@
       "impact": "A GM could start two jobs on one hardpoint.",
       "severity": "MINOR",
       "recommendedAction": "Pass pending-job mount keys into the planner like reserved EP."
+    },
+    {
+      "id": "P6B-D-032",
+      "workstream": "P6B-W",
+      "component": "launchers: loading, expenditure and capacity expansion",
+      "source": "Starships of the Galaxy pp. 45-46",
+      "status": "DEPENDENCY_BLOCKED",
+      "reason": "Standard capacities are now recorded from the printed text (vehicle-launcher-capacity.js). Loading and expending ammunition need a launcher attack path (missiles and torpedoes also carry special rules: splash, penetration, shieldbuster SR loss) and a magazine authority; capacity expansion needs V-P6A-03 (EP and cost basis).",
+      "missing": "Launcher attack/ammunition authorities; V-P6A-03 for expansion.",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6A-03"
+      ],
+      "options": [],
+      "impact": "Launchers and ammunition are not installable; capacity is reference data only.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Build the magazine authority on top of the existing AmmoSystem once one launcher family is certified for attack."
     }
   ]
 }

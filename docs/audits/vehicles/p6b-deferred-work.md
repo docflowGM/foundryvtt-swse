@@ -13,7 +13,7 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | ENGINEERING_COMPLEXITY | 10 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 2 |
-| DEPENDENCY_BLOCKED | 6 |
+| DEPENDENCY_BLOCKED | 7 |
 
 ## Items (by severity)
 
@@ -26,6 +26,7 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | P6B-D-023 | P6B-W | all weapons on Colossal (frigate) or larger hulls; turbolasers; capital ship weapons | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-024 | P6B-W | pilot-crewed vehicle weapons fired by a named pilot | SOURCE_EVIDENCE_MISSING | IMPORTANT | no | - |
 | P6B-D-026 | P6B-W | ion cannons (light/medium/heavy, Hapan triple) | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
+| P6B-D-032 | P6B-W | launchers: loading, expenditure and capacity expansion | DEPENDENCY_BLOCKED | IMPORTANT | yes | V-P6A-03 |
 | P6B-D-003 | P6B-1 | jamming-suite, jamming-array | ENGINEERING_COMPLEXITY | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-004 | P6B-1 | combat-thrusters | DEPENDENCY_BLOCKED | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-005 | P6B-1 | navicomputer-limited | RULES_DECISION_REQUIRED | MINOR | yes | V-P6B-01 |
@@ -366,3 +367,13 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 - **Owner ruling needed:** no
 - **Impact:** A GM could start two jobs on one hardpoint.
 - **Recommended action:** Pass pending-job mount keys into the planner like reserved EP.
+
+### P6B-D-032 - launchers: loading, expenditure and capacity expansion
+
+- **Source:** Starships of the Galaxy pp. 45-46
+- **Category / severity:** DEPENDENCY_BLOCKED / IMPORTANT
+- **Reason:** Standard capacities are now recorded from the printed text (vehicle-launcher-capacity.js). Loading and expending ammunition need a launcher attack path (missiles and torpedoes also carry special rules: splash, penetration, shieldbuster SR loss) and a magazine authority; capacity expansion needs V-P6A-03 (EP and cost basis).
+- **Missing:** Launcher attack/ammunition authorities; V-P6A-03 for expansion.
+- **Owner ruling needed:** yes (V-P6A-03)
+- **Impact:** Launchers and ammunition are not installable; capacity is reference data only.
+- **Recommended action:** Build the magazine authority on top of the existing AmmoSystem once one launcher family is certified for attack.

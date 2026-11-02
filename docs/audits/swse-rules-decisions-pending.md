@@ -785,3 +785,9 @@ V-P6-05 was engineering scope, not a rules question. P6B-1 delivered the runtime
 | Resolution | |
 
 - **Revision 17 (2026-11-02):** appended V-P6B-04. No existing entry changed.
+
+### Narrowing note for V-P6A-03 (2026-11-02; not a ruling)
+
+The owner located the printed standard capacities (*Starships of the Galaxy* pp. 45-46): concussion missile launchers light 6 / medium 16 / heavy 30 (+20% cost per additional missile, up to double); proton torpedo launcher 3 (+25% per torpedo, up to 16); shieldbuster torpedo launcher 4 (+25%, up to 8); all mine launchers 6 (+25%, up to 12). These are recorded as source data in `scripts/domain/vehicles/vehicle-launcher-capacity.js`. What remains open in V-P6A-03 is only the optional EXPANSION: whether added capacity costs emplacement points and which cost the percentage applies to. The V-P6A-03 entry above is unchanged.
+
+- **Revision 18 (2026-11-02):** appended the V-P6A-03 narrowing note. No existing entry changed.
