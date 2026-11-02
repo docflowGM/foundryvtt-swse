@@ -562,6 +562,7 @@ function normalizeDefenseKey(value = 'reflex') {
 // See docs/audits/v2-math-integrity-authority-ledger.md's Grapple domain
 // section, "Certification-correction addendum 8".
 function getTargetDefenseValue(actor, key) {
+  if (!actor) return null;
   const prepared = SchemaAdapters.getDefenseTotalIfPrepared(actor, key);
   if (prepared !== null) return prepared;
   const legacy = actor.system?.defenses?.[key]?.total ?? actor.system?.defenses?.[key]?.value ?? null;
