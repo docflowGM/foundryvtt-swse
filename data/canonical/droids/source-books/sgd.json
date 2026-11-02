@@ -8460,6 +8460,78 @@
             "operationStatus": "source-only",
             "attackBonus": 1
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-014-ACTION-BULLY",
+            "statement": "Protocol Bully costs one swift action: successful Persuasion intimidation grants MASTER +2 circumstance bonus on Persuasion. Main prose instead describes EV rerolling its OWN Persuasion and keeping the better result; controlling interpretation unresolved.",
+            "scope": "EV-Series Supervisor Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 94,
+              "pdfPage1Based": 95,
+              "sourceEntryKey": "SGD-DROID-014",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-BULLY"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-014-ACTION-COORDINATED-ATTACK",
+            "statement": "One swift action per turn: allies get +2 attack rolls against an enemy adjacent to droid or within its point-blank range, not all attacks unconditionally.",
+            "scope": "EV-Series Supervisor Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 94,
+              "pdfPage1Based": 95,
+              "sourceEntryKey": "SGD-DROID-014",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-COORDINATED-ATTACK"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-014-ACTION-DEMAND-SURRENDER",
+            "statement": "One swift action once per encounter, target at half or less maximum HP; Persuasion check opposed by target Will Defense.",
+            "scope": "EV-Series Supervisor Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 94,
+              "pdfPage1Based": 95,
+              "sourceEntryKey": "SGD-DROID-014",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-DEMAND-SURRENDER"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-014-ACTION-IMPROVE-ACCESS",
+            "statement": "Two swift actions per turn; Use Computer against target computer Will Defense to improve attitude.",
+            "scope": "EV-Series Supervisor Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 94,
+              "pdfPage1Based": 95,
+              "sourceEntryKey": "SGD-DROID-014",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-IMPROVE-ACCESS"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-014-ACTION-ISSUE-ROUTINE-COMMAND",
+            "statement": "One swift action per turn to give routine command to computer already friendly.",
+            "scope": "EV-Series Supervisor Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 94,
+              "pdfPage1Based": 95,
+              "sourceEntryKey": "SGD-DROID-014",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-ISSUE-ROUTINE-COMMAND"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -8556,9 +8628,86 @@
         ]
       },
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-014-VARIANT-QUARTERMASTER",
+            "statement": "Install video recorder and torso power recharger; supply datapad inventory records. The recipient of an item issued by the modified droid can reroll the FIRST attack or skill check made with that particular item each encounter (keep better) only if the droid maintained the item for at least 8 hours in the preceding 24 hours. No universal ongoing reroll.",
+            "scope": "EV-Series Supervisor Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 95,
+              "pdfPage1Based": 96,
+              "sourceEntryKey": "SGD-DROID-014",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-QUARTERMASTER"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-014-VARIANT-TECHNICIAN",
+            "statement": "REPLACE internal comlink with Diagnostics Package; retrain Persuasion and Skill Focus (Persuasion) to Perception counterparts; add tool kit and mesh tape. Optional replace one hand with tool appendage and multifunction apparatus accommodating up to three tools. Optional calibrated targeting scope DC 15 Mechanics and 15 minutes gives +2 equipment bonus to Mechanics checks to make REPAIRS only.",
+            "scope": "EV-Series Supervisor Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 95,
+              "pdfPage1Based": 96,
+              "sourceEntryKey": "SGD-DROID-014",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-TECHNICIAN"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "constraints": [
+          {
+            "ruleId": "SGD-DROID-014-CONSTRAINT-QUARTERMASTER-ITEM-MAINTENANCE",
+            "statement": "Reroll only first skill check OR attack per issued item each encounter; requires 8 hours of actual maintenance in prior 24 hours and benefits user of gear, not all owners of droid.",
+            "scope": "EV-Series Supervisor Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 95,
+              "pdfPage1Based": 96,
+              "sourceEntryKey": "SGD-DROID-014",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-QUARTERMASTER-ITEM-MAINTENANCE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-014-CONSTRAINT-TECHNICIAN-REPLACE-COMLINK",
+            "statement": "Diagnostics Package displaces internal comlink; tool appendage may replace one hand and calibrated scope grants +2 equipment Mechanics only while repairing, not general Mechanics checks.",
+            "scope": "EV-Series Supervisor Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 95,
+              "pdfPage1Based": 96,
+              "sourceEntryKey": "SGD-DROID-014",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-TECHNICIAN-REPLACE-COMLINK"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
-        "heroEligibility": "allowed"
+        "heroEligibility": "allowed",
+        "startingSelections": [
+          {
+            "ruleId": "SGD-DROID-014-PC-HEROIC-PROTOCOL-CHASSIS",
+            "statement": "Playable heroic EV uses stock protocol chassis, noble class suggested; replace default translator unit with heuristic processor and Bully special quality and purchase internal comlink separately. Suggested class is not an automatic class grant.",
+            "scope": "EV-Series Supervisor Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 95,
+              "pdfPage1Based": 96,
+              "sourceEntryKey": "SGD-DROID-014",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "PC-HEROIC-PROTOCOL-CHASSIS"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "vehicleLink": {},
       "economics": {
@@ -8568,7 +8717,36 @@
       "text": {
         "mechanicsNotes": "Source language line preserved in sidecar evidence; speaking vs understanding remains unverified."
       },
-      "exceptions": {},
+      "exceptions": {
+        "sourceContradictions": [
+          {
+            "issueId": "SGD-014-BULLY-EFFECT-CONFLICT",
+            "fieldPointers": [
+              "/rules/conditionalMechanics",
+              "/combat/specialActions"
+            ],
+            "statements": [
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 94,
+                "pdfPage1Based": 95,
+                "sourceEntryKey": "SGD-DROID-014",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "SGD-014-BULLY-EFFECT-CONFLICT-CLAIM-1: Main Bully: EV rerolls own Persuasion check, keeping better"
+              },
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 94,
+                "pdfPage1Based": 95,
+                "sourceEntryKey": "SGD-DROID-014",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "SGD-014-BULLY-EFFECT-CONFLICT-CLAIM-2: Protocol Bully: successful action grants +2 circumstance to master's Persuasion"
+              }
+            ],
+            "resolutionStatus": "unresolved"
+          }
+        ]
+      },
       "fieldStates": {
         "/abilities/con": "explicitly-none"
       },
@@ -8579,11 +8757,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 94-95 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 94-95 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge. M7 printed pp.94-95 reviewed using rendered source PDF 2026-11-02; printed variant and protocol evidence source-only; no strict mechanical or runtime certificate.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p94:PDF-page-95",
           "SGD-CENSUS:SGD-DROID-014",
-          "SGD:p94:PDF-p95:visual-statblock-field-review"
+          "SGD:p94:PDF-p95:visual-statblock-field-review",
+          "SGD:p94-95:PDF_RENDERED_2026-11-02:M7"
         ]
       }
     },
@@ -8927,6 +9106,78 @@
             },
             "executionStatus": "source-only"
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-015-ACTION-CLAW-ATTACK",
+            "statement": "One swift action per turn: melee claw +13, 1d6+8 damage; distinct from extra-action weapon permissions.",
+            "scope": "FLTCH-Series Battle Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 96,
+              "pdfPage1Based": 97,
+              "sourceEntryKey": "SGD-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-CLAW-ATTACK"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-015-ACTION-HEAVY-RIFLE-ATTACK",
+            "statement": "One swift action per turn: special-grip handheld heavy blaster rifle ranged +10, 3d10+2 damage.",
+            "scope": "FLTCH-Series Battle Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 96,
+              "pdfPage1Based": 97,
+              "sourceEntryKey": "SGD-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-HEAVY-RIFLE-ATTACK"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-015-ACTION-MISSILE-ATTACK",
+            "statement": "One swift action per turn: built-in single-missile launcher ranged +9, 6d6+2 damage, 2-square radius; printed launcher has ONE missile, no unlimited attacks.",
+            "scope": "FLTCH-Series Battle Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 96,
+              "pdfPage1Based": 97,
+              "sourceEntryKey": "SGD-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-MISSILE-ATTACK"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-015-ACTION-NIGHTMARE-PROTOCOL",
+            "statement": "Protocol Nightmare takes TWO swift actions, once per encounter, performing melee attack and intimidating same target with effect after turn. Main prose says a FREE intimidation action during melee attack, once per encounter. Action cost is unresolved.",
+            "scope": "FLTCH-Series Battle Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 96,
+              "pdfPage1Based": 97,
+              "sourceEntryKey": "SGD-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-NIGHTMARE-PROTOCOL"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-015-ACTION-ZERO-RANGE-PROTOCOL",
+            "statement": "Protocol Zero-Range takes TWO swift actions, once per encounter: grab/grapple +13, then immediate arm-mounted rifle +10 for 3d8+2. Main prose describes immediate arm-mounted rifle attack after successful grapple without explicit two-swift cost or encounter cap; unresolved.",
+            "scope": "FLTCH-Series Battle Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 96,
+              "pdfPage1Based": 97,
+              "sourceEntryKey": "SGD-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-ZERO-RANGE-PROTOCOL"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -9080,7 +9331,68 @@
           }
         ]
       },
-      "modifications": {},
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-015-VARIANT-AMMO-BOOST",
+            "statement": "Modify BOTH droid power cable/link (DC20 Mechanics, 500 credits) and a specified handheld blaster (DC20 Mechanics, 100 credits), combined work 2 hours. Linked blaster may draw on droid power reserve; optional overcharge EXPENDS TWO POWER UNITS per attack for +1d6 damage on successful hit. No automatic additional attack or universal +1d6.",
+            "scope": "FLTCH-Series Battle Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 97,
+              "pdfPage1Based": 98,
+              "sourceEntryKey": "SGD-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-AMMO-BOOST"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-015-VARIANT-MERCENARY-RENTAL",
+            "statement": "Rent-specific program DC25 Use Computer and 1 day, optional tracking device DC20 Mechanics. Droid obeys commands only within rental contract, returns to owner/defends itself if contract expires in combat, and ends contract on tampering. No universal rental cost or automatic owner change.",
+            "scope": "FLTCH-Series Battle Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 97,
+              "pdfPage1Based": 98,
+              "sourceEntryKey": "SGD-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-MERCENARY-RENTAL"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "constraints": [
+          {
+            "ruleId": "SGD-DROID-015-CONSTRAINT-WEAPONS-GRIP-MOUNT",
+            "statement": "Separate heavy blaster rifle with special grip, built-in rifle on claw arm, built-in ONE-shot missile launcher and demountable jetpack. Ordinary nongrip weapon incurs printed -5 penalty; weapon identity, grip, physical attack permissions need verification.",
+            "scope": "FLTCH-Series Battle Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 97,
+              "pdfPage1Based": 98,
+              "sourceEntryKey": "SGD-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-WEAPONS-GRIP-MOUNT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-015-CONSTRAINT-AMMO-POWER-UNITS",
+            "statement": "Ammo Boost requires the specifically linked handheld weapon, spends double power units for damage option, demands integration with canonical V2 FireState and power-pack resource authority.",
+            "scope": "FLTCH-Series Battle Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 97,
+              "pdfPage1Based": 98,
+              "sourceEntryKey": "SGD-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-AMMO-POWER-UNITS"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -9092,7 +9404,62 @@
       "text": {
         "mechanicsNotes": "Source language line preserved in sidecar evidence; speaking vs understanding remains unverified."
       },
-      "exceptions": {},
+      "exceptions": {
+        "sourceContradictions": [
+          {
+            "issueId": "SGD-015-NIGHTMARE-ACTION-CONFLICT",
+            "fieldPointers": [
+              "/rules/conditionalMechanics",
+              "/combat/specialActions"
+            ],
+            "statements": [
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 96,
+                "pdfPage1Based": 97,
+                "sourceEntryKey": "SGD-DROID-015",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "SGD-015-NIGHTMARE-ACTION-CONFLICT-CLAIM-1: Main Nightmare: free intimidation action simultaneous with melee once per encounter"
+              },
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 96,
+                "pdfPage1Based": 97,
+                "sourceEntryKey": "SGD-DROID-015",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "SGD-015-NIGHTMARE-ACTION-CONFLICT-CLAIM-2: Protocol Nightmare: two swift actions once per encounter"
+              }
+            ],
+            "resolutionStatus": "unresolved"
+          },
+          {
+            "issueId": "SGD-015-ZERO-RANGE-ACTION-CONFLICT",
+            "fieldPointers": [
+              "/rules/conditionalMechanics",
+              "/combat/specialActions"
+            ],
+            "statements": [
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 96,
+                "pdfPage1Based": 97,
+                "sourceEntryKey": "SGD-DROID-015",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "SGD-015-ZERO-RANGE-ACTION-CONFLICT-CLAIM-1: Main Zero-Range: immediate rifle hit after successful claw grab/grapple; no extra cost stated"
+              },
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 96,
+                "pdfPage1Based": 97,
+                "sourceEntryKey": "SGD-DROID-015",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "SGD-015-ZERO-RANGE-ACTION-CONFLICT-CLAIM-2: Protocol Zero-Range: two swift actions once per encounter for grab plus rifle"
+              }
+            ],
+            "resolutionStatus": "unresolved"
+          }
+        ]
+      },
       "fieldStates": {
         "/abilities/con": "explicitly-none"
       },
@@ -9131,11 +9498,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 96-97 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 96-97 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge. M7 printed pp.96-97 reviewed using rendered source PDF 2026-11-02; printed variant and protocol evidence source-only; no strict mechanical or runtime certificate.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p96:PDF-page-97",
           "SGD-CENSUS:SGD-DROID-015",
-          "SGD:p96:PDF-p97:visual-statblock-field-review"
+          "SGD:p96:PDF-p97:visual-statblock-field-review",
+          "SGD:p96-97:PDF_RENDERED_2026-11-02:M7"
         ]
       }
     },
