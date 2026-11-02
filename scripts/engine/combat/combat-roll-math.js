@@ -48,6 +48,8 @@ import { resolveArmorUsageEffects } from "/systems/foundryvtt-swse/scripts/engin
 import { ResolutionContext } from "/systems/foundryvtt-swse/scripts/engine/resolution/resolution-context.js";
 import { RULES } from "/systems/foundryvtt-swse/scripts/engine/execution/rules/rule-enum.js";
 import { resolveTalentDamageContributions } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-talent-contributions.js";
+import { isPistolWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { trustySidearmDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/class-gunslinger-trusty-sidearm.js";
 import { collectSharedDamageDiceTerms } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-item-dice-contributions.js";
 import { canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
 import { criticalPostMultiplierDice } from "/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-effects.js";
@@ -757,6 +759,7 @@ export function resolveStockDroidDamageContract(actor, weapon, context = {}) {
   if (typedDamagePool.total !== 0) components['Effect Intent'] = typedDamagePool.total;
   if (combatOptionDamage !== 0) components['Combat Option'] = combatOptionDamage;
   if (scopedFeatDamage !== 0) components['Scoped Feat'] = scopedFeatDamage;
+  if (trustySidearm !== 0) components['Trusty Sidearm'] = trustySidearm;
 
   return { formula, total: situationalTotal, components, flags: { stockDroidFlat: true, stockDamageFormula: formula }, typedModifierLedger: typedDamagePool.ledger };
 }
@@ -793,8 +796,11 @@ export function resolveDamageBonus(actor, weapon, context = {}) {
   const typedDamagePool = computeTypedDamageModifierPool(actor, weapon, context, optionModifiers);
   const combatOptionDamage = optionModifiers.damageBonus || 0;
   const scopedFeatDamage = ScopedCombatFeatResolver.getBonus(actor, weapon, 'damage', context);
+  // Gunslinger Trusty Sidearm is a pre-critical weapon-damage bonus.
+  // Resolve through the same pistol authority used by other combat rules.
+  const trustySidearm = trustySidearmDamageBonus(actor,{isPistol:isPistolWeapon(weapon)});
 
-  const total = halfLvl + enhancement + abilityMod + rageMod + rapidAlchemyMod + typedDamagePool.total + combatOptionDamage + scopedFeatDamage;
+  const total = halfLvl + enhancement + abilityMod + rageMod + rapidAlchemyMod + typedDamagePool.total + combatOptionDamage + scopedFeatDamage + trustySidearm;
 
   const components = {};
   if (halfLvl !== 0) components['½ Level'] = halfLvl;
