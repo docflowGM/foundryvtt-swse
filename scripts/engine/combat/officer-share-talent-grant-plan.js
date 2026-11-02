@@ -24,7 +24,11 @@ export function isOfficerSharedTalentPrerequisiteWaived(item) {
 }
 
 const copied=x=>JSON.parse(JSON.stringify(x));
-const uniqueActors=(actors)=>Array.from(new Map(actors.map(a=>[a.id,a])).values());
+/** Preserve synthetic token actors separately from their world Actor source. */
+export function uniqueOfficerShareTalentActors(actors=[]) {
+  const key=actor=>String(actor?.uuid || actor?.id || '');
+  return Array.from(new Map(actors.filter(a=>key(a)).map(actor=>[key(actor),actor])).values());
+}
 
 export function ownOfficerTalentItem(officer,talentId) {
   const suffix=`.${talentId}`;
