@@ -51,8 +51,10 @@ export function resolveOfficerShareTalentScene({
   const recipients = [], proofs = [], seenActors = new Set();
   for (const id of recipientTokenIds) {
     const matches = tokens.filter(token => tokenId(token) === id);
-    if (matches.length !== 1 || !activeTokenIds.has(id)) {
-      throw new Error('Share Talent recipient token is absent from the active encounter');
+    // RAW requires an ally on the scene in range who can see/hear the Officer;
+    // that ally need not have been added to the combat tracker.
+    if (matches.length !== 1) {
+      throw new Error('Share Talent recipient token is absent from the current scene');
     }
     const token = matches[0], target = token.actor;
     const targetId = actorId(token);
