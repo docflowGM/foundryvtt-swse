@@ -9,6 +9,7 @@ const doc=(id,type,name,cost)=>({
 });
 const listing=(id,type='equipment',cost=4000,availability='Restricted')=>({
  id,name:id,type,availability,cost,costStatus:'priced',
+ sourcePack:'foundryvtt-swse.equipment',sourceUuid:`Compendium.foundryvtt-swse.equipment.${id}`,
  doc:doc(id,type,id,cost),
 });
 const index={allItems:[
@@ -59,6 +60,18 @@ test('Enforcer delivery denies unsupported equipment, unknown pricing, overspend
  assert.throws(()=>delivery({...opts,selected:[{id:'kit',quantity:1}],location:''}),/location/);
  assert.throws(()=>delivery({...opts,selected:[{id:'kit',quantity:1}],
   entries:[{...ledger[0],status:'delivered'}]}),/already resolved/);
+});
+test('Resources fail closed against world or ambiguous source entries even with valid pricing',()=>{
+ const options={actor:{id:'PC1'},entries:ledger,classLevel:2,
+   selected:[{id:'kit',quantity:1}],location:'Civilized Base',approvalUserId:'GM'};
+ const world={...listing('kit'),sourcePack:'world',sourceUuid:null};
+ const missing={...listing('kit'),sourceUuid:null};
+ const mismatch={...listing('kit'),sourceUuid:'Compendium.other.pack.kit'};
+ for(const entry of [world,missing,mismatch]){
+   const index={allItems:[entry]};
+   assert.deepEqual(eligible(index),[]);
+   assert.throws(()=>delivery({...options,index}),/not an eligible restricted\/military source item/);
+ }
 });
 test('GM may defer full untouched resources once, preserving next-level carry accounting',()=>{
  const result=planEnforcerEquipmentDeferral({entries:ledger,classLevel:2});
