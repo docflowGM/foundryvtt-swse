@@ -22,6 +22,7 @@ import { FeatEngine } from '../feats/feat-engine.js';
 const CHOICE_TYPES = Object.freeze({
   feat_choice: 'classFeatChoices',
   talent_choice: 'talentChoices',
+  share_talent_choice: 'shareTalentChoices',
   force_power_choice: 'forcePowerChoices',
   force_secret_choice: 'forceSecretChoices',
   force_technique_choice: 'forceTechniqueChoices',
@@ -217,6 +218,8 @@ function normalizeAutomaticFeature(feature, classModel, context) {
       grantedClassLevel: context.selectedClassNextLevel,
       progressionFeatureType: type,
       value: feature?.value ?? feature?.rank ?? null,
+      featureKey: feature?.featureKey || null,
+      unit: feature?.unit || null,
       locked: true,
       choiceEditable: false,
     },
@@ -227,6 +230,7 @@ function countChoices(features = []) {
   const counts = {
     classFeatChoices: 0,
     talentChoices: 0,
+    shareTalentChoices: 0,
     forcePowerChoices: 0,
     forceSecretChoices: 0,
     forceTechniqueChoices: 0,

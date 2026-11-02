@@ -245,6 +245,17 @@ export function validateLevelUpRequiredSelections(manifest, progressionSession) 
     if (selected < required) errors.push(`Choose ${required} class bonus feat${required === 1 ? '' : 's'} from ${manifest.className || 'the leveled class'}`);
   }
 
+  // Share Talent is a separate persistent Officer feature, never a talent grant.
+  // Exact owned identity and eligible tree are rechecked at finalization.
+  const shareCount = Number(manifest.choices?.shareTalentChoices || 0);
+  if (shareCount > 0) {
+    const shares = selectionArray(progressionSession, 'shareTalentSelections');
+    if (manifest.className !== 'Officer' || shareCount !== 1 || shares.length !== 1
+        || !shares[0]?.talentId || shares[0]?.officerLevel !== manifest.classLevel) {
+      errors.push('Officer Share Talent requires exactly one previously-owned canonical talent selection for this class level');
+    }
+  }
+
   if (Number(manifest.choices?.talentChoices || 0) > 0) {
     const required = Number(manifest.choices.talentChoices) || 0;
     const selected = countSelectionEntries(talents);
@@ -298,6 +309,8 @@ export function buildLevelUpFinalizationReceipt(manifest, progressionSession) {
       forceSecrets: selectionNames(selectionArray(progressionSession, 'forceSecrets')),
       forceTechniques: selectionNames(selectionArray(progressionSession, 'forceTechniques')),
       medicalSecrets: selectionNames(selectionArray(progressionSession, 'medicalSecrets')),
+      shareTalentSelections: selectionArray(progressionSession, 'shareTalentSelections').map(s => ({officerLevel:s.officerLevel,talentId:s.talentId,treeId:s.treeId})),
+      enforcerResources: manifest?.className === 'Enforcer' ? {classLevel: manifest.classLevel, kind:'equipment-entitlement-not-currency'} : null,
       starshipManeuvers: selectionNames(selectionArray(progressionSession, 'starshipManeuvers')),
     },
     automaticClassFeatures: selectionNames(manifest?.automaticClassFeatures || []),
@@ -334,6 +347,31 @@ export function auditLevelUpActorAfterFinalization(actor, manifest, progressionS
     if (!hasActorItemNamed(actor, check.name, check.itemKinds, check.refs, mutationPlan)) {
       const label = check.name || asArray(check.refs).find(Boolean) || 'unknown selection';
       errors.push(`Missing ${check.kind}: ${label}`);
+    }
+  }
+
+  // The Officer Share Talent entitlement materializes to a permanent feature
+  // choice flag, not a Talent Item. Include it in post-apply certification.
+  if (Number(manifest.choices?.shareTalentChoices || 0) > 0) {
+    const wanted = selectionArray(progressionSession, 'shareTalentSelections')[0];
+    const stored = actor?.flags?.swse?.classFeatures?.officer?.sharedTalents || [];
+    if (!wanted || !Array.isArray(stored)
+      || !stored.some(entry => entry.officerLevel === manifest.classLevel
+          && entry.talentId === wanted.talentId && entry.treeId === wanted.treeId)) {
+      errors.push('Officer Share Talent permanent selection was not materialized');
+    }
+  }
+
+  if (manifest.className === 'Enforcer') {
+    const entries = actor?.flags?.swse?.classFeatures?.enforcer?.resources || [];
+    const expected = Array.isArray(entries) ? entries.filter(x =>
+      x.enforcerClassLevel === manifest.classLevel) : [];
+    if (expected.length !== 1 || !Number.isInteger(expected[0]?.heroicLevel)
+      || expected[0].heroicLevel < manifest.classLevel
+      || !Number.isInteger(expected[0]?.newValueCredits)
+      || expected[0].newValueCredits !== 2000 * expected[0].heroicLevel
+      || !['awaiting-equipment-selection', 'delivered', 'deferred-to-next-level'].includes(expected[0]?.status)) {
+      errors.push('Enforcer Resources recurring equipment entitlement was not materialized');
     }
   }
 

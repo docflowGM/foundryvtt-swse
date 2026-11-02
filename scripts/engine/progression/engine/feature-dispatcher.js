@@ -25,6 +25,16 @@ async function handleTalentChoice(feature, actor, engine) {
     SWSELogger.log(`Feature: Talent choice (${feature.value || 1} talent(s))`);
 }
 
+async function handleShareTalentChoice(feature, actor, engine) {
+    // Officer Share Talent is NOT an ordinary new-talent choice.
+    // The player selects a previously owned eligible talent for future sharing.
+    if (!engine.data.shareTalentChoices) {
+        engine.data.shareTalentChoices = [];
+    }
+    engine.data.shareTalentChoices.push(feature);
+    SWSELogger.log('Feature: Officer Share Talent choice (already-owned talent only)');
+}
+
 async function handleFeatChoice(feature, actor, engine) {
     // Feat choice features grant a budget for selecting feats
     if (!engine.data.featChoices) {
@@ -192,6 +202,7 @@ export const FEATURE_DISPATCH_TABLE = {
 
     // Choice features (require UI selection)
     'talent_choice': handleTalentChoice,
+    'share_talent_choice': handleShareTalentChoice,
     'feat_choice': handleFeatChoice,
     'skill_choice': handleSkillChoice,
     'force_technique_choice': handleForceTechniqueChoice,

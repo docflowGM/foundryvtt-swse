@@ -1,0 +1,31 @@
+{{!-- Officer Share Talent: canonical already-owned talent choice, NOT a new talent grant --}}
+<div class="prog-force-secret-browse prog-share-talent-browse">
+  <div class="prog-force-secret-browse__intro">
+    <h3>Officer Share Talent — Class Level {{officerLevel}}</h3>
+    <p>Choose one talent you already possess from Influence, Inspiration, Commando, or Military Tactics. You cannot change the selection after it is made. This does not grant a new talent.</p>
+    {{#if selectedName}}<p><strong>Selected:</strong> {{selectedName}}</p>{{/if}}
+    {{#if loadError}}<p role="alert">{{loadError}}</p>{{/if}}
+  </div>
+  {{#if options.length}}
+    <div class="prog-force-secret-grid" role="list">
+      {{#each options}}
+        <div class="prog-force-secret-card {{#if selected}}prog-force-secret-card--selected{{/if}}"
+             data-action="focus-item" data-item-id="{{id}}" tabindex="0" role="option"
+             aria-selected="{{#if selected}}true{{else}}false{{/if}}">
+          <div class="prog-force-secret-card__header">
+            <h3 class="prog-force-secret-card__name">{{name}}</h3>
+          </div>
+          <p class="prog-force-secret-card__description">{{treeName}} talent tree</p>
+          {{> "systems/foundryvtt-swse/templates/apps/progression-framework/partials/option-card-action.hbs"
+             itemId=id name=name selected=selected
+             deselect=cardAction.deselect state=cardAction.state
+             disabled=cardAction.disabled title=cardAction.title}}
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="prog-force-secret-browse__empty" role="status">
+      No eligible already-owned talents are available. Acquire an eligible talent before choosing Share Talent.
+    </div>
+  {{/if}}
+</div>

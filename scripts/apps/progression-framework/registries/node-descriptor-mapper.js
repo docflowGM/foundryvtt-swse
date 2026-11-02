@@ -33,6 +33,7 @@ import { ForceSecretStep } from '../steps/force-secret-step.js';
 import { ForceTechniqueStep } from '../steps/force-technique-step.js';
 import { ForceRegimenStep } from '../steps/force-regimen-step.js';
 import { MedicalSecretStep } from '../steps/medical-secret-step.js';
+import { ShareTalentStep } from '../steps/share-talent-step.js';
 import { StarshipManeuverStep } from '../steps/starship-maneuver-step.js';
 import { FinalDroidConfigurationStep } from '../steps/final-droid-configuration-step.js';
 import { NullStepPlugin } from '../steps/null-step-plugin.js';
@@ -62,6 +63,7 @@ const NODE_PLUGIN_MAP = {
   'force-secrets': ForceSecretStep,
   'force-techniques': ForceTechniqueStep,
   'force-regimens': ForceRegimenStep,
+  'share-talent': ShareTalentStep,
   'medical-secrets': MedicalSecretStep,
   'starship-maneuvers': StarshipManeuverStep,
   'levelup-review': LevelupReviewStep,

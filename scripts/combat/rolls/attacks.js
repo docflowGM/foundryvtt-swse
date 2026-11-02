@@ -29,6 +29,7 @@ import { resolveVehicleAttackBonus, resolveAbstractCrewAttackBonus } from "/syst
 import { resolveAttackDomain } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-domain-router.js";
 import { GrappleStateEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-engine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
+import { sceneCommandCoverBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/class-command-cover.js";
 import { normalizeRangeBand } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/canonical-range.js";
 import { SIZE_RANK } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/condition-policy.js";
 import { WeaponRuntimeError, ERROR_CODES, reportWeaponRuntimeError } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
@@ -561,6 +562,7 @@ function normalizeDefenseKey(value = 'reflex') {
 // See docs/audits/v2-math-integrity-authority-ledger.md's Grapple domain
 // section, "Certification-correction addendum 8".
 function getTargetDefenseValue(actor, key) {
+  if (!actor) return null;
   const prepared = SchemaAdapters.getDefenseTotalIfPrepared(actor, key);
   if (prepared !== null) return prepared;
   const legacy = actor.system?.defenses?.[key]?.total ?? actor.system?.defenses?.[key]?.value ?? null;
@@ -568,16 +570,21 @@ function getTargetDefenseValue(actor, key) {
   return Number.isFinite(number) ? number : null;
 }
 
-export function getTargetReflex(actor = null) {
-  if (!actor) return null;
-  return getTargetDefenseValue(actor, 'reflex');
+export function getTargetReflex(actor = null, options = {}) {
+  return getTargetDefense(actor, 'reflex', options);
 }
 
-export function getTargetDefense(actor = null, defenseType = 'reflex') {
+export function getTargetDefense(actor = null, defenseType = 'reflex', options = {}) {
   if (!actor) return null;
   const key = normalizeDefenseKey(defenseType);
   if (key === 'dc') return null;
-  return getTargetDefenseValue(actor, key);
+  const base = getTargetDefenseValue(actor, key);
+  if (!Number.isFinite(base) || key !== 'reflex') return base;
+  // Command Cover is contextual to CURRENT adjacent ally positions. Do not
+  // alter or cache the actor's permanent derived Reflex Defense.
+  const commandCover = sceneCommandCoverBonus(actor, { tokenId: options.tokenId ?? null });
+  const otherCover = Math.max(0, Number(options.existingCoverBonus) || 0);
+  return base + Math.max(commandCover, otherCover); // cover does not stack
 }
 
 export function resolveTargetContext(options = {}, fallbackTarget = null) {
@@ -592,7 +599,12 @@ export function resolveTargetContext(options = {}, fallbackTarget = null) {
   }
   const target = fallbackTarget;
   const defenseType = normalizeDefenseKey(ctx?.defenseType || 'reflex');
-  const base = getTargetDefense(target, defenseType);
+  const base = getTargetDefenseValue(target, defenseType);
+  const commandCover = defenseType === 'reflex'
+    ? sceneCommandCoverBonus(target, { tokenId: ctx?.tokenId || null })
+    : 0;
+  const ordinaryCover = defenseType === 'reflex' ? Math.max(0, Number(ctx?.coverBonus || 0)) : 0;
+  const coverBonus = Math.max(commandCover, ordinaryCover);
   // Purely additive, opt-in adjustment on top of the canonical target
   // defense value -- e.g. a Grab/Grapple-specific Reflex resistance bonus
   // (Grapple Resistance, Grab Back) that must be part of the SAME hit
@@ -605,9 +617,10 @@ export function resolveTargetContext(options = {}, fallbackTarget = null) {
   // Phase 5D-I-C-C: attack-contextual PASSIVE defense of the target's held weapon (Dual-Phase extended blade vs an adjacent attacker, a disarm-defense
   // equipment bonus against a disarm attack). Reflex only, computed once per attack by resolveTargetSideDefense; the target's stored defense is never changed.
   const passive = defenseType === 'reflex' ? (Number(options.passiveDefenseAdjustment ?? 0) || 0) : 0;
-  const adjustment = (Number(ctx?.defenseAdjustment ?? 0) || 0) + passive;
+  const adjustment = (Number(ctx?.defenseAdjustment ?? 0) || 0) + passive + coverBonus;
   const defenseValue = Number.isFinite(base) ? base + adjustment : base;
-  return { target, targetName: target?.name ?? '', defenseType, defenseValue, mode: target ? 'token' : 'none', adjustment };
+  return { target, targetName: target?.name ?? '', defenseType, defenseValue,
+    mode: target ? 'token' : 'none', adjustment, coverBonus, commandCoverBonus: commandCover };
 }
 
 function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) {

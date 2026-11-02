@@ -28,6 +28,9 @@ import { initializeDiscoverySystem, onDiscoveryReady } from "./scripts/ui/discov
 import { initializeSentinelGovernance } from "./scripts/governance/sentinel/sentinel-init.js";
 import { MutationInterceptor } from "./scripts/governance/mutation/MutationInterceptor.js";
 import { ActorEngine } from "./scripts/governance/actor-engine/actor-engine.js";
+import { openEnforcerResourceDelivery } from "./scripts/apps/enforcer-resource-delivery-dialog.js";
+import { openOfficerShareTalentAction } from "./scripts/apps/officer-share-talent-dialog.js";
+import { registerOfficerShareTalentCleanup } from "./scripts/engine/combat/officer-share-talent-service.js";
 import { ConditionTrackFeatActions } from "./scripts/engine/feats/condition-track-feat-actions.js";
 import { SystemInitHooks } from "./scripts/engine/progression/hooks/system-init-hooks.js";
 import { registerHandlebarsHelpers as registerSystemHandlebarsHelpers } from "./helpers/handlebars/index.js";
@@ -117,7 +120,11 @@ Hooks.once("init", async () => {
     RollEngine,
     EntityCreateBrowser,
     openEntityCreateBrowser,
-    openForceAlchemyWorkbench
+    openForceAlchemyWorkbench,
+    classFeatures: {
+      enforcerResources: { open: openEnforcerResourceDelivery },
+      officerShareTalent: { open: openOfficerShareTalentAction }
+    }
   };
 
   globalThis.SWSE.ActorEngine = ActorEngine;
@@ -193,6 +200,7 @@ Hooks.once("init", async () => {
   registerNpcDamageHydrationHooks();
   registerForceExecutorChatHooks();
   registerActionEconomyHooks();
+  registerOfficerShareTalentCleanup();
   registerFeatHousekeepingRuntimePatches();
   registerConsularTalentActions();
   registerSentinelTalentActions();

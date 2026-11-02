@@ -25,11 +25,19 @@ import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/en
 import { buildClassGrantLedger } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 import { buildLevelUpEventContext } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-event-context.js';
 import { MedicalSecretRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/medical/medical-secret-registry.js';
+import { TalentDB } from '/systems/foundryvtt-swse/scripts/data/talent-db.js';
+import { TalentTreeDB } from '/systems/foundryvtt-swse/scripts/data/talent-tree-db.js';
+import {
+  persistedOfficerShareTalents, resolveOfficerShareTalentChoice,
+} from '/systems/foundryvtt-swse/scripts/engine/progression/utils/officer-share-talent-authority.js';
 import { ActorEngine as CanonicalActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { FeatChoiceResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js';
 import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js';
 import { calculateMaxForcePointsForBuildPlan } from '/systems/foundryvtt-swse/scripts/data/force-points.js';
 import { buildLevelUpEntitlementManifest } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-entitlement-manifest.js';
+import { planScalingClassFeatureUpdate } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-scaling-feature-upsert.js';
+import { getLevelSplit } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
+import { pendingEnforcerResources, planEnforcerResourceEntitlement } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/enforcer-resources-entitlement.js';
 import { ChargenRules } from '/systems/foundryvtt-swse/scripts/engine/chargen/ChargenRules.js';
 import {
   auditLevelUpActorAfterFinalization,
@@ -1688,6 +1696,58 @@ export class ProgressionFinalizer {
       });
     }
 
+    // Officer's Share Talent is a persistent CLASS FEATURE selection, not a
+    // newly acquired talent Item. Resolve and freeze canonical owned identity
+    // before the ActorEngine mutation plan is built. Even if the UI is bypassed,
+    // the same printed-rule checks run here and fail closed.
+    if (sessionState.mode === 'levelup' && Number(levelUpManifest?.choices?.shareTalentChoices || 0) > 0) {
+      if (levelUpManifest.className !== 'Officer'
+        || Number(levelUpManifest.choices.shareTalentChoices) !== 1) {
+        throw new Error('Unsupported class Share Talent entitlement');
+      }
+      const selections = sessionState.progressionSession?.draftSelections?.shareTalentSelections || [];
+      if (!Array.isArray(selections) || selections.length !== 1) {
+        throw new Error('Officer Share Talent requires exactly one already-owned talent selection');
+      }
+      if (!TalentTreeDB.isBuilt && !(await TalentTreeDB.build())) {
+        throw new Error('Officer Share Talent cannot resolve canonical talent tree membership');
+      }
+      if (!TalentDB.isBuilt && !(await TalentDB.build(TalentTreeDB))) {
+        throw new Error('Officer Share Talent cannot resolve canonical talent identities');
+      }
+      const verified = resolveOfficerShareTalentChoice({
+        actor, choice: selections[0], officerLevel: levelUpManifest.classLevel,
+        talentDB: TalentDB, treeDB: TalentTreeDB,
+      });
+      if (!verified.valid) {
+        throw new Error(`Illegal Officer Share Talent: ${verified.errors.join('; ')}`);
+      }
+      set['flags.swse.classFeatures.officer.sharedTalents'] = [
+        ...persistedOfficerShareTalents(actor),
+        verified.selection,
+      ];
+    }
+
+    // Enforcer Resources are restricted/military EQUIPMENT entitlements, not
+    // spendable credits. Every Enforcer class level earns a distinct, audited
+    // allowance based on the NEW heroic level. Never auto-create unselected
+    // equipment or make ordinary currency spendable.
+    if (sessionState.mode === 'levelup' && levelUpManifest?.className === 'Enforcer') {
+      const split = getLevelSplit(actor);
+      if (!Number.isInteger(split.heroicLevel) || !Number.isInteger(split.totalLevel)
+          || split.totalLevel + 1 !== Number(levelUpManifest.characterLevel)) {
+        throw new Error('Enforcer Resources requires a complete pre-level class ledger to determine heroic level');
+      }
+      const heroicAfter = split.heroicLevel + 1;
+      const planned = planEnforcerResourceEntitlement({
+        existing: pendingEnforcerResources(actor),
+        classLevel: levelUpManifest.classLevel,
+        heroicLevel: heroicAfter,
+        sessionId: sessionState.sessionId,
+      });
+      set['flags.swse.classFeatures.enforcer.resources'] = planned.entries;
+    }
+
     await ProgressionContentAuthority.initialize?.();
 
     const classAutoGrantItems = await this._compileClassAutoGrantItems(actor, selections, sessionState, levelUpManifest);
@@ -1698,7 +1758,7 @@ export class ProgressionFinalizer {
     }));
     add.items.push(...await this._compileClassStarterEquipmentItems(actor, selections, sessionState));
     if (sessionState.mode === 'levelup') {
-      const automaticClassFeatures = await this._compileAutomaticClassFeatureItems(actor, levelUpManifest, sessionState);
+      const automaticClassFeatures = await this._compileAutomaticClassFeatureItems(actor, levelUpManifest, sessionState, update.items);
       add.items.push(...filterDroidForbiddenItemSpecs(automaticClassFeatures, actor, {
         subtype: sessionState.progressionSession?.subtype,
         droidContext: sessionState.progressionSession?.droidContext,
@@ -3114,13 +3174,20 @@ export class ProgressionFinalizer {
     };
   }
 
-  static async _compileAutomaticClassFeatureItems(actor, levelUpManifest, sessionState) {
+  static async _compileAutomaticClassFeatureItems(actor, levelUpManifest, sessionState, updates = []) {
     if (!levelUpManifest?.automaticClassFeatures?.length) return [];
     const existing = new Set((actor?.items || []).map(item => `${String(item.type || '').toLowerCase()}::${String(item.name || '').toLowerCase()}`));
     const out = [];
     for (const feature of levelUpManifest.automaticClassFeatures) {
       const name = feature.name || feature.id;
       if (!name) continue;
+      if (feature.system?.featureKey && feature.system?.progressionFeatureType === 'scaling_feature') {
+        const plan = planScalingClassFeatureUpdate(actor?.items || [], feature);
+        if (plan?.found) {
+          if (plan.update) updates.push(plan.update);
+          continue; // never grant a second copy of this scaling class feature
+        }
+      }
       const dedupeKey = `feat::${String(name).toLowerCase()}`;
       if (existing.has(dedupeKey)) continue;
       existing.add(dedupeKey);

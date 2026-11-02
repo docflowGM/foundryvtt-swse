@@ -5,6 +5,7 @@
 
 const CANONICAL_FEATURE_TYPES = {
     talent_choice: 'talent_choice',
+    share_talent_choice: 'share_talent_choice',
     feat_choice: 'feat_choice',
     feat_grant: 'feat_grant',
     class_feature: 'class_feature',

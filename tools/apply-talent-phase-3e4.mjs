@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { verifyClassPackProtectedState } from './lib/class-pack-protected-guard.mjs';
 /**
  * Phase 3E-4 — Seven-record canonical production repair (manifest -> dry-run -> apply -> verify).
  *
@@ -184,7 +185,15 @@ export function verifyApplied(root = ROOT, { exact = false } = {}) {
   }
   check('addendum authority: source/page/prerequisites/benefit/description.value all equal', addendum.additions.every(a => { const s = by.get(a.production.id)?.system; return s && s.source === a.publication.sourcebook && s.page === a.publication.page && (s.prerequisites ?? '') === a.prerequisites && s.benefit === a.rulesText && s.description?.value === a.rulesText; }));
   if (!later) check('the other 1,180 records are unchanged', sortedFp(talents.filter(t => !ids.has(t._id))) === report.othersFingerprint);
-  for (const [rel, sha] of Object.entries(report.untouchedFiles)) if (!PHASE_5C_OWNED.has(rel) && (!later || !LATER_OWNED.has(rel))) check(`untouched: ${rel}`, fs.existsSync(path.join(root, rel)) && gitBlobSha(readText(rel, root)) === sha);
+  for (const [rel, sha] of Object.entries(report.untouchedFiles)) {
+    if (!(!PHASE_5C_OWNED.has(rel) && (!later || !LATER_OWNED.has(rel)))) continue;
+    if (rel === 'packs/classes.db') {
+      const classIntegrity = verifyClassPackProtectedState(root);
+      check('protected class identities, trees, features, HP and defenses', classIntegrity.ok, classIntegrity.failures.join('; '));
+    } else {
+      check(`untouched: ${rel}`, fs.existsSync(path.join(root, rel)) && gitBlobSha(readText(rel, root)) === sha);
+    }
+  }
   if (exact && !later) check('packs/talents.db equals the certified post-state blob', gitBlobSha(talentsText) === report.postState.talents);
   return res;
 }

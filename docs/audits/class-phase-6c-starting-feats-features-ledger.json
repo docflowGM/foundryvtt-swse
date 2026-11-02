@@ -1,0 +1,2970 @@
+{
+  "schemaVersion": 1,
+  "phase": "6C",
+  "scope": "read-only class starting feats, bonus-feat bindings and level-by-level class feature unlocks; talent tree membership excluded",
+  "branch": "fix/class-mechanics-core-skills",
+  "sourceAuthority": "Published class tables in user-provided PDF and TXT corpus; Phase 6B source review ledger; repository runtime paths for integration; do not treat TXT or prior audit as independent full runtime verification",
+  "totals": {
+    "classes": 37,
+    "base": 5,
+    "prestige": 32,
+    "startingFeatPackageEntries": 18,
+    "bonusFeatClassChoices": 50,
+    "typedProgressionEntries": 504,
+    "distinctCatalogFeatureDefinitions": 53
+  },
+  "featLists": {
+    "scoundrel_feats": {
+      "classNames": [
+        "Scoundrel"
+      ],
+      "idCount": 80,
+      "nameCount": 82,
+      "source": "manual-raw-heroic-class-bonus-feat-list-2026-06-02",
+      "uniqueFeatIds": true,
+      "featNames": [
+        "Deadeye",
+        "Dodge",
+        "Melee Defense",
+        "Mobility",
+        "Point-Blank Shot",
+        "Precise Shot",
+        "Quick Draw",
+        "Rapid Shot",
+        "Running Attack",
+        "Skill Focus",
+        "Skill Training",
+        "Vehicular Combat",
+        "Weapon Proficiency (Advanced Melee Weapons)",
+        "Weapon Proficiency (Pistols)",
+        "Weapon Proficiency (Simple Weapons)",
+        "Tech Specialist",
+        "Gearhead",
+        "Implant Training",
+        "Poison Resistance",
+        "Quick Skill",
+        "Sniper Shot",
+        "Advantageous Attack",
+        "Advantageous Cover",
+        "Bad Feeling",
+        "Crossfire",
+        "Cunning Attack",
+        "Scavenger",
+        "Burst of Speed",
+        "Close Combat Escape",
+        "Collateral Damage",
+        "Cornered",
+        "Deceptive Drop",
+        "Desperate Gambit",
+        "Duck and Cover",
+        "Fleet-Footed",
+        "Friends in Low Places",
+        "Hasty Modification",
+        "Impulsive Flight",
+        "Knife Trick",
+        "Lightning Draw",
+        "Signature Device",
+        "Superior Tech",
+        "Droidcraft",
+        "Droid Hunter",
+        "Expert Droid Repair",
+        "Overwhelming Attack",
+        "Attack Combo (Ranged)",
+        "Biotech Specialist",
+        "Fatal Hit",
+        "Return Fire",
+        "Vehicle Systems Expertise",
+        "Zero Range",
+        "Fast Surge",
+        "Moving Target",
+        "Prime Shot",
+        "Rapid Reaction",
+        "Recovering Surge",
+        "Vehicular Surge",
+        "Bantha Herder",
+        "Disabler",
+        "Fight Through Pain",
+        "Force of Personality",
+        "Mission Specialist",
+        "Opportunistic Shooter",
+        "Pistoleer",
+        "Predictive Defense",
+        "Steadying Position",
+        "Disturbing Presence",
+        "Expert Briber",
+        "Hobbling Strike",
+        "Improved Opportunistic Trickery",
+        "Indomitable Personality",
+        "Master of Disguise",
+        "Opportunistic Trickery",
+        "Sadistic Strike",
+        "Silver Tongue",
+        "Stand Tall",
+        "Acrobatic Ally",
+        "Acrobatic Dodge",
+        "Combat Trickery",
+        "Hold Together",
+        "Improved Sleight of Hand"
+      ]
+    },
+    "noble_feats": {
+      "classNames": [
+        "Noble"
+      ],
+      "idCount": 55,
+      "nameCount": 59,
+      "source": "manual-raw-noble-bonus-feat-list-2026-06-02",
+      "uniqueFeatIds": true,
+      "featNames": [
+        "Armor Proficiency (Light)",
+        "Cybernetic Surgery",
+        "Exotic Weapon Proficiency",
+        "Linguist",
+        "Melee Defense",
+        "Skill Focus",
+        "Skill Training",
+        "Surgical Expertise",
+        "Weapon Finesse",
+        "Advanced Melee Weapon Proficiency",
+        "Weapon Proficiency (Pistols)",
+        "Weapon Proficiency (Rifles)",
+        "Weapon Proficiency (Simple Weapons)",
+        "Tech Specialist",
+        "Flurry",
+        "Quick Skill",
+        "Informer",
+        "Rapport",
+        "Cornered",
+        "Friends in Low Places",
+        "Hasty Modification",
+        "Impulsive Flight",
+        "Opportunistic Retreat",
+        "Signature Device",
+        "Superior Tech",
+        "Tactical Advantage",
+        "Wicked Strike",
+        "Experienced Medic",
+        "Leader of Droids",
+        "Unwavering Resolve",
+        "Wary Defender",
+        "Biotech Specialist",
+        "Biotech Surgery",
+        "Return Fire",
+        "Returning Bug",
+        "Fast Surge",
+        "Rapid Reaction",
+        "Recovering Surge",
+        "Disabler",
+        "Fight Through Pain",
+        "Force of Personality",
+        "Mission Specialist",
+        "Predictive Defense",
+        "Sport Hunter",
+        "Brilliant Defense",
+        "Cut the Red Tape",
+        "Demoralizing Strike",
+        "Disturbing Presence",
+        "Expert Briber",
+        "Flèche",
+        "Indomitable Personality",
+        "Master of Disguise",
+        "Sadistic Strike",
+        "Silver Tongue",
+        "Stand Tall",
+        "Combat Trickery",
+        "Elder's Knowledge",
+        "Intimidator",
+        "Mounted Combat"
+      ]
+    },
+    "scout_feats": {
+      "classNames": [
+        "Scout"
+      ],
+      "idCount": 79,
+      "nameCount": 82,
+      "source": "manual-raw-heroic-class-bonus-feat-list-2026-06-02",
+      "uniqueFeatIds": true,
+      "featNames": [
+        "Armor Proficiency (Heavy)",
+        "Armor Proficiency (Light)",
+        "Armor Proficiency (Medium)",
+        "Careful Shot",
+        "Deadeye",
+        "Dodge",
+        "Far Shot",
+        "Linguist",
+        "Mobility",
+        "Point-Blank Shot",
+        "Precise Shot",
+        "Rapid Shot",
+        "Running Attack",
+        "Shake It Off",
+        "Skill Focus",
+        "Skill Training",
+        "Sniper",
+        "Vehicular Combat",
+        "Weapon Proficiency (Advanced Melee Weapons)",
+        "Weapon Proficiency (Pistols)",
+        "Weapon Proficiency (Rifles)",
+        "Weapon Proficiency (Simple Weapons)",
+        "Conditioning",
+        "Gearhead",
+        "Increased Agility",
+        "Poison Resistance",
+        "Advantageous Attack",
+        "Advantageous Cover",
+        "Bad Feeling",
+        "Cunning Attack",
+        "Burst of Speed",
+        "Cornered",
+        "Deadly Sniper",
+        "Duck and Cover",
+        "Fleet-Footed",
+        "Resurgence",
+        "Slippery Maneuver",
+        "Stay Up",
+        "Droidcraft",
+        "Droid Hunter",
+        "Expert Droid Repair",
+        "Flash and Clear",
+        "Attack Combo (Ranged)",
+        "Fatal Hit",
+        "Feat of Strength",
+        "Grapple Resistance",
+        "Return Fire",
+        "Vehicle Systems Expertise",
+        "Deft Charge",
+        "Fast Surge",
+        "Moving Target",
+        "Prime Shot",
+        "Rapid Reaction",
+        "Rebel Military Training",
+        "Recovering Surge",
+        "Vehicular Surge",
+        "Destructive Force",
+        "Disabler",
+        "Dive for Cover",
+        "Forceful Blast",
+        "Fortifying Recovery",
+        "Mission Specialist",
+        "Never Surrender",
+        "Opportunistic Shooter",
+        "Pistoleer",
+        "Resilient Strength",
+        "Riflemaster",
+        "Risk Taker",
+        "Sport Hunter",
+        "Steadying Position",
+        "Grazing Shot",
+        "Hobbling Strike",
+        "Meat Shield",
+        "Stand Tall",
+        "Hold Together",
+        "Hyperblazer",
+        "Improvised Weapon Mastery",
+        "Maniacal Charge",
+        "Mounted Combat",
+        "Targeted Area",
+        "Trample",
+        "Wilderness First Aid"
+      ]
+    },
+    "soldier_feats": {
+      "classNames": [
+        "Soldier"
+      ],
+      "idCount": 140,
+      "nameCount": 144,
+      "source": "manual-raw-heroic-class-bonus-feat-list-2026-06-02",
+      "uniqueFeatIds": true,
+      "featNames": [
+        "Armor Proficiency (Light)",
+        "Armor Proficiency (Medium)",
+        "Armor Proficiency (Heavy)",
+        "Bantha Rush",
+        "Careful Shot",
+        "Charging Fire",
+        "Cleave",
+        "Combat Reflexes",
+        "Coordinated Attack",
+        "Crush",
+        "Deadeye",
+        "Double Attack",
+        "Dual Weapon Mastery I",
+        "Dual Weapon Mastery II",
+        "Dual Weapon Mastery III",
+        "Exotic Weapon Proficiency",
+        "Far Shot",
+        "Great Cleave",
+        "Improved Charge",
+        "Improved Disarm",
+        "Martial Arts I",
+        "Martial Arts II",
+        "Martial Arts III",
+        "Melee Defense",
+        "Mighty Swing",
+        "Pin",
+        "Point-Blank Shot",
+        "Power Attack",
+        "Precise Shot",
+        "Quick Draw",
+        "Rapid Shot",
+        "Rapid Strike",
+        "Running Attack",
+        "Shake It Off",
+        "Skill Focus",
+        "Skill Training",
+        "Sniper",
+        "Throw",
+        "Toughness",
+        "Trip",
+        "Triple Attack",
+        "Triple Crit",
+        "Vehicular Combat",
+        "Weapon Focus",
+        "Weapon Proficiency (Advanced Melee Weapons)",
+        "Weapon Proficiency (Heavy Weapons)",
+        "Weapon Proficiency (Pistols)",
+        "Weapon Proficiency (Rifles)",
+        "Weapon Proficiency (Simple Weapons)",
+        "Accelerated Strike",
+        "Conditioning",
+        "Critical Strike",
+        "Flurry",
+        "Improved Rapid Strike",
+        "Increased Agility",
+        "Power Blast",
+        "Sniper Shot",
+        "Tumble Defense",
+        "Withdrawal Strike",
+        "Advantageous Cover",
+        "Angled Throw",
+        "Blaster Barrage",
+        "Crossfire",
+        "Improved Bantha Rush",
+        "Mighty Throw",
+        "Rapport",
+        "Savage Attack",
+        "Strafe",
+        "Burst of Speed",
+        "Collateral Damage",
+        "Deadly Sniper",
+        "Impetuous Move",
+        "Lightning Draw",
+        "Resurgence",
+        "Slippery Maneuver",
+        "Stay Up",
+        "Artillery Shot",
+        "Coordinated Barrage",
+        "Droid Hunter",
+        "Experienced Medic",
+        "Flash and Clear",
+        "Flood of Fire",
+        "Grand Army of the Republic Training",
+        "Gunnery Specialist",
+        "Overwhelming Attack",
+        "Separatist Military Training",
+        "Trench Warrior",
+        "Unstoppable Force",
+        "Wary Defender",
+        "Attack Combo (Fire and Strike)",
+        "Attack Combo (Melee)",
+        "Attack Combo (Ranged)",
+        "Autofire Assault",
+        "Autofire Sweep",
+        "Brink of Death",
+        "Fatal Hit",
+        "Feat of Strength",
+        "Galactic Alliance Military Training",
+        "Grapple Resistance",
+        "Knock Heads",
+        "Rancor Crush",
+        "Zero Range",
+        "Assured Attack",
+        "Deft Charge",
+        "Fast Surge",
+        "Imperial Military Training",
+        "Prime Shot",
+        "Rapid Reaction",
+        "Rebel Military Training",
+        "Recovering Surge",
+        "Vehicular Surge",
+        "Bantha Herder",
+        "Battering Attack",
+        "Destructive Force",
+        "Disabler",
+        "Dive for Cover",
+        "Forceful Blast",
+        "Fortifying Recovery",
+        "Mission Specialist",
+        "Never Surrender",
+        "Officer Candidacy Training",
+        "Opportunistic Shooter",
+        "Pistoleer",
+        "Resilient Strength",
+        "Riflemaster",
+        "Risk Taker",
+        "Sport Hunter",
+        "Staggering Attack",
+        "Steadying Position",
+        "Bone Crusher",
+        "Flèche",
+        "Grazing Shot",
+        "Hobbling Strike",
+        "Meat Shield",
+        "Resolute Stance",
+        "Sadistic Strike",
+        "Wookiee Grip",
+        "Frightening Cleave",
+        "Grab Back",
+        "Halt",
+        "Heavy Hitter",
+        "Improvised Weapon Mastery",
+        "Maniacal Charge",
+        "Targeted Area"
+      ]
+    },
+    "jedi_feats": {
+      "classNames": [
+        "Jedi"
+      ],
+      "idCount": 79,
+      "nameCount": 81,
+      "source": "manual-raw-heroic-class-bonus-feat-list-2026-06-02",
+      "uniqueFeatIds": true,
+      "featNames": [
+        "Acrobatic Strike",
+        "Cleave",
+        "Combat Reflexes",
+        "Dodge",
+        "Double Attack",
+        "Dreadful Rage",
+        "Dual Weapon Mastery I",
+        "Dual Weapon Mastery II",
+        "Dual Weapon Mastery III",
+        "Force Sensitivity",
+        "Great Cleave",
+        "Improved Charge",
+        "Improved Disarm",
+        "Martial Arts I",
+        "Martial Arts II",
+        "Martial Arts III",
+        "Melee Defense",
+        "Mobility",
+        "Power Attack",
+        "Powerful Charge",
+        "Quick Draw",
+        "Rapid Strike",
+        "Running Attack",
+        "Skill Focus",
+        "Skill Training",
+        "Strong in the Force",
+        "Triple Attack",
+        "Triple Crit",
+        "Weapon Finesse",
+        "Weapon Focus (Lightsabers)",
+        "Weapon Proficiency (Lightsabers)",
+        "Weapon Proficiency (Simple Weapons)",
+        "Accelerated Strike",
+        "Critical Strike",
+        "Flurry",
+        "Force Readiness",
+        "Improved Rapid Strike",
+        "Tumble Defense",
+        "Withdrawal Strike",
+        "Savage Attack",
+        "Swarm",
+        "Burst of Speed",
+        "Close Combat Escape",
+        "Impetuous Move",
+        "Impulsive Flight",
+        "Lightning Draw",
+        "Opportunistic Retreat",
+        "Resurgence",
+        "Slippery Maneuver",
+        "Stay Up",
+        "Tactical Advantage",
+        "Wicked Strike",
+        "Unstoppable Force",
+        "Unwavering Resolve",
+        "Wary Defender",
+        "Attack Combo (Melee)",
+        "Brink of Death",
+        "Feat of Strength",
+        "Grapple Resistance",
+        "Assured Attack",
+        "Deft Charge",
+        "Fast Surge",
+        "Moving Target",
+        "Rapid Reaction",
+        "Recovering Surge",
+        "Battering Attack",
+        "Dive for Cover",
+        "Fight Through Pain",
+        "Force of Personality",
+        "Mission Specialist",
+        "Never Surrender",
+        "Officer Candidacy Training",
+        "Resilient Strength",
+        "Risk Taker",
+        "Staggering Attack",
+        "Brilliant Defense",
+        "Resolute Stance",
+        "Stand Tall",
+        "Elder's Knowledge",
+        "Instinctive Attack",
+        "Instinctive Defense"
+      ]
+    }
+  },
+  "classes": [
+    {
+      "id": "06f4d9029debf827",
+      "name": "Medic",
+      "kind": "prestige",
+      "printedSource": "The Force Unleashed Campaign Guide pp. 52-54",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "medical_secret_choice": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "medical_secret_choice",
+          "name": "Medical Secret"
+        },
+        {
+          "level": 4,
+          "type": "medical_secret_choice",
+          "name": "Medical Secret"
+        },
+        {
+          "level": 6,
+          "type": "medical_secret_choice",
+          "name": "Medical Secret"
+        },
+        {
+          "level": 8,
+          "type": "medical_secret_choice",
+          "name": "Medical Secret"
+        },
+        {
+          "level": 10,
+          "type": "medical_secret_choice",
+          "name": "Medical Secret"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "07a64453f95e04f2",
+      "name": "Jedi Master",
+      "kind": "prestige",
+      "printedSource": "Saga Edition Core Rulebook pp. 219-220",
+      "levelCount": 5,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1,
+          1,
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5
+        ],
+        "force_secret_choice": [
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 1,
+          "type": "class_feature",
+          "name": "Fearless"
+        },
+        {
+          "level": 1,
+          "type": "class_feature",
+          "name": "Serenity"
+        },
+        {
+          "level": 2,
+          "type": "force_secret_choice",
+          "name": "Force Secret"
+        },
+        {
+          "level": 3,
+          "type": "force_secret_choice",
+          "name": "Force Secret"
+        },
+        {
+          "level": 4,
+          "type": "force_secret_choice",
+          "name": "Force Secret"
+        },
+        {
+          "level": 5,
+          "type": "force_secret_choice",
+          "name": "Force Secret"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "162d866ba36fce69",
+      "name": "Gunslinger",
+      "kind": "prestige",
+      "printedSource": "Saga Edition Core Rulebook pp. 216-217",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "scaling_feature": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "Trusty Sidearm +1"
+        },
+        {
+          "level": 4,
+          "type": "scaling_feature",
+          "name": "Trusty Sidearm +2"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Trusty Sidearm +3"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Trusty Sidearm +4"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Trusty Sidearm +5"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "19ee85a788380256",
+      "name": "Outlaw",
+      "kind": "prestige",
+      "printedSource": "Scum and Villainy pp. 34-35",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "scaling_feature": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "Fugitive +1"
+        },
+        {
+          "level": 4,
+          "type": "scaling_feature",
+          "name": "Fugitive +2"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Fugitive +3"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Fugitive +4"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Fugitive +5"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "1ba03b2d00245906",
+      "name": "Sith Apprentice",
+      "kind": "prestige",
+      "printedSource": "Saga Edition Core Rulebook pp. 222-223",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "force_technique_choice": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "force_technique_choice",
+          "name": "Force Technique"
+        },
+        {
+          "level": 4,
+          "type": "force_technique_choice",
+          "name": "Force Technique"
+        },
+        {
+          "level": 6,
+          "type": "force_technique_choice",
+          "name": "Force Technique"
+        },
+        {
+          "level": 8,
+          "type": "force_technique_choice",
+          "name": "Force Technique"
+        },
+        {
+          "level": 10,
+          "type": "force_technique_choice",
+          "name": "Force Technique"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "21dfe84d159a1b7f",
+      "name": "Scoundrel",
+      "kind": "heroic_base",
+      "printedSource": "Core Rulebook pp. 45–48",
+      "levelCount": 20,
+      "startingFeats": [
+        {
+          "name": "Point-Blank Shot",
+          "type": "class_feature"
+        },
+        {
+          "name": "Weapon Proficiency (Pistols)",
+          "type": "proficiency"
+        },
+        {
+          "name": "Weapon Proficiency (Simple Weapons)",
+          "type": "proficiency"
+        }
+      ],
+      "bonusFeatListKeys": [
+        "scoundrel_feats"
+      ],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "feat_grant": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9,
+          11,
+          13,
+          15,
+          17,
+          19
+        ],
+        "feat_choice": [
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16,
+          18,
+          20
+        ]
+      },
+      "nonGenericFeatures": [],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "289fcf920ef0e184",
+      "name": "Force Adept",
+      "kind": "prestige",
+      "printedSource": "Saga Edition Core Rulebook pp. 212-214",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "force_technique_choice": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "force_technique_choice",
+          "name": "Force Technique"
+        },
+        {
+          "level": 4,
+          "type": "force_technique_choice",
+          "name": "Force Technique"
+        },
+        {
+          "level": 6,
+          "type": "force_technique_choice",
+          "name": "Force Technique"
+        },
+        {
+          "level": 8,
+          "type": "force_technique_choice",
+          "name": "Force Technique"
+        },
+        {
+          "level": 10,
+          "type": "force_technique_choice",
+          "name": "Force Technique"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "2f7cfdc115c640a5",
+      "name": "Sith Lord",
+      "kind": "prestige",
+      "printedSource": "Saga Edition Core Rulebook pp. 223-224",
+      "levelCount": 5,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1,
+          1,
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5
+        ],
+        "force_secret_choice": [
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 1,
+          "type": "class_feature",
+          "name": "Fearless"
+        },
+        {
+          "level": 1,
+          "type": "class_feature",
+          "name": "Temptation"
+        },
+        {
+          "level": 2,
+          "type": "force_secret_choice",
+          "name": "Force Secret"
+        },
+        {
+          "level": 3,
+          "type": "force_secret_choice",
+          "name": "Force Secret"
+        },
+        {
+          "level": 4,
+          "type": "force_secret_choice",
+          "name": "Force Secret"
+        },
+        {
+          "level": 5,
+          "type": "force_secret_choice",
+          "name": "Force Secret"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "30b9cd24b80ebf46",
+      "name": "Officer",
+      "kind": "prestige",
+      "printedSource": "Saga Edition Core Rulebook pp. 220-221",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "scaling_feature": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "Command Cover +1"
+        },
+        {
+          "level": 4,
+          "type": "scaling_feature",
+          "name": "Command Cover +2"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Command Cover +3"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Command Cover +4"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Command Cover +5"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "324631ca844a88be",
+      "name": "Crime Lord",
+      "kind": "prestige",
+      "printedSource": "Saga Edition Core Rulebook pp. 209-210",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "scaling_feature": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "Command Cover +1"
+        },
+        {
+          "level": 4,
+          "type": "scaling_feature",
+          "name": "Command Cover +2"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Command Cover +3"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Command Cover +4"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Command Cover +5"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "336bba6d1e517c92",
+      "name": "Bounty Hunter",
+      "kind": "prestige",
+      "printedSource": "Saga Edition Core Rulebook pp. 207-209",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "scaling_feature": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "Familiar Foe +1"
+        },
+        {
+          "level": 4,
+          "type": "scaling_feature",
+          "name": "Familiar Foe +2"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Familiar Foe +3"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Familiar Foe +4"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Familiar Foe +5"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "3b1ed5f1038d49fb",
+      "name": "Independent Droid",
+      "kind": "prestige",
+      "printedSource": "The Force Unleashed Campaign Guide pp. 46-47",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1,
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "scaling_feature": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 1,
+          "type": "class_feature",
+          "name": "Sapience"
+        },
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "Independent Spirit +1"
+        },
+        {
+          "level": 4,
+          "type": "scaling_feature",
+          "name": "Independent Spirit +2"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Independent Spirit +3"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Independent Spirit +4"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Independent Spirit +5"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "480a290aa128f683",
+      "name": "Martial Arts Master",
+      "kind": "prestige",
+      "printedSource": "Galaxy at War pp. 32-33",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "scaling_feature": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "Tough as Durasteel +2"
+        },
+        {
+          "level": 4,
+          "type": "scaling_feature",
+          "name": "Tough as Durasteel +4"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Tough as Durasteel +6"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Tough as Durasteel +8"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Tough as Durasteel +10"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "4ee81a6708a516cd",
+      "name": "Pathfinder",
+      "kind": "prestige",
+      "printedSource": "Rebellion Era Campaign Guide pp. 44-45",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "scaling_feature": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "Create Cover (1 Square)"
+        },
+        {
+          "level": 4,
+          "type": "scaling_feature",
+          "name": "Create Cover (2 Squares)"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Create Cover (3 Squares)"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Create Cover (4 Squares)"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Create Cover (5 Squares)"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "533f1066362655c7",
+      "name": "Gladiator",
+      "kind": "prestige",
+      "printedSource": "Knights of the Old Republic Campaign Guide pp. 43-45",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "scaling_feature": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "Unflinching (1/Encounter)"
+        },
+        {
+          "level": 4,
+          "type": "scaling_feature",
+          "name": "Unflinching (2/Encounter)"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Unflinching (3/Encounter)"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Unflinching (4/Encounter)"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Unflinching (5/Encounter)"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "557e1a5ec72166fd",
+      "name": "Shaper",
+      "kind": "prestige",
+      "printedSource": "Legacy Era Campaign Guide pp. 46-47",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1,
+          6
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "scaling_feature": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "Shaper Lore +1"
+        },
+        {
+          "level": 4,
+          "type": "scaling_feature",
+          "name": "Shaper Lore +2"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Shaper Lore +3"
+        },
+        {
+          "level": 6,
+          "type": "class_feature",
+          "name": "Shaper Hand"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Shaper Lore +4"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Shaper Lore +5"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "61876f91a1633cdf",
+      "name": "Enforcer",
+      "kind": "prestige",
+      "printedSource": "The Force Unleashed Campaign Guide pp. 43-45",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "scaling_feature": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 1,
+          "type": "class_feature",
+          "name": "Resources"
+        },
+        {
+          "level": 2,
+          "type": "class_feature",
+          "name": "Resources"
+        },
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "Targeted Suspect +1"
+        },
+        {
+          "level": 3,
+          "type": "class_feature",
+          "name": "Resources"
+        },
+        {
+          "level": 4,
+          "type": "class_feature",
+          "name": "Resources"
+        },
+        {
+          "level": 4,
+          "type": "scaling_feature",
+          "name": "Targeted Suspect +2"
+        },
+        {
+          "level": 5,
+          "type": "class_feature",
+          "name": "Resources"
+        },
+        {
+          "level": 6,
+          "type": "class_feature",
+          "name": "Resources"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Targeted Suspect +3"
+        },
+        {
+          "level": 7,
+          "type": "class_feature",
+          "name": "Resources"
+        },
+        {
+          "level": 8,
+          "type": "class_feature",
+          "name": "Resources"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Targeted Suspect +4"
+        },
+        {
+          "level": 9,
+          "type": "class_feature",
+          "name": "Resources"
+        },
+        {
+          "level": 10,
+          "type": "class_feature",
+          "name": "Resources"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Targeted Suspect +5"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "74fa04f5afb5f6e1",
+      "name": "Assassin",
+      "kind": "prestige",
+      "printedSource": "Scum and Villainy pp. 28-29",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "scaling_feature": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "Mark +1"
+        },
+        {
+          "level": 4,
+          "type": "scaling_feature",
+          "name": "Mark +2"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Mark +3"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Mark +4"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Mark +5"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "7c7d3aa972d968c8",
+      "name": "Droid Commander",
+      "kind": "prestige",
+      "printedSource": "The Clone Wars Campaign Guide pp. 42-43",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "scaling_feature": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "Networked Mind (1 Droid Ally)"
+        },
+        {
+          "level": 4,
+          "type": "scaling_feature",
+          "name": "Networked Mind (2 Droid Allies)"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Networked Mind (3 Droid Allies)"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Networked Mind (4 Droid Allies)"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Networked Mind (5 Droid Allies)"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "8c58016e587dd2c7",
+      "name": "Noble",
+      "kind": "heroic_base",
+      "printedSource": "Core Rulebook pp. 43–45",
+      "levelCount": 20,
+      "startingFeats": [
+        {
+          "name": "Linguist*",
+          "type": "class_feature"
+        },
+        {
+          "name": "Weapon Proficiency (Pistols)",
+          "type": "proficiency"
+        },
+        {
+          "name": "Weapon Proficiency (Simple Weapons)",
+          "type": "proficiency"
+        }
+      ],
+      "bonusFeatListKeys": [
+        "noble_feats"
+      ],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "feat_grant": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9,
+          11,
+          13,
+          15,
+          17,
+          19
+        ],
+        "feat_choice": [
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16,
+          18,
+          20
+        ]
+      },
+      "nonGenericFeatures": [],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "8da58194b3d58041",
+      "name": "Charlatan",
+      "kind": "prestige",
+      "printedSource": "Scum and Villainy pp. 30-31",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1,
+          2,
+          4
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "scaling_feature": [
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "class_feature",
+          "name": "Score"
+        },
+        {
+          "level": 4,
+          "type": "class_feature",
+          "name": "Swindle"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Swindle +1"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Swindle +2"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Swindle +5"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "9c9989c34714f920",
+      "name": "Ace Pilot",
+      "kind": "prestige",
+      "printedSource": "Saga Edition Core Rulebook pp. 206-207",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "scaling_feature": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "Vehicle Dodge +1"
+        },
+        {
+          "level": 4,
+          "type": "scaling_feature",
+          "name": "Vehicle Dodge +2"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Vehicle Dodge +3"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Vehicle Dodge +4"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Vehicle Dodge +5"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "acd10710f000ae70",
+      "name": "Vanguard",
+      "kind": "prestige",
+      "printedSource": "The Clone Wars Campaign Guide pp. 46-47",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "scaling_feature": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "Surprise Attack +1"
+        },
+        {
+          "level": 4,
+          "type": "scaling_feature",
+          "name": "Surprise Attack +2"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Surprise Attack +3"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Surprise Attack +4"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Surprise Attack +5"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "b5bed5d1b5f42958",
+      "name": "Scout",
+      "kind": "heroic_base",
+      "printedSource": "Core Rulebook pp. 48–50",
+      "levelCount": 20,
+      "startingFeats": [
+        {
+          "name": "Shake It Off*",
+          "type": "class_feature"
+        },
+        {
+          "name": "Weapon Proficiency (Pistols)",
+          "type": "proficiency"
+        },
+        {
+          "name": "Weapon Proficiency (Rifles)",
+          "type": "proficiency"
+        },
+        {
+          "name": "Weapon Proficiency (Simple Weapons)",
+          "type": "proficiency"
+        }
+      ],
+      "bonusFeatListKeys": [
+        "scout_feats"
+      ],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "feat_grant": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9,
+          11,
+          13,
+          15,
+          17,
+          19
+        ],
+        "feat_choice": [
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16,
+          18,
+          20
+        ]
+      },
+      "nonGenericFeatures": [],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "b85240cf77cf95eb",
+      "name": "Military Engineer",
+      "kind": "prestige",
+      "printedSource": "The Clone Wars Campaign Guide pp. 44-45",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "scaling_feature": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "Field-Created Weapon +1"
+        },
+        {
+          "level": 4,
+          "type": "scaling_feature",
+          "name": "Field-Created Weapon +2"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Field-Created Weapon +3"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Field-Created Weapon +4"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Field-Created Weapon +5"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "c4dbedcf989cb6b2",
+      "name": "Elite Trooper",
+      "kind": "prestige",
+      "printedSource": "Saga Edition Core Rulebook pp. 211-212",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1,
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "scaling_feature": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 1,
+          "type": "class_feature",
+          "name": "Delay Damage"
+        },
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "Damage Reduction 1"
+        },
+        {
+          "level": 4,
+          "type": "scaling_feature",
+          "name": "Damage Reduction 2"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Damage Reduction 3"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Damage Reduction 4"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Damage Reduction 5"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "d87c05d2a34f5627",
+      "name": "Melee Duelist",
+      "kind": "prestige",
+      "printedSource": "Knights of the Old Republic Campaign Guide pp. 46-47",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "scaling_feature": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "Master of Movement (1/Encounter)"
+        },
+        {
+          "level": 4,
+          "type": "scaling_feature",
+          "name": "Master of Movement (2/Encounter)"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Master of Movement (3/Encounter)"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Master of Movement (4/Encounter)"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Master of Movement (5/Encounter)"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "db019dfbb271cdf6",
+      "name": "Improviser",
+      "kind": "prestige",
+      "printedSource": "Rebellion Era Campaign Guide pp. 41-43",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1,
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "scaling_feature": [
+          2,
+          2,
+          3,
+          3,
+          4,
+          4,
+          5,
+          5,
+          6,
+          6,
+          7,
+          7,
+          8,
+          8,
+          9,
+          9,
+          10,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 1,
+          "type": "class_feature",
+          "name": "No Tools Required"
+        },
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "Contraband (2"
+        },
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "000 credits)"
+        },
+        {
+          "level": 3,
+          "type": "scaling_feature",
+          "name": "Contraband (3"
+        },
+        {
+          "level": 3,
+          "type": "scaling_feature",
+          "name": "000 credits)"
+        },
+        {
+          "level": 4,
+          "type": "scaling_feature",
+          "name": "Contraband (4"
+        },
+        {
+          "level": 4,
+          "type": "scaling_feature",
+          "name": "000 credits)"
+        },
+        {
+          "level": 5,
+          "type": "scaling_feature",
+          "name": "Contraband (5"
+        },
+        {
+          "level": 5,
+          "type": "scaling_feature",
+          "name": "000 credits)"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Contraband (6"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "000 credits)"
+        },
+        {
+          "level": 7,
+          "type": "scaling_feature",
+          "name": "Contraband (7"
+        },
+        {
+          "level": 7,
+          "type": "scaling_feature",
+          "name": "000 credits)"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Contraband (8"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "000 credits)"
+        },
+        {
+          "level": 9,
+          "type": "scaling_feature",
+          "name": "Contraband (9"
+        },
+        {
+          "level": 9,
+          "type": "scaling_feature",
+          "name": "000 credits)"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Contraband (10"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "000 credits)"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "de3f367749b82fcf",
+      "name": "Saboteur",
+      "kind": "prestige",
+      "printedSource": "The Force Unleashed Campaign Guide pp. 54-56",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1,
+          1,
+          2,
+          4,
+          6,
+          8,
+          10
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 1,
+          "type": "class_feature",
+          "name": "Unexpected Results"
+        },
+        {
+          "level": 2,
+          "type": "class_feature",
+          "name": "Destructive"
+        },
+        {
+          "level": 4,
+          "type": "class_feature",
+          "name": "Quick Sabotage (Simple Devices)"
+        },
+        {
+          "level": 6,
+          "type": "class_feature",
+          "name": "Quick Sabotage (Tricky Devices)"
+        },
+        {
+          "level": 8,
+          "type": "class_feature",
+          "name": "Quick Sabotage (Complex Devices)"
+        },
+        {
+          "level": 10,
+          "type": "class_feature",
+          "name": "Master Saboteur"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "e647ee8f065e1d19",
+      "name": "Infiltrator",
+      "kind": "prestige",
+      "printedSource": "The Force Unleashed Campaign Guide pp. 48-49",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1,
+          4
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "scaling_feature": [
+          2,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "Unarmed Stun (+1d_)"
+        },
+        {
+          "level": 4,
+          "type": "class_feature",
+          "name": "Lead Infiltrator"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Unarmed Stun (+2d_)"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Lead Infiltrator (x2)"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Unarmed Stun (+3d_)"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "ec505163e5647cc6",
+      "name": "Imperial Knight",
+      "kind": "prestige",
+      "printedSource": "Legacy Era Campaign Guide pp. 43-45",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "force_technique_choice": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "force_technique_choice",
+          "name": "Force Technique"
+        },
+        {
+          "level": 4,
+          "type": "force_technique_choice",
+          "name": "Force Technique"
+        },
+        {
+          "level": 6,
+          "type": "force_technique_choice",
+          "name": "Force Technique"
+        },
+        {
+          "level": 8,
+          "type": "force_technique_choice",
+          "name": "Force Technique"
+        },
+        {
+          "level": 10,
+          "type": "force_technique_choice",
+          "name": "Force Technique"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "ef6fe8fdbbd884b4",
+      "name": "Force Disciple",
+      "kind": "prestige",
+      "printedSource": "Saga Edition Core Rulebook pp. 214-215",
+      "levelCount": 5,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1,
+          1,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5
+        ],
+        "force_secret_choice": [
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 1,
+          "type": "class_feature",
+          "name": "Indomitable"
+        },
+        {
+          "level": 1,
+          "type": "class_feature",
+          "name": "Prophet"
+        },
+        {
+          "level": 2,
+          "type": "force_secret_choice",
+          "name": "Force Secret"
+        },
+        {
+          "level": 2,
+          "type": "class_feature",
+          "name": "Prophet"
+        },
+        {
+          "level": 3,
+          "type": "force_secret_choice",
+          "name": "Force Secret"
+        },
+        {
+          "level": 3,
+          "type": "class_feature",
+          "name": "Prophet"
+        },
+        {
+          "level": 4,
+          "type": "force_secret_choice",
+          "name": "Force Secret"
+        },
+        {
+          "level": 4,
+          "type": "class_feature",
+          "name": "Prophet"
+        },
+        {
+          "level": 5,
+          "type": "force_secret_choice",
+          "name": "Force Secret"
+        },
+        {
+          "level": 5,
+          "type": "class_feature",
+          "name": "Prophet"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "f62ca2e639cab614",
+      "name": "Soldier",
+      "kind": "heroic_base",
+      "printedSource": "Core Rulebook pp. 51–53",
+      "levelCount": 20,
+      "startingFeats": [
+        {
+          "name": "Armor Proficiency (Light)",
+          "type": "proficiency"
+        },
+        {
+          "name": "Armor Proficiency (Medium)",
+          "type": "proficiency"
+        },
+        {
+          "name": "Weapon Proficiency (Pistols)",
+          "type": "proficiency"
+        },
+        {
+          "name": "Weapon Proficiency (Rifles)",
+          "type": "proficiency"
+        },
+        {
+          "name": "Weapon Proficiency (Simple Weapons)",
+          "type": "proficiency"
+        }
+      ],
+      "bonusFeatListKeys": [
+        "soldier_feats"
+      ],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "feat_grant": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9,
+          11,
+          13,
+          15,
+          17,
+          19
+        ],
+        "feat_choice": [
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16,
+          18,
+          20
+        ]
+      },
+      "nonGenericFeatures": [],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "fb5c2644f988e6bf",
+      "name": "Jedi Knight",
+      "kind": "prestige",
+      "printedSource": "Saga Edition Core Rulebook pp. 217-219",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "force_technique_choice": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "force_technique_choice",
+          "name": "Force Technique"
+        },
+        {
+          "level": 4,
+          "type": "force_technique_choice",
+          "name": "Force Technique"
+        },
+        {
+          "level": 6,
+          "type": "force_technique_choice",
+          "name": "Force Technique"
+        },
+        {
+          "level": 8,
+          "type": "force_technique_choice",
+          "name": "Force Technique"
+        },
+        {
+          "level": 10,
+          "type": "force_technique_choice",
+          "name": "Force Technique"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "fc815ae3ca4bf726",
+      "name": "Corporate Agent",
+      "kind": "prestige",
+      "printedSource": "Knights of the Old Republic Campaign Guide pp. 41-42",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "scaling_feature": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "Executive Leadership (1/Encounter)"
+        },
+        {
+          "level": 4,
+          "type": "scaling_feature",
+          "name": "Executive Leadership (2/Encounter)"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Executive Leadership (3/Encounter)"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Executive Leadership (4/Encounter)"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Executive Leadership (5/Encounter)"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "fcf8cc428a6eb01a",
+      "name": "Master Privateer",
+      "kind": "prestige",
+      "printedSource": "The Force Unleashed Campaign Guide pp. 50-52",
+      "levelCount": 10,
+      "startingFeats": [],
+      "bonusFeatListKeys": [],
+      "choicesByType": {
+        "class_feature": [
+          1,
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "scaling_feature": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 1,
+          "type": "class_feature",
+          "name": "Lure of Piracy"
+        },
+        {
+          "level": 2,
+          "type": "scaling_feature",
+          "name": "Veteran Privateer (1/Encounter)"
+        },
+        {
+          "level": 4,
+          "type": "scaling_feature",
+          "name": "Veteran Privateer (2/Encounter)"
+        },
+        {
+          "level": 6,
+          "type": "scaling_feature",
+          "name": "Veteran Privateer (3/Encounter)"
+        },
+        {
+          "level": 8,
+          "type": "scaling_feature",
+          "name": "Veteran Privateer (4/Encounter)"
+        },
+        {
+          "level": 10,
+          "type": "scaling_feature",
+          "name": "Veteran Privateer (5/Encounter)"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    },
+    {
+      "id": "fec1f8af44fcc35a",
+      "name": "Jedi",
+      "kind": "heroic_base",
+      "printedSource": "Core Rulebook pp. 38–42",
+      "levelCount": 20,
+      "startingFeats": [
+        {
+          "name": "Force Sensitivity",
+          "type": "class_feature"
+        },
+        {
+          "name": "Weapon Proficiency (Lightsabers)",
+          "type": "proficiency"
+        },
+        {
+          "name": "Weapon Proficiency (Simple Weapons)",
+          "type": "proficiency"
+        }
+      ],
+      "bonusFeatListKeys": [
+        "jedi_feats"
+      ],
+      "choicesByType": {
+        "class_feature": [
+          1,
+          1,
+          7
+        ],
+        "feat_grant": [
+          1
+        ],
+        "talent_choice": [
+          1,
+          3,
+          5,
+          7,
+          9,
+          11,
+          13,
+          15,
+          17,
+          19
+        ],
+        "feat_choice": [
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16,
+          18,
+          20
+        ]
+      },
+      "nonGenericFeatures": [
+        {
+          "level": 1,
+          "type": "class_feature",
+          "name": "Lightsaber"
+        },
+        {
+          "level": 7,
+          "type": "class_feature",
+          "name": "Lightsaber Construction"
+        }
+      ],
+      "sourceVerification": "inventory / previous Phase 6B selective source validation; not full class-feature runtime certification"
+    }
+  ],
+  "issues": [
+    {
+      "id": "6C-001",
+      "severity": "CRITICAL",
+      "classNames": [
+        "Officer"
+      ],
+      "type": "wrong_choice_type_and_schedule",
+      "evidence": "Printed Core p221 Share Talent on levels 2/4/6/8/10; repository has ordinary talent_choice on even levels with no share_talent_choice. The even-level class talent choices are not valid replacements.",
+      "expected": "Odd levels ordinary talent; even levels distinct Share Talent picks."
+    },
+    {
+      "id": "6C-002",
+      "severity": "HIGH",
+      "classNames": [
+        "Improviser"
+      ],
+      "type": "malformed_and_extra_unlocks",
+      "evidence": "Rebellion p41 Contraband appears only at levels 2/4/6/8/10, values 2k to 10k. Production includes comma-split fragments at levels 2-10, including odd levels.",
+      "expected": "One contraband entry at each printed even level, no fragments or odd-level grants."
+    },
+    {
+      "id": "6C-003",
+      "severity": "HIGH",
+      "classNames": [
+        "Force Disciple"
+      ],
+      "type": "repeated_once_acquired_feature",
+      "evidence": "Core p215 Prophet granted at class level 1, currently emitted as class_feature at levels 1-5.",
+      "expected": "Grant Prophet once at level 1, compute later level effects from progression."
+    },
+    {
+      "id": "6C-004",
+      "severity": "HIGH",
+      "classNames": [
+        "Crime Lord",
+        "Officer"
+      ],
+      "type": "repeated_scaling_feature",
+      "evidence": "Core pp209-210 and 221 Command Cover granted once and scales according to class level/context; current pack emits separate grants at 2/4/6/8/10.",
+      "expected": "One class feature with separate derived scaling, no additive duplicates."
+    },
+    {
+      "id": "6C-005",
+      "severity": "MEDIUM",
+      "classNames": [
+        "Enforcer"
+      ],
+      "type": "repeated_once_acquired_feature_candidate",
+      "evidence": "Force Unleashed pp43-45 table lists Resources at level 1, whereas production emits Resources as independent class_feature at each of 1-10. Descriptive resource allotment may recur by level.",
+      "expected": "Source-check and model one level-1 grant with level-based resources rather than repeated item grants."
+    },
+    {
+      "id": "6C-006",
+      "severity": "MEDIUM",
+      "classNames": [
+        "Infiltrator"
+      ],
+      "type": "malformed_label",
+      "evidence": "Force Unleashed p49 Unarmed Stun at 2/6/10 currently stores +1d_, +2d_, +3d_ placeholder labels.",
+      "expected": "Printed dice values and typed progressions; preserve 2/6/10 unlock cadence."
+    },
+    {
+      "id": "6C-007",
+      "severity": "MEDIUM",
+      "classNames": [
+        "Master Privateer"
+      ],
+      "type": "incorrect_feature_name",
+      "evidence": "Force Unleashed pp51-52 calls first-level feature Piracy; pack calls it Lure of Piracy.",
+      "expected": "Source-aligned player-readable name."
+    },
+    {
+      "id": "6C-008",
+      "severity": "HIGH",
+      "classNames": [
+        "Noble",
+        "Jedi"
+      ],
+      "type": "feat_binding_name_id_mismatch",
+      "evidence": "Both class descriptive featNames include Wicked Strike, but their canonical featIds omit existing canonical Wicked Strike feat ID 5bef5e65e532ba7c.",
+      "expected": "Reconcile printed source eligibility and add canonical ID only where source certified."
+    },
+    {
+      "id": "6C-009",
+      "severity": "MEDIUM",
+      "classNames": [
+        "Jedi",
+        "Noble",
+        "Scoundrel",
+        "Scout",
+        "Soldier"
+      ],
+      "type": "parameterized_feat_constraint_risk",
+      "evidence": "All featIds resolve but parameterized Weapon Proficiency and Weapon Focus are represented by shared IDs, whereas featNames list specific allowed categories. FeatSlotValidator validates ID membership only.",
+      "expected": "Validate chosen weapon/category specialization against the class bonus-feat list, not only generic feat ID."
+    },
+    {
+      "id": "6C-010",
+      "severity": "MEDIUM",
+      "classNames": [
+        "Jedi",
+        "Noble",
+        "Scoundrel",
+        "Scout",
+        "Soldier"
+      ],
+      "type": "conditional_starting_grant_runtime_probe",
+      "evidence": "Core Noble Linguist requires INT 13 and Scout Shake It Off requires CON 13 plus trained Endurance. Class grant ledger explicitly evaluates starred conditional feats; no Foundry end-to-end test in this pass.",
+      "expected": "Test grant/no-grant under both prerequisites in chargen; never suppress other starting feats."
+    },
+    {
+      "id": "6C-011",
+      "severity": "HIGH",
+      "classNames": [
+        "all"
+      ],
+      "type": "feature_automation_not_certified",
+      "evidence": "Class feature catalog contains 53 definitions (40 ACTIVE/STUB, 8 ACTIVE/CHOICE_GRANT, 3 PASSIVE/RULE, 2 INFO_ONLY/INFO); level-up manifest materializes typed class_feature and scaling_feature as locked feat items; that materialization alone does not prove mechanical activation.",
+      "expected": "One owner per class feature mechanic with runtime tests for scaling, duration, usage, prerequisites."
+    }
+  ]
+}

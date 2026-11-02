@@ -236,6 +236,10 @@ export class ActiveStepComputer {
         case 'medical-secrets':
           return this._hasMedicalSecretChoices(actor, progressionSession);
 
+        case 'share-talent':
+          return mode === 'levelup'
+            && Number(buildLevelUpEntitlementManifest(actor, progressionSession)?.choices?.shareTalentChoices || 0) > 0;
+
         // Starship maneuvers: applicable if entitlements exist
         case 'starship-maneuvers':
           return this._hasStarshipChoices(actor, progressionSession);
