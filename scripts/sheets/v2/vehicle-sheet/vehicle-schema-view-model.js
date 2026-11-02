@@ -165,6 +165,13 @@ function effectiveRows({ record, entries, hp, hpBase, fortitude, extra = [], env
       conditionalActive: active, availableLabel: active ? null : speed(m.effectiveSquares, m.effectiveKmh),
       current: null, hasCurrent: false, currentLabel: '' });
   }
+  // P6B-1: action/check modifiers granted by equipment (shown separately; they apply to specific actions, not to the statistics above)
+  const plain = (label, baseLabel, modification, effectiveLabel) => rows.push({ label, base: null, baseLabel, modification, effective: null, effectiveLabel, current: null, hasCurrent: false, currentLabel: '' });
+  if (fx.rechargeShields.sources.length) plain('Recharge shields action', `+${fx.rechargeShields.base}`, fx.rechargeShields.sources.map(x => x.name).join(', '), `+${fx.rechargeShields.effective} (up to the maximum)`);
+  for (const b of fx.skillBonuses) {
+    const what = b.skill === 'pilot' ? `Pilot (${b.purpose})` : `Use Computer (${b.use})`;
+    plain(`${what} equipment bonus`, 'none', b.sources.map(x => x.name).join(', '), `+${b.value}${b.allOutValue ? ` (+${b.allOutValue} all-out)` : ''}`);
+  }
   if (fx.hyperdrive.effectiveClass !== null)
     rows.push({ label: 'Hyperdrive', base: null, baseLabel: 'None', modification: fx.hyperdrive.sources.map(x => x.name).join(', '), effective: fx.hyperdrive.effectiveClass,
       effectiveLabel: `Class ${fx.hyperdrive.effectiveClass}`, current: null, hasCurrent: false, currentLabel: '' });

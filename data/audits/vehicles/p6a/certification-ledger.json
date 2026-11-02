@@ -4,8 +4,8 @@
  "counts": {
   "sourceListed": 181,
   "sourceVerified": 174,
-  "mechanicSpecified": 39,
-  "operationallyIntegrated": 39
+  "mechanicSpecified": 43,
+  "operationallyIntegrated": 43
  },
  "rows": [
   {
@@ -394,8 +394,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 41
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "skill-bonus",
+    "test": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -412,8 +415,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 41
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "skill-bonus",
+    "test": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -430,8 +436,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 41
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "skill-bonus",
+    "test": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -676,8 +685,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 43
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "recharge",
+    "test": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {

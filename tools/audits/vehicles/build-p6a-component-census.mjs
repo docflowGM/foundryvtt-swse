@@ -249,7 +249,7 @@ const worksheetResolution = pdf.reviewedWorksheetItems.map(w => {
 
 /* ---------- certification ledger and readiness ---------- */
 // P6B-0: atmospheric thrusters apply through the GM-set environment authority (vehicle-operating-context.js).
-const OPERATIONAL_KINDS = new Set(['armor', 'shield', 'dexterity', 'hyperdrive', 'atmospheric']);
+const OPERATIONAL_KINDS = new Set(['armor', 'shield', 'dexterity', 'hyperdrive', 'atmospheric', 'recharge', 'skill-bonus']);
 const certificationP6a = Object.fromEntries(pdfReconciliation.filter(r => r.disposition === 'MATCHED_CANONICAL' && r.evidence.startsWith('PDF') && !certification[r.catalogId])
   .map(r => [r.catalogId, { status: 'SOURCE_VERIFIED', evidence: r.evidence === 'PDF_VISUAL_REVIEW' ? 'PDF_REVIEWED_P6A' : 'PDF_PROSE_REVIEWED_P6A', book: r.source.book,
     printedPage: r.source.printedPage, printedPageRange: [r.source.printedPage, r.source.printedPage], table: r.source.table ?? r.source.section, pageResolution: 'pdf-table-page' }]));

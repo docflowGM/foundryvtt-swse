@@ -104,6 +104,8 @@ export function getEffectiveVehicleDerived(actor) {
     pilotDexModifierDelta: fx.initiative.delta,
     atmosphericMovement: fx.movement.filter(m => m.sources.length),
     environment,
+    rechargeShieldsAmount: fx.rechargeShields.effective,
+    skillBonuses: fx.skillBonuses,
     contributions: { reflex: fx.reflex, initiative: fx.initiative, shield: fx.shield },
     unimplemented: fx.unimplemented
   };
@@ -116,4 +118,15 @@ export function getEffectiveVehicleInitiative(actor) {
   if (eff) return eff.initiative;
   if (claimsPublishedSource(actor)) throw new Error('UNIVERSAL_VEHICLE_SOURCE_INVALID: initiative');
   return null;
+}
+
+/**
+ * Shield points restored by one recharge shields action on this actor. Regenerating shields (SotG) raise the normal
+ * 5 to 10 ("up to the ship's maximum", which ActorEngine.rechargeShields enforces). Only the NORMAL amount is
+ * replaced; any other amount (a droid's Endurance restoration, a power) is passed through untouched.
+ */
+export function getEffectiveRechargeShieldsAmount(actor, baseAmount = 5) {
+  if (actor?.type !== 'vehicle' || baseAmount !== 5) return baseAmount;
+  const eff = getEffectiveVehicleDerived(actor);
+  return eff?.rechargeShieldsAmount ?? baseAmount;
 }

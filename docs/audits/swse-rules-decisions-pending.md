@@ -697,3 +697,31 @@ Appended; the entries above are unchanged. Blocker: SOURCE = published evidence 
 - **Revision 11 (2026-11-01):** recorded the owner's resolutions of V-P6A-05 and V-P6A-06 (status and Resolution fields only; questions unchanged).
 - **Revision 12 (2026-11-01):** appended V-P6A-07 (gravity well errata scope). No existing entry changed.
 - **Revision 13 (2026-11-01):** appended the P6A blocker classification table. No existing entry changed.
+
+## P6B vehicle rulings (2026-11-02)
+
+Appended; the entries above are unchanged.
+
+### V-P6B-01 - Limited navicomputer: astrogation bonus and third jump
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6B-01 |
+| Rules domain | Vehicle modifications |
+| Feature | Navicomputer, Limited |
+| Source | *Starships of the Galaxy*, Movement Systems, Navicomputer (p. 41) |
+| Evidence | The limited navicomputer stores only two jumps' worth of information: enough to reach a destination and return. The standard navicomputer grants +5 on Use Computer checks to astrogate; the advanced one +10. |
+| Confirmed behavior | Two stored jumps; 0 EP; 500 credits. |
+| Unresolved question | Does the limited navicomputer grant the navicomputer's +5 astrogation bonus (always, only for its two stored jumps, or never), and what happens when a third jump is attempted? |
+| Options | (a) storage limit only, no astrogation bonus; (b) +5 while astrogating one of its two stored jumps. |
+| Recommended ruling | None |
+| Implementation impact | `navicomputer-limited` stays SOURCE_VERIFIED and not installable (P6B-D-005). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### Engineering status note for V-P6-05 (not a ruling)
+
+V-P6-05 was engineering scope, not a rules question. P6B-1 delivered the runtime consumers for regenerating shields (recharge shields action restores 10), the SubLight Accelerator Motor (+5/+10 Pilot to increase speed) and the standard/advanced navicomputers (+5/+10 astrogation). Jamming suite/array and combat thrusters remain undelivered (P6B-D-003, P6B-D-004). The V-P6-05 entry above is unchanged.
+
+- **Revision 14 (2026-11-02):** appended V-P6B-01 and the V-P6-05 engineering status note. No existing entry changed.

@@ -2,8 +2,8 @@
  "schema": "swse.vehicle.p6a.readiness.v1",
  "counts": {
   "exposeAsReference": 181,
-  "installable": 39,
-  "mechanicallyApplied": 39,
+  "installable": 43,
+  "mechanicallyApplied": 43,
   "combatUsable": 0
  },
  "rows": [
@@ -211,11 +211,10 @@
    "catalogId": "navicomputer",
    "name": "Navicomputer",
    "exposeAsReference": true,
-   "installable": false,
-   "mechanicallyApplied": false,
+   "installable": true,
+   "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -223,11 +222,10 @@
    "catalogId": "navicomputer-advanced",
    "name": "Navicomputer, Advanced",
    "exposeAsReference": true,
-   "installable": false,
-   "mechanicallyApplied": false,
+   "installable": true,
+   "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -235,11 +233,10 @@
    "catalogId": "sublight-accelerator",
    "name": "SubLight Accelerator Motor (SLAM)",
    "exposeAsReference": true,
-   "installable": false,
-   "mechanicallyApplied": false,
+   "installable": true,
+   "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -387,11 +384,10 @@
    "catalogId": "regenerating-shields",
    "name": "Regenerating Shields",
    "exposeAsReference": true,
-   "installable": false,
-   "mechanicallyApplied": false,
+   "installable": true,
+   "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },

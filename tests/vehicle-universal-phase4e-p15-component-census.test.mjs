@@ -60,7 +60,7 @@ test('certification ledger and readiness manifest never overstate operation', ()
     if (l.mechanicSpecified) { assert.ok(l.sourceVerified?.book && l.sourceVerified?.printedPage, l.catalogId); assert.equal(cert[l.catalogId].status, 'MECHANIC_SPECIFIED'); }
     if (l.operationallyIntegrated) assert.ok(l.mechanicSpecified, l.catalogId);
   }
-  assert.equal(ledger.counts.mechanicSpecified, 39);
+  assert.equal(ledger.counts.mechanicSpecified, 43);
   assert.equal(ready.counts.combatUsable, 0);
   for (const r of ready.rows) { assert.equal(r.combatUsable, false); if (r.installable) assert.ok(cert[r.catalogId]?.status === 'MECHANIC_SPECIFIED'); }
   // atmospheric thrusters: applied since P6B-0 through the GM-set environment (only in an explicit atmosphere)
@@ -121,7 +121,7 @@ test('certification overlay: PDF-verified rows are SOURCE_VERIFIED only, never i
   assert.match(svc, /certification-p6a\.json/);
   assert.match(svc, /\.\.\.\(p6aRes\.ok[^;]*\.\.\.\(\(await certRes\.json\(\)\)\.rows/);
   const ready = load(`${DIR}/readiness-manifest.json`);
-  assert.equal(ready.counts.installable, 39);
+  assert.equal(ready.counts.installable, 43);
   assert.equal(ready.counts.combatUsable, 0);
 });
 

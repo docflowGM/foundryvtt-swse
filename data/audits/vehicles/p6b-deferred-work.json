@@ -1,0 +1,75 @@
+{
+  "schema": "swse.vehicle.p6b.deferred-work.v1",
+  "purpose": "Side bucket for P6B items that could not be implemented safely. Items here are NOT certified and stay fail-closed (not installable / not executable). Rendered to docs/audits/vehicles/p6b-deferred-work.md by tools/audits/vehicles/build-p6b-deferred-work.mjs.",
+  "categories": ["RULES_DECISION_REQUIRED", "SOURCE_EVIDENCE_MISSING", "ENGINEERING_COMPLEXITY", "LIVE_RUNTIME_PENDING", "NONCRITICAL_DEFECT", "DEPENDENCY_BLOCKED"],
+  "severities": ["BLOCKING", "IMPORTANT", "MINOR"],
+  "items": [
+    {
+      "id": "P6B-D-001", "workstream": "P6B-1", "component": "reinforced-bulkheads-10, reinforced-bulkheads-20, reinforced-bulkheads-30",
+      "source": "Starships of the Galaxy pp. 43-44", "status": "RULES_DECISION_REQUIRED",
+      "reason": "Hit points increase by a percentage; the book gives no rounding rule, and it is unruled whether the percentage applies to printed HP only or also to other HP increases.",
+      "missing": "Rounding direction and percentage basis.", "ownerRulingNeeded": true, "linkedDecisions": ["V-P6-01"],
+      "options": ["round down (Core general rounding)", "round to nearest", "percentage of printed HP only vs current maximum"],
+      "impact": "3 rows stay SOURCE_VERIFIED and not installable.", "severity": "IMPORTANT",
+      "recommendedAction": "Owner rules on V-P6-01; the effect is a one-line hp kind in the effects registry once ruled."
+    },
+    {
+      "id": "P6B-D-002", "workstream": "P6B-1", "component": "sublight-drive-1 .. sublight-drive-6",
+      "source": "Starships of the Galaxy p. 41, Table 3-3", "status": "RULES_DECISION_REQUIRED",
+      "reason": "Every published hull already has a sublight speed; installing a drive is a replacement, which is unruled (same question as shields/hyperdrives). The 'military vessels only' clause for the fastest drives has no hull 'military' attribute in canonical data.",
+      "missing": "Replacement rule (refund, EP of the old drive); a source-backed military-hull classification.", "ownerRulingNeeded": true, "linkedDecisions": ["V-P6-02"],
+      "options": ["replacement frees the old drive's EP", "replacement keeps the old EP consumed", "replacement not allowed on stock hulls"],
+      "impact": "6 rows stay SOURCE_VERIFIED and not installable; starship-scale speed is never changed by the Shipyard.", "severity": "IMPORTANT",
+      "recommendedAction": "Owner rules on V-P6-02; then decide how a hull is classified as military (data field) before enabling the fastest drives."
+    },
+    {
+      "id": "P6B-D-003", "workstream": "P6B-1", "component": "jamming-suite, jamming-array",
+      "source": "Starships of the Galaxy p. 43", "status": "ENGINEERING_COMPLEXITY",
+      "reason": "The rule is printed clearly, but applying it needs an effect on ANOTHER vehicle: a swift action that picks a target within 6 starship squares, a per-target size-based penalty on Use Computer (communications/sensors) and on fire control (not reducing the Intelligence modifier below +0), and an opposed Use Computer check. None of these consumers exists: no starship-scale range measurement, no cross-actor temporary condition store, and fire control is not used by any executable weapon (V-P2-04).",
+      "missing": "Cross-vehicle temporary effect state, starship-scale range check, opposed-check flow, fire-control penalty consumer.", "ownerRulingNeeded": false, "linkedDecisions": ["V-P6-05", "V-P2-04"],
+      "options": [], "impact": "2 rows stay SOURCE_VERIFIED and not installable.", "severity": "MINOR",
+      "recommendedAction": "Build after weapon execution (V-P2-04) exists, using the combat ActiveEffect path for the target condition."
+    },
+    {
+      "id": "P6B-D-004", "workstream": "P6B-1", "component": "combat-thrusters",
+      "source": "Starships of the Galaxy p. 41", "status": "DEPENDENCY_BLOCKED",
+      "reason": "Effects are 'treated as one size smaller when targeted by capital-ship weapons' and 'treated as a starfighter for dogfighting and starship combat maneuvers'. The system has no dogfight eligibility check, no starship-maneuver eligibility by size, and no executable capital-ship weapon targeting.",
+      "missing": "Dogfight / starship maneuver eligibility consumer; capital-weapon targeting (blocked by V-P2-04).", "ownerRulingNeeded": false, "linkedDecisions": ["V-P6-05", "V-P2-04"],
+      "options": [], "impact": "Row stays SOURCE_VERIFIED and not installable.", "severity": "MINOR",
+      "recommendedAction": "Implement as a size-category override read by the dogfight and capital-weapon targeting code once those exist."
+    },
+    {
+      "id": "P6B-D-005", "workstream": "P6B-1", "component": "navicomputer-limited",
+      "source": "Starships of the Galaxy p. 41", "status": "RULES_DECISION_REQUIRED",
+      "reason": "The printed text says only that it stores two jumps' worth of information. It does not state whether it grants the navicomputer's +5 astrogation bonus, or what happens on a third jump.",
+      "missing": "Bonus value (if any) and the consequence of exceeding two stored jumps.", "ownerRulingNeeded": true, "linkedDecisions": ["V-P6B-01"],
+      "options": ["no astrogation bonus; storage limit only", "same +5 as a standard navicomputer while within its two stored jumps"],
+      "impact": "Row stays SOURCE_VERIFIED and not installable.", "severity": "MINOR",
+      "recommendedAction": "Owner rules on V-P6B-01."
+    },
+    {
+      "id": "P6B-D-006", "workstream": "P6B-1", "component": "navicomputer (training clause)",
+      "source": "Starships of the Galaxy p. 41", "status": "NONCRITICAL_DEFECT",
+      "reason": "The +5 bonus is integrated. Any trained-only gate for astrogation in the skill roller is not vehicle-aware, so a navicomputer clause about untrained astrogation has no consumer; the roll is never blocked by the vehicle code either way.",
+      "missing": "A trained-only check consumer for Use Computer (astrogate) that can see the vehicle.", "ownerRulingNeeded": false, "linkedDecisions": ["V-P6-05"],
+      "options": [], "impact": "No incorrect mechanic: the bonus applies; the training permission is not enforced either way.", "severity": "MINOR",
+      "recommendedAction": "Wire when the skill roller gains trained-only enforcement for skill uses."
+    },
+    {
+      "id": "P6B-D-007", "workstream": "P6B-1", "component": "com-jammers",
+      "source": "legacy catalog row (effectVerification UNVERIFIED)", "status": "SOURCE_EVIDENCE_MISSING",
+      "reason": "The row's effect text is legacy and unverified; the census does not match it to a printed SotG row.",
+      "missing": "A printed source for the component and its effect.", "ownerRulingNeeded": false, "linkedDecisions": [],
+      "options": [], "impact": "Row stays reference-only; not installable.", "severity": "MINOR",
+      "recommendedAction": "Locate a printed source or retire the legacy row."
+    },
+    {
+      "id": "P6B-D-008", "workstream": "P6B-1", "component": "all 43 integrated effects; P6B-0 environment and Pilot check",
+      "source": "-", "status": "LIVE_RUNTIME_PENDING",
+      "reason": "Verified offline (Node tests with Handlebars). Foundry V13 runtime is not available in this environment.",
+      "missing": "Live V13 session run of docs/audits/vehicles/p6a-final-acceptance-report.md checklist plus P6B-1 items (recharge shields restores 10 with regenerating shields; SLAM bonus in speed Pilot check; astrogation roll bonus).", "ownerRulingNeeded": false, "linkedDecisions": [],
+      "options": [], "impact": "Status stays OFFLINE_INTEGRATED_LIVE_PENDING; nothing is marked LIVE_RUNTIME_VERIFIED.", "severity": "IMPORTANT",
+      "recommendedAction": "Run the live checklist in a V13 world."
+    }
+  ]
+}

@@ -6,10 +6,11 @@
  * (flags.swse.universalVehicleSource) is never rewritten, and removing an installation restores the
  * baseline because effective values are always recomputed from baseline + the sealed ledger.
  *
- * Deliberately NOT encoded (see docs/audits/swse-rules-decisions-pending.md, V-P6-*): hit-point percentage
- * rounding (Reinforced Bulkheads), sublight-drive replacement, jammers, regenerating shields, combat
- * thrusters, navicomputers and SLAM (roll/action integration), and replacement-vs-addition when a hull
- * already has the system. Those rows stay SOURCE_VERIFIED and cannot be installed.
+ * Deliberately NOT encoded (see docs/audits/swse-rules-decisions-pending.md, V-P6-*, and
+ * docs/audits/vehicles/p6b-deferred-work.md): hit-point percentage rounding (Reinforced Bulkheads),
+ * sublight-drive replacement, jammers, combat thrusters, the limited navicomputer, and replacement-vs-addition
+ * when a hull already has the system. Those rows stay SOURCE_VERIFIED and cannot be installed.
+ * P6B-1 added regenerating shields (recharge action), SLAM and navicomputers (check equipment bonuses).
  *
  * No Foundry globals: Node-testable.
  */
@@ -26,6 +27,12 @@ const CITE = Object.freeze({
   atmospheric: 'Starships of the Galaxy, Atmospheric Thrusters: raises maximum velocity and character-scale fly speed while in an atmosphere'
 });
 
+const CITE2 = Object.freeze({
+  recharge: 'Starships of the Galaxy, Regenerating Shields: the current shield rating increases by 10 (up to the maximum) when the recharge shields action is used; normal shields increase by only 5',
+  slam: 'Starships of the Galaxy, SubLight Accelerator Motor: +5 bonus on Pilot checks to increase a vehicle\'s speed, +10 if the pilot is using all-out movement',
+  navicomputer: 'Starships of the Galaxy, Navicomputer: +5 bonus on Use Computer checks made for astrogation (advanced navicomputer +10 instead of +5)'
+});
+
 const SHIELD_RATINGS = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 70, 80, 90, 100, 125, 150, 175, 200];
 const HYPERDRIVES = { 'hyperdrive-075': 0.75, 'hyperdrive-1': 1, 'hyperdrive-15': 1.5, 'hyperdrive-2': 2, 'hyperdrive-3': 3, 'hyperdrive-4': 4,
   'hyperdrive-5': 5, 'hyperdrive-6': 6, 'hyperdrive-8': 8, 'hyperdrive-10': 10, 'hyperdrive-15-class': 15 };
@@ -35,6 +42,10 @@ export const EFFECTS = Object.freeze({
   ...Object.fromEntries(SHIELD_RATINGS.map(n => [`shields-${n}`, { kind: 'shield', value: n, group: 'shields', citation: CITE.shields }])),
   ...Object.fromEntries([2, 4, 6].map(n => [`maneuvering-jets-${n}`, { kind: 'dexterity', value: n, group: 'jets', citation: CITE.jets }])),
   ...Object.fromEntries(Object.entries(HYPERDRIVES).map(([id, cls]) => [id, { kind: 'hyperdrive', value: cls, group: 'hyperdrive', citation: CITE.hyperdrive }])),
+  'regenerating-shields': { kind: 'recharge', value: 10, group: 'recharge-shields', citation: CITE2.recharge },
+  'sublight-accelerator': { kind: 'skill-bonus', skill: 'pilot', purpose: 'increase-speed', value: 5, allOutValue: 10, group: 'slam', citation: CITE2.slam },
+  'navicomputer': { kind: 'skill-bonus', skill: 'useComputer', use: 'astrogate', value: 5, group: 'navicomputer', citation: CITE2.navicomputer },
+  'navicomputer-advanced': { kind: 'skill-bonus', skill: 'useComputer', use: 'astrogate', value: 10, group: 'navicomputer', citation: CITE2.navicomputer },
   'atmospheric-thrusters': { kind: 'atmospheric', percent: 10, group: 'atmospheric', citation: CITE.atmospheric },
   'atmospheric-thrusters-advanced': { kind: 'atmospheric', percent: 25, group: 'atmospheric', citation: CITE.atmospheric }
 });
@@ -66,6 +77,11 @@ export function effectInstallability({ catalogEntry, record, entries = [] }) {
     case 'dexterity': if (!finite(record?.abilities?.dex) || !finite(record?.defenses?.reflex) || !finite(record?.abilities?.initiativePrinted)) reasons.push('DEXTERITY_BASIS_UNKNOWN'); break;
     case 'hyperdrive': if (record?.hyperspace?.capability !== 'unavailable') reasons.push('HYPERDRIVE_REPLACEMENT_UNRULED'); break;
     case 'atmospheric': if (!flyModes(record).length) reasons.push('NO_ATMOSPHERIC_FLIGHT_MODE'); break;
+    case 'recharge': break;
+    case 'skill-bonus':
+      // a hull printed with an installed navicomputer already has the standard one: a second is a duplicate (stacking unruled)
+      if (catalogEntry.id === 'navicomputer' && record?.hyperspace?.navComputer === 'installed') reasons.push('NAVICOMPUTER_ALREADY_PRESENT');
+      break;
     default: reasons.push('EFFECT_KIND_UNKNOWN');
   }
   return reasons;
@@ -85,8 +101,13 @@ export function computeEffectiveStatistics({ record, entries = [], environment =
     hyperdrive: { base: record?.hyperspace?.capability ?? null, effectiveClass: null, sources: [] },
     movement: flyModes(record).map(m => ({ mode: m.mode, scale: m.scale, baseSquares: m.squaresPerMove ?? null, effectiveSquares: m.squaresPerMove ?? null,
       baseKmh: m.maxVelocityKmh ?? null, effectiveKmh: m.maxVelocityKmh ?? null, conditional: null, sources: [] })),
+    rechargeShields: { base: 5, effective: 5, sources: [] },
+    skillBonuses: [],
     unimplemented: []
   };
+  // A hull printed with an installed navicomputer carries the standard +5 (SotG Navicomputer).
+  if (record?.hyperspace?.navComputer === 'installed')
+    out.skillBonuses.push({ skill: 'useComputer', use: 'astrogate', value: 5, sources: [{ name: 'Navicomputer (printed with the hull)', published: true }] });
   for (const e of entries) {
     const fx = EFFECTS[e.catalogId];
     if (!fx) { out.unimplemented.push({ installId: e.installId, name: e.name }); continue; }
@@ -105,6 +126,8 @@ export function computeEffectiveStatistics({ record, entries = [], environment =
         break;
       }
       case 'hyperdrive': out.hyperdrive.effectiveClass = fx.value; out.hyperdrive.sources.push(src); break;
+      case 'recharge': out.rechargeShields.effective = fx.value; out.rechargeShields.sources.push(src); break;
+      case 'skill-bonus': out.skillBonuses.push({ skill: fx.skill, use: fx.use ?? null, purpose: fx.purpose ?? null, value: fx.value, allOutValue: fx.allOutValue ?? null, sources: [src] }); break;
       case 'atmospheric':
         for (const m of out.movement) {
           if (finite(m.baseSquares)) m.effectiveSquares = Math.floor(m.baseSquares * (100 + fx.percent) / 100);
@@ -114,6 +137,14 @@ export function computeEffectiveStatistics({ record, entries = [], environment =
         break;
       default: out.unimplemented.push({ installId: e.installId, name: e.name });
     }
+  }
+  {
+    const best = new Map();
+    for (const b of out.skillBonuses) {
+      const k = `${b.skill}|${b.use ?? ''}|${b.purpose ?? ''}`, cur = best.get(k);
+      if (!cur || b.value > cur.value) best.set(k, b);
+    }
+    out.skillBonuses = [...best.values()];
   }
   for (const s of [out.reflex, out.initiative]) if (finite(s.base)) s.effective = s.base + s.delta;
   // Atmosphere-only effects apply only in an explicit 'atmosphere' environment (unknown never activates them).

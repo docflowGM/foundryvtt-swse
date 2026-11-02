@@ -30,13 +30,14 @@ const wrap = a => ({ ...structuredClone(a), id: 'v1', isOwner: true, items: [], 
 test('registry and certification agree exactly: MECHANIC_SPECIFIED <=> implemented effect', () => {
   const certified = Object.entries(overlay).filter(([, r]) => r.status === 'MECHANIC_SPECIFIED').map(([id]) => id).sort();
   assert.deepEqual(certified, [...E.IMPLEMENTED_EFFECT_IDS].sort());
-  assert.equal(certified.length, 39);
+  assert.equal(certified.length, Object.keys(E.EFFECTS).length);
+  assert.equal(certified.length, 43, 'P6B-1 added regenerating shields, SLAM, navicomputer and advanced navicomputer');
   for (const id of E.IMPLEMENTED_EFFECT_IDS) {
     assert.ok(catalog.some(c => c.id === id), id);
     assert.match(E.EFFECTS[id].citation, /Starships of the Galaxy/);
     assert.equal(overlay[id].effectTest, 'tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs');
   }
-  for (const id of ['reinforced-bulkheads-10', 'jamming-suite', 'regenerating-shields', 'combat-thrusters', 'navicomputer', 'sublight-accelerator', 'sublight-drive-3'])
+  for (const id of ['reinforced-bulkheads-10', 'jamming-suite', 'combat-thrusters', 'navicomputer-limited', 'sublight-drive-3'])
     assert.equal(overlay[id].status, 'SOURCE_VERIFIED', id + ' stays deferred');
 });
 
@@ -109,7 +110,7 @@ test('atmospheric thrusters raise fly speed and max velocity, rounded down, only
 const FLY = s => s.scale === 'character' && ['fly', 'flying'].includes(s.mode);
 
 test('deferred rows stay denied through the planner with the precise reason', () => {
-  for (const id of ['reinforced-bulkheads-20', 'jamming-array', 'navicomputer-advanced', 'sublight-drive-2', 'combat-thrusters']) {
+  for (const id of ['reinforced-bulkheads-20', 'jamming-array', 'navicomputer-limited', 'sublight-drive-2', 'combat-thrusters']) {
     const r = install(byKey(XW), id);
     assert.equal(r.ok, false); assert.ok(r.reasons.includes('MODIFICATION_EFFECT_NOT_IMPLEMENTED'), id);
   }

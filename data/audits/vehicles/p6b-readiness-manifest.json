@@ -139,6 +139,60 @@
           "reason": "applied through the P6B-0 environment authority"
         }
       }
+    },
+    {
+      "id": "P6B-1",
+      "status": "OFFLINE_COMPLETE_LIVE_PENDING",
+      "delivered": [
+        "regenerating shields: the recharge shields action (ActorEngine.rechargeShields) restores 10 instead of 5, up to the maximum",
+        "SubLight Accelerator Motor: +5 equipment bonus on Pilot checks to increase speed (+10 with all-out movement) through vehiclePilotCheck",
+        "navicomputer (+5) and advanced navicomputer (+10) on Use Computer astrogation checks via VehicleOperatingContextService.rollAstrogationCheck; a hull printed with an installed navicomputer carries the standard +5; same-check equipment bonuses keep the highest",
+        "Effective Statistics panel rows for the recharge amount and check equipment bonuses"
+      ],
+      "countChanges": {
+        "mechanicSpecified": {
+          "from": 39,
+          "to": 43
+        },
+        "operationallyIntegratedOffline": {
+          "from": 39,
+          "to": 43
+        },
+        "installable": {
+          "from": 39,
+          "to": 43
+        },
+        "identities": [
+          "regenerating-shields",
+          "sublight-accelerator",
+          "navicomputer",
+          "navicomputer-advanced"
+        ],
+        "reason": "P6B-1 effects with runtime consumers and offline tests (p18)"
+      },
+      "deferred": [
+        "reinforced-bulkheads-10/20/30",
+        "sublight-drive-1..6",
+        "jamming-suite",
+        "jamming-array",
+        "combat-thrusters",
+        "navicomputer-limited"
+      ],
+      "deferredRegister": "data/audits/vehicles/p6b-deferred-work.json"
     }
-  ]
+  ],
+  "currentCounts": {
+    "catalogRecords": 187,
+    "reconciledMatches": 174,
+    "unresolvedSource": 7,
+    "notInstallableOptions": 6,
+    "sourceVerified": 174,
+    "mechanicSpecified": 43,
+    "operationallyIntegratedOffline": 43,
+    "liveRuntimeVerified": 0,
+    "installable": 43,
+    "combatAuthorizedWeapons": 0,
+    "p6aOverlaySourceVerified": 118,
+    "note": "after P6B-1"
+  }
 }

@@ -61,7 +61,34 @@ function vehicleDexterity(actor) {
  * The vehicle side of a Pilot check.
  * @returns {{ok:boolean, mode:'CREW_ACTOR'|'GENERIC_CREW', modifier:number|null, breakdown:object[], reasons:string[]}}
  */
-export function vehiclePilotCheck(vehicle, { pilotActor = null } = {}) {
+/**
+ * Equipment bonuses a certified installation (or the hull's printed equipment) grants to ONE kind of check:
+ * { skill, use?, purpose?, allOutMovement? } -> { total, sources }. Same-check equipment bonuses do not stack (the
+ * effective-statistics resolver already keeps the highest). Not a Pilot/Dex calculation: those stay in vehiclePilotCheck.
+ */
+export function vehicleSkillEquipmentBonus(vehicle, { skill, use = null, purpose = null, allOutMovement = false } = {}) {
+  const eff = getEffectiveVehicleDerived(vehicle);
+  const out = { total: 0, sources: [] };
+  for (const b of eff?.skillBonuses ?? []) {
+    if (b.skill !== skill) continue;
+    if (b.use && b.use !== use) continue;
+    if (b.purpose && b.purpose !== purpose) continue;
+    const value = allOutMovement && finite(b.allOutValue) ? b.allOutValue : b.value;
+    out.total += value; out.sources.push({ name: b.sources?.map(x => x.name).join(', '), value });
+  }
+  return out;
+}
+
+export function vehiclePilotCheck(vehicle, { pilotActor = null, purpose = null, allOutMovement = false } = {}) {
+  const base = basePilotCheck(vehicle, { pilotActor });
+  if (!base.ok || purpose === null) return base;
+  // SLAM: +5 on Pilot checks to increase speed (+10 for all-out movement)
+  const eq = vehicleSkillEquipmentBonus(vehicle, { skill: 'pilot', purpose, allOutMovement });
+  if (!eq.total) return base;
+  return { ...base, modifier: base.modifier + eq.total, breakdown: [...base.breakdown, ...eq.sources.map(x => ({ label: `Equipment: ${x.name}`, value: x.value, purpose }))] };
+}
+
+function basePilotCheck(vehicle, { pilotActor = null } = {}) {
   const r = raw(vehicle);
   const record = getVerifiedPublishedRecord(vehicle);
   const reasons = [], breakdown = [];

@@ -92,7 +92,9 @@
    "pageResolution": "pdf-table-page"
   },
   "regenerating-shields": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 43,
@@ -695,7 +697,9 @@
    "pageResolution": "pdf-table-page"
   },
   "navicomputer": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 41,
@@ -708,7 +712,9 @@
    "pageResolution": "pdf-table-page"
   },
   "navicomputer-advanced": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 41,
@@ -721,7 +727,9 @@
    "pageResolution": "pdf-table-page"
   },
   "sublight-accelerator": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs",
    "evidence": "OCR_TEXT",
    "book": "Starships of the Galaxy",
    "printedPage": 41,
