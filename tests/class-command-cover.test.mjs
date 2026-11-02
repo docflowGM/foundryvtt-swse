@@ -3,6 +3,9 @@ import assert from 'node:assert/strict';
 import {
  commandCoverLimit,evaluateCommandCover,sceneCommandCoverBonus,
 } from '../scripts/engine/combat/class-command-cover.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 const actor=(id='def',officer=0,crime=0)=>({id,items:[
  ...(officer?[{type:'class',name:'Officer',system:{level:officer}},{type:'feat',system:{sourceType:'class-feature',featureKey:'officer.commandCover'}}]:[]),
  ...(crime?[{type:'class',name:'Crime Lord',system:{level:crime}},{type:'feat',system:{sourceType:'class-feature',featureKey:'crimeLord.commandCover'}}]:[]),
@@ -51,4 +54,13 @@ test('no published class feature Item means no bonus, despite a class name or ma
  assert.equal(result(without).bonus,0);
  without.items.push({type:'feat',name:'Command Cover',system:{sourceType:'other'}});
  assert.equal(result(without).bonus,0);
+});
+
+test('attack resolution reads scene Command Cover once, merges it by maximum with other cover, and never persists it to derived defenses',()=>{
+ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+ const attacks=fs.readFileSync(path.join(root,'scripts/combat/rolls/attacks.js'),'utf8');
+ assert.match(attacks,/import \{ sceneCommandCoverBonus \} from/);
+ assert.match(attacks,/Math\.max\(commandCover, ordinaryCover\)/);
+ assert.match(attacks,/sceneCommandCoverBonus\(target, \{ tokenId: ctx\?\.tokenId/);
+ assert.match(attacks,/const defenseValue = Number\.isFinite\(base\) \? base \+ adjustment : base/);
 });
