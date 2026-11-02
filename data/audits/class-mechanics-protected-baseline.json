@@ -1,0 +1,198 @@
+{
+  "schemaVersion": 1,
+  "sourceBaselineCommit": "9275da66c21b917acbed628f9dcaf3e070aaa14f",
+  "reason": "Talent audit frozen byte-level class-pack check predates approved Core skills and BAB corrections. Preserve every other class record field while permitting ONLY these three approved class-mechanics fields.",
+  "exemptFields": [
+    "system.trainedSkills",
+    "system.class_skills",
+    "system.babProgression"
+  ],
+  "checksumAlgorithm": "FNV-1a-64 over JSON.stringify class record excluding the three exempt system fields; length prefix",
+  "records": [
+    {
+      "_id": "06f4d9029debf827",
+      "name": "Medic",
+      "fingerprint": "1590:83428820ae2163a3"
+    },
+    {
+      "_id": "07a64453f95e04f2",
+      "name": "Jedi Master",
+      "fingerprint": "1277:ba02cf60019d3a49"
+    },
+    {
+      "_id": "162d866ba36fce69",
+      "name": "Gunslinger",
+      "fingerprint": "1960:9e7b6f6f35ef4992"
+    },
+    {
+      "_id": "19ee85a788380256",
+      "name": "Outlaw",
+      "fingerprint": "1800:76f76d51126af4c6"
+    },
+    {
+      "_id": "1ba03b2d00245906",
+      "name": "Sith Apprentice",
+      "fingerprint": "2077:c0cb46ceb432d515"
+    },
+    {
+      "_id": "21dfe84d159a1b7f",
+      "name": "Scoundrel",
+      "fingerprint": "3867:d764621b81c45d94"
+    },
+    {
+      "_id": "289fcf920ef0e184",
+      "name": "Force Adept",
+      "fingerprint": "2175:33d90e67eb53cb45"
+    },
+    {
+      "_id": "2f7cfdc115c640a5",
+      "name": "Sith Lord",
+      "fingerprint": "1270:f92cfc545b83c645"
+    },
+    {
+      "_id": "30b9cd24b80ebf46",
+      "name": "Officer",
+      "fingerprint": "2317:e8ce8031cef2b4bf"
+    },
+    {
+      "_id": "324631ca844a88be",
+      "name": "Crime Lord",
+      "fingerprint": "1940:f0f5460c6ad7acc3"
+    },
+    {
+      "_id": "336bba6d1e517c92",
+      "name": "Bounty Hunter",
+      "fingerprint": "1973:9e9b4ca5c1ee0d4a"
+    },
+    {
+      "_id": "3b1ed5f1038d49fb",
+      "name": "Independent Droid",
+      "fingerprint": "1907:120860893a5f3b74"
+    },
+    {
+      "_id": "480a290aa128f683",
+      "name": "Martial Arts Master",
+      "fingerprint": "1928:36445b03a3c3d253"
+    },
+    {
+      "_id": "4ee81a6708a516cd",
+      "name": "Pathfinder",
+      "fingerprint": "1777:a447a693d9f05702"
+    },
+    {
+      "_id": "533f1066362655c7",
+      "name": "Gladiator",
+      "fingerprint": "1798:efac6dc76ed4f9df"
+    },
+    {
+      "_id": "557e1a5ec72166fd",
+      "name": "Shaper",
+      "fingerprint": "1765:63eebba068e8a040"
+    },
+    {
+      "_id": "61876f91a1633cdf",
+      "name": "Enforcer",
+      "fingerprint": "2078:22d10aab0549fad6"
+    },
+    {
+      "_id": "74fa04f5afb5f6e1",
+      "name": "Assassin",
+      "fingerprint": "1801:8cadc79c0f6b2eb5"
+    },
+    {
+      "_id": "7c7d3aa972d968c8",
+      "name": "Droid Commander",
+      "fingerprint": "1855:eceab04cdb075f80"
+    },
+    {
+      "_id": "8c58016e587dd2c7",
+      "name": "Noble",
+      "fingerprint": "3993:c063269c80cd3362"
+    },
+    {
+      "_id": "8da58194b3d58041",
+      "name": "Charlatan",
+      "fingerprint": "1561:f89f00f0166a622b"
+    },
+    {
+      "_id": "9c9989c34714f920",
+      "name": "Ace Pilot",
+      "fingerprint": "2068:5420cc793e31d2e8"
+    },
+    {
+      "_id": "acd10710f000ae70",
+      "name": "Vanguard",
+      "fingerprint": "1741:afd5748f83fc246d"
+    },
+    {
+      "_id": "b5bed5d1b5f42958",
+      "name": "Scout",
+      "fingerprint": "3828:ad72b421ebfaa53d"
+    },
+    {
+      "_id": "b85240cf77cf95eb",
+      "name": "Military Engineer",
+      "fingerprint": "1694:315e7f357d7d3398"
+    },
+    {
+      "_id": "c4dbedcf989cb6b2",
+      "name": "Elite Trooper",
+      "fingerprint": "2618:3bf09ce180593179"
+    },
+    {
+      "_id": "d87c05d2a34f5627",
+      "name": "Melee Duelist",
+      "fingerprint": "1837:059d81b352dee932"
+    },
+    {
+      "_id": "db019dfbb271cdf6",
+      "name": "Improviser",
+      "fingerprint": "2552:57d4352f1aaefe07"
+    },
+    {
+      "_id": "de3f367749b82fcf",
+      "name": "Saboteur",
+      "fingerprint": "1863:3ea5e388d614159a"
+    },
+    {
+      "_id": "e647ee8f065e1d19",
+      "name": "Infiltrator",
+      "fingerprint": "1850:59f94fcc97f92e66"
+    },
+    {
+      "_id": "ec505163e5647cc6",
+      "name": "Imperial Knight",
+      "fingerprint": "1975:0754dfa5ad7b6439"
+    },
+    {
+      "_id": "ef6fe8fdbbd884b4",
+      "name": "Force Disciple",
+      "fingerprint": "1459:b167ad4cb1ad2e43"
+    },
+    {
+      "_id": "f62ca2e639cab614",
+      "name": "Soldier",
+      "fingerprint": "3841:61c098e55dd16da4"
+    },
+    {
+      "_id": "fb5c2644f988e6bf",
+      "name": "Jedi Knight",
+      "fingerprint": "2991:04a9f70a2a6f16c5"
+    },
+    {
+      "_id": "fc815ae3ca4bf726",
+      "name": "Corporate Agent",
+      "fingerprint": "1847:b74be1df7e285434"
+    },
+    {
+      "_id": "fcf8cc428a6eb01a",
+      "name": "Master Privateer",
+      "fingerprint": "1981:c30834743bd43082"
+    },
+    {
+      "_id": "fec1f8af44fcc35a",
+      "name": "Jedi",
+      "fingerprint": "3102:c5dbc4ae4790738d"
+    }
+  ]
+}
