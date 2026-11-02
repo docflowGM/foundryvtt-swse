@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {buildOfficerShareTalentGrant,ownOfficerTalentItem} from '../scripts/engine/combat/officer-share-talent-grant-plan.js';
+import {buildOfficerShareTalentGrant,ownOfficerTalentItem,isOfficerSharedTalentPrerequisiteWaived} from '../scripts/engine/combat/officer-share-talent-grant-plan.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -32,6 +32,24 @@ test('temporary Share Talent clones actual canonical talent and retains provenan
  assert.equal(result._id,undefined);
  assert.equal(item._id,'original');
 });
+test('only complete temporary Officer Share Talent provenance waives recipient prerequisites',()=>{
+ const item=buildOfficerShareTalentGrant({
+   officer,recipient,talent:officer.items[0],selection,encounterId:'enc',day:15,
+ });
+ assert.equal(isOfficerSharedTalentPrerequisiteWaived(item),true);
+ for(const edited of [
+   {...item,system:{...item.system,sourceType:'ordinary-talent'}},
+   {...item,system:{...item.system,prerequisiteWaivedBy:null}},
+   {...item,system:{...item.system,talentSourceId:'different'}},
+   {...item,system:{...item.system,temporary:false}},
+   {...item,flags:{swse:{officerSharedTalent:{...item.flags.swse.officerSharedTalent,encounterId:''}}}},
+   {...item,flags:{swse:{officerSharedTalent:{...item.flags.swse.officerSharedTalent,officerLevel:0}}}},
+   {...item,type:'feat'},
+ ]) assert.equal(isOfficerSharedTalentPrerequisiteWaived(edited),false);
+ const checker=fs.readFileSync(path.join(ROOT,'scripts/governance/integrity/prerequisite-integrity-checker.js'),'utf8');
+ assert.match(checker,/isOfficerSharedTalentPrerequisiteWaived\(item\)/);
+});
+
 test('never duplicate the same canonically owned talent for an ally',()=>{
  const withTalent={id:'B',items:[{type:'talent',system:{talentSourceId:'T123'}}]};
  assert.equal(buildOfficerShareTalentGrant({officer,recipient:withTalent,
