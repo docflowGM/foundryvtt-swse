@@ -7,7 +7,6 @@
  */
 const tokensOf = canvasRef => Array.from(canvasRef?.tokens?.placeables || []);
 const tokenId = token => String(token?.id || token?.document?.id || '');
-const disposition = token => Number(token?.document?.disposition ?? token?.disposition);
 const actorId = token => String(token?.actor?.id || '');
 const sceneId = scene => String(scene?.id || (typeof scene === 'string' ? scene : ''));
 
@@ -43,8 +42,7 @@ export function resolveOfficerShareTalentScene({
   const tokens = tokensOf(canvasRef);
   const officerTokens = tokens.filter(token => actorId(token) === String(officer.id));
   if (officerTokens.length !== 1) throw new Error('Officer token is ambiguous or absent');
-  const source = officerTokens[0], faction = disposition(source);
-  if (![1, -1].includes(faction)) throw new Error('Officer allegiance is unresolved');
+  const source = officerTokens[0];
   const activeTokenIds = new Set(Array.from(combat?.combatants || []).map(c => String(c.tokenId || '')));
   if (!activeTokenIds.has(tokenId(source))) throw new Error('Officer token does not belong to this encounter');
 
@@ -59,8 +57,9 @@ export function resolveOfficerShareTalentScene({
     const token = matches[0], target = token.actor;
     const targetId = actorId(token);
     const identity = String(target?.uuid || targetId);
-    if (!targetId || targetId === String(officer.id) || seenActors.has(identity)
-      || disposition(token) !== faction) {
+    // Alliance is a GM-confirmed RAW fact. Foundry token disposition is not
+    // a reliable substitute (neutral tokens may be allies).
+    if (!targetId || targetId === String(officer.id) || seenActors.has(identity)) {
       throw new Error('Share Talent recipient is not a unique allied actor');
     }
     const distance = officerShareTalentDistanceSquares(scene, grid, source, token);
