@@ -27,6 +27,28 @@ test('only canonically-owned, source-resolved talents in published eligible tree
   assert.deepEqual(eligibleOfficerShareTalents(actor([owned('influence1')]),{isBuilt:false},treeDB),[]);
 });
 
+test('borrowed or temporary talents never qualify for permanent Share Talent selection',()=>{
+ const borrowed={
+   ...owned('influence1'),
+   system:{sourceType:'officer-share-talent',temporary:true},
+   flags:{...owned('influence1').flags,swse:{officerSharedTalent:{
+     sourceOfficerId:'other',talentId:'influence1',encounterId:'combat',
+   }}},
+ };
+ for(const altered of [
+   borrowed,
+   {...owned('influence1'),system:{temporary:true}},
+   {...owned('influence1'),system:{sourceType:'officer-share-talent'}},
+   {...owned('influence1'),flags:{...owned('influence1').flags,swse:{officerSharedTalent:{temporary:true}}}},
+ ]) {
+   assert.deepEqual(eligibleOfficerShareTalents(actor([altered]),talentDB,treeDB),[]);
+   assert.equal(resolveOfficerShareTalentChoice({
+     actor:actor([altered]),choice:{talentId:'influence1'},officerLevel:2,talentDB,treeDB,
+   }).valid,false);
+ }
+ assert.equal(eligibleOfficerShareTalents(actor([owned('influence1')]),talentDB,treeDB).length,1);
+});
+
 test('valid choice is normalized from the canonical registries, not player-supplied labels',()=>{
  const a=actor([owned('influence1')]);
  const r=resolveOfficerShareTalentChoice({actor:a,officerLevel:2,
