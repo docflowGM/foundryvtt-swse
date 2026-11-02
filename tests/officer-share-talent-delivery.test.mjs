@@ -48,6 +48,9 @@ test('encounter cleanup is registered and temporary talent items use ActorEngine
  assert.match(service,/Hooks\.on\('updateCombat'/);
  assert.match(service,/Hooks\.once\?\.\('ready'/);
  assert.match(service,/ActorEngine\.restoreSnapshotVerified\(/);
+ assert.match(service,/touched\.push\(entry\.actor\);\s*await ActorEngine\.applyMutationPlan\(entry\.actor/);
+ assert.match(service,/touched\.push\(officer\);\s*await ActorEngine\.applyMutationPlan\(officer/);
+ assert.match(service,/\[\.\.\.touched\]\.reverse\(\)/);
  assert.match(service,/transactional:true/);
  assert.match(service,/await combatant\.useAction\('standard'\)/);
  assert.match(service,/delete:\{items:expired\.map/);
