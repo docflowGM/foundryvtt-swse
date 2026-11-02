@@ -44,11 +44,20 @@ test('Share Talent fails closed if target moved out of range after dialog inspec
   assert.throws(()=>resolveOfficerShareTalentScene({...options,canvasRef:current}),/no longer within 10 squares/);
 });
 
-test('Share Talent requires explicit GM senses and allegiance assertions',()=>{
+test('Share Talent requires GM sight/hearing/alliance proof, not arbitrary token disposition',()=>{
   assert.throws(()=>resolveOfficerShareTalentScene({...options,confirmedSenses:false}),/GM must confirm/);
   assert.throws(()=>resolveOfficerShareTalentScene({...options,confirmedAllies:false}),/GM must confirm/);
-  const enemy=token('target',ally,500,0,-1);
-  assert.throws(()=>resolveOfficerShareTalentScene({...options,canvasRef:{...canvasRef,tokens:{placeables:[source,enemy]}}}),/unique allied actor/);
+  for(const displayDisposition of [-1,0,1]) {
+    const targetToken=token('target',ally,500,0,displayDisposition);
+    assert.deepEqual(resolveOfficerShareTalentScene({
+      ...options,canvasRef:{...canvasRef,tokens:{placeables:[source,targetToken]}},
+    }).recipientActors,[ally]);
+  }
+  const neutral=token('target',ally,500,0,0);
+  assert.throws(()=>resolveOfficerShareTalentScene({
+    ...options,confirmedAllies:false,
+    canvasRef:{...canvasRef,tokens:{placeables:[source,neutral]}},
+  }),/GM must confirm/);
 });
 
 test('Share Talent refuses different scene, non-encounter targets and duplicate identities',()=>{
@@ -93,5 +102,6 @@ test('Service enforces turn economy and derives recipients at action time; dialo
   assert.match(dialog,/recipientTokenIds:chosen\.tokenIds/);
   assert.match(dialog,/confirmedAllies/);
   assert.doesNotMatch(dialog,/combatTokenIds\.has\(tokenId\(t\)\)/);
+  assert.doesNotMatch(dialog,/faction\(t\)===sourceFaction/);
   assert.doesNotMatch(dialog,/recipientProofs:tokenSelections/);
 });
