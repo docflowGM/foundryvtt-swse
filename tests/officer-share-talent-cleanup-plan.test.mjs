@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {buildOfficerShareTalentGrant,uniqueOfficerShareTalentActors} from '../scripts/engine/combat/officer-share-talent-grant-plan.js';
-import {planOfficerShareTalentExpiry} from '../scripts/engine/combat/officer-share-talent-cleanup-plan.js';
+import {planOfficerShareTalentExpiry,executeOfficerShareTalentExpiry} from '../scripts/engine/combat/officer-share-talent-cleanup-plan.js';
 
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const officer={id:'officer',name:'Officer'};
@@ -73,7 +73,33 @@ test('cleanup preserves distinct synthetic token actors sharing a base world Act
 
 test('runtime cleanup submits effects before Items to one transactional ActorEngine plan',()=>{
  const service=fs.readFileSync(path.join(ROOT,'scripts/engine/combat/officer-share-talent-service.js'),'utf8');
- assert.match(service,/planOfficerShareTalentExpiry\(\{actor,encounterId:combatId\}\)/);
- assert.match(service,/delete:\{effects:expiry\.effects,items:expiry\.items\}/);
- assert.match(service,/source:'OfficerShareTalentService\.expireEncounter',transactional:true/);
+ assert.match(service,/executeOfficerShareTalentExpiry\(/);
+ const helper=fs.readFileSync(path.join(ROOT,'scripts/engine/combat/officer-share-talent-cleanup-plan.js'),'utf8');
+ assert.match(helper,/delete:\{effects:plan\.effects,items:plan\.items\}/);
+ assert.match(helper,/source:'OfficerShareTalentService\.expireEncounter',transactional:true/);
+});
+
+test('cleanup continues to healthy actors after a malformed or failing recipient',async()=>{
+ const bad={id:'bad',uuid:'Actor.bad',
+   items:[{...grant('bad-shared','enc-A'),system:{temporary:false}}],
+   effects:[]};
+ const first={id:'first',items:[grant('item1','enc-A')],effects:[effect('effect1','item1')]};
+ const second={id:'second',items:[grant('item2','enc-A')],effects:[effect('effect2','item2')]};
+ const untouched={id:'untouched',items:[grant('item3','enc-B')],effects:[]};
+ const applied=[];
+ const result=await executeOfficerShareTalentExpiry({
+   actors:[bad,first,second,untouched],encounterId:'enc-A',
+   applyMutationPlan:async (actor,plan,opts)=>{
+     assert.equal(opts.transactional,true);
+     applied.push({id:actor.id,plan});
+     if(actor.id==='first')throw new Error('simulated ActorEngine rollback');
+   },
+ });
+ assert.equal(result.success,false);
+ assert.deepEqual(applied.map(x=>x.id),['first','second']);
+ assert.equal(result.expired.length,1);
+ assert.equal(result.expired[0].actorId,'second');
+ assert.equal(result.expired[0].effectsRemoved,1);
+ assert.deepEqual(result.failures.map(x=>x.actorId),['bad','first']);
+ assert.match(result.failures[0].reason,/INDETERMINATE/);
 });
