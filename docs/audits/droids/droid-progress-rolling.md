@@ -1,6 +1,6 @@
 # SWSE Droid Publication Mechanical Hydration - Rolling local progress
 
-**Current book: Starships of the Galaxy (priority 13/14).** No GitHub write, Foundry import or runtime mechanical certification is authorized.
+**Current book: Starships of the Galaxy (priority 13/14).** Source-review audit GitHub push authorized by owner; Foundry imports and runtime mechanical certification are NOT authorized.
 
 | Measure | Starships of the Galaxy | All 14 sourcebooks |
 |---|---:|---:|
@@ -46,4 +46,4 @@ These are separate completion gates. A visually reviewed statblock does not veri
 | 13 | Starships of the Galaxy | 3/3 | 3/3 | 0/3 |
 | 14 | Jedi Academy Training Manual | 0/0 | 0/0 | 0/0 |
 
-**GitHub:** Local only. Upload only when explicitly authorized by owner.
+**GitHub:** Source-review audit checkpoint pushed to `audit/droid-publication-census-2026-10-29`. No production pack or mechanics changes.

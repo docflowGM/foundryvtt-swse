@@ -7,11 +7,11 @@
   "overall": {
     "publicationClaimsTotal": 234,
     "draftSourceEntries": 234,
-    "draftSourceCoveragePercent": 100.0,
+    "draftSourceCoveragePercent": 100,
     "selectedFieldPdfVisuallyReviewedEntries": 234,
-    "selectedFieldPdfCoveragePercent": 100.0,
+    "selectedFieldPdfCoveragePercent": 100,
     "independentlyMechanicalCertifiedEntries": 0,
-    "mechanicalCertificationPercent": 0.0,
+    "mechanicalCertificationPercent": 0,
     "directPdfVisualFieldComparisons": 3615
   },
   "currentBook": {
@@ -20,10 +20,10 @@
     "publishedClaimsTotal": 3,
     "draftSourceEntries": 3,
     "selectedFieldPdfVisuallyReviewedEntries": 3,
-    "selectedFieldPdfPercent": 100.0,
+    "selectedFieldPdfPercent": 100,
     "directPdfVisualFieldComparisons": 15,
     "mechanicallyCertifiedEntries": 0,
-    "mechanicalCertificationPercent": 0.0,
+    "mechanicalCertificationPercent": 0,
     "status": "IN_PROGRESS_NOT_CERTIFIED",
     "remainingUnvisuallyReviewedFirstPages": 0,
     "mechanicalCertificationsStillNeeded": 3
@@ -104,6 +104,6 @@
   },
   "remainingUndraftedPublicationClaims": 0,
   "caveat": "Draft source records and selected printed-PDF fields are not complete mechanical certification. Equipment, feats, talents, full rules, and Foundry V13 execution remain gated.",
-  "githubWritesAuthorized": false,
-  "repositorySyncState": "LOCAL_ONLY_UNPUSHED"
+  "githubWritesAuthorized": true,
+  "repositorySyncState": "AUDIT_SOURCE_REVIEW_PUSHED_TO_GITHUB_NOT_PRODUCTION"
 }

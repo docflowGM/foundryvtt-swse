@@ -1,7 +1,7 @@
 {
   "schema": "swse.droid.mechanical-hydration.local-overlay/0.3",
   "originalQueue": "data/audits/droids/droid-mechanical-hydration-queue.json",
-  "note": "LOCAL ONLY. This is not the GitHub queue or system data. Published identities remain separate.",
+  "note": "Audit source-review files pushed to GitHub on owner request; this remains a non-production, uncertified hydration overlay, not the canonical GitHub certification queue.",
   "expectedPublishedClaims": 234,
   "localSourceDrafts": 234,
   "selectedFirstPageVisualReviews": 234,
@@ -177,5 +177,5 @@
     }
   ],
   "productionMutationAuthorized": false,
-  "gitHubWriteAuthorization": false
+  "gitHubWriteAuthorization": true
 }
