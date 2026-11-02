@@ -1,0 +1,163 @@
+{
+  "schema": "swse.droids.sgd.source-mechanics-sprint-006-010/0.1",
+  "date": "2026-11-02",
+  "source": "Scavenger's Guide to Droids",
+  "printedPages": [
+    78,
+    87
+  ],
+  "recordIds": [
+    "SGD-DROID-006",
+    "SGD-DROID-007",
+    "SGD-DROID-008",
+    "SGD-DROID-009",
+    "SGD-DROID-010"
+  ],
+  "sourceReviewStatus": "PDF_VISUALLY_VERIFIED_RECORD_MECHANICAL_DEEPENING",
+  "sprintStatus": "SOURCE_ONLY_NONEXECUTABLE",
+  "summary": {
+    "reviewed": 5,
+    "variantRecords": 13,
+    "protocolActionClaims": 22,
+    "newVariantConstraintClaims": 9,
+    "newHeroicBuildClaims": 1,
+    "newPrintedSourceContradictions": 3,
+    "pdfPagesVisual": 10
+  },
+  "recordDetails": [
+    {
+      "id": "SGD-DROID-006",
+      "name": "Colicoid Infiltrator-Series Droid",
+      "pages": [
+        78,
+        79
+      ],
+      "variants": [
+        "Communications Beacon",
+        "Heavy Weapons Turret",
+        "Walking Throne"
+      ],
+      "actions": 5,
+      "addedConstraints": 1,
+      "blockers": [
+        "Original 4 tool appendages vs 6 distinct possession types; loaded weapon mount rights unverified",
+        "Heavy turret >2 missile launchers displace disguise/silence equipment; four shots until allied reload",
+        "Comlink Beacon 500 km applies only after 3 installations and skill/feat retraining"
+      ]
+    },
+    {
+      "id": "SGD-DROID-007",
+      "name": "CZ-Series Secretary Droid",
+      "pages": [
+        80,
+        81
+      ],
+      "variants": [
+        "Identity Thief",
+        "Pirate HoloNet Transceiver",
+        "Slicer's Proxy"
+      ],
+      "actions": 4,
+      "addedConstraints": 2,
+      "pcClaims": 1,
+      "blockers": [
+        "SGD-007-COMLINK-JAMMER-ACTION-CONFLICT: main standard versus protocol swift",
+        "SGD-007-COMLINK-JAMMER-DURATION-CONFLICT: main droid turn versus protocol owner turn",
+        "SGD-007-TRANSLATOR-PRESENCE-CONFLICT: protocol translator present, main Systems absent",
+        "Slicer's Proxy stores external slicer's checks, not the droid's; maximum Int modifier command count"
+      ]
+    },
+    {
+      "id": "SGD-DROID-008",
+      "name": "DP-2 Probe Droid",
+      "pages": [
+        82,
+        83
+      ],
+      "variants": [
+        "Blockade Breaker",
+        "Courier Droid"
+      ],
+      "actions": 5,
+      "addedConstraints": 2,
+      "primaryAuthority": "vehicle",
+      "blockers": [
+        "Publication identifies Large starfighter/ground vehicle, with vehicle crew/payload/cargo/weapon and starship speed",
+        "No independently verified vehicleSourceEntryKey; vehicleLink not fabricated",
+        "Blockade Breaker replaces beacon launcher with SR25 starship shield and separate battery",
+        "Courier x8 hyperdrive, speed 4 starship scale and 20kg internal storage are variant-only"
+      ]
+    },
+    {
+      "id": "SGD-DROID-009",
+      "name": "Droideka Mark II",
+      "pages": [
+        84,
+        85
+      ],
+      "variants": [
+        "Magnetic Starship Turret",
+        "Sith Jedi Hunter"
+      ],
+      "actions": 5,
+      "addedConstraints": 2,
+      "blockers": [
+        "Protocol assigns 2 laser cannons to tool appendages; ion cannon mount rights missing",
+        "Sith variant anti-Jedi high-frequency emitters set shield SR to zero while active",
+        "Sith gyroscope wheeled speed drops to 3; special linked cannon full-round attack and block/deflect DC +10 are variant-only",
+        "Magnetic coupler failure has pilot-dependent Acrobatics checks"
+      ]
+    },
+    {
+      "id": "SGD-DROID-010",
+      "name": "DT-16 Destructor Battle Droid",
+      "pages": [
+        86,
+        87
+      ],
+      "variants": [
+        "Sentry",
+        "Antivehicle Defense",
+        "Light Construction"
+      ],
+      "actions": 3,
+      "addedConstraints": 2,
+      "blockers": [
+        "Baseline 2 concealed arm rifles plus one grenade launcher with 12 frag; no fabricated extra hands",
+        "Barrage consumes 3 grenades, not an infinite burst",
+        "Antivehicle adds 2 shoulder tool mounts, 2 launchers, separate storage and replacement magazines; reload economy differs",
+        "Light Construction removes both stock rifles and grenade launcher; no old weapon rights after conversion"
+      ]
+    }
+  ],
+  "sourceLedgerCommit": "4320f782aa8fd98474dae4d44f6767833027706c",
+  "overallSGDStructurallyHydrated": 46,
+  "sgdRecordsDeepSourceMechanicsReviewedNow": 10,
+  "strictSourceMechanicalCertificationsSGD": 0,
+  "strictSourceMechanicalCertificationsProject": 0,
+  "foundryRuntimeCertifications": 0,
+  "verification": {
+    "customRecursiveSchemaWalk": "46/46 PASS",
+    "fieldStatesNullEmpty": "46/46 PASS",
+    "censusNamePageIdentity": "46/46 PASS",
+    "attackGroupsSourceOnly": "46/46 PASS",
+    "sprintSourceProvenance": "PASS",
+    "pythonJsonschemaDraft202012": "NOT RUN",
+    "foundryRuntime": "NOT RUN"
+  },
+  "productionCompendiumChanges": 0,
+  "branchMerged": false,
+  "nextFive": [
+    "SGD-DROID-011",
+    "SGD-DROID-012",
+    "SGD-DROID-013",
+    "SGD-DROID-014",
+    "SGD-DROID-015"
+  ],
+  "notes": [
+    "Data is drawn directly from paired printed pages (main and protocol) and alternate variant sections.",
+    "CZ source conflicts are unresolved: no selected controlling action or translator installed.",
+    "DP-2 remains vehicle-primary; no second droid actor, vehicleSourceEntryKey, or runtime link fabricated.",
+    "The separate component catalog sprint from another contributor was not altered or reverted."
+  ]
+}
