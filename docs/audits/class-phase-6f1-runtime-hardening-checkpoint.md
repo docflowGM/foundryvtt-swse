@@ -27,6 +27,14 @@
 - Second current-turn check immediately before spending a standard action.
 - Command Cover suppression use in both contextual target-defense and getTargetDefense access.
 
+## Continuation: source-rule and cleanup review
+
+- **Core p. 222 verified from the supplied text:** Share Talent recipients are allies within 10 squares who can see and hear the Officer; they are NOT required to be combat tracker participants. The dialog and scene resolver now include eligible scene actors outside initiative, while the Officer must still act on the current encounter turn.
+- **Synthetic recipients:** Scene checks, duplicate prevention, daily-use receipt references and the share plan now use synthetic Actor UUIDs when available, avoiding conflation of separate unlinked tokens created from the same base Actor template.
+- **Expiry failure isolation:** A malformed encounter-tagged share grant fails explicitly with GM-review evidence instead of being silently skipped. Each recipient cleanup is attempted separately using the same transactional ActorEngine path. An error does not prevent cleanup of other actors; failures are reported and the system never claims a successful full encounter cleanup.
+- **Enforcer vehicle ownership metadata:** The existing StoreAcquisitionService now retains the caller-supplied source for owner links and relationship records. Ordinary store purchases still default to `store`; Enforcer grants remain identified as `Enforcer Resources` rather than appearing as purchased assets.
+- **Talent runtime certification:** The passive/active talent engines are distributed. The legacy `initializeTalentEffectsHooks()` function is present, but a repository search located no corresponding index registration. Therefore neither copying a talent Item nor the standalone hook's existence proves that all Officer-shared talent effects execute. No global hook registration was added without a separate duplicate-effect audit.
+
 ## Evidence / certification gates
 
 - Prior PR #1094 head `a46962e2dcaa68e7179cf3fa14bece729affd6ca` passed rolling CI, run 41521610934.
