@@ -22,6 +22,7 @@ import { FeatEngine } from '../feats/feat-engine.js';
 const CHOICE_TYPES = Object.freeze({
   feat_choice: 'classFeatChoices',
   talent_choice: 'talentChoices',
+  share_talent_choice: 'shareTalentChoices',
   force_power_choice: 'forcePowerChoices',
   force_secret_choice: 'forceSecretChoices',
   force_technique_choice: 'forceTechniqueChoices',
@@ -227,6 +228,7 @@ function countChoices(features = []) {
   const counts = {
     classFeatChoices: 0,
     talentChoices: 0,
+    shareTalentChoices: 0,
     forcePowerChoices: 0,
     forceSecretChoices: 0,
     forceTechniqueChoices: 0,
