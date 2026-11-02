@@ -742,6 +742,26 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     isFinal: false,
   },
 
+  'share-talent': {
+    nodeId: 'share-talent',
+    label: 'Share Talent',
+    icon: 'fa-people-arrows-left-right',
+    category: 'conditional',
+    modes: ['levelup'],
+    subtypes: ['actor', 'npc', 'follower'],
+    activationPolicy: ActivationPolicy.PREREQUISITE,
+    dependsOn: ['class'],
+    invalidates: ['summary', 'levelup-review'],
+    invalidationBehavior: {
+      summary: InvalidationBehavior.RECOMPUTE,
+      'levelup-review': InvalidationBehavior.RECOMPUTE,
+    },
+    selectionKey: 'shareTalentSelections',
+    optional: false,
+    isSkippable: false,
+    isFinal: false,
+  },
+
   'medical-secrets': {
     nodeId: 'medical-secrets',
     label: 'Medical Secrets',
