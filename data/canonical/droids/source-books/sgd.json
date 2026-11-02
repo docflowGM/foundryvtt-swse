@@ -22438,7 +22438,21 @@
           }
         ],
         "initiativePrinted": 11,
-        "perceptionPrinted": 12
+        "perceptionPrinted": 12,
+        "languages": [
+          {
+            "name": "Basic",
+            "raw": "Printed Languages: Basic, Binary, Yuuzhan Vong"
+          },
+          {
+            "name": "Binary",
+            "raw": "Printed Languages: Basic, Binary, Yuuzhan Vong"
+          },
+          {
+            "name": "Yuuzhan Vong",
+            "raw": "Printed Languages: Basic, Binary, Yuuzhan Vong"
+          }
+        ]
       },
       "progression": {
         "classLineRaw": "soldier 5/scout 3/eli te trooper 1",
@@ -22578,6 +22592,20 @@
               "sourceEntryKey": "SGD-DROID-046"
             }
           }
+        ],
+        "classes": [
+          {
+            "className": "soldier",
+            "level": 5
+          },
+          {
+            "className": "scout",
+            "level": 3
+          },
+          {
+            "className": "elite trooper",
+            "level": 1
+          }
         ]
       },
       "defenses": {
@@ -22591,11 +22619,84 @@
         "damageThreshold": 27
       },
       "movement": {
-        "speedLineRaw": "Speed 6 squares (walking)"
+        "speedLineRaw": "Speed 6 squares (walking)",
+        "locomotionSystems": [
+          {
+            "instanceId": "SGD-DROID-046-MOVE-01",
+            "mode": "walking",
+            "speedSquares": 6,
+            "raw": "Speed 6 squares (walking)",
+            "componentInstanceId": "SGD-DROID-046-COMP-001",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Speed 6 squares (walking)"
+            }
+          }
+        ],
+        "specialMovement": [
+          {
+            "ruleId": "SGD-046-LIMITED-REPULSOR-LEAP",
+            "statement": "Limited booster supports jumping, halving all Jump DCs as a free action; not independent hovering/flying locomotion.",
+            "scope": "YVH-Series printed repulsorlift Jump augmentation",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SGD-046-LIMITED-REPULSOR-LEAP"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
-      "anatomy": {},
-      "processor": {},
-      "programming": {},
+      "anatomy": {
+        "bodyPlatformKind": "ordinary-chassis",
+        "physicalLocations": [
+          {
+            "locationId": "SGD-DROID-046-PHYSICAL-01",
+            "name": "First printed hand appendage",
+            "locationKind": "hand",
+            "installedComponentIds": [
+              "SGD-DROID-046-COMP-003"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-046-PHYSICAL-02",
+            "name": "Second printed hand appendage",
+            "locationKind": "hand",
+            "installedComponentIds": [
+              "SGD-DROID-046-COMP-004"
+            ]
+          }
+        ]
+      },
+      "processor": {
+        "type": "heuristic",
+        "processorInstanceId": "SGD-DROID-046-COMP-002"
+      },
+      "programming": {
+        "behaviorRestrictions": [
+          {
+            "ruleId": "SGD-046-COMMAND-AUTHORIZATION",
+            "statement": "Published YVH model roleplay guidance says it follows procedures and obtains required authorization before using its most lethal weaponry; roleplay text does not establish a new executable weapon-permission rule.",
+            "scope": "Printed character-creation guidance",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 159,
+              "pdfPage1Based": 160,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SGD-046-COMMAND-AUTHORIZATION"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "combat": {
         "baseAttackBonusPrinted": 8,
         "grapplePrinted": 12,
@@ -22624,16 +22725,377 @@
             "operationStatus": "source-only",
             "attackBonus": 10
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-046-CANNON-NORMAL",
+            "statement": "Normal power blaster cannon uses one of 30 normal-power shot units; damage 3d12+4. Protocol permits one swift attack per turn with area/adjacent target rule. Individual attack ownership/mount is not yet certified.",
+            "scope": "YVH normal-power cannon attack; printed character and protocol alternatives",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SGD-046-CANNON-NORMAL"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-046-CANNON-MAX",
+            "statement": "Maximum power blaster cannon expends two normal-power shot units for 4d12+4; protocol one swift action at most once per turn, alternative to normal-power firing, not a free second shot.",
+            "scope": "YVH maximum-power cannon alternative",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SGD-046-CANNON-MAX"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-046-VIBROBLADE-PROTOCOL",
+            "statement": "Protocol grants a vibroblade attack +12, 2d6+8, one swift action per turn; character attack expression is a distinct statblock alternative.",
+            "scope": "YVH protocol action, source-only",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SGD-046-VIBROBLADE-PROTOCOL"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-046-TAUNT-PROTOCOL",
+            "statement": "Protocol Taunt takes two swift actions, once per turn, targeting up to three Yuuzhan Vong within 6 squares; competing main text gives one free action and all Yuuzhan Vong within range.",
+            "scope": "YVH source conflict; do not choose controlling action/cap",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SGD-046-TAUNT-PROTOCOL"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-046-SCAN-PROTOCOL",
+            "statement": "Protocol Scan takes two swift actions once per turn, Perception +22 versus Yuuzhan Vong Stealth/Deception within 12 squares; main text gives full-round action.",
+            "scope": "YVH source conflict; do not choose controlling action",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SGD-046-SCAN-PROTOCOL"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "conditions": [
+          {
+            "ruleId": "SGD-046-VARIABLE-CANNON-RESOURCE",
+            "statement": "Printed adjustable power pack has 30 normal-shot units; normal costs one unit, maximum costs two units; only one cannon attack choice per printed protocol action, no extra attack inferred.",
+            "scope": "Blaster cannon resource without runtime activation",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SGD-046-VARIABLE-CANNON-RESOURCE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-046-PROTOCOL-AREA-ATTACK",
+            "statement": "The protocol describes cannon normal/max attacks as area attacks that may hit adjacent enemies on successful hit; a miss causes half target damage and no adjacent damage, requiring separate source-confirmed combat authority.",
+            "scope": "YVH cannon's protocol area damage and miss rule",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SGD-046-PROTOCOL-AREA-ATTACK"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
       "systems": {
-        "sourceSystemsRaw": "walking locomotion, heuristic processor, 2 hand appendages, internal com link (encrypted), locked access, improved sensor package, YV sensor package, darkvision, vocabulator, translator unit (DC 10), laminanium armor (+ 12 armor), limited repulsorlift booster"
+        "sourceSystemsRaw": "walking locomotion, heuristic processor, 2 hand appendages, internal com link (encrypted), locked access, improved sensor package, YV sensor package, darkvision, vocabulator, translator unit (DC 10), laminanium armor (+ 12 armor), limited repulsorlift booster",
+        "installed": [
+          {
+            "instanceId": "SGD-DROID-046-COMP-001",
+            "name": "Walking locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems: Walking locomotion"
+            },
+            "catalogRef": "walking"
+          },
+          {
+            "instanceId": "SGD-DROID-046-COMP-002",
+            "name": "Heuristic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems: Heuristic processor"
+            },
+            "catalogRef": "heuristic-processor"
+          },
+          {
+            "instanceId": "SGD-DROID-046-COMP-003",
+            "name": "Hand appendage [1/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems: Hand appendage [1/2]"
+            },
+            "catalogRef": "hand",
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-046-PHYSICAL-01"
+          },
+          {
+            "instanceId": "SGD-DROID-046-COMP-004",
+            "name": "Hand appendage [2/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems: Hand appendage [2/2]"
+            },
+            "catalogRef": "hand",
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-046-PHYSICAL-02"
+          },
+          {
+            "instanceId": "SGD-DROID-046-COMP-005",
+            "name": "Internal comlink (encrypted)",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems: Internal comlink (encrypted)"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-046-COMP-006",
+            "name": "Locked access",
+            "componentCategory": "control",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems: Locked access"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-046-COMP-007",
+            "name": "Improved sensor package",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems: Improved sensor package"
+            },
+            "catalogRef": "improved-sensor-package"
+          },
+          {
+            "instanceId": "SGD-DROID-046-COMP-008",
+            "name": "YV sensor package",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems: YV sensor package"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-046-COMP-009",
+            "name": "Darkvision",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems: Darkvision"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-046-COMP-010",
+            "name": "Vocabulator",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems: Vocabulator"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-046-COMP-011",
+            "name": "Translator unit (DC 10)",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems: Translator unit (DC 10)"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-046-COMP-012",
+            "name": "Laminanium armor (+12 armor)",
+            "componentCategory": "armor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems: Laminanium armor (+12 armor)"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-046-COMP-013",
+            "name": "Limited repulsorlift booster",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems: Limited repulsorlift booster"
+            }
+          }
+        ]
       },
-      "equipment": {},
-      "modifications": {},
+      "equipment": {
+        "possessions": [
+          {
+            "entryId": "SGD-DROID-046-POS-01",
+            "name": "Blaster cannon",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "SGD-DROID-046-POS-02",
+            "name": "Vibroblade",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          }
+        ]
+      },
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-046-VARIANT-GUARDIAN",
+            "statement": "Guardian specialization is a separately published transformation, 12 hours and DC 25 Use Computer, swapping one soldier talent for Harm's Way, which may be used repeatedly each round.",
+            "scope": "YVH guardian variant; not factory or baseline",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 159,
+              "pdfPage1Based": 160,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SGD-046-VARIANT-GUARDIAN"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "constraints": [
+          {
+            "ruleId": "SGD-046-WEAPON-MOUNT-NARRATIVE",
+            "statement": "Source lore identifies a variable-output cannon on the right arm and an interchangeable weapons mount on the left; this does not establish which hand holds the printed vibroblade or grant integrated attack rights until mount ownership is certified.",
+            "scope": "Published physical mounting narrative",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 159,
+              "pdfPage1Based": 160,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SGD-046-WEAPON-MOUNT-NARRATIVE"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
-        "heroEligibility": "allowed"
+        "heroEligibility": "allowed",
+        "creationRoute": "stock-chassis",
+        "startingSelections": [
+          {
+            "ruleId": "SGD-046-HEROIC-CONSTRUCTION-ROUTE",
+            "statement": "Heroic YVH build starts with stock battle-droid chassis, soldier 1st class, Armor Proficiency (heavy) and Weapon Proficiency (heavy weapons) as bonus feats; swap plasteel shell for laminanium armor and add YV sensor pack; suggested trained skills include Initiative, Endurance and Perception.",
+            "scope": "Optional heroic PC build, distinct from stock NPC statblock",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 159,
+              "pdfPage1Based": 160,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SGD-046-HEROIC-CONSTRUCTION-ROUTE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-046-GUARDIAN-MODIFICATION",
+            "statement": "A separate YVH guardian variant requires 12 hours reprogramming and DC 25 Use Computer, replacing one soldier talent with Harm's Way; optional repeated Harm's Way use is not the baseline stock YVH capability.",
+            "scope": "YVH guardian variant only",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 159,
+              "pdfPage1Based": 160,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SGD-046-GUARDIAN-MODIFICATION"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "vehicleLink": {},
       "economics": {
@@ -22643,7 +23105,62 @@
       "text": {
         "mechanicsNotes": "Source language line preserved in sidecar evidence; speaking vs understanding remains unverified."
       },
-      "exceptions": {},
+      "exceptions": {
+        "sourceContradictions": [
+          {
+            "issueId": "SGD-046-SCAN-ACTION-COST-CONFLICT",
+            "fieldPointers": [
+              "/rules/conditionalMechanics",
+              "/combat/specialActions"
+            ],
+            "statements": [
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 158,
+                "pdfPage1Based": 159,
+                "sourceEntryKey": "SGD-DROID-046",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "Main Scan uses full-round action"
+              },
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 159,
+                "pdfPage1Based": 160,
+                "sourceEntryKey": "SGD-DROID-046",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "Protocol Scan uses two swift actions, once per turn"
+              }
+            ],
+            "resolutionStatus": "unresolved"
+          },
+          {
+            "issueId": "SGD-046-TAUNT-ACTION-AND-TARGET-CONFLICT",
+            "fieldPointers": [
+              "/rules/conditionalMechanics",
+              "/combat/specialActions"
+            ],
+            "statements": [
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 158,
+                "pdfPage1Based": 159,
+                "sourceEntryKey": "SGD-DROID-046",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "Main Taunt is free action and targets all Yuuzhan Vong within 6 squares"
+              },
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 159,
+                "pdfPage1Based": 160,
+                "sourceEntryKey": "SGD-DROID-046",
+                "verifiedBy": "pdf-visual",
+                "citationLabel": "Protocol Taunt costs two swift actions and targets up to three Yuuzhan Vong within 6 squares"
+              }
+            ],
+            "resolutionStatus": "unresolved"
+          }
+        ]
+      },
       "fieldStates": {
         "/abilities/con": "explicitly-none"
       },
@@ -22708,11 +23225,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding.",
+        "reviewNotes": "PDF pages 159-160, printed pp.158-159 visually checked including main statblock, protocol block, playing heroic sidebar and guardian variant. Structured 13 physical systems, 2 hands, walking, 3 classes, languages, 2 printed possessions, four main attack rows, action alternatives and 30-unit blaster power reserve. Source contradictions SGD-046-SCAN-ACTION-COST-CONFLICT and SGD-046-TAUNT-ACTION-AND-TARGET-CONFLICT unresolved. Exact feat/talent instance keys, right-arm cannon/mount and optional Guardian transformation require separate mechanical certification. Not runtime-tested.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p158:PDF-page-159",
           "SGD-CENSUS:SGD-DROID-046",
-          "SGD:p158:PDF-p159:visual-statblock-field-review"
+          "SGD:p158:PDF-p159:visual-statblock-field-review",
+          "SGD:printed-pp158-159:PDF-index158-159:both-pages-visual-2026-11-02"
         ]
       }
     }
