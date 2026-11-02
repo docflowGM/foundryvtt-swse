@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {buildOfficerShareTalentGrant} from '../scripts/engine/combat/officer-share-talent-grant-plan.js';
+import {buildOfficerShareTalentGrant,uniqueOfficerShareTalentActors} from '../scripts/engine/combat/officer-share-talent-grant-plan.js';
 import {planOfficerShareTalentExpiry} from '../scripts/engine/combat/officer-share-talent-cleanup-plan.js';
 
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
@@ -60,6 +60,16 @@ test('spoofed or incomplete temporary provenance is not an expiry authority',()=
  assert.deepEqual(planOfficerShareTalentExpiry({actor,encounterId:'enc-A'}),{
    items:[],effects:[],
  });
+});
+
+test('cleanup preserves distinct synthetic token actors sharing a base world Actor ID',()=>{
+ const world={id:'same',uuid:'Actor.same'};
+ const token1={id:'same',uuid:'Scene.first.Token.t1.Actor.same'};
+ const token2={id:'same',uuid:'Scene.second.Token.t2.Actor.same'};
+ const observed=uniqueOfficerShareTalentActors([world,token1,token2,world,token1]);
+ assert.deepEqual(observed,[world,token1,token2]);
+ const service=fs.readFileSync(path.join(ROOT,'scripts/engine/combat/officer-share-talent-service.js'),'utf8');
+ assert.match(service,/const uniqueActors=uniqueOfficerShareTalentActors/);
 });
 
 test('runtime cleanup submits effects before Items to one transactional ActorEngine plan',()=>{
