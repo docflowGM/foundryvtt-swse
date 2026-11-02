@@ -1,0 +1,336 @@
+{
+  "schema": "swse.droids.catalog.cross-app-test-fixtures/0.1",
+  "date": "2026-11-02",
+  "branch": "audit/droid-publication-census-2026-10-29",
+  "dependsOn": [
+    "data/audits/droids/component-core-cost-factor-audit.json",
+    "data/audits/droids/component-keep-source-facts-core-003.json"
+  ],
+  "readOnlyCodeSources": [
+    {
+      "path": "scripts/data/droid-part-schema.js",
+      "sha": "fcde3e63eb847397b16cd1606df153dd8bc9c015",
+      "role": "Garage cost and weight helper"
+    },
+    {
+      "path": "scripts/data/droid-systems.js",
+      "sha": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+      "role": "Published-comparison raw formulas"
+    },
+    {
+      "path": "scripts/apps/progression-framework/steps/droid-builder-step.js",
+      "sha": "27181f3ccbe574f21d23eed6a4bc5bb334e0cb1d",
+      "role": "PC draft default-grants and source size factor"
+    },
+    {
+      "path": "scripts/engine/progression/droids/droid-trait-rules.js",
+      "sha": "cc408d12d09a12c071bb1a9a9256b05accc05cae",
+      "role": "PC size factor"
+    },
+    {
+      "path": "scripts/engine/customization/droid-customization-engine.js",
+      "sha": "31928dfc33d1c59df114384d9850f6a1cc29dccb",
+      "role": "Garage calls computeDroidPartCost"
+    },
+    {
+      "path": "scripts/apps/progression-framework/steps/follower-steps/follower-droid-builder-step.js",
+      "sha": "34c7b8d879408ec2dc066aa6df4249fb6c3fda07",
+      "role": "Follower draft collection"
+    },
+    {
+      "path": "scripts/apps/store/store-checkout.js",
+      "sha": "f33274a8d4b9a53304ebe388686d088da48a908a",
+      "role": "Store checkout boundary (end-to-end untested)"
+    }
+  ],
+  "summary": {
+    "fixtures": 9,
+    "sourceConflictBlockers": 2,
+    "knownSourceToCodeDiscrepancyFixtures": 3,
+    "fullMechanicalCertifications": 0,
+    "productionMutations": 0,
+    "executedTests": 0,
+    "foundryRuntimeCertifications": 0
+  },
+  "fixtures": [
+    {
+      "id": "PAR-LOCO-001",
+      "name": "Small SR5 published factor",
+      "book": "Core",
+      "pages": [
+        187,
+        195,
+        197
+      ],
+      "size": "small",
+      "chosen": "sr5-shield-generator",
+      "context": "Garage offer/quote/install",
+      "sourceExpected": {
+        "credits": 5000,
+        "weightKg": 20
+      },
+      "currentStatic": {
+        "credits": 1250,
+        "weightKg": 5,
+        "derivation": "droid-part-schema costFactor 0.5 rather than printed 2"
+      },
+      "check": "All affected apps quote 5000 and 20kg before permitted discounts; correct actor debit and installed ledger.",
+      "readiness": "SPECIFICATION_ONLY_NOT_EXECUTED",
+      "applicationStatus": {
+        "garage": "NOT_TESTED",
+        "pcChargen": "NOT_TESTED",
+        "follower": "NOT_TESTED",
+        "store": "NOT_TESTED",
+        "foundryV13": "NOT_TESTED"
+      }
+    },
+    {
+      "id": "PAR-LOCO-002",
+      "name": "Medium Telescopic Hand cost",
+      "book": "Core",
+      "pages": [
+        190,
+        194
+      ],
+      "size": "medium",
+      "chosen": "telescopic-appendage",
+      "selectedBaseAppendage": "hand",
+      "sourceExpected": {
+        "baseAppendageCredits": 50,
+        "baseAppendageWeightKg": 5,
+        "upgradeCredits": 100,
+        "upgradeWeightKg": 10
+      },
+      "currentStatic": {
+        "genericCostQuoteIfNoExplicitPartCost": 2,
+        "derivation": "source.cost(appendageCost) receives costFactor=1, computes 2; source.weight similarly receives 1, computes 2kg"
+      },
+      "check": "Selected appendage object and its base cost/weight must be available to price and weight resolvers. No default Hand price for Tool unless selected.",
+      "readiness": "SPECIFICATION_ONLY_NOT_EXECUTED",
+      "applicationStatus": {
+        "garage": "NOT_TESTED",
+        "pcChargen": "NOT_TESTED",
+        "follower": "NOT_TESTED",
+        "store": "NOT_TESTED",
+        "foundryV13": "NOT_TESTED"
+      }
+    },
+    {
+      "id": "PAR-LOCO-003",
+      "name": "Medium Stabilized Tool mount",
+      "book": "Core",
+      "pages": [
+        190,
+        194
+      ],
+      "size": "medium",
+      "chosen": "mount",
+      "selectedBaseAppendage": "tool",
+      "sourceExpected": {
+        "baseToolCredits": 10,
+        "baseToolWeightKg": 2,
+        "mountCredits": 50,
+        "mountWeightKg": 10,
+        "mountedWeaponCostIncluded": false
+      },
+      "currentStatic": {
+        "rawCostCredits": 125,
+        "rawWeightKg": 2,
+        "derivation": "raw mount uses 125*CF / 2*CF rather than source's 5x Tool"
+      },
+      "check": "Quote 50 credits/10kg and separately debit mounted weapon. Do not grant additional attacks.",
+      "readiness": "SPECIFICATION_ONLY_NOT_EXECUTED",
+      "applicationStatus": {
+        "garage": "NOT_TESTED",
+        "pcChargen": "NOT_TESTED",
+        "follower": "NOT_TESTED",
+        "store": "NOT_TESTED",
+        "foundryV13": "NOT_TESTED"
+      }
+    },
+    {
+      "id": "PAR-LOCO-004",
+      "name": "Medium Walking base locomotion",
+      "book": "Core",
+      "pages": [
+        187,
+        188
+      ],
+      "size": "medium",
+      "chosen": "walking",
+      "sourceExpected": {
+        "baseSpeedSquares": 6,
+        "locomotionCredits": 360,
+        "formula": "10 * publishedCF(1) * 6^2"
+      },
+      "currentStatic": {
+        "garageFactor": 1,
+        "progressionFactor": 1,
+        "codeBaseQuote": "both definitions can compute 360 before baseline-grant exception"
+      },
+      "check": "When default locomotion is granted at chargen, no debit; when voluntarily purchased, quote formula. Keep granted/unpaid state distinct from source price.",
+      "readiness": "SPECIFICATION_ONLY_NOT_EXECUTED",
+      "applicationStatus": {
+        "garage": "NOT_TESTED",
+        "pcChargen": "NOT_TESTED",
+        "follower": "NOT_TESTED",
+        "store": "NOT_TESTED",
+        "foundryV13": "NOT_TESTED"
+      }
+    },
+    {
+      "id": "PAR-LOCO-005",
+      "name": "Extra Legs with Medium Walking",
+      "book": "Core",
+      "pages": [
+        189
+      ],
+      "size": "medium",
+      "chosen": "extra-legs",
+      "selectedLocomotion": "walking",
+      "sourceExpected": {
+        "ordinaryWalkingCost": 360,
+        "doubleWalkingCost": 720,
+        "carryingCapacityIncreasePercent": 50,
+        "stabilityBonus": 5
+      },
+      "currentStatic": {
+        "sourceFieldTypo": "requiresLocomtion",
+        "canInferLegality": false
+      },
+      "check": "With Walking installed, quote and physical prerequisite; without Walking deny. Update capacity and prone defense without app double counting.",
+      "readiness": "SPECIFICATION_ONLY_NOT_EXECUTED",
+      "applicationStatus": {
+        "garage": "NOT_TESTED",
+        "pcChargen": "NOT_TESTED",
+        "follower": "NOT_TESTED",
+        "store": "NOT_TESTED",
+        "foundryV13": "NOT_TESTED"
+      }
+    },
+    {
+      "id": "PAR-LOCO-006",
+      "name": "Secondary locomotion cost surcharge",
+      "book": "Core",
+      "pages": [
+        188
+      ],
+      "size": "small",
+      "chosen": "second-locomotion",
+      "sourceExpected": {
+        "additionalChargeCredits": 1000,
+        "formula": "500 * publishedCF(2)",
+        "baseLocomotionItemPriceSeparate": true
+      },
+      "currentStatic": {
+        "genericSinglePartCostFn": "No locomotion-position count argument; surcharge requires separate build/installation logic not yet tested"
+      },
+      "check": "Apply second/third/fourth/fifth charge exactly once at published size factor in each relevant workflow; rollback on failure.",
+      "readiness": "SPECIFICATION_ONLY_NOT_EXECUTED",
+      "applicationStatus": {
+        "garage": "NOT_TESTED",
+        "pcChargen": "NOT_TESTED",
+        "follower": "NOT_TESTED",
+        "store": "NOT_TESTED",
+        "foundryV13": "NOT_TESTED"
+      }
+    },
+    {
+      "id": "PAR-LOCO-007",
+      "name": "Restricted locomotion 1/10 price",
+      "book": "Core",
+      "pages": [
+        189
+      ],
+      "size": "medium",
+      "chosen": "restricted-walking-exclusive",
+      "sourceExpected": {
+        "unrestrictedWalkingCredits": 360,
+        "restrictedWalkingCredits": 36,
+        "restriction": "engage/disengage requires move; while engaged only move and run"
+      },
+      "currentStatic": {
+        "genericPartCostArgs": "No restriction selector on normal single-part formula; separate workflow may exist"
+      },
+      "check": "Select restricted mode explicitly, debit 36 for this component before other applicable rules, track action restriction; do not apply discount without real restriction.",
+      "readiness": "SPECIFICATION_ONLY_NOT_EXECUTED",
+      "applicationStatus": {
+        "garage": "NOT_TESTED",
+        "pcChargen": "NOT_TESTED",
+        "follower": "NOT_TESTED",
+        "store": "NOT_TESTED",
+        "foundryV13": "NOT_TESTED"
+      }
+    },
+    {
+      "id": "PAR-LOCO-008",
+      "name": "Climbing Claws printed cost conflict",
+      "book": "Core",
+      "pages": [
+        189,
+        194
+      ],
+      "size": "medium",
+      "chosen": "climbing-claws",
+      "sourceExpected": {
+        "status": "BLOCKED_SOURCE_CONFLICT",
+        "proseWalkingCostDoubled": 720,
+        "tableIfHandAppendageCostDoubled": 100,
+        "decidedPriceCredits": null,
+        "requiredLocomotion": "walking"
+      },
+      "currentStatic": {
+        "genericCostIfNoOverride": 2,
+        "requiresHandOrClaw": true
+      },
+      "check": "Do not allow authoritative price until printed prose/table conflict adjudicated; do not require Hand/Claw instead of Walking based on unsupported repository restriction.",
+      "readiness": "SPECIFICATION_ONLY_NOT_EXECUTED",
+      "applicationStatus": {
+        "garage": "NOT_TESTED",
+        "pcChargen": "NOT_TESTED",
+        "follower": "NOT_TESTED",
+        "store": "NOT_TESTED",
+        "foundryV13": "NOT_TESTED"
+      }
+    },
+    {
+      "id": "PAR-LOCO-009",
+      "name": "Jump Servos printed cost conflict",
+      "book": "Core",
+      "pages": [
+        189,
+        194
+      ],
+      "size": "medium",
+      "chosen": "jump-servos",
+      "sourceExpected": {
+        "status": "BLOCKED_SOURCE_CONFLICT",
+        "proseWalkingCostDoubled": 720,
+        "tableIfHandAppendageCostDoubled": 100,
+        "decidedPriceCredits": null,
+        "printedWeightKg": 2
+      },
+      "currentStatic": {
+        "costMultiplier": 2,
+        "unknownSelectedPriceBase": true
+      },
+      "check": "Make source conflict explicit at purchase; no arbitrary base cost resolution. Walking prerequisite retained.",
+      "readiness": "SPECIFICATION_ONLY_NOT_EXECUTED",
+      "applicationStatus": {
+        "garage": "NOT_TESTED",
+        "pcChargen": "NOT_TESTED",
+        "follower": "NOT_TESTED",
+        "store": "NOT_TESTED",
+        "foundryV13": "NOT_TESTED"
+      }
+    }
+  ],
+  "acceptance": [
+    "A single cost authority takes a certified canonical part + selected variant/host + actor size + operation mode",
+    "No silent zero quote when price missing/ambiguous",
+    "Given same legal host and component, Garage/chargen/follower/Store prices match or explicit published exceptions are recorded",
+    "Installation does not double-charge default frame grants",
+    "Unresolved printed price conflict must be surfaced as blocked, not guessed",
+    "The canonical postcreation part ledger is system.installedSystems; nonbody equipment/stations remain external"
+  ]
+}
