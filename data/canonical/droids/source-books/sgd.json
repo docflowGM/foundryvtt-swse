@@ -26629,6 +26629,64 @@
             "operationStatus": "source-only",
             "attackBonus": 0
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-041-ACTION-EAVESDROP",
+            "statement": "One swift action once per turn, Perception check to listen to conversations and learn information; no automatic interception through barriers.",
+            "scope": "TT-8L Gatekeeper Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 148,
+              "pdfPage1Based": 149,
+              "sourceEntryKey": "SGD-DROID-041",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-EAVESDROP"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-041-ACTION-INTIMIDATE",
+            "statement": "Two swift actions once per turn, Persuasion check to force one creature to back down, reveal information, or flee within normal intimidation limits.",
+            "scope": "TT-8L Gatekeeper Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 148,
+              "pdfPage1Based": 149,
+              "sourceEntryKey": "SGD-DROID-041",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-INTIMIDATE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-041-ACTION-SENSE-DECEPTION",
+            "statement": "Reaction: detects deceptive appearances created by Deception, under actual check/sensor authority; not perfect truth detection.",
+            "scope": "TT-8L Gatekeeper Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 148,
+              "pdfPage1Based": 149,
+              "sourceEntryKey": "SGD-DROID-041",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-SENSE-DECEPTION"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-041-ACTION-STUBBORN",
+            "statement": "No action; main prose adds its Charisma bonus to its OWN Will Defense when Persuasion used against droid. Protocol adds bonus to MASTER Will Defense when persuaded. Preexisting target contradiction unresolved.",
+            "scope": "TT-8L Gatekeeper Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 148,
+              "pdfPage1Based": 149,
+              "sourceEntryKey": "SGD-DROID-041",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-STUBBORN"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -26708,7 +26766,96 @@
         ]
       },
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-041-VARIANT-ADVANCE-SCOUT",
+            "statement": "Choose actual vehicle (e.g. speeder bike), remove anchored TT-8L from base and secure it in vehicle; retrain Knowledge (bureaucracy) plus its Skill Training to Pilot, optionally Skill Focus Persuasion to Pilot. Vehicle entity maintains independent movement/combat authority; no automatic self-propelled speed.",
+            "scope": "TT-8L Gatekeeper Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 149,
+              "pdfPage1Based": 150,
+              "sourceEntryKey": "SGD-DROID-041",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-ADVANCE-SCOUT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-041-VARIANT-COMMUNICATIONS-ANTENNA",
+            "statement": "Retrain skill e.g. Persuasion to Use Computer, corresponding Skill Focus. Attach pod with long-range comlink or hypertransceiver (hypertransceiver DC30 Mechanics/2 days). Convert telescoping appendage to antenna DC15 Mechanics/10 minutes; attach prebuilt module FULL-ROUND action, remove SWIFT. No factory hypertransceiver.",
+            "scope": "TT-8L Gatekeeper Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 149,
+              "pdfPage1Based": 150,
+              "sourceEntryKey": "SGD-DROID-041",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-COMMUNICATIONS-ANTENNA"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-041-VARIANT-SECURITY-CAMERA",
+            "statement": "Add actual video recorder or holorecorder to photoreceptor, remove stationary base and mount in selected fixed location, wire to real facility network/camera system or arrange wireless transmission. Surveillance remains constrained to line of sight and communication authority.",
+            "scope": "TT-8L Gatekeeper Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 149,
+              "pdfPage1Based": 150,
+              "sourceEntryKey": "SGD-DROID-041",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-SECURITY-CAMERA"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "constraints": [
+          {
+            "ruleId": "SGD-DROID-041-CONSTRAINT-SPEED-ZERO",
+            "statement": "Stock TT-8L speed is ZERO and it is a stationary sentry; installing it into a speeder does not grant innate ground locomotion.",
+            "scope": "TT-8L Gatekeeper Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 148,
+              "pdfPage1Based": 149,
+              "sourceEntryKey": "SGD-DROID-041",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-SPEED-ZERO"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-041-CONSTRAINT-STUBBORN-TARGET-UNRESOLVED",
+            "statement": "Existing SGD-041-STUBBORN-TARGET-CONFLICT remains: main protects TT-8L Will, protocol protects its MASTER Will. No automatic bonus to both.",
+            "scope": "TT-8L Gatekeeper Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 148,
+              "pdfPage1Based": 149,
+              "sourceEntryKey": "SGD-DROID-041",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-STUBBORN-TARGET-UNRESOLVED"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-041-CONSTRAINT-HERO-PROHIBITED",
+            "statement": "TT-8L cannot be played as droid hero; vehicle and security-device modifications are alternative NPC roles.",
+            "scope": "TT-8L Gatekeeper Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 149,
+              "pdfPage1Based": 150,
+              "sourceEntryKey": "SGD-DROID-041",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-HERO-PROHIBITED"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -26775,12 +26922,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.148-149 inspected: TT-8L has printed Speed 0, no locomotion chassis part and a telescopic tool appendage, not a walking droid. Stubborn's protected subject differs in main prose versus protocol. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.148-149 inspected: TT-8L has printed Speed 0, no locomotion chassis part and a telescopic tool appendage, not a walking droid. Stubborn's protected subject differs in main prose versus protocol. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks. M13 full source mechanics second pass pp.148-149, 4 actions, 3 variants, 3 constraints; source only; no mechanical certificate.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p148:PDF-page-149",
           "SGD-CENSUS:SGD-DROID-041",
           "SGD:p148:PDF-p149:visual-statblock-field-review",
-          "SGD:p148-p149:PDF-p149-p150:M4-printed-source-review"
+          "SGD:p148-p149:PDF-p149-p150:M4-printed-source-review",
+          "SGD:printed-p148-149:PDF-p149-150:M13-rendered-review"
         ]
       }
     },
@@ -27051,6 +27199,78 @@
             "operationStatus": "source-only",
             "attackBonus": 2
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-042-ACTION-MOVE",
+            "statement": "One swift up to twice/turn, move 6 walking squares.",
+            "scope": "V2-Series Commando Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 150,
+              "pdfPage1Based": 151,
+              "sourceEntryKey": "SGD-DROID-042",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-MOVE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-042-ACTION-AVOID-SURPRISE",
+            "statement": "One free action at battle start, Perception check; success master not surprised, not universal immunity.",
+            "scope": "V2-Series Commando Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 150,
+              "pdfPage1Based": 151,
+              "sourceEntryKey": "SGD-DROID-042",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-AVOID-SURPRISE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-042-ACTION-PATROL-DUTY",
+            "statement": "One swift once/turn: Perception opposed by a target Stealth; detect target on success.",
+            "scope": "V2-Series Commando Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 150,
+              "pdfPage1Based": 151,
+              "sourceEntryKey": "SGD-DROID-042",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-PATROL-DUTY"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-042-ACTION-SILENT-ACTION",
+            "statement": "One swift once/turn: aid a character's Stealth check for +2; not passive Stealth aura.",
+            "scope": "V2-Series Commando Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 150,
+              "pdfPage1Based": 151,
+              "sourceEntryKey": "SGD-DROID-042",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-SILENT-ACTION"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-042-ACTION-SUPPORT-FIRE",
+            "statement": "One swift once/turn: rifle +2 for 3d8 damage on successful attack, requires possessed blaster rifle.",
+            "scope": "V2-Series Commando Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 150,
+              "pdfPage1Based": 151,
+              "sourceEntryKey": "SGD-DROID-042",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-SUPPORT-FIRE"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -27140,9 +27360,114 @@
           }
         ]
       },
-      "modifications": {},
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-042-VARIANT-BOMB-DISPOSAL-UNIT",
+            "statement": "Install/reinforce special courier compartment (already-existing compartment reinforcement DC20 Mechanics), stock compressed cryogas canister; freeze explosive for later detonation. Activating held explosives to detonate FREE ACTION explicitly DESTROYS THE DROID as self-destruct; no free bomb immunity.",
+            "scope": "V2-Series Commando Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 151,
+              "pdfPage1Based": 152,
+              "sourceEntryKey": "SGD-DROID-042",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-BOMB-DISPOSAL-UNIT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-042-VARIANT-EVA-SHIPJACKER",
+            "statement": "Fit maneuvering jets DC25 Mechanics/30 minutes; droid can use FULL-ROUND action to move 1 starship square outside ship. Attach to ship with Acrobatics vs ship Reflex; plant explosives at DC = 10 times difference in size categories. Successful viewport blast affects cockpit/command occupants only; ship ingress and interior combat separately.",
+            "scope": "V2-Series Commando Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 151,
+              "pdfPage1Based": 152,
+              "sourceEntryKey": "SGD-DROID-042",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-EVA-SHIPJACKER"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-042-VARIANT-HALA-DROID",
+            "statement": "Add repulsors DC25 Mechanics/about 1h. Jump sequence requires DC20 Jump to land in right area (each point short deviates random 100m), then DC30 Pilot to control descent. Failure takes maximum fall damage; no automatically safe flight mode.",
+            "scope": "V2-Series Commando Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 151,
+              "pdfPage1Based": 152,
+              "sourceEntryKey": "SGD-DROID-042",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-HALA-DROID"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "constraints": [
+          {
+            "ruleId": "SGD-DROID-042-CONSTRAINT-COURIER-EXPLOSIVE-DESTROYS-SELF",
+            "statement": "Bomb Disposal explosive detonation inside modified courier compartment destroys host completely; do not grant generic self-destruct without installed explosive.",
+            "scope": "V2-Series Commando Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 151,
+              "pdfPage1Based": 152,
+              "sourceEntryKey": "SGD-DROID-042",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-COURIER-EXPLOSIVE-DESTROYS-SELF"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-042-CONSTRAINT-EVA-STARSHIP-MOVEMENT",
+            "statement": "EVA jets grant 1 starship square for full-round action ONLY in described external-ship mode. Installing jets does not create unlimited ordinary flying or starship weapon rights.",
+            "scope": "V2-Series Commando Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 151,
+              "pdfPage1Based": 152,
+              "sourceEntryKey": "SGD-DROID-042",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-EVA-STARSHIP-MOVEMENT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-042-CONSTRAINT-HERO-RECOMMENDATIONS-NOT-FREE",
+            "statement": "Soldier starting path, scout multiclass, elite trooper or independent droid suggested; recommended Mechanics feat and talents require legal prerequisites and acquisition.",
+            "scope": "V2-Series Commando Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 151,
+              "pdfPage1Based": 152,
+              "sourceEntryKey": "SGD-DROID-042",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-HERO-RECOMMENDATIONS-NOT-FREE"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
-        "heroEligibility": "allowed"
+        "heroEligibility": "allowed",
+        "startingSelections": [
+          {
+            "ruleId": "SGD-DROID-042-PC-HEROIC-ROUTE",
+            "statement": "Hero V2 may start soldier, invest in Commando talents and legal Mechanics training/Skill Focus; later scout, elite trooper or independent droid are possible paths, not factory grants.",
+            "scope": "V2-Series Commando Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 151,
+              "pdfPage1Based": 152,
+              "sourceEntryKey": "SGD-DROID-042",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "PC-HEROIC-ROUTE"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "vehicleLink": {},
       "economics": {
@@ -27178,12 +27503,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.150-151 inspected: V2 owns a blaster rifle as printed Possessions and has an Improved Stealth talent; source-only ranged row does not license extra weapon actions. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.150-151 inspected: V2 owns a blaster rifle as printed Possessions and has an Improved Stealth talent; source-only ranged row does not license extra weapon actions. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks. M13 full source mechanics second pass pp.150-151, 5 actions, 3 variants, 3 constraints; source only; no mechanical certificate.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p150:PDF-page-151",
           "SGD-CENSUS:SGD-DROID-042",
           "SGD:p150:PDF-p151:visual-statblock-field-review",
-          "SGD:p150-p151:PDF-p151-p152:M4-printed-source-review"
+          "SGD:p150-p151:PDF-p151-p152:M4-printed-source-review",
+          "SGD:printed-p150-151:PDF-p151-152:M13-rendered-review"
         ]
       }
     },
@@ -27430,6 +27756,92 @@
             "operationStatus": "source-only",
             "attackBonus": 3
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-043-ACTION-MOVE",
+            "statement": "One swift up to twice/turn, 6 squares wheeled.",
+            "scope": "V6-Series Pilot Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 152,
+              "pdfPage1Based": 153,
+              "sourceEntryKey": "SGD-DROID-043",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-MOVE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-043-ACTION-COPILOT",
+            "statement": "One swift once/turn aids pilot's Pilot check +2, not extra move.",
+            "scope": "V6-Series Pilot Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 152,
+              "pdfPage1Based": 153,
+              "sourceEntryKey": "SGD-DROID-043",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-COPILOT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-043-ACTION-ISSUE-ROUTINE-COMMAND",
+            "statement": "One swift once/turn issues routine command only to friendly computer.",
+            "scope": "V6-Series Pilot Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 152,
+              "pdfPage1Based": 153,
+              "sourceEntryKey": "SGD-DROID-043",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-ISSUE-ROUTINE-COMMAND"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-043-ACTION-RECHARGE-SHIELDS",
+            "statement": "Two swift once/turn, DC20 Mechanics restore 5 starship SR to maximum.",
+            "scope": "V6-Series Pilot Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 152,
+              "pdfPage1Based": 153,
+              "sourceEntryKey": "SGD-DROID-043",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-RECHARGE-SHIELDS"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-043-ACTION-REGULATE-POWER",
+            "statement": "Two swift once/turn, DC20 Mechanics +1 ship condition step.",
+            "scope": "V6-Series Pilot Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 152,
+              "pdfPage1Based": 153,
+              "sourceEntryKey": "SGD-DROID-043",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-REGULATE-POWER"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-043-ACTION-STAY-ON-TARGET",
+            "statement": "One swift once/turn Pilot check at -5 opposed by target Pilot to engage in dogfight, vehicle-only.",
+            "scope": "V6-Series Pilot Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 152,
+              "pdfPage1Based": 153,
+              "sourceEntryKey": "SGD-DROID-043",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-STAY-ON-TARGET"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -27510,9 +27922,114 @@
         ]
       },
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-043-VARIANT-GUNNER-DROID",
+            "statement": "REPLACE Weapon Proficiency (simple weapons) with Vehicular Combat; mag clamps in turret and droid require DC30 Mechanics/2h; DC25 Use Computer/1h specialist aim. Once per turn +2 to EITHER one attack OR damage roll made while installed in turret. Using SOTG maneuvers option INSTEAD grants gunner-descriptor maneuvers equal INT modifier min1; not both.",
+            "scope": "V6-Series Pilot Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 153,
+              "pdfPage1Based": 154,
+              "sourceEntryKey": "SGD-DROID-043",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-GUNNER-DROID"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-043-VARIANT-SPEEDER-PILOT",
+            "statement": "Repulsorcraft interface DC25 Mechanics/1h. DC20 Use Computer/30m grants equivalent Vehicular Combat feat BUT ONLY while piloting repulsorlift craft; does not grant globally-owned bonus feat.",
+            "scope": "V6-Series Pilot Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 153,
+              "pdfPage1Based": 154,
+              "sourceEntryKey": "SGD-DROID-043",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-SPEEDER-PILOT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-043-VARIANT-HIJACKER-DROID",
+            "statement": "Sleeper coordinates Use Computer opposed by droid Will/30m; unsuccessful install no knowledge/coordinates. Modified droid unaware until jump, shuts down after diverted jump. Further opposed Use Computer check after pirates depart can reset original destination and wipe memory; no guarantee of success or automatic coverup.",
+            "scope": "V6-Series Pilot Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 153,
+              "pdfPage1Based": 154,
+              "sourceEntryKey": "SGD-DROID-043",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-HIJACKER-DROID"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "constraints": [
+          {
+            "ruleId": "SGD-DROID-043-CONSTRAINT-LICENSED-MEMORY-WIPE",
+            "statement": "Narrative says licensed V6 pilot droids ordinarily require memory wipe between flights under Imperial regulations; source lore/legal context, not a generic engine mechanic on all droids.",
+            "scope": "V6-Series Pilot Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 152,
+              "pdfPage1Based": 153,
+              "sourceEntryKey": "SGD-DROID-043",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-LICENSED-MEMORY-WIPE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-043-CONSTRAINT-VEHICULAR-COMBAT-SCOPE",
+            "statement": "Speeder variant equivalent Vehicular Combat is restricted to repulsorlift vehicles; Gunner variant replaces Weapon Proficiency simple, does not add free feat.",
+            "scope": "V6-Series Pilot Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 153,
+              "pdfPage1Based": 154,
+              "sourceEntryKey": "SGD-DROID-043",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-VEHICULAR-COMBAT-SCOPE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-043-CONSTRAINT-GUNNER-ALTERNATIVE-RULES",
+            "statement": "Default V6 Gunner +2 attack OR +2 damage; SOTG optional descriptor maneuver package is alternate published option, never simultaneous stacking.",
+            "scope": "V6-Series Pilot Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 153,
+              "pdfPage1Based": 154,
+              "sourceEntryKey": "SGD-DROID-043",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-GUNNER-ALTERNATIVE-RULES"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
-        "heroEligibility": "allowed"
+        "heroEligibility": "allowed",
+        "startingSelections": [
+          {
+            "ruleId": "SGD-DROID-043-PC-HEROIC-ROUTE",
+            "statement": "Playable V6 scoundrel suggested, later pilot-related feats/talents via legal classes; optional astrogation buffer must be purchased and installed, not factory stock. Existing nonheroic 2 does not automatically carry over.",
+            "scope": "V6-Series Pilot Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 153,
+              "pdfPage1Based": 154,
+              "sourceEntryKey": "SGD-DROID-043",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "PC-HEROIC-ROUTE"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "vehicleLink": {},
       "economics": {
@@ -27548,12 +28065,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.152-153 inspected: V6 is wheeled-only pilot model; navigation/vehicle control skills are not standalone personal movement modes or attacks. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.152-153 inspected: V6 is wheeled-only pilot model; navigation/vehicle control skills are not standalone personal movement modes or attacks. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks. M13 full source mechanics second pass pp.152-153, 6 actions, 3 variants, 3 constraints; source only; no mechanical certificate.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p152:PDF-page-153",
           "SGD-CENSUS:SGD-DROID-043",
           "SGD:p152:PDF-p153:visual-statblock-field-review",
-          "SGD:p152-p153:PDF-p153-p154:M4-printed-source-review"
+          "SGD:p152-p153:PDF-p153-p154:M4-printed-source-review",
+          "SGD:printed-p152-153:PDF-p153-154:M13-rendered-review"
         ]
       }
     },
@@ -27961,6 +28479,78 @@
             },
             "executionStatus": "source-only"
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-044-ACTION-MOVE",
+            "statement": "One swift up to twice/turn, 6 squares walking.",
+            "scope": "X-1 Viper Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 154,
+              "pdfPage1Based": 155,
+              "sourceEntryKey": "SGD-DROID-044",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-MOVE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-044-ACTION-AVOID-SURPRISE",
+            "statement": "One free action at battle start: Perception check; success master avoids surprise.",
+            "scope": "X-1 Viper Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 154,
+              "pdfPage1Based": 155,
+              "sourceEntryKey": "SGD-DROID-044",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-AVOID-SURPRISE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-044-ACTION-DOUBLE-ATTACK",
+            "statement": "Two swift once/turn: two separate attacks, +10 twin cannon for 4d10×2+2, +9 grenade launcher for 4d6+2 2-square splash. Requires real separate weapons and finite ammo.",
+            "scope": "X-1 Viper Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 154,
+              "pdfPage1Based": 155,
+              "sourceEntryKey": "SGD-DROID-044",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-DOUBLE-ATTACK"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-044-ACTION-PATROL-DUTY",
+            "statement": "One swift once/turn: Perception vs target Stealth; detect target only on success.",
+            "scope": "X-1 Viper Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 154,
+              "pdfPage1Based": 155,
+              "sourceEntryKey": "SGD-DROID-044",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-PATROL-DUTY"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-044-ACTION-RAPID-SHOT",
+            "statement": "One swift once/turn: twin cannon +10 and 5d10×2+2 on successful hit; alternative firing mode, not an unconditional extra attack.",
+            "scope": "X-1 Viper Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 154,
+              "pdfPage1Based": 155,
+              "sourceEntryKey": "SGD-DROID-044",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-RAPID-SHOT"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -28086,7 +28676,96 @@
           }
         ]
       },
-      "modifications": {},
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-044-VARIANT-DEEP-SEA-DIVER",
+            "statement": "Seal X-1 internals, add swimming webbing and internal buoyancy DC25 Mechanics/2 days, retrain Swim and Skill Focus (Swim). Water-capable modification; not factory swim speed.",
+            "scope": "X-1 Viper Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 155,
+              "pdfPage1Based": 156,
+              "sourceEntryKey": "SGD-DROID-044",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-DEEP-SEA-DIVER"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-044-VARIANT-JAWA-TRANSPORT",
+            "statement": "DC30 Mechanics/4h remove unused interior components to accommodate four Small OR two Medium passengers plus 100kg cargo. Add manual override with STANDARD action/DC20 Use Computer for passenger control; no independent extra vehicle actor.",
+            "scope": "X-1 Viper Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 155,
+              "pdfPage1Based": 156,
+              "sourceEntryKey": "SGD-DROID-044",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-JAWA-TRANSPORT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-044-VARIANT-RECONSTRUCTION-DROID",
+            "statement": "DC30 Mechanics/4h clear interior for 500kg cargo. Additional external cargo pods each +250kg require DC25 Mechanics/1h each; pod count ≤half STR modifier, minimum one. Variant purpose is transport/building, no automatic extra abilities.",
+            "scope": "X-1 Viper Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 155,
+              "pdfPage1Based": 156,
+              "sourceEntryKey": "SGD-DROID-044",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-RECONSTRUCTION-DROID"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "constraints": [
+          {
+            "ruleId": "SGD-DROID-044-CONSTRAINT-MOLECULAR-REFLECTION",
+            "statement": "Only if incoming RANGED ENERGY attack MISSES, reflect it by subtracting 10 from attacker's own attack roll and comparing with attacker's Reflex. No reflection on hits or all damage types.",
+            "scope": "X-1 Viper Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 154,
+              "pdfPage1Based": 155,
+              "sourceEntryKey": "SGD-DROID-044",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-MOLECULAR-REFLECTION"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-044-CONSTRAINT-HOSTAGE-ENCOUNTER-NOT-FACTORY",
+            "statement": "Example encounter describes swift-action hostage body shield +4 Reflex vs one opponent while hostage held. This is scenario context, not an always-available innate ability of every stock X-1; do not promote.",
+            "scope": "X-1 Viper Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 155,
+              "pdfPage1Based": 156,
+              "sourceEntryKey": "SGD-DROID-044",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-HOSTAGE-ENCOUNTER-NOT-FACTORY"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-044-CONSTRAINT-HERO-PROHIBITED",
+            "statement": "X-1 explicitly cannot be played as droid hero; its twin cannons/grenade launcher require authoritative individual mounts and resources.",
+            "scope": "X-1 Viper Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 154,
+              "pdfPage1Based": 155,
+              "sourceEntryKey": "SGD-DROID-044",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-HERO-PROHIBITED"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -28137,12 +28816,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.154-155 inspected: X-1 has two twin blaster cannons and one grenade launcher; burst/autofire options, molecular-shielding reaction and deep-sea rules need independent action and ammo proof. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.154-155 inspected: X-1 has two twin blaster cannons and one grenade launcher; burst/autofire options, molecular-shielding reaction and deep-sea rules need independent action and ammo proof. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks. M13 full source mechanics second pass pp.154-155, 5 actions, 3 variants, 3 constraints; source only; no mechanical certificate.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p154:PDF-page-155",
           "SGD-CENSUS:SGD-DROID-044",
           "SGD:p154:PDF-p155:visual-statblock-field-review",
-          "SGD:p154-p155:PDF-p155-p156:M4-printed-source-review"
+          "SGD:p154-p155:PDF-p155-p156:M4-printed-source-review",
+          "SGD:printed-p154-155:PDF-p155-156:M13-rendered-review"
         ]
       }
     },
@@ -28398,6 +29078,78 @@
             "operationStatus": "source-only",
             "attackBonus": 0
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-045-ACTION-MOVE",
+            "statement": "One swift up to twice/turn; 6 squares walking OR 6 hovering; hovering installed locomotion LIMITED, not free continuous flight.",
+            "scope": "XLT-014 Labor Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 156,
+              "pdfPage1Based": 157,
+              "sourceEntryKey": "SGD-DROID-045",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-MOVE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-045-ACTION-AVOID-SURPRISE",
+            "statement": "Free action battle start, Perception check; on success master avoids surprise.",
+            "scope": "XLT-014 Labor Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 156,
+              "pdfPage1Based": 157,
+              "sourceEntryKey": "SGD-DROID-045",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-AVOID-SURPRISE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-045-ACTION-IMPROVE-ACCESS",
+            "statement": "Two swift once/turn, Use Computer vs computer Will to improve attitude; not automatic unlocked access.",
+            "scope": "XLT-014 Labor Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 156,
+              "pdfPage1Based": 157,
+              "sourceEntryKey": "SGD-DROID-045",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-IMPROVE-ACCESS"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-045-ACTION-ISSUE-ROUTINE-COMMAND",
+            "statement": "One swift once/turn, routine command to computer only if computer friendly.",
+            "scope": "XLT-014 Labor Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 156,
+              "pdfPage1Based": 157,
+              "sourceEntryKey": "SGD-DROID-045",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-ISSUE-ROUTINE-COMMAND"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-045-ACTION-QUICK-SCAN",
+            "statement": "Two swift once/turn, DC20 Perception within 6 squares; master's cover/concealment penalties halved against creatures droid reveals. Main also allows network information in half usual time by additional Use Computer check, not an automatic free download.",
+            "scope": "XLT-014 Labor Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 156,
+              "pdfPage1Based": 157,
+              "sourceEntryKey": "SGD-DROID-045",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-QUICK-SCAN"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -28513,9 +29265,114 @@
           }
         ]
       },
-      "modifications": {},
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-045-VARIANT-CHAUFFEUR",
+            "statement": "REPLACE factory remote receiver with basic processor, replace claws with hands; add improved sensors/darkvision/comlink. Retrain Use Computer and Skill Focus (Use Computer) to Pilot; ALTERNATIVELY install scomp link and keep Use Computer/Skill Focus unchanged. These mutually exclusive paths are not two free bonuses.",
+            "scope": "XLT-014 Labor Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 157,
+              "pdfPage1Based": 158,
+              "sourceEntryKey": "SGD-DROID-045",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-CHAUFFEUR"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-045-VARIANT-INFILTRATOR",
+            "statement": "REPLACE remote receiver with heuristic processor. Repulsorlift sound baffling 200 credits/DC15 Mechanics/1h permits Stealth reroll keep better; add improved sensors and darkvision, replace Skill Focus (Perception) with Skill Training (Stealth), retrain skills and buy security kit.",
+            "scope": "XLT-014 Labor Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 157,
+              "pdfPage1Based": 158,
+              "sourceEntryKey": "SGD-DROID-045",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-INFILTRATOR"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-045-VARIANT-MECHANICS-ASSISTANT",
+            "statement": "REPLACE remote receiver with heuristic processor and at least one claw with tool/hand. Install diagnostics and add 5kg storage for separately purchased toolkit/spares; REPLACE Armor Proficiency (light) with Skill Training (Mechanics), gaining actual trained skill via feat, not both.",
+            "scope": "XLT-014 Labor Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 157,
+              "pdfPage1Based": 158,
+              "sourceEntryKey": "SGD-DROID-045",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-MECHANICS-ASSISTANT"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "constraints": [
+          {
+            "ruleId": "SGD-DROID-045-CONSTRAINT-QUICK-SCAN-SCOPE",
+            "statement": "DC20 Perception scan 6-square range and reduced penalties for master, not unconditional negation of total cover/concealment. Use Computer network retrieval half-time a distinct check.",
+            "scope": "XLT-014 Labor Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 156,
+              "pdfPage1Based": 157,
+              "sourceEntryKey": "SGD-DROID-045",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-QUICK-SCAN-SCOPE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-045-CONSTRAINT-HEURISTIC-PROCESSOR-REPLACEMENT",
+            "statement": "Infiltrator and Mechanics Assistant replace remote receiver; chauffeur uses basic processor OR scomp-based skill approach. Do not stack old remote dependency and new brain silently.",
+            "scope": "XLT-014 Labor Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 157,
+              "pdfPage1Based": 158,
+              "sourceEntryKey": "SGD-DROID-045",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-HEURISTIC-PROCESSOR-REPLACEMENT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-045-CONSTRAINT-LIMITED-HOVER",
+            "statement": "Stock hovering explicitly LIMITED; six-square hovering speed does not mean jet flight or starship movement.",
+            "scope": "XLT-014 Labor Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 156,
+              "pdfPage1Based": 157,
+              "sourceEntryKey": "SGD-DROID-045",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-LIMITED-HOVER"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
-        "heroEligibility": "allowed"
+        "heroEligibility": "allowed",
+        "startingSelections": [
+          {
+            "ruleId": "SGD-DROID-045-PC-HEROIC-ROUTE",
+            "statement": "Heroic XLT stock labor chassis with scoundrel suggested; REPLACE basic processor with remote processor and add Quick Scan; choose legal starting Perception/Gather Information/Use Computer and feats, buy video recorder rather than automatic possession.",
+            "scope": "XLT-014 Labor Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 157,
+              "pdfPage1Based": 158,
+              "sourceEntryKey": "SGD-DROID-045",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "PC-HEROIC-ROUTE"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "vehicleLink": {},
       "economics": {
@@ -28564,12 +29421,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.156-157 inspected: XLT-014 has remote receiver and two printed locomotion modes; hovering explicitly limited. Video recorder is one possession, not a permanent unlimited sensing buff. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.156-157 inspected: XLT-014 has remote receiver and two printed locomotion modes; hovering explicitly limited. Video recorder is one possession, not a permanent unlimited sensing buff. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks. M13 full source mechanics second pass pp.156-157, 5 actions, 3 variants, 3 constraints; source only; no mechanical certificate.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p156:PDF-page-157",
           "SGD-CENSUS:SGD-DROID-045",
           "SGD:p156:PDF-p157:visual-statblock-field-review",
-          "SGD:p156-p157:PDF-p157-p158:M4-printed-source-review"
+          "SGD:p156-p157:PDF-p157-p158:M4-printed-source-review",
+          "SGD:printed-p156-157:PDF-p157-158:M13-rendered-review"
         ]
       }
     },
