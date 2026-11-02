@@ -57,9 +57,8 @@ test('spoofed or incomplete temporary provenance is not an expiry authority',()=
  const item=grant('shared-A','enc-A');
  const fake={...item,system:{...item.system,prerequisiteWaivedBy:null}};
  const actor={id:'ally',items:[fake],effects:[effect('fx','shared-A')]};
- assert.deepEqual(planOfficerShareTalentExpiry({actor,encounterId:'enc-A'}),{
-   items:[],effects:[],
- });
+ assert.throws(()=>planOfficerShareTalentExpiry({actor,encounterId:'enc-A'}),
+   /INDETERMINATE: malformed temporary grant requires GM review/);
 });
 
 test('cleanup preserves distinct synthetic token actors sharing a base world Actor ID',()=>{
