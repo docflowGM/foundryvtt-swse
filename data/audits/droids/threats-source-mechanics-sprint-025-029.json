@@ -1,0 +1,116 @@
+{
+  "schema": "swse.droids.threats.source-mechanics-sprint/0.1",
+  "date": "2026-11-02",
+  "branch": "audit/droid-publication-census-2026-10-29",
+  "bookId": "THREATS",
+  "sourcePages": [
+    156,
+    157,
+    158,
+    159,
+    160
+  ],
+  "scope": "Final five detailed PDF source pages with distinct weapon/feature claims, preserving no inferred movement component on Sith Warbot.",
+  "records": [
+    {
+      "id": "THREATS-DROID-025",
+      "name": "Mark VII Inquisitor Series Seeker Droid",
+      "printedPage": 156,
+      "components": 9,
+      "featGroups": 7,
+      "talentGroups": 3,
+      "ruleIds": [
+        "THREATS-DROID-025-CONSTRAINT-SEEKER-WEAPON-APPENDAGES",
+        "THREATS-DROID-025-CONSTRAINT-PERCEPTION-FORCED-SECOND-ROLL",
+        "THREATS-DROID-025-CONSTRAINT-DATA-PROBE-NARRATIVE-BONUS",
+        "THREATS-DROID-025-CONSTRAINT-HERO-PROHIBITED"
+      ],
+      "certification": "partial"
+    },
+    {
+      "id": "THREATS-DROID-026",
+      "name": "Imperial Mark IV Series Sentry Droid",
+      "printedPage": 157,
+      "components": 9,
+      "featGroups": 5,
+      "talentGroups": 0,
+      "ruleIds": [
+        "THREATS-DROID-026-CONSTRAINT-NO-FACTORY-WEAPON",
+        "THREATS-DROID-026-CONSTRAINT-TRANSPONDER-IS-ALERT-NOT-ATTACK",
+        "THREATS-DROID-026-CONSTRAINT-SENSOR-RANGE-VERSUS-ATTACK",
+        "THREATS-DROID-026-CONSTRAINT-HERO-PROHIBITED"
+      ],
+      "certification": "partial"
+    },
+    {
+      "id": "THREATS-DROID-027",
+      "name": "SD-6 Hulk Infantry Droid",
+      "printedPage": 158,
+      "components": 8,
+      "featGroups": 9,
+      "talentGroups": 8,
+      "ruleIds": [
+        "THREATS-DROID-027-CONSTRAINT-DR3-SEPARATE",
+        "THREATS-DROID-027-CONSTRAINT-CONTROLLED-BURST-AUTO-FIRE",
+        "THREATS-DROID-027-CONSTRAINT-DELAY-DAMAGE-QUALIFIER",
+        "THREATS-DROID-027-CONSTRAINT-BASIC-UNDERSTAND-ONLY",
+        "THREATS-DROID-027-CONSTRAINT-HERO-PERMISSION-UNSTATED"
+      ],
+      "certification": "partial"
+    },
+    {
+      "id": "THREATS-DROID-028",
+      "name": "Sith Elite Warbot",
+      "printedPage": 159,
+      "components": 7,
+      "featGroups": 7,
+      "talentGroups": 2,
+      "ruleIds": [
+        "THREATS-DROID-028-CONSTRAINT-LOCOMOTION-UNSPECIFIED",
+        "THREATS-DROID-028-CONSTRAINT-SITH-SWORD-DR-INTERACTION",
+        "THREATS-DROID-028-CONSTRAINT-SITH-SWORD-DARK-SIDE-COST",
+        "THREATS-DROID-028-CONSTRAINT-DUAL-PISTOLS-ALTERNATIVE",
+        "THREATS-DROID-028-CONSTRAINT-HERO-PERMISSION-UNSTATED"
+      ],
+      "certification": "partial"
+    },
+    {
+      "id": "THREATS-DROID-029",
+      "name": "PK Worker Droid",
+      "printedPage": 160,
+      "components": 5,
+      "featGroups": 4,
+      "talentGroups": 0,
+      "ruleIds": [
+        "THREATS-DROID-029-CONSTRAINT-ONE-UNASSIGNED-FEAT",
+        "THREATS-DROID-029-CONSTRAINT-MECHANIC-PRINTING",
+        "THREATS-DROID-029-CONSTRAINT-NO-FACTORY-POSSESSIONS",
+        "THREATS-DROID-029-CONSTRAINT-HERO-ALLOWED"
+      ],
+      "certification": "partial"
+    }
+  ],
+  "totals": {
+    "models": 5,
+    "components": 38,
+    "appendages": 10,
+    "possessions": 10,
+    "feats": 32,
+    "talents": 13,
+    "skills": 16,
+    "constraints": 22,
+    "attacks": 10,
+    "sourceDeepReviewed": 29,
+    "sourceIdentities": 29,
+    "strictCertified": 0
+  },
+  "boundaries": {
+    "all29KeyCountUnchanged": true,
+    "sithWarbotLocomotionUnspecified": true,
+    "PKPrintedMechanicPreserved": true,
+    "combatNonExecutable": true,
+    "sourceOnly": true,
+    "foundryRuntimeUnrun": true
+  },
+  "next": "Full book-wide cross-record integrity validation and source-mechanics closeout."
+}
