@@ -141,6 +141,18 @@
   </section>
   {{/if}}
 
+  {{#if classAdvisories.length}}
+  <section class="prog-class-details__section prog-class-details__advisory">
+    <h4 class="prog-class-details__section-title"><i class="fas fa-user-shield"></i> GM Adjudication</h4>
+    <ul class="prog-class-details__list">
+      {{#each classAdvisories}}
+        <li>{{this}}</li>
+      {{/each}}
+    </ul>
+    <p class="prog-class-details__description">These notes do not automatically lock the class. The GM determines how narrative restrictions apply.</p>
+  </section>
+  {{/if}}
+
   {{#if hasPrerequisiteRows}}
   <section class="prog-class-details__section prog-class-details__prereqs">
     <h4 class="prog-class-details__section-title"><i class="fas fa-clipboard-check"></i> {{localize "SWSE.Progression.Core.Class.Prerequisites"}}</h4>
