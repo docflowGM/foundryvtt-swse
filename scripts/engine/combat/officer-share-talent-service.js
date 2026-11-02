@@ -160,12 +160,16 @@ export class OfficerShareTalentService {
 export function registerOfficerShareTalentCleanup() {
   if(!globalThis.Hooks?.on)return;
   globalThis.Hooks.on('deleteCombat',async combat=>{
-    try{await OfficerShareTalentService.expireEncounter(combat?.id);}
+    const actors=uniqueActors([...Array.from(globalThis.game?.actors||[]),
+      ...Array.from(combat?.combatants||[]).map(c=>c.actor).filter(Boolean)]);
+    try{await OfficerShareTalentService.expireEncounter(combat?.id,{actors});}
     catch(error){globalThis.ui?.notifications?.error?.(`Share Talent cleanup failed: ${error.message}`);}
   });
   globalThis.Hooks.on('updateCombat',async (combat,changes)=>{
     if(changes?.started!==false)return;
-    try{await OfficerShareTalentService.expireEncounter(combat?.id);}
+    const actors=uniqueActors([...Array.from(globalThis.game?.actors||[]),
+      ...Array.from(combat?.combatants||[]).map(c=>c.actor).filter(Boolean)]);
+    try{await OfficerShareTalentService.expireEncounter(combat?.id,{actors});}
     catch(error){globalThis.ui?.notifications?.error?.(`Share Talent cleanup failed: ${error.message}`);}
   });
 }
