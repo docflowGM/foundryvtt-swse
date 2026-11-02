@@ -35,6 +35,6 @@ test('combat composition adds the bonus to additive total once, BEFORE critical 
  assert.match(code,/components\['Trusty Sidearm'\] = trustySidearm/);
  const formula=code.slice(code.indexOf('export function buildDamageFormula('));
  assert.match(formula,/const bonusTotal = Number\(composition\?\.bonus\?\.total/);
- assert.match(formula,/formula = \`\(\\$\{formula\}\) \* \\$\{multiplier\}\`/);
+ assert.ok(formula.includes('formula = `(${formula}) * ${multiplier}`;'));
  assert.doesNotMatch(formula,/trustySidearm/);
 });
