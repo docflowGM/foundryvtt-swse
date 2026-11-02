@@ -331,12 +331,16 @@
             "itemMustBeSizesSmaller": 4
           },
           {
+            "body": "leg",
+            "itemMustBeSizesSmaller": 4
+          },
+          {
             "body": "head",
             "itemMustBeSizesSmaller": 5
           }
         ],
         "textClaimsLocations": 4,
-        "textEnumeratesLocations": 3
+        "textEnumeratesLocations": 4
       },
       "mechanics": {
         "detection": "Perception check against droid Will Defense +5",
@@ -346,7 +350,6 @@
         }
       },
       "blockers": [
-        "Fourth placement claimed but not enumerated in paragraph",
         "Weight-cell unit and optional toaster variant specification require review",
         "Do not treat size-based courier capacity as Core kg-based Internal Storage"
       ],
@@ -363,6 +366,13 @@
         "completeSourceMechanical": false,
         "garageChargenStoreParity": false,
         "foundryRuntime": false
+      },
+      "sourceCorrection": {
+        "date": "2026-11-02",
+        "reason": "Printed SGD p.56 says arm OR leg; initial visual review omitted leg.",
+        "recheckedPrintedPage": 56,
+        "pdfPage1Based": 57,
+        "sourceStatus": "PDF_VISUAL_VERIFIED_CORRECTION"
       }
     },
     {
