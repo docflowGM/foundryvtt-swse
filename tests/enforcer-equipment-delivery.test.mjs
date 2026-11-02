@@ -10,7 +10,10 @@ const doc=(id,type,name,cost)=>({
 const listing=(id,type='equipment',cost=4000,availability='Restricted')=>({
  id,name:id,type,availability,cost,costStatus:'priced',
  sourcePack:'foundryvtt-swse.equipment',sourceUuid:`Compendium.foundryvtt-swse.equipment.${id}`,
- doc:doc(id,type,id,cost),
+ doc:{...doc(id,type,id,cost),__storeSource:{
+   source:'compendium',pack:'foundryvtt-swse.equipment',
+   uuid:`Compendium.foundryvtt-swse.equipment.${id}`,
+ }},
 });
 const index={allItems:[
  listing('kit','equipment',4000),
@@ -67,7 +70,11 @@ test('Resources fail closed against world or ambiguous source entries even with 
  const world={...listing('kit'),sourcePack:'world',sourceUuid:null};
  const missing={...listing('kit'),sourceUuid:null};
  const mismatch={...listing('kit'),sourceUuid:'Compendium.other.pack.kit'};
- for(const entry of [world,missing,mismatch]){
+ const copied=listing('kit');
+ const worldCopy={...copied,doc:{...copied.doc,__storeSource:{
+   source:'world',pack:null,uuid:null,
+ }}};
+ for(const entry of [world,missing,mismatch,worldCopy]){
    const index={allItems:[entry]};
    assert.deepEqual(eligible(index),[]);
    assert.throws(()=>delivery({...options,index}),/not an eligible restricted\/military source item/);
