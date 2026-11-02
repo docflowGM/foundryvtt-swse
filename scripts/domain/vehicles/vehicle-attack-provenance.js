@@ -7,6 +7,8 @@
  */
 import { getVerifiedPublishedRecord, claimsPublishedSource } from './vehicle-source-identity.js';
 import { readCertifiedInstallations } from './vehicle-installation-ledger.js';
+import { EFFECTS } from './vehicle-modification-effects.js';
+import { resolveCertifiedInstalledWeapon } from './vehicle-weapon-damage.js';
 
 function validKey(x) { return typeof x === 'string' && x.trim().length > 0; }
 function sameWeaponLabel(a, b) {
@@ -78,5 +80,12 @@ function classifySourceBackedWeapon(vehicle, weapon) {
   if (!sameWeaponLabel(entry.name, weapon.name)) return { kind:'UNRESOLVED', reason:'INSTALLATION_WEAPON_NAME_MISMATCH' };
   if (weapon.system?.vehicleMount?.crewRole !== m.operatorRole)
     return { kind:'UNRESOLVED', reason:'INSTALLATION_OPERATOR_ROLE_MISMATCH' };
+  // P6B: a certified weapon specification makes the Item a mere representation. Its identity, mount and damage must
+  // agree with the sealed entry and the certified specification, or it does not fire.
+  if (EFFECTS[entry.catalogId]?.kind === 'weapon') {
+    if (weapon.actor !== vehicle) return { kind:'UNRESOLVED', reason:'WEAPON_NOT_OWNED_BY_VEHICLE' };
+    const id = resolveCertifiedInstalledWeapon(weapon);
+    if (!id?.ok) return { kind:'UNRESOLVED', reason: id?.reason ?? 'INSTALLED_WEAPON_UNVERIFIED' };
+  }
   return { kind:'CERTIFIED_INSTALLATION', installId, itemId:weapon.id, mount:m };
 }

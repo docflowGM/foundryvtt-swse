@@ -112,8 +112,7 @@ export class VehicleInstallationService {
       audit: { kind: 'vehicle-uninstall', installId, refundPolicyDecided: plan.refundPolicyDecided }
     }); } finally { clearLedgerWrite(vehicle.id); }
     const weaponItems = await this.#afterLedgerChange(vehicle, tx);
-    return tx.success ? { success: true, refundPolicyDecided: plan.refundPolicyDecided, transactionId: tx.transactionId, weaponItems }
-      : { success: false, reasons: ['TRANSACTION_FAILED'], error: tx.error };
+    return this.#result(tx, { refundPolicyDecided: plan.refundPolicyDecided, weaponItems });
   }
 
   // ---------------------------------------------------------------------------------------------
@@ -140,23 +139,46 @@ export class VehicleInstallationService {
   }
 
   /**
-   * Owned weapon Items follow the sealed ledger: one Item per executable weapon installation; Shipyard-created weapon
-   * Items whose installation is gone are deleted. Idempotent; through ActorEngine. Called after every ledger change.
+   * Owned weapon Items follow the sealed ledger: one Item per executable weapon installation; managed Items that are
+   * stale, duplicated or edited are replaced. Idempotent; through ActorEngine; never charges anything and never
+   * touches an Item that is not Shipyard-managed. After writing, the result is VERIFIED against the vehicle's Items:
+   * `synced` is true only when no further change is needed.
+   * @returns {{success:boolean, synced:boolean, created:number, deleted:number, reasons?:string[], error?:string}}
    */
   static async syncInstalledWeaponItems(vehicle) {
     const src = this.#source(vehicle);
-    if (src.error) return { success: false, reasons: [src.error] };
+    if (src.error) return { success: false, synced: false, created: 0, deleted: 0, reasons: [src.error] };
     const { entries } = readCertifiedInstallations(src.flags, src.record.identity.sourceEntryKey);
     const plan = planInstalledWeaponItemSync({ items: Array.from(vehicle.items ?? []), entries });
-    if (plan.deleteIds.length) await ActorEngine.deleteEmbeddedDocuments(vehicle, 'Item', plan.deleteIds);
-    if (plan.create.length) await ActorEngine.createEmbeddedDocuments(vehicle, 'Item', plan.create);
-    return { success: true, created: plan.create.length, deleted: plan.deleteIds.length };
+    let deleted = 0, created = 0;
+    try {
+      if (plan.deleteIds.length) { await ActorEngine.deleteEmbeddedDocuments(vehicle, 'Item', plan.deleteIds); deleted = plan.deleteIds.length; }
+      if (plan.create.length) { await ActorEngine.createEmbeddedDocuments(vehicle, 'Item', plan.create); created = plan.create.length; }
+    } catch (err) {
+      return { success: false, synced: false, created, deleted, reasons: ['WEAPON_ITEM_SYNC_FAILED'], error: err?.message ?? String(err) };
+    }
+    const after = planInstalledWeaponItemSync({ items: Array.from(vehicle.items ?? []), entries });
+    const synced = after.create.length === 0 && after.deleteIds.length === 0;
+    return synced ? { success: true, synced: true, created, deleted }
+      : { success: false, synced: false, created, deleted, reasons: ['WEAPON_ITEM_SYNC_UNVERIFIED'] };
   }
 
+  /**
+   * Repair the owned weapon Items from the sealed ledger. Safe to repeat: no credits move, no ledger write, only
+   * Shipyard-managed Items are touched. Allowed for a GM or the vehicle's owner.
+   */
+  static async reconcileWeaponItems(args) { return this.#exclusive(args?.vehicle, () => this.#reconcile(args)); }
+  static async #reconcile({ vehicle }) {
+    if (!(this.#isGM() || vehicle?.isOwner === true)) return { success: false, reasons: ['NOT_AUTHORIZED'] };
+    const w = await this.syncInstalledWeaponItems(vehicle);
+    return { success: w.success, operational: w.synced, weaponItems: w, reasons: w.success ? [] : w.reasons };
+  }
+
+  /** Items are synchronized after any ledger change; a failure never undoes the committed installation. */
   static async #afterLedgerChange(vehicle, tx) {
     if (!tx?.success) return null;
     try { return await this.syncInstalledWeaponItems(vehicle); }
-    catch (err) { return { success: false, reasons: ['WEAPON_ITEM_SYNC_FAILED'], error: err?.message ?? String(err) }; }
+    catch (err) { return { success: false, synced: false, created: 0, deleted: 0, reasons: ['WEAPON_ITEM_SYNC_FAILED'], error: err?.message ?? String(err) }; }
   }
 
   /** One transaction: credits (if any) + the jobs store (+ ledger on completion). Rolls back only on a database failure. */
@@ -182,9 +204,22 @@ export class VehicleInstallationService {
     return { src, entries };
   }
 
+  /**
+   * Three distinct outcomes (never conflated):
+   *   success / installationCompleted : the transaction committed (credits, ledger, jobs) - it is NOT rolled back later;
+   *   weaponItemsSynced               : the owned weapon Items match the ledger (true when no Item work was needed);
+   *   operational                     : both - a weapon is usable only then.
+   * When the transaction committed but the Items are not synchronized the result is `partial` and names the repair.
+   */
   static #result(tx, extra) {
-    return tx.success ? { success: true, transactionId: tx.transactionId, ...extra } : { success: false, reasons: ['TRANSACTION_FAILED'], error: tx.error };
+    if (!tx.success) return { success: false, installationCompleted: false, operational: false, reasons: ['TRANSACTION_FAILED'], error: tx.error };
+    const { weaponItems, ...rest } = extra ?? {};
+    const itemsOk = weaponItems == null || weaponItems.synced === true;
+    return { success: true, installationCompleted: true, weaponItemsSynced: itemsOk, operational: itemsOk, transactionId: tx.transactionId, ...rest,
+      ...(weaponItems ? { weaponItems } : {}),
+      ...(itemsOk ? {} : { partial: true, reasons: ['WEAPON_ITEMS_NOT_SYNCHRONIZED'], repair: 'reconcileWeaponItems' }) };
   }
+
 
   /** Begin an installation job: validates like an installation, reserves EP, charges the first attempt. */
   static async startJob(args) { return this.#exclusive(args?.vehicle, () => this.#startJob(args)); }

@@ -31,7 +31,10 @@ const REASON_TEXT = {
   MOUNT_CERTIFICATION_REASON_REQUIRED: 'The GM must give a reason when certifying a weapon mount.',
   MOUNT_PROVENANCE_SET_BY_SERVICE_ONLY: 'Mount provenance is recorded by the system, not supplied by the request.',
   CAPITAL_SHIP_TARGETING_PENALTY_NOT_IMPLEMENTED: 'Weapons cannot be installed on frigate-size or larger ships yet (the capital-ship attack penalty is not automated).',
-  WEAPON_ITEM_SYNC_FAILED: 'The weapon was installed but its weapon item could not be created; ask the GM to resync weapons.'
+  WEAPON_ITEM_SYNC_FAILED: 'The weapon item could not be written.',
+  WEAPON_ITEM_SYNC_UNVERIFIED: 'The weapon items could not be verified after writing.',
+  WEAPON_ITEMS_NOT_SYNCHRONIZED: 'The installation is complete and paid for, but the weapon is not operational yet: its weapon item is not in sync. Use "Resync weapons".',
+  NOT_AUTHORIZED: 'Only a GM or the vehicle\'s owner can do that.'
 };
 export const describeReasons = reasons => (reasons ?? []).map(r => REASON_TEXT[r] ?? r).join(' ');
 
@@ -52,6 +55,11 @@ const OUTCOME = {
  */
 export async function runShipyardAction({ action, jobId, catalogId, vehicle }, deps) {
   const { service, game, notify } = deps;
+  if (action === 'resync-weapons') {   // repairs Items from the sealed ledger; no owner character, no credits
+    const r = await service.reconcileWeaponItems({ vehicle });
+    if (r.success) notify.info('Weapon items are in sync.'); else notify.warn(describeReasons(r.reasons));
+    return r;
+  }
   const ownerActor = resolveOwnerActor(vehicle, game);
   if (!ownerActor) { notify.warn('No owner character is available for this installation.'); return { success: false, reasons: ['NO_OWNER_ACTOR'] }; }
   const installerActor = game?.user?.character ?? ownerActor;
@@ -89,6 +97,8 @@ export async function runShipyardAction({ action, jobId, catalogId, vehicle }, d
     }
     default: return { success: false, reasons: ['UNKNOWN_ACTION'] };
   }
+  // A committed transaction whose weapon Items are not in sync is NOT reported as a clean success.
+  if (r.success && r.partial) { notify.warn(describeReasons(r.reasons)); return r; }
   if (r.success) notify.info(r.outcome ? `${OUTCOME[r.outcome]} (check ${r.total})` : 'Done.');
   else notify.warn(describeReasons(r.reasons) || r.error || 'The action was refused.');
   return r;

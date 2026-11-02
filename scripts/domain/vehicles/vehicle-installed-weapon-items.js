@@ -9,8 +9,9 @@
  * from an editable catalog row. Pure; no Foundry globals.
  */
 import { EFFECTS } from './vehicle-modification-effects.js';
+import { INSTALLED_WEAPON_FLAG } from './vehicle-weapon-damage.js';
 
-export const INSTALLED_WEAPON_FLAG = 'vehicleInstalledWeapon';
+export { INSTALLED_WEAPON_FLAG };
 const installIdOf = item => item?.flags?.swse?.[INSTALLED_WEAPON_FLAG]?.installId ?? null;
 
 export function buildInstalledWeaponItemData(entry) {
@@ -31,15 +32,35 @@ export function buildInstalledWeaponItemData(entry) {
   };
 }
 
+/** Does a managed Item still equal the representation the sealed entry calls for? (damage, name, mount, identity) */
+export function managedItemMatches(item, expected) {
+  const vm = item?.system?.vehicleMount ?? {}, ev = expected.system.vehicleMount;
+  const flag = item?.flags?.swse?.[INSTALLED_WEAPON_FLAG] ?? {}, ef = expected.flags.swse[INSTALLED_WEAPON_FLAG];
+  return item?.name === expected.name && item?.system?.damage === expected.system.damage && item?.system?.arc === expected.system.arc
+    && vm.installId === ev.installId && vm.mountKey === ev.mountKey && vm.arc === ev.arc && vm.crewRole === ev.crewRole
+    && flag.installId === ef.installId && flag.catalogId === ef.catalogId && flag.sourceEntryKey === ef.sourceEntryKey;
+}
+
 /**
+ * Plan the Items that should exist for the verified ledger. Idempotent: a consistent set yields an empty plan.
+ *  - one Item per executable weapon entry;
+ *  - a managed Item that no longer matches its entry (edited, renamed, wrong identity) is replaced, never trusted;
+ *  - duplicate managed Items for one installation are removed (the first consistent one is kept);
+ *  - managed Items without an entry are removed.
+ * Items that are not Shipyard-managed (no installation flag) are never touched.
  * @param {{items: object[], entries: object[]}} p items = the vehicle's current Items; entries = verified ledger entries
  * @returns {{create: object[], deleteIds: string[]}}
  */
 export function planInstalledWeaponItemSync({ items = [], entries = [] }) {
   const wanted = new Map(entries.map(e => [e.installId, buildInstalledWeaponItemData(e)]).filter(([, d]) => d));
-  const owned = items.filter(i => installIdOf(i));
-  const deleteIds = owned.filter(i => !wanted.has(installIdOf(i))).map(i => i.id ?? i._id);
-  const have = new Set(owned.filter(i => wanted.has(installIdOf(i))).map(installIdOf));
-  const create = [...wanted.entries()].filter(([id]) => !have.has(id)).map(([, d]) => d);
+  const deleteIds = [], kept = new Set();
+  for (const item of items) {
+    const id = installIdOf(item);
+    if (!id) continue;
+    const expected = wanted.get(id);
+    if (!expected || kept.has(id) || !managedItemMatches(item, expected)) { deleteIds.push(item.id ?? item._id); continue; }
+    kept.add(id);
+  }
+  const create = [...wanted.entries()].filter(([id]) => !kept.has(id)).map(([, d]) => d);
   return { create, deleteIds };
 }

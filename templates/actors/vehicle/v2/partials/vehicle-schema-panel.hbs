@@ -118,6 +118,7 @@
         </select>
         <button type="button" data-shipyard-action="start-job">Begin installation</button>
         {{#if view.shipyard.isGM}}<button type="button" data-shipyard-action="gm-instant">GM: install instantly</button>{{/if}}
+        <button type="button" data-shipyard-action="resync-weapons" title="Repairs the weapon items from the installation records; costs nothing">Resync weapons</button>
       </div>
       {{else}}
       <p>No certified modifications are installable on this vehicle.</p>

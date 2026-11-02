@@ -6,6 +6,7 @@
 import { classifyVehicleActorSource } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
 import { isLedgerUpdateAllowed } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-installation-ledger.js";
 import { checkProvenanceUpdate, claimsPublishedSource } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-source-identity.js";
+import { isShipyardManagedWeaponItem } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
 import { UNIVERSAL_VEHICLE_PACKS } from "/systems/foundryvtt-swse/scripts/domain/vehicles/universal-vehicle-pack-registry.js";
 
 let registered = false;
@@ -129,6 +130,38 @@ export function guardVehicleProvenance(actor, changes) {
   return undefined;
 }
 
+/* ------------------------------------------------------------------------------------------------------------------ */
+/* Shipyard-managed weapon Items are representations of sealed installations: their authority fields are not editable. */
+/* ------------------------------------------------------------------------------------------------------------------ */
+const PROTECTED_WEAPON_ITEM_PATHS = ['name', 'system.damage', 'system.vehicleMount', 'system.arc', 'flags.swse.vehicleInstalledWeapon'];
+
+/** Every dotted path an update touches, with '-=' / '==' markers resolved to the key they act on. */
+function touchedPaths(changes, prefix = '', out = []) {
+  if (changes === null || typeof changes !== 'object') { out.push(prefix); return out; }
+  const keys = Object.keys(changes);
+  if (!keys.length && prefix) out.push(prefix);
+  for (const raw of keys) {
+    const key = raw.replace(/^(-=|==)/, '');
+    const path = prefix ? `${prefix}.${key}` : key;
+    const v = changes[raw];
+    if (v !== null && typeof v === 'object' && !Array.isArray(v) && !raw.startsWith('-=')) touchedPaths(v, path, out); else out.push(path);
+  }
+  return out;
+}
+const related = (a, b) => a === b || a.startsWith(b + '.') || b.startsWith(a + '.');
+
+export function updateTouchesShipyardWeaponItem(changes) {
+  return touchedPaths(changes).some(p => PROTECTED_WEAPON_ITEM_PATHS.some(q => related(p, q)));
+}
+
+/** Refuse edits to the authority fields of a Shipyard-managed weapon Item (damage, name, mount, identity flag). */
+export function guardShipyardWeaponItem(item, changes) {
+  if (item?.parent?.type !== 'vehicle' || !isShipyardManagedWeaponItem(item)) return undefined;
+  if (!updateTouchesShipyardWeaponItem(changes)) return undefined;
+  console.error('[foundryvtt-swse] Shipyard weapon Item update denied: SHIPYARD_WEAPON_ITEM_IS_MANAGED (reconcile through the Shipyard instead)');
+  return false;
+}
+
 export function registerVehiclePreCreateHooks() {
   if (registered) return;
   registered = true;
@@ -136,6 +169,7 @@ export function registerVehiclePreCreateHooks() {
   Hooks.on('preUpdateActor', guardVehicleInstallationLedger);
   Hooks.on('preUpdateActor', guardVehicleProvenance);
   Hooks.on('preUpdateActor', guardVehicleEnvironment);
+  Hooks.on('preUpdateItem', guardShipyardWeaponItem);
   // Intentionally no createActor weapon hydration. Source firing groups are
   // reference evidence, not permissions or physical mounted weapons.
 }
