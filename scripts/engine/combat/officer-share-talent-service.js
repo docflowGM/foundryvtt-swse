@@ -159,6 +159,27 @@ export class OfficerShareTalentService {
 
 export function registerOfficerShareTalentCleanup() {
   if(!globalThis.Hooks?.on)return;
+  // A GM can reconnect after a combat ended while offline. Clean up only
+  // grants whose encounter no longer exists as an active combat.
+  globalThis.Hooks.once?.('ready',async ()=>{
+    if(globalThis.game?.user?.isGM!==true)return;
+    const current=new Set(Array.from(globalThis.game?.combats||[])
+      .filter(combat=>combat?.started===true).map(combat=>combat.id));
+    const actors=uniqueActors([
+      ...Array.from(globalThis.game?.actors||[]),
+      ...Array.from(globalThis.canvas?.tokens?.placeables||[])
+        .map(token=>token.actor).filter(Boolean),
+      ...Array.from(globalThis.game?.combats||[]).flatMap(combat=>
+        Array.from(combat.combatants||[]).map(c=>c.actor).filter(Boolean)),
+    ]);
+    const stale=new Set(actors.flatMap(actor=>asItems(actor.items)
+      .map(item=>provenance(item)?.encounterId).filter(id=>id&&!current.has(id))));
+    for(const id of stale){
+      try{await OfficerShareTalentService.expireEncounter(id,{actors});}
+      catch(error){globalThis.ui?.notifications?.error?.(
+        `Stale Officer Share Talent cleanup failed: ${error.message}`);}
+    }
+  });
   globalThis.Hooks.on('deleteCombat',async combat=>{
     const actors=uniqueActors([...Array.from(globalThis.game?.actors||[]),
       ...Array.from(combat?.combatants||[]).map(c=>c.actor).filter(Boolean)]);
