@@ -17,7 +17,7 @@ import { TalentTreeDB } from '/systems/foundryvtt-swse/scripts/data/talent-tree-
 import { eligibleOfficerShareTalents, persistedOfficerShareTalents } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/officer-share-talent-authority.js';
 import { planOfficerShareTalentAction } from '/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-action-rules.js';
 import { resolveOfficerShareTalentScene } from '/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-scene.js';
-import { planOfficerShareTalentExpiry } from '/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-cleanup-plan.js';
+import { executeOfficerShareTalentExpiry } from '/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-cleanup-plan.js';
 import { executeOfficerShareTalentTransaction } from '/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-transaction.js';
 
 const locks=new Set();
@@ -103,18 +103,15 @@ export class OfficerShareTalentService {
   static async expireEncounter(combatId,{actors=null}={}) {
     if(globalThis.game?.user?.isGM!==true)return {skipped:'GM required'};
     const all=actors||Array.from(globalThis.game?.actors||[]);
-    const outcome=[];
-    for(const actor of all){
-      const expiry=planOfficerShareTalentExpiry({actor,encounterId:combatId});
-      if(!expiry.items.length)continue;
-      // Delete linked effects first. ActorEngine's deleteItem hook may also
-      // attempt effect cleanup; when it runs there must be nothing orphaned.
-      await ActorEngine.applyMutationPlan(actor,{
-        delete:{effects:expiry.effects,items:expiry.items},
-      },{source:'OfficerShareTalentService.expireEncounter',transactional:true});
-      outcome.push({actorId:actor.id,removed:expiry.items.length,effectsRemoved:expiry.effects.length});
+    const report=await executeOfficerShareTalentExpiry({
+      actors:all,encounterId:combatId,
+      applyMutationPlan:(actor,plan,options)=>ActorEngine.applyMutationPlan(actor,plan,options),
+    });
+    if(!report.success){
+      const identities=report.failures.map(f=>f.actorUuid||f.actorId||'unknown').join(', ');
+      throw new Error(`Share Talent cleanup incomplete; GM review required for ${report.failures.length} actor(s): ${identities}`);
     }
-    return {expired:outcome};
+    return report;
   }
 }
 
