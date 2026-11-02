@@ -28,6 +28,7 @@ import { initializeDiscoverySystem, onDiscoveryReady } from "./scripts/ui/discov
 import { initializeSentinelGovernance } from "./scripts/governance/sentinel/sentinel-init.js";
 import { MutationInterceptor } from "./scripts/governance/mutation/MutationInterceptor.js";
 import { ActorEngine } from "./scripts/governance/actor-engine/actor-engine.js";
+import { openEnforcerResourceDelivery } from "./scripts/apps/enforcer-resource-delivery-dialog.js";
 import { ConditionTrackFeatActions } from "./scripts/engine/feats/condition-track-feat-actions.js";
 import { SystemInitHooks } from "./scripts/engine/progression/hooks/system-init-hooks.js";
 import { registerHandlebarsHelpers as registerSystemHandlebarsHelpers } from "./helpers/handlebars/index.js";
@@ -117,7 +118,10 @@ Hooks.once("init", async () => {
     RollEngine,
     EntityCreateBrowser,
     openEntityCreateBrowser,
-    openForceAlchemyWorkbench
+    openForceAlchemyWorkbench,
+    classFeatures: {
+      enforcerResources: { open: openEnforcerResourceDelivery }
+    }
   };
 
   globalThis.SWSE.ActorEngine = ActorEngine;
