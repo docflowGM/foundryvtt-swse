@@ -56,10 +56,24 @@ test('Master Privateer printed feature is Piracy; existing catalog ID remains st
   assert.equal(def[0].name, 'Piracy');
 });
 
-test('all six approved class progression records and the other 31 are protected from drift', () => {
+test('Enforcer Resources is unlocked once at level 1 while the per-level allowance is represented separately', () => {
+  const hits = occurrences('Enforcer', f => f.name === 'Resources');
+  assert.equal(hits.length, 1);
+  assert.equal(hits[0].level, 1);
+  assert.equal(hits[0].feature.featureKey, 'enforcer.resources');
+  assert.equal(hits[0].feature.progression.grantEachClassLevel, true);
+  assert.equal(hits[0].feature.progression.creditsPerHeroicLevel, 2000);
+  assert.equal(hits[0].feature.progression.carryDeferredValue, true);
+  for(const lvl of [1,3,5,7,9]) {
+    const row = byName('Enforcer').find(r => r.level === lvl);
+    assert.equal(row.features.filter(f => f.type === 'talent_choice').length, 1);
+  }
+});
+
+test('all seven approved class progression records and the other 30 are protected from drift', () => {
   const guard = verifyClassPackProtectedState(root);
   assert.equal(guard.ok, true, guard.failures.join('; '));
   const baseline = JSON.parse(read('data/audits/class-mechanics-protected-baseline.json'));
-  assert.equal(Object.keys(baseline.approvedProgressionExceptions).length, 6);
+  assert.equal(Object.keys(baseline.approvedProgressionExceptions).length, 7);
   assert.equal(classes.length, 37);
 });
