@@ -1,0 +1,152 @@
+{
+  "schema": "swse.droids.sgd.source-mechanics-sprint-011-015/0.1",
+  "date": "2026-11-02",
+  "bookId": "SGD",
+  "printedPages": [
+    88,
+    97
+  ],
+  "sourceAuthority": "Scavenger's Guide to Droids (rendered PDF printed pp.88-97; OCR is index only)",
+  "sprintStatus": "SOURCE_MECHANICAL_DEEPENING_NOT_STRICT_CERTIFICATION",
+  "records": [
+    {
+      "id": "SGD-DROID-011",
+      "name": "Duelist Elite Training Droid",
+      "pages": [
+        88,
+        89
+      ],
+      "variantCount": 3,
+      "actionCount": 3,
+      "pcCount": 1,
+      "constraintCount": 2,
+      "issues": [
+        "Sith Weapon Master programming reverts after shutdown/restart",
+        "Stiletto hidden weapon triggers only after covert signal, flat-footed first hit",
+        "Lightsaber Sparring Partner exchanges proficiency rather than granting bonus feat",
+        "Rapier and First Aid resource/action validity must be mapped to weapon/medical authority"
+      ]
+    },
+    {
+      "id": "SGD-DROID-012",
+      "name": "E522 Assassin Droid",
+      "pages": [
+        90,
+        91
+      ],
+      "variantCount": 1,
+      "actionCount": 3,
+      "pcCount": 0,
+      "constraintCount": 2,
+      "issues": [
+        "Hunter-seeker missile locks until hit or five consecutive missed rounds; six missiles total",
+        "Needler neurotoxin applies to living creature after successful hit, Core poison authority required",
+        "Heavy support variant relocates launcher to shoulders and replaces needler and ion rifle",
+        "Fire-linked twin blaster is one standard-action firing choice with -2, not twice-unrestricted attacks"
+      ]
+    },
+    {
+      "id": "SGD-DROID-013",
+      "name": "EI-9 Network Security Droid",
+      "pages": [
+        92,
+        93
+      ],
+      "variantCount": 2,
+      "actionCount": 3,
+      "pcCount": 1,
+      "constraintCount": 2,
+      "issues": [
+        "Electromagnetic Pulse 6-square radius, 1d10+BAB vs Fortitude, one-round effect and one-round recharge; external electronic-target authority needed",
+        "Slicer Tracker tracking program and remote sensor permission require distinct systems and Use Computer checks",
+        "Hidden core restoration attempts after 1d12 minutes, repeats once per hour after failures",
+        "Heroic service chassis must purchase droid port/processor/appendages and does not inherit printed heroic talents"
+      ]
+    },
+    {
+      "id": "SGD-DROID-014",
+      "name": "EV-Series Supervisor Droid",
+      "pages": [
+        94,
+        95
+      ],
+      "variantCount": 2,
+      "actionCount": 5,
+      "pcCount": 1,
+      "constraintCount": 2,
+      "conflicts": [
+        "SGD-014-BULLY-EFFECT-CONFLICT"
+      ],
+      "issues": [
+        "Bully printed main prose rerolls its own Persuasion; protocol grants master +2 circumstance Persuasion; unresolved controlling rule",
+        "Quartermaster requires per-item 8 hours maintenance within 24 hours, first attack or skill check only each encounter",
+        "Technician swaps internal comlink for diagnostics package, head targeting scope is repair-specific +2 equipment",
+        "Heroic protocol chassis gains heuristic plus Bully in lieu of translator, not alongside it"
+      ]
+    },
+    {
+      "id": "SGD-DROID-015",
+      "name": "FLTCH-Series Battle Droid",
+      "pages": [
+        96,
+        97
+      ],
+      "variantCount": 2,
+      "actionCount": 5,
+      "pcCount": 0,
+      "constraintCount": 2,
+      "conflicts": [
+        "SGD-015-NIGHTMARE-ACTION-CONFLICT",
+        "SGD-015-ZERO-RANGE-ACTION-CONFLICT"
+      ],
+      "issues": [
+        "Nightmare main free action Intimidation vs protocol two swift actions once/encounter",
+        "Zero-Range main automatic follow-up vs protocol two swift actions once/encounter; grapple/rifle attacks require verified V2 weapon mount rights",
+        "Built-in missile launcher has exactly one missile, no infinite ammunition; ordinary weapon grip may incur -5",
+        "Ammo Boost costs 500 credits on droid +100 on weapon, requires two DC20 Mechanics checks/two hours and double power units for optional +1d6"
+      ]
+    }
+  ],
+  "sprintTotals": {
+    "newModels": 5,
+    "variants": 10,
+    "actions": 19,
+    "pcClaims": 3,
+    "constraints": 10,
+    "newConflicts": 3
+  },
+  "cumulative": {
+    "sgdBookIdentities": 46,
+    "sgdStructurallyHydrated": 46,
+    "recordsDeepSourceMechanicsReviewed": 15,
+    "modelSpecificVariantsSourceRecorded": 38,
+    "sourceProtocolActionClaims": 60,
+    "addedSourceModificationConstraints": 25,
+    "newConflictsRecordedDuringM5M6M7": 7,
+    "totalUnresolvedContradictionsInFirst15": 8,
+    "strictSGDCertifications": 0,
+    "strictProjectCertifications": 0,
+    "foundryRuntimeCertifications": 0
+  },
+  "ledgerCommit": "f129c9f8669570c84737fca27f14fa353560a2d0",
+  "validation": {
+    "recursiveCustomDraftSchemaWalk": "46/46 PASS",
+    "fieldStatesNullEmptySemantics": "46/46 PASS",
+    "censusNamePageIdentity": "46/46 PASS",
+    "attackExpressionsNonExecutable": "46/46 PASS",
+    "pdfPageReview": "Ten pp.88–97 PDF pages rendered and visually reviewed",
+    "pythonDraft202012ValidatorAgainstRemoteLedger": "NOT RUN",
+    "FoundryV13Runtime": "NOT RUN"
+  },
+  "productionPackEdits": 0,
+  "productionCodeEdits": 0,
+  "mergesToMain": 0,
+  "nextRecords": [
+    "SGD-DROID-016",
+    "SGD-DROID-017",
+    "SGD-DROID-018",
+    "SGD-DROID-019",
+    "SGD-DROID-020"
+  ],
+  "nonInflationPolicy": "Printed source facts and schema correctness are not complete source-mechanical certification. Printed attack expressions remain source-only."
+}
