@@ -133,7 +133,7 @@ export class ShareTalentStep extends ProgressionStepPlugin {
   getRemainingPicks(){return [{label:this._selected?'Share Talent selected':'1 Share Talent selection required',isWarning:!this._selected}];}
   getUtilityBarConfig(){return {mode:'minimal'};}
   getUtilityBarMode(){return 'minimal';}
-  getMentorMode(){return 'informational';}
+  getMentorMode(){return 'context-only';}
   getMentorContext(){return 'Share one talent you already possess. The selection is permanent and does not grant a new talent.';}
 }
 export default ShareTalentStep;
