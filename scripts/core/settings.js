@@ -76,7 +76,7 @@ game.settings.register('foundryvtt-swse', 'performanceDiagnostics', {
 
   game.settings.register("foundryvtt-swse", "sithApprenticeMinimumDSP", {
     name: "Sith Apprentice Dark Side Score Requirement",
-    hint: "Legacy setting, retained for compatibility. The project rule now uses one Dark Side Point for Sith Apprentice; GM adjudicates narrative membership.",
+    hint: "Legacy setting (inactive): Sith Apprentice now requires 1 DSP.",
     scope: "world",
     config: false,
     type: String,
@@ -93,7 +93,7 @@ game.settings.register('foundryvtt-swse', 'performanceDiagnostics', {
 
   game.settings.register("foundryvtt-swse", "sithLordMinimumDSP", {
     name: "Sith Lord Dark Side Score Requirement",
-    hint: "Legacy setting, retained for compatibility. The project rule now uses one Dark Side Point for Sith Lord; GM adjudicates narrative membership.",
+    hint: "Legacy setting (inactive): Sith Lord now requires 1 DSP.",
     scope: "world",
     config: false,
     type: String,
