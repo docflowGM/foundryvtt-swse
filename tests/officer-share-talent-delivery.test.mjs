@@ -56,6 +56,15 @@ test('never duplicate the same canonically owned talent for an ally',()=>{
   talent:officer.items[0],selection,encounterId:'enc',day:15}),null);
  assert.throws(()=>ownOfficerTalentItem({...officer,items:[]},'T123'),/not uniquely owned/);
 });
+test('a temporary borrowed talent cannot become the Officer source for another Share Talent',()=>{
+ const borrowed=buildOfficerShareTalentGrant({
+   officer,recipient,talent:officer.items[0],selection,encounterId:'enc',day:15,
+ });
+ const officerWithBorrowed={id:'officer2',items:[{
+   ...borrowed,id:'borrowed',toObject:()=>borrowed,
+ }]};
+ assert.throws(()=>ownOfficerTalentItem(officerWithBorrowed,'T123'),/not uniquely owned/);
+});
 test('encounter cleanup is registered and temporary talent items use ActorEngine, not direct Item mutations',()=>{
  const index=fs.readFileSync(path.join(ROOT,'index.js'),'utf8');
  const service=fs.readFileSync(path.join(ROOT,'scripts/engine/combat/officer-share-talent-service.js'),'utf8');
