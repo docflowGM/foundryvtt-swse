@@ -15,6 +15,7 @@ import { TalentDB } from '/systems/foundryvtt-swse/scripts/data/talent-db.js';
 import { TalentTreeDB } from '/systems/foundryvtt-swse/scripts/data/talent-tree-db.js';
 import { eligibleOfficerShareTalents, persistedOfficerShareTalents } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/officer-share-talent-authority.js';
 import { planOfficerShareTalentAction } from '/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-action-rules.js';
+import { resolveOfficerShareTalentScene } from '/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-scene.js';
 
 const locks=new Set();
 import {
@@ -28,7 +29,7 @@ const uniqueActors=(actors)=>Array.from(new Map(actors.map(a=>[a.id,a])).values(
 
 /** Strict GM runtime service. Returns successful delivery only after all legs commit. */
 export class OfficerShareTalentService {
-  static async activate({officer,talentId,combat,recipientActors,recipientProofs}={}) {
+  static async activate({officer,talentId,combat,recipientTokenIds,confirmedSenses=false,confirmedAllies=false}={}) {
     if(globalThis.game?.user?.isGM!==true)throw new Error('GM authorization is required to apply shared talent benefits');
     if(!officer?.id||!combat?.id||combat.started!==true)throw new Error('Share Talent requires an active encounter and Officer');
     if(locks.has(officer.id))throw new Error('Officer Share Talent already in progress');
@@ -44,15 +45,17 @@ export class OfficerShareTalentService {
       if(classes.length!==1)throw new Error('Unique Officer class level unavailable');
       const level=Number(classes[0].system?.level);
       const combatant=Array.from(combat.combatants||[]).find(c=>c.actor?.id===officer.id);
-      if(!combatant||combatant.hasAction?.('standard')!==true) {
-        throw new Error('Officer has no available standard action in the encounter');
+      if(!combatant||combat.combatant?.id!==combatant.id||combatant.canAct!==true
+        ||combatant.hasAction?.('standard')!==true) {
+        throw new Error('Officer is not able to spend a standard action on the current turn');
       }
       const day=dayFromClock(globalThis.game?.time?.worldTime);
       if(day===null)throw new Error('Current campaign day is unavailable');
       const previous=officer.flags?.swse?.classFeatures?.officer?.dailyShares||[];
       if(!Array.isArray(previous))throw new Error('Malformed Officer daily Share Talent usage');
-      const recipients=uniqueActors(Array.isArray(recipientActors)?recipientActors:[]);
-      if(recipients.length!==(recipientActors?.length||0))throw new Error('Duplicate recipient identities');
+      const {recipientActors:recipients,recipientProofs}=resolveOfficerShareTalentScene({
+        officer,combat,recipientTokenIds,confirmedSenses,confirmedAllies,
+      });
       const plan=planOfficerShareTalentAction({
         selections:persistedOfficerShareTalents(officer),
         usesToday:previous.filter(u=>u.day===day),talentId,officerLevel:level,
