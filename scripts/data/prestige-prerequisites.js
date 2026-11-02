@@ -231,7 +231,7 @@ export const PRESTIGE_PREREQUISITES = {
         minLevel: 7,
         skills: ['Use the Force'],
         feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
-        darkSideScore: 'wisdom', // Must equal Wisdom score
+        darkSideScore: 1, // Project house rule: DSP >= 1 (GM rules on narrative status)
         special: 'Must be a member of The Sith',
         requirements: [
             { type: 'level', min: 7 },
@@ -239,7 +239,7 @@ export const PRESTIGE_PREREQUISITES = {
             { type: 'force_sensitive', required: true },
             { type: 'feat', key: 'weapon-proficiency', name: 'Weapon Proficiency',
               choice: { kind: 'weapon-group', key: 'lightsabers', name: 'Lightsabers' } },
-            { type: 'dark_side', min: 'wisdom' },
+            { type: 'dark_side', min: 1 },
             { type: 'table_state', key: 'must-be-member-sith',
               raw: 'Must be a member of The Sith', severity: 'advisory' }
         ]
@@ -253,7 +253,7 @@ export const PRESTIGE_PREREQUISITES = {
         forceTechniques: {
             count: 1
         },
-        darkSideScore: 'wisdom',
+        darkSideScore: 1, // Project house rule: DSP >= 1
         special: 'Must be a member of The Sith',
         requirements: [
             { type: 'level', min: 12 },
@@ -262,7 +262,7 @@ export const PRESTIGE_PREREQUISITES = {
             { type: 'feat', key: 'weapon-proficiency', name: 'Weapon Proficiency',
               choice: { kind: 'weapon-group', key: 'lightsabers', name: 'Lightsabers' } },
             { type: 'force_technique_count', count: 1 },
-            { type: 'dark_side', min: 'wisdom' },
+            { type: 'dark_side', min: 1 },
             { type: 'table_state', key: 'must-be-member-sith',
               raw: 'Must be a member of The Sith', severity: 'advisory' }
         ]
