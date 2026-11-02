@@ -98,6 +98,13 @@ export class OfficerShareTalentService {
             {talentId,day,encounterId:combat.id,recipientActorIds:recipients.map(a=>a.id)},
           ]},
         },{source:'OfficerShareTalentService.activate.usage',transactional:true});
+        // ActorEngine mutation legs can await asynchronous Foundry document
+        // work. A new combat turn may begin after initial preflight, so refuse
+        // to debit the Officer on another combatant's turn.
+        if(globalThis.game?.combat?.id!==combat.id || combat.started!==true
+          ||combat.combatant?.id!==combatant.id || combatant.canAct!==true) {
+          throw new Error('Officer Share Talent turn changed before action expenditure');
+        }
         // Use the V2 action-economy SSOT, not SWSECombatant.useAction():
         // the legacy method incorrectly consumes the MOVE action with STANDARD.
         // A loose-mode advisory/no-op is not a valid once/day Share Talent spend.
