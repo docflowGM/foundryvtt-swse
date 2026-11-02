@@ -163,6 +163,20 @@
               "sourceEntryKey": "SGD-DROID-001"
             },
             "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-001-FORTITUDE-HEAT-EXTREME-HEAT",
+            "statement": "Printed Fortitude Defense is 14 normally and 24 to resist fire and extreme heat. The conditional 24 is not a standing defense score or blanket damage immunity.",
+            "scope": "Only Fortitude checks or defense resolutions to resist fire and extreme heat for the 8D Smelter Droid.",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 68,
+              "pdfPage1Based": 69,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-001",
+              "citationLabel": "Defenses: Fort 14 (24 to resist fire and extreme heat)"
+            },
+            "executionStatus": "source-only"
           }
         ],
         "armorNote": "Duravlex shell (+4 armor)"
@@ -183,7 +197,7 @@
         "attackGroups": [
           {
             "attackId": "printed-attack-01",
-            "raw": "Melee claw +2 (ld4+4) or",
+            "raw": "Melee claw +2 (1d4+4) or",
             "operationStatus": "source-only",
             "attackBonus": 2
           },
@@ -416,7 +430,20 @@
       "systems": {
         "sourceSystemsRaw": "heuristic processor, walking locomotion, 2 hand appendages, translator unit (DC 10), vocabulator"
       },
-      "equipment": {},
+      "equipment": {
+        "possessions": [
+          {
+            "entryId": "SGD-DROID-002-POSSESSION-001",
+            "name": "code cylinder",
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "SGD-DROID-002-POSSESSION-002",
+            "name": "storage device (20 memory units)",
+            "factoryVsPresented": "unknown"
+          }
+        ]
+      },
       "modifications": {},
       "pcConstruction": {
         "heroEligibility": "allowed"
@@ -429,7 +456,36 @@
       "text": {
         "mechanicsNotes": "Source language line preserved in sidecar evidence; speaking vs understanding remains unverified."
       },
-      "exceptions": {},
+      "exceptions": {
+        "sourceContradictions": [
+          {
+            "issueId": "SGD-002-ARCHIVE-PROCESSOR-ACTION-COST",
+            "fieldPointers": [
+              "/rules/conditionalMechanics",
+              "/pcConstruction/startingSelections"
+            ],
+            "statements": [
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 70,
+                "pdfPage1Based": 71,
+                "verifiedBy": "pdf-visual",
+                "sourceEntryKey": "SGD-DROID-002",
+                "citationLabel": "Archive Processor prose: full-round action"
+              },
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 70,
+                "pdfPage1Based": 71,
+                "verifiedBy": "pdf-visual",
+                "sourceEntryKey": "SGD-DROID-002",
+                "citationLabel": "Archive Processor protocol block: two swift actions once per turn"
+              }
+            ],
+            "resolutionStatus": "unresolved"
+          }
+        ]
+      },
       "fieldStates": {
         "/abilities/con": "explicitly-none"
       },
