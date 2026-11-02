@@ -8,6 +8,7 @@ import { getClassLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/l
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
 import { isNonheroicClassRef, NONHEROIC_CLASS_MODEL } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/nonheroic-class-model.js";
+import { getCanonicalClassBABAtLevel } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-bab-table.js";
 
 /**
  * Evaluate prestige class readiness for all prestige classes
@@ -143,10 +144,6 @@ function calculateActorBAB(actor) {
   for (const classItem of classItems) {
     const className = String(classItem?.name || '').trim();
     const level = Number(classItem?.system?.level);
-    if (!Number.isInteger(level) || level < 1) {
-      throw new Error(`Prestige readiness: invalid class level for "${className}"`);
-    }
-
     const classModel = isNonheroicClassRef(classItem)
       ? NONHEROIC_CLASS_MODEL
       : (ClassesRegistry.getBySourceId(classItem?.system?.classSourceId || classItem?.system?.sourceId)
@@ -156,13 +153,7 @@ function calculateActorBAB(actor) {
       throw new Error(`Prestige readiness: canonical class "${className}" is unavailable`);
     }
 
-    const row = (classModel.levelProgression || []).find(
-      entry => Number(entry?.level) === level
-    );
-    if (!row || !Number.isInteger(row.bab) || row.bab < 0) {
-      throw new Error(`Prestige readiness: no certified BAB row for "${className}" level ${level}`);
-    }
-    totalBAB += row.bab;
+    totalBAB += getCanonicalClassBABAtLevel(classModel, level);
   }
 
   return totalBAB;
