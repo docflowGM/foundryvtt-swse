@@ -24,16 +24,15 @@ export async function openOfficerShareTalentAction(officer) {
   const owners=tokens.filter(t=>t?.actor?.id===officer.id);
   if(owners.length!==1)throw new Error('Officer must have exactly one unambiguous token in the current scene');
   const source=owners[0],sourceFaction=faction(source);
-  const combatTokenIds=new Set(Array.from(combat.combatants||[]).map(c=>c.tokenId));
   const candidates=tokens
     .filter(t=>t!==source && t.actor?.id && t.actor.id!==officer.id
-      && faction(t)===sourceFaction && sourceFaction!==0 && combatTokenIds.has(tokenId(t)))
+      && faction(t)===sourceFaction && sourceFaction!==0)
     .map(t=>({...{
       token:t,tokenId:tokenId(t),actorId:t.actor.id,
       name:t.actor.name||t.name, distanceSquares:officerShareTalentDistanceSquares(scene,canvas.grid,source,t),
     }}))
     .filter(x=>x.distanceSquares!==null && x.distanceSquares>=0 && x.distanceSquares<=10);
-  if(!candidates.length)throw new Error('No measured allied encounter tokens within 10 squares');
+  if(!candidates.length)throw new Error('No measured allied scene tokens within 10 squares');
   const selections=persistedOfficerShareTalents(officer);
   if(!selections.length)throw new Error('Officer has no permanent Share Talent selection');
   const day=Math.floor(Number(game.time?.worldTime)/86400);
