@@ -310,6 +310,7 @@ export function buildLevelUpFinalizationReceipt(manifest, progressionSession) {
       forceTechniques: selectionNames(selectionArray(progressionSession, 'forceTechniques')),
       medicalSecrets: selectionNames(selectionArray(progressionSession, 'medicalSecrets')),
       shareTalentSelections: selectionArray(progressionSession, 'shareTalentSelections').map(s => ({officerLevel:s.officerLevel,talentId:s.talentId,treeId:s.treeId})),
+      enforcerResources: manifest?.className === 'Enforcer' ? {classLevel: manifest.classLevel, kind:'equipment-entitlement-not-currency'} : null,
       starshipManeuvers: selectionNames(selectionArray(progressionSession, 'starshipManeuvers')),
     },
     automaticClassFeatures: selectionNames(manifest?.automaticClassFeatures || []),
@@ -358,6 +359,19 @@ export function auditLevelUpActorAfterFinalization(actor, manifest, progressionS
       || !stored.some(entry => entry.officerLevel === manifest.classLevel
           && entry.talentId === wanted.talentId && entry.treeId === wanted.treeId)) {
       errors.push('Officer Share Talent permanent selection was not materialized');
+    }
+  }
+
+  if (manifest.className === 'Enforcer') {
+    const entries = actor?.flags?.swse?.classFeatures?.enforcer?.resources || [];
+    const expected = Array.isArray(entries) ? entries.filter(x =>
+      x.enforcerClassLevel === manifest.classLevel) : [];
+    if (expected.length !== 1 || !Number.isInteger(expected[0]?.heroicLevel)
+      || expected[0].heroicLevel < manifest.classLevel
+      || !Number.isInteger(expected[0]?.newValueCredits)
+      || expected[0].newValueCredits !== 2000 * expected[0].heroicLevel
+      || !['awaiting-equipment-selection', 'delivered', 'deferred-to-next-level'].includes(expected[0]?.status)) {
+      errors.push('Enforcer Resources recurring equipment entitlement was not materialized');
     }
   }
 
