@@ -36,7 +36,7 @@ import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progre
 import { calculateMaxForcePointsForBuildPlan } from '/systems/foundryvtt-swse/scripts/data/force-points.js';
 import { buildLevelUpEntitlementManifest } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-entitlement-manifest.js';
 import { planScalingClassFeatureUpdate } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-scaling-feature-upsert.js';
-import { getHeroicLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
+import { getLevelSplit } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
 import { pendingEnforcerResources, planEnforcerResourceEntitlement } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/enforcer-resources-entitlement.js';
 import { ChargenRules } from '/systems/foundryvtt-swse/scripts/engine/chargen/ChargenRules.js';
 import {
@@ -1733,7 +1733,12 @@ export class ProgressionFinalizer {
     // allowance based on the NEW heroic level. Never auto-create unselected
     // equipment or make ordinary currency spendable.
     if (sessionState.mode === 'levelup' && levelUpManifest?.className === 'Enforcer') {
-      const heroicAfter = getHeroicLevel(actor) + 1;
+      const split = getLevelSplit(actor);
+      if (!Number.isInteger(split.heroicLevel) || !Number.isInteger(split.totalLevel)
+          || split.totalLevel + 1 !== Number(levelUpManifest.characterLevel)) {
+        throw new Error('Enforcer Resources requires a complete pre-level class ledger to determine heroic level');
+      }
+      const heroicAfter = split.heroicLevel + 1;
       const planned = planEnforcerResourceEntitlement({
         existing: pendingEnforcerResources(actor),
         classLevel: levelUpManifest.classLevel,
