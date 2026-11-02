@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { verifyClassPackProtectedState } from './lib/class-pack-protected-guard.mjs';
 /**
  * Phase 3D-3 — DRY-RUN applicator for the 92 production talent records Phase 3C protected.
  *
@@ -611,7 +612,9 @@ export function verifyPostState(st, { exact = false, root = ROOT, scan = true } 
   check('every homebrew talent keeps a resolvable tree context (homebrew tree, canonical tree id, or the legacy slug of a canonical tree)', st.homebrewTalents.every(t => st.homebrewTrees.some(x => x.system.talentIds.includes(t._id)) || st.trees.some(c => c._id === t.system.treeId || registrySlug(c.name) === String(t.system.treeId).replace(/_/g, '-'))));
   const hbTreeIds = st.homebrewTrees.map(t => t._id);
   check('no canonical class references a homebrew-only tree', st.classes.every(c => !hbTreeIds.some(id => JSON.stringify(c.system ?? {}).includes(id))));
-  check('class records are byte-identical to the Phase 3C state', gitBlobSha(st.texts.classes) === report.preState.classes);
+  const protectedClassState = verifyClassPackProtectedState(root);
+  check('class records preserve all protected Phase 3C data and approved class progression changes',
+    protectedClassState.ok, protectedClassState.failures.join('; '));
 
   const regIds = new Set(st.trees.map(t => t._id));
   check('both registry files are identical and canonical-only (no homebrew tree, no homebrew talent)', st.texts.registry === st.texts.registryFixes && st.registry.every(e => !e.sourceId || regIds.has(e.sourceId)) && st.registry.every(e => (e.talentIds ?? []).every(id => !hb.has(id))));
