@@ -14,14 +14,25 @@
       "productionCertified": 0,
       "appParityCertified": 0,
       "foundryRuntimeCertified": 0
+    },
+    {
+      "id": "MECH-002",
+      "path": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "identitiesEvaluated": 25,
+      "certifiedPrintedMechanics": 19,
+      "heldSourceCompleteness": 6,
+      "productionCertified": 0,
+      "appParityCertified": 0,
+      "foundryRuntimeCertified": 0
     }
   ],
   "counts": {
-    "totalSourceMechanicalCertified": 25,
-    "remainingSourceMechanicalNotYetCertified": 97,
+    "totalSourceMechanicalCertified": 44,
+    "remainingSourceMechanicalNotYetCertified": 78,
     "productionRegistryCertified": 0,
     "applicationParityCertified": 0,
-    "foundryRuntimeCertified": 0
+    "foundryRuntimeCertified": 0,
+    "sourceMechanicsOnHold": 6
   },
   "certifiedIdentityIds": [
     "droid-plasteel-shell",
@@ -48,7 +59,34 @@
     "droid-vocabulator",
     "droid-heuristic-processor",
     "droid-credit-reader",
-    "droid-remote-starship-starter"
+    "droid-remote-starship-starter",
+    "droid-stationary",
+    "droid-hardened-systems-x2",
+    "droid-hardened-systems-x3",
+    "droid-hardened-systems-x4",
+    "droid-hardened-systems-x5",
+    "droid-shield-generator-sr-5",
+    "droid-shield-generator-sr-10",
+    "droid-shield-generator-sr-15",
+    "droid-shield-generator-sr-20",
+    "droid-basic-processor",
+    "droid-remote-processor",
+    "droid-remote-receiver",
+    "droid-backup-processor",
+    "droid-synchronized-fire-circuits",
+    "droid-restraining-bolt",
+    "droid-droid-caller",
+    "droid-diagnostics-package",
+    "droid-secondary-battery",
+    "droid-internal-storage"
   ],
-  "certifiedSourceStatusOnly": true
+  "certifiedSourceStatusOnly": true,
+  "heldIdentityIds": [
+    "droid-walking",
+    "droid-wheeled",
+    "droid-tracked",
+    "droid-hovering",
+    "droid-flying",
+    "droid-self-destruct-system"
+  ]
 }
