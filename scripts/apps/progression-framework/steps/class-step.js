@@ -475,7 +475,9 @@ export class ClassStep extends ProgressionStepPlugin {
     if (!entry) return;
 
     const pendingData = this._buildPendingPrerequisiteData(shell);
-    const eligibility = this._classEligibility.get(entry.id) || this._evaluateClassEligibilityForDisplay(entry, shell, pendingData);
+    // Recompute at commit, never trust a cached browser eligibility verdict:
+    // Piracy and other ongoing restrictions may change while the step is open.
+    const eligibility = this._evaluateClassEligibilityForDisplay(entry, shell, pendingData);
     if (eligibility?.eligible === false) {
       swseLogger.warn('[ClassStep] Blocked commit of unavailable class', {
         className: entry.name,
