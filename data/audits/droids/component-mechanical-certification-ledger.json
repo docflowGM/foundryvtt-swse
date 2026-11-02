@@ -1,0 +1,54 @@
+{
+  "schema": "swse.droids.component.mechanical-certification-ledger/v1",
+  "updated": "2026-11-02",
+  "historicalScope": {
+    "frozenCoreSgdIdentities": 122,
+    "sourceFactReviewed": 122
+  },
+  "batches": [
+    {
+      "id": "MECH-001",
+      "path": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "identitiesEvaluated": 25,
+      "certifiedPrintedMechanics": 25,
+      "productionCertified": 0,
+      "appParityCertified": 0,
+      "foundryRuntimeCertified": 0
+    }
+  ],
+  "counts": {
+    "totalSourceMechanicalCertified": 25,
+    "remainingSourceMechanicalNotYetCertified": 97,
+    "productionRegistryCertified": 0,
+    "applicationParityCertified": 0,
+    "foundryRuntimeCertified": 0
+  },
+  "certifiedIdentityIds": [
+    "droid-plasteel-shell",
+    "droid-quadanium-shell",
+    "droid-durasteel-shell",
+    "droid-quadanium-plating",
+    "droid-durasteel-plating",
+    "droid-quadanium-battle-armor",
+    "droid-duranium-plating",
+    "droid-durasteel-battle-armor",
+    "droid-mandalorian-steel-shell",
+    "droid-duranium-battle-armor",
+    "droid-neutronium-plating",
+    "droid-duravlex-shell",
+    "droid-crystadurium-plating",
+    "droid-probe",
+    "droid-instrument",
+    "droid-tool",
+    "droid-claw",
+    "droid-hand",
+    "droid-improved-sensor-package",
+    "droid-darkvision",
+    "droid-internal-comlink",
+    "droid-vocabulator",
+    "droid-heuristic-processor",
+    "droid-credit-reader",
+    "droid-remote-starship-starter"
+  ],
+  "certifiedSourceStatusOnly": true
+}
