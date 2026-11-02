@@ -309,6 +309,7 @@ export function buildLevelUpFinalizationReceipt(manifest, progressionSession) {
       forceSecrets: selectionNames(selectionArray(progressionSession, 'forceSecrets')),
       forceTechniques: selectionNames(selectionArray(progressionSession, 'forceTechniques')),
       medicalSecrets: selectionNames(selectionArray(progressionSession, 'medicalSecrets')),
+      shareTalentSelections: selectionArray(progressionSession, 'shareTalentSelections').map(s => ({officerLevel:s.officerLevel,talentId:s.talentId,treeId:s.treeId})),
       starshipManeuvers: selectionNames(selectionArray(progressionSession, 'starshipManeuvers')),
     },
     automaticClassFeatures: selectionNames(manifest?.automaticClassFeatures || []),
@@ -345,6 +346,18 @@ export function auditLevelUpActorAfterFinalization(actor, manifest, progressionS
     if (!hasActorItemNamed(actor, check.name, check.itemKinds, check.refs, mutationPlan)) {
       const label = check.name || asArray(check.refs).find(Boolean) || 'unknown selection';
       errors.push(`Missing ${check.kind}: ${label}`);
+    }
+  }
+
+  // The Officer Share Talent entitlement materializes to a permanent feature
+  // choice flag, not a Talent Item. Include it in post-apply certification.
+  if (Number(manifest.choices?.shareTalentChoices || 0) > 0) {
+    const wanted = selectionArray(progressionSession, 'shareTalentSelections')[0];
+    const stored = actor?.flags?.swse?.classFeatures?.officer?.sharedTalents || [];
+    if (!wanted || !Array.isArray(stored)
+      || !stored.some(entry => entry.officerLevel === manifest.classLevel
+          && entry.talentId === wanted.talentId && entry.treeId === wanted.treeId)) {
+      errors.push('Officer Share Talent permanent selection was not materialized');
     }
   }
 
