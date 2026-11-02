@@ -1,4 +1,5 @@
 /** Foundry-independent talent Item provenance and shared-Item construction. */
+import { isPermanentOfficerTalentItem } from '../progression/utils/officer-owned-talent-identity.js';
 export const asItems=v=>Array.from(v?.contents||v||[]);
 const provenance=item=>item?.flags?.swse?.officerSharedTalent || null;
 const dayFromClock=time=>Number.isFinite(Number(time))?Math.floor(Number(time)/86400):null;
@@ -27,7 +28,7 @@ const uniqueActors=(actors)=>Array.from(new Map(actors.map(a=>[a.id,a])).values(
 
 export function ownOfficerTalentItem(officer,talentId) {
   const suffix=`.${talentId}`;
-  const matches=asItems(officer?.items).filter(item=>item.type==='talent' && (
+  const matches=asItems(officer?.items).filter(item=>isPermanentOfficerTalentItem(item) && (
     item.system?.canonicalId===talentId || item.system?.talentSourceId===talentId
     || sourceId(item).endsWith(suffix)));
   if(matches.length!==1)throw new Error('The selected canonical Talent Item is not uniquely owned by the Officer');
