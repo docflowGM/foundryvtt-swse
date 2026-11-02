@@ -21,7 +21,7 @@ const index={allItems:[
 ]};
 const resolveSourceDocument = item => item?.doc?.toObject?.() ?? null;
 const eligible = index => enforcerEligibleInventory(index, resolveSourceDocument);
-const delivery = args => delivery({...args, resolveSourceDocument});
+const delivery = args => planEnforcerEquipmentDelivery({...args, resolveSourceDocument});
 const ledger=[{enforcerClassLevel:2,heroicLevel:9,amountCredits:18000,
  status:'awaiting-equipment-selection',delivery:'civilized-accessible-location'}];
 
