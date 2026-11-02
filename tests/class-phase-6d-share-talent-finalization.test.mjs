@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { validateLevelUpRequiredSelections } from '../scripts/engine/progression/utils/levelup-finalization-audit.js';
+import { validateLevelUpRequiredSelections, auditLevelUpActorAfterFinalization } from '../scripts/engine/progression/utils/levelup-finalization-audit.js';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const source=p=>fs.readFileSync(path.join(root,p),'utf8');
@@ -42,4 +42,15 @@ test('finalizer must revalidate canonical owned identity and store only the shar
  const step=source('scripts/apps/progression-framework/steps/share-talent-step.js');
  assert.match(step,/_commitNormalized\(shell, 'shareTalentSelections'/);
  assert.doesNotMatch(step,/_commitNormalized\(shell, 'talents'/);
+});
+
+test('post-apply audit verifies the Officer Share Talent permanent class-feature flag, not an extra talent',()=>{
+ const m={className:'Officer',classId:'Officer',classLevel:2,characterLevel:8,
+  choices:{shareTalentChoices:1},classSkills:[],automaticClassFeatures:[]};
+ const state=draft({shareTalentSelections:[{officerLevel:2,talentId:'talent1',treeId:'influence'}]});
+ const a={items:[],system:{level:8,progression:{classLevels:[{classId:'Officer',level:2}]},
+    forcePoints:{max:1,value:1}},flags:{swse:{classFeatures:{officer:{sharedTalents:[]}}}}};
+ assert.ok(auditLevelUpActorAfterFinalization(a,m,state).errors.some(x=>/permanent selection/.test(x)));
+ a.flags.swse.classFeatures.officer.sharedTalents=[{officerLevel:2,talentId:'talent1',treeId:'influence'}];
+ assert.deepEqual(auditLevelUpActorAfterFinalization(a,m,state).errors,[]);
 });
