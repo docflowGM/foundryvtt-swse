@@ -6411,6 +6411,50 @@
             "operationStatus": "source-only",
             "attackBonus": 3
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-011-ACTION-FENCING-ASSIST",
+            "statement": "One swift once/turn, +2 to assisted character attack; not an extra droid attack.",
+            "scope": "Duelist Elite Training Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 88,
+              "pdfPage1Based": 89,
+              "sourceEntryKey": "SGD-DROID-011",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-FENCING-ASSIST"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-011-ACTION-FIRST-AID",
+            "statement": "Two swift once/turn, adjacent Treat Injury DC15; heal target character level plus margin exceeding 15; each target once/day via first aid.",
+            "scope": "Duelist Elite Training Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 88,
+              "pdfPage1Based": 89,
+              "sourceEntryKey": "SGD-DROID-011",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-FIRST-AID"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-011-ACTION-RAPIER-THRUST",
+            "statement": "One swift once/turn, rapier melee +4 for 1d8+4; actual weapon required.",
+            "scope": "Duelist Elite Training Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 88,
+              "pdfPage1Based": 89,
+              "sourceEntryKey": "SGD-DROID-011",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-RAPIER-THRUST"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -6517,9 +6561,100 @@
           }
         ]
       },
-      "modifications": {},
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-011-VARIANT-LIGHTSABER-SPARRING",
+            "statement": "DC11 Use Computer and 1000-credit training module; swap Weapon Proficiency (pistols) to (lightsabers), NOT extra free proficiency; no granted lightsaber.",
+            "scope": "Duelist Elite Training Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 89,
+              "pdfPage1Based": 90,
+              "sourceEntryKey": "SGD-DROID-011",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-LIGHTSABER-SPARRING"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-011-VARIANT-SITH-WEAPON-MASTER",
+            "statement": "Remove safety program via Use Computer vs droid Will Defense; choose weapon specialization DC25 Mechanics 30 minutes and optional feat swaps; modified programming REVERTS after shutdown/restart.",
+            "scope": "Duelist Elite Training Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 89,
+              "pdfPage1Based": 90,
+              "sourceEntryKey": "SGD-DROID-011",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-SITH-WEAPON-MASTER"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-011-VARIANT-STILETTO",
+            "statement": "Hidden command Use Computer vs droid Will Defense, 30 minutes; conceal command origin DC +10. Hidden knife/blaster installation DC20 Mechanics 1 hour; concealment Perception opposed to higher of install result and Will Defense; first triggered attack treats target flat-footed, not subsequent attacks.",
+            "scope": "Duelist Elite Training Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 89,
+              "pdfPage1Based": 90,
+              "sourceEntryKey": "SGD-DROID-011",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-STILETTO"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "constraints": [
+          {
+            "ruleId": "SGD-DROID-011-CONSTRAINT-STILETTO-GATE",
+            "statement": "Only secretly installed special weapon after scripted signal can benefit from first-attack flat-footed; no passive rule.",
+            "scope": "Duelist Elite Training Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 89,
+              "pdfPage1Based": 90,
+              "sourceEntryKey": "SGD-DROID-011",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-STILETTO-GATE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-011-CONSTRAINT-SITH-RESET",
+            "statement": "Modified weapon-master programming resets when droid shut down/restarted; no perpetual altered behavior.",
+            "scope": "Duelist Elite Training Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 89,
+              "pdfPage1Based": 90,
+              "sourceEntryKey": "SGD-DROID-011",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-SITH-RESET"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
-        "heroEligibility": "allowed"
+        "heroEligibility": "allowed",
+        "startingSelections": [
+          {
+            "ruleId": "SGD-DROID-011-PC-HEROIC",
+            "statement": "Heroic Duelist allowed; soldier/noble recommended but no automatic grants of printed soldier 1 progression.",
+            "scope": "Duelist Elite Training Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 88,
+              "pdfPage1Based": 89,
+              "sourceEntryKey": "SGD-DROID-011",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "PC-HEROIC"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "vehicleLink": {},
       "economics": {
@@ -6555,7 +6690,7 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 88-89 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 88-89 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge. M7 printed pp.88-89 PDF visually verified; variants/protocol source-only 2026-11-02.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p88:PDF-page-89",
           "SGD-CENSUS:SGD-DROID-011",
@@ -6934,6 +7069,50 @@
             },
             "executionStatus": "source-only"
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-012-ACTION-COVER-FIRE",
+            "statement": "One swift once/turn after successful ranged attack, allies within 6 squares +1 Reflex until start of droid next turn.",
+            "scope": "E522 Assassin Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 90,
+              "pdfPage1Based": 91,
+              "sourceEntryKey": "SGD-DROID-012",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-COVER-FIRE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-012-ACTION-PARALYZE-OPPONENT",
+            "statement": "One swift once/turn successful needler hit on living target injects paralytic poison, Core p255 rules; not applicable to nonliving targets.",
+            "scope": "E522 Assassin Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 90,
+              "pdfPage1Based": 91,
+              "sourceEntryKey": "SGD-DROID-012",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-PARALYZE-OPPONENT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-012-ACTION-RAPID-SHOT",
+            "statement": "One swift once/turn heavy repeating blaster +5 for 4d10+3 or ion rifle +5 for 4d8+3 ion.",
+            "scope": "E522 Assassin Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 90,
+              "pdfPage1Based": 91,
+              "sourceEntryKey": "SGD-DROID-012",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-RAPID-SHOT"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -7131,7 +7310,54 @@
           }
         ]
       },
-      "modifications": {},
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-012-VARIANT-HEAVY-WEAPON-SUPPORT",
+            "statement": "Add SR10+ shield, remove needler and ion rifle; move missile launcher from left appendage to shoulder, add opposite shoulder launcher; add 16kg storage/loading DC15 Mechanics 2 hours; install second heavy repeating blaster and grenade launcher. Exchange pistols/simple weapon proficiencies for Dual Weapon Mastery I/Far Shot. Fire-link DC25 Use Computer 2h: twin blasters simultaneously ONE standard action with -2 attack.",
+            "scope": "E522 Assassin Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 91,
+              "pdfPage1Based": 92,
+              "sourceEntryKey": "SGD-DROID-012",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-HEAVY-WEAPON-SUPPORT"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "constraints": [
+          {
+            "ruleId": "SGD-DROID-012-CONSTRAINT-SEEKER-MISSILE",
+            "statement": "Hunter-seeker missile launches toward chosen target and makes one attack check each round until hit or five CONSECUTIVE missed rounds, not a simple five-round lifetime; printed load 6 missiles.",
+            "scope": "E522 Assassin Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 90,
+              "pdfPage1Based": 91,
+              "sourceEntryKey": "SGD-DROID-012",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-SEEKER-MISSILE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-012-CONSTRAINT-HEAVY-SUPPORT-MOUNT",
+            "statement": "Variant shoulder-launcher relocation and removal of needler/ion cannot preserve old free mounts or attack rights; vehicle/weapon sourcing pending.",
+            "scope": "E522 Assassin Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 91,
+              "pdfPage1Based": 92,
+              "sourceEntryKey": "SGD-DROID-012",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-HEAVY-SUPPORT-MOUNT"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -7182,7 +7408,7 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 90-91 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 90-91 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge. M7 printed pp.90-91 PDF visually verified; variants/protocol source-only 2026-11-02.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p90:PDF-page-91",
           "SGD-CENSUS:SGD-DROID-012",
@@ -7573,6 +7799,50 @@
             "operationStatus": "source-only",
             "attackBonus": 6
           }
+        ],
+        "specialActions": [
+          {
+            "ruleId": "SGD-DROID-013-ACTION-DEFENSE-IN-DEPTH",
+            "statement": "Protocol one swift once/turn after defeating opponent's Use Computer routine command check, computer attitude toward offender worsens one step; main prose describes automatic trigger and action semantics need later proof.",
+            "scope": "EI-9 Network Security Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 92,
+              "pdfPage1Based": 93,
+              "sourceEntryKey": "SGD-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-DEFENSE-IN-DEPTH"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-013-ACTION-IMPROVE-ACCESS",
+            "statement": "Two swift once/turn Use Computer vs computer Will to improve attitude.",
+            "scope": "EI-9 Network Security Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 92,
+              "pdfPage1Based": 93,
+              "sourceEntryKey": "SGD-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-IMPROVE-ACCESS"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-013-ACTION-ISSUE-ROUTINE-COMMAND",
+            "statement": "One swift once/turn issues routine command to friendly computer.",
+            "scope": "EI-9 Network Security Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 93,
+              "pdfPage1Based": 94,
+              "sourceEntryKey": "SGD-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTION-ISSUE-ROUTINE-COMMAND"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
@@ -7777,9 +8047,86 @@
           }
         ]
       },
-      "modifications": {},
+      "modifications": {
+        "publishedNonFactoryChanges": [
+          {
+            "ruleId": "SGD-DROID-013-VARIANT-ELECTROMAGNETIC-PULSE",
+            "statement": "DC25 Mechanics installation, 4000 credits and 3 days. Six-square pulse, 1d10+BAB vs target Fortitude; objects lacking Fortitude use 10 typical unshielded or 25 military; affected electronic/droid/cybernetic system shuts down one round, requires one recharge round.",
+            "scope": "EI-9 Network Security Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 93,
+              "pdfPage1Based": 94,
+              "sourceEntryKey": "SGD-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-ELECTROMAGNETIC-PULSE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-013-VARIANT-SLICER-TRACKER",
+            "statement": "DC30 Use Computer 2 hours +4000 credits software. After locator finds slicer, remote tracking-program insertion uses opposed Use Computer; later network entries send location. Access nearby linked sensors via DC25 Use Computer (possible separate checks) for audio/visual subject data.",
+            "scope": "EI-9 Network Security Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 93,
+              "pdfPage1Based": 94,
+              "sourceEntryKey": "SGD-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "VARIANT-SLICER-TRACKER"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "constraints": [
+          {
+            "ruleId": "SGD-DROID-013-CONSTRAINT-HIDDEN-CORE-RECOVERY",
+            "statement": "After memory wipe/programming alteration, hidden core attempts restoration after 1d12 minutes, then once each hour on failures; no immediate or guaranteed restoration.",
+            "scope": "EI-9 Network Security Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 92,
+              "pdfPage1Based": 93,
+              "sourceEntryKey": "SGD-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-HIDDEN-CORE-RECOVERY"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-DROID-013-CONSTRAINT-PRECISION-LOCATOR",
+            "statement": "On winning opposed Use Computer against remote challenger, learns BASIC opponent location; persistent tracking separately requires Slicer Tracker.",
+            "scope": "EI-9 Network Security Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 92,
+              "pdfPage1Based": 93,
+              "sourceEntryKey": "SGD-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-PRECISION-LOCATOR"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
-        "heroEligibility": "allowed"
+        "heroEligibility": "allowed",
+        "startingSelections": [
+          {
+            "ruleId": "SGD-DROID-013-PC-SERVICE-HERO",
+            "statement": "Heroic EI-9 service chassis: replace basic with heuristic processor, add scomp link on a tool appendage, two extra tool appendages for data ports, hidden core; choose scoundrel/Slicer progression using actual feat/skill resources.",
+            "scope": "EI-9 Network Security Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 93,
+              "pdfPage1Based": 94,
+              "sourceEntryKey": "SGD-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "PC-SERVICE-HERO"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "vehicleLink": {},
       "economics": {
@@ -7800,7 +8147,7 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 92-93 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M2 fifteen-record sprint: full printed pages 92-93 inspected; structured classes, systems, physical locations, movement and positive possessions. Exact feat/talent identity, weapon ownership permissions and conditional mechanics remain under mechanical certification review. Runtime deferred until merge. M7 printed pp.92-93 PDF visually verified; variants/protocol source-only 2026-11-02.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p92:PDF-page-93",
           "SGD-CENSUS:SGD-DROID-013",
