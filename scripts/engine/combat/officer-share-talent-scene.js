@@ -58,7 +58,8 @@ export function resolveOfficerShareTalentScene({
     }
     const token = matches[0], target = token.actor;
     const targetId = actorId(token);
-    if (!targetId || targetId === String(officer.id) || seenActors.has(targetId)
+    const identity = String(target?.uuid || targetId);
+    if (!targetId || targetId === String(officer.id) || seenActors.has(identity)
       || disposition(token) !== faction) {
       throw new Error('Share Talent recipient is not a unique allied actor');
     }
@@ -66,10 +67,10 @@ export function resolveOfficerShareTalentScene({
     if (!Number.isFinite(distance) || distance < 0 || distance > 10) {
       throw new Error('Share Talent recipient is no longer within 10 squares');
     }
-    seenActors.add(targetId);
+    seenActors.add(identity);
     recipients.push(target);
     proofs.push({
-      actorId: targetId, isAlly: true, distanceSquares: distance,
+      actorId: identity, isAlly: true, distanceSquares: distance,
       canSeeOfficer: true, canHearOfficer: true,
     });
   }
