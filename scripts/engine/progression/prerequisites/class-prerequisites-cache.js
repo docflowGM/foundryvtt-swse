@@ -178,7 +178,7 @@ export function evaluateClassEligibility({
             missing: assessment.missingPrereqs || [],
             met: assessment.legal ? ['All prerequisites met'] : []
         }
-    };
+    });
 }
 
 /**
