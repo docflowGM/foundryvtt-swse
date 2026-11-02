@@ -7,6 +7,9 @@
 const REASON_TEXT = {
   GM_REQUIRED: 'Only a GM can do that.',
   ENVIRONMENT_STATE_INVALID: 'Unknown environment state.',
+  ASSIGNED_PILOT_UNAVAILABLE: 'The pilot assigned to this vehicle could not be found. Reassign the pilot station or clear it to use the generic crew.',
+  PILOT_ROLL_NOT_AUTHORIZED: 'You do not control the assigned pilot.',
+  GENERIC_CREW_ROLL_NOT_AUTHORIZED: 'Only the vehicle\'s owner or a GM can roll for the generic crew.',
   GM_OVERRIDE_REASON_REQUIRED: 'A reason is required for a GM override.',
   WORK_TIME_INCOMPLETE: 'The installation time has not been completed yet (the GM logs work days).',
   OWNER_VEHICLE_NOT_ASSOCIATED: 'This character is not recorded as the vehicle\'s owner.',
@@ -103,7 +106,7 @@ export function createDefaultShipyardDeps(service) {
 
 /**
  * P6B-0 operating-context buttons: GM environment adjudication and the Pilot check (crew pilot from the vehicle's
- * pilot station when assigned, otherwise the generic crew). deps: { service, resolvePilot, notify }.
+ * pilot station when assigned, otherwise the generic crew). deps: { service, notify }.
  */
 export async function runOperatingAction({ action, environment, vehicle }, deps) {
   if (environment) {
@@ -111,7 +114,12 @@ export async function runOperatingAction({ action, environment, vehicle }, deps)
     if (!r.success) deps.notify.warn(describeReasons(r.reasons));
     return r;
   }
-  if (action === 'pilot-check') return deps.service.rollPilotCheck(vehicle, { pilotActor: await deps.resolvePilot(vehicle) });
+  // The service resolves the assigned pilot itself and fails explicitly when it is unavailable.
+  if (action === 'pilot-check') {
+    const r = await deps.service.rollPilotCheck(vehicle, {});
+    if (!r.success && r.reasons?.length) deps.notify.warn(describeReasons(r.reasons));
+    return r;
+  }
   return { success: false, reasons: ['UNKNOWN_ACTION'] };
 }
 
@@ -127,12 +135,5 @@ export function bindOperatingActions(root, vehicle, deps) {
 }
 
 export function createDefaultOperatingDeps(service) {
-  return {
-    service, notify: globalThis.ui.notifications,
-    resolvePilot: async vehicle => {
-      const entry = vehicle.system?.crewPositions?.pilot;
-      const uuid = typeof entry === 'string' ? entry : entry?.uuid;
-      return uuid ? (await fromUuid(uuid)) ?? null : null;
-    }
-  };
+  return { service, notify: globalThis.ui.notifications };
 }

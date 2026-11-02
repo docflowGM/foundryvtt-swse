@@ -79,3 +79,37 @@ export function vehiclePilotCheck(vehicle, { pilotActor = null } = {}) {
   if (delta) breakdown.push({ label: 'Certified installations (Dexterity modifier)', value: delta });
   return { ok: true, mode: 'GENERIC_CREW', modifier: printed + delta, breakdown, reasons };
 }
+
+/**
+ * The pilot station assignment, distinguishing "nobody assigned" from "assigned but unresolvable".
+ * @returns {{assigned:false}|{assigned:true, uuid:string|null}}
+ */
+export function assignedPilotEntry(vehicle) {
+  const e = raw(vehicle)?.system?.crewPositions?.pilot;
+  if (e === undefined || e === null || e === '' || (typeof e === 'object' && !Object.keys(e).length)) return { assigned: false };
+  const uuid = typeof e === 'string' ? e : (e.uuid ?? null);
+  return { assigned: true, uuid: typeof uuid === 'string' && uuid.trim() ? uuid.trim() : null };
+}
+
+const isActorDocument = d => d && (d.documentName === 'Actor' || (d.system !== undefined && d.items !== undefined && typeof d.type === 'string'));
+const canRoll = (doc, user) => user?.isGM === true || doc?.isOwner === true || (typeof doc?.testUserPermission === 'function' && doc.testUserPermission(user, 'OWNER') === true);
+
+/**
+ * Decide who rolls a vehicle Pilot check. Pure: the caller resolves the UUID.
+ *   - assigned pilot -> must resolve to a character-type Actor (never the vehicle itself) the user may roll for,
+ *     otherwise ASSIGNED_PILOT_UNAVAILABLE / PILOT_ROLL_NOT_AUTHORIZED. There is NO fallback to generic crew.
+ *   - nobody assigned -> generic crew, which the vehicle's owner (or a GM) may roll.
+ * @param {{vehicle:object, resolved:object|null, user:object, explicitPilot?:object|null}} p
+ */
+export function decidePilotRoller({ vehicle, resolved = null, user, explicitPilot = null }) {
+  const entry = assignedPilotEntry(vehicle);
+  const candidate = explicitPilot ?? (entry.assigned ? resolved : null);
+  if (explicitPilot || entry.assigned) {
+    if (!explicitPilot && !entry.uuid) return { ok: false, reasons: ['ASSIGNED_PILOT_UNAVAILABLE'], detail: 'assignment has no UUID' };
+    if (!isActorDocument(candidate) || candidate.type === 'vehicle' || (vehicle?.id && candidate.id === vehicle.id)) return { ok: false, reasons: ['ASSIGNED_PILOT_UNAVAILABLE'], detail: 'assignment did not resolve to a character Actor' };
+    if (!canRoll(candidate, user)) return { ok: false, reasons: ['PILOT_ROLL_NOT_AUTHORIZED'] };
+    return { ok: true, mode: 'CREW_ACTOR', pilotActor: candidate };
+  }
+  if (!canRoll(vehicle, user)) return { ok: false, reasons: ['GENERIC_CREW_ROLL_NOT_AUTHORIZED'] };
+  return { ok: true, mode: 'GENERIC_CREW', pilotActor: null };
+}

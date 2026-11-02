@@ -108,10 +108,10 @@ test('roll wiring reuses the canonical skill roll; actions route through the ser
   assert.doesNotMatch(core, /SWSERoll\.rollSkillCheck/, 'the broken legacy call is gone');
   const calls = [];
   const service = { setEnvironment: async (v, s) => (calls.push(['env', s]), { success: true }), rollPilotCheck: async (v, o) => (calls.push(['pilot', o.pilotActor?.id ?? null]), { success: true }) };
-  const deps = { service, notify: { warn() {} }, resolvePilot: async () => ({ id: 'pc1' }) };
+  const deps = { service, notify: { warn() {} } };
   await runOperatingAction({ environment: 'atmosphere', vehicle: {} }, deps);
   await runOperatingAction({ action: 'pilot-check', vehicle: {} }, deps);
-  assert.deepEqual(calls, [['env', 'atmosphere'], ['pilot', 'pc1']]);
+  assert.deepEqual(calls, [['env', 'atmosphere'], ['pilot', null]], 'the sheet no longer resolves the pilot; the service does and fails explicitly');
 });
 
 test('effective statistics agree across derived data, sheet, projection, Initiative and the Pilot check', () => {
@@ -141,4 +141,117 @@ if (!Handlebars && process.env.SWSE_REQUIRE_HANDLEBARS === '1') throw new Error(
   assert.match(player, /data-vehicle-action="pilot-check"/);
   assert.doesNotMatch(player, /data-vehicle-environment/);
   assert.match(t({ view: buildVehicleSchemaViewModel(a, { isGM: true }) }), /data-vehicle-environment="atmosphere"/);
+});
+
+
+// ---------------- independent-review corrections ----------------
+const { registerVehiclePreCreateHooks, updateTouchesVehicleEnvironment } = await import('../scripts/actors/vehicle/vehicle-precreate-hooks.js');
+const { VehicleOperatingContextService: Svc } = await import('../scripts/engine/vehicles/vehicle-operating-context-service.js');
+
+test('review 1: the GM-only environment guard holds for every accepted update shape, at the real hook boundary', () => {
+  const handlers = [];
+  globalThis.Hooks = { on: (name, fn) => { if (name === 'preUpdateActor') handlers.push(fn); }, once() {}, off() {}, call() {}, callAll() {} };
+  registerVehiclePreCreateHooks();
+  assert.ok(handlers.length >= 3);
+  globalThis.game = { user: { id: 'p', isGM: false }, users: { get: id => ({ gm: { id: 'gm', isGM: true }, p: { id: 'p', isGM: false } })[id] } };
+  const a = actorOf(ARC);
+  const verdict = (changes, userId) => (handlers.some(h => h(a, structuredClone(changes), {}, userId) === false) ? 'DENIED' : 'ALLOWED');
+  const touching = [
+    { 'flags.swse.vehicleEnvironment': { state: 'atmosphere' } },
+    { 'flags.swse.vehicleEnvironment.state': 'atmosphere' },
+    { 'flags.swse.vehicleEnvironment.history': [] },
+    { 'flags.swse.-=vehicleEnvironment': null },
+    { 'flags.swse.==vehicleEnvironment': { state: 'space' } },
+    { flags: { swse: { vehicleEnvironment: { state: 'atmosphere' } } } },
+    { flags: { swse: { '-=vehicleEnvironment': null } } },
+    { flags: { swse: { '==vehicleEnvironment': {} } } },
+    { 'flags.swse': { vehicleEnvironment: { state: 'atmosphere' } } },   // parent-object update
+    { flags: { swse: { vehicleEnvironment: { history: [] } } } },        // audit history
+    { 'flags.-=swse': null }, { flags: { '-=swse': null } }, { flags: { '==swse': {} } }, { '-=flags': null },
+    { 'flags.swse': null }, { flags: null }
+  ];
+  const plainGmOk = [touching[0], touching[1], touching[5], touching[8]];
+  for (const c of plainGmOk) assert.equal(verdict(c, 'gm'), 'ALLOWED', 'GM through the full hook chain: ' + JSON.stringify(c));
+  for (const c of touching) {
+    assert.equal(updateTouchesVehicleEnvironment(c), true, JSON.stringify(c));
+    assert.equal(verdict(c, 'p'), 'DENIED', 'player: ' + JSON.stringify(c));
+    // a GM passes the ENVIRONMENT guard (broad parent deletions are still stopped by the provenance/ledger guards)
+    assert.equal(guardVehicleEnvironment(a, structuredClone(c), {}, 'gm'), undefined, 'GM: ' + JSON.stringify(c));
+    assert.equal(guardVehicleEnvironment(a, structuredClone(c), {}, 'p'), false);
+    assert.equal(verdict(c, 'nobody'), 'DENIED', 'unknown user fails closed: ' + JSON.stringify(c));
+  }
+  // mixed with another guarded flag: the player is denied by the environment guard; a GM is still stopped by the ledger guard
+  const mixed = { flags: { swse: { vehicleInstallations: [], vehicleEnvironment: { state: 'space' } } } };
+  assert.equal(updateTouchesVehicleEnvironment(mixed), true);
+  assert.equal(verdict(mixed, 'p'), 'DENIED');
+  assert.equal(handlers.map(h => h(a, structuredClone(mixed), {}, 'gm')).includes(false), true, 'ledger guard still applies to a GM');
+  const unrelated = [
+    { 'system.hp.value': 5 }, { name: 'x' }, { 'flags.swse.vehicleInstallations': undefined }, { flags: { swse: { other: 1 } } }, { 'flags.swse': { other: 1 } },
+    { 'flags.other.vehicleEnvironment': 1 }, { flags: { foundryvtt: { vehicleEnvironment: 1 } } }, { 'flags.swse.vehicleEnvironmentX': 1 }
+  ];
+  for (const c of unrelated) assert.equal(updateTouchesVehicleEnvironment(c), false, JSON.stringify(c));
+  assert.equal(handlers.some(h => h({ type: 'character' }, { 'flags.swse.vehicleEnvironment': {} }, {}, 'p') === false), false, 'non-vehicle Actors are not governed');
+});
+
+test('review 2: an assigned pilot that cannot be resolved fails explicitly and never falls back to the generic crew', async () => {
+  const vehicle = actorOf(XW);
+  const me = { id: 'p', isGM: false };
+  const pc = { id: 'pc1', documentName: 'Actor', type: 'character', system: {}, items: [], isOwner: true };
+  const warns = [];
+  globalThis.ui = { notifications: { warn: m => warns.push(m), error() {}, info() {} } };
+  // the decision itself
+  assert.deepEqual(O.assignedPilotEntry(vehicle), { assigned: false });
+  vehicle.system.crewPositions = { pilot: 'Actor.missing' };
+  assert.deepEqual(O.assignedPilotEntry(vehicle), { assigned: true, uuid: 'Actor.missing' });
+  assert.deepEqual(O.decidePilotRoller({ vehicle, resolved: null, user: me }).reasons, ['ASSIGNED_PILOT_UNAVAILABLE']);
+  assert.deepEqual(O.decidePilotRoller({ vehicle, resolved: { documentName: 'Item', type: 'weapon' }, user: me }).reasons, ['ASSIGNED_PILOT_UNAVAILABLE'], 'not an Actor');
+  assert.deepEqual(O.decidePilotRoller({ vehicle, resolved: { ...vehicle, documentName: 'Actor', type: 'vehicle' }, user: me }).reasons, ['ASSIGNED_PILOT_UNAVAILABLE'], 'a vehicle is not a pilot');
+  vehicle.system.crewPositions = { pilot: { name: 'Legacy name only' } };
+  assert.deepEqual(O.decidePilotRoller({ vehicle, resolved: null, user: me }).reasons, ['ASSIGNED_PILOT_UNAVAILABLE'], 'legacy entry without a UUID');
+  vehicle.system.crewPositions = { pilot: 'Actor.pc1' };
+  assert.deepEqual(O.decidePilotRoller({ vehicle, resolved: { ...pc, isOwner: false }, user: me }).reasons, ['PILOT_ROLL_NOT_AUTHORIZED']);
+  assert.equal(O.decidePilotRoller({ vehicle, resolved: { ...pc, isOwner: false }, user: { isGM: true } }).ok, true, 'GM may roll');
+  assert.deepEqual(O.decidePilotRoller({ vehicle, resolved: pc, user: me }).mode, 'CREW_ACTOR');
+  // generic crew only when nobody is assigned, and only for the owner / GM
+  const nobody = actorOf(XW);
+  assert.deepEqual(O.decidePilotRoller({ vehicle: nobody, user: me }).mode, 'GENERIC_CREW');
+  assert.deepEqual(O.decidePilotRoller({ vehicle: { ...nobody, isOwner: false }, user: me }).reasons, ['GENERIC_CREW_ROLL_NOT_AUTHORIZED']);
+  // through the service: no roll is made for an unresolved assignment
+  vehicle.system.crewPositions = { pilot: 'Actor.missing' };
+  const r = await Svc.rollPilotCheck(vehicle, { resolveUuid: async () => null, user: me });
+  assert.deepEqual([r.success, r.reasons], [false, ['ASSIGNED_PILOT_UNAVAILABLE']]);
+  assert.equal(r.check, undefined, 'no generic-crew modifier was even computed');
+  const r2 = await Svc.rollPilotCheck(vehicle, { resolveUuid: async () => { throw new Error('boom'); }, user: me });
+  assert.deepEqual(r2.reasons, ['ASSIGNED_PILOT_UNAVAILABLE']);
+  assert.ok(warns.some(w => /ASSIGNED_PILOT_UNAVAILABLE/.test(w)));
+  const src = readFileSync('scripts/sheets/v2/vehicle-sheet/vehicle-shipyard-actions.js', 'utf8');
+  assert.doesNotMatch(src, /resolvePilot/, 'the null-returning sheet resolver is gone');
+});
+
+test('review 3: the displayed atmospheric speed follows the explicit environment and agrees with derived data', () => {
+  const a = actorOf(ARC); const fly = rec(a).movement.speedModes.find(m => m.scale === 'character');
+  const boosted = Math.floor(fly.squaresPerMove * 1.1);
+  install(a, 'atmospheric-thrusters', 't1');
+  const row = () => buildVehicleSchemaViewModel(a, {}).effective.find(r => r.label.startsWith('Atmospheric'));
+  for (const env of [null, 'unknown', 'space']) {
+    if (env) setEnv(a, env);
+    const r = row();
+    assert.equal(r.effective, fly.squaresPerMove, `${env}: unmodified`);
+    assert.equal(r.conditionalActive, false);
+    assert.match(r.effectiveLabel, new RegExp(`^${fly.squaresPerMove} sq`));
+    assert.match(r.availableLabel, new RegExp(`^${boosted} sq`), 'availability shown separately');
+    assert.match(r.modification, /inactive/);
+    assert.equal(derive(a).speed.total, r.effective, 'sheet and derived data agree');
+  }
+  setEnv(a, 'atmosphere');
+  const r = row();
+  assert.equal(r.effective, boosted);
+  assert.equal(r.conditionalActive, true);
+  assert.equal(r.availableLabel, null);
+  assert.match(r.modification, /active/);
+  assert.equal(derive(a).speed.total, r.effective);
+  assert.equal(rec(a).movement.speedModes.find(m => m.scale === 'character').squaresPerMove, fly.squaresPerMove, 'published baseline untouched');
+  remove(a, 't1');
+  assert.equal(buildVehicleSchemaViewModel(a, {}).effective.some(x => x.label.startsWith('Atmospheric')), false, 'removal drops the contribution');
+  assert.equal(derive(a).speed.total, fly.squaresPerMove);
 });

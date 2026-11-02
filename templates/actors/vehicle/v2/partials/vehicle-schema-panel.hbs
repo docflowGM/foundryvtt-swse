@@ -72,7 +72,7 @@
     {{#each view.effective}}
       <div class="swse-vehicle-stat-row" data-stat="{{label}}">
         <span>{{label}}</span> Base <strong>{{baseLabel}}</strong> · Modifications <em>{{modification}}</em>
-        · Effective <strong>{{effectiveLabel}}</strong>{{#if hasCurrent}} · Current <strong>{{currentLabel}}</strong>{{/if}}
+        · Effective <strong>{{effectiveLabel}}</strong>{{#if availableLabel}} · <em>available in atmosphere: {{availableLabel}}</em>{{/if}}{{#if hasCurrent}} · Current <strong>{{currentLabel}}</strong>{{/if}}
       </div>
     {{/each}}
   </div>
