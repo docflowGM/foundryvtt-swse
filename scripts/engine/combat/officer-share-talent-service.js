@@ -11,6 +11,7 @@
  * Permission: GM executes; user must affirm sight/hearing in encounter UI.
  */
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
+import { ActionEconomyConsumption } from '/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js';
 import { TalentDB } from '/systems/foundryvtt-swse/scripts/data/talent-db.js';
 import { TalentTreeDB } from '/systems/foundryvtt-swse/scripts/data/talent-tree-db.js';
 import { eligibleOfficerShareTalents, persistedOfficerShareTalents } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/officer-share-talent-authority.js';
@@ -46,8 +47,8 @@ export class OfficerShareTalentService {
       const level=Number(classes[0].system?.level);
       const combatant=Array.from(combat.combatants||[]).find(c=>c.actor?.id===officer.id);
       if(!combatant||combat.combatant?.id!==combatant.id||combatant.canAct!==true
-        ||combatant.hasAction?.('standard')!==true) {
-        throw new Error('Officer is not able to spend a standard action on the current turn');
+        ||globalThis.game?.combat?.id!==combat.id) {
+        throw new Error('Officer is not able to act on the current encounter turn');
       }
       const day=dayFromClock(globalThis.game?.time?.worldTime);
       if(day===null)throw new Error('Current campaign day is unavailable');
@@ -96,7 +97,16 @@ export class OfficerShareTalentService {
             {talentId,day,encounterId:combat.id,recipientActorIds:recipients.map(a=>a.id)},
           ]},
         },{source:'OfficerShareTalentService.activate.usage',transactional:true});
-        await combatant.useAction('standard');
+        // Use the V2 action-economy SSOT, not SWSECombatant.useAction():
+        // the legacy method incorrectly consumes the MOVE action with STANDARD.
+        // A loose-mode advisory/no-op is not a valid once/day Share Talent spend.
+        const spent=await ActionEconomyConsumption.spend(officer,'standard',{
+          source:'officer.shareTalent',actionName:'Officer Share Talent',
+          talentId,encounterId:combat.id,
+        },{notify:true});
+        if(spent?.committed!==true || spent?.engineResult?.allowed===false) {
+          throw new Error('Officer Share Talent standard action was not committed');
+        }
       }catch(error){
         const recovery=await Promise.allSettled([...touched].reverse().map(async actor=>{
           const result=await ActorEngine.restoreSnapshotVerified(actor,snapshots.get(actor.id),'OfficerShareTalentService.rollback');
