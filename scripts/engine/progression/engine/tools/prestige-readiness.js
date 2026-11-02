@@ -6,6 +6,8 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getClassLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
+import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
+import { isNonheroicClassRef, NONHEROIC_CLASS_MODEL } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/nonheroic-class-model.js";
 
 /**
  * Evaluate prestige class readiness for all prestige classes
@@ -133,33 +135,34 @@ function checkClassPrerequisites(classData, actor, options = {}) {
  * @returns {number} - Total BAB
  */
 function calculateActorBAB(actor) {
-  // FIX: Use actual class items instead of non-existent classLevels array
+  // Prestige eligibility must use the same numeric class tables as derived BAB,
+  // not assume every prestige class is medium BAB when a character item is thin.
   const classItems = ActorAbilityBridge.getClasses(actor);
   let totalBAB = 0;
 
   for (const classItem of classItems) {
-    const classLevel = classItem.system.level || 1;
-    const className = classItem.name;
-
-    // Get BAB from class level progression if available
-    const levelProgression = classItem.system.levelProgression || [];
-    const levelData = levelProgression.find(lp => lp.level === classLevel);
-
-    if (levelData && typeof levelData.bab === 'number') {
-      totalBAB += levelData.bab;
-    } else {
-      // Fallback: Calculate from BAB progression
-      const babProgression = classItem.system.babProgression || 'medium';
-      const fullBABClasses = ['Jedi', 'Soldier'];
-
-      if (fullBABClasses.includes(className)) {
-        // Full BAB progression: +1 per level
-        totalBAB += classLevel;
-      } else {
-        // 3/4 BAB progression
-        totalBAB += Math.floor(classLevel * 0.75);
-      }
+    const className = String(classItem?.name || '').trim();
+    const level = Number(classItem?.system?.level);
+    if (!Number.isInteger(level) || level < 1) {
+      throw new Error(`Prestige readiness: invalid class level for "${className}"`);
     }
+
+    const classModel = isNonheroicClassRef(classItem)
+      ? NONHEROIC_CLASS_MODEL
+      : (ClassesRegistry.getBySourceId(classItem?.system?.classSourceId || classItem?.system?.sourceId)
+        || ClassesRegistry.getByName(className));
+
+    if (!classModel) {
+      throw new Error(`Prestige readiness: canonical class "${className}" is unavailable`);
+    }
+
+    const row = (classModel.levelProgression || []).find(
+      entry => Number(entry?.level) === level
+    );
+    if (!row || !Number.isInteger(row.bab) || row.bab < 0) {
+      throw new Error(`Prestige readiness: no certified BAB row for "${className}" level ${level}`);
+    }
+    totalBAB += row.bab;
   }
 
   return totalBAB;
