@@ -25,6 +25,11 @@ import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/en
 import { buildClassGrantLedger } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 import { buildLevelUpEventContext } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-event-context.js';
 import { MedicalSecretRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/medical/medical-secret-registry.js';
+import { TalentDB } from '/systems/foundryvtt-swse/scripts/data/talent-db.js';
+import { TalentTreeDB } from '/systems/foundryvtt-swse/scripts/data/talent-tree-db.js';
+import {
+  persistedOfficerShareTalents, resolveOfficerShareTalentChoice,
+} from '/systems/foundryvtt-swse/scripts/engine/progression/utils/officer-share-talent-authority.js';
 import { ActorEngine as CanonicalActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { FeatChoiceResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js';
 import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js';
@@ -1686,6 +1691,38 @@ export class ProgressionFinalizer {
         flags: nw.flags,
         img: nw.img
       });
+    }
+
+    // Officer's Share Talent is a persistent CLASS FEATURE selection, not a
+    // newly acquired talent Item. Resolve and freeze canonical owned identity
+    // before the ActorEngine mutation plan is built. Even if the UI is bypassed,
+    // the same printed-rule checks run here and fail closed.
+    if (sessionState.mode === 'levelup' && Number(levelUpManifest?.choices?.shareTalentChoices || 0) > 0) {
+      if (levelUpManifest.className !== 'Officer'
+        || Number(levelUpManifest.choices.shareTalentChoices) !== 1) {
+        throw new Error('Unsupported class Share Talent entitlement');
+      }
+      const selections = sessionState.progressionSession?.draftSelections?.shareTalentSelections || [];
+      if (!Array.isArray(selections) || selections.length !== 1) {
+        throw new Error('Officer Share Talent requires exactly one already-owned talent selection');
+      }
+      if (!TalentTreeDB.isBuilt && !(await TalentTreeDB.build())) {
+        throw new Error('Officer Share Talent cannot resolve canonical talent tree membership');
+      }
+      if (!TalentDB.isBuilt && !(await TalentDB.build(TalentTreeDB))) {
+        throw new Error('Officer Share Talent cannot resolve canonical talent identities');
+      }
+      const verified = resolveOfficerShareTalentChoice({
+        actor, choice: selections[0], officerLevel: levelUpManifest.classLevel,
+        talentDB: TalentDB, treeDB: TalentTreeDB,
+      });
+      if (!verified.valid) {
+        throw new Error(`Illegal Officer Share Talent: ${verified.errors.join('; ')}`);
+      }
+      set['flags.swse.classFeatures.officer.sharedTalents'] = [
+        ...persistedOfficerShareTalents(actor),
+        verified.selection,
+      ];
     }
 
     await ProgressionContentAuthority.initialize?.();
