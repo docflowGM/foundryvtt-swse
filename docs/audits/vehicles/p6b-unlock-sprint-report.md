@@ -18,7 +18,7 @@ nothing here is LIVE_RUNTIME_VERIFIED. The 429 canonical published vehicle ident
 | MECHANIC_SPECIFIED / installable | 54 | 57 |
 | Operationally integrated (offline) | 51 | 54 |
 | Combat-usable weapons | 0 | 3 (laser cannon light / medium / heavy) |
-| Hulls with convertible cargo / consumables | 200 / 114 | 398 / 393 |
+| Hulls with convertible cargo / consumables | 215 / 114 | 398 / 393 |
 
 ## Delivered
 
