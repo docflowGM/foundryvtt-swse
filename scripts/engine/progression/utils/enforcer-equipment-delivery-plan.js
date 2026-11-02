@@ -7,7 +7,13 @@ const assetTypes = new Set(['vehicle']); // Restricted/military vehicles, not dr
 function isCompendiumSource(item) {
   const pack = typeof item?.sourcePack === 'string' ? item.sourcePack.trim() : '';
   const uuid = typeof item?.sourceUuid === 'string' ? item.sourceUuid.trim() : '';
-  return !!pack && pack !== 'world' && uuid.startsWith(`Compendium.${pack}.`);
+  const origin = item?.doc?.__storeSource;
+  // The loader marks the ACTUAL collection from which it read the document.
+  // Imported world copies may preserve flags.core.sourceId, so the derived
+  // StoreItem sourcePack/sourceUuid alone cannot certify compendium origin.
+  return !!pack && pack !== 'world' && uuid.startsWith(`Compendium.${pack}.`)
+    && origin?.source === 'compendium'
+    && origin.pack === pack && origin.uuid === uuid;
 }
 
 export function enforcerEligibleInventory(index, resolveSourceDocument) {
