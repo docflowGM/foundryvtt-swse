@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { planEnforcerResourceEntitlement } from '../scripts/engine/progression/utils/enforcer-resources-entitlement.js';
+import { auditLevelUpActorAfterFinalization } from '../scripts/engine/progression/utils/levelup-finalization-audit.js';
 
 test('each Enforcer level grants restricted/military equipment value = new HEROIC level × 2,000, not currency', () => {
   const first=planEnforcerResourceEntitlement({existing:[],classLevel:1,heroicLevel:8,sessionId:'one'});
@@ -34,4 +35,19 @@ test('fail closed on duplicate levels, missing heroic-level authority, malformed
   assert.throws(()=>planEnforcerResourceEntitlement({...args,heroicLevel:0}),/Heroic level/);
   assert.throws(()=>planEnforcerResourceEntitlement({...args,classLevel:11}),/Invalid Enforcer/);
   assert.throws(()=>planEnforcerResourceEntitlement({...args,classLevel:3,existing:[{enforcerClassLevel:1,amountCredits:2000,status:'deferred-to-next-level'}]}),/nonadjacent/);
+});
+
+test('finalization audit requires Enforcer resource ledger and rejects currency-only substitutes',()=>{
+ const m={className:'Enforcer',classId:'Enforcer',classLevel:1,characterLevel:8,
+  choices:{},classSkills:[],automaticClassFeatures:[]};
+ const a={items:[],flags:{swse:{classFeatures:{enforcer:{resources:[]}}}},system:{
+  level:8,progression:{classLevels:[{classId:'Enforcer',level:1}]},forcePoints:{max:1,value:1},
+  credits:{value:16000},
+ }};
+ const draft={draftSelections:{feats:[],talents:[]}};
+ assert.ok(auditLevelUpActorAfterFinalization(a,m,draft).errors.some(x=>/Enforcer Resources/.test(x)));
+ a.flags.swse.classFeatures.enforcer.resources=planEnforcerResourceEntitlement({
+  existing:[],classLevel:1,heroicLevel:8,sessionId:'test'
+ }).entries;
+ assert.deepEqual(auditLevelUpActorAfterFinalization(a,m,draft).errors,[]);
 });
