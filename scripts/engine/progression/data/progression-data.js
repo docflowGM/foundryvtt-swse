@@ -166,7 +166,7 @@ export const PROGRESSION_RULES = {
     Noble: {
       name: 'Noble',
       hitDie: 6,
-      baseAttackBonus: 'low',
+      baseAttackBonus: 'medium',
       startingFeats: [
         'Linguist',
         'Weapon Proficiency (Pistols)',
