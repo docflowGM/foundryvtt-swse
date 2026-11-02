@@ -74,25 +74,28 @@ export class OfficerShareTalentService {
       const actors=uniqueActors([officer,...recipients]);
       const snapshots=new Map();
       for(const actor of actors)snapshots.set(actor.id,await ActorEngine.captureRecoverySnapshot(actor));
-      const changed=[];
+      // Track a leg BEFORE entering ActorEngine. A failed transactional call
+      // can still have made a partial mutation (or had an indeterminate inner
+      // rollback); omitting that actor from outer verification is unsafe.
+      const touched=[];
       try {
         for(const entry of additions){
           if(!entry.item)continue; // already owns this talent; no duplicate
+          touched.push(entry.actor);
           await ActorEngine.applyMutationPlan(entry.actor,{
             add:{items:[entry.item]},
           },{source:'OfficerShareTalentService.activate.grant',transactional:true});
-          changed.push(entry.actor);
         }
+        touched.push(officer);
         await ActorEngine.applyMutationPlan(officer,{
           set:{'flags.swse.classFeatures.officer.dailyShares':[
             ...previous.filter(p=>p.day===day),
             {talentId,day,encounterId:combat.id,recipientActorIds:recipients.map(a=>a.id)},
           ]},
         },{source:'OfficerShareTalentService.activate.usage',transactional:true});
-        changed.push(officer);
         await combatant.useAction('standard');
       }catch(error){
-        const recovery=await Promise.allSettled([...changed].reverse().map(async actor=>{
+        const recovery=await Promise.allSettled([...touched].reverse().map(async actor=>{
           const result=await ActorEngine.restoreSnapshotVerified(actor,snapshots.get(actor.id),'OfficerShareTalentService.rollback');
           return {actorId:actor.id,verdict:result.verdict};
         }));
