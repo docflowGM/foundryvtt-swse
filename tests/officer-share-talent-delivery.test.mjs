@@ -85,7 +85,9 @@ test('encounter cleanup is registered and temporary talent items use ActorEngine
  assert.match(txn,/spent\?\.committed!==true/);
  assert.doesNotMatch(service,/combatant\.useAction\(/);
 
- assert.match(service,/delete:\{effects:expiry\.effects,items:expiry\.items\}/);
+ assert.match(service,/executeOfficerShareTalentExpiry\(/);
+ const cleanup=fs.readFileSync(path.join(ROOT,'scripts/engine/combat/officer-share-talent-cleanup-plan.js'),'utf8');
+ assert.match(cleanup,/delete:\{effects:plan\.effects,items:plan\.items\}/);
  assert.match(dialog,/confirmedSenses/);
  assert.match(dialog,/distanceSquares/);
 });
