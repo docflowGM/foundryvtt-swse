@@ -21,13 +21,14 @@ import { planOfficerShareTalentExpiry } from '/systems/foundryvtt-swse/scripts/e
 
 const locks=new Set();
 import {
-  asItems, ownOfficerTalentItem, buildOfficerShareTalentGrant
+  asItems, ownOfficerTalentItem, buildOfficerShareTalentGrant,
+  uniqueOfficerShareTalentActors
 } from '/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-grant-plan.js';
 export {ownOfficerTalentItem, buildOfficerShareTalentGrant};
 
 const provenance=item=>item?.flags?.swse?.officerSharedTalent || null;
 const dayFromClock=time=>Number.isFinite(Number(time))?Math.floor(Number(time)/86400):null;
-const uniqueActors=(actors)=>Array.from(new Map(actors.map(a=>[a.id,a])).values());
+const uniqueActors=uniqueOfficerShareTalentActors;
 
 /** Strict GM runtime service. Returns successful delivery only after all legs commit. */
 export class OfficerShareTalentService {
