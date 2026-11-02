@@ -1,0 +1,161 @@
+{
+  "schema": "swse.droids.threats.source-mechanics-sprint/0.1",
+  "date": "2026-11-02",
+  "bookId": "THREATS",
+  "branch": "audit/droid-publication-census-2026-10-29",
+  "primarySource": "SAGA EDITION - Threats of the Galaxy.pdf",
+  "printedPages": [
+    134,
+    135,
+    136,
+    137,
+    138
+  ],
+  "pdfPages1Based": [
+    135,
+    136,
+    137,
+    138,
+    139
+  ],
+  "scope": "Full page printed statblock + adjacent narrative source-deepening for six droid models (five printed pages). Source-only; no playable or runtime authority.",
+  "records": [
+    {
+      "id": "THREATS-DROID-001",
+      "printedName": "VX Series Artillery Droid",
+      "printedPage": 134,
+      "printedClass": "soldier 12",
+      "installedComponentInstances": 6,
+      "physicalAppendages": 2,
+      "printedPossessions": 2,
+      "featGroups": 12,
+      "talentGroups": 6,
+      "sourceConstraintIds": [
+        "THREATS-DROID-001-CONSTRAINT-MISSILE-PAYLOAD-SEPARATE",
+        "THREATS-DROID-001-CONSTRAINT-LIGHT-CONCUSSION-EQUIPMENT",
+        "THREATS-DROID-001-CONSTRAINT-MOUNT-OWNERSHIP-UNPROVEN",
+        "THREATS-DROID-001-CONSTRAINT-HERO-PROHIBITED"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "THREATS-DROID-002",
+      "printedName": "ASN-121 Assassin Droid",
+      "printedPage": 135,
+      "printedClass": "soldier 9",
+      "installedComponentInstances": 10,
+      "physicalAppendages": 3,
+      "printedPossessions": 1,
+      "featGroups": 9,
+      "talentGroups": 5,
+      "sourceConstraintIds": [
+        "THREATS-DROID-002-CONSTRAINT-SECURITY-SCANS-VS-SIGHT",
+        "THREATS-DROID-002-CONSTRAINT-SNIPER-BLASTER-IDENTITY",
+        "THREATS-DROID-002-CONSTRAINT-CONCEALED-STORAGE-BOUND",
+        "THREATS-DROID-002-CONSTRAINT-HERO-PROHIBITED"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "THREATS-DROID-003",
+      "printedName": "R3 Series Astromech Droid",
+      "printedPage": 136,
+      "printedClass": "nonheroic 3",
+      "installedComponentInstances": 17,
+      "physicalAppendages": 8,
+      "printedPossessions": 7,
+      "featGroups": 4,
+      "talentGroups": 0,
+      "sourceConstraintIds": [
+        "THREATS-DROID-003-CONSTRAINT-HYPERSPACE-FIVE-COORDINATES",
+        "THREATS-DROID-003-CONSTRAINT-STORAGE-AND-EQUIPMENT-DISTINCT",
+        "THREATS-DROID-003-CONSTRAINT-MAGNETIC-FEET-AND-MODES",
+        "THREATS-DROID-003-CONSTRAINT-HERO-ALLOWED-NOT-STARTING-LOADOUT"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "THREATS-DROID-004",
+      "printedName": "R4 Series Astromech Droid",
+      "printedPage": 137,
+      "printedClass": "nonheroic 2",
+      "installedComponentInstances": 14,
+      "physicalAppendages": 7,
+      "printedPossessions": 4,
+      "featGroups": 3,
+      "talentGroups": 0,
+      "sourceConstraintIds": [
+        "THREATS-DROID-004-CONSTRAINT-FACTORY-STORAGE-EIGHT",
+        "THREATS-DROID-004-CONSTRAINT-R4-STARFIGHTER-VARIANT",
+        "THREATS-DROID-004-CONSTRAINT-TOOLS-POSSESSED",
+        "THREATS-DROID-004-CONSTRAINT-HERO-ELIGIBILITY"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "THREATS-DROID-005",
+      "printedName": "R5 Series Astromech Droid",
+      "printedPage": 138,
+      "printedClass": "nonheroic 2",
+      "installedComponentInstances": 17,
+      "physicalAppendages": 8,
+      "printedPossessions": 6,
+      "featGroups": 3,
+      "talentGroups": 0,
+      "sourceConstraintIds": [
+        "THREATS-DROID-005-CONSTRAINT-FACTORY-ONE-COORDINATE",
+        "THREATS-DROID-005-CONSTRAINT-USER-MODIFIED-NAVIGATION",
+        "THREATS-DROID-005-CONSTRAINT-STOCK-PAYLOAD-OWNERSHIP",
+        "THREATS-DROID-005-CONSTRAINT-HERO-ELIGIBILITY"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "THREATS-DROID-006",
+      "printedName": "R7 Series Astromech Droid",
+      "printedPage": 138,
+      "printedClass": "nonheroic 6",
+      "installedComponentInstances": 15,
+      "physicalAppendages": 6,
+      "printedPossessions": 6,
+      "featGroups": 5,
+      "talentGroups": 0,
+      "sourceConstraintIds": [
+        "THREATS-DROID-006-CONSTRAINT-FIFTEEN-COORDINATES-NARRATIVE",
+        "THREATS-DROID-006-CONSTRAINT-NON-EWING-PENALTY",
+        "THREATS-DROID-006-CONSTRAINT-FOUR-NOT-SIX-TOOLS",
+        "THREATS-DROID-006-CONSTRAINT-HERO-ELIGIBILITY"
+      ],
+      "mechanicalStatus": "partial"
+    }
+  ],
+  "totals": {
+    "models": 6,
+    "componentInstances": 79,
+    "physicalAppendages": 34,
+    "possessions": 26,
+    "printedFeatGroups": 36,
+    "printedTalentGroups": 11,
+    "printedSkills": 27,
+    "sourceConstraints": 24,
+    "sourceAttackRows": 8,
+    "publicationIdentities": 29,
+    "sourceDeepReviewed": 6,
+    "strictMechanicalCertifications": 0
+  },
+  "guardrails": {
+    "all29SourceKeysPreserved": true,
+    "featsAreGroupedPrintedClaimsNotCanonicalIDs": true,
+    "componentsAreSourceInstancesNotCertifiedCatalogMappings": true,
+    "combatRowsNonExecutable": true,
+    "pcEligibilityNotModified": true,
+    "allModelsRemainPartial": true,
+    "productionMutations": 0
+  },
+  "validationNotRun": [
+    "Authoritative full repository JSON Schema suite",
+    "Canonical item/trait/skill and mount graph certification",
+    "Live Foundry V13 engine tests"
+  ],
+  "next": "THREATS-DROID-007–012 on printed pp.139–143"
+}

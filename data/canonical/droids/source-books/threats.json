@@ -36,8 +36,270 @@
         "challengeLevel": 12
       },
       "geometry": {},
-      "abilities": {},
-      "progression": {},
+      "abilities": {
+        "skills": [
+          {
+            "name": "Perception",
+            "printedTotal": 13,
+            "raw": "Perception +13",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Skills: Perception"
+            }
+          }
+        ]
+      },
+      "progression": {
+        "classLineRaw": "soldier 12",
+        "classes": [
+          {
+            "className": "soldier",
+            "level": 12
+          }
+        ],
+        "feats": [
+          {
+            "traitId": "THREATS-DROID-001-feats-01",
+            "name": "Armor Proficiency (light, medium)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Feats: Armor Proficiency (light, medium)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-001-feats-02",
+            "name": "Coordinated Attack",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Feats: Coordinated Attack"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-001-feats-03",
+            "name": "Double Attack (heavy weapons)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Feats: Double Attack (heavy weapons)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-001-feats-04",
+            "name": "Improved Damage Threshold",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Feats: Improved Damage Threshold"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-001-feats-05",
+            "name": "Improved Defenses",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Feats: Improved Defenses"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-001-feats-06",
+            "name": "Far Shot",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Feats: Far Shot"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-001-feats-07",
+            "name": "Point Blank Shot",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Feats: Point Blank Shot"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-001-feats-08",
+            "name": "Precise Shot",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Feats: Precise Shot"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-001-feats-09",
+            "name": "Sniper",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Feats: Sniper"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-001-feats-10",
+            "name": "Triple Attack (heavy weapons)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Feats: Triple Attack (heavy weapons)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-001-feats-11",
+            "name": "Weapon Focus (heavy weapons)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Feats: Weapon Focus (heavy weapons)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-001-feats-12",
+            "name": "Weapon Proficiency (heavy weapons, pistols, rifles, simple weapons)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Feats: Weapon Proficiency (heavy weapons, pistols, rifles, simple weapons)"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "talents": [
+          {
+            "traitId": "THREATS-DROID-001-talents-01",
+            "name": "Battle Analysis",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Talents: Battle Analysis"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-001-talents-02",
+            "name": "Devastating Attack (heavy weapons)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Talents: Devastating Attack (heavy weapons)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-001-talents-03",
+            "name": "Indomitable",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Talents: Indomitable"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-001-talents-04",
+            "name": "Penetrating Attack (heavy weapons)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Talents: Penetrating Attack (heavy weapons)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-001-talents-05",
+            "name": "Tough as Nails",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Talents: Tough as Nails"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-001-talents-06",
+            "name": "Weapon Specialization (heavy weapons)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Talents: Weapon Specialization (heavy weapons)"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "defenses": {
         "reflex": 26,
         "flatFootedReflex": 24,
@@ -48,15 +310,244 @@
         "hitPoints": 90,
         "damageThreshold": 31
       },
-      "movement": {},
+      "movement": {
+        "locomotionSystems": [
+          {
+            "instanceId": "THREATS-DROID-001-MOVE-1",
+            "mode": "tracked",
+            "speedSquares": 6,
+            "raw": "6 squares (tracked)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Speed tracked"
+            },
+            "componentInstanceId": "THREATS-DROID-001-COMP-001"
+          }
+        ]
+      },
       "anatomy": {},
       "processor": {},
       "programming": {},
-      "combat": {},
+      "combat": {
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Ranged missile launcher +15 (6d6+8, 2-square splash)",
+            "operationStatus": "source-only",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed attack 1"
+            }
+          },
+          {
+            "attackId": "printed-attack-02",
+            "raw": "Ranged light concussion missile +15 (-5 against targets smaller than Huge) (4d10+8 ×2, 2-square splash)",
+            "operationStatus": "source-only",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed attack 2"
+            }
+          }
+        ]
+      },
       "capacity": {},
-      "systems": {},
-      "equipment": {},
-      "modifications": {},
+      "systems": {
+        "installed": [
+          {
+            "instanceId": "THREATS-DROID-001-COMP-001",
+            "name": "tracked locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Systems: tracked locomotion"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-001-COMP-002",
+            "name": "tool appendage [1/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Systems: 2 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-001-LOCATION-01"
+          },
+          {
+            "instanceId": "THREATS-DROID-001-COMP-003",
+            "name": "tool appendage [2/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Systems: 2 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-001-LOCATION-02"
+          },
+          {
+            "instanceId": "THREATS-DROID-001-COMP-004",
+            "name": "basic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Systems: basic processor"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-001-COMP-005",
+            "name": "improved sensor package",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Systems: improved sensor package"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-001-COMP-006",
+            "name": "integrated comlink",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Systems: integrated comlink"
+            },
+            "identityStatus": "source-only"
+          }
+        ],
+        "sourceSystemsRaw": "tracked locomotion, 2 tool appendage, basic processor, improved sensor package, integrated comlink"
+      },
+      "equipment": {
+        "possessions": [
+          {
+            "entryId": "THREATS-DROID-001-POS-01",
+            "name": "2 missile launchers with 4 magazines",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Possessions: 2 missile launchers with 4 magazines"
+            },
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "THREATS-DROID-001-POS-02",
+            "name": "light concussion missile launcher with 2 light concussion missiles",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "Printed Possessions: light concussion missile launcher with 2 light concussion missiles"
+            },
+            "factoryVsPresented": "unknown"
+          }
+        ]
+      },
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "THREATS-DROID-001-CONSTRAINT-MISSILE-PAYLOAD-SEPARATE",
+            "statement": "Printed Possessions give two missile launchers with four magazines, and a distinct light concussion launcher with two light concussion missiles. Neither magazine capacity nor replacement ammunition is inferred.",
+            "scope": "VX Series Artillery Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "MISSILE-PAYLOAD-SEPARATE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "THREATS-DROID-001-CONSTRAINT-LIGHT-CONCUSSION-EQUIPMENT",
+            "statement": "A separate equipment sidebar defines light concussion missile launcher as a heavy weapon with its own rate of fire and ammunition; vehicle/size-target attack penalty is not a generic -5 to all attacks.",
+            "scope": "VX Series Artillery Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "LIGHT-CONCUSSION-EQUIPMENT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "THREATS-DROID-001-CONSTRAINT-MOUNT-OWNERSHIP-UNPROVEN",
+            "statement": "Two printed tool appendages do not themselves certify three simultaneous physically installed or hand-held missile weapons. Printed alternative attacks remain source-only until mounts and grip are reviewed.",
+            "scope": "VX Series Artillery Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "MOUNT-OWNERSHIP-UNPROVEN"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "THREATS-DROID-001-CONSTRAINT-HERO-PROHIBITED",
+            "statement": "Published VX series artillery droids cannot be played as droid heroes.",
+            "scope": "VX Series Artillery Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-001",
+              "citationLabel": "HERO-PROHIBITED"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -89,11 +580,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified. M1 printed source mechanical second pass, full statblock and neighboring narrative, p134/PDF 135. All factory instances, printed progression, equipment and conditional rules remain source-only; cross-domain canon and mounts unresolved.",
         "reviewerEvidenceRefs": [
           "THREATS-CENSUS:THREATS-DROID-001",
           "Threats of the Galaxy:printed-p134:TXT-line-12933",
-          "THREATS-DROID-001:printed-p134:PDF-p135:selected-field-visual"
+          "THREATS-DROID-001:printed-p134:PDF-p135:selected-field-visual",
+          "THREATS:printed-p134:PDF-p135:M1-visual-secondary-mechanics"
         ]
       }
     },
@@ -126,8 +618,270 @@
         "challengeLevel": 9
       },
       "geometry": {},
-      "abilities": {},
-      "progression": {},
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedTotal": 12,
+            "raw": "Initiative +12",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Skills: Initiative"
+            }
+          },
+          {
+            "name": "Knowledge (tactics)",
+            "printedTotal": 10,
+            "raw": "Knowledge (tactics) +10",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Skills: Knowledge (tactics)"
+            }
+          },
+          {
+            "name": "Mechanics",
+            "printedTotal": 10,
+            "raw": "Mechanics +10",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Skills: Mechanics"
+            }
+          },
+          {
+            "name": "Perception",
+            "printedTotal": 11,
+            "raw": "Perception +11",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Skills: Perception"
+            }
+          },
+          {
+            "name": "Stealth",
+            "printedTotal": 12,
+            "raw": "Stealth +12",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Skills: Stealth"
+            }
+          }
+        ]
+      },
+      "progression": {
+        "classLineRaw": "soldier 9",
+        "classes": [
+          {
+            "className": "soldier",
+            "level": 9
+          }
+        ],
+        "feats": [
+          {
+            "traitId": "THREATS-DROID-002-feats-01",
+            "name": "Armor Proficiency (light, medium)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Feats: Armor Proficiency (light, medium)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-002-feats-02",
+            "name": "Deadeye",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Feats: Deadeye"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-002-feats-03",
+            "name": "Improved Damage Threshold",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Feats: Improved Damage Threshold"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-002-feats-04",
+            "name": "Point Blank Shot",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Feats: Point Blank Shot"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-002-feats-05",
+            "name": "Precise Shot",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Feats: Precise Shot"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-002-feats-06",
+            "name": "Running Attack",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Feats: Running Attack"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-002-feats-07",
+            "name": "Sniper",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Feats: Sniper"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-002-feats-08",
+            "name": "Weapon Focus (pistols)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Feats: Weapon Focus (pistols)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-002-feats-09",
+            "name": "Weapon Proficiency (pistols, rifles, simple weapons)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Feats: Weapon Proficiency (pistols, rifles, simple weapons)"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "talents": [
+          {
+            "traitId": "THREATS-DROID-002-talents-01",
+            "name": "Battle Analysis",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Talents: Battle Analysis"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-002-talents-02",
+            "name": "Cover Fire",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Talents: Cover Fire"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-002-talents-03",
+            "name": "Demolitionist",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Talents: Demolitionist"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-002-talents-04",
+            "name": "Devastating Attack (pistols)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Talents: Devastating Attack (pistols)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-002-talents-05",
+            "name": "Penetrating Attack (pistols)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Talents: Penetrating Attack (pistols)"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "defenses": {
         "reflex": 26,
         "flatFootedReflex": 23,
@@ -138,15 +892,288 @@
         "hitPoints": 74,
         "damageThreshold": 25
       },
-      "movement": {},
+      "movement": {
+        "locomotionSystems": [
+          {
+            "instanceId": "THREATS-DROID-002-MOVE-1",
+            "mode": "flying",
+            "speedSquares": 9,
+            "raw": "9 squares (flying)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Speed flying"
+            },
+            "componentInstanceId": "THREATS-DROID-002-COMP-001"
+          }
+        ]
+      },
       "anatomy": {},
       "processor": {},
       "programming": {},
-      "combat": {},
+      "combat": {
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee claw +8 (1d3+3)",
+            "operationStatus": "source-only",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed attack 1"
+            }
+          },
+          {
+            "attackId": "printed-attack-02",
+            "raw": "Ranged sniper blaster +12 (3d8+4)",
+            "operationStatus": "source-only",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed attack 2"
+            }
+          }
+        ]
+      },
       "capacity": {},
-      "systems": {},
-      "equipment": {},
-      "modifications": {},
+      "systems": {
+        "installed": [
+          {
+            "instanceId": "THREATS-DROID-002-COMP-001",
+            "name": "flying locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Systems: flying locomotion"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-002-COMP-002",
+            "name": "improved sensor package",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Systems: improved sensor package"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-002-COMP-003",
+            "name": "darkvision",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Systems: darkvision"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-002-COMP-004",
+            "name": "internal storage (2 kg)",
+            "componentCategory": "storage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Systems: internal storage (2 kg)"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-002-COMP-005",
+            "name": "heuristic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Systems: heuristic processor"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-002-COMP-006",
+            "name": "quadanium shell (+3 armor)",
+            "componentCategory": "armor",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Systems: quadanium shell (+3 armor)"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-002-COMP-007",
+            "name": "claw appendage",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Systems: claw appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-002-LOCATION-01"
+          },
+          {
+            "instanceId": "THREATS-DROID-002-COMP-008",
+            "name": "tool appendage [1/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Systems: 2 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-002-LOCATION-02"
+          },
+          {
+            "instanceId": "THREATS-DROID-002-COMP-009",
+            "name": "tool appendage [2/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Systems: 2 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-002-LOCATION-03"
+          },
+          {
+            "instanceId": "THREATS-DROID-002-COMP-010",
+            "name": "stabilized weapon mount",
+            "componentCategory": "weapon-mount",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Systems: stabilized weapon mount"
+            },
+            "identityStatus": "source-only"
+          }
+        ],
+        "sourceSystemsRaw": "flying locomotion, improved sensor package, darkvision, internal storage (2 kg), heuristic processor, quadanium shell (+3 armor), claw appendage, 2 tool appendage, stabilized weapon mount"
+      },
+      "equipment": {
+        "possessions": [
+          {
+            "entryId": "THREATS-DROID-002-POS-01",
+            "name": "sniper blaster (treat as heavy blaster pistol)",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "Printed Possessions: sniper blaster (treat as heavy blaster pistol)"
+            },
+            "factoryVsPresented": "unknown"
+          }
+        ]
+      },
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "THREATS-DROID-002-CONSTRAINT-SECURITY-SCANS-VS-SIGHT",
+            "statement": "The named 'Immune to Security Scans' effect emits energy beams that defeat electronic observation as printed; it does not make the droid visually invisible to living guards.",
+            "scope": "ASN-121 Assassin Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "SECURITY-SCANS-VS-SIGHT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "THREATS-DROID-002-CONSTRAINT-SNIPER-BLASTER-IDENTITY",
+            "statement": "Possessed sniper blaster is treated as a heavy blaster pistol. A stabilized weapon mount is independently listed, but the precise blaster-to-mount link is not certified.",
+            "scope": "ASN-121 Assassin Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "SNIPER-BLASTER-IDENTITY"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "THREATS-DROID-002-CONSTRAINT-CONCEALED-STORAGE-BOUND",
+            "statement": "Internal storage is 2 kg; narrative concealment of grenades or small cargo does not grant ammunition or expanded payload.",
+            "scope": "ASN-121 Assassin Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "CONCEALED-STORAGE-BOUND"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "THREATS-DROID-002-CONSTRAINT-HERO-PROHIBITED",
+            "statement": "The ASN-121 is expressly not playable as a droid hero.",
+            "scope": "ASN-121 Assassin Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 135,
+              "pdfPage1Based": 136,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-002",
+              "citationLabel": "HERO-PROHIBITED"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -164,11 +1191,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified. M1 printed source mechanical second pass, full statblock and neighboring narrative, p135/PDF 136. All factory instances, printed progression, equipment and conditional rules remain source-only; cross-domain canon and mounts unresolved.",
         "reviewerEvidenceRefs": [
           "THREATS-CENSUS:THREATS-DROID-002",
           "Threats of the Galaxy:printed-p135:TXT-line-13041",
-          "THREATS-DROID-002:printed-p135:PDF-p136:selected-field-visual"
+          "THREATS-DROID-002:printed-p135:PDF-p136:selected-field-visual",
+          "THREATS:printed-p135:PDF-p136:M1-visual-secondary-mechanics"
         ]
       }
     },
@@ -201,8 +1229,153 @@
         "challengeLevel": 1
       },
       "geometry": {},
-      "abilities": {},
-      "progression": {},
+      "abilities": {
+        "skills": [
+          {
+            "name": "Knowledge (physical sciences)",
+            "printedTotal": 9,
+            "raw": "Knowledge (physical sciences) +9",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Skills: Knowledge (physical sciences)"
+            }
+          },
+          {
+            "name": "Mechanics",
+            "printedTotal": 15,
+            "raw": "Mechanics +15",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Skills: Mechanics"
+            }
+          },
+          {
+            "name": "Perception",
+            "printedTotal": 3,
+            "raw": "Perception +3",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Skills: Perception"
+            }
+          },
+          {
+            "name": "Pilot",
+            "printedTotal": 9,
+            "raw": "Pilot +9",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Skills: Pilot"
+            }
+          },
+          {
+            "name": "Stealth",
+            "printedTotal": 9,
+            "raw": "Stealth +9",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Skills: Stealth"
+            }
+          },
+          {
+            "name": "Use Computer",
+            "printedTotal": 13,
+            "raw": "Use Computer +13",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Skills: Use Computer"
+            }
+          }
+        ]
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 3",
+        "classes": [
+          {
+            "className": "nonheroic",
+            "level": 3
+          }
+        ],
+        "nonheroicLevels": 3,
+        "feats": [
+          {
+            "traitId": "THREATS-DROID-003-feats-01",
+            "name": "Skill Focus (Mechanics)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Feats: Skill Focus (Mechanics)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-003-feats-02",
+            "name": "Skill Focus (Use Computer)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Feats: Skill Focus (Use Computer)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-003-feats-03",
+            "name": "Skill Training (Pilot)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Feats: Skill Training (Pilot)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-003-feats-04",
+            "name": "Toughness",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Feats: Toughness"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "talents": []
+      },
       "defenses": {
         "reflex": 14,
         "flatFootedReflex": 11,
@@ -213,15 +1386,482 @@
         "hitPoints": 10,
         "damageThreshold": 9
       },
-      "movement": {},
+      "movement": {
+        "locomotionSystems": [
+          {
+            "instanceId": "THREATS-DROID-003-MOVE-1",
+            "mode": "wheeled",
+            "speedSquares": 6,
+            "raw": "6 squares (wheeled)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Speed wheeled"
+            },
+            "componentInstanceId": "THREATS-DROID-003-COMP-001"
+          },
+          {
+            "instanceId": "THREATS-DROID-003-MOVE-2",
+            "mode": "walking",
+            "speedSquares": 4,
+            "raw": "4 squares (walking)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Speed walking"
+            },
+            "componentInstanceId": "THREATS-DROID-003-COMP-002"
+          }
+        ]
+      },
       "anatomy": {},
       "processor": {},
       "programming": {},
-      "combat": {},
+      "combat": {
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee electroshock probe +1 (1d8 ion)",
+            "operationStatus": "source-only",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed attack 1"
+            }
+          }
+        ]
+      },
       "capacity": {},
-      "systems": {},
-      "equipment": {},
-      "modifications": {},
+      "systems": {
+        "installed": [
+          {
+            "instanceId": "THREATS-DROID-003-COMP-001",
+            "name": "wheeled locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Systems: wheeled locomotion"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-003-COMP-002",
+            "name": "walking locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Systems: walking locomotion"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-003-COMP-003",
+            "name": "magnetic feet",
+            "componentCategory": "locomotion-accessory",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Systems: magnetic feet"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-003-COMP-004",
+            "name": "heuristic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Systems: heuristic processor"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-003-COMP-005",
+            "name": "tool appendage [1/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Systems: 6 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-003-LOCATION-01"
+          },
+          {
+            "instanceId": "THREATS-DROID-003-COMP-006",
+            "name": "tool appendage [2/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Systems: 6 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-003-LOCATION-02"
+          },
+          {
+            "instanceId": "THREATS-DROID-003-COMP-007",
+            "name": "tool appendage [3/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Systems: 6 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-003-LOCATION-03"
+          },
+          {
+            "instanceId": "THREATS-DROID-003-COMP-008",
+            "name": "tool appendage [4/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Systems: 6 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-003-LOCATION-04"
+          },
+          {
+            "instanceId": "THREATS-DROID-003-COMP-009",
+            "name": "tool appendage [5/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Systems: 6 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-003-LOCATION-05"
+          },
+          {
+            "instanceId": "THREATS-DROID-003-COMP-010",
+            "name": "tool appendage [6/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Systems: 6 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-003-LOCATION-06"
+          },
+          {
+            "instanceId": "THREATS-DROID-003-COMP-011",
+            "name": "claw appendage",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Systems: claw appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-003-LOCATION-07"
+          },
+          {
+            "instanceId": "THREATS-DROID-003-COMP-012",
+            "name": "telescopic appendage",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Systems: telescopic appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-003-LOCATION-08"
+          },
+          {
+            "instanceId": "THREATS-DROID-003-COMP-013",
+            "name": "diagnostics package",
+            "componentCategory": "accessory",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Systems: diagnostics package"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-003-COMP-014",
+            "name": "integrated comlink",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Systems: integrated comlink"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-003-COMP-015",
+            "name": "internal storage (2 kg)",
+            "componentCategory": "storage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Systems: internal storage (2 kg)"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-003-COMP-016",
+            "name": "improved sensor package",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Systems: improved sensor package"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-003-COMP-017",
+            "name": "darkvision",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Systems: darkvision"
+            },
+            "identityStatus": "source-only"
+          }
+        ],
+        "sourceSystemsRaw": "wheeled locomotion, walking locomotion, magnetic feet, heuristic processor, 6 tool appendage, claw appendage, telescopic appendage, diagnostics package, integrated comlink, internal storage (2 kg), improved sensor package, darkvision"
+      },
+      "equipment": {
+        "possessions": [
+          {
+            "entryId": "THREATS-DROID-003-POS-01",
+            "name": "astrogation buffer (storage device, 5 memory units)",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Possessions: astrogation buffer (storage device, 5 memory units)"
+            },
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "THREATS-DROID-003-POS-02",
+            "name": "circular saw",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Possessions: circular saw"
+            },
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "THREATS-DROID-003-POS-03",
+            "name": "electric arc welder",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Possessions: electric arc welder"
+            },
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "THREATS-DROID-003-POS-04",
+            "name": "electroshock probe",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Possessions: electroshock probe"
+            },
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "THREATS-DROID-003-POS-05",
+            "name": "fire extinguisher",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Possessions: fire extinguisher"
+            },
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "THREATS-DROID-003-POS-06",
+            "name": "holoprojector",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Possessions: holoprojector"
+            },
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "THREATS-DROID-003-POS-07",
+            "name": "holorecorder",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "Printed Possessions: holorecorder"
+            },
+            "factoryVsPresented": "unknown"
+          }
+        ]
+      },
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "THREATS-DROID-003-CONSTRAINT-HYPERSPACE-FIVE-COORDINATES",
+            "statement": "The stock possessed astrogation buffer has five memory units; narrative describes storing up to five hyperspace coordinate sets. Neither means unlimited routes or free starship navigation permissions.",
+            "scope": "R3 Series Astromech Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "HYPERSPACE-FIVE-COORDINATES"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "THREATS-DROID-003-CONSTRAINT-STORAGE-AND-EQUIPMENT-DISTINCT",
+            "statement": "Built-in storage is 2 kg, separate from the possessed buffer, saw, welder, electroshock probe, extinguisher, holoprojector and holorecorder.",
+            "scope": "R3 Series Astromech Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "STORAGE-AND-EQUIPMENT-DISTINCT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "THREATS-DROID-003-CONSTRAINT-MAGNETIC-FEET-AND-MODES",
+            "statement": "The droid has wheeled 6 and walking 4 square speeds, with magnetic feet as another installed system. It does not thereby acquire flying movement.",
+            "scope": "R3 Series Astromech Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "MAGNETIC-FEET-AND-MODES"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "THREATS-DROID-003-CONSTRAINT-HERO-ALLOWED-NOT-STARTING-LOADOUT",
+            "statement": "Printed model can be played as a droid hero, but its nonheroic 3 level, chosen feats, and listed equipment are not universal free starting grants.",
+            "scope": "R3 Series Astromech Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-003",
+              "citationLabel": "HERO-ALLOWED-NOT-STARTING-LOADOUT"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "allowed"
       },
@@ -239,11 +1879,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified. M1 printed source mechanical second pass, full statblock and neighboring narrative, p136/PDF 137. All factory instances, printed progression, equipment and conditional rules remain source-only; cross-domain canon and mounts unresolved.",
         "reviewerEvidenceRefs": [
           "THREATS-CENSUS:THREATS-DROID-003",
           "Threats of the Galaxy:printed-p136:TXT-line-13150",
-          "THREATS-DROID-003:printed-p136:PDF-p137:selected-field-visual"
+          "THREATS-DROID-003:printed-p136:PDF-p137:selected-field-visual",
+          "THREATS:printed-p136:PDF-p137:M1-visual-secondary-mechanics"
         ]
       }
     },
@@ -276,8 +1917,114 @@
         "challengeLevel": 1
       },
       "geometry": {},
-      "abilities": {},
-      "progression": {},
+      "abilities": {
+        "skills": [
+          {
+            "name": "Mechanics",
+            "printedTotal": 14,
+            "raw": "Mechanics +14",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Skills: Mechanics"
+            }
+          },
+          {
+            "name": "Pilot",
+            "printedTotal": 8,
+            "raw": "Pilot +8",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Skills: Pilot"
+            }
+          },
+          {
+            "name": "Stealth",
+            "printedTotal": 8,
+            "raw": "Stealth +8",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Skills: Stealth"
+            }
+          },
+          {
+            "name": "Use Computer",
+            "printedTotal": 12,
+            "raw": "Use Computer +12",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Skills: Use Computer"
+            }
+          }
+        ]
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 2",
+        "classes": [
+          {
+            "className": "nonheroic",
+            "level": 2
+          }
+        ],
+        "nonheroicLevels": 2,
+        "feats": [
+          {
+            "traitId": "THREATS-DROID-004-feats-01",
+            "name": "Skill Focus (Mechanics)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Feats: Skill Focus (Mechanics)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-004-feats-02",
+            "name": "Skill Focus (Use Computer)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Feats: Skill Focus (Use Computer)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-004-feats-03",
+            "name": "Skill Training (Pilot)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Feats: Skill Training (Pilot)"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "talents": []
+      },
       "defenses": {
         "reflex": 13,
         "flatFootedReflex": 11,
@@ -288,15 +2035,396 @@
         "hitPoints": 8,
         "damageThreshold": 9
       },
-      "movement": {},
+      "movement": {
+        "locomotionSystems": [
+          {
+            "instanceId": "THREATS-DROID-004-MOVE-1",
+            "mode": "wheeled",
+            "speedSquares": 6,
+            "raw": "6 squares (wheeled)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Speed wheeled"
+            },
+            "componentInstanceId": "THREATS-DROID-004-COMP-001"
+          },
+          {
+            "instanceId": "THREATS-DROID-004-MOVE-2",
+            "mode": "walking",
+            "speedSquares": 4,
+            "raw": "4 squares (walking)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Speed walking"
+            },
+            "componentInstanceId": "THREATS-DROID-004-COMP-002"
+          }
+        ]
+      },
       "anatomy": {},
       "processor": {},
       "programming": {},
-      "combat": {},
+      "combat": {
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee electroshock probe +0 (1d8 ion)",
+            "operationStatus": "source-only",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed attack 1"
+            }
+          }
+        ]
+      },
       "capacity": {},
-      "systems": {},
-      "equipment": {},
-      "modifications": {},
+      "systems": {
+        "installed": [
+          {
+            "instanceId": "THREATS-DROID-004-COMP-001",
+            "name": "wheeled locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Systems: wheeled locomotion"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-004-COMP-002",
+            "name": "walking locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Systems: walking locomotion"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-004-COMP-003",
+            "name": "heuristic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Systems: heuristic processor"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-004-COMP-004",
+            "name": "tool appendage [1/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Systems: 6 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-004-LOCATION-01"
+          },
+          {
+            "instanceId": "THREATS-DROID-004-COMP-005",
+            "name": "tool appendage [2/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Systems: 6 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-004-LOCATION-02"
+          },
+          {
+            "instanceId": "THREATS-DROID-004-COMP-006",
+            "name": "tool appendage [3/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Systems: 6 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-004-LOCATION-03"
+          },
+          {
+            "instanceId": "THREATS-DROID-004-COMP-007",
+            "name": "tool appendage [4/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Systems: 6 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-004-LOCATION-04"
+          },
+          {
+            "instanceId": "THREATS-DROID-004-COMP-008",
+            "name": "tool appendage [5/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Systems: 6 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-004-LOCATION-05"
+          },
+          {
+            "instanceId": "THREATS-DROID-004-COMP-009",
+            "name": "tool appendage [6/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Systems: 6 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-004-LOCATION-06"
+          },
+          {
+            "instanceId": "THREATS-DROID-004-COMP-010",
+            "name": "claw appendage",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Systems: claw appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-004-LOCATION-07"
+          },
+          {
+            "instanceId": "THREATS-DROID-004-COMP-011",
+            "name": "diagnostics package",
+            "componentCategory": "accessory",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Systems: diagnostics package"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-004-COMP-012",
+            "name": "integrated comlink",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Systems: integrated comlink"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-004-COMP-013",
+            "name": "internal storage (8 kg)",
+            "componentCategory": "storage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Systems: internal storage (8 kg)"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-004-COMP-014",
+            "name": "darkvision",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Systems: darkvision"
+            },
+            "identityStatus": "source-only"
+          }
+        ],
+        "sourceSystemsRaw": "wheeled locomotion, walking locomotion, heuristic processor, 6 tool appendage, claw appendage, diagnostics package, integrated comlink, internal storage (8 kg), darkvision"
+      },
+      "equipment": {
+        "possessions": [
+          {
+            "entryId": "THREATS-DROID-004-POS-01",
+            "name": "circular saw",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Possessions: circular saw"
+            },
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "THREATS-DROID-004-POS-02",
+            "name": "electric arc welder",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Possessions: electric arc welder"
+            },
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "THREATS-DROID-004-POS-03",
+            "name": "electroshock probe",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Possessions: electroshock probe"
+            },
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "THREATS-DROID-004-POS-04",
+            "name": "tool kit",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "Printed Possessions: tool kit"
+            },
+            "factoryVsPresented": "unknown"
+          }
+        ]
+      },
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "THREATS-DROID-004-CONSTRAINT-FACTORY-STORAGE-EIGHT",
+            "statement": "Factory internal storage is 8 kg, not R3's 2 kg. Factory does not list improved sensor package, magnetic feet or holographic equipment.",
+            "scope": "R4 Series Astromech Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "FACTORY-STORAGE-EIGHT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "THREATS-DROID-004-CONSTRAINT-R4-STARFIGHTER-VARIANT",
+            "statement": "Narrative describes a dedicated R4 starfighter variant with a different dome/body; it is not the default printed Systems configuration.",
+            "scope": "R4 Series Astromech Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "R4-STARFIGHTER-VARIANT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "THREATS-DROID-004-CONSTRAINT-TOOLS-POSSESSED",
+            "statement": "The circular saw, electric arc welder, electroshock probe and tool kit are on Possessions line, not separate additional appendage instances.",
+            "scope": "R4 Series Astromech Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "TOOLS-POSSESSED"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "THREATS-DROID-004-CONSTRAINT-HERO-ELIGIBILITY",
+            "statement": "R4 is allowed as a droid hero, but default nonheroic 2 and factory skills/feats must not be granted without legal creation choices.",
+            "scope": "R4 Series Astromech Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 137,
+              "pdfPage1Based": 138,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-004",
+              "citationLabel": "HERO-ELIGIBILITY"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "allowed"
       },
@@ -314,11 +2442,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified. M1 printed source mechanical second pass, full statblock and neighboring narrative, p137/PDF 138. All factory instances, printed progression, equipment and conditional rules remain source-only; cross-domain canon and mounts unresolved.",
         "reviewerEvidenceRefs": [
           "THREATS-CENSUS:THREATS-DROID-004",
           "Threats of the Galaxy:printed-p137:TXT-line-13263",
-          "THREATS-DROID-004:printed-p137:PDF-p138:selected-field-visual"
+          "THREATS-DROID-004:printed-p137:PDF-p138:selected-field-visual",
+          "THREATS:printed-p137:PDF-p138:M1-visual-secondary-mechanics"
         ]
       }
     },
@@ -351,8 +2480,114 @@
         "challengeLevel": 1
       },
       "geometry": {},
-      "abilities": {},
-      "progression": {},
+      "abilities": {
+        "skills": [
+          {
+            "name": "Mechanics",
+            "printedTotal": 13,
+            "raw": "Mechanics +13",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Skills: Mechanics"
+            }
+          },
+          {
+            "name": "Perception",
+            "printedTotal": 3,
+            "raw": "Perception +3",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Skills: Perception"
+            }
+          },
+          {
+            "name": "Stealth",
+            "printedTotal": 6,
+            "raw": "Stealth +6",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Skills: Stealth"
+            }
+          },
+          {
+            "name": "Use Computer",
+            "printedTotal": 11,
+            "raw": "Use Computer +11",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Skills: Use Computer"
+            }
+          }
+        ]
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 2",
+        "classes": [
+          {
+            "className": "nonheroic",
+            "level": 2
+          }
+        ],
+        "nonheroicLevels": 2,
+        "feats": [
+          {
+            "traitId": "THREATS-DROID-005-feats-01",
+            "name": "Skill Focus (Mechanics)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Feats: Skill Focus (Mechanics)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-005-feats-02",
+            "name": "Skill Focus (Use Computer)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Feats: Skill Focus (Use Computer)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-005-feats-03",
+            "name": "Skill Training (Mechanics)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Feats: Skill Training (Mechanics)"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "talents": []
+      },
       "defenses": {
         "reflex": 11,
         "flatFootedReflex": 11,
@@ -363,15 +2598,468 @@
         "hitPoints": 5,
         "damageThreshold": 9
       },
-      "movement": {},
+      "movement": {
+        "locomotionSystems": [
+          {
+            "instanceId": "THREATS-DROID-005-MOVE-1",
+            "mode": "wheeled",
+            "speedSquares": 6,
+            "raw": "6 squares (wheeled)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Speed wheeled"
+            },
+            "componentInstanceId": "THREATS-DROID-005-COMP-001"
+          },
+          {
+            "instanceId": "THREATS-DROID-005-MOVE-2",
+            "mode": "walking",
+            "speedSquares": 4,
+            "raw": "4 squares (walking)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Speed walking"
+            },
+            "componentInstanceId": "THREATS-DROID-005-COMP-002"
+          }
+        ]
+      },
       "anatomy": {},
       "processor": {},
       "programming": {},
-      "combat": {},
+      "combat": {
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee electroshock probe +0 (1d8 ion)",
+            "operationStatus": "source-only",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed attack 1"
+            }
+          }
+        ]
+      },
       "capacity": {},
-      "systems": {},
-      "equipment": {},
-      "modifications": {},
+      "systems": {
+        "installed": [
+          {
+            "instanceId": "THREATS-DROID-005-COMP-001",
+            "name": "wheeled locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Systems: wheeled locomotion"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-005-COMP-002",
+            "name": "walking locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Systems: walking locomotion"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-005-COMP-003",
+            "name": "magnetic feet",
+            "componentCategory": "locomotion-accessory",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Systems: magnetic feet"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-005-COMP-004",
+            "name": "heuristic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Systems: heuristic processor"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-005-COMP-005",
+            "name": "tool appendage [1/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Systems: 6 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-005-LOCATION-01"
+          },
+          {
+            "instanceId": "THREATS-DROID-005-COMP-006",
+            "name": "tool appendage [2/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Systems: 6 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-005-LOCATION-02"
+          },
+          {
+            "instanceId": "THREATS-DROID-005-COMP-007",
+            "name": "tool appendage [3/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Systems: 6 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-005-LOCATION-03"
+          },
+          {
+            "instanceId": "THREATS-DROID-005-COMP-008",
+            "name": "tool appendage [4/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Systems: 6 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-005-LOCATION-04"
+          },
+          {
+            "instanceId": "THREATS-DROID-005-COMP-009",
+            "name": "tool appendage [5/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Systems: 6 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-005-LOCATION-05"
+          },
+          {
+            "instanceId": "THREATS-DROID-005-COMP-010",
+            "name": "tool appendage [6/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Systems: 6 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-005-LOCATION-06"
+          },
+          {
+            "instanceId": "THREATS-DROID-005-COMP-011",
+            "name": "claw appendage",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Systems: claw appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-005-LOCATION-07"
+          },
+          {
+            "instanceId": "THREATS-DROID-005-COMP-012",
+            "name": "telescopic appendage",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Systems: telescopic appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-005-LOCATION-08"
+          },
+          {
+            "instanceId": "THREATS-DROID-005-COMP-013",
+            "name": "diagnostics package",
+            "componentCategory": "accessory",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Systems: diagnostics package"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-005-COMP-014",
+            "name": "integrated comlink",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Systems: integrated comlink"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-005-COMP-015",
+            "name": "internal storage (2 kg)",
+            "componentCategory": "storage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Systems: internal storage (2 kg)"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-005-COMP-016",
+            "name": "improved sensor package",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Systems: improved sensor package"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-005-COMP-017",
+            "name": "darkvision",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Systems: darkvision"
+            },
+            "identityStatus": "source-only"
+          }
+        ],
+        "sourceSystemsRaw": "wheeled locomotion, walking locomotion, magnetic feet, heuristic processor, 6 tool appendage, claw appendage, telescopic appendage, diagnostics package, integrated comlink, internal storage (2 kg), improved sensor package, darkvision"
+      },
+      "equipment": {
+        "possessions": [
+          {
+            "entryId": "THREATS-DROID-005-POS-01",
+            "name": "circular saw",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Possessions: circular saw"
+            },
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "THREATS-DROID-005-POS-02",
+            "name": "electric arc welder",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Possessions: electric arc welder"
+            },
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "THREATS-DROID-005-POS-03",
+            "name": "electroshock probe",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Possessions: electroshock probe"
+            },
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "THREATS-DROID-005-POS-04",
+            "name": "fire extinguisher",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Possessions: fire extinguisher"
+            },
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "THREATS-DROID-005-POS-05",
+            "name": "holoprojector",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Possessions: holoprojector"
+            },
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "THREATS-DROID-005-POS-06",
+            "name": "holorecorder",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "Printed Possessions: holorecorder"
+            },
+            "factoryVsPresented": "unknown"
+          }
+        ]
+      },
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "THREATS-DROID-005-CONSTRAINT-FACTORY-ONE-COORDINATE",
+            "statement": "Narrative says R5 can store only ONE set of hyperspace coordinates despite shared astromech appearance; no astrogation buffer is listed in Possessions. No extra buffer is invented.",
+            "scope": "R5 Series Astromech Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "FACTORY-ONE-COORDINATE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "THREATS-DROID-005-CONSTRAINT-USER-MODIFIED-NAVIGATION",
+            "statement": "Later Rebel user modifications expanded R5 astrogation to six, seven, or ten sets; those are owner modifications, not factory capabilities, and installation procedure is not specified.",
+            "scope": "R5 Series Astromech Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "USER-MODIFIED-NAVIGATION"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "THREATS-DROID-005-CONSTRAINT-STOCK-PAYLOAD-OWNERSHIP",
+            "statement": "Listed six tool appendages, one claw, telescopic appendage and separately possessed six tools/electronics are not permission for extra weapon attacks.",
+            "scope": "R5 Series Astromech Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "STOCK-PAYLOAD-OWNERSHIP"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "THREATS-DROID-005-CONSTRAINT-HERO-ELIGIBILITY",
+            "statement": "R5 can be used as a droid hero but does not gain owner-modified navigation memory as stock.",
+            "scope": "R5 Series Astromech Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-005",
+              "citationLabel": "HERO-ELIGIBILITY"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "allowed"
       },
@@ -389,11 +3077,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified. M1 printed source mechanical second pass, full statblock and neighboring narrative, p138/PDF 139. All factory instances, printed progression, equipment and conditional rules remain source-only; cross-domain canon and mounts unresolved.",
         "reviewerEvidenceRefs": [
           "THREATS-CENSUS:THREATS-DROID-005",
           "Threats of the Galaxy:printed-p138:TXT-line-13367",
-          "THREATS-DROID-005:printed-p138:PDF-p139:selected-field-visual"
+          "THREATS-DROID-005:printed-p138:PDF-p139:selected-field-visual",
+          "THREATS:printed-p138:PDF-p139:M1-visual-secondary-mechanics"
         ]
       }
     },
@@ -426,8 +3115,179 @@
         "challengeLevel": 2
       },
       "geometry": {},
-      "abilities": {},
-      "progression": {},
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedTotal": 11,
+            "raw": "Initiative +11",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Skills: Initiative"
+            }
+          },
+          {
+            "name": "Knowledge (physical sciences)",
+            "printedTotal": 16,
+            "raw": "Knowledge (physical sciences) +16",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Skills: Knowledge (physical sciences)"
+            }
+          },
+          {
+            "name": "Mechanics",
+            "printedTotal": 13,
+            "raw": "Mechanics +13",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Skills: Mechanics"
+            }
+          },
+          {
+            "name": "Perception",
+            "printedTotal": 6,
+            "raw": "Perception +6",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Skills: Perception"
+            }
+          },
+          {
+            "name": "Pilot",
+            "printedTotal": 16,
+            "raw": "Pilot +16",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Skills: Pilot"
+            }
+          },
+          {
+            "name": "Stealth",
+            "printedTotal": 11,
+            "raw": "Stealth +11",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Skills: Stealth"
+            }
+          },
+          {
+            "name": "Use Computer",
+            "printedTotal": 16,
+            "raw": "Use Computer +16",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Skills: Use Computer"
+            }
+          }
+        ]
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 6",
+        "classes": [
+          {
+            "className": "nonheroic",
+            "level": 6
+          }
+        ],
+        "nonheroicLevels": 6,
+        "feats": [
+          {
+            "traitId": "THREATS-DROID-006-feats-01",
+            "name": "Skill Focus (Knowledge [physical sciences])",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Feats: Skill Focus (Knowledge [physical sciences])"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-006-feats-02",
+            "name": "Skill Focus (Pilot)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Feats: Skill Focus (Pilot)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-006-feats-03",
+            "name": "Skill Focus (Use Computer)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Feats: Skill Focus (Use Computer)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-006-feats-04",
+            "name": "Skill Training (Initiative)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Feats: Skill Training (Initiative)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "THREATS-DROID-006-feats-05",
+            "name": "Toughness",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Feats: Toughness"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "talents": []
+      },
       "defenses": {
         "reflex": 14,
         "flatFootedReflex": 11,
@@ -438,15 +3298,436 @@
         "hitPoints": 21,
         "damageThreshold": 9
       },
-      "movement": {},
+      "movement": {
+        "locomotionSystems": [
+          {
+            "instanceId": "THREATS-DROID-006-MOVE-1",
+            "mode": "wheeled",
+            "speedSquares": 6,
+            "raw": "6 squares (wheeled)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Speed wheeled"
+            },
+            "componentInstanceId": "THREATS-DROID-006-COMP-001"
+          },
+          {
+            "instanceId": "THREATS-DROID-006-MOVE-2",
+            "mode": "walking",
+            "speedSquares": 4,
+            "raw": "4 squares (walking)",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Speed walking"
+            },
+            "componentInstanceId": "THREATS-DROID-006-COMP-002"
+          }
+        ]
+      },
       "anatomy": {},
       "processor": {},
       "programming": {},
-      "combat": {},
+      "combat": {
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee electroshock probe +4 (1d8 ion)",
+            "operationStatus": "source-only",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed attack 1"
+            }
+          }
+        ]
+      },
       "capacity": {},
-      "systems": {},
-      "equipment": {},
-      "modifications": {},
+      "systems": {
+        "installed": [
+          {
+            "instanceId": "THREATS-DROID-006-COMP-001",
+            "name": "wheeled locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Systems: wheeled locomotion"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-006-COMP-002",
+            "name": "walking locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Systems: walking locomotion"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-006-COMP-003",
+            "name": "magnetic feet",
+            "componentCategory": "locomotion-accessory",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Systems: magnetic feet"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-006-COMP-004",
+            "name": "heuristic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Systems: heuristic processor"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-006-COMP-005",
+            "name": "tool appendage [1/4]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Systems: 4 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-006-LOCATION-01"
+          },
+          {
+            "instanceId": "THREATS-DROID-006-COMP-006",
+            "name": "tool appendage [2/4]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Systems: 4 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-006-LOCATION-02"
+          },
+          {
+            "instanceId": "THREATS-DROID-006-COMP-007",
+            "name": "tool appendage [3/4]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Systems: 4 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-006-LOCATION-03"
+          },
+          {
+            "instanceId": "THREATS-DROID-006-COMP-008",
+            "name": "tool appendage [4/4]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Systems: 4 tool appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-006-LOCATION-04"
+          },
+          {
+            "instanceId": "THREATS-DROID-006-COMP-009",
+            "name": "claw appendage",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Systems: claw appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-006-LOCATION-05"
+          },
+          {
+            "instanceId": "THREATS-DROID-006-COMP-010",
+            "name": "telescopic appendage",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Systems: telescopic appendage"
+            },
+            "identityStatus": "source-only",
+            "count": 1,
+            "physicalLocationId": "THREATS-DROID-006-LOCATION-06"
+          },
+          {
+            "instanceId": "THREATS-DROID-006-COMP-011",
+            "name": "diagnostics package",
+            "componentCategory": "accessory",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Systems: diagnostics package"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-006-COMP-012",
+            "name": "integrated comlink",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Systems: integrated comlink"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-006-COMP-013",
+            "name": "internal storage (1 kg)",
+            "componentCategory": "storage",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Systems: internal storage (1 kg)"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-006-COMP-014",
+            "name": "improved sensor package",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Systems: improved sensor package"
+            },
+            "identityStatus": "source-only"
+          },
+          {
+            "instanceId": "THREATS-DROID-006-COMP-015",
+            "name": "darkvision",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Systems: darkvision"
+            },
+            "identityStatus": "source-only"
+          }
+        ],
+        "sourceSystemsRaw": "wheeled locomotion, walking locomotion, magnetic feet, heuristic processor, 4 tool appendage, claw appendage, telescopic appendage, diagnostics package, integrated comlink, internal storage (1 kg), improved sensor package, darkvision"
+      },
+      "equipment": {
+        "possessions": [
+          {
+            "entryId": "THREATS-DROID-006-POS-01",
+            "name": "circular saw",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Possessions: circular saw"
+            },
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "THREATS-DROID-006-POS-02",
+            "name": "electric arc welder",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Possessions: electric arc welder"
+            },
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "THREATS-DROID-006-POS-03",
+            "name": "electroshock probe",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Possessions: electroshock probe"
+            },
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "THREATS-DROID-006-POS-04",
+            "name": "fire extinguisher",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Possessions: fire extinguisher"
+            },
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "THREATS-DROID-006-POS-05",
+            "name": "holoprojector",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Possessions: holoprojector"
+            },
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "THREATS-DROID-006-POS-06",
+            "name": "holorecorder",
+            "quantity": 1,
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "Printed Possessions: holorecorder"
+            },
+            "factoryVsPresented": "unknown"
+          }
+        ]
+      },
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "THREATS-DROID-006-CONSTRAINT-FIFTEEN-COORDINATES-NARRATIVE",
+            "statement": "R7 narrative describes up to FIFTEEN hyperspace coordinate sets in active memory; no separate astrogation buffer is printed under Possessions. Avoid manufacturing an extra installed storage component.",
+            "scope": "R7 Series Astromech Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "FIFTEEN-COORDINATES-NARRATIVE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "THREATS-DROID-006-CONSTRAINT-NON-EWING-PENALTY",
+            "statement": "R7 was designed for the E-wing and the printed narrative imposes -4 to ALL skill checks if installed in any other starfighter. This is a conditional ship-installation penalty, not universally -4 on foot.",
+            "scope": "R7 Series Astromech Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "NON-EWING-PENALTY"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "THREATS-DROID-006-CONSTRAINT-FOUR-NOT-SIX-TOOLS",
+            "statement": "Factory R7 has four tool appendages, one claw and one telescopic appendage; do not copy the R5's six-tool profile.",
+            "scope": "R7 Series Astromech Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "FOUR-NOT-SIX-TOOLS"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "THREATS-DROID-006-CONSTRAINT-HERO-ELIGIBILITY",
+            "statement": "R7 may be played as a droid hero but the published nonheroic 6 and its class skill totals do not automatically become legal PC starting statistics.",
+            "scope": "R7 Series Astromech Droid",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "THREATS-DROID-006",
+              "citationLabel": "HERO-ELIGIBILITY"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "allowed"
       },
@@ -464,11 +3745,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified. M1 printed source mechanical second pass, full statblock and neighboring narrative, p138/PDF 139. All factory instances, printed progression, equipment and conditional rules remain source-only; cross-domain canon and mounts unresolved.",
         "reviewerEvidenceRefs": [
           "THREATS-CENSUS:THREATS-DROID-006",
           "Threats of the Galaxy:printed-p138:TXT-line-13454",
-          "THREATS-DROID-006:printed-p138:PDF-p139:selected-field-visual"
+          "THREATS-DROID-006:printed-p138:PDF-p139:selected-field-visual",
+          "THREATS:printed-p138:PDF-p139:M1-visual-secondary-mechanics"
         ]
       }
     },
