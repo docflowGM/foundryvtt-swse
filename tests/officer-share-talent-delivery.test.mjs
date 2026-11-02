@@ -70,7 +70,10 @@ test('encounter cleanup is registered and temporary talent items use ActorEngine
  assert.match(service,/touched\.push\(officer\);\s*await ActorEngine\.applyMutationPlan\(officer/);
  assert.match(service,/\[\.\.\.touched\]\.reverse\(\)/);
  assert.match(service,/transactional:true/);
- assert.match(service,/await combatant\.useAction\('standard'\)/);
+ assert.match(service,/ActionEconomyConsumption\.spend\(officer,'standard'/);
+ assert.match(service,/spent\?\.committed!==true/);
+ assert.doesNotMatch(service,/combatant\.useAction\(/);
+
  assert.match(service,/delete:\{items:expired\.map/);
  assert.match(dialog,/confirmedSenses/);
  assert.match(dialog,/distanceSquares/);
