@@ -17,6 +17,7 @@ import { TalentTreeDB } from '/systems/foundryvtt-swse/scripts/data/talent-tree-
 import { eligibleOfficerShareTalents, persistedOfficerShareTalents } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/officer-share-talent-authority.js';
 import { planOfficerShareTalentAction } from '/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-action-rules.js';
 import { resolveOfficerShareTalentScene } from '/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-scene.js';
+import { planOfficerShareTalentExpiry } from '/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-cleanup-plan.js';
 
 const locks=new Set();
 import {
@@ -127,12 +128,14 @@ export class OfficerShareTalentService {
     const all=actors||Array.from(globalThis.game?.actors||[]);
     const outcome=[];
     for(const actor of all){
-      const expired=asItems(actor.items).filter(item=>provenance(item)?.encounterId===combatId);
-      if(!expired.length)continue;
+      const expiry=planOfficerShareTalentExpiry({actor,encounterId:combatId});
+      if(!expiry.items.length)continue;
+      // Delete linked effects first. ActorEngine's deleteItem hook may also
+      // attempt effect cleanup; when it runs there must be nothing orphaned.
       await ActorEngine.applyMutationPlan(actor,{
-        delete:{items:expired.map(x=>x.id||x._id)},
+        delete:{effects:expiry.effects,items:expiry.items},
       },{source:'OfficerShareTalentService.expireEncounter',transactional:true});
-      outcome.push({actorId:actor.id,removed:expired.length});
+      outcome.push({actorId:actor.id,removed:expiry.items.length,effectsRemoved:expiry.effects.length});
     }
     return {expired:outcome};
   }
