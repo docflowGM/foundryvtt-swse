@@ -57,7 +57,14 @@ export function verifyClassPackProtectedState(root) {
       if (!expected || expected.name !== doc.name) {
         report.failures.push(`class identity changed: ${doc.name} (${doc._id})`);
       } else if (classProtectedFingerprint(doc) !== expected.fingerprint) {
-        report.failures.push(`protected class fields changed: ${doc.name}`);
+        // Only the two fully source-verified progression replacements are
+        // permitted. Everything else, including later changes to those classes,
+        // remains protected by the exact canonical fingerprint.
+        const approved = baseline.approvedProgressionExceptions?.[doc._id];
+        if (!approved || approved.name !== doc.name
+          || approved.approvedFingerprint !== classProtectedFingerprint(doc)) {
+          report.failures.push(`protected class fields changed: ${doc.name}`);
+        }
       }
     }
     for (const entry of baseline.records) if (!ids.has(entry._id)) {
