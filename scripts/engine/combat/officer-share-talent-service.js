@@ -67,7 +67,7 @@ export class OfficerShareTalentService {
       });
       if(!plan.ok)throw new Error(plan.errors.join('; '));
       if(plan.plan.recipientActorIds.length!==recipients.length ||
-        !plan.plan.recipientActorIds.every(id=>recipients.some(r=>r?.id===id))){
+        !plan.plan.recipientActorIds.every(id=>recipients.some(r=>String(r?.uuid||r?.id)===id))){
         throw new Error('Recipient proof identities do not match chosen actors');
       }
       const owned=ownOfficerTalentItem(officer,talentId);
@@ -80,7 +80,7 @@ export class OfficerShareTalentService {
         officer,additions,actorEngine:ActorEngine,
         usage:[
           ...previous.filter(p=>p.day===day),
-          {talentId,day,encounterId:combat.id,recipientActorIds:recipients.map(a=>a.id)},
+          {talentId,day,encounterId:combat.id,recipientActorIds:recipients.map(a=>String(a?.uuid||a?.id))},
         ],
         validateBeforeSpend:()=>{
           // ActorEngine operations may have awaited other Foundry events;
@@ -95,7 +95,7 @@ export class OfficerShareTalentService {
           talentId,encounterId:combat.id,
         },{notify:true}),
       });
-      return {success:true,talentId,recipientActorIds:recipients.map(a=>a.id),
+      return {success:true,talentId,recipientActorIds:recipients.map(a=>String(a?.uuid||a?.id)),
         encounterId:combat.id,day,temporaryUntil:'end-of-encounter'};
     }finally{locks.delete(officer.id);}
   }
