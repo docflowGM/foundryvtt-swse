@@ -1617,9 +1617,7 @@
           }
         ]
       },
-      "equipment": {
-        "possessions": []
-      },
+      "equipment": {},
       "modifications": {
         "publishedNonFactoryChanges": [
           {
