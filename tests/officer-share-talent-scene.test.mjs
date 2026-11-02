@@ -54,7 +54,9 @@ test('Share Talent requires explicit GM senses and allegiance assertions',()=>{
 test('Share Talent refuses different scene, non-encounter targets and duplicate identities',()=>{
   assert.throws(()=>resolveOfficerShareTalentScene({...options,combat:{...combat,scene:'other'}}),/current active encounter scene/);
   assert.throws(()=>resolveOfficerShareTalentScene({...options,combat:{...combat,started:false}}),/current active encounter scene/);
-  assert.throws(()=>resolveOfficerShareTalentScene({...options,combat:{...combat,combatants:[{tokenId:'source'}]}}),/absent from the active encounter/);
+  assert.deepEqual(resolveOfficerShareTalentScene({...options,combat:{...combat,combatants:[{tokenId:'source'}]}}).recipientActors,[ally]);
+  const vanished={...canvasRef,tokens:{placeables:[source,other]}};
+  assert.throws(()=>resolveOfficerShareTalentScene({...options,canvasRef:vanished}),/absent from the current scene/);
   assert.throws(()=>resolveOfficerShareTalentScene({...options,recipientTokenIds:['target','target']}),/unique recipient token identities/);
   const duplicateActorToken=token('other',ally,200,0);
   assert.throws(()=>resolveOfficerShareTalentScene({
@@ -75,5 +77,6 @@ test('Service enforces turn economy and derives recipients at action time; dialo
   assert.match(service,/combatant\.canAct!==true/);
   assert.match(dialog,/recipientTokenIds:chosen\.tokenIds/);
   assert.match(dialog,/confirmedAllies/);
+  assert.doesNotMatch(dialog,/combatTokenIds\.has\(tokenId\(t\)\)/);
   assert.doesNotMatch(dialog,/recipientProofs:tokenSelections/);
 });
