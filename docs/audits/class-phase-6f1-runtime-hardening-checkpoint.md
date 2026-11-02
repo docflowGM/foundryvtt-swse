@@ -9,6 +9,7 @@
 
 - **Officer Share Talent (Core p. 222):** Previous permanent even-Officer-level talent selections remain intact. Runtime activation checks active combat/turn, GM confirmation of target allegiance and sight/hearing, remeasures token ranges and verifies scene/encounter identity at action time. Recipient talent Items are temporary clones of the Officer's owned canonical talent, with exact provenance and encounter cleanup. Mutation legs are tracked BEFORE entering ActorEngine, so the outer verified recovery checks a potentially partially changed leg.
 - **Temporary prerequisites:** `isOfficerSharedTalentPrerequisiteWaived` recognizes only typed, internally consistent temporary Officer grants; `PrerequisiteIntegrityChecker` exempts those, not ordinary talent Items. The waiver does not authorize arbitrary acquisition.
+- **Permanent talent ownership:** `isPermanentOfficerTalentItem` is the shared predicate used in both Officer acquisition options and activation's source Item lookup. Borrowed Share Talent clones, other temporary talents, and temporary-flagged Items are ineligible to become permanent selections or to be re-shared.
 - **Action economy:** Share Talent now uses `ActionEconomyConsumption.spend(officer,'standard',...)` and refuses a noncommitted/no-op result. This is the V2 action authority. `SWSECombatant.useAction('standard')` is a legacy path which incorrectly consumes a move action; no global combatant rewrite is attempted in this class-scoped PR.
 - **Enforcer Resources (Force Unleashed p. 44):** Delivery is a GM-approved equipment entitlement, not credits or a store purchase. Eligible entries must be priced Restricted/Military source documents that Store V2 actually loaded from a compendium (`__storeSource` match). World copies retaining old `sourceId` are rejected. Deliver and defer use one per-actor in-client decision lock, with ledger read inside that lock.
 - **Command Cover:** The existing `CombatStatusResolver` cover-suppression predicate is exported and reused by attack target-defense paths. Command Cover and ordinary cover remain the higher applicable cover bonus, not an additive pair; explicit cover suppression blocks both.
@@ -19,6 +20,7 @@
 - Enforcer per-actor overlapping decisions and release-after-failure.
 - Share Talent scene mismatch, moved targets, repeated token and actor identities, combat membership, range in Foundry v13 scene-distance units, GM confirmation.
 - Share Talent typed provenance/waiver spoof resistance, canonical V2 action-spend wiring and touched-leg rollback evidence.
+- Officer talent picker and activation-source rejection of borrowed temporary talent Items.
 - Command Cover suppression use in both contextual target-defense and getTargetDefense access.
 
 ## Evidence / certification gates
