@@ -83,7 +83,7 @@ test('encounter cleanup is registered and temporary talent items use ActorEngine
  assert.match(service,/spent\?\.committed!==true/);
  assert.doesNotMatch(service,/combatant\.useAction\(/);
 
- assert.match(service,/delete:\{items:expired\.map/);
+ assert.match(service,/delete:\{effects:expiry\.effects,items:expiry\.items\}/);
  assert.match(dialog,/confirmedSenses/);
  assert.match(dialog,/distanceSquares/);
 });
