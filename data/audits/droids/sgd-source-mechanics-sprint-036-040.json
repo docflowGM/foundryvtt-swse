@@ -1,0 +1,162 @@
+{
+  "schema": "swse.droids.sgd.source-mechanics-sprint/0.1",
+  "date": "2026-11-02",
+  "bookId": "SGD",
+  "scope": "Detailed source second pass 036-040 printed pp.138-147 PDF 139-148",
+  "records": [
+    {
+      "sourceEntryKey": "SGD-DROID-036",
+      "printedName": "SD-X-Series Stealth Battle Droid",
+      "pages": [
+        138,
+        139
+      ],
+      "actions": [
+        "SGD-DROID-036-ACTION-MOVE",
+        "SGD-DROID-036-ACTION-BLASTER-RIFLE",
+        "SGD-DROID-036-ACTION-STEALTH-CHECK",
+        "SGD-DROID-036-ACTION-VIBRODAGGERS",
+        "SGD-DROID-036-ACTION-THREAT-SCAN"
+      ],
+      "variants": [
+        "SGD-DROID-036-VARIANT-BODYGUARD-ENHANCEMENTS",
+        "SGD-DROID-036-VARIANT-MARTIAL-ARTS-ENHANCEMENTS"
+      ],
+      "constraints": [
+        "SGD-DROID-036-CONSTRAINT-STEALTH-NOT-UNIVERSAL",
+        "SGD-DROID-036-CONSTRAINT-THREAT-SCAN-ACTION-CONFLICT",
+        "SGD-DROID-036-CONSTRAINT-CONCEALED-BLADE-RESOURCE"
+      ],
+      "additionalConflicts": [
+        "SGD-036-THREAT-SCAN-ACTION-CONFLICT"
+      ],
+      "certification": "partial"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-037",
+      "printedName": "LEP-Series Service Droid",
+      "pages": [
+        140,
+        141
+      ],
+      "actions": [
+        "SGD-DROID-037-ACTION-MOVE",
+        "SGD-DROID-037-ACTION-EMPATHIC",
+        "SGD-DROID-037-ACTION-FIRST-AID",
+        "SGD-DROID-037-ACTION-HAGGLE",
+        "SGD-DROID-037-ACTION-REVIVIFY",
+        "SGD-DROID-037-ACTION-TREAT-POISON"
+      ],
+      "variants": [
+        "SGD-DROID-037-VARIANT-BODYGUARD",
+        "SGD-DROID-037-VARIANT-NANNY",
+        "SGD-DROID-037-VARIANT-PERSONAL-TRANSPORT"
+      ],
+      "constraints": [
+        "SGD-DROID-037-CONSTRAINT-PATIENT-SCOPE",
+        "SGD-DROID-037-CONSTRAINT-STORAGE-LOCK-AND-PASSENGER"
+      ],
+      "additionalConflicts": [],
+      "certification": "partial"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-038",
+      "printedName": "Shadow Droid",
+      "pages": [
+        142,
+        143
+      ],
+      "actions": [
+        "SGD-DROID-038-ACTION-MOVE",
+        "SGD-DROID-038-ACTION-ENGAGE-ENEMY",
+        "SGD-DROID-038-ACTION-PROTECT-AND-SERVE",
+        "SGD-DROID-038-ACTION-RAMMING-SPEED",
+        "SGD-DROID-038-ACTION-WINGMAN"
+      ],
+      "variants": [
+        "SGD-DROID-038-VARIANT-FEAR-GENERATOR",
+        "SGD-DROID-038-VARIANT-SITH-SQUADRON"
+      ],
+      "constraints": [
+        "SGD-DROID-038-CONSTRAINT-STARSHIP-PRIMARY-ATTACKS",
+        "SGD-DROID-038-CONSTRAINT-OWNER-FORCE-POINT",
+        "SGD-DROID-038-CONSTRAINT-HERO-PROHIBITED"
+      ],
+      "additionalConflicts": [],
+      "certification": "partial"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-039",
+      "printedName": "Colicoid T4 Turret Droid",
+      "pages": [
+        144,
+        145
+      ],
+      "actions": [
+        "SGD-DROID-039-ACTION-MOVE",
+        "SGD-DROID-039-ACTION-CUTTING-LASER",
+        "SGD-DROID-039-ACTION-PATROL-DUTY",
+        "SGD-DROID-039-ACTION-RAPID-SHOT",
+        "SGD-DROID-039-ACTION-STABILITY"
+      ],
+      "variants": [
+        "SGD-DROID-039-VARIANT-ARTILLERY-SPOTTER",
+        "SGD-DROID-039-VARIANT-LISTENING-POST",
+        "SGD-DROID-039-VARIANT-PATROL-GUARD"
+      ],
+      "constraints": [
+        "SGD-DROID-039-CONSTRAINT-CUTTING-LASER-CONFLICT",
+        "SGD-DROID-039-CONSTRAINT-TURRET-WEAPON-MOUNTS",
+        "SGD-DROID-039-CONSTRAINT-HERO-PROHIBITED"
+      ],
+      "additionalConflicts": [],
+      "certification": "partial"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-040",
+      "printedName": "TC-SC Infiltration Droid",
+      "pages": [
+        146,
+        147
+      ],
+      "actions": [
+        "SGD-DROID-040-ACTION-MOVE",
+        "SGD-DROID-040-ACTION-AVOID-SURPRISE",
+        "SGD-DROID-040-ACTION-DASTARDLY-BLADE",
+        "SGD-DROID-040-ACTION-DASTARDLY-BLAST",
+        "SGD-DROID-040-ACTION-PATROL-DUTY"
+      ],
+      "variants": [
+        "SGD-DROID-040-VARIANT-DECOY-DROID",
+        "SGD-DROID-040-VARIANT-ELIMINATION-DROID"
+      ],
+      "constraints": [
+        "SGD-DROID-040-CONSTRAINT-DASTARDLY-TRIGGER",
+        "SGD-DROID-040-CONSTRAINT-DECOY-DAMAGE-GATE",
+        "SGD-DROID-040-CONSTRAINT-ELIMINATION-FEAT-SWAP"
+      ],
+      "additionalConflicts": [],
+      "certification": "partial"
+    }
+  ],
+  "totals": {
+    "models": 5,
+    "actions": 26,
+    "variants": 12,
+    "constraints": 14,
+    "heroicRoutes": 3,
+    "newContradictions": 1,
+    "reviewedDetailed": 40,
+    "hydrated": 46,
+    "strictCertified": 0
+  },
+  "assertions": {
+    "identityPreserved": true,
+    "allNewClaimsSourceOnly": true,
+    "allPrintedAttacksSourceOnly": true,
+    "T4ConflictPreserved": true,
+    "fullPythonSchema": "NOT RUN",
+    "FoundryRuntime": "NOT RUN"
+  },
+  "next": "SGD 041–045, then 046 closeout."
+}
