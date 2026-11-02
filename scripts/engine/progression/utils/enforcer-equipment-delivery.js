@@ -47,6 +47,9 @@ function locateEntitlement(entries, level) {
 /** A GM may defer an unspent entitlement once, to exactly the next class level. */
 export function planEnforcerEquipmentDeferral({entries,classLevel}={}) {
   const next=clone(entries),current=locateEntitlement(next,classLevel);
+  if (classLevel >= 10 || next.some(entry => entry.enforcerClassLevel > classLevel)) {
+    throw new Error('Enforcer Resources can only be deferred to a future next Enforcer class level');
+  }
   current.status='deferred-to-next-level';
   current.resolution='deferred';
   return {entries:next,current};
