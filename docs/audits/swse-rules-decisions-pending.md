@@ -297,10 +297,10 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Options | None supported by certified evidence. |
 | Recommended ruling | None |
 | Implementation impact | Weapon installs are denied without mount evidence; even with it the ledger entry is `executable:false`. Enabling execution is P4-D. |
-| Status | `DEFERRED_RULES_REVIEW` |
+| Status | `RESOLVED_OWNER_RULING` |
 | Review classification | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
-| Resolution | |
+| Resolution | Owner ruling 2026-11-02: a GM may certify the physical mount and assign the firing arc of a NEWLY INSTALLED starship weapon. The mount stores its identity, arc, operator, GM approval and audit provenance, and is recorded as GM-adjudicated (never as published/printed evidence). The weapon's mechanics (damage, EP, cost, availability, size) must still be independently source-verified. Existing stock attack groups remain reference-only and gain no authorization. A GM-approved mount is necessary but not sufficient: every other attack validation still applies. |
 
 ## V-P4-01 — Vehicle size modifier on top of printed Initiative
 
@@ -740,9 +740,9 @@ V-P6-05 was engineering scope, not a rules question. P6B-1 delivered the runtime
 | Options | (1) combine at 1,000 kg per ton / keep units separate and refuse; (2) convert to days then round down / round in the printed unit with a 1-day minimum. |
 | Recommended ruling | None |
 | Implementation impact | Planner refuses cargo pods on non-ton hulls (CARGO_UNIT_NOT_TONS) and extended range on non-day hulls (CONSUMABLES_UNIT_CONVERSION_UNRULED); smuggler compartments not installable (P6B-D-010). |
-| Status | `DEFERRED_RULES_REVIEW` |
+| Status | `RESOLVED_OWNER_RULING` |
 | Decision authority | Project owner |
-| Resolution | |
+| Resolution | Owner ruling 2026-11-02 (calculation policy): 1 metric ton = 1,000 kg; 1 week = 7 days. Project gameplay convention (NOT a published SWSE calendar rule): 1 month = 30 days, 1 year = 365 days, unless an authoritative source gives a specific duration. Extended Range: convert the ORIGINAL printed consumables to days, take 10%, round down in days, minimum 1 day, per installation, never compounded. Published values and units are preserved in source data. Unusual annotated cargo quantities are not guessed; they are deferred individually. |
 
 ### V-P6B-03 - Slave circuits: rounding of the reduced crew requirement
 
@@ -763,3 +763,5 @@ V-P6-05 was engineering scope, not a rules question. P6B-1 delivered the runtime
 | Resolution | |
 
 - **Revision 15 (2026-11-02):** appended V-P6B-02 and V-P6B-03. No existing entry changed.
+
+- **Revision 16 (2026-11-02):** recorded the owner's resolutions of V-P2-04 (GM-certified mount and arc for newly installed weapons) and V-P6B-02 (unit conversion calculation policy) in their Status and Resolution fields only; questions unchanged.

@@ -101,8 +101,8 @@ test('custom designs refuse accessories whose base the stock frame does not prov
   const frame = frames.find(f => f.id === 'light-freighter');
   const reasons = id => C.validateDesign({ designId: 'd3', name: 'X', frame, systems: [{ catalogEntry: row(id), installId: 'z1' }], authorship: claims,
     crewQuality: 'skilled', authority: { verified: true }, rules: RULES }).reasons;
-  assert.ok(reasons('cargo-pod-light').includes('cargo-pod-light:CARGO_UNIT_NOT_TONS'));
-  assert.ok(reasons('extended-range').includes('extended-range:CONSUMABLES_UNIT_CONVERSION_UNRULED'));
+  assert.ok(reasons('cargo-pod-light').includes('cargo-pod-light:CARGO_UNKNOWN'));
+  assert.ok(reasons('extended-range').includes('extended-range:CONSUMABLES_UNKNOWN'));
   assert.ok(reasons('atmospheric-thrusters').includes('atmospheric-thrusters:NO_ATMOSPHERIC_FLIGHT_MODE'));
   assert.deepEqual(reasons('cryogenic-chambers'), [], 'capacity accessories work (Colossal: 1 creature per unit)');
 });

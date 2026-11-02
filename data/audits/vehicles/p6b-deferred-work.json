@@ -184,18 +184,354 @@
       "linkedDecisions": [
         "V-P6B-02"
       ],
-      "options": [
-        "convert to days (week 7, month 30, year 365) then round down",
-        "round in the printed unit, minimum 1 day"
-      ],
+      "options": [],
       "id": "P6B-D-010",
-      "component": "cargo pods / extended range / smuggler compartments on hulls whose printed unit needs conversion",
-      "status": "RULES_DECISION_REQUIRED",
-      "reason": "Cargo pods add tons; 181 hulls print cargo in kg (and some in annotated units). Extended range adds 10% rounded down with a 1-day minimum; 279 hulls print consumables in weeks/months/years, and rounding in days or in the printed unit gives different results. Smuggler compartments cap hidden cargo at 5% of original cargo, again in kg vs tons.",
-      "missing": "Whether 1 ton = 1,000 kg for cargo arithmetic; which unit the extended-range rounding uses and the day length of a month/year.",
-      "impact": "Fail-closed: planner refuses with CARGO_UNIT_NOT_TONS / CONSUMABLES_UNIT_CONVERSION_UNRULED; smuggler compartments not installable.",
-      "severity": "IMPORTANT",
-      "recommendedAction": "Owner rules on V-P6B-02; then the refusals become conversions."
+      "component": "cargo pods / extended range on hulls with annotated or unknown printed quantities; smuggler compartments",
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "reason": "V-P6B-02 resolved the unit conversions (owner ruling 2026-11-02): 398 of 429 hulls now have a convertible cargo value and 393 a convertible consumables duration. The remaining hulls print annotated, missing or unusual quantities (e.g. \"70 tons (15 tons on shuttle-only models)\", \"2 days (1 week with booster ring)\", \"hours\", \"unlimited\"); these are refused individually, never guessed (listed in annotatedCargo / annotatedConsumables). Smuggler compartments stay deferred: the printed text caps hidden cargo at 5% of the original cargo but does not say whether hidden space reduces normal cargo.",
+      "missing": "Which value of an annotated quantity applies; whether smuggler compartment space is carved out of normal cargo.",
+      "impact": "Planner refuses with CARGO_QUANTITY_ANNOTATED_UNRULED / CARGO_UNKNOWN (31 hulls) or CONSUMABLES_UNIT_CONVERSION_UNRULED / CONSUMABLES_UNKNOWN (36 hulls).",
+      "severity": "MINOR",
+      "recommendedAction": "Rule per annotated identity only if a player needs one of these hulls; otherwise leave refused.",
+      "annotatedCargo": [
+        {
+          "key": "core-at-st",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "core-droid-tri-fighter",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "core-vulture-class-droid-starfighter",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "cw-azure-angel",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "cw-delta-7-aethersprite-interceptor-high-maneuver-variant",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "cw-delta-7-aethersprite-interceptor-high-speed-variant",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "cw-ground-armored-tank",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "cw-hyena-class-bomber",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "cw-ig-227-hailfire-class-droid-tank",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "cw-manta-droid-subfighter",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "cw-og-9-homing-spider-droid",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "cw-persuader-class-droid-enforcer",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "cw-single-trooper-aerial-platform",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "cw-tri-droid",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "fucg-at-ct",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "fucg-at-kt",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "gaw-ground-armored-tank",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "goi-republic-engineering-corporation-ferret-class-reconnaissance-vessel",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "goi-republic-engineering-corporation-prowler-class-reconnaissance-vessel",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "kotor-star-forge-manufacture-herald-class-shuttle",
+          "printed": "70 tons (15 tons on shuttle-only models)",
+          "reason": "CARGO_QUANTITY_ANNOTATED_UNRULED"
+        },
+        {
+          "key": "le-all-terrain-riot-control-transport-at-rct",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "re-assassin-class-corvette",
+          "printed": "2,100 tons maximum (1,500 typical)",
+          "reason": "CARGO_QUANTITY_ANNOTATED_UNRULED"
+        },
+        {
+          "key": "re-tie-scout",
+          "printed": "25 tons (150 tons civilian)",
+          "reason": "CARGO_QUANTITY_ANNOTATED_UNRULED"
+        },
+        {
+          "key": "sotg-baktoid-armor-workshop-vulture-class-starfighter",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "sotg-delta-7-aethersprite-light-interceptor",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "sotg-escape-pod",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "sotg-feethan-ottraw-scalable-industries-mankvim-814-light-interceptor",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "sotg-haor-chall-engineering-scarab-class-starfighter",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "sotg-phlac-arphocc-automata-industries-droid-tri-fighter",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "sotg-sienar-fleet-systems-tie-bomber",
+          "printed": "15 tons, bomb bay",
+          "reason": "CARGO_QUANTITY_ANNOTATED_UNRULED"
+        },
+        {
+          "key": "ur-all-terrain-roller",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        }
+      ],
+      "annotatedConsumables": [
+        {
+          "key": "core-eta-2-actis-interceptor",
+          "printed": "2 days (1 week with booster ring)",
+          "reason": "CONSUMABLES_UNIT_CONVERSION_UNRULED"
+        },
+        {
+          "key": "cw-barc-speeder",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-daystar-dc0052-intergalactic-speeder",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-delta-7-aethersprite-interceptor-high-maneuver-variant",
+          "printed": "none (1 week with booster ring)",
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-delta-7-aethersprite-interceptor-high-speed-variant",
+          "printed": "none (1 week with booster ring)",
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-eta-2-actis-interceptor-heavy-defenses-variant",
+          "printed": "2 days (1 week with booster ring)",
+          "reason": "CONSUMABLES_UNIT_CONVERSION_UNRULED"
+        },
+        {
+          "key": "cw-eta-2-actis-interceptor-high-maneuver-variant",
+          "printed": "2 days (1 week with booster ring)",
+          "reason": "CONSUMABLES_UNIT_CONVERSION_UNRULED"
+        },
+        {
+          "key": "cw-grievous-wheel-bike-modified-tsmeu-6",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-ground-armored-tank",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-ig-227-hailfire-class-droid-tank",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-manta-droid-subfighter",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-multi-troop-transport",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-og-9-homing-spider-droid",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-persuader-class-droid-enforcer",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-single-trooper-aerial-platform",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-soulless-one-modified-belbullab-22",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-trade-federation-troop-carrier",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-tri-droid",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-tsmeu-6-personal-wheel-bike",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "gaw-drop-pod",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "gaw-ground-armored-tank",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "gaw-t8-loading-vehicle",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "goi-republic-engineering-corporation-ferret-class-reconnaissance-vessel",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "goi-republic-engineering-corporation-prowler-class-reconnaissance-vessel",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "le-model-67-shrieker-speeder-bike",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "le-quickfire-speeder-bike",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "le-veltiss-2-airspeeder",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "re-tie-experimental-m2",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "re-tie-experimental-m3",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "sav-starforge-station",
+          "printed": "unlimited",
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "sotg-delta-7-aethersprite-light-interceptor",
+          "printed": "none (1 week with booster ring)",
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "sotg-feethan-ottraw-scalable-industries-mankvim-814-light-interceptor",
+          "printed": "2 hours",
+          "reason": "CONSUMABLES_UNIT_CONVERSION_UNRULED"
+        },
+        {
+          "key": "sotg-kuat-systems-engineering-alpha-3-nimbus-v-wing-starfighter",
+          "printed": "15 hours",
+          "reason": "CONSUMABLES_UNIT_CONVERSION_UNRULED"
+        },
+        {
+          "key": "tog-bloodfin-razalon-fc-20-speeder-bike",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "tog-modified-r-2000-raptor-speeder-bike",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "tog-nebulon-q-swoop",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        }
+      ]
     },
     {
       "workstream": "P6B-2",

@@ -8,8 +8,8 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 
 | Category | Count |
 |---|---|
-| RULES_DECISION_REQUIRED | 5 |
-| SOURCE_EVIDENCE_MISSING | 4 |
+| RULES_DECISION_REQUIRED | 4 |
+| SOURCE_EVIDENCE_MISSING | 5 |
 | ENGINEERING_COMPLEXITY | 5 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 1 |
@@ -23,13 +23,13 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | P6B-D-001 | P6B-1 | reinforced-bulkheads-10, reinforced-bulkheads-20, reinforced-bulkheads-30 | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6-01 |
 | P6B-D-002 | P6B-1 | sublight-drive-1 .. sublight-drive-6 | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6-02 |
 | P6B-D-008 | P6B-1 | all 51 offline-integrated effects (P6B-0..3); P6B-0 environment and Pilot check; custom-ship effects | LIVE_RUNTIME_PENDING | IMPORTANT | no | - |
-| P6B-D-010 | P6B-2 | cargo pods / extended range / smuggler compartments on hulls whose printed unit needs conversion | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6B-02 |
 | P6B-D-003 | P6B-1 | jamming-suite, jamming-array | ENGINEERING_COMPLEXITY | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-004 | P6B-1 | combat-thrusters | DEPENDENCY_BLOCKED | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-005 | P6B-1 | navicomputer-limited | RULES_DECISION_REQUIRED | MINOR | yes | V-P6B-01 |
 | P6B-D-006 | P6B-1 | navicomputer (training clause) | NONCRITICAL_DEFECT | MINOR | no | V-P6-05 |
 | P6B-D-007 | P6B-1 | com-jammers | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
 | P6B-D-009 | P6B-2 | sensor-array-2, sensor-array-4, sensor-array-6 | DEPENDENCY_BLOCKED | MINOR | no | V-P2-04 |
+| P6B-D-010 | P6B-2 | cargo pods / extended range on hulls with annotated or unknown printed quantities; smuggler compartments | SOURCE_EVIDENCE_MISSING | MINOR | yes | V-P6B-02 |
 | P6B-D-011 | P6B-2 | escape-pod-small, escape-pod-large | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
 | P6B-D-012 | P6B-2 | passenger-seating, passenger-quarters, medical-suite | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
 | P6B-D-013 | P6B-2 | slave-circuits-basic, slave-circuits-advanced, slave-circuits-recall | RULES_DECISION_REQUIRED | MINOR | yes | V-P6B-03 |
@@ -137,16 +137,15 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 - **Impact:** Ledger status EXPOSED_NOT_APPLIED (mechanicallyApplied false) while installable.
 - **Recommended action:** Read getEffectiveVehicleDerived().intelligence in P6B-3 weapon attack resolution once V-P2-04 is resolved.
 
-### P6B-D-010 - cargo pods / extended range / smuggler compartments on hulls whose printed unit needs conversion
+### P6B-D-010 - cargo pods / extended range on hulls with annotated or unknown printed quantities; smuggler compartments
 
 - **Source:** Starships of the Galaxy pp. 48-53 (Accessories)
-- **Category / severity:** RULES_DECISION_REQUIRED / IMPORTANT
-- **Reason:** Cargo pods add tons; 181 hulls print cargo in kg (and some in annotated units). Extended range adds 10% rounded down with a 1-day minimum; 279 hulls print consumables in weeks/months/years, and rounding in days or in the printed unit gives different results. Smuggler compartments cap hidden cargo at 5% of original cargo, again in kg vs tons.
-- **Missing:** Whether 1 ton = 1,000 kg for cargo arithmetic; which unit the extended-range rounding uses and the day length of a month/year.
+- **Category / severity:** SOURCE_EVIDENCE_MISSING / MINOR
+- **Reason:** V-P6B-02 resolved the unit conversions (owner ruling 2026-11-02): 398 of 429 hulls now have a convertible cargo value and 393 a convertible consumables duration. The remaining hulls print annotated, missing or unusual quantities (e.g. "70 tons (15 tons on shuttle-only models)", "2 days (1 week with booster ring)", "hours", "unlimited"); these are refused individually, never guessed (listed in annotatedCargo / annotatedConsumables). Smuggler compartments stay deferred: the printed text caps hidden cargo at 5% of the original cargo but does not say whether hidden space reduces normal cargo.
+- **Missing:** Which value of an annotated quantity applies; whether smuggler compartment space is carved out of normal cargo.
 - **Owner ruling needed:** yes (V-P6B-02)
-- **Source-supported options:** convert to days (week 7, month 30, year 365) then round down; round in the printed unit, minimum 1 day
-- **Impact:** Fail-closed: planner refuses with CARGO_UNIT_NOT_TONS / CONSUMABLES_UNIT_CONVERSION_UNRULED; smuggler compartments not installable.
-- **Recommended action:** Owner rules on V-P6B-02; then the refusals become conversions.
+- **Impact:** Planner refuses with CARGO_QUANTITY_ANNOTATED_UNRULED / CARGO_UNKNOWN (31 hulls) or CONSUMABLES_UNIT_CONVERSION_UNRULED / CONSUMABLES_UNKNOWN (36 hulls).
+- **Recommended action:** Rule per annotated identity only if a player needs one of these hulls; otherwise leave refused.
 
 ### P6B-D-011 - escape-pod-small, escape-pod-large
 

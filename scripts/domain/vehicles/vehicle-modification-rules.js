@@ -170,3 +170,35 @@ export function makeUnusedEmplacementResolver(table) {
     return { state: 'known', total: entry.unusedEmplacementPoints, basis: entry.basis };
   };
 }
+
+/**
+ * Owner calculation policy V-P6B-02 (2026-11-02). 1 metric ton = 1,000 kg and 1 week = 7 days are unit facts;
+ * 30 days/month and 365 days/year are a PROJECT GAMEPLAY CONVENTION, not a published SWSE calendar rule.
+ * Published values and units are never rewritten: these only feed calculations. Annotated or unusual quantities
+ * ("tons (150 tons civilian)", "hours", "unlimited", ...) are not guessed: they return null with a reason.
+ */
+export const VEHICLE_UNIT_POLICY = Object.freeze({
+  decision: 'V-P6B-02',
+  kgPerTon: 1000,
+  daysPer: Object.freeze({ day: 1, days: 1, week: 7, weeks: 7, month: 30, months: 30, year: 365, years: 365 }),
+  conventionUnits: Object.freeze(['month', 'months', 'year', 'years'])
+});
+const KG_PER_UNIT = Object.freeze({ kg: 1, ton: 1000, tons: 1000, 'metric tons': 1000, 'million tons': 1000 * 1000000 });
+
+/** Printed cargo in whole kilograms: { ok, kg, printed } or { ok:false, reason }. */
+export function cargoToKilograms(cargo) {
+  if (!cargo || !finite(cargo.value)) return { ok: false, reason: 'CARGO_UNKNOWN' };
+  const per = KG_PER_UNIT[String(cargo.unit ?? '').trim()];
+  if (per === undefined) return { ok: false, reason: 'CARGO_QUANTITY_ANNOTATED_UNRULED' };
+  return { ok: true, kg: Math.round(cargo.value * per), printed: cargo.raw ?? `${cargo.value} ${cargo.unit}` };
+}
+
+/** Printed consumables in days: { ok, days, basis: 'UNIT_FACT'|'PROJECT_CALENDAR_CONVENTION', printed } or { ok:false, reason }. */
+export function consumablesToDays(consumables) {
+  if (!consumables || !finite(consumables.value)) return { ok: false, reason: 'CONSUMABLES_UNKNOWN' };
+  const unit = String(consumables.unit ?? '').trim();
+  const per = VEHICLE_UNIT_POLICY.daysPer[unit];
+  if (per === undefined) return { ok: false, reason: 'CONSUMABLES_UNIT_CONVERSION_UNRULED' };
+  return { ok: true, days: consumables.value * per, basis: VEHICLE_UNIT_POLICY.conventionUnits.includes(unit) ? 'PROJECT_CALENDAR_CONVENTION' : 'UNIT_FACT',
+    printed: consumables.raw ?? `${consumables.value} ${unit}` };
+}

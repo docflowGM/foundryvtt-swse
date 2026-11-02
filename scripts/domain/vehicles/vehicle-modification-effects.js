@@ -10,14 +10,14 @@
  * docs/audits/vehicles/p6b-deferred-work.md): hit-point percentage rounding (Reinforced Bulkheads),
  * sublight-drive replacement, jammers, combat thrusters, the limited navicomputer, and replacement-vs-addition
  * when a hull already has the system. Those rows stay SOURCE_VERIFIED and cannot be installed.
- * P6B-2 added sensor arrays (Intelligence), cargo pods, the sensor enhancement package, extended range (printed-in-days
- * consumables only) and per-bay capacities (cryogenic chambers, hangar bays).
+ * P6B-2 added sensor arrays (Intelligence), cargo pods, the sensor enhancement package, extended range (printed
+ * consumables, converted under owner policy V-P6B-02) and per-bay capacities (cryogenic chambers, hangar bays).
  * P6B-1 added regenerating shields (recharge action), SLAM and navicomputers (check equipment bonuses).
  *
  * No Foundry globals: Node-testable.
  */
 import { getVehiclePublishedFieldState } from './vehicle-runtime-contract.js';
-import { costModifierForSize } from './vehicle-modification-rules.js';
+import { costModifierForSize, cargoToKilograms, consumablesToDays } from './vehicle-modification-rules.js';
 
 const finite = v => typeof v === 'number' && Number.isFinite(v);
 const abilityMod = score => Math.floor((score - 10) / 2);
@@ -104,10 +104,10 @@ export function effectInstallability({ catalogEntry, record, entries = [] }) {
       if (costModifierForSize(record?.classification?.printedSize) === null) reasons.push('HULL_SIZE_HAS_NO_PUBLISHED_COST_MODIFIER');
       const dexAfter = record.abilities.dex + installedDexterityChange(entries) + effect.dexterity;
       if (dexAfter < 1) reasons.push('CARGO_POD_DEXTERITY_BELOW_1');
-      if (!cargoTons(record)) reasons.push('CARGO_UNIT_NOT_TONS');
+      { const c = cargoToKilograms(record?.capacity?.cargo); if (!c.ok) reasons.push(c.reason); }
       break;
     }
-    case 'consumables': if (!consumablesDays(record)) reasons.push('CONSUMABLES_UNIT_CONVERSION_UNRULED'); break;
+    case 'consumables': { const c = consumablesToDays(record?.capacity?.consumables); if (!c.ok) reasons.push(c.reason); break; }
     case 'capacity': {
       const m = costModifierForSize(record?.classification?.printedSize);
       if (m === null) reasons.push('HULL_SIZE_HAS_NO_PUBLISHED_COST_MODIFIER');
@@ -129,17 +129,6 @@ function installedDexterityChange(entries) {
   for (const e of entries) { const fx = EFFECTS[e.catalogId]; if (fx?.kind === 'dexterity') d += fx.value; else if (fx?.kind === 'cargo-pod') d += fx.dexterity; }
   return d;
 }
-/** Printed cargo in tons, or null when the printed unit is not plain tons (kg, million tons, annotated units). */
-function cargoTons(record) {
-  const c = record?.capacity?.cargo;
-  return finite(c?.value) && ['ton', 'tons', 'metric tons'].includes(c.unit) ? { value: c.value, unit: c.unit } : null;
-}
-/** Printed consumables in days, only when printed in days (week/month conversions are unruled: rounding unit differs). */
-function consumablesDays(record) {
-  const c = record?.capacity?.consumables;
-  return finite(c?.value) && ['day', 'days'].includes(c.unit) ? c.value : null;
-}
-
 const stat = (base) => ({ base: finite(base) ? base : null, effective: finite(base) ? base : null, delta: 0, sources: [] });
 
 /**
@@ -158,8 +147,8 @@ export function computeEffectiveStatistics({ record, entries = [], environment =
     skillBonuses: [],
     intelligence: { base: finite(record?.abilities?.int) ? record.abilities.int : null, effective: finite(record?.abilities?.int) ? record.abilities.int : null, modifierDelta: 0, sources: [] },
     dexterity: { base: finite(record?.abilities?.dex) ? record.abilities.dex : null, effective: finite(record?.abilities?.dex) ? record.abilities.dex : null, sources: [] },
-    cargo: { base: record?.capacity?.cargo ?? null, addedTons: 0, effective: null, sources: [] },
-    consumables: { base: record?.capacity?.consumables ?? null, addedDays: 0, effectiveDays: null, sources: [] },
+    cargo: { base: record?.capacity?.cargo ?? null, addedTons: 0, baseKg: null, effectiveKg: null, effective: null, sources: [] },
+    consumables: { base: record?.capacity?.consumables ?? null, baseDays: null, basis: null, addedDays: 0, effectiveDays: null, sources: [] },
     capacities: {},
     unimplemented: []
   };
@@ -199,8 +188,10 @@ export function computeEffectiveStatistics({ record, entries = [], environment =
         break;
       }
       case 'consumables': {
-        const days = consumablesDays(record);
-        if (days !== null) { const add = Math.max(fx.minimumDays, Math.floor(days * fx.percent / 100)); out.consumables.addedDays += add; out.consumables.sources.push({ ...src, days: add }); }
+        // V-P6B-02: 10% of the ORIGINAL printed duration converted to days, rounded down, minimum 1 day; never compounded.
+        const c = consumablesToDays(record?.capacity?.consumables);
+        if (c.ok) { const add = Math.max(fx.minimumDays, Math.floor(c.days * fx.percent / 100)); out.consumables.addedDays += add; out.consumables.sources.push({ ...src, days: add }); }
+        else out.unimplemented.push({ installId: e.installId, name: e.name });
         break;
       }
       case 'capacity': {
@@ -235,8 +226,17 @@ export function computeEffectiveStatistics({ record, entries = [], environment =
   }
   for (const s of [out.reflex, out.initiative]) if (finite(s.base)) s.effective = s.base + s.delta;
   if (finite(out.intelligence.base)) out.intelligence.modifierDelta = abilityMod(out.intelligence.effective) - abilityMod(out.intelligence.base);
-  { const t = cargoTons(record); if (t && out.cargo.sources.length) out.cargo.effective = { value: t.value + out.cargo.addedTons, unit: 'tons' }; }
-  { const d = consumablesDays(record); if (d !== null && out.consumables.sources.length) out.consumables.effectiveDays = d + out.consumables.addedDays; }
+  if (out.cargo.sources.length) {
+    const c = cargoToKilograms(record?.capacity?.cargo);
+    if (c.ok) {
+      out.cargo.baseKg = c.kg; out.cargo.effectiveKg = c.kg + out.cargo.addedTons * 1000;
+      out.cargo.effective = { value: out.cargo.effectiveKg / 1000, unit: 'tons' };
+    }
+  }
+  if (out.consumables.sources.length) {
+    const c = consumablesToDays(record?.capacity?.consumables);
+    if (c.ok) { out.consumables.baseDays = c.days; out.consumables.basis = c.basis; out.consumables.effectiveDays = c.days + out.consumables.addedDays; }
+  }
   // Atmosphere-only effects apply only in an explicit 'atmosphere' environment (unknown never activates them).
   for (const m of out.movement) m.applies = m.sources.length > 0 && environment === 'atmosphere';
   out.environment = environment;

@@ -186,9 +186,12 @@ function effectiveRows({ record, entries, hp, hpBase, fortitude, extra = [], env
     plain('Cargo', b?.raw ?? (finite(b?.value) ? `${b.value} ${b.unit ?? ''}`.trim() : SOURCE_UNKNOWN), `+${fx.cargo.addedTons} tons (${fx.cargo.sources.map(x => x.name).join(', ')})`,
       fx.cargo.effective ? `${fx.cargo.effective.value} tons` : SOURCE_UNKNOWN);
   }
-  if (fx.consumables.sources.length)
-    plain('Consumables', fx.consumables.base?.raw ?? SOURCE_UNKNOWN, `+${fx.consumables.addedDays} days (${fx.consumables.sources.map(x => x.name).join(', ')})`,
+  if (fx.consumables.sources.length) {
+    // V-P6B-02: months/years are converted with the project calendar convention (30/365 days), not a published rule.
+    const conv = fx.consumables.basis === 'PROJECT_CALENDAR_CONVENTION' ? ` (= ${fx.consumables.baseDays} days, project calendar convention)` : '';
+    plain('Consumables', `${fx.consumables.base?.raw ?? SOURCE_UNKNOWN}${conv}`, `+${fx.consumables.addedDays} days (${fx.consumables.sources.map(x => x.name).join(', ')})`,
       finite(fx.consumables.effectiveDays) ? `${fx.consumables.effectiveDays} days` : SOURCE_UNKNOWN);
+  }
   const CAPACITY_LABEL = { hangar: 'Hangar space (units)', cryogenic: 'Cryogenic stasis (Medium or smaller creatures)' };
   for (const [key, c] of Object.entries(fx.capacities))
     plain(CAPACITY_LABEL[key] ?? key, 'none', c.sources.map(x => `${x.name} (${x.amount})`).join(', '), String(c.total));

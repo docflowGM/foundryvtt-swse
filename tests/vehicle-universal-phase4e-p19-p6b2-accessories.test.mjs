@@ -64,8 +64,13 @@ test('cargo pods: +cost modifier x 1/5/10 tons; Dexterity -2 each through Reflex
   // jets and pods accumulate on the Dexterity score, not on separately rounded modifiers
   install(a, 'maneuvering-jets-2', 'j1'); install(a, 'cargo-pod-light', 'p7');
   assert.equal(getEffectiveVehicleDerived(a).reflex, base.reflex, 'Dex 10 +2 -2 = 10');
-  // printed cargo in kg: the tons addition cannot be summed without a unit conversion -> refused, never guessed
-  assert.ok(plan(actorOf(XW), 'cargo-pod-light').reasons.includes('CARGO_UNIT_NOT_TONS'));
+  // V-P6B-02: printed kg cargo combines at 1,000 kg per ton; the printed value is untouched
+  const x = actorOf(XW); install(x, 'cargo-pod-light', 'k1');           // Gargantuan: cost modifier 2 -> +2 tons
+  const xc = getEffectiveVehicleDerived(x).cargo;
+  assert.deepEqual([xc.baseKg, xc.effectiveKg, xc.effective.value], [110, 2110, 2.11]);
+  assert.deepEqual(rec(x).capacity.cargo, { value: 110, unit: 'kg', raw: '110 kg' }, 'published value and unit preserved');
+  // annotated quantities are never guessed
+  assert.ok(plan(actorOf('kotor-star-forge-manufacture-herald-class-shuttle'), 'cargo-pod-light').reasons.includes('CARGO_QUANTITY_ANNOTATED_UNRULED'));
 });
 
 test('sensor arrays: equipment bonus to Intelligence; not stackable; no consumer changes other statistics', () => {
@@ -93,13 +98,18 @@ test('sensor enhancement package: +5 on Perception and Use Computer checks to op
   assert.match(svc, /vehicleSkillEquipmentBonus\(vehicle, \{ skill, use: 'sensors' \}\)/);
 });
 
-test('extended range: +10% of printed consumables per installation (rounded down, minimum 1 day); only days-printed hulls', () => {
-  const c = actorOf(LAATC);                              // 3 days
-  install(c, 'extended-range', 'x1');
-  assert.equal(getEffectiveVehicleDerived(c).consumables.effectiveDays, 4, '10% of 3 = 0.3 -> minimum 1 day');
-  install(c, 'extended-range', 'x2');                    // printed "for each time it is installed"
-  assert.equal(getEffectiveVehicleDerived(c).consumables.effectiveDays, 5);
-  assert.ok(plan(actorOf(YT), 'extended-range').reasons.includes('CONSUMABLES_UNIT_CONVERSION_UNRULED'), '2 months: rounding unit unruled');
+test('extended range (V-P6B-02): 10% of the ORIGINAL duration in days, rounded down, minimum 1 day; not compounded', () => {
+  const ext = (key, n) => { const a = actorOf(key); for (let i = 0; i < n; i++) install(a, 'extended-range', `x${i}`); return getEffectiveVehicleDerived(a).consumables; };
+  assert.equal(ext(LAATC, 1).effectiveDays, 4, '3 days: 0.3 -> minimum 1 day');
+  assert.equal(ext(LAATC, 2).effectiveDays, 5);
+  let c = ext(YT, 1);                                                      // 2 months
+  assert.deepEqual([c.baseDays, c.addedDays, c.effectiveDays, c.basis], [60, 6, 66, 'PROJECT_CALENDAR_CONVENTION']);
+  assert.equal(ext(YT, 3).effectiveDays, 60 + 18, 'each installation adds 10% of the original 60 days (never 10% of 66)');
+  c = ext('core-arc-170-starfighter', 1);                                  // 1 week = 7 days: 0.7 -> 1
+  assert.deepEqual([c.baseDays, c.effectiveDays, c.basis], [7, 8, 'UNIT_FACT']);
+  assert.equal(ext('core-imperial-i-class-star-destroyer', 1).effectiveDays, 2190 + 219, '6 years = 2,190 days');
+  assert.ok(plan(actorOf('core-eta-2-actis-interceptor'), 'extended-range').reasons.includes('CONSUMABLES_UNIT_CONVERSION_UNRULED'), 'annotated duration not guessed');
+  assert.deepEqual(rec(actorOf(YT)).capacity.consumables, { value: 2, unit: 'months', raw: '2 months' });
 });
 
 test('capacities: hangar bays (cost modifier/50 units) and cryogenic chambers (cost modifier/5); fractional capacities refused', () => {
