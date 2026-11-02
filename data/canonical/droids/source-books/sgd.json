@@ -23824,8 +23824,8 @@
               },
               {
                 "book": "Scavenger's Guide to Droids",
-                "page": 138,
-                "pdfPage1Based": 139,
+                "page": 139,
+                "pdfPage1Based": 140,
                 "sourceEntryKey": "SGD-DROID-036",
                 "verifiedBy": "pdf-visual",
                 "citationLabel": "SGD-036-THREAT-SCAN-ACTION-CONFLICT PROTOCOL: Protocol Threat Scan costs two swift actions once per turn"
@@ -30150,6 +30150,76 @@
               "citationLabel": "SGD-046-WEAPON-MOUNT-NARRATIVE"
             },
             "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-046-CONSTRAINT-REPULSOR-LEAP-NOT-FLIGHT",
+            "statement": "Limited leg repulsorlift booster uses FREE action and halves DC of Jump checks; does not confer flying movement, 6-square tactical speed unchanged.",
+            "scope": "YVH-Series Battle Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-REPULSOR-LEAP-NOT-FLIGHT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-046-CONSTRAINT-YV-SCAN-TARGET-AND-CONFLICT",
+            "statement": "YV sensor scan uses +22 Perception opposed by a Yuuzhan Vong within 12 squares Stealth or Deception; main FULL-ROUND vs protocol TWO SWIFT action cost unresolved. Does not grant general lifeform true sight.",
+            "scope": "YVH-Series Battle Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-YV-SCAN-TARGET-AND-CONFLICT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-046-CONSTRAINT-YV-TAUNT-TARGET-AND-CONFLICT",
+            "statement": "All Yuuzhan Vong treat YVH as hostile; main FREE ACTION targets all Yuuzhan Vong within six squares; protocol TWO SWIFT targets at most three; unresolved. Successful intimidation only redirects the affected opponent's next-turn attack toward YVH, not control over other actions.",
+            "scope": "YVH-Series Battle Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 159,
+              "pdfPage1Based": 160,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-YV-TAUNT-TARGET-AND-CONFLICT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-046-CONSTRAINT-VARIABLE-OUTPUT-AMMUNITION",
+            "statement": "Blaster cannon power reserve is finite: standard shot one power unit (30 normal shots); Maximum Firepower consumes TWO shot units and increases normal 3d12 to 4d12 for the printed area attack. Do not grant a second cannon attack or unlimited ammo.",
+            "scope": "YVH-Series Battle Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 159,
+              "pdfPage1Based": 160,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-VARIABLE-OUTPUT-AMMUNITION"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SGD-046-CONSTRAINT-GUARDIAN-REQUIRES-REPLACEMENT",
+            "statement": "Guardian programming requires 12 hours and DC25 Use Computer, gains Harm's Way by REPLACING one soldier talent. Its repeated Harm's Way use each round is variant-only, not factory YVH; keep NPC/heroic path distinct.",
+            "scope": "YVH-Series Battle Droid",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 159,
+              "pdfPage1Based": 160,
+              "sourceEntryKey": "SGD-DROID-046",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CONSTRAINT-GUARDIAN-REQUIRES-REPLACEMENT"
+            },
+            "executionStatus": "source-only"
           }
         ]
       },
@@ -30315,12 +30385,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF pages 159-160, printed pp.158-159 visually checked including main statblock, protocol block, playing heroic sidebar and guardian variant. Structured 13 physical systems, 2 hands, walking, 3 classes, languages, 2 printed possessions, four main attack rows, action alternatives and 30-unit blaster power reserve. Source contradictions SGD-046-SCAN-ACTION-COST-CONFLICT and SGD-046-TAUNT-ACTION-AND-TARGET-CONFLICT unresolved. Exact feat/talent instance keys, right-arm cannon/mount and optional Guardian transformation require separate mechanical certification. Not runtime-tested.",
+        "reviewNotes": "PDF pages 159-160, printed pp.158-159 visually checked including main statblock, protocol block, playing heroic sidebar and guardian variant. Structured 13 physical systems, 2 hands, walking, 3 classes, languages, 2 printed possessions, four main attack rows, action alternatives and 30-unit blaster power reserve. Source contradictions SGD-046-SCAN-ACTION-COST-CONFLICT and SGD-046-TAUNT-ACTION-AND-TARGET-CONFLICT unresolved. Exact feat/talent instance keys, right-arm cannon/mount and optional Guardian transformation require separate mechanical certification. Not runtime-tested. M14 final full paired-page second source-mechanics readback printed pp.158-159, PDF pp.159-160. Existing five protocol actions, Guardian transformation, two unresolved contradictions and heroic route retained. Added five non-executable constraints clarifying repulsor, YV detection/taunt, cannon shot expenditure and optional Guardian talent swap. All remain partial mechanical certification.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p158:PDF-page-159",
           "SGD-CENSUS:SGD-DROID-046",
           "SGD:p158:PDF-p159:visual-statblock-field-review",
-          "SGD:printed-pp158-159:PDF-index158-159:both-pages-visual-2026-11-02"
+          "SGD:printed-pp158-159:PDF-index158-159:both-pages-visual-2026-11-02",
+          "SGD:printed-pp158-159:PDF-p159-160:M14-second-source-mechanics-closeout"
         ]
       }
     }
