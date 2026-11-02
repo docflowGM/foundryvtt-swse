@@ -245,6 +245,13 @@ export function validateLevelUpRequiredSelections(manifest, progressionSession) 
     if (selected < required) errors.push(`Choose ${required} class bonus feat${required === 1 ? '' : 's'} from ${manifest.className || 'the leveled class'}`);
   }
 
+  // Share Talent is not a new-talent award. Until a picker resolves an
+  // already-owned eligible talent and preserves its immutable selection,
+  // fail closed rather than granting an illegal extra talent or losing a pick.
+  if (Number(manifest.choices?.shareTalentChoices || 0) > 0) {
+    errors.push('Officer Share Talent requires the dedicated existing-talent picker; ordinary talent selections cannot satisfy this class feature');
+  }
+
   if (Number(manifest.choices?.talentChoices || 0) > 0) {
     const required = Number(manifest.choices.talentChoices) || 0;
     const selected = countSelectionEntries(talents);
