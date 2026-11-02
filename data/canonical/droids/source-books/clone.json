@@ -7090,10 +7090,159 @@
         "con": null,
         "wis": 9,
         "cha": 7,
-        "int": 9
+        "int": 9,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedTotal": 9,
+            "raw": "Initiative +9",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 188,
+              "pdfPage1Based": 189,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-018",
+              "citationLabel": "Printed skill Initiative"
+            }
+          }
+        ]
       },
       "progression": {
-        "classLineRaw": "nonheroic 9/soldier 3"
+        "classLineRaw": "nonheroic 9/soldier 3",
+        "feats": [
+          {
+            "traitId": "CLONE-DROID-018-feats-01",
+            "name": "Armor Proficiency (light, medium)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 188,
+              "pdfPage1Based": 189,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-018",
+              "citationLabel": "Printed feat grouped as shown: Armor Proficiency (light, medium)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-018-feats-02",
+            "name": "Double Attack",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 188,
+              "pdfPage1Based": 189,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-018",
+              "citationLabel": "Printed feat grouped as shown: Double Attack"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-018-feats-03",
+            "name": "Point Blank Shot",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 188,
+              "pdfPage1Based": 189,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-018",
+              "citationLabel": "Printed feat grouped as shown: Point Blank Shot"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-018-feats-04",
+            "name": "Power Attack",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 188,
+              "pdfPage1Based": 189,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-018",
+              "citationLabel": "Printed feat grouped as shown: Power Attack"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-018-feats-05",
+            "name": "Rapid Shot",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 188,
+              "pdfPage1Based": 189,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-018",
+              "citationLabel": "Printed feat grouped as shown: Rapid Shot"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-018-feats-06",
+            "name": "Toughness",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 188,
+              "pdfPage1Based": 189,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-018",
+              "citationLabel": "Printed feat grouped as shown: Toughness"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-018-feats-07",
+            "name": "Weapon Focus (heavy weapons)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 188,
+              "pdfPage1Based": 189,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-018",
+              "citationLabel": "Printed feat grouped as shown: Weapon Focus (heavy weapons)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-018-feats-08",
+            "name": "Weapon Proficiency (heavy weapons, rifles)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 188,
+              "pdfPage1Based": 189,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-018",
+              "citationLabel": "Printed feat grouped as shown: Weapon Proficiency (heavy weapons, rifles)"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "talents": [
+          {
+            "traitId": "CLONE-DROID-018-talents-01",
+            "name": "Armored Defense",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 188,
+              "pdfPage1Based": 189,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-018",
+              "citationLabel": "Printed talent grouped as shown: Armored Defense"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-018-talents-02",
+            "name": "Juggernaut",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 188,
+              "pdfPage1Based": 189,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-018",
+              "citationLabel": "Printed talent grouped as shown: Juggernaut"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "defenses": {
         "reflex": 14,
@@ -7390,13 +7539,14 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p188 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p188 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified. M6 grouped printed feat/talent claims and skill totals transcribed from visually separated statblock column p188. Each feat/weapon proficiency group remains source-only, not yet mapped to certified canonical registry IDs or level-legal progression.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-018",
           "Clone Wars Campaign Guide:printed-p188:TXT-line-18087",
           "CLONE:printed-p188:PDF-page-189:selected-visual-fields:batch2",
           "CLONE:printed-p189:PDF-page-190:A-DSD-continuation",
-          "CLONE:printed-p188:PDF-p189:M4-paired-column-visual-mechanics"
+          "CLONE:printed-p188:PDF-p189:M4-paired-column-visual-mechanics",
+          "CLONE:printed-p188:PDF-p189:M6-feat-talent-skill-visual-pass"
         ]
       }
     },
@@ -7434,10 +7584,224 @@
         "con": null,
         "int": 12,
         "wis": 11,
-        "cha": 11
+        "cha": 11,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedTotal": 14,
+            "raw": "Initiative +14",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 189,
+              "pdfPage1Based": 190,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-019",
+              "citationLabel": "Printed skill Initiative"
+            }
+          },
+          {
+            "name": "Perception",
+            "printedTotal": 14,
+            "raw": "Perception +14",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 189,
+              "pdfPage1Based": 190,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-019",
+              "citationLabel": "Printed skill Perception"
+            }
+          }
+        ]
       },
       "progression": {
-        "classLineRaw": "nonheroic 6/soldier 6/elite trooper 3"
+        "classLineRaw": "nonheroic 6/soldier 6/elite trooper 3",
+        "feats": [
+          {
+            "traitId": "CLONE-DROID-019-feats-01",
+            "name": "Armor Proficiency (light, medium)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 189,
+              "pdfPage1Based": 190,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-019",
+              "citationLabel": "Printed feat grouped as shown: Armor Proficiency (light, medium)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-019-feats-02",
+            "name": "Coordinated Attack",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 189,
+              "pdfPage1Based": 190,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-019",
+              "citationLabel": "Printed feat grouped as shown: Coordinated Attack"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-019-feats-03",
+            "name": "Double Attack (advanced melee weapons)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 189,
+              "pdfPage1Based": 190,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-019",
+              "citationLabel": "Printed feat grouped as shown: Double Attack (advanced melee weapons)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-019-feats-04",
+            "name": "Double Attack (rifles)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 189,
+              "pdfPage1Based": 190,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-019",
+              "citationLabel": "Printed feat grouped as shown: Double Attack (rifles)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-019-feats-05",
+            "name": "Martial Arts I",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 189,
+              "pdfPage1Based": 190,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-019",
+              "citationLabel": "Printed feat grouped as shown: Martial Arts I"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-019-feats-06",
+            "name": "Point Blank Shot",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 189,
+              "pdfPage1Based": 190,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-019",
+              "citationLabel": "Printed feat grouped as shown: Point Blank Shot"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-019-feats-07",
+            "name": "Rapid Shot",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 189,
+              "pdfPage1Based": 190,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-019",
+              "citationLabel": "Printed feat grouped as shown: Rapid Shot"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-019-feats-08",
+            "name": "Rapid Strike",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 189,
+              "pdfPage1Based": 190,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-019",
+              "citationLabel": "Printed feat grouped as shown: Rapid Strike"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-019-feats-09",
+            "name": "Weapon Proficiency (advanced melee weapons, heavy weapons, rifles, simple weapons)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 189,
+              "pdfPage1Based": 190,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-019",
+              "citationLabel": "Printed feat grouped as shown: Weapon Proficiency (advanced melee weapons, heavy weapons, rifles, simple weapons)"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "talents": [
+          {
+            "traitId": "CLONE-DROID-019-talents-01",
+            "name": "Armored Defense",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 189,
+              "pdfPage1Based": 190,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-019",
+              "citationLabel": "Printed talent grouped as shown: Armored Defense"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-019-talents-02",
+            "name": "Exotic Weapon Mastery",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 189,
+              "pdfPage1Based": 190,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-019",
+              "citationLabel": "Printed talent grouped as shown: Exotic Weapon Mastery"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-019-talents-03",
+            "name": "Improved Armor Defense",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 189,
+              "pdfPage1Based": 190,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-019",
+              "citationLabel": "Printed talent grouped as shown: Improved Armor Defense"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-019-talents-04",
+            "name": "Indomitable",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 189,
+              "pdfPage1Based": 190,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-019",
+              "citationLabel": "Printed talent grouped as shown: Indomitable"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-019-talents-05",
+            "name": "Multiattack Proficiency (rifles)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 189,
+              "pdfPage1Based": 190,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-019",
+              "citationLabel": "Printed talent grouped as shown: Multiattack Proficiency (rifles)"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "defenses": {
         "reflex": 26,
@@ -7760,12 +8124,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p189 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified. M5 correction: p189 A-Series Systems were mistakenly overlaid with p188 A-DSD list in M4; corrected to nine separately printed p189 tokens. No source attestation of any self-destruct system on A-Series.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p189 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified. M5 correction: p189 A-Series Systems were mistakenly overlaid with p188 A-DSD list in M4; corrected to nine separately printed p189 tokens. No source attestation of any self-destruct system on A-Series. M6 grouped printed feat/talent claims and skill totals transcribed from visually separated statblock column p189. Each feat/weapon proficiency group remains source-only, not yet mapped to certified canonical registry IDs or level-legal progression.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-019",
           "Clone Wars Campaign Guide:printed-p189:TXT-line-18169",
           "CLONE:printed-p189:PDF-page-190:selected-visual-fields:batch2",
-          "CLONE:printed-p189:PDF-p190:M4-paired-column-visual-mechanics"
+          "CLONE:printed-p189:PDF-p190:M4-paired-column-visual-mechanics",
+          "CLONE:printed-p189:PDF-p190:M6-feat-talent-skill-visual-pass"
         ]
       }
     },
@@ -7803,10 +8168,146 @@
         "int": 9,
         "wis": 10,
         "cha": 10,
-        "con": null
+        "con": null,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedTotal": 9,
+            "raw": "Initiative +9",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 190,
+              "pdfPage1Based": 191,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-020",
+              "citationLabel": "Printed skill Initiative"
+            }
+          },
+          {
+            "name": "Perception",
+            "printedTotal": 8,
+            "raw": "Perception +8",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 190,
+              "pdfPage1Based": 191,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-020",
+              "citationLabel": "Printed skill Perception"
+            }
+          }
+        ]
       },
       "progression": {
-        "classLineRaw": "nonheroic 3/soldier 3"
+        "classLineRaw": "nonheroic 3/soldier 3",
+        "feats": [
+          {
+            "traitId": "CLONE-DROID-020-feats-01",
+            "name": "Dual Weapon Mastery I",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 190,
+              "pdfPage1Based": 191,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-020",
+              "citationLabel": "Printed feat grouped as shown: Dual Weapon Mastery I"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-020-feats-02",
+            "name": "Rapid Shot",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 190,
+              "pdfPage1Based": 191,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-020",
+              "citationLabel": "Printed feat grouped as shown: Rapid Shot"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-020-feats-03",
+            "name": "Skill Training (Initiative)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 190,
+              "pdfPage1Based": 191,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-020",
+              "citationLabel": "Printed feat grouped as shown: Skill Training (Initiative)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-020-feats-04",
+            "name": "Running Attack",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 190,
+              "pdfPage1Based": 191,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-020",
+              "citationLabel": "Printed feat grouped as shown: Running Attack"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-020-feats-05",
+            "name": "Toughness",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 190,
+              "pdfPage1Based": 191,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-020",
+              "citationLabel": "Printed feat grouped as shown: Toughness"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-020-feats-06",
+            "name": "Weapon Proficiency (heavy weapons, pistols, simple weapons)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 190,
+              "pdfPage1Based": 191,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-020",
+              "citationLabel": "Printed feat grouped as shown: Weapon Proficiency (heavy weapons, pistols, simple weapons)"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "talents": [
+          {
+            "traitId": "CLONE-DROID-020-talents-01",
+            "name": "Melee Smash",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 190,
+              "pdfPage1Based": 191,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-020",
+              "citationLabel": "Printed talent grouped as shown: Melee Smash"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-020-talents-02",
+            "name": "Stunning Strike",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 190,
+              "pdfPage1Based": 191,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-020",
+              "citationLabel": "Printed talent grouped as shown: Stunning Strike"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "defenses": {
         "reflex": 15,
@@ -8028,12 +8529,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p190 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p190 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified. M6 grouped printed feat/talent claims and skill totals transcribed from visually separated statblock column p190. Each feat/weapon proficiency group remains source-only, not yet mapped to certified canonical registry IDs or level-legal progression.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-020",
           "Clone Wars Campaign Guide:printed-p190:TXT-line-18260",
           "CLONE:printed-p190:PDF-page-191:selected-visual-fields:batch2",
-          "CLONE:printed-p190:PDF-p191:M4-paired-column-visual-mechanics"
+          "CLONE:printed-p190:PDF-p191:M4-paired-column-visual-mechanics",
+          "CLONE:printed-p190:PDF-p191:M6-feat-talent-skill-visual-pass"
         ]
       }
     },
@@ -8071,10 +8573,133 @@
         "int": 10,
         "wis": 10,
         "cha": 9,
-        "con": null
+        "con": null,
+        "skills": [
+          {
+            "name": "Perception",
+            "printedTotal": 10,
+            "raw": "Perception +10",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 190,
+              "pdfPage1Based": 191,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-021",
+              "citationLabel": "Printed skill Perception"
+            }
+          }
+        ]
       },
       "progression": {
-        "classLineRaw": "nonheroic 3/soldier 3"
+        "classLineRaw": "nonheroic 3/soldier 3",
+        "feats": [
+          {
+            "traitId": "CLONE-DROID-021-feats-01",
+            "name": "Armor Proficiency (light)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 190,
+              "pdfPage1Based": 191,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-021",
+              "citationLabel": "Printed feat grouped as shown: Armor Proficiency (light)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-021-feats-02",
+            "name": "Deadeye",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 190,
+              "pdfPage1Based": 191,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-021",
+              "citationLabel": "Printed feat grouped as shown: Deadeye"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-021-feats-03",
+            "name": "Far Shot",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 190,
+              "pdfPage1Based": 191,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-021",
+              "citationLabel": "Printed feat grouped as shown: Far Shot"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-021-feats-04",
+            "name": "Point Blank Shot",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 190,
+              "pdfPage1Based": 191,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-021",
+              "citationLabel": "Printed feat grouped as shown: Point Blank Shot"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-021-feats-05",
+            "name": "Precise Shot",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 190,
+              "pdfPage1Based": 191,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-021",
+              "citationLabel": "Printed feat grouped as shown: Precise Shot"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-021-feats-06",
+            "name": "Weapon Proficiency (pistols, rifles, simple weapons)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 190,
+              "pdfPage1Based": 191,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-021",
+              "citationLabel": "Printed feat grouped as shown: Weapon Proficiency (pistols, rifles, simple weapons)"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "talents": [
+          {
+            "traitId": "CLONE-DROID-021-talents-01",
+            "name": "Battle Analysis",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 190,
+              "pdfPage1Based": 191,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-021",
+              "citationLabel": "Printed talent grouped as shown: Battle Analysis"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-021-talents-02",
+            "name": "Devastating Attack (rifles)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 190,
+              "pdfPage1Based": 191,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-021",
+              "citationLabel": "Printed talent grouped as shown: Devastating Attack (rifles)"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "defenses": {
         "reflex": 15,
@@ -8324,12 +8949,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p190 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p190 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified. M6 grouped printed feat/talent claims and skill totals transcribed from visually separated statblock column p190. Each feat/weapon proficiency group remains source-only, not yet mapped to certified canonical registry IDs or level-legal progression.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-021",
           "Clone Wars Campaign Guide:printed-p190:TXT-line-18268",
           "CLONE:printed-p190:PDF-page-191:selected-visual-fields:batch2",
-          "CLONE:printed-p190:PDF-p191:M4-paired-column-visual-mechanics"
+          "CLONE:printed-p190:PDF-p191:M4-paired-column-visual-mechanics",
+          "CLONE:printed-p190:PDF-p191:M6-feat-talent-skill-visual-pass"
         ]
       }
     },
@@ -8367,10 +8993,93 @@
         "con": null,
         "int": 10,
         "wis": 11,
-        "cha": 7
+        "cha": 7,
+        "skills": [
+          {
+            "name": "Perception",
+            "printedTotal": 8,
+            "raw": "Perception +8",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 191,
+              "pdfPage1Based": 192,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-022",
+              "citationLabel": "Printed skill Perception"
+            }
+          }
+        ]
       },
       "progression": {
-        "classLineRaw": "nonheroic 6"
+        "classLineRaw": "nonheroic 6",
+        "feats": [
+          {
+            "traitId": "CLONE-DROID-022-feats-01",
+            "name": "Armor Proficiency (light)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 191,
+              "pdfPage1Based": 192,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-022",
+              "citationLabel": "Printed feat grouped as shown: Armor Proficiency (light)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-022-feats-02",
+            "name": "Charging Fire",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 191,
+              "pdfPage1Based": 192,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-022",
+              "citationLabel": "Printed feat grouped as shown: Charging Fire"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-022-feats-03",
+            "name": "Rapid Shot",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 191,
+              "pdfPage1Based": 192,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-022",
+              "citationLabel": "Printed feat grouped as shown: Rapid Shot"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-022-feats-04",
+            "name": "Toughness",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 191,
+              "pdfPage1Based": 192,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-022",
+              "citationLabel": "Printed feat grouped as shown: Toughness"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-022-feats-05",
+            "name": "Weapon Proficiency (heavy weapons, rifles, simple weapons)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 191,
+              "pdfPage1Based": 192,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-022",
+              "citationLabel": "Printed feat grouped as shown: Weapon Proficiency (heavy weapons, rifles, simple weapons)"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "talents": []
       },
       "defenses": {
         "reflex": 10,
@@ -8626,12 +9335,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p191 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p191 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified. M6 grouped printed feat/talent claims and skill totals transcribed from visually separated statblock column p191. Each feat/weapon proficiency group remains source-only, not yet mapped to certified canonical registry IDs or level-legal progression.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-022",
           "Clone Wars Campaign Guide:printed-p191:TXT-line-18397",
           "CLONE:printed-p191:PDF-page-192:selected-visual-fields:batch2",
-          "CLONE:printed-p191:PDF-p192:M4-paired-column-visual-mechanics"
+          "CLONE:printed-p191:PDF-p192:M4-paired-column-visual-mechanics",
+          "CLONE:printed-p191:PDF-p192:M6-feat-talent-skill-visual-pass"
         ]
       }
     },
@@ -8669,10 +9379,146 @@
         "con": null,
         "int": 10,
         "wis": 11,
-        "cha": 7
+        "cha": 7,
+        "skills": [
+          {
+            "name": "Perception",
+            "printedTotal": 9,
+            "raw": "Perception +9",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-023",
+              "citationLabel": "Printed skill Perception"
+            }
+          }
+        ]
       },
       "progression": {
-        "classLineRaw": "nonheroic 6/soldier 3"
+        "classLineRaw": "nonheroic 6/soldier 3",
+        "feats": [
+          {
+            "traitId": "CLONE-DROID-023-feats-01",
+            "name": "Armor Proficiency (light, medium)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-023",
+              "citationLabel": "Printed feat grouped as shown: Armor Proficiency (light, medium)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-023-feats-02",
+            "name": "Burst Fire",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-023",
+              "citationLabel": "Printed feat grouped as shown: Burst Fire"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-023-feats-03",
+            "name": "Charging Fire",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-023",
+              "citationLabel": "Printed feat grouped as shown: Charging Fire"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-023-feats-04",
+            "name": "Dual Weapon Mastery I",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-023",
+              "citationLabel": "Printed feat grouped as shown: Dual Weapon Mastery I"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-023-feats-05",
+            "name": "Rapid Shot",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-023",
+              "citationLabel": "Printed feat grouped as shown: Rapid Shot"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-023-feats-06",
+            "name": "Toughness",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-023",
+              "citationLabel": "Printed feat grouped as shown: Toughness"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-023-feats-07",
+            "name": "Weapon Proficiency (heavy weapons, rifles)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-023",
+              "citationLabel": "Printed feat grouped as shown: Weapon Proficiency (heavy weapons, rifles)"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "talents": [
+          {
+            "traitId": "CLONE-DROID-023-talents-01",
+            "name": "Devastating Attack (rifles)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-023",
+              "citationLabel": "Printed talent grouped as shown: Devastating Attack (rifles)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-023-talents-02",
+            "name": "Penetrating Attack (rifles)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-023",
+              "citationLabel": "Printed talent grouped as shown: Penetrating Attack (rifles)"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "defenses": {
         "reflex": 19,
@@ -8943,13 +9789,14 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p192 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p192 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified. M6 grouped printed feat/talent claims and skill totals transcribed from visually separated statblock column p192. Each feat/weapon proficiency group remains source-only, not yet mapped to certified canonical registry IDs or level-legal progression.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-023",
           "Clone Wars Campaign Guide:printed-p192:TXT-line-18479",
           "CLONE:printed-p192:PDF-page-193:selected-visual-fields:batch2",
           "CLONE:printed-p191:model-hero-eligibility",
-          "CLONE:printed-p192:PDF-p193:M4-paired-column-visual-mechanics"
+          "CLONE:printed-p192:PDF-p193:M4-paired-column-visual-mechanics",
+          "CLONE:printed-p192:PDF-p193:M6-feat-talent-skill-visual-pass"
         ]
       }
     },
@@ -8987,10 +9834,198 @@
         "con": null,
         "int": 14,
         "wis": 16,
-        "cha": 8
+        "cha": 8,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedTotal": 13,
+            "raw": "Initiative +13",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-024",
+              "citationLabel": "Printed skill Initiative"
+            }
+          },
+          {
+            "name": "Knowledge (tactics)",
+            "printedTotal": 12,
+            "raw": "Knowledge (tactics) +12",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-024",
+              "citationLabel": "Printed skill Knowledge (tactics)"
+            }
+          },
+          {
+            "name": "Perception",
+            "printedTotal": 13,
+            "raw": "Perception +13",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-024",
+              "citationLabel": "Printed skill Perception"
+            }
+          },
+          {
+            "name": "Stealth",
+            "printedTotal": 13,
+            "raw": "Stealth +13",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-024",
+              "citationLabel": "Printed skill Stealth"
+            }
+          }
+        ]
       },
       "progression": {
-        "classLineRaw": "nonheroic 6/soldier 4"
+        "classLineRaw": "nonheroic 6/soldier 4",
+        "feats": [
+          {
+            "traitId": "CLONE-DROID-024-feats-01",
+            "name": "Coordinated Attack",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-024",
+              "citationLabel": "Printed feat grouped as shown: Coordinated Attack"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-024-feats-02",
+            "name": "Improved Defenses",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-024",
+              "citationLabel": "Printed feat grouped as shown: Improved Defenses"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-024-feats-03",
+            "name": "Point Blank Shot",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-024",
+              "citationLabel": "Printed feat grouped as shown: Point Blank Shot"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-024-feats-04",
+            "name": "Precise Shot",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-024",
+              "citationLabel": "Printed feat grouped as shown: Precise Shot"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-024-feats-05",
+            "name": "Skill Training (Knowledge [tactics])",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-024",
+              "citationLabel": "Printed feat grouped as shown: Skill Training (Knowledge [tactics])"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-024-feats-06",
+            "name": "Sniper",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-024",
+              "citationLabel": "Printed feat grouped as shown: Sniper"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-024-feats-07",
+            "name": "Weapon Focus (rifles)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-024",
+              "citationLabel": "Printed feat grouped as shown: Weapon Focus (rifles)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-024-feats-08",
+            "name": "Weapon Proficiency (pistols, rifles, simple weapons)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-024",
+              "citationLabel": "Printed feat grouped as shown: Weapon Proficiency (pistols, rifles, simple weapons)"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "talents": [
+          {
+            "traitId": "CLONE-DROID-024-talents-01",
+            "name": "Battle Analysis",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-024",
+              "citationLabel": "Printed talent grouped as shown: Battle Analysis"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-024-talents-02",
+            "name": "Cover Fire",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 192,
+              "pdfPage1Based": 193,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-024",
+              "citationLabel": "Printed talent grouped as shown: Cover Fire"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "defenses": {
         "reflex": 19,
@@ -9213,12 +10248,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p192 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p192 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified. M6 grouped printed feat/talent claims and skill totals transcribed from visually separated statblock column p192. Each feat/weapon proficiency group remains source-only, not yet mapped to certified canonical registry IDs or level-legal progression.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-024",
           "Clone Wars Campaign Guide:printed-p192:TXT-line-18559",
           "CLONE:printed-p192:PDF-page-193:selected-visual-fields:batch2",
-          "CLONE:printed-p192:PDF-p193:M4-paired-column-visual-mechanics"
+          "CLONE:printed-p192:PDF-p193:M4-paired-column-visual-mechanics",
+          "CLONE:printed-p192:PDF-p193:M6-feat-talent-skill-visual-pass"
         ]
       }
     },
@@ -9256,10 +10292,93 @@
         "con": null,
         "int": 13,
         "wis": 10,
-        "cha": 8
+        "cha": 8,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedTotal": 11,
+            "raw": "Initiative +11",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 193,
+              "pdfPage1Based": 194,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-025",
+              "citationLabel": "Printed skill Initiative"
+            }
+          },
+          {
+            "name": "Pilot",
+            "printedTotal": 11,
+            "raw": "Pilot +11",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 193,
+              "pdfPage1Based": 194,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-025",
+              "citationLabel": "Printed skill Pilot"
+            }
+          }
+        ]
       },
       "progression": {
-        "classLineRaw": "nonheroic 6"
+        "classLineRaw": "nonheroic 6",
+        "feats": [
+          {
+            "traitId": "CLONE-DROID-025-feats-01",
+            "name": "Power Attack",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 193,
+              "pdfPage1Based": 194,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-025",
+              "citationLabel": "Printed feat grouped as shown: Power Attack"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-025-feats-02",
+            "name": "Powerful Charge",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 193,
+              "pdfPage1Based": 194,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-025",
+              "citationLabel": "Printed feat grouped as shown: Powerful Charge"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-025-feats-03",
+            "name": "Running Attack",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 193,
+              "pdfPage1Based": 194,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-025",
+              "citationLabel": "Printed feat grouped as shown: Running Attack"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-025-feats-04",
+            "name": "Weapon Proficiency (advanced melee weapons, pistols, rifles, simple weapons)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 193,
+              "pdfPage1Based": 194,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-025",
+              "citationLabel": "Printed feat grouped as shown: Weapon Proficiency (advanced melee weapons, pistols, rifles, simple weapons)"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "talents": []
       },
       "defenses": {
         "reflex": 13,
@@ -9459,13 +10578,14 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p193 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 3 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p193 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 3 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified. M6 grouped printed feat/talent claims and skill totals transcribed from visually separated statblock column p193. Each feat/weapon proficiency group remains source-only, not yet mapped to certified canonical registry IDs or level-legal progression.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-025",
           "Clone Wars Campaign Guide:printed-p193:TXT-line-18628",
           "CLONE:printed-p193:PDF-page-194:selected-visual-fields:batch2",
           "CLONE:printed-p192:model-hero-eligibility",
-          "CLONE:printed-p193:PDF-p194:M4-paired-column-visual-mechanics"
+          "CLONE:printed-p193:PDF-p194:M4-paired-column-visual-mechanics",
+          "CLONE:printed-p193:PDF-p194:M6-feat-talent-skill-visual-pass"
         ]
       }
     },
@@ -9503,10 +10623,185 @@
         "con": null,
         "wis": 12,
         "int": 10,
-        "cha": 8
+        "cha": 8,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedTotal": 11,
+            "raw": "Initiative +11",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 193,
+              "pdfPage1Based": 194,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-026",
+              "citationLabel": "Printed skill Initiative"
+            }
+          },
+          {
+            "name": "Mechanics",
+            "printedTotal": 8,
+            "raw": "Mechanics +8",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 193,
+              "pdfPage1Based": 194,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-026",
+              "citationLabel": "Printed skill Mechanics"
+            }
+          },
+          {
+            "name": "Perception",
+            "printedTotal": 9,
+            "raw": "Perception +9",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 193,
+              "pdfPage1Based": 194,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-026",
+              "citationLabel": "Printed skill Perception"
+            }
+          }
+        ]
       },
       "progression": {
-        "classLineRaw": "soldier 1/Jedi 5"
+        "classLineRaw": "soldier 1/Jedi 5",
+        "feats": [
+          {
+            "traitId": "CLONE-DROID-026-feats-01",
+            "name": "Armor Proficiency (light, medium)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 193,
+              "pdfPage1Based": 194,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-026",
+              "citationLabel": "Printed feat grouped as shown: Armor Proficiency (light, medium)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-026-feats-02",
+            "name": "Dual Weapon Mastery I",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 193,
+              "pdfPage1Based": 194,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-026",
+              "citationLabel": "Printed feat grouped as shown: Dual Weapon Mastery I"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-026-feats-03",
+            "name": "Dual Weapon Mastery II",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 193,
+              "pdfPage1Based": 194,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-026",
+              "citationLabel": "Printed feat grouped as shown: Dual Weapon Mastery II"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-026-feats-04",
+            "name": "Rapid Strike",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 193,
+              "pdfPage1Based": 194,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-026",
+              "citationLabel": "Printed feat grouped as shown: Rapid Strike"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-026-feats-05",
+            "name": "Weapon Finesse",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 193,
+              "pdfPage1Based": 194,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-026",
+              "citationLabel": "Printed feat grouped as shown: Weapon Finesse"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-026-feats-06",
+            "name": "Weapon Focus (lightsabers)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 193,
+              "pdfPage1Based": 194,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-026",
+              "citationLabel": "Printed feat grouped as shown: Weapon Focus (lightsabers)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-026-feats-07",
+            "name": "Weapon Proficiency (lightsabers, pistols, rifles, simple weapons)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 193,
+              "pdfPage1Based": 194,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-026",
+              "citationLabel": "Printed feat grouped as shown: Weapon Proficiency (lightsabers, pistols, rifles, simple weapons)"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "talents": [
+          {
+            "traitId": "CLONE-DROID-026-talents-01",
+            "name": "Lightsaber Defense (2)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 193,
+              "pdfPage1Based": 194,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-026",
+              "citationLabel": "Printed talent grouped as shown: Lightsaber Defense (2)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-026-talents-02",
+            "name": "Melee Smash",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 193,
+              "pdfPage1Based": 194,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-026",
+              "citationLabel": "Printed talent grouped as shown: Melee Smash"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-026-talents-03",
+            "name": "Weapon Specialization (lightsabers)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 193,
+              "pdfPage1Based": 194,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-026",
+              "citationLabel": "Printed talent grouped as shown: Weapon Specialization (lightsabers)"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "defenses": {
         "reflex": 21,
@@ -9781,12 +11076,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p193 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p193 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified. M6 grouped printed feat/talent claims and skill totals transcribed from visually separated statblock column p193. Each feat/weapon proficiency group remains source-only, not yet mapped to certified canonical registry IDs or level-legal progression.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-026",
           "Clone Wars Campaign Guide:printed-p193:TXT-line-18688",
           "CLONE:printed-p193:PDF-page-194:selected-visual-fields:batch2",
-          "CLONE:printed-p193:PDF-p194:M4-paired-column-visual-mechanics"
+          "CLONE:printed-p193:PDF-p194:M4-paired-column-visual-mechanics",
+          "CLONE:printed-p193:PDF-p194:M6-feat-talent-skill-visual-pass"
         ]
       }
     },
@@ -9824,10 +11120,302 @@
         "con": null,
         "int": 10,
         "wis": 13,
-        "cha": 11
+        "cha": 11,
+        "skills": [
+          {
+            "name": "Endurance",
+            "printedTotal": 11,
+            "raw": "Endurance +11",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027",
+              "citationLabel": "Printed skill Endurance"
+            }
+          },
+          {
+            "name": "Initiative",
+            "printedTotal": 13,
+            "raw": "Initiative +13",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027",
+              "citationLabel": "Printed skill Initiative"
+            }
+          },
+          {
+            "name": "Use the Force",
+            "printedTotal": 11,
+            "raw": "Use the Force +11",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027",
+              "citationLabel": "Printed skill Use the Force"
+            }
+          }
+        ]
       },
       "progression": {
-        "classLineRaw": "soldier 12"
+        "classLineRaw": "soldier 12",
+        "feats": [
+          {
+            "traitId": "CLONE-DROID-027-feats-01",
+            "name": "Armor Proficiency (light, medium)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027",
+              "citationLabel": "Printed feat grouped as shown: Armor Proficiency (light, medium)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-027-feats-02",
+            "name": "Combat Reflexes",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027",
+              "citationLabel": "Printed feat grouped as shown: Combat Reflexes"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-027-feats-03",
+            "name": "Dodge",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027",
+              "citationLabel": "Printed feat grouped as shown: Dodge"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-027-feats-04",
+            "name": "Double Attack",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027",
+              "citationLabel": "Printed feat grouped as shown: Double Attack"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-027-feats-05",
+            "name": "Exotic Weapon Proficiency (stun tentacles)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027",
+              "citationLabel": "Printed feat grouped as shown: Exotic Weapon Proficiency (stun tentacles)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-027-feats-06",
+            "name": "Force Sensitivity",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027",
+              "citationLabel": "Printed feat grouped as shown: Force Sensitivity"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-027-feats-07",
+            "name": "Melee Defense",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027",
+              "citationLabel": "Printed feat grouped as shown: Melee Defense"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-027-feats-08",
+            "name": "Pin",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027",
+              "citationLabel": "Printed feat grouped as shown: Pin"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-027-feats-09",
+            "name": "Rapid Strike",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027",
+              "citationLabel": "Printed feat grouped as shown: Rapid Strike"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-027-feats-10",
+            "name": "Running Attack",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027",
+              "citationLabel": "Printed feat grouped as shown: Running Attack"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-027-feats-11",
+            "name": "Trip",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027",
+              "citationLabel": "Printed feat grouped as shown: Trip"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-027-feats-12",
+            "name": "Weapon Focus (stun tentacles)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027",
+              "citationLabel": "Printed feat grouped as shown: Weapon Focus (stun tentacles)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-027-feats-13",
+            "name": "Weapon Proficiency (pistols, rifles, simple weapons)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027",
+              "citationLabel": "Printed feat grouped as shown: Weapon Proficiency (pistols, rifles, simple weapons)"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "talents": [
+          {
+            "traitId": "CLONE-DROID-027-talents-01",
+            "name": "Devastating Attack (stun tentacles)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027",
+              "citationLabel": "Printed talent grouped as shown: Devastating Attack (stun tentacles)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-027-talents-02",
+            "name": "Expert Grappler",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027",
+              "citationLabel": "Printed talent grouped as shown: Expert Grappler"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-027-talents-03",
+            "name": "Force Perception",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027",
+              "citationLabel": "Printed talent grouped as shown: Force Perception"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-027-talents-04",
+            "name": "Foresight",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027",
+              "citationLabel": "Printed talent grouped as shown: Foresight"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-027-talents-05",
+            "name": "Melee Smash",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027",
+              "citationLabel": "Printed talent grouped as shown: Melee Smash"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-027-talents-06",
+            "name": "Stunning Strike",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027",
+              "citationLabel": "Printed talent grouped as shown: Stunning Strike"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "defenses": {
         "reflex": 24,
@@ -10092,12 +11680,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p194 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p194 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified. M6 grouped printed feat/talent claims and skill totals transcribed from visually separated statblock column p194. Each feat/weapon proficiency group remains source-only, not yet mapped to certified canonical registry IDs or level-legal progression.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-027",
           "Clone Wars Campaign Guide:printed-p194:TXT-line-18778",
           "CLONE:printed-p194:PDF-page-195:selected-visual-fields:batch2",
-          "CLONE:printed-p194:PDF-p195:M4-paired-column-visual-mechanics"
+          "CLONE:printed-p194:PDF-p195:M4-paired-column-visual-mechanics",
+          "CLONE:printed-p194:PDF-p195:M6-feat-talent-skill-visual-pass"
         ]
       }
     },
@@ -10135,10 +11724,145 @@
         "con": null,
         "int": 10,
         "wis": 14,
-        "cha": 8
+        "cha": 8,
+        "skills": [
+          {
+            "name": "Climb",
+            "printedTotal": 20,
+            "raw": "Climb +20",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-028",
+              "citationLabel": "Printed skill Climb"
+            }
+          },
+          {
+            "name": "Perception",
+            "printedTotal": 15,
+            "raw": "Perception +15",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-028",
+              "citationLabel": "Printed skill Perception"
+            }
+          },
+          {
+            "name": "Stealth",
+            "printedTotal": -3,
+            "raw": "Stealth -3",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-028",
+              "citationLabel": "Printed skill Stealth"
+            }
+          }
+        ]
       },
       "progression": {
-        "classLineRaw": "nonheroic 18"
+        "classLineRaw": "nonheroic 18",
+        "feats": [
+          {
+            "traitId": "CLONE-DROID-028-feats-01",
+            "name": "Armor Proficiency (light, medium)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-028",
+              "citationLabel": "Printed feat grouped as shown: Armor Proficiency (light, medium)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-028-feats-02",
+            "name": "Cleave",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-028",
+              "citationLabel": "Printed feat grouped as shown: Cleave"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-028-feats-03",
+            "name": "Crush",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-028",
+              "citationLabel": "Printed feat grouped as shown: Crush"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-028-feats-04",
+            "name": "Pin",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-028",
+              "citationLabel": "Printed feat grouped as shown: Pin"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-028-feats-05",
+            "name": "Power Attack",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-028",
+              "citationLabel": "Printed feat grouped as shown: Power Attack"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-028-feats-06",
+            "name": "Powerful Charge",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-028",
+              "citationLabel": "Printed feat grouped as shown: Powerful Charge"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-028-feats-07",
+            "name": "Weapon Proficiency (heavy weapons, simple weapons)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "pdfPage1Based": 195,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-028",
+              "citationLabel": "Printed feat grouped as shown: Weapon Proficiency (heavy weapons, simple weapons)"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "talents": []
       },
       "defenses": {
         "reflex": 16,
@@ -10385,12 +12109,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p194 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p194 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified. M6 grouped printed feat/talent claims and skill totals transcribed from visually separated statblock column p194. Each feat/weapon proficiency group remains source-only, not yet mapped to certified canonical registry IDs or level-legal progression.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-028",
           "Clone Wars Campaign Guide:printed-p194:TXT-line-18869",
           "CLONE:printed-p194:PDF-page-195:selected-visual-fields:batch2",
-          "CLONE:printed-p194:PDF-p195:M4-paired-column-visual-mechanics"
+          "CLONE:printed-p194:PDF-p195:M4-paired-column-visual-mechanics",
+          "CLONE:printed-p194:PDF-p195:M6-feat-talent-skill-visual-pass"
         ]
       }
     },
@@ -10428,10 +12153,119 @@
         "int": 10,
         "wis": 15,
         "cha": 8,
-        "con": null
+        "con": null,
+        "skills": [
+          {
+            "name": "Perception",
+            "printedTotal": 18,
+            "raw": "Perception +18",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 195,
+              "pdfPage1Based": 196,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-029",
+              "citationLabel": "Printed skill Perception"
+            }
+          },
+          {
+            "name": "Stealth",
+            "printedTotal": 10,
+            "raw": "Stealth +10",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 195,
+              "pdfPage1Based": 196,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-029",
+              "citationLabel": "Printed skill Stealth"
+            }
+          }
+        ]
       },
       "progression": {
-        "classLineRaw": "nonheroic 9"
+        "classLineRaw": "nonheroic 9",
+        "feats": [
+          {
+            "traitId": "CLONE-DROID-029-feats-01",
+            "name": "Armor Proficiency (light)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 195,
+              "pdfPage1Based": 196,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-029",
+              "citationLabel": "Printed feat grouped as shown: Armor Proficiency (light)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-029-feats-02",
+            "name": "Burst Fire",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 195,
+              "pdfPage1Based": 196,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-029",
+              "citationLabel": "Printed feat grouped as shown: Burst Fire"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-029-feats-03",
+            "name": "Skill Focus (Perception)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 195,
+              "pdfPage1Based": 196,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-029",
+              "citationLabel": "Printed feat grouped as shown: Skill Focus (Perception)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-029-feats-04",
+            "name": "Skill Focus (Stealth)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 195,
+              "pdfPage1Based": 196,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-029",
+              "citationLabel": "Printed feat grouped as shown: Skill Focus (Stealth)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-029-feats-05",
+            "name": "Skill Training (Stealth)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 195,
+              "pdfPage1Based": 196,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-029",
+              "citationLabel": "Printed feat grouped as shown: Skill Training (Stealth)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-029-feats-06",
+            "name": "Weapon Proficiency (heavy weapons, rifles)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 195,
+              "pdfPage1Based": 196,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-029",
+              "citationLabel": "Printed feat grouped as shown: Weapon Proficiency (heavy weapons, rifles)"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "talents": []
       },
       "defenses": {
         "reflex": 16,
@@ -10696,12 +12530,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p195 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p195 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified. M6 grouped printed feat/talent claims and skill totals transcribed from visually separated statblock column p195. Each feat/weapon proficiency group remains source-only, not yet mapped to certified canonical registry IDs or level-legal progression.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-029",
           "Clone Wars Campaign Guide:printed-p195:TXT-line-18948",
           "CLONE:printed-p195:PDF-page-196:selected-visual-fields:batch2",
-          "CLONE:printed-p195:PDF-p196:M4-paired-column-visual-mechanics"
+          "CLONE:printed-p195:PDF-p196:M4-paired-column-visual-mechanics",
+          "CLONE:printed-p195:PDF-p196:M6-feat-talent-skill-visual-pass"
         ]
       }
     },
@@ -10739,10 +12574,119 @@
         "con": null,
         "wis": 8,
         "cha": 7,
-        "int": 11
+        "int": 11,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedTotal": 15,
+            "raw": "Initiative +15",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 196,
+              "pdfPage1Based": 197,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-030",
+              "citationLabel": "Printed skill Initiative"
+            }
+          },
+          {
+            "name": "Stealth",
+            "printedTotal": 0,
+            "raw": "Stealth +0",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 196,
+              "pdfPage1Based": 197,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-030",
+              "citationLabel": "Printed skill Stealth"
+            }
+          }
+        ]
       },
       "progression": {
-        "classLineRaw": "nonheroic 9"
+        "classLineRaw": "nonheroic 9",
+        "feats": [
+          {
+            "traitId": "CLONE-DROID-030-feats-01",
+            "name": "Burst Fire",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 196,
+              "pdfPage1Based": 197,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-030",
+              "citationLabel": "Printed feat grouped as shown: Burst Fire"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-030-feats-02",
+            "name": "Double Attack",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 196,
+              "pdfPage1Based": 197,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-030",
+              "citationLabel": "Printed feat grouped as shown: Double Attack"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-030-feats-03",
+            "name": "Rapid Shot",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 196,
+              "pdfPage1Based": 197,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-030",
+              "citationLabel": "Printed feat grouped as shown: Rapid Shot"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-030-feats-04",
+            "name": "Running Attack",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 196,
+              "pdfPage1Based": 197,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-030",
+              "citationLabel": "Printed feat grouped as shown: Running Attack"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-030-feats-05",
+            "name": "Skill Focus (Initiative)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 196,
+              "pdfPage1Based": 197,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-030",
+              "citationLabel": "Printed feat grouped as shown: Skill Focus (Initiative)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-030-feats-06",
+            "name": "Weapon Proficiency (rifles, simple weapons)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 196,
+              "pdfPage1Based": 197,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-030",
+              "citationLabel": "Printed feat grouped as shown: Weapon Proficiency (rifles, simple weapons)"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "talents": []
       },
       "defenses": {
         "reflex": 10,
@@ -11009,12 +12953,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p196 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p196 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified. M6 grouped printed feat/talent claims and skill totals transcribed from visually separated statblock column p196. Each feat/weapon proficiency group remains source-only, not yet mapped to certified canonical registry IDs or level-legal progression.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-030",
           "Clone Wars Campaign Guide:printed-p196:TXT-line-19035",
           "CLONE:printed-p196:PDF-page-197:selected-visual-fields:batch2",
-          "CLONE:printed-p196:PDF-p197:M4-paired-column-visual-mechanics"
+          "CLONE:printed-p196:PDF-p197:M4-paired-column-visual-mechanics",
+          "CLONE:printed-p196:PDF-p197:M6-feat-talent-skill-visual-pass"
         ]
       }
     },
@@ -11052,10 +12997,124 @@
         "con": null,
         "int": 11,
         "wis": 9,
-        "cha": 9
+        "cha": 9,
+        "skills": [
+          {
+            "name": "Perception",
+            "printedTotal": 7,
+            "raw": "Perception +7",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 196,
+              "pdfPage1Based": 197,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-031",
+              "citationLabel": "Printed skill Perception"
+            }
+          },
+          {
+            "name": "Knowledge (tactics)",
+            "printedTotal": 5,
+            "raw": "Knowledge (tactics) +5",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 196,
+              "pdfPage1Based": 197,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-031",
+              "citationLabel": "Printed skill Knowledge (tactics)"
+            },
+            "variantScope": "commander only"
+          },
+          {
+            "name": "Pilot",
+            "printedTotal": 5,
+            "raw": "Pilot +5",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 196,
+              "pdfPage1Based": 197,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-031",
+              "citationLabel": "Printed skill Pilot"
+            },
+            "variantScope": "pilot only"
+          }
+        ]
       },
       "progression": {
-        "classLineRaw": "nonheroic 6"
+        "classLineRaw": "nonheroic 6",
+        "feats": [
+          {
+            "traitId": "CLONE-DROID-031-feats-01",
+            "name": "Toughness",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 196,
+              "pdfPage1Based": 197,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-031",
+              "citationLabel": "Printed feat grouped as shown: Toughness"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-031-feats-02",
+            "name": "Weapon Proficiency (pistols, rifles, heavy weapons, simple weapons)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 196,
+              "pdfPage1Based": 197,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-031",
+              "citationLabel": "Printed feat grouped as shown: Weapon Proficiency (pistols, rifles, heavy weapons, simple weapons)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-031-feats-03",
+            "name": "Coordinated Attack [commander only]",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 196,
+              "pdfPage1Based": 197,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-031",
+              "citationLabel": "Printed feat grouped as shown: Coordinated Attack [commander only]"
+            },
+            "executionStatus": "source-only",
+            "variantScope": "OOM Commander"
+          },
+          {
+            "traitId": "CLONE-DROID-031-feats-04",
+            "name": "Skill Training (Knowledge [tactics]) [commander only]",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 196,
+              "pdfPage1Based": 197,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-031",
+              "citationLabel": "Printed feat grouped as shown: Skill Training (Knowledge [tactics]) [commander only]"
+            },
+            "executionStatus": "source-only",
+            "variantScope": "OOM Commander"
+          },
+          {
+            "traitId": "CLONE-DROID-031-feats-05",
+            "name": "Skill Training (Pilot) [pilot only]",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 196,
+              "pdfPage1Based": 197,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-031",
+              "citationLabel": "Printed feat grouped as shown: Skill Training (Pilot) [pilot only]"
+            },
+            "executionStatus": "source-only",
+            "variantScope": "OOM Pilot"
+          }
+        ],
+        "talents": []
       },
       "defenses": {
         "reflex": 10,
@@ -11292,12 +13351,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p196 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p196 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified. M6 grouped printed feat/talent claims and skill totals transcribed from visually separated statblock column p196. Each feat/weapon proficiency group remains source-only, not yet mapped to certified canonical registry IDs or level-legal progression.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-031",
           "Clone Wars Campaign Guide:printed-p196:TXT-line-19104",
           "CLONE:printed-p196:PDF-page-197:selected-visual-fields:batch2",
-          "CLONE:printed-p196:PDF-p197:M4-paired-column-visual-mechanics"
+          "CLONE:printed-p196:PDF-p197:M4-paired-column-visual-mechanics",
+          "CLONE:printed-p196:PDF-p197:M6-feat-talent-skill-visual-pass"
         ]
       }
     },
@@ -11335,10 +13395,185 @@
         "con": null,
         "int": 12,
         "wis": 10,
-        "cha": 9
+        "cha": 9,
+        "skills": [
+          {
+            "name": "Climb",
+            "printedTotal": 10,
+            "raw": "Climb +10",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 197,
+              "pdfPage1Based": 198,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-032",
+              "citationLabel": "Printed skill Climb"
+            }
+          },
+          {
+            "name": "Perception",
+            "printedTotal": 11,
+            "raw": "Perception +11",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 197,
+              "pdfPage1Based": 198,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-032",
+              "citationLabel": "Printed skill Perception"
+            }
+          },
+          {
+            "name": "Stealth",
+            "printedTotal": 15,
+            "raw": "Stealth +15",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 197,
+              "pdfPage1Based": 198,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-032",
+              "citationLabel": "Printed skill Stealth"
+            }
+          }
+        ]
       },
       "progression": {
-        "classLineRaw": "nonheroic 3/scout 5"
+        "classLineRaw": "nonheroic 3/scout 5",
+        "feats": [
+          {
+            "traitId": "CLONE-DROID-032-feats-01",
+            "name": "Armor Proficiency (light)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 197,
+              "pdfPage1Based": 198,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-032",
+              "citationLabel": "Printed feat grouped as shown: Armor Proficiency (light)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-032-feats-02",
+            "name": "Burst Fire",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 197,
+              "pdfPage1Based": 198,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-032",
+              "citationLabel": "Printed feat grouped as shown: Burst Fire"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-032-feats-03",
+            "name": "Point Blank Shot",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 197,
+              "pdfPage1Based": 198,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-032",
+              "citationLabel": "Printed feat grouped as shown: Point Blank Shot"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-032-feats-04",
+            "name": "Precise Shot",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 197,
+              "pdfPage1Based": 198,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-032",
+              "citationLabel": "Printed feat grouped as shown: Precise Shot"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-032-feats-05",
+            "name": "Skill Focus (Stealth)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 197,
+              "pdfPage1Based": 198,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-032",
+              "citationLabel": "Printed feat grouped as shown: Skill Focus (Stealth)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-032-feats-06",
+            "name": "Skill Training (Stealth)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 197,
+              "pdfPage1Based": 198,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-032",
+              "citationLabel": "Printed feat grouped as shown: Skill Training (Stealth)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-032-feats-07",
+            "name": "Weapon Proficiency (heavy weapons, pistols, rifles)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 197,
+              "pdfPage1Based": 198,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-032",
+              "citationLabel": "Printed feat grouped as shown: Weapon Proficiency (heavy weapons, pistols, rifles)"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "talents": [
+          {
+            "traitId": "CLONE-DROID-032-talents-01",
+            "name": "Acute Senses",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 197,
+              "pdfPage1Based": 198,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-032",
+              "citationLabel": "Printed talent grouped as shown: Acute Senses"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-032-talents-02",
+            "name": "Hidden Movement",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 197,
+              "pdfPage1Based": 198,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-032",
+              "citationLabel": "Printed talent grouped as shown: Hidden Movement"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-032-talents-03",
+            "name": "Improved Stealth",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 197,
+              "pdfPage1Based": 198,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-032",
+              "citationLabel": "Printed talent grouped as shown: Improved Stealth"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "defenses": {
         "reflex": 18,
@@ -11613,12 +13848,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p197 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 5 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p197 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 5 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified. M6 grouped printed feat/talent claims and skill totals transcribed from visually separated statblock column p197. Each feat/weapon proficiency group remains source-only, not yet mapped to certified canonical registry IDs or level-legal progression.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-032",
           "Clone Wars Campaign Guide:printed-p197:TXT-line-19175",
           "CLONE:printed-p197:PDF-page-198:selected-visual-fields:batch2",
-          "CLONE:printed-p197:PDF-p198:M4-paired-column-visual-mechanics"
+          "CLONE:printed-p197:PDF-p198:M4-paired-column-visual-mechanics",
+          "CLONE:printed-p197:PDF-p198:M6-feat-talent-skill-visual-pass"
         ]
       }
     },
@@ -11656,10 +13892,145 @@
         "con": null,
         "wis": 14,
         "cha": 7,
-        "int": 8
+        "int": 8,
+        "skills": [
+          {
+            "name": "Perception",
+            "printedTotal": 15,
+            "raw": "Perception +15",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 198,
+              "pdfPage1Based": 199,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-033",
+              "citationLabel": "Printed skill Perception"
+            }
+          },
+          {
+            "name": "Stealth",
+            "printedTotal": 0,
+            "raw": "Stealth +0",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 198,
+              "pdfPage1Based": 199,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-033",
+              "citationLabel": "Printed skill Stealth"
+            }
+          }
+        ]
       },
       "progression": {
-        "classLineRaw": "nonheroic 16"
+        "classLineRaw": "nonheroic 16",
+        "feats": [
+          {
+            "traitId": "CLONE-DROID-033-feats-01",
+            "name": "Armor Proficiency (light)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 198,
+              "pdfPage1Based": 199,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-033",
+              "citationLabel": "Printed feat grouped as shown: Armor Proficiency (light)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-033-feats-02",
+            "name": "Burst Fire",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 198,
+              "pdfPage1Based": 199,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-033",
+              "citationLabel": "Printed feat grouped as shown: Burst Fire"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-033-feats-03",
+            "name": "Dual Weapon Mastery I",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 198,
+              "pdfPage1Based": 199,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-033",
+              "citationLabel": "Printed feat grouped as shown: Dual Weapon Mastery I"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-033-feats-04",
+            "name": "Dual Weapon Mastery II",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 198,
+              "pdfPage1Based": 199,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-033",
+              "citationLabel": "Printed feat grouped as shown: Dual Weapon Mastery II"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-033-feats-05",
+            "name": "Improved Defenses",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 198,
+              "pdfPage1Based": 199,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-033",
+              "citationLabel": "Printed feat grouped as shown: Improved Defenses"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-033-feats-06",
+            "name": "Point Blank Shot",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 198,
+              "pdfPage1Based": 199,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-033",
+              "citationLabel": "Printed feat grouped as shown: Point Blank Shot"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-033-feats-07",
+            "name": "Weapon Focus (heavy weapons)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 198,
+              "pdfPage1Based": 199,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-033",
+              "citationLabel": "Printed feat grouped as shown: Weapon Focus (heavy weapons)"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "traitId": "CLONE-DROID-033-feats-08",
+            "name": "Weapon Proficiency (heavy weapons, rifles)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 198,
+              "pdfPage1Based": 199,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-033",
+              "citationLabel": "Printed feat grouped as shown: Weapon Proficiency (heavy weapons, rifles)"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "talents": []
       },
       "defenses": {
         "reflex": 17,
@@ -11906,13 +14277,14 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p198 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M4 detailed printed PDF p198 and adjacent continuation context: factory Systems and possessions isolated, progression class line recorded, 4 model-specific source-only mechanic restrictions. Feat/talent canonical identities, weapon mounts and ammunition left uncertified. M6 grouped printed feat/talent claims and skill totals transcribed from visually separated statblock column p198. Each feat/weapon proficiency group remains source-only, not yet mapped to certified canonical registry IDs or level-legal progression.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-033",
           "Clone Wars Campaign Guide:printed-p198:TXT-line-19251",
           "CLONE:printed-p198:PDF-page-199:selected-visual-fields",
           "CLONE:printed-p197:Ultra-Droideka-hero-prohibition",
-          "CLONE:printed-p198:PDF-p199:M4-paired-column-visual-mechanics"
+          "CLONE:printed-p198:PDF-p199:M4-paired-column-visual-mechanics",
+          "CLONE:printed-p198:PDF-p199:M6-feat-talent-skill-visual-pass"
         ]
       }
     },
