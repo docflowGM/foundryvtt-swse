@@ -69,18 +69,20 @@ test('encounter cleanup is registered and temporary talent items use ActorEngine
  const index=fs.readFileSync(path.join(ROOT,'index.js'),'utf8');
  const service=fs.readFileSync(path.join(ROOT,'scripts/engine/combat/officer-share-talent-service.js'),'utf8');
  const dialog=fs.readFileSync(path.join(ROOT,'scripts/apps/officer-share-talent-dialog.js'),'utf8');
+ const txn=fs.readFileSync(path.join(ROOT,'scripts/engine/combat/officer-share-talent-transaction.js'),'utf8');
  assert.match(index,/registerOfficerShareTalentCleanup\(\)/);
  assert.match(index,/officerShareTalent:\s*\{ open: openOfficerShareTalentAction/);
  assert.match(service,/Hooks\.on\('deleteCombat'/);
  assert.match(service,/Hooks\.on\('updateCombat'/);
  assert.match(service,/Hooks\.once\?\.\('ready'/);
- assert.match(service,/ActorEngine\.restoreSnapshotVerified\(/);
- assert.match(service,/touched\.push\(entry\.actor\);\s*await ActorEngine\.applyMutationPlan\(entry\.actor/);
- assert.match(service,/touched\.push\(officer\);\s*await ActorEngine\.applyMutationPlan\(officer/);
- assert.match(service,/\[\.\.\.touched\]\.reverse\(\)/);
- assert.match(service,/transactional:true/);
+ assert.match(txn,/actorEngine\.restoreSnapshotVerified\(/);
+ assert.match(txn,/touched\.push\(entry\.actor\);\s*await actorEngine\.applyMutationPlan\(entry\.actor/);
+ assert.match(txn,/touched\.push\(officer\);\s*await actorEngine\.applyMutationPlan\(officer/);
+ assert.match(txn,/\[\.\.\.touched\]\.reverse\(\)/);
+ assert.match(txn,/transactional:true/);
  assert.match(service,/ActionEconomyConsumption\.spend\(officer,'standard'/);
- assert.match(service,/spent\?\.committed!==true/);
+ assert.match(service,/executeOfficerShareTalentTransaction\(/);
+ assert.match(txn,/spent\?\.committed!==true/);
  assert.doesNotMatch(service,/combatant\.useAction\(/);
 
  assert.match(service,/delete:\{effects:expiry\.effects,items:expiry\.items\}/);
