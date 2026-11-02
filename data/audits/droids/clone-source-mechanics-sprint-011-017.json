@@ -1,0 +1,133 @@
+{
+  "schema": "swse.droids.clone.source-mechanical-deepening/0.1",
+  "date": "2026-11-02",
+  "sourceBook": "Clone Wars Campaign Guide",
+  "checkpoint": "011-017",
+  "pages": [
+    72,
+    73,
+    94,
+    160,
+    161,
+    162
+  ],
+  "scope": "PDF visually reviewed statblocks and squad construction; source-only field hydration and bounded facts, no actor promotion.",
+  "records": [
+    {
+      "id": "CLONE-DROID-011",
+      "name": "CLL-6 Binary Load Lifter",
+      "printedPage": 72,
+      "authority": "droid",
+      "components": 4,
+      "restrictions": [
+        "NO-FINE-MANIPULATORS",
+        "BASIC-RECEPTION-ONLY",
+        "HERO-PROHIBITED"
+      ],
+      "state": "partial"
+    },
+    {
+      "id": "CLONE-DROID-012",
+      "name": "FA-5 Valet Droid",
+      "printedPage": 72,
+      "authority": "droid",
+      "components": 5,
+      "restrictions": [
+        "PILOT-PROGRAMMING-NOT-VEHICLE",
+        "UNASSIGNED-FEATS",
+        "HERO-ELIGIBLE"
+      ],
+      "state": "partial"
+    },
+    {
+      "id": "CLONE-DROID-013",
+      "name": "IW-37 Pincer Loader Droid",
+      "printedPage": 73,
+      "authority": "droid",
+      "components": 5,
+      "restrictions": [
+        "LOADER-WEAPON-CONTEXT",
+        "ARMOR-POSSESSION-RELATION",
+        "HERO-PROHIBITED"
+      ],
+      "state": "partial"
+    },
+    {
+      "id": "CLONE-DROID-014",
+      "name": "B1-Series Battle Droid Squad",
+      "printedPage": 94,
+      "authority": "squad-aggregation",
+      "components": 0,
+      "restrictions": [
+        "SQUAD-FOUR-BASE",
+        "SQUAD-MELEE-AREA",
+        "SQUAD-RANGED-SPLASH",
+        "SQUAD-INTERACTION",
+        "FOUR-INDIVIDUALS-NOT-STOCK-CHASSIS"
+      ],
+      "state": "partial"
+    },
+    {
+      "id": "CLONE-DROID-015",
+      "name": "FX-6 Medical Assistance Droid",
+      "printedPage": 160,
+      "authority": "droid",
+      "components": 6,
+      "restrictions": [
+        "SIX-INSTRUMENTS-NOT-SIX-HANDS",
+        "SURGERY-PRIORITY",
+        "MEDICAL-KIT-POSSESSION",
+        "SPLIT-PAGE-FIELDS"
+      ],
+      "state": "partial"
+    },
+    {
+      "id": "CLONE-DROID-016",
+      "name": "FA-4 Pilot Droid",
+      "printedPage": 161,
+      "authority": "droid",
+      "components": 7,
+      "restrictions": [
+        "PRIVACY-WIPE",
+        "CANNOT-FIRE-SHIP-WEAPONS",
+        "BUFFER-CAPACITY",
+        "HERO-ELIGIBLE"
+      ],
+      "state": "partial"
+    },
+    {
+      "id": "CLONE-DROID-017",
+      "name": "Marksman-H Combat Remote",
+      "printedPage": 162,
+      "authority": "droid",
+      "components": 3,
+      "restrictions": [
+        "STUN-ONLY-FACTORY",
+        "ACTIVATION-TRIGGER",
+        "STABILIZED-MOUNT",
+        "HERO-PROHIBITED"
+      ],
+      "state": "partial"
+    }
+  ],
+  "totals": {
+    "models": 7,
+    "individualModels": 6,
+    "squadAggregations": 1,
+    "componentInstances": 30,
+    "appendages": 8,
+    "possessions": 4,
+    "feats": 23,
+    "skillEntries": 16,
+    "constraints": 26,
+    "secondPassReviewed": 17,
+    "overallSourceIdentities": 40,
+    "strictCertified": 0
+  },
+  "outstanding": [
+    "Canonical feats, talents and stock heroic-chassis rights",
+    "Exact physical medical instrument mounts and medpac usage",
+    "B1 squad aggregation engine model rather than individual actor",
+    "Foundry runtime verification"
+  ]
+}

@@ -4370,9 +4370,94 @@
         "con": null,
         "int": 8,
         "wis": 10,
-        "cha": 5
+        "cha": 5,
+        "skills": [
+          {
+            "name": "Endurance",
+            "printedTotal": 19,
+            "raw": "Endurance +19",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-011",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed skill Endurance"
+            }
+          },
+          {
+            "name": "Perception",
+            "printedTotal": 10,
+            "raw": "Perception +10",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-011",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed skill Perception"
+            }
+          }
+        ],
+        "languages": [
+          {
+            "name": "Basic (understand only)",
+            "raw": "Printed Languages"
+          },
+          {
+            "name": "Binary",
+            "raw": "Printed Languages"
+          }
+        ]
       },
-      "progression": {},
+      "progression": {
+        "classLineRaw": "nonheroic 1",
+        "classes": [
+          {
+            "className": "nonheroic",
+            "level": 1
+          }
+        ],
+        "nonheroicLevels": 1,
+        "feats": [
+          {
+            "traitId": "CLONE-DROID-011-feats-01",
+            "name": "Skill Focus (Endurance)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-011",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat Skill Focus (Endurance)"
+            }
+          },
+          {
+            "traitId": "CLONE-DROID-011-feats-02",
+            "name": "Skill Focus (Perception)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-011",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat Skill Focus (Perception)"
+            }
+          },
+          {
+            "traitId": "CLONE-DROID-011-feats-03",
+            "name": "Skill Training (Perception)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-011",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat Skill Training (Perception)"
+            }
+          }
+        ]
+      },
       "defenses": {
         "reflex": 9,
         "flatFootedReflex": 9,
@@ -4384,7 +4469,24 @@
         "damageThreshold": 19
       },
       "movement": {
-        "speedLineRaw": "Speed 8 squares (waiking)"
+        "speedLineRaw": "Speed 8 squares (waiking)",
+        "locomotionSystems": [
+          {
+            "instanceId": "CLONE-DROID-011-MOVE-1",
+            "mode": "walking",
+            "speedSquares": 8,
+            "raw": "8 squares (walking)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-011",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Speed"
+            },
+            "componentInstanceId": "CLONE-DROID-011-COMP-001"
+          }
+        ]
       },
       "anatomy": {},
       "processor": {},
@@ -4401,10 +4503,113 @@
       },
       "capacity": {},
       "systems": {
-        "sourceSystemsRaw": "walking locomotion, basic processar, 2 toal appendages"
+        "sourceSystemsRaw": "walking locomotion, basic processar, 2 toal appendages",
+        "installed": [
+          {
+            "instanceId": "CLONE-DROID-011-COMP-001",
+            "name": "walking locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-011",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems walking locomotion"
+            }
+          },
+          {
+            "instanceId": "CLONE-DROID-011-COMP-002",
+            "name": "basic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-011",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems basic processor"
+            }
+          },
+          {
+            "instanceId": "CLONE-DROID-011-COMP-003",
+            "name": "tool appendage [1/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-011",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems tool appendage"
+            },
+            "count": 1,
+            "physicalLocationId": "CLONE-DROID-011-LOCATION-01"
+          },
+          {
+            "instanceId": "CLONE-DROID-011-COMP-004",
+            "name": "tool appendage [2/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-011",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems tool appendage"
+            },
+            "count": 1,
+            "physicalLocationId": "CLONE-DROID-011-LOCATION-02"
+          }
+        ]
       },
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "CLONE-DROID-011-CONSTRAINT-NO-FINE-MANIPULATORS",
+            "statement": "The printed two tool appendages are load-lifting trays; prose explicitly denies hand/manipulator use. Do not grant free precision manipulation or an additional independent limb.",
+            "scope": "CLL-6 Binary Load Lifter",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-011",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "NO-FINE-MANIPULATORS"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-011-CONSTRAINT-BASIC-RECEPTION-ONLY",
+            "statement": "Basic understand-only, speaks Binary; no Basic speech from order reception.",
+            "scope": "CLL-6 Binary Load Lifter",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-011",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "BASIC-RECEPTION-ONLY"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-011-CONSTRAINT-HERO-PROHIBITED",
+            "statement": "CLL-6 is explicitly unavailable as a droid hero.",
+            "scope": "CLL-6 Binary Load Lifter",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-011",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "HERO-PROHIBITED"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -4427,11 +4632,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M3 detailed source-only mechanical boundaries captured; no actor, weapon mount, or class certification.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-011",
           "Clone Wars Campaign Guide:printed-p72:TXT-line-6390",
-          "CLONE:printed-p72:PDF-page-73:selected-visual-fields"
+          "CLONE:printed-p72:PDF-page-73:selected-visual-fields",
+          "CLONE:p72:PDF-p73:M3-model-visual-source-pass"
         ]
       }
     },
@@ -4469,9 +4675,94 @@
         "con": null,
         "int": 10,
         "wis": 10,
-        "cha": 12
+        "cha": 12,
+        "skills": [
+          {
+            "name": "Endurance",
+            "printedTotal": 10,
+            "raw": "Endurance +10",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-012",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed skill Endurance"
+            }
+          },
+          {
+            "name": "Pilot",
+            "printedTotal": 12,
+            "raw": "Pilot +12",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-012",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed skill Pilot"
+            }
+          }
+        ],
+        "languages": [
+          {
+            "name": "Basic",
+            "raw": "Printed Languages"
+          },
+          {
+            "name": "Binary",
+            "raw": "Printed Languages"
+          }
+        ]
       },
-      "progression": {},
+      "progression": {
+        "classLineRaw": "nonheroic 1",
+        "classes": [
+          {
+            "className": "nonheroic",
+            "level": 1
+          }
+        ],
+        "nonheroicLevels": 1,
+        "feats": [
+          {
+            "traitId": "CLONE-DROID-012-feats-01",
+            "name": "Skill Focus (Endurance)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-012",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat Skill Focus (Endurance)"
+            }
+          },
+          {
+            "traitId": "CLONE-DROID-012-feats-02",
+            "name": "Skill Training (Pilot)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-012",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat Skill Training (Pilot)"
+            }
+          },
+          {
+            "traitId": "CLONE-DROID-012-feats-03",
+            "name": "2 unassigned feats",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-012",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat 2 unassigned feats"
+            }
+          }
+        ]
+      },
       "defenses": {
         "reflex": 12,
         "flatFootedReflex": 10,
@@ -4483,7 +4774,24 @@
         "damageThreshold": 10
       },
       "movement": {
-        "speedLineRaw": "Speed 6 squares"
+        "speedLineRaw": "Speed 6 squares",
+        "locomotionSystems": [
+          {
+            "instanceId": "CLONE-DROID-012-MOVE-1",
+            "mode": "walking",
+            "speedSquares": 6,
+            "raw": "6 squares (walking)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-012",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Speed"
+            },
+            "componentInstanceId": "CLONE-DROID-012-COMP-001"
+          }
+        ]
       },
       "anatomy": {},
       "processor": {},
@@ -4505,10 +4813,126 @@
       },
       "capacity": {},
       "systems": {
-        "sourceSystemsRaw": "walking locomotion, 2 hand appendages, basic processor,"
+        "sourceSystemsRaw": "walking locomotion, 2 hand appendages, basic processor,",
+        "installed": [
+          {
+            "instanceId": "CLONE-DROID-012-COMP-001",
+            "name": "walking locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-012",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems walking locomotion"
+            }
+          },
+          {
+            "instanceId": "CLONE-DROID-012-COMP-002",
+            "name": "hand appendage [1/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-012",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems hand appendage"
+            },
+            "count": 1,
+            "physicalLocationId": "CLONE-DROID-012-LOCATION-01"
+          },
+          {
+            "instanceId": "CLONE-DROID-012-COMP-003",
+            "name": "hand appendage [2/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-012",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems hand appendage"
+            },
+            "count": 1,
+            "physicalLocationId": "CLONE-DROID-012-LOCATION-02"
+          },
+          {
+            "instanceId": "CLONE-DROID-012-COMP-004",
+            "name": "basic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-012",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems basic processor"
+            }
+          },
+          {
+            "instanceId": "CLONE-DROID-012-COMP-005",
+            "name": "vocabulator",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-012",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems vocabulator"
+            }
+          }
+        ]
       },
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "CLONE-DROID-012-CONSTRAINT-PILOT-PROGRAMMING-NOT-VEHICLE",
+            "statement": "Pilot protocols allow parking/retrieving owners' ships or airspeeders through actual vehicle controls; no vehicle attack, special mount or own vehicle actor granted.",
+            "scope": "FA-5 Valet Droid",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-012",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "PILOT-PROGRAMMING-NOT-VEHICLE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-012-CONSTRAINT-UNASSIGNED-FEATS",
+            "statement": "Two printed feats are expressly UNASSIGNED; not two freely selected certified combat feats. Legal class/feat assignment requires downstream proof.",
+            "scope": "FA-5 Valet Droid",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-012",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "UNASSIGNED-FEATS"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-012-CONSTRAINT-HERO-ELIGIBLE",
+            "statement": "Hero creation allowed, but printed nonheroic level and factory Pilot check not free heroic progression.",
+            "scope": "FA-5 Valet Droid",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "sourceEntryKey": "CLONE-DROID-012",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "HERO-ELIGIBLE"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "allowed"
       },
@@ -4531,11 +4955,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M3 detailed source-only mechanical boundaries captured; no actor, weapon mount, or class certification.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-012",
           "Clone Wars Campaign Guide:printed-p72:TXT-line-6434",
-          "CLONE:printed-p72:PDF-page-73:selected-visual-fields"
+          "CLONE:printed-p72:PDF-page-73:selected-visual-fields",
+          "CLONE:p72:PDF-p73:M3-model-visual-source-pass"
         ]
       }
     },
@@ -4573,9 +4998,102 @@
         "con": null,
         "wis": 8,
         "cha": 6,
-        "int": 8
+        "int": 8,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedTotal": 7,
+            "raw": "Initiative +7",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 73,
+              "pdfPage1Based": 74,
+              "sourceEntryKey": "CLONE-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed skill Initiative"
+            }
+          },
+          {
+            "name": "Perception",
+            "printedTotal": 6,
+            "raw": "Perception +6",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 73,
+              "pdfPage1Based": 74,
+              "sourceEntryKey": "CLONE-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed skill Perception"
+            }
+          }
+        ],
+        "languages": [
+          {
+            "name": "Binary",
+            "raw": "Printed Languages"
+          }
+        ]
       },
-      "progression": {},
+      "progression": {
+        "classLineRaw": "nonheroic 4",
+        "classes": [
+          {
+            "className": "nonheroic",
+            "level": 4
+          }
+        ],
+        "nonheroicLevels": 4,
+        "feats": [
+          {
+            "traitId": "CLONE-DROID-013-feats-01",
+            "name": "Armor Proficiency (light)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 73,
+              "pdfPage1Based": 74,
+              "sourceEntryKey": "CLONE-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat Armor Proficiency (light)"
+            }
+          },
+          {
+            "traitId": "CLONE-DROID-013-feats-02",
+            "name": "Improved Damage Threshold",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 73,
+              "pdfPage1Based": 74,
+              "sourceEntryKey": "CLONE-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat Improved Damage Threshold"
+            }
+          },
+          {
+            "traitId": "CLONE-DROID-013-feats-03",
+            "name": "Pin",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 73,
+              "pdfPage1Based": 74,
+              "sourceEntryKey": "CLONE-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat Pin"
+            }
+          },
+          {
+            "traitId": "CLONE-DROID-013-feats-04",
+            "name": "Power Attack",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 73,
+              "pdfPage1Based": 74,
+              "sourceEntryKey": "CLONE-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat Power Attack"
+            }
+          }
+        ]
+      },
       "defenses": {
         "reflex": 15,
         "flatFootedReflex": 15,
@@ -4587,7 +5105,24 @@
         "damageThreshold": 22
       },
       "movement": {
-        "speedLineRaw": "Speed 6 squares (walking)"
+        "speedLineRaw": "Speed 6 squares (walking)",
+        "locomotionSystems": [
+          {
+            "instanceId": "CLONE-DROID-013-MOVE-1",
+            "mode": "walking",
+            "speedSquares": 6,
+            "raw": "6 squares (walking)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 73,
+              "pdfPage1Based": 74,
+              "sourceEntryKey": "CLONE-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Speed"
+            },
+            "componentInstanceId": "CLONE-DROID-013-COMP-001"
+          }
+        ]
       },
       "anatomy": {},
       "processor": {},
@@ -4694,10 +5229,135 @@
       },
       "capacity": {},
       "systems": {
-        "sourceSystemsRaw": "walking locomation, basic processor, 2 claw appendages,"
+        "sourceSystemsRaw": "walking locomation, basic processor, 2 claw appendages,",
+        "installed": [
+          {
+            "instanceId": "CLONE-DROID-013-COMP-001",
+            "name": "walking locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 73,
+              "pdfPage1Based": 74,
+              "sourceEntryKey": "CLONE-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems walking locomotion"
+            }
+          },
+          {
+            "instanceId": "CLONE-DROID-013-COMP-002",
+            "name": "basic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 73,
+              "pdfPage1Based": 74,
+              "sourceEntryKey": "CLONE-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems basic processor"
+            }
+          },
+          {
+            "instanceId": "CLONE-DROID-013-COMP-003",
+            "name": "claw appendage [1/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 73,
+              "pdfPage1Based": 74,
+              "sourceEntryKey": "CLONE-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems claw appendage"
+            },
+            "count": 1,
+            "physicalLocationId": "CLONE-DROID-013-LOCATION-01"
+          },
+          {
+            "instanceId": "CLONE-DROID-013-COMP-004",
+            "name": "claw appendage [2/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 73,
+              "pdfPage1Based": 74,
+              "sourceEntryKey": "CLONE-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems claw appendage"
+            },
+            "count": 1,
+            "physicalLocationId": "CLONE-DROID-013-LOCATION-02"
+          },
+          {
+            "instanceId": "CLONE-DROID-013-COMP-005",
+            "name": "durasteel plating (+6 armor)",
+            "componentCategory": "armor",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 73,
+              "pdfPage1Based": 74,
+              "sourceEntryKey": "CLONE-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems durasteel plating (+6 armor)"
+            }
+          }
+        ]
       },
-      "equipment": {},
-      "modifications": {},
+      "equipment": {
+        "possessions": [
+          {
+            "entryId": "CLONE-DROID-013-POS-01",
+            "name": "durasteel shell",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          }
+        ]
+      },
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "CLONE-DROID-013-CONSTRAINT-LOADER-WEAPON-CONTEXT",
+            "statement": "Stock two claws have printed melee 2 claws +10 (1d6+7); cargo/towing descriptions do not create torpedo/missile launch capability or a vehicle weapon mount.",
+            "scope": "IW-37 Pincer Loader Droid",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 73,
+              "pdfPage1Based": 74,
+              "sourceEntryKey": "CLONE-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "LOADER-WEAPON-CONTEXT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-013-CONSTRAINT-ARMOR-POSSESSION-RELATION",
+            "statement": "Factory Systems identify durasteel plating (+6 armor) but Possessions ALSO lists durasteel shell; preserve dual source claims for physical armor reconciliation, do not double count armor bonuses.",
+            "scope": "IW-37 Pincer Loader Droid",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 73,
+              "pdfPage1Based": 74,
+              "sourceEntryKey": "CLONE-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ARMOR-POSSESSION-RELATION"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-013-CONSTRAINT-HERO-PROHIBITED",
+            "statement": "IW-37 explicitly may not be a heroic droid.",
+            "scope": "IW-37 Pincer Loader Droid",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 73,
+              "pdfPage1Based": 74,
+              "sourceEntryKey": "CLONE-DROID-013",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "HERO-PROHIBITED"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -4720,11 +5380,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M3 detailed source-only mechanical boundaries captured; no actor, weapon mount, or class certification.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-013",
           "Clone Wars Campaign Guide:printed-p73:TXT-line-6483",
-          "CLONE:printed-p73:PDF-page-74:selected-visual-fields"
+          "CLONE:printed-p73:PDF-page-74:selected-visual-fields",
+          "CLONE:p73:PDF-p74:M3-model-visual-source-pass"
         ]
       }
     },
@@ -4768,7 +5429,80 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "CLONE-DROID-014-CONSTRAINT-SQUAD-FOUR-BASE",
+            "statement": "Derived from four B1 droids; construction increases size one category and doubles source character hit points, increases damage threshold by 10, adds +4 on all attack rolls, and treats units as aiding each other. This is SQUAD packaging, not four distinct turn owners.",
+            "scope": "B1-Series Battle Droid Squad",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 94,
+              "pdfPage1Based": 95,
+              "sourceEntryKey": "CLONE-DROID-014",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SQUAD-FOUR-BASE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-014-CONSTRAINT-SQUAD-MELEE-AREA",
+            "statement": "Squad melee attacks affect all squares within its reach (unless it elects not to affect all), not four individual attacks.",
+            "scope": "B1-Series Battle Droid Squad",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 94,
+              "pdfPage1Based": 95,
+              "sourceEntryKey": "CLONE-DROID-014",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SQUAD-MELEE-AREA"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-014-CONSTRAINT-SQUAD-RANGED-SPLASH",
+            "statement": "Squad ranged attacks have 1-square splash and splash damage equals 2 dice; eligible attacks still require actual issued squad weapons.",
+            "scope": "B1-Series Battle Droid Squad",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 94,
+              "pdfPage1Based": 95,
+              "sourceEntryKey": "CLONE-DROID-014",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SQUAD-RANGED-SPLASH"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-014-CONSTRAINT-SQUAD-INTERACTION",
+            "statement": "Squad cannot be grabbed or grappled, can make opportunity attacks that provoke it but those are not area attacks; squad has 2x2 fighting space.",
+            "scope": "B1-Series Battle Droid Squad",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 94,
+              "pdfPage1Based": 95,
+              "sourceEntryKey": "CLONE-DROID-014",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SQUAD-INTERACTION"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-014-CONSTRAINT-FOUR-INDIVIDUALS-NOT-STOCK-CHASSIS",
+            "statement": "This source identity represents a group of four units in one squad statblock. Do not grant individual droid hero creation or duplicate squad hp/attack statistics to a single B1.",
+            "scope": "B1-Series Battle Droid Squad",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 94,
+              "pdfPage1Based": 95,
+              "sourceEntryKey": "CLONE-DROID-014",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "FOUR-INDIVIDUALS-NOT-STOCK-CHASSIS"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {},
       "vehicleLink": {},
       "economics": {},
@@ -4785,17 +5519,90 @@
       },
       "fieldStates": {},
       "rules": {
-        "mechanicalExecutionStatus": "source-only"
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "CLONE-DROID-014-RULE-SQUAD-FOUR-BASE",
+            "statement": "Derived from four B1 droids; construction increases size one category and doubles source character hit points, increases damage threshold by 10, adds +4 on all attack rolls, and treats units as aiding each other. This is SQUAD packaging, not four distinct turn owners.",
+            "scope": "B1-Series Battle Droid Squad",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 94,
+              "pdfPage1Based": 95,
+              "sourceEntryKey": "CLONE-DROID-014",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SQUAD-FOUR-BASE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-014-RULE-SQUAD-MELEE-AREA",
+            "statement": "Squad melee attacks affect all squares within its reach (unless it elects not to affect all), not four individual attacks.",
+            "scope": "B1-Series Battle Droid Squad",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 94,
+              "pdfPage1Based": 95,
+              "sourceEntryKey": "CLONE-DROID-014",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SQUAD-MELEE-AREA"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-014-RULE-SQUAD-RANGED-SPLASH",
+            "statement": "Squad ranged attacks have 1-square splash and splash damage equals 2 dice; eligible attacks still require actual issued squad weapons.",
+            "scope": "B1-Series Battle Droid Squad",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 94,
+              "pdfPage1Based": 95,
+              "sourceEntryKey": "CLONE-DROID-014",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SQUAD-RANGED-SPLASH"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-014-RULE-SQUAD-INTERACTION",
+            "statement": "Squad cannot be grabbed or grappled, can make opportunity attacks that provoke it but those are not area attacks; squad has 2x2 fighting space.",
+            "scope": "B1-Series Battle Droid Squad",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 94,
+              "pdfPage1Based": 95,
+              "sourceEntryKey": "CLONE-DROID-014",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SQUAD-INTERACTION"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-014-RULE-FOUR-INDIVIDUALS-NOT-STOCK-CHASSIS",
+            "statement": "This source identity represents a group of four units in one squad statblock. Do not grant individual droid hero creation or duplicate squad hp/attack statistics to a single B1.",
+            "scope": "B1-Series Battle Droid Squad",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 94,
+              "pdfPage1Based": 95,
+              "sourceEntryKey": "CLONE-DROID-014",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "FOUR-INDIVIDUALS-NOT-STOCK-CHASSIS"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "certification": {
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M3 visual squad printed p94: distinct aggregation of four B1 units, squad attack/defense/movement and construction semantics source-only. No individual stock chassis permission. M3 detailed source-only mechanical boundaries captured; no actor, weapon mount, or class certification.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-014",
           "Clone Wars Campaign Guide:printed-p95:TXT-line-8396",
-          "CLONE:printed-p94:PDF-page-95:selected-visual-fields"
+          "CLONE:printed-p94:PDF-page-95:selected-visual-fields",
+          "CLONE:p94:PDF-p95:M3-model-visual-source-pass"
         ]
       }
     },
@@ -4833,9 +5640,161 @@
         "con": null,
         "int": 14,
         "wis": 15,
-        "cha": 9
+        "cha": 9,
+        "skills": [
+          {
+            "name": "Knowledge (life sciences)",
+            "printedTotal": 8,
+            "raw": "Knowledge (life sciences) +8",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed skill Knowledge (life sciences)"
+            }
+          },
+          {
+            "name": "Knowledge (technology)",
+            "printedTotal": 8,
+            "raw": "Knowledge (technology) +8",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed skill Knowledge (technology)"
+            }
+          },
+          {
+            "name": "Perception",
+            "printedTotal": 10,
+            "raw": "Perception +10",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed skill Perception"
+            }
+          },
+          {
+            "name": "Treat Injury",
+            "printedTotal": 13,
+            "raw": "Treat Injury +13",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed skill Treat Injury"
+            }
+          },
+          {
+            "name": "Use Computer",
+            "printedTotal": 8,
+            "raw": "Use Computer +8",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed skill Use Computer"
+            }
+          }
+        ],
+        "languages": [
+          {
+            "name": "Basic",
+            "raw": "Printed Languages"
+          },
+          {
+            "name": "Binary",
+            "raw": "Printed Languages"
+          },
+          {
+            "name": "2 unassigned",
+            "raw": "Printed Languages"
+          }
+        ]
       },
-      "progression": {},
+      "progression": {
+        "classLineRaw": "nonheroic 3",
+        "classes": [
+          {
+            "className": "nonheroic",
+            "level": 3
+          }
+        ],
+        "nonheroicLevels": 3,
+        "feats": [
+          {
+            "traitId": "CLONE-DROID-015-feats-01",
+            "name": "Cybernetic Surgery",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat Cybernetic Surgery"
+            }
+          },
+          {
+            "traitId": "CLONE-DROID-015-feats-02",
+            "name": "Skill Focus (Treat Injury)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat Skill Focus (Treat Injury)"
+            }
+          },
+          {
+            "traitId": "CLONE-DROID-015-feats-03",
+            "name": "Skill Training (Knowledge [technology])",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat Skill Training (Knowledge [technology])"
+            }
+          },
+          {
+            "traitId": "CLONE-DROID-015-feats-04",
+            "name": "Skill Training (Use Computer)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat Skill Training (Use Computer)"
+            }
+          },
+          {
+            "traitId": "CLONE-DROID-015-feats-05",
+            "name": "Surgical Expertise",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat Surgical Expertise"
+            }
+          }
+        ]
+      },
       "defenses": {
         "reflex": 12,
         "flatFootedReflex": 12,
@@ -4847,7 +5806,24 @@
         "damageThreshold": 9
       },
       "movement": {
-        "speedLineRaw": "Speed 2 squares (tracked)"
+        "speedLineRaw": "Speed 2 squares (tracked)",
+        "locomotionSystems": [
+          {
+            "instanceId": "CLONE-DROID-015-MOVE-1",
+            "mode": "tracked",
+            "speedSquares": 2,
+            "raw": "2 squares (tracked)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Speed"
+            },
+            "componentInstanceId": "CLONE-DROID-015-COMP-001"
+          }
+        ]
       },
       "anatomy": {},
       "processor": {},
@@ -4864,10 +5840,158 @@
       },
       "capacity": {},
       "systems": {
-        "sourceSystemsRaw": "tracked locomation, heuristic processor, 6 instruments,"
+        "sourceSystemsRaw": "tracked locomation, heuristic processor, 6 instruments,",
+        "installed": [
+          {
+            "instanceId": "CLONE-DROID-015-COMP-001",
+            "name": "tracked locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems tracked locomotion"
+            }
+          },
+          {
+            "instanceId": "CLONE-DROID-015-COMP-002",
+            "name": "heuristic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems heuristic processor"
+            }
+          },
+          {
+            "instanceId": "CLONE-DROID-015-COMP-003",
+            "name": "6 instruments",
+            "componentCategory": "medical-instrument",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems 6 instruments"
+            }
+          },
+          {
+            "instanceId": "CLONE-DROID-015-COMP-004",
+            "name": "improved sensor package",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems improved sensor package"
+            }
+          },
+          {
+            "instanceId": "CLONE-DROID-015-COMP-005",
+            "name": "vocabulator",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems vocabulator"
+            }
+          },
+          {
+            "instanceId": "CLONE-DROID-015-COMP-006",
+            "name": "plasteel shell (+2 armor)",
+            "componentCategory": "armor",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems plasteel shell (+2 armor)"
+            }
+          }
+        ]
       },
-      "equipment": {},
-      "modifications": {},
+      "equipment": {
+        "possessions": [
+          {
+            "entryId": "CLONE-DROID-015-POS-01",
+            "name": "medical kit",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          }
+        ]
+      },
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "CLONE-DROID-015-CONSTRAINT-SIX-INSTRUMENTS-NOT-SIX-HANDS",
+            "statement": "Six instruments in factory Systems are medical instruments, not proven six generic manipulators, hands, or mounted attacks. Main statblock 'Melee instrument +1 (1d2-1)' remains source-only.",
+            "scope": "FX-6 Medical Assistance Droid",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 160,
+              "pdfPage1Based": 161,
+              "sourceEntryKey": "CLONE-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SIX-INSTRUMENTS-NOT-SIX-HANDS"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-015-CONSTRAINT-SURGERY-PRIORITY",
+            "statement": "Printed programming prefers cybernetic intervention if viable/cost-effective; this is descriptive priority, not a free surgery, replacement inventory or additional health restoration.",
+            "scope": "FX-6 Medical Assistance Droid",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 160,
+              "pdfPage1Based": 161,
+              "sourceEntryKey": "CLONE-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SURGERY-PRIORITY"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-015-CONSTRAINT-MEDICAL-KIT-POSSESSION",
+            "statement": "Medical kit is carried under Possessions rather than an installed Systems component.",
+            "scope": "FX-6 Medical Assistance Droid",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 160,
+              "pdfPage1Based": 161,
+              "sourceEntryKey": "CLONE-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "MEDICAL-KIT-POSSESSION"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-015-CONSTRAINT-SPLIT-PAGE-FIELDS",
+            "statement": "The FX-6 statblock begins on p160 and continues on p161; source evidence for every printed feat, movement, Systems, and Possessions is p161. Do not treat the continuation as an absent field.",
+            "scope": "FX-6 Medical Assistance Droid",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 160,
+              "pdfPage1Based": 161,
+              "sourceEntryKey": "CLONE-DROID-015",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "SPLIT-PAGE-FIELDS"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "allowed"
       },
@@ -4893,12 +6017,13 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M3 detailed source-only mechanical boundaries captured; no actor, weapon mount, or class certification.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-015",
           "Clone Wars Campaign Guide:printed-p160:TXT-line-15307",
           "CLONE:printed-p160:PDF-page-161:selected-visual-fields",
-          "CLONE:printed-p161:PDF-page-162:continued-statblock"
+          "CLONE:printed-p161:PDF-page-162:continued-statblock",
+          "CLONE:p160-161:PDF-p161-162:M3-model-visual-source-pass"
         ]
       }
     },
@@ -4936,9 +6061,136 @@
         "con": null,
         "int": 14,
         "wis": 12,
-        "cha": 7
+        "cha": 7,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedTotal": 13,
+            "raw": "Initiative +13",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-016",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed skill Initiative"
+            }
+          },
+          {
+            "name": "Perception",
+            "printedTotal": 4,
+            "raw": "Perception +4",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-016",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed skill Perception"
+            }
+          },
+          {
+            "name": "Pilot",
+            "printedTotal": 13,
+            "raw": "Pilot +13",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-016",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed skill Pilot"
+            }
+          },
+          {
+            "name": "Use Computer",
+            "printedTotal": 13,
+            "raw": "Use Computer +13",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-016",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed skill Use Computer"
+            }
+          }
+        ],
+        "languages": [
+          {
+            "name": "Basic",
+            "raw": "Printed Languages"
+          },
+          {
+            "name": "Binary",
+            "raw": "Printed Languages"
+          },
+          {
+            "name": "2 unassigned",
+            "raw": "Printed Languages"
+          }
+        ]
       },
-      "progression": {},
+      "progression": {
+        "classLineRaw": "nonheroic 2",
+        "classes": [
+          {
+            "className": "nonheroic",
+            "level": 2
+          }
+        ],
+        "nonheroicLevels": 2,
+        "feats": [
+          {
+            "traitId": "CLONE-DROID-016-feats-01",
+            "name": "Skill Focus (Initiative)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-016",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat Skill Focus (Initiative)"
+            }
+          },
+          {
+            "traitId": "CLONE-DROID-016-feats-02",
+            "name": "Skill Focus (Pilot)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-016",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat Skill Focus (Pilot)"
+            }
+          },
+          {
+            "traitId": "CLONE-DROID-016-feats-03",
+            "name": "Skill Focus (Use Computer)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-016",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat Skill Focus (Use Computer)"
+            }
+          },
+          {
+            "traitId": "CLONE-DROID-016-feats-04",
+            "name": "Vehicular Combat",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-016",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat Vehicular Combat"
+            }
+          }
+        ]
+      },
       "defenses": {
         "reflex": 13,
         "flatFootedReflex": 11,
@@ -4950,7 +6202,24 @@
         "damageThreshold": 9
       },
       "movement": {
-        "speedLineRaw": "Speed 4 squares (wheeled)"
+        "speedLineRaw": "Speed 4 squares (wheeled)",
+        "locomotionSystems": [
+          {
+            "instanceId": "CLONE-DROID-016-MOVE-1",
+            "mode": "wheeled",
+            "speedSquares": 4,
+            "raw": "4 squares (wheeled)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-016",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Speed"
+            },
+            "componentInstanceId": "CLONE-DROID-016-COMP-001"
+          }
+        ]
       },
       "anatomy": {},
       "processor": {},
@@ -4967,10 +6236,175 @@
       },
       "capacity": {},
       "systems": {
-        "sourceSystemsRaw": "wheeled locomotion, magnetic feet, 2 hands, improved sensor"
+        "sourceSystemsRaw": "wheeled locomotion, magnetic feet, 2 hands, improved sensor",
+        "installed": [
+          {
+            "instanceId": "CLONE-DROID-016-COMP-001",
+            "name": "wheeled locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-016",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems wheeled locomotion"
+            }
+          },
+          {
+            "instanceId": "CLONE-DROID-016-COMP-002",
+            "name": "magnetic feet",
+            "componentCategory": "other",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-016",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems magnetic feet"
+            }
+          },
+          {
+            "instanceId": "CLONE-DROID-016-COMP-003",
+            "name": "hand appendage [1/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-016",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems hand appendage"
+            },
+            "count": 1,
+            "physicalLocationId": "CLONE-DROID-016-LOCATION-01"
+          },
+          {
+            "instanceId": "CLONE-DROID-016-COMP-004",
+            "name": "hand appendage [2/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-016",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems hand appendage"
+            },
+            "count": 1,
+            "physicalLocationId": "CLONE-DROID-016-LOCATION-02"
+          },
+          {
+            "instanceId": "CLONE-DROID-016-COMP-005",
+            "name": "improved sensor package",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-016",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems improved sensor package"
+            }
+          },
+          {
+            "instanceId": "CLONE-DROID-016-COMP-006",
+            "name": "darkvision",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-016",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems darkvision"
+            }
+          },
+          {
+            "instanceId": "CLONE-DROID-016-COMP-007",
+            "name": "vocabulator",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-016",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems vocabulator"
+            }
+          }
+        ]
       },
-      "equipment": {},
-      "modifications": {},
+      "equipment": {
+        "possessions": [
+          {
+            "entryId": "CLONE-DROID-016-POS-01",
+            "name": "astrogation buffer (10 memory units)",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          }
+        ]
+      },
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "CLONE-DROID-016-CONSTRAINT-PRIVACY-WIPE",
+            "statement": "Narrative says FA-4 owner may wipe destination/conversation memory via voice command; there is no stated free shield/weapon immunity or unrestricted remote hacking permission.",
+            "scope": "FA-4 Pilot Droid",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-016",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "PRIVACY-WIPE"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-016-CONSTRAINT-CANNOT-FIRE-SHIP-WEAPONS",
+            "statement": "Although trained to pilot and avoid hazards, the published FA-4 is NOT programmed for combat and cannot use its ship weaponry to fire back. Vehicular Combat is defensive, not a weapon right.",
+            "scope": "FA-4 Pilot Droid",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-016",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "CANNOT-FIRE-SHIP-WEAPONS"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-016-CONSTRAINT-BUFFER-CAPACITY",
+            "statement": "Ten-memory-unit astrogation buffer printed as a possession/storage device, not ten kilograms and not a built-in vehicle.",
+            "scope": "FA-4 Pilot Droid",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-016",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "BUFFER-CAPACITY"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-016-CONSTRAINT-HERO-ELIGIBLE",
+            "statement": "Heroic route allowed, no automatic nonheroic 2 or factory feat grants.",
+            "scope": "FA-4 Pilot Droid",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 161,
+              "pdfPage1Based": 162,
+              "sourceEntryKey": "CLONE-DROID-016",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "HERO-ELIGIBLE"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "allowed"
       },
@@ -4993,11 +6427,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M3 detailed source-only mechanical boundaries captured; no actor, weapon mount, or class certification.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-016",
           "Clone Wars Campaign Guide:printed-p161:TXT-line-15367",
-          "CLONE:printed-p161:PDF-page-162:selected-visual-fields"
+          "CLONE:printed-p161:PDF-page-162:selected-visual-fields",
+          "CLONE:p161:PDF-p162:M3-model-visual-source-pass"
         ]
       }
     },
@@ -5035,9 +6470,93 @@
         "int": 10,
         "wis": 11,
         "cha": 6,
-        "con": null
+        "con": null,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedTotal": 10,
+            "raw": "Initiative +10",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 162,
+              "pdfPage1Based": 163,
+              "sourceEntryKey": "CLONE-DROID-017",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed skill Initiative"
+            }
+          }
+        ],
+        "languages": [
+          {
+            "name": "Basic",
+            "raw": "Printed Languages"
+          },
+          {
+            "name": "Binary",
+            "raw": "Printed Languages"
+          }
+        ]
       },
-      "progression": {},
+      "progression": {
+        "classLineRaw": "nonheroic 2",
+        "classes": [
+          {
+            "className": "nonheroic",
+            "level": 2
+          }
+        ],
+        "nonheroicLevels": 2,
+        "feats": [
+          {
+            "traitId": "CLONE-DROID-017-feats-01",
+            "name": "Dodge",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 162,
+              "pdfPage1Based": 163,
+              "sourceEntryKey": "CLONE-DROID-017",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat Dodge"
+            }
+          },
+          {
+            "traitId": "CLONE-DROID-017-feats-02",
+            "name": "Point Blank Shot",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 162,
+              "pdfPage1Based": 163,
+              "sourceEntryKey": "CLONE-DROID-017",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat Point Blank Shot"
+            }
+          },
+          {
+            "traitId": "CLONE-DROID-017-feats-03",
+            "name": "Weapon Focus (pistols)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 162,
+              "pdfPage1Based": 163,
+              "sourceEntryKey": "CLONE-DROID-017",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat Weapon Focus (pistols)"
+            }
+          },
+          {
+            "traitId": "CLONE-DROID-017-feats-04",
+            "name": "Weapon Proficiency (pistols)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 162,
+              "pdfPage1Based": 163,
+              "sourceEntryKey": "CLONE-DROID-017",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed feat Weapon Proficiency (pistols)"
+            }
+          }
+        ]
+      },
       "defenses": {
         "reflex": 19,
         "flatFootedReflex": 15,
@@ -5049,7 +6568,24 @@
         "damageThreshold": 6
       },
       "movement": {
-        "speedLineRaw": "Speed 1 square (hovering)"
+        "speedLineRaw": "Speed 1 square (hovering)",
+        "locomotionSystems": [
+          {
+            "instanceId": "CLONE-DROID-017-MOVE-1",
+            "mode": "hovering",
+            "speedSquares": 1,
+            "raw": "1 squares (hovering)",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 162,
+              "pdfPage1Based": 163,
+              "sourceEntryKey": "CLONE-DROID-017",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Speed"
+            },
+            "componentInstanceId": "CLONE-DROID-017-COMP-001"
+          }
+        ]
       },
       "anatomy": {},
       "processor": {},
@@ -5376,10 +6912,119 @@
       },
       "capacity": {},
       "systems": {
-        "sourceSystemsRaw": "hovering locomotion, basic processor, weapon mount (stabilized)"
+        "sourceSystemsRaw": "hovering locomotion, basic processor, weapon mount (stabilized)",
+        "installed": [
+          {
+            "instanceId": "CLONE-DROID-017-COMP-001",
+            "name": "hovering locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 162,
+              "pdfPage1Based": 163,
+              "sourceEntryKey": "CLONE-DROID-017",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems hovering locomotion"
+            }
+          },
+          {
+            "instanceId": "CLONE-DROID-017-COMP-002",
+            "name": "basic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 162,
+              "pdfPage1Based": 163,
+              "sourceEntryKey": "CLONE-DROID-017",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems basic processor"
+            }
+          },
+          {
+            "instanceId": "CLONE-DROID-017-COMP-003",
+            "name": "weapon mount (stabilized)",
+            "componentCategory": "weapon-mount",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 162,
+              "pdfPage1Based": 163,
+              "sourceEntryKey": "CLONE-DROID-017",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "Printed Systems weapon mount (stabilized)"
+            }
+          }
+        ]
       },
-      "equipment": {},
-      "modifications": {},
+      "equipment": {
+        "possessions": [
+          {
+            "entryId": "CLONE-DROID-017-POS-01",
+            "name": "light blaster",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          }
+        ]
+      },
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "CLONE-DROID-017-CONSTRAINT-STUN-ONLY-FACTORY",
+            "statement": "Ranged light blaster +5 deals 1d4 STUN; factory low-power stunner blaster must not automatically grant standard lethal damage output.",
+            "scope": "Marksman-H Combat Remote",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 162,
+              "pdfPage1Based": 163,
+              "sourceEntryKey": "CLONE-DROID-017",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "STUN-ONLY-FACTORY"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-017-CONSTRAINT-ACTIVATION-TRIGGER",
+            "statement": "Narrative default setting remains on guard until target readies weapon, then begins shooting; no unlimited attack as a free reaction without ordinary encounter turn authority.",
+            "scope": "Marksman-H Combat Remote",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 162,
+              "pdfPage1Based": 163,
+              "sourceEntryKey": "CLONE-DROID-017",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "ACTIVATION-TRIGGER"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-017-CONSTRAINT-STABILIZED-MOUNT",
+            "statement": "A real stabilized weapon mount is printed, and light blaster is Possession; must bind actual mount-to-weapon relationship before executing an attack.",
+            "scope": "Marksman-H Combat Remote",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 162,
+              "pdfPage1Based": 163,
+              "sourceEntryKey": "CLONE-DROID-017",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "STABILIZED-MOUNT"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CLONE-DROID-017-CONSTRAINT-HERO-PROHIBITED",
+            "statement": "This Diminutive combat remote cannot be a heroic droid.",
+            "scope": "Marksman-H Combat Remote",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 162,
+              "pdfPage1Based": 163,
+              "sourceEntryKey": "CLONE-DROID-017",
+              "verifiedBy": "pdf-visual",
+              "citationLabel": "HERO-PROHIBITED"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -5402,11 +7047,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation. M3 detailed source-only mechanical boundaries captured; no actor, weapon mount, or class certification.",
         "reviewerEvidenceRefs": [
           "CLONE-CENSUS:CLONE-DROID-017",
           "Clone Wars Campaign Guide:printed-p162:TXT-line-15508",
-          "CLONE:printed-p162:PDF-page-163:selected-visual-fields"
+          "CLONE:printed-p162:PDF-page-163:selected-visual-fields",
+          "CLONE:p162:PDF-p163:M3-model-visual-source-pass"
         ]
       }
     },
