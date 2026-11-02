@@ -228,11 +228,15 @@ export function buildVehicleDerived(actor, system) {
   if (published) {
     const mv = published.movement;
     const primary = mv.primaryCharacter;
+    // Certified atmosphere-only movement effects apply only in an explicit atmosphere environment.
+    const atmo = (published.atmosphericMovement ?? []).find(m => m.applies && m.mode === primary?.mode);
+    const total = atmo && Number.isFinite(atmo.effectiveSquares) ? atmo.effectiveSquares : primary?.squares ?? null;
     system.derived.speed = {
       base: primary?.squares ?? null,
-      total: primary?.squares ?? null,
+      total,
       walk: mv.walking?.squares ?? null,
-      adjustment: 0,
+      adjustment: Number.isFinite(total) && Number.isFinite(primary?.squares) ? total - primary.squares : 0,
+      environment: published.environment ?? 'unknown',
       mode: primary?.mode ?? null,
       starshipSquares: mv.primaryStarship?.squares ?? null,
       modes: mv.modes,

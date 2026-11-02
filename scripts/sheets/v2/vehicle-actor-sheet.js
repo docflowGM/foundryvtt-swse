@@ -8,7 +8,8 @@ import { getActorSheetThemeGroups } from "/systems/foundryvtt-swse/scripts/theme
 import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
 import { ShellSurfaceRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellSurfaceRegistry.js";
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
-import { bindShipyardActions, createDefaultShipyardDeps } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-shipyard-actions.js";
+import { VehicleOperatingContextService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-operating-context-service.js";
+import { bindShipyardActions, createDefaultShipyardDeps, bindOperatingActions, createDefaultOperatingDeps } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-shipyard-actions.js";
 import { VehicleInstallationService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-installation-service.js";
 import { classifyVehicleActorRuntime } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
 import { loadUnusedEpTable } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-schema-view-model.js";
@@ -810,6 +811,7 @@ export class SWSEV2VehicleSheet extends SWSEV2ActorSheetBase {
 
     // Shipyard installation work: governed service calls only (no direct ledger/jobs edits).
     if (this.actor) bindShipyardActions(root, this.actor, createDefaultShipyardDeps(VehicleInstallationService));
+    if (this.actor) bindOperatingActions(root, this.actor, createDefaultOperatingDeps(VehicleOperatingContextService));
 
     root.querySelectorAll('[data-action="customize-vehicle"]').forEach(btn => {
       btn.addEventListener('click', async (ev) => {

@@ -78,7 +78,7 @@ const stat = (base) => ({ base: finite(base) ? base : null, effective: finite(ba
  * registered effect. Entries without one are listed in `unimplemented` and contribute nothing.
  * @param {{record: object, entries: object[]}} p record is the published source record (or a construction-derived equivalent)
  */
-export function computeEffectiveStatistics({ record, entries = [] }) {
+export function computeEffectiveStatistics({ record, entries = [], environment = 'unknown' }) {
   const out = {
     reflex: stat(record?.defenses?.reflex), initiative: stat(record?.abilities?.initiativePrinted),
     shield: stat(record?.defenses?.shieldRating),
@@ -116,5 +116,8 @@ export function computeEffectiveStatistics({ record, entries = [] }) {
     }
   }
   for (const s of [out.reflex, out.initiative]) if (finite(s.base)) s.effective = s.base + s.delta;
+  // Atmosphere-only effects apply only in an explicit 'atmosphere' environment (unknown never activates them).
+  for (const m of out.movement) m.applies = m.sources.length > 0 && environment === 'atmosphere';
+  out.environment = environment;
   return out;
 }

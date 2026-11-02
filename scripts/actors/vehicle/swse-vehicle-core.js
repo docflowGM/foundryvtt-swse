@@ -377,13 +377,14 @@ export class SWSEVehicleCore {
 
       const skillKey = this._mapSkillName(skillName);
 
-      const { SWSERoll } = await import("/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js");
-
-      await SWSERoll.rollSkillCheck(actor, skillKey, {
-        ...config,
-        vehicleName: vehicle.name,
-        crewPosition: position
-      });
+      // Pilot checks add the vehicle's size and effective Dexterity modifiers (P6B-0 operating-context authority);
+      // other crew skills roll the crew Actor's own skill. Both use the canonical skill roll (scripts/rolls/skills.js).
+      if (skillKey === 'pilot') {
+        const { VehicleOperatingContextService } = await import("/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-operating-context-service.js");
+        return (await VehicleOperatingContextService.rollPilotCheck(vehicle, { ...config, pilotActor: actor, crewPosition: position })).success;
+      }
+      const { rollSkill } = await import("/systems/foundryvtt-swse/scripts/rolls/skills.js");
+      await rollSkill(actor, skillKey, { ...config, vehicleName: vehicle.name, crewPosition: position });
 
       return true;
     } catch (error) {

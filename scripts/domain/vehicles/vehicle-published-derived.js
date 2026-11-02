@@ -85,7 +85,10 @@ export function getEffectiveVehicleDerived(actor) {
   const record = getVerifiedPublishedRecord(actor);
   const raw = typeof actor?.toObject === 'function' ? actor.toObject() : actor;
   const { entries } = readCertifiedInstallations(raw?.flags, record.identity.sourceEntryKey);
-  const fx = computeEffectiveStatistics({ record, entries });
+  // Environment is an explicit GM-set flag only (vehicle-operating-context.js); anything else is 'unknown'.
+  const envState = raw?.flags?.swse?.vehicleEnvironment?.state;
+  const environment = envState === 'atmosphere' || envState === 'space' ? envState : 'unknown';
+  const fx = computeEffectiveStatistics({ record, entries, environment });
   const printedSR = record.defenses?.shieldRating;
   const shieldMax = fx.shield.sources.length ? fx.shield.effective : (finite(printedSR) ? printedSR : null);
   return {
@@ -100,6 +103,7 @@ export function getEffectiveVehicleDerived(actor) {
       : { capability: record.hyperspace?.capability ?? null, class: record.hyperspace?.primaryMultiplier ?? null, fromInstallation: false },
     pilotDexModifierDelta: fx.initiative.delta,
     atmosphericMovement: fx.movement.filter(m => m.sources.length),
+    environment,
     contributions: { reflex: fx.reflex, initiative: fx.initiative, shield: fx.shield },
     unimplemented: fx.unimplemented
   };

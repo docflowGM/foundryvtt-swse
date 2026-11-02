@@ -207,3 +207,24 @@ export function planManualRestore(actor, options = {}) {
   if (post.kind !== 'canonical') return { ...base, status: 'REJECTED', reasons: ['RESTORE_RESULT_INVALID', ...post.errors] };
   return { ...base, status: 'READY', reasons: [], errataId: record.errataId, gameplayChanges, shields, shieldDecision: options.shieldDecision ?? null, update };
 }
+
+/**
+ * After a MANUAL restoration write: verify every restored field actually persisted (source record + digest, shield
+ * rating/maximum, current shields as kept or clamped, printed-groups mirror, migration record removed, restoration
+ * audit persisted, valid canonical classification). A partial or silently refused write is never success.
+ */
+export function verifyManualRestoreState(actor, plan, audit) {
+  const raw = typeof actor?.toObject === 'function' ? actor.toObject() : actor;
+  const problems = [];
+  const src = raw?.flags?.swse?.universalVehicleSource, want = plan.update['flags.swse.universalVehicleSource'];
+  if (JSON.stringify(src?.source) !== JSON.stringify(want.source) || src?.recordDigest !== want.recordDigest) problems.push('SOURCE_NOT_RESTORED');
+  if (src && digestUniversalVehicleSource(src.source) !== src.recordDigest) problems.push('RESTORED_DIGEST_INVALID');
+  if ('system.shieldRating' in plan.update && raw?.system?.shieldRating !== plan.update['system.shieldRating']) problems.push('SHIELD_RATING_NOT_RESTORED');
+  if ('system.shields.max' in plan.update && raw?.system?.shields?.max !== plan.update['system.shields.max']) problems.push('SHIELD_MAX_NOT_RESTORED');
+  if (plan.shields && raw?.system?.shields?.value !== plan.shields.after.value) problems.push('CURRENT_SHIELDS_NOT_AS_PLANNED');
+  if ('system.sourceAttackGroups' in plan.update && JSON.stringify(raw?.system?.sourceAttackGroups) !== JSON.stringify(plan.update['system.sourceAttackGroups'])) problems.push('GROUPS_NOT_RESTORED');
+  if ((raw?.flags?.swse?.errataMigrations ?? []).some(m => m.version === ERRATA_MIGRATION_VERSION)) problems.push('MIGRATION_RECORD_NOT_CLEARED');
+  if (!(raw?.flags?.swse?.errataMigrationRestorations ?? []).some(r => r.version === audit.version && r.at === audit.at && r.gmUserId === audit.gmUserId)) problems.push('RESTORATION_AUDIT_NOT_PERSISTED');
+  if (classifyVehicleActorSource(raw, undefined, { mode: 'runtime' }).kind !== 'canonical') problems.push('RESTORED_ACTOR_INVALID');
+  return { ok: problems.length === 0, problems };
+}

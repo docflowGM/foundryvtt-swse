@@ -70,6 +70,18 @@ export function applyChangesToCopy(source, changes) {
  * reject the vehicle (e.g. current HP above the printed maximum, a forged mirror, a stock
  * weapon row). A vehicle that is already invalid is not trapped: repairs remain possible.
  */
+/** The vehicle operating environment is GM-adjudicated: only a GM user may change flags.swse.vehicleEnvironment. */
+export function guardVehicleEnvironment(actor, changes, _options, userId) {
+  if (actor?.type !== 'vehicle') return undefined;
+  const touches = changes && (Object.keys(changes).some(k => /^flags\.swse\.(-=)?vehicleEnvironment/.test(k)) ||
+    (changes.flags?.swse && Object.keys(changes.flags.swse).some(k => /^(-=)?vehicleEnvironment$/.test(k))));
+  if (!touches) return undefined;
+  const user = globalThis.game?.users?.get?.(userId) ?? (userId === undefined ? globalThis.game?.user : null);
+  if (user?.isGM === true) return undefined;
+  console.error('[foundryvtt-swse] Vehicle environment change denied: GM_REQUIRED');
+  return false;
+}
+
 export function guardVehicleProvenance(actor, changes) {
   const verdict = checkProvenanceUpdate(actor, changes);
   if (!verdict.ok) {
@@ -93,6 +105,7 @@ export function registerVehiclePreCreateHooks() {
   Hooks.on('preCreateActor', validateVehicleCreation);
   Hooks.on('preUpdateActor', guardVehicleInstallationLedger);
   Hooks.on('preUpdateActor', guardVehicleProvenance);
+  Hooks.on('preUpdateActor', guardVehicleEnvironment);
   // Intentionally no createActor weapon hydration. Source firing groups are
   // reference evidence, not permissions or physical mounted weapons.
 }

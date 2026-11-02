@@ -6,6 +6,7 @@
 
 const REASON_TEXT = {
   GM_REQUIRED: 'Only a GM can do that.',
+  ENVIRONMENT_STATE_INVALID: 'Unknown environment state.',
   GM_OVERRIDE_REASON_REQUIRED: 'A reason is required for a GM override.',
   WORK_TIME_INCOMPLETE: 'The installation time has not been completed yet (the GM logs work days).',
   OWNER_VEHICLE_NOT_ASSOCIATED: 'This character is not recorded as the vehicle\'s owner.',
@@ -97,5 +98,41 @@ export function createDefaultShipyardDeps(service) {
     service, game: globalThis.game, notify: globalThis.ui.notifications,
     askReason: title => ask(title, 'Reason (recorded with the override)'),
     askDays: async () => { const v = await ask('Log work days', 'Days of work completed', 'number'); const n = Number(v); return v === null || !Number.isFinite(n) || n <= 0 ? null : n; }
+  };
+}
+
+/**
+ * P6B-0 operating-context buttons: GM environment adjudication and the Pilot check (crew pilot from the vehicle's
+ * pilot station when assigned, otherwise the generic crew). deps: { service, resolvePilot, notify }.
+ */
+export async function runOperatingAction({ action, environment, vehicle }, deps) {
+  if (environment) {
+    const r = await deps.service.setEnvironment(vehicle, environment);
+    if (!r.success) deps.notify.warn(describeReasons(r.reasons));
+    return r;
+  }
+  if (action === 'pilot-check') return deps.service.rollPilotCheck(vehicle, { pilotActor: await deps.resolvePilot(vehicle) });
+  return { success: false, reasons: ['UNKNOWN_ACTION'] };
+}
+
+export function bindOperatingActions(root, vehicle, deps) {
+  for (const btn of root.querySelectorAll('[data-vehicle-environment], [data-vehicle-action="pilot-check"]')) {
+    btn.addEventListener('click', async ev => {
+      ev.preventDefault();
+      btn.disabled = true;
+      try { await runOperatingAction({ action: btn.dataset.vehicleAction, environment: btn.dataset.vehicleEnvironment, vehicle }, deps); }
+      finally { btn.disabled = false; }
+    });
+  }
+}
+
+export function createDefaultOperatingDeps(service) {
+  return {
+    service, notify: globalThis.ui.notifications,
+    resolvePilot: async vehicle => {
+      const entry = vehicle.system?.crewPositions?.pilot;
+      const uuid = typeof entry === 'string' ? entry : entry?.uuid;
+      return uuid ? (await fromUuid(uuid)) ?? null : null;
+    }
   };
 }

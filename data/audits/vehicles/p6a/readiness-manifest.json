@@ -3,7 +3,7 @@
  "counts": {
   "exposeAsReference": 181,
   "installable": 39,
-  "mechanicallyApplied": 37,
+  "mechanicallyApplied": 39,
   "combatUsable": 0
  },
  "rows": [
@@ -12,10 +12,9 @@
    "name": "Atmospheric Thrusters",
    "exposeAsReference": true,
    "installable": true,
-   "mechanicallyApplied": false,
+   "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
-    "CONDITIONAL_EFFECT_NOT_APPLIED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -24,10 +23,9 @@
    "name": "Atmospheric Thrusters, Advanced",
    "exposeAsReference": true,
    "installable": true,
-   "mechanicallyApplied": false,
+   "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
-    "CONDITIONAL_EFFECT_NOT_APPLIED",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },

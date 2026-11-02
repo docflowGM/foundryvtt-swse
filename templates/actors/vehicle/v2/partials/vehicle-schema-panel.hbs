@@ -126,3 +126,25 @@
   </div>
 </section>
 {{/if}}
+
+{{#if view.operating}}
+<section class="swse-vehicle-panel swse-vehicle-operating-panel" data-environment="{{view.operating.environment}}">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">Operating Context</h3>
+    <span class="swse-vehicle-mini-badge">{{view.operating.environmentLabel}}</span>
+  </header>
+  <div class="swse-vehicle-panel-body swse-vehicle-kv-list">
+    <div><span>Environment</span><strong>{{view.operating.environmentLabel}}</strong></div>
+    <div><span>Pilot (generic crew)</span><strong>{{view.operating.genericCrewPilotLabel}}</strong></div>
+    <div><span>Vehicle modifier for a crew pilot</span><strong>{{view.operating.crewPilotVehicleModifierLabel}}</strong></div>
+    {{#if view.operating.canAct}}<div><button type="button" data-vehicle-action="pilot-check">Pilot check</button></div>{{/if}}
+    {{#if view.operating.isGM}}
+      <div class="swse-vehicle-environment-actions">
+        <button type="button" data-vehicle-environment="atmosphere">GM: in atmosphere</button>
+        <button type="button" data-vehicle-environment="space">GM: in space</button>
+        <button type="button" data-vehicle-environment="unknown">GM: unknown</button>
+      </div>
+    {{/if}}
+  </div>
+</section>
+{{/if}}

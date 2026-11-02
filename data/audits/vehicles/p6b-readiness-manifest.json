@@ -16,7 +16,7 @@
     "notInstallableOptions": 6,
     "sourceVerified": 174,
     "mechanicSpecified": 39,
-    "operationallyIntegratedOffline": 37,
+    "operationallyIntegratedOffline": 39,
     "liveRuntimeVerified": 0,
     "installable": 39,
     "combatAuthorizedWeapons": 0,
@@ -115,5 +115,30 @@
     "no catalog certification grants weapon firing authority",
     "the 429 publication records change only through approved amendments",
     "effective = published + certified ledger, recomputed"
+  ],
+  "checkpoints": [
+    {
+      "id": "P6B-0",
+      "status": "OFFLINE_COMPLETE_LIVE_PENDING",
+      "delivered": [
+        "manual-restore persisted-state verification (verifyManualRestoreState)",
+        "vehicle operating context: GM-set environment atmosphere|space|unknown with audit trail and GM-only write guard",
+        "atmospheric thrusters applied in derived speed only in an explicit atmosphere",
+        "vehicle Pilot check: crew Actor = canonical rollSkill + vehicle size (Table 10-1) + effective Dex modifier; generic crew = printed Pilot + certified Dex delta",
+        "one Table 10-1 size authority shared with combat Initiative",
+        "legacy rollCrewSkill fixed (it called a non-existent SWSERoll.rollSkillCheck)"
+      ],
+      "countChanges": {
+        "operationallyIntegratedOffline": {
+          "from": 37,
+          "to": 39,
+          "identities": [
+            "atmospheric-thrusters",
+            "atmospheric-thrusters-advanced"
+          ],
+          "reason": "applied through the P6B-0 environment authority"
+        }
+      }
+    }
   ]
 }

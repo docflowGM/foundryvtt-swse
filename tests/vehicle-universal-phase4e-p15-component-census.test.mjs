@@ -63,8 +63,8 @@ test('certification ledger and readiness manifest never overstate operation', ()
   assert.equal(ledger.counts.mechanicSpecified, 39);
   assert.equal(ready.counts.combatUsable, 0);
   for (const r of ready.rows) { assert.equal(r.combatUsable, false); if (r.installable) assert.ok(cert[r.catalogId]?.status === 'MECHANIC_SPECIFIED'); }
-  // atmospheric thrusters: certified but conditional -> not mechanically applied
-  assert.equal(ready.rows.find(r => r.catalogId === 'atmospheric-thrusters').mechanicallyApplied, false);
+  // atmospheric thrusters: applied since P6B-0 through the GM-set environment (only in an explicit atmosphere)
+  assert.equal(ready.rows.find(r => r.catalogId === 'atmospheric-thrusters').mechanicallyApplied, true);
 });
 
 test('PDF authority: all 172 printed rows reconciled to catalog identities; corrections applied except errata checks', () => {

@@ -1,4 +1,5 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { vehicleSizeModifier } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-operating-context.js";
 import { getEffectiveVehicleInitiative } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-published-derived.js";
 import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
@@ -88,24 +89,10 @@ export class SWSECombatDocument extends Combat {
    * @returns {number} The size modifier to apply to Initiative
    */
   _getVehicleSizeModifier(vehicle) {
-    // Core Table 10-1 prints -10 for Colossal and for each of its subtypes (frigate, cruiser, station).
-    const raw = vehicle.system.size?.toLowerCase() || 'medium';
-    const size = raw.startsWith('colossal') ? 'colossal' : raw;
-
-    const sizeModifiers = {
-      'colossal': -10,
-      'gargantuan': -5,
-      'huge': -2,
-      'large': -1,
-      'medium': 0,
-      'small': 0,
-      'tiny': 0,
-      'diminutive': 0,
-      'fine': 0
-    };
-
-    return sizeModifiers[size] ?? 0;
+    // One Table 10-1 authority (vehicle-operating-context.js); an unknown size contributes nothing here.
+    return vehicleSizeModifier(vehicle.system?.size || 'medium') ?? 0;
   }
+
 
   /* -------------------------------------------- */
   /* ROLL INITIATIVE (Consolidated via CombatEngine) */

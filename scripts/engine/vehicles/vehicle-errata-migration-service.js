@@ -17,7 +17,7 @@
  * Unlinked token Actors are only REPORTED (scanUnlinkedTokens); migrating them is not implemented.
  */
 import {
-  ERRATA_MIGRATION_VERSION, planErrataMigration, planManualRestore, migrationFingerprint, verifyMigratedState, verifyRestoredState, restoreDeletions
+  ERRATA_MIGRATION_VERSION, planErrataMigration, planManualRestore, migrationFingerprint, verifyMigratedState, verifyRestoredState, restoreDeletions, verifyManualRestoreState
 } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-errata-migration.js";
 import { authorizeProvenanceMigration, clearProvenanceMigration } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-source-identity.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
@@ -137,11 +137,7 @@ export class VehicleErrataMigrationService {
       try {
         await this.#write(actor, { ...plan.update, 'flags.swse.errataMigrationRestorations': [...(actor.flags?.swse?.errataMigrationRestorations ?? []), audit] });
       } catch (err) { return { ok: false, reasons: ['RESTORE_WRITE_FAILED'], error: err?.message ?? String(err) }; }
-      const after = fresh(actorId);
-      const problems = [];
-      if (JSON.stringify(after?.flags?.swse?.universalVehicleSource) !== JSON.stringify(plan.update['flags.swse.universalVehicleSource'])) problems.push('SOURCE_NOT_RESTORED');
-      if ('system.shields.max' in plan.update && after?.system?.shields?.max !== plan.update['system.shields.max']) problems.push('SHIELD_MAX_NOT_RESTORED');
-      if ((after?.flags?.swse?.errataMigrations ?? []).some(m => m.version === ERRATA_MIGRATION_VERSION)) problems.push('MIGRATION_RECORD_NOT_CLEARED');
+      const { problems } = verifyManualRestoreState(fresh(actorId), plan, audit);
       return problems.length ? { ok: false, reasons: problems } : { ok: true, gameplayChangesKept: plan.gameplayChanges, shields: plan.shields };
     } finally { this._busy.delete(actorId); }
   }

@@ -5,7 +5,7 @@
   "sourceListed": 181,
   "sourceVerified": 174,
   "mechanicSpecified": 39,
-  "operationallyIntegrated": 37
+  "operationallyIntegrated": 39
  },
  "rows": [
   {
@@ -26,7 +26,7 @@
     "effectKind": "atmospheric",
     "test": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs"
    },
-   "operationallyIntegrated": "EXPOSED_NOT_APPLIED",
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -47,7 +47,7 @@
     "effectKind": "atmospheric",
     "test": "tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs"
    },
-   "operationallyIntegrated": "EXPOSED_NOT_APPLIED",
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {

@@ -15,6 +15,7 @@ import { CREW_QUALITY, makeUnusedEmplacementResolver } from '../../../domain/veh
 import { summarizeInstallations } from '../../../domain/vehicles/vehicle-installation-ledger.js';
 import { verifyConstructionRecord, DEFAULT_CONSTRUCTION_RULES } from '../../../domain/vehicles/custom-vehicle-construction.js';
 import { EFFECTS, computeEffectiveStatistics, effectInstallability } from '../../../domain/vehicles/vehicle-modification-effects.js';
+import { readVehicleEnvironment, vehiclePilotCheck } from '../../../domain/vehicles/vehicle-operating-context.js';
 import { readJobs, describeJob, reservedEpFromJobs } from '../../../domain/vehicles/vehicle-installation-jobs.js';
 import { describeShield, SOURCE_UNKNOWN } from './vehicle-publication-view-model.js';
 
@@ -179,6 +180,17 @@ export function buildVehicleSchemaViewModel(actor, options = {}) {
   const assessment = classifyVehicleActorRuntime(actor);
   const flags = rawFlags(actor);
   const result = { origin: null, identity: {}, hp: null, shield: null, ep: null, installed: null, effective: [], construction: null, reasons: [], notes: [] };
+  // P6B-0 operating context: GM-set environment and the vehicle side of the Pilot check (generic crew shown here;
+  // a crew Actor's own Pilot bonus is added at roll time by the skill authority).
+  if (assessment.kind !== 'invalid-canonical') {
+    const environment = readVehicleEnvironment(actor);
+    const pilot = vehiclePilotCheck(actor);
+    const withCrew = vehiclePilotCheck(actor, { pilotActor: { id: 'crew' } });
+    result.operating = { environment, environmentLabel: { atmosphere: 'Atmosphere', space: 'Space (vacuum)', unknown: 'Unknown (atmosphere-only effects inactive)' }[environment],
+      isGM: options.isGM === true, canAct: actor?.isOwner === true || options.isGM === true,
+      genericCrewPilot: pilot.ok ? pilot.modifier : null, genericCrewPilotLabel: pilot.ok ? (pilot.modifier >= 0 ? '+' : '') + pilot.modifier : 'Unknown',
+      crewPilotVehicleModifier: withCrew.ok ? withCrew.modifier : null, crewPilotVehicleModifierLabel: withCrew.ok ? (withCrew.modifier >= 0 ? '+' : '') + withCrew.modifier : 'Unknown (' + withCrew.reasons.join(', ') + ')' };
+  }
 
   if (assessment.kind === 'invalid-canonical') {
     return { ...result, origin: VEHICLE_ORIGIN.PUBLISHED_SOURCE_INVALID, hp: currentHp(actor),

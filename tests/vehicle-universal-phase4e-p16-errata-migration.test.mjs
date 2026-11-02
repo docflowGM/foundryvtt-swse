@@ -276,3 +276,35 @@ test('provenance write-authorization never mutates the caller update (regression
   assert.equal(JSON.stringify(update), before);
   assert.deepEqual(M.restoreDeletions({ universalVehicleSource: { source: { publication: {} } } }), { 'flags.swse.universalVehicleSource.source.publication.-=errataApplied': null });
 });
+
+test('P6B-0: a partially persisted or silently refused manual restoration never reports success', async () => {
+  // refused without throwing
+  let a = oldActor(YW, { shieldsValue: 4 });
+  world([a]);
+  await S.apply({ actorIds: [a.id], expectedFingerprints: fp(a) });
+  world([a], { onWrite: (_x, u) => ('flags.swse.errataMigrationRestorations' in u ? 'ignore' : null) });
+  let pv = S.previewRestore(a.id);
+  let r = await S.restore(a.id, { gmConfirmed: true, expectedFingerprint: pv.fingerprint });
+  assert.equal(r.ok, false);
+  assert.ok(r.reasons.includes('SOURCE_NOT_RESTORED') && r.reasons.includes('RESTORATION_AUDIT_NOT_PERSISTED') && r.reasons.includes('MIGRATION_RECORD_NOT_CLEARED'));
+  // persisted, but a recalculation altered the shield maximum and dropped the audit
+  a = oldActor(YW, { shieldsValue: 4 });
+  world([a]);
+  await S.apply({ actorIds: [a.id], expectedFingerprints: fp(a) });
+  world([a], { onWrite: (_x, u) => ('flags.swse.errataMigrationRestorations' in u ? actor => { actor.system.shields.max = 25; delete actor.flags.swse.errataMigrationRestorations; } : null) });
+  pv = S.previewRestore(a.id);
+  r = await S.restore(a.id, { gmConfirmed: true, expectedFingerprint: pv.fingerprint });
+  assert.equal(r.ok, false);
+  assert.ok(r.reasons.includes('SHIELD_MAX_NOT_RESTORED'));
+  assert.ok(r.reasons.includes('RESTORATION_AUDIT_NOT_PERSISTED'));
+  // clamped current value must persist as planned
+  a = oldActor(YW, { shieldsValue: 4 });
+  world([a]);
+  await S.apply({ actorIds: [a.id], expectedFingerprints: fp(a) });
+  Object.assign(a, applyChangesToCopy(a.toObject(), { 'system.shields.value': 20 }));
+  world([a], { onWrite: (_x, u) => ('flags.swse.errataMigrationRestorations' in u ? actor => { actor.system.shields.value = 20; } : null) });
+  pv = S.previewRestore(a.id, { shieldDecision: 'clamp-to-restored-max' });
+  r = await S.restore(a.id, { gmConfirmed: true, expectedFingerprint: pv.fingerprint, shieldDecision: 'clamp-to-restored-max' });
+  assert.equal(r.ok, false);
+  assert.ok(r.reasons.includes('CURRENT_SHIELDS_NOT_AS_PLANNED'));
+});
