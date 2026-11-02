@@ -80,6 +80,20 @@ test('Resources fail closed against world or ambiguous source entries even with 
    assert.throws(()=>delivery({...options,index}),/not an eligible restricted\/military source item/);
  }
 });
+test('Enforcer vehicle linkage keeps class grant provenance, while normal store default is unchanged',async()=>{
+ const fs=await import('node:fs');
+ const path=await import('node:path');
+ const url=await import('node:url');
+ const root=path.resolve(path.dirname(url.fileURLToPath(import.meta.url)),'..');
+ const service=fs.readFileSync(path.join(root,'scripts/engine/store/acquisition-service.js'),'utf8');
+ const delivery=fs.readFileSync(path.join(root,'scripts/engine/progression/utils/enforcer-equipment-delivery.js'),'utf8');
+ assert.match(service,/source: metadata\.source/);
+ assert.match(service,/source: link\.source/);
+ assert.match(service,/source = 'store'/); // default store purchase remains default
+ assert.match(delivery,/transactionContext:'enforcer-resources',source:'Enforcer Resources'/);
+ assert.match(delivery,/StoreAcquisitionService\.buildOwnerLinkPlan/);
+});
+
 test('GM may defer full untouched resources once, preserving next-level carry accounting',()=>{
  const result=planEnforcerEquipmentDeferral({entries:ledger,classLevel:2});
  assert.equal(result.current.status,'deferred-to-next-level');
