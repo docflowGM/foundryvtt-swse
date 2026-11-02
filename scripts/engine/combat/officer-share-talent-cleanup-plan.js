@@ -19,10 +19,16 @@ export function planOfficerShareTalentExpiry({actor,encounterId}={}) {
   if (!actor?.id || typeof encounterId!=='string' || !encounterId.trim()) {
     throw new Error('Officer Share Talent expiry needs actor and encounter identity');
   }
-  const expiring=entries(actor.items).filter(item=>
-    isOfficerSharedTalentPrerequisiteWaived(item)
-    && item.flags.swse.officerSharedTalent.encounterId===encounterId
+  const candidates=entries(actor.items).filter(item=>
+    item?.flags?.swse?.officerSharedTalent?.encounterId===encounterId
   );
+  // Never silently strand an expired benefit if a document/schema update
+  // dropped part of the required canonical provenance. Do not guess which
+  // Item is safe to remove: require explicit GM recovery instead.
+  if(candidates.some(item=>!isOfficerSharedTalentPrerequisiteWaived(item))) {
+    throw new Error('Share Talent expiry INDETERMINATE: malformed temporary grant requires GM review');
+  }
+  const expiring=candidates;
   if(!expiring.length)return {items:[],effects:[]};
   if(expiring.some(item=>!idOf(item)) ||
     new Set(expiring.map(idOf)).size!==expiring.length){
