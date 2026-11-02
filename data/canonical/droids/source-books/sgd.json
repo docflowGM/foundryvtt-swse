@@ -15084,7 +15084,19 @@
           }
         ],
         "initiativePrinted": 2,
-        "perceptionPrinted": 8
+        "perceptionPrinted": 8,
+        "languages": [
+          {
+            "name": "Basic",
+            "raw": "Basic (understand only)",
+            "understands": true,
+            "speaks": false
+          },
+          {
+            "name": "Binary",
+            "raw": "Printed language capability"
+          }
+        ]
       },
       "progression": {
         "classLineRaw": "nonheroic 2",
@@ -15111,7 +15123,14 @@
               "sourceEntryKey": "SGD-DROID-031"
             }
           }
-        ]
+        ],
+        "classes": [
+          {
+            "className": "nonheroic",
+            "level": 2
+          }
+        ],
+        "nonheroicLevels": 2
       },
       "defenses": {
         "reflex": 12,
@@ -15127,21 +15146,108 @@
         "speedLineRaw": "Speed 6 squares (wheeled), 4 squares (walking)",
         "locomotionSystems": [
           {
-            "instanceId": "sgd-031-wheeled",
+            "instanceId": "SGD-DROID-031-MOVE-01",
             "mode": "wheeled",
-            "speedSquares": 6
+            "speedSquares": 6,
+            "raw": "6 squares (wheeled)",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-031",
+              "citationLabel": "Printed speed 6 squares (wheeled)"
+            },
+            "componentInstanceId": "SGD-DROID-031-COMP-002"
           },
           {
-            "instanceId": "sgd-031-walking",
+            "instanceId": "SGD-DROID-031-MOVE-02",
             "mode": "walking",
             "speedSquares": 4,
+            "raw": "4 squares (walking)",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-031",
+              "citationLabel": "Printed speed 4 squares (walking)"
+            },
+            "componentInstanceId": "SGD-DROID-031-COMP-003",
             "restricted": "exclusive"
           }
         ]
       },
-      "anatomy": {},
-      "processor": {},
-      "programming": {},
+      "anatomy": {
+        "bodyPlatformKind": "ordinary-chassis",
+        "physicalLocations": [
+          {
+            "locationId": "SGD-DROID-031-PHYSICAL-01",
+            "name": "Printed claw 1",
+            "locationKind": "claw",
+            "installedComponentIds": [
+              "SGD-DROID-031-COMP-004"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-031-PHYSICAL-02",
+            "name": "Printed tool 1",
+            "locationKind": "tool",
+            "installedComponentIds": [
+              "SGD-DROID-031-COMP-005"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-031-PHYSICAL-03",
+            "name": "Printed tool 2",
+            "locationKind": "tool",
+            "installedComponentIds": [
+              "SGD-DROID-031-COMP-006"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-031-PHYSICAL-04",
+            "name": "Printed tool 3",
+            "locationKind": "tool",
+            "installedComponentIds": [
+              "SGD-DROID-031-COMP-007"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-031-PHYSICAL-05",
+            "name": "Printed tool 4",
+            "locationKind": "tool",
+            "installedComponentIds": [
+              "SGD-DROID-031-COMP-008"
+            ]
+          }
+        ]
+      },
+      "processor": {
+        "type": "heuristic",
+        "processorInstanceId": "SGD-DROID-031-COMP-001"
+      },
+      "programming": {
+        "languagesSoftware": [
+          {
+            "ruleId": "SGD-DROID-031-UNASSIGNED-LANGUAGE-CHOICES",
+            "statement": "2 published language choices remain unassigned and understand-only; not selected language rights.",
+            "scope": "Printed unassigned language count",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-031",
+              "citationLabel": "UNASSIGNED-LANGUAGE-CHOICES"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "defaultDuties": [
+          "Astromech navigation, repair and vehicle computer assistance (published model function)"
+        ]
+      },
       "combat": {
         "baseAttackBonusPrinted": 1,
         "grapplePrinted": -3,
@@ -15162,9 +15268,268 @@
       },
       "capacity": {},
       "systems": {
-        "sourceSystemsRaw": "heuristic processor, wheeled locomotion, walking locomotion (exclusive). 1 claw appendage, 4 tool appendages, diagnostics package, improved sensor package, internal comlink, scomp link, sensor booster, sensor pack, magnetic feet"
+        "sourceSystemsRaw": "heuristic processor, wheeled locomotion, walking locomotion (exclusive), 1 claw appendage, 4 tool appendages, diagnostics package, improved sensor package, internal comlink, scomp link, sensor booster, sensor pack, magnetic feet",
+        "installed": [
+          {
+            "instanceId": "SGD-DROID-031-COMP-001",
+            "name": "heuristic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-031",
+              "citationLabel": "Printed Systems: heuristic processor"
+            },
+            "catalogRef": "heuristic-processor"
+          },
+          {
+            "instanceId": "SGD-DROID-031-COMP-002",
+            "name": "wheeled locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-031",
+              "citationLabel": "Printed Systems: wheeled locomotion"
+            },
+            "catalogRef": "wheeled"
+          },
+          {
+            "instanceId": "SGD-DROID-031-COMP-003",
+            "name": "walking locomotion (exclusive)",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-031",
+              "citationLabel": "Printed Systems: walking locomotion (exclusive)"
+            },
+            "catalogRef": "walking"
+          },
+          {
+            "instanceId": "SGD-DROID-031-COMP-004",
+            "name": "1 claw appendage",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-031",
+              "citationLabel": "Printed Systems: 1 claw appendage"
+            },
+            "catalogRef": "claw",
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-031-PHYSICAL-01"
+          },
+          {
+            "instanceId": "SGD-DROID-031-COMP-005",
+            "name": "4 tool appendages [1/4]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-031",
+              "citationLabel": "Printed Systems: 4 tool appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-031-PHYSICAL-02"
+          },
+          {
+            "instanceId": "SGD-DROID-031-COMP-006",
+            "name": "4 tool appendages [2/4]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-031",
+              "citationLabel": "Printed Systems: 4 tool appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-031-PHYSICAL-03"
+          },
+          {
+            "instanceId": "SGD-DROID-031-COMP-007",
+            "name": "4 tool appendages [3/4]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-031",
+              "citationLabel": "Printed Systems: 4 tool appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-031-PHYSICAL-04"
+          },
+          {
+            "instanceId": "SGD-DROID-031-COMP-008",
+            "name": "4 tool appendages [4/4]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-031",
+              "citationLabel": "Printed Systems: 4 tool appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-031-PHYSICAL-05"
+          },
+          {
+            "instanceId": "SGD-DROID-031-COMP-009",
+            "name": "diagnostics package",
+            "componentCategory": "accessory",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-031",
+              "citationLabel": "Printed Systems: diagnostics package"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-031-COMP-010",
+            "name": "improved sensor package",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-031",
+              "citationLabel": "Printed Systems: improved sensor package"
+            },
+            "catalogRef": "improved-sensor-package"
+          },
+          {
+            "instanceId": "SGD-DROID-031-COMP-011",
+            "name": "internal comlink",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-031",
+              "citationLabel": "Printed Systems: internal comlink"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-031-COMP-012",
+            "name": "scomp link",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-031",
+              "citationLabel": "Printed Systems: scomp link"
+            },
+            "catalogRef": "scomp-link"
+          },
+          {
+            "instanceId": "SGD-DROID-031-COMP-013",
+            "name": "sensor booster",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-031",
+              "citationLabel": "Printed Systems: sensor booster"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-031-COMP-014",
+            "name": "sensor pack",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-031",
+              "citationLabel": "Printed Systems: sensor pack"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-031-COMP-015",
+            "name": "magnetic feet",
+            "componentCategory": "accessory",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-031",
+              "citationLabel": "Printed Systems: magnetic feet"
+            },
+            "catalogRef": "magnetic-feet"
+          }
+        ]
       },
-      "equipment": {},
+      "equipment": {
+        "possessions": [
+          {
+            "entryId": "SGD-DROID-031-POS-01",
+            "name": "astrogation buffer (storage device; 6 memory units)",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "SGD-DROID-031-POS-02",
+            "name": "circular saw",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "SGD-DROID-031-POS-03",
+            "name": "electroshock probe",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "SGD-DROID-031-POS-04",
+            "name": "fire extinguisher",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "SGD-DROID-031-POS-05",
+            "name": "holoprojector",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "SGD-DROID-031-POS-06",
+            "name": "holorecorder",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "SGD-DROID-031-POS-07",
+            "name": "laser welder",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          }
+        ]
+      },
       "modifications": {},
       "pcConstruction": {
         "heroEligibility": "allowed"
@@ -15229,11 +15594,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.128-129 inspected: Exclusive wheeled/walking locomotion is a source choice, not two simultaneous movement grants. Stored astrogation buffer and seven printed possessions remain separate from installed sensor/cabling; missile-free welder and electroshock are not automatically mounted attacks. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p128:PDF-page-129",
           "SGD-CENSUS:SGD-DROID-031",
-          "SGD:p128:PDF-p129:visual-statblock-field-review"
+          "SGD:p128:PDF-p129:visual-statblock-field-review",
+          "SGD:p128-p129:PDF-p129-p130:M4-printed-source-review"
         ]
       }
     },
@@ -15345,7 +15711,17 @@
           }
         ],
         "initiativePrinted": -1,
-        "perceptionPrinted": 0
+        "perceptionPrinted": 0,
+        "languages": [
+          {
+            "name": "Basic",
+            "raw": "Printed language capability"
+          },
+          {
+            "name": "Binary",
+            "raw": "Printed language capability"
+          }
+        ]
       },
       "progression": {
         "classLineRaw": "non heroic 1",
@@ -15372,7 +15748,14 @@
               "sourceEntryKey": "SGD-DROID-032"
             }
           }
-        ]
+        ],
+        "classes": [
+          {
+            "className": "nonheroic",
+            "level": 1
+          }
+        ],
+        "nonheroicLevels": 1
       },
       "defenses": {
         "reflex": 9,
@@ -15385,11 +15768,68 @@
         "damageThreshold": 8
       },
       "movement": {
-        "speedLineRaw": "Speed 6 squares (walking)"
+        "speedLineRaw": "Speed 6 squares (walking)",
+        "locomotionSystems": [
+          {
+            "instanceId": "SGD-DROID-032-MOVE-01",
+            "mode": "walking",
+            "speedSquares": 6,
+            "raw": "6 squares (walking)",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 130,
+              "pdfPage1Based": 131,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-032",
+              "citationLabel": "Printed speed 6 squares (walking)"
+            },
+            "componentInstanceId": "SGD-DROID-032-COMP-002"
+          }
+        ]
       },
-      "anatomy": {},
-      "processor": {},
-      "programming": {},
+      "anatomy": {
+        "bodyPlatformKind": "ordinary-chassis",
+        "physicalLocations": [
+          {
+            "locationId": "SGD-DROID-032-PHYSICAL-01",
+            "name": "Printed hand 1",
+            "locationKind": "hand",
+            "installedComponentIds": [
+              "SGD-DROID-032-COMP-003"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-032-PHYSICAL-02",
+            "name": "Printed hand 2",
+            "locationKind": "hand",
+            "installedComponentIds": [
+              "SGD-DROID-032-COMP-004"
+            ]
+          }
+        ]
+      },
+      "processor": {
+        "type": "basic",
+        "processorInstanceId": "SGD-DROID-032-COMP-001"
+      },
+      "programming": {
+        "languagesSoftware": [
+          {
+            "ruleId": "SGD-DROID-032-UNASSIGNED-LANGUAGE-CHOICES",
+            "statement": "1 published language choices remain unassigned; not selected language rights.",
+            "scope": "Printed unassigned language count",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 130,
+              "pdfPage1Based": 131,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-032",
+              "citationLabel": "UNASSIGNED-LANGUAGE-CHOICES"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "combat": {
         "baseAttackBonusPrinted": 0,
         "grapplePrinted": -1,
@@ -15410,7 +15850,93 @@
       },
       "capacity": {},
       "systems": {
-        "sourceSystemsRaw": "basic processor, walking locomotion, 2 hand appendages, translator unit (DC 10). vocabulator RWW-SERIES PROTOCOL. ORClID"
+        "sourceSystemsRaw": "basic processor, walking locomotion, 2 hand appendages, translator unit (DC 10), vocabulator",
+        "installed": [
+          {
+            "instanceId": "SGD-DROID-032-COMP-001",
+            "name": "basic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 130,
+              "pdfPage1Based": 131,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-032",
+              "citationLabel": "Printed Systems: basic processor"
+            },
+            "catalogRef": "basic-processor"
+          },
+          {
+            "instanceId": "SGD-DROID-032-COMP-002",
+            "name": "walking locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 130,
+              "pdfPage1Based": 131,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-032",
+              "citationLabel": "Printed Systems: walking locomotion"
+            },
+            "catalogRef": "walking"
+          },
+          {
+            "instanceId": "SGD-DROID-032-COMP-003",
+            "name": "2 hand appendages [1/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 130,
+              "pdfPage1Based": 131,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-032",
+              "citationLabel": "Printed Systems: 2 hand appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-032-PHYSICAL-01"
+          },
+          {
+            "instanceId": "SGD-DROID-032-COMP-004",
+            "name": "2 hand appendages [2/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 130,
+              "pdfPage1Based": 131,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-032",
+              "citationLabel": "Printed Systems: 2 hand appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-032-PHYSICAL-02"
+          },
+          {
+            "instanceId": "SGD-DROID-032-COMP-005",
+            "name": "translator unit (DC 10)",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 130,
+              "pdfPage1Based": 131,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-032",
+              "citationLabel": "Printed Systems: translator unit (DC 10)"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-032-COMP-006",
+            "name": "vocabulator",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 130,
+              "pdfPage1Based": 131,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-032",
+              "citationLabel": "Printed Systems: vocabulator"
+            }
+          }
+        ]
       },
       "equipment": {},
       "modifications": {},
@@ -15425,7 +15951,36 @@
       "text": {
         "mechanicsNotes": "Source language line preserved in sidecar evidence; speaking vs understanding remains unverified."
       },
-      "exceptions": {},
+      "exceptions": {
+        "sourceContradictions": [
+          {
+            "issueId": "SGD-032-MIMIC-EFFECT-CONFLICT",
+            "fieldPointers": [
+              "/rules/conditionalMechanics",
+              "/combat/specialActions"
+            ],
+            "statements": [
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 130,
+                "pdfPage1Based": 131,
+                "verifiedBy": "pdf-visual",
+                "sourceEntryKey": "SGD-DROID-032",
+                "citationLabel": "Mimic primary prose: swift action reroll Deception, accept second roll"
+              },
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 130,
+                "pdfPage1Based": 131,
+                "verifiedBy": "pdf-visual",
+                "sourceEntryKey": "SGD-DROID-032",
+                "citationLabel": "Mimic protocol: swift action +2 bonus to Deception"
+              }
+            ],
+            "resolutionStatus": "unresolved"
+          }
+        ]
+      },
       "fieldStates": {
         "/abilities/con": "explicitly-none"
       },
@@ -15451,11 +16006,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.130-131 inspected: RWW systems OCR included a following title fragment; corrected using printed Systems line. Mimic printed prose reroll versus protocol +2 are conflicting benefits and must not be merged. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p130:PDF-page-131",
           "SGD-CENSUS:SGD-DROID-032",
-          "SGD:p130:PDF-p131:visual-statblock-field-review"
+          "SGD:p130:PDF-p131:visual-statblock-field-review",
+          "SGD:p130-p131:PDF-p131-p132:M4-printed-source-review"
         ]
       }
     },
@@ -15567,7 +16123,17 @@
           }
         ],
         "initiativePrinted": 4,
-        "perceptionPrinted": 1
+        "perceptionPrinted": 1,
+        "languages": [
+          {
+            "name": "Basic",
+            "raw": "Printed language capability"
+          },
+          {
+            "name": "Binary",
+            "raw": "Printed language capability"
+          }
+        ]
       },
       "progression": {
         "classLineRaw": "non heroic 4",
@@ -15616,7 +16182,14 @@
               "sourceEntryKey": "SGD-DROID-033"
             }
           }
-        ]
+        ],
+        "classes": [
+          {
+            "className": "nonheroic",
+            "level": 4
+          }
+        ],
+        "nonheroicLevels": 4
       },
       "defenses": {
         "reflex": 12,
@@ -15629,11 +16202,76 @@
         "damageThreshold": 10
       },
       "movement": {
-        "speedLineRaw": "Speed 6 squares (hovering)"
+        "speedLineRaw": "Speed 6 squares (hovering)",
+        "locomotionSystems": [
+          {
+            "instanceId": "SGD-DROID-033-MOVE-01",
+            "mode": "hovering",
+            "speedSquares": 6,
+            "raw": "6 squares (hovering)",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 132,
+              "pdfPage1Based": 133,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-033",
+              "citationLabel": "Printed speed 6 squares (hovering)"
+            },
+            "componentInstanceId": "SGD-DROID-033-COMP-002"
+          }
+        ]
       },
-      "anatomy": {},
-      "processor": {},
-      "programming": {},
+      "anatomy": {
+        "bodyPlatformKind": "ordinary-chassis",
+        "physicalLocations": [
+          {
+            "locationId": "SGD-DROID-033-PHYSICAL-01",
+            "name": "Printed claw 1",
+            "locationKind": "claw",
+            "installedComponentIds": [
+              "SGD-DROID-033-COMP-003"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-033-PHYSICAL-02",
+            "name": "Printed claw 2",
+            "locationKind": "claw",
+            "installedComponentIds": [
+              "SGD-DROID-033-COMP-004"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-033-PHYSICAL-03",
+            "name": "Printed claw 3",
+            "locationKind": "claw",
+            "installedComponentIds": [
+              "SGD-DROID-033-COMP-005"
+            ]
+          }
+        ]
+      },
+      "processor": {
+        "type": "heuristic",
+        "processorInstanceId": "SGD-DROID-033-COMP-001"
+      },
+      "programming": {
+        "languagesSoftware": [
+          {
+            "ruleId": "SGD-DROID-033-UNASSIGNED-LANGUAGE-CHOICES",
+            "statement": "1 published language choices remain unassigned; not selected language rights.",
+            "scope": "Printed unassigned language count",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 132,
+              "pdfPage1Based": 133,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-033",
+              "citationLabel": "UNASSIGNED-LANGUAGE-CHOICES"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "combat": {
         "baseAttackBonusPrinted": 3,
         "grapplePrinted": 5,
@@ -15654,7 +16292,94 @@
       },
       "capacity": {},
       "systems": {
-        "sourceSystemsRaw": "heuristic processor, hovering locomotion, 3 claw appendag es, vocabul ator"
+        "sourceSystemsRaw": "heuristic processor, hovering locomotion, 3 claw appendag es, vocabul ator",
+        "installed": [
+          {
+            "instanceId": "SGD-DROID-033-COMP-001",
+            "name": "heuristic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 132,
+              "pdfPage1Based": 133,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-033",
+              "citationLabel": "Printed Systems: heuristic processor"
+            },
+            "catalogRef": "heuristic-processor"
+          },
+          {
+            "instanceId": "SGD-DROID-033-COMP-002",
+            "name": "hovering locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 132,
+              "pdfPage1Based": 133,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-033",
+              "citationLabel": "Printed Systems: hovering locomotion"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-033-COMP-003",
+            "name": "3 claw appendages [1/3]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 132,
+              "pdfPage1Based": 133,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-033",
+              "citationLabel": "Printed Systems: 3 claw appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-033-PHYSICAL-01"
+          },
+          {
+            "instanceId": "SGD-DROID-033-COMP-004",
+            "name": "3 claw appendages [2/3]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 132,
+              "pdfPage1Based": 133,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-033",
+              "citationLabel": "Printed Systems: 3 claw appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-033-PHYSICAL-02"
+          },
+          {
+            "instanceId": "SGD-DROID-033-COMP-005",
+            "name": "3 claw appendages [3/3]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 132,
+              "pdfPage1Based": 133,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-033",
+              "citationLabel": "Printed Systems: 3 claw appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-033-PHYSICAL-03"
+          },
+          {
+            "instanceId": "SGD-DROID-033-COMP-006",
+            "name": "vocabul ator",
+            "componentCategory": "accessory",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 132,
+              "pdfPage1Based": 133,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-033",
+              "citationLabel": "Printed Systems: vocabul ator"
+            }
+          }
+        ]
       },
       "equipment": {},
       "modifications": {},
@@ -15708,11 +16433,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.132-133 inspected: RX Hot-Shot Pilot missile/torpedo evasion is one reaction per encounter, separate from ordinary pilot/vehicle controls. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p132:PDF-page-133",
           "SGD-CENSUS:SGD-DROID-033",
-          "SGD:p132:PDF-p133:visual-statblock-field-review"
+          "SGD:p132:PDF-p133:visual-statblock-field-review",
+          "SGD:p132-p133:PDF-p133-p134:M4-printed-source-review"
         ]
       }
     },
@@ -15824,7 +16550,19 @@
           }
         ],
         "initiativePrinted": 1,
-        "perceptionPrinted": 8
+        "perceptionPrinted": 8,
+        "languages": [
+          {
+            "name": "Basic",
+            "raw": "Basic (understand only)",
+            "understands": true,
+            "speaks": false
+          },
+          {
+            "name": "Binary",
+            "raw": "Printed language capability"
+          }
+        ]
       },
       "progression": {
         "classLineRaw": "nonheroic 2",
@@ -15851,7 +16589,14 @@
               "sourceEntryKey": "SGD-DROID-034"
             }
           }
-        ]
+        ],
+        "classes": [
+          {
+            "className": "nonheroic",
+            "level": 2
+          }
+        ],
+        "nonheroicLevels": 2
       },
       "defenses": {
         "reflex": 11,
@@ -15864,11 +16609,108 @@
         "damageThreshold": 10
       },
       "movement": {
-        "speedLineRaw": "Speed 4 squares (tracked)"
+        "speedLineRaw": "Speed 4 squares (tracked)",
+        "locomotionSystems": [
+          {
+            "instanceId": "SGD-DROID-034-MOVE-01",
+            "mode": "tracked",
+            "speedSquares": 4,
+            "raw": "4 squares (tracked)",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-034",
+              "citationLabel": "Printed speed 4 squares (tracked)"
+            },
+            "componentInstanceId": "SGD-DROID-034-COMP-002"
+          }
+        ]
       },
-      "anatomy": {},
-      "processor": {},
-      "programming": {},
+      "anatomy": {
+        "bodyPlatformKind": "ordinary-chassis",
+        "physicalLocations": [
+          {
+            "locationId": "SGD-DROID-034-PHYSICAL-01",
+            "name": "Printed claw 1",
+            "locationKind": "claw",
+            "installedComponentIds": [
+              "SGD-DROID-034-COMP-003"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-034-PHYSICAL-02",
+            "name": "Printed tool 1",
+            "locationKind": "tool",
+            "installedComponentIds": [
+              "SGD-DROID-034-COMP-004"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-034-PHYSICAL-03",
+            "name": "Printed tool 2",
+            "locationKind": "tool",
+            "installedComponentIds": [
+              "SGD-DROID-034-COMP-005"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-034-PHYSICAL-04",
+            "name": "Printed tool 3",
+            "locationKind": "tool",
+            "installedComponentIds": [
+              "SGD-DROID-034-COMP-006"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-034-PHYSICAL-05",
+            "name": "Printed tool 4",
+            "locationKind": "tool",
+            "installedComponentIds": [
+              "SGD-DROID-034-COMP-007"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-034-PHYSICAL-06",
+            "name": "Printed tool 5",
+            "locationKind": "tool",
+            "installedComponentIds": [
+              "SGD-DROID-034-COMP-008"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-034-PHYSICAL-07",
+            "name": "Printed tool 6",
+            "locationKind": "tool",
+            "installedComponentIds": [
+              "SGD-DROID-034-COMP-009"
+            ]
+          }
+        ]
+      },
+      "processor": {
+        "type": "heuristic",
+        "processorInstanceId": "SGD-DROID-034-COMP-001"
+      },
+      "programming": {
+        "languagesSoftware": [
+          {
+            "ruleId": "SGD-DROID-034-UNASSIGNED-LANGUAGE-CHOICES",
+            "statement": "3 published language choices remain unassigned and understand-only; not selected language rights.",
+            "scope": "Printed unassigned language count",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-034",
+              "citationLabel": "UNASSIGNED-LANGUAGE-CHOICES"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "combat": {
         "baseAttackBonusPrinted": 1,
         "grapplePrinted": -4,
@@ -15889,9 +16731,199 @@
       },
       "capacity": {},
       "systems": {
-        "sourceSystemsRaw": "heuristic processor, tracked locomotion, 1 claw appendage, 6 tool appendages, astrogation buffer (5 memory units), diagnostics package, internal com link"
+        "sourceSystemsRaw": "heuristic processor, tracked locomotion, 1 claw appendage, 6 tool appendages, astrogation buffer (5 memory units), diagnostics package, internal comlink",
+        "installed": [
+          {
+            "instanceId": "SGD-DROID-034-COMP-001",
+            "name": "heuristic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-034",
+              "citationLabel": "Printed Systems: heuristic processor"
+            },
+            "catalogRef": "heuristic-processor"
+          },
+          {
+            "instanceId": "SGD-DROID-034-COMP-002",
+            "name": "tracked locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-034",
+              "citationLabel": "Printed Systems: tracked locomotion"
+            },
+            "catalogRef": "tracked"
+          },
+          {
+            "instanceId": "SGD-DROID-034-COMP-003",
+            "name": "1 claw appendage",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-034",
+              "citationLabel": "Printed Systems: 1 claw appendage"
+            },
+            "catalogRef": "claw",
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-034-PHYSICAL-01"
+          },
+          {
+            "instanceId": "SGD-DROID-034-COMP-004",
+            "name": "6 tool appendages [1/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-034",
+              "citationLabel": "Printed Systems: 6 tool appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-034-PHYSICAL-02"
+          },
+          {
+            "instanceId": "SGD-DROID-034-COMP-005",
+            "name": "6 tool appendages [2/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-034",
+              "citationLabel": "Printed Systems: 6 tool appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-034-PHYSICAL-03"
+          },
+          {
+            "instanceId": "SGD-DROID-034-COMP-006",
+            "name": "6 tool appendages [3/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-034",
+              "citationLabel": "Printed Systems: 6 tool appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-034-PHYSICAL-04"
+          },
+          {
+            "instanceId": "SGD-DROID-034-COMP-007",
+            "name": "6 tool appendages [4/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-034",
+              "citationLabel": "Printed Systems: 6 tool appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-034-PHYSICAL-05"
+          },
+          {
+            "instanceId": "SGD-DROID-034-COMP-008",
+            "name": "6 tool appendages [5/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-034",
+              "citationLabel": "Printed Systems: 6 tool appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-034-PHYSICAL-06"
+          },
+          {
+            "instanceId": "SGD-DROID-034-COMP-009",
+            "name": "6 tool appendages [6/6]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-034",
+              "citationLabel": "Printed Systems: 6 tool appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-034-PHYSICAL-07"
+          },
+          {
+            "instanceId": "SGD-DROID-034-COMP-010",
+            "name": "astrogation buffer (5 memory units)",
+            "componentCategory": "storage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-034",
+              "citationLabel": "Printed Systems: astrogation buffer (5 memory units)"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-034-COMP-011",
+            "name": "diagnostics package",
+            "componentCategory": "accessory",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-034",
+              "citationLabel": "Printed Systems: diagnostics package"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-034-COMP-012",
+            "name": "internal comlink",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-034",
+              "citationLabel": "Printed Systems: internal comlink"
+            }
+          }
+        ]
       },
-      "equipment": {},
+      "equipment": {
+        "possessions": [
+          {
+            "entryId": "SGD-DROID-034-POS-01",
+            "name": "holorecorder",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "SGD-DROID-034-POS-02",
+            "name": "tool kit",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          }
+        ]
+      },
       "modifications": {},
       "pcConstruction": {
         "heroEligibility": "allowed"
@@ -15943,11 +16975,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.134-135 inspected: S19 diagnostics and astrogation buffer are printed factory systems; holorecorder and tool kit are separately printed possessions; repair-time minimum 10 minutes. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p134:PDF-page-135",
           "SGD-CENSUS:SGD-DROID-034",
-          "SGD:p134:PDF-p135:visual-statblock-field-review"
+          "SGD:p134:PDF-p135:visual-statblock-field-review",
+          "SGD:p134-p135:PDF-p135-p136:M4-printed-source-review"
         ]
       }
     },
@@ -16048,7 +17081,17 @@
           }
         ],
         "initiativePrinted": 15,
-        "perceptionPrinted": 15
+        "perceptionPrinted": 15,
+        "languages": [
+          {
+            "name": "Basic",
+            "raw": "Printed language capability"
+          },
+          {
+            "name": "Binary",
+            "raw": "Printed language capability"
+          }
+        ]
       },
       "progression": {
         "classLineRaw": "soldier 8/elite trooper 8",
@@ -16254,6 +17297,16 @@
               "sourceEntryKey": "SGD-DROID-035"
             }
           }
+        ],
+        "classes": [
+          {
+            "className": "soldier",
+            "level": 8
+          },
+          {
+            "className": "elite trooper",
+            "level": 8
+          }
         ]
       },
       "defenses": {
@@ -16262,17 +17315,73 @@
         "fortitude": 39,
         "will": 26,
         "damageReduction": 4,
-        "shieldRating": 15
+        "shieldRating": 15,
+        "conditionalDefenseRules": [
+          {
+            "ruleId": "SGD-DROID-035-LASER-REFLECTIVE-ARMOR",
+            "statement": "+11 armor against blasters and lasers; printed base armor +10; do not apply +11 as an additional bonus.",
+            "scope": "SD-9 versus laser/blaster attack contexts",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-035",
+              "citationLabel": "LASER-REFLECTIVE-ARMOR"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
       },
       "durability": {
         "hitPoints": 108,
         "damageThreshold": 44
       },
       "movement": {
-        "speedLineRaw": "Speed 6 squares (walking)"
+        "speedLineRaw": "Speed 6 squares (walking)",
+        "locomotionSystems": [
+          {
+            "instanceId": "SGD-DROID-035-MOVE-01",
+            "mode": "walking",
+            "speedSquares": 6,
+            "raw": "6 squares (walking)",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-035",
+              "citationLabel": "Printed speed 6 squares (walking)"
+            },
+            "componentInstanceId": "SGD-DROID-035-COMP-001"
+          }
+        ]
       },
-      "anatomy": {},
-      "processor": {},
+      "anatomy": {
+        "bodyPlatformKind": "ordinary-chassis",
+        "physicalLocations": [
+          {
+            "locationId": "SGD-DROID-035-PHYSICAL-01",
+            "name": "Printed tool-mount 1",
+            "locationKind": "tool-mount",
+            "installedComponentIds": [
+              "SGD-DROID-035-COMP-003"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-035-PHYSICAL-02",
+            "name": "Printed tool-mount 2",
+            "locationKind": "tool-mount",
+            "installedComponentIds": [
+              "SGD-DROID-035-COMP-004"
+            ]
+          }
+        ]
+      },
+      "processor": {
+        "type": "basic",
+        "processorInstanceId": "SGD-DROID-035-COMP-002"
+      },
       "programming": {},
       "combat": {
         "baseAttackBonusPrinted": 16,
@@ -16308,13 +17417,198 @@
             "operationStatus": "source-only",
             "attackBonus": 10
           }
+        ],
+        "conditions": [
+          {
+            "ruleId": "SGD-DROID-035-MULTIWEAPON-ROWS",
+            "statement": "Printed heavy repeating blaster and plasma burst cannon combination rows are alternatives with their own attack economy, not free cumulative independent attacks.",
+            "scope": "SD-9 attack rows",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-035",
+              "citationLabel": "MULTIWEAPON-ROWS"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
       "systems": {
-        "sourceSystemsRaw": "wa lking locomotion, basic processor, 2 tool mounts, interna l comlink, ion shield generator (SR 15 [ion damage only]), locked access, improved sensor package, vocabulator, laser-reflective duranium battle armor (+ 10 armor, + 11 vs. blast ers and lasers)"
+        "sourceSystemsRaw": "wa lking locomotion, basic processor, 2 tool mounts, interna l comlink, ion shield generator (SR 15 [ion damage only]), locked access, improved sensor package, vocabulator, laser-reflective duranium battle armor (+ 10 armor, + 11 vs. blast ers and lasers)",
+        "installed": [
+          {
+            "instanceId": "SGD-DROID-035-COMP-001",
+            "name": "walking locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-035",
+              "citationLabel": "Printed Systems: walking locomotion"
+            },
+            "catalogRef": "walking"
+          },
+          {
+            "instanceId": "SGD-DROID-035-COMP-002",
+            "name": "basic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-035",
+              "citationLabel": "Printed Systems: basic processor"
+            },
+            "catalogRef": "basic-processor"
+          },
+          {
+            "instanceId": "SGD-DROID-035-COMP-003",
+            "name": "2 tool mounts [1/2]",
+            "componentCategory": "other",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-035",
+              "citationLabel": "Printed Systems: 2 tool mounts"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-035-PHYSICAL-01"
+          },
+          {
+            "instanceId": "SGD-DROID-035-COMP-004",
+            "name": "2 tool mounts [2/2]",
+            "componentCategory": "other",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-035",
+              "citationLabel": "Printed Systems: 2 tool mounts"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-035-PHYSICAL-02"
+          },
+          {
+            "instanceId": "SGD-DROID-035-COMP-005",
+            "name": "internal comlink",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-035",
+              "citationLabel": "Printed Systems: internal comlink"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-035-COMP-006",
+            "name": "ion shield generator (SR 15 [ion damage only])",
+            "componentCategory": "other",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-035",
+              "citationLabel": "Printed Systems: ion shield generator (SR 15 [ion damage only])"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-035-COMP-007",
+            "name": "locked access",
+            "componentCategory": "accessory",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-035",
+              "citationLabel": "Printed Systems: locked access"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-035-COMP-008",
+            "name": "improved sensor package",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-035",
+              "citationLabel": "Printed Systems: improved sensor package"
+            },
+            "catalogRef": "improved-sensor-package"
+          },
+          {
+            "instanceId": "SGD-DROID-035-COMP-009",
+            "name": "vocabulator",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-035",
+              "citationLabel": "Printed Systems: vocabulator"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-035-COMP-010",
+            "name": "laser-reflective duranium battle armor (+ 10 armor, + 11 vs",
+            "componentCategory": "armor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-035",
+              "citationLabel": "Printed Systems: laser-reflective duranium battle armor (+ 10 armor, + 11 vs"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-035-COMP-011",
+            "name": "blast ers and lasers)",
+            "componentCategory": "accessory",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 136,
+              "pdfPage1Based": 137,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-035",
+              "citationLabel": "Printed Systems: blast ers and lasers)"
+            }
+          }
+        ]
       },
-      "equipment": {},
+      "equipment": {
+        "possessions": [
+          {
+            "entryId": "SGD-DROID-035-POS-01",
+            "name": "integrated heavy repeating blaster",
+            "quantity": 1,
+            "factoryVsPresented": "unknown",
+            "isIntegrated": true
+          },
+          {
+            "entryId": "SGD-DROID-035-POS-02",
+            "name": "integrated plasma burst cannon",
+            "quantity": 1,
+            "factoryVsPresented": "unknown",
+            "isIntegrated": true
+          }
+        ]
+      },
       "modifications": {},
       "pcConstruction": {
         "heroEligibility": "prohibited"
@@ -16392,11 +17686,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.136-137 inspected: SD-9 has two tool mounts rather than ordinary manipulation tool appendages; ion-only SR 15, conditional laser-reflective armor and mutually exclusive/combined attack rows must not be flattened. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p136:PDF-page-137",
           "SGD-CENSUS:SGD-DROID-035",
-          "SGD:p136:PDF-p137:visual-statblock-field-review"
+          "SGD:p136:PDF-p137:visual-statblock-field-review",
+          "SGD:p136-p137:PDF-p137-p138:M4-printed-source-review"
         ]
       }
     },
@@ -16508,7 +17803,17 @@
           }
         ],
         "initiativePrinted": 11,
-        "perceptionPrinted": 13
+        "perceptionPrinted": 13,
+        "languages": [
+          {
+            "name": "Basic",
+            "raw": "Printed language capability"
+          },
+          {
+            "name": "Binary",
+            "raw": "Printed language capability"
+          }
+        ]
       },
       "progression": {
         "classLineRaw": "soldier 3/scout 6",
@@ -16659,6 +17964,16 @@
               "sourceEntryKey": "SGD-DROID-036"
             }
           }
+        ],
+        "classes": [
+          {
+            "className": "soldier",
+            "level": 3
+          },
+          {
+            "className": "scout",
+            "level": 6
+          }
         ]
       },
       "defenses": {
@@ -16672,11 +17987,68 @@
         "damageThreshold": 24
       },
       "movement": {
-        "speedLineRaw": "Speed 6 squares (walking)"
+        "speedLineRaw": "Speed 6 squares (walking)",
+        "locomotionSystems": [
+          {
+            "instanceId": "SGD-DROID-036-MOVE-01",
+            "mode": "walking",
+            "speedSquares": 6,
+            "raw": "6 squares (walking)",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-036",
+              "citationLabel": "Printed speed 6 squares (walking)"
+            },
+            "componentInstanceId": "SGD-DROID-036-COMP-001"
+          }
+        ]
       },
-      "anatomy": {},
-      "processor": {},
-      "programming": {},
+      "anatomy": {
+        "bodyPlatformKind": "ordinary-chassis",
+        "physicalLocations": [
+          {
+            "locationId": "SGD-DROID-036-PHYSICAL-01",
+            "name": "Printed hand 1",
+            "locationKind": "hand",
+            "installedComponentIds": [
+              "SGD-DROID-036-COMP-003"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-036-PHYSICAL-02",
+            "name": "Printed hand 2",
+            "locationKind": "hand",
+            "installedComponentIds": [
+              "SGD-DROID-036-COMP-004"
+            ]
+          }
+        ]
+      },
+      "processor": {
+        "type": "heuristic",
+        "processorInstanceId": "SGD-DROID-036-COMP-002"
+      },
+      "programming": {
+        "languagesSoftware": [
+          {
+            "ruleId": "SGD-DROID-036-UNASSIGNED-LANGUAGE-CHOICES",
+            "statement": "1 published language choices remain unassigned; not selected language rights.",
+            "scope": "Printed unassigned language count",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-036",
+              "citationLabel": "UNASSIGNED-LANGUAGE-CHOICES"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "combat": {
         "baseAttackBonusPrinted": 7,
         "grapplePrinted": 10,
@@ -16703,9 +18075,157 @@
       },
       "capacity": {},
       "systems": {
-        "sourceSystemsRaw": "wa lking locomotion, heuristic processor, 2 hand appendages with concealed vibrodaggers, internal comlink (encrypted), locked access, improved sensor package, darkvision, vocabulator, laminanium armor (+12 armor)"
+        "sourceSystemsRaw": "wa lking locomotion, heuristic processor, 2 hand appendages with concealed vibrodaggers, internal comlink (encrypted), locked access, improved sensor package, darkvision, vocabulator, laminanium armor (+12 armor)",
+        "installed": [
+          {
+            "instanceId": "SGD-DROID-036-COMP-001",
+            "name": "walking locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-036",
+              "citationLabel": "Printed Systems: walking locomotion"
+            },
+            "catalogRef": "walking"
+          },
+          {
+            "instanceId": "SGD-DROID-036-COMP-002",
+            "name": "heuristic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-036",
+              "citationLabel": "Printed Systems: heuristic processor"
+            },
+            "catalogRef": "heuristic-processor"
+          },
+          {
+            "instanceId": "SGD-DROID-036-COMP-003",
+            "name": "2 hand appendages with concealed vibrodaggers [1/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-036",
+              "citationLabel": "Printed Systems: 2 hand appendages with concealed vibrodaggers"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-036-PHYSICAL-01"
+          },
+          {
+            "instanceId": "SGD-DROID-036-COMP-004",
+            "name": "2 hand appendages with concealed vibrodaggers [2/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-036",
+              "citationLabel": "Printed Systems: 2 hand appendages with concealed vibrodaggers"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-036-PHYSICAL-02"
+          },
+          {
+            "instanceId": "SGD-DROID-036-COMP-005",
+            "name": "internal comlink (encrypted)",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-036",
+              "citationLabel": "Printed Systems: internal comlink (encrypted)"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-036-COMP-006",
+            "name": "locked access",
+            "componentCategory": "accessory",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-036",
+              "citationLabel": "Printed Systems: locked access"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-036-COMP-007",
+            "name": "improved sensor package",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-036",
+              "citationLabel": "Printed Systems: improved sensor package"
+            },
+            "catalogRef": "improved-sensor-package"
+          },
+          {
+            "instanceId": "SGD-DROID-036-COMP-008",
+            "name": "darkvision",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-036",
+              "citationLabel": "Printed Systems: darkvision"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-036-COMP-009",
+            "name": "vocabulator",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-036",
+              "citationLabel": "Printed Systems: vocabulator"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-036-COMP-010",
+            "name": "laminanium armor (+12 armor)",
+            "componentCategory": "armor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 138,
+              "pdfPage1Based": 139,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-036",
+              "citationLabel": "Printed Systems: laminanium armor (+12 armor)"
+            }
+          }
+        ]
       },
-      "equipment": {},
+      "equipment": {
+        "possessions": [
+          {
+            "entryId": "SGD-DROID-036-POS-01",
+            "name": "blaster rifle",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          }
+        ]
+      },
       "modifications": {},
       "pcConstruction": {
         "heroEligibility": "allowed"
@@ -16770,11 +18290,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.138-139 inspected: SD-X concealed vibrodaggers are attached to hand appendages and require a swift action to extend; separate carried blaster rifle, not a duplicate integral weapon. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p138:PDF-page-139",
           "SGD-CENSUS:SGD-DROID-036",
-          "SGD:p138:PDF-p139:visual-statblock-field-review"
+          "SGD:p138:PDF-p139:visual-statblock-field-review",
+          "SGD:p138-p139:PDF-p139-p140:M4-printed-source-review"
         ]
       }
     },
@@ -16875,7 +18396,17 @@
           }
         ],
         "initiativePrinted": 0,
-        "perceptionPrinted": 5
+        "perceptionPrinted": 5,
+        "languages": [
+          {
+            "name": "Basic",
+            "raw": "Printed language capability"
+          },
+          {
+            "name": "Binary",
+            "raw": "Printed language capability"
+          }
+        ]
       },
       "progression": {
         "classLineRaw": "nonheroic 1",
@@ -16902,7 +18433,14 @@
               "sourceEntryKey": "SGD-DROID-037"
             }
           }
-        ]
+        ],
+        "classes": [
+          {
+            "className": "nonheroic",
+            "level": 1
+          }
+        ],
+        "nonheroicLevels": 1
       },
       "defenses": {
         "reflex": 10,
@@ -16915,11 +18453,84 @@
         "damageThreshold": 8
       },
       "movement": {
-        "speedLineRaw": "Speed 6 squares (walking)"
+        "speedLineRaw": "Speed 6 squares (walking)",
+        "locomotionSystems": [
+          {
+            "instanceId": "SGD-DROID-037-MOVE-01",
+            "mode": "walking",
+            "speedSquares": 6,
+            "raw": "6 squares (walking)",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 140,
+              "pdfPage1Based": 141,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-037",
+              "citationLabel": "Printed speed 6 squares (walking)"
+            },
+            "componentInstanceId": "SGD-DROID-037-COMP-002"
+          }
+        ]
       },
-      "anatomy": {},
-      "processor": {},
-      "programming": {},
+      "anatomy": {
+        "bodyPlatformKind": "ordinary-chassis",
+        "physicalLocations": [
+          {
+            "locationId": "SGD-DROID-037-PHYSICAL-01",
+            "name": "Printed hand 1",
+            "locationKind": "hand",
+            "installedComponentIds": [
+              "SGD-DROID-037-COMP-003"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-037-PHYSICAL-02",
+            "name": "Printed hand 2",
+            "locationKind": "hand",
+            "installedComponentIds": [
+              "SGD-DROID-037-COMP-004"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-037-PHYSICAL-03",
+            "name": "Printed probe 1",
+            "locationKind": "probe",
+            "installedComponentIds": [
+              "SGD-DROID-037-COMP-005"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-037-PHYSICAL-04",
+            "name": "Printed probe 2",
+            "locationKind": "probe",
+            "installedComponentIds": [
+              "SGD-DROID-037-COMP-006"
+            ]
+          }
+        ]
+      },
+      "processor": {
+        "type": "basic",
+        "processorInstanceId": "SGD-DROID-037-COMP-001"
+      },
+      "programming": {
+        "languagesSoftware": [
+          {
+            "ruleId": "SGD-DROID-037-UNASSIGNED-LANGUAGE-CHOICES",
+            "statement": "1 published language choices remain unassigned; not selected language rights.",
+            "scope": "Printed unassigned language count",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 140,
+              "pdfPage1Based": 141,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-037",
+              "citationLabel": "UNASSIGNED-LANGUAGE-CHOICES"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "combat": {
         "baseAttackBonusPrinted": 0,
         "grapplePrinted": 0,
@@ -16940,7 +18551,123 @@
       },
       "capacity": {},
       "systems": {
-        "sourceSystemsRaw": "basic processor, walking locomotion, 2 hand appendages, 2 probe appendages, internal storage (30 kg), vocabulator"
+        "sourceSystemsRaw": "basic processor, walking locomotion, 2 hand appendages, 2 probe appendages, internal storage (30 kg), vocabulator",
+        "installed": [
+          {
+            "instanceId": "SGD-DROID-037-COMP-001",
+            "name": "basic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 140,
+              "pdfPage1Based": 141,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-037",
+              "citationLabel": "Printed Systems: basic processor"
+            },
+            "catalogRef": "basic-processor"
+          },
+          {
+            "instanceId": "SGD-DROID-037-COMP-002",
+            "name": "walking locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 140,
+              "pdfPage1Based": 141,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-037",
+              "citationLabel": "Printed Systems: walking locomotion"
+            },
+            "catalogRef": "walking"
+          },
+          {
+            "instanceId": "SGD-DROID-037-COMP-003",
+            "name": "2 hand appendages [1/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 140,
+              "pdfPage1Based": 141,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-037",
+              "citationLabel": "Printed Systems: 2 hand appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-037-PHYSICAL-01"
+          },
+          {
+            "instanceId": "SGD-DROID-037-COMP-004",
+            "name": "2 hand appendages [2/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 140,
+              "pdfPage1Based": 141,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-037",
+              "citationLabel": "Printed Systems: 2 hand appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-037-PHYSICAL-02"
+          },
+          {
+            "instanceId": "SGD-DROID-037-COMP-005",
+            "name": "2 probe appendages [1/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 140,
+              "pdfPage1Based": 141,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-037",
+              "citationLabel": "Printed Systems: 2 probe appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-037-PHYSICAL-03"
+          },
+          {
+            "instanceId": "SGD-DROID-037-COMP-006",
+            "name": "2 probe appendages [2/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 140,
+              "pdfPage1Based": 141,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-037",
+              "citationLabel": "Printed Systems: 2 probe appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-037-PHYSICAL-04"
+          },
+          {
+            "instanceId": "SGD-DROID-037-COMP-007",
+            "name": "internal storage (30 kg)",
+            "componentCategory": "storage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 140,
+              "pdfPage1Based": 141,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-037",
+              "citationLabel": "Printed Systems: internal storage (30 kg)"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-037-COMP-008",
+            "name": "vocabulator",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 140,
+              "pdfPage1Based": 141,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-037",
+              "citationLabel": "Printed Systems: vocabulator"
+            }
+          }
+        ]
       },
       "equipment": {},
       "modifications": {},
@@ -16981,11 +18708,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.140-141 inspected: LEP has two hand and two probe appendages, storage 30 kg and no printed Possessions section; an unlisted item is unknown, not explicit absence. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p140:PDF-page-141",
           "SGD-CENSUS:SGD-DROID-037",
-          "SGD:p140:PDF-p141:visual-statblock-field-review"
+          "SGD:p140:PDF-p141:visual-statblock-field-review",
+          "SGD:p140-p141:PDF-p141-p142:M4-printed-source-review"
         ]
       }
     },
@@ -17097,7 +18825,19 @@
           }
         ],
         "initiativePrinted": 21,
-        "perceptionPrinted": 17
+        "perceptionPrinted": 17,
+        "languages": [
+          {
+            "name": "Basic",
+            "raw": "Basic (understand only)",
+            "understands": true,
+            "speaks": false
+          },
+          {
+            "name": "Binary",
+            "raw": "Printed language capability"
+          }
+        ]
       },
       "progression": {
         "classLineRaw": "soldier 6/nonheroic 9",
@@ -17215,7 +18955,18 @@
               "sourceEntryKey": "SGD-DROID-038"
             }
           }
-        ]
+        ],
+        "classes": [
+          {
+            "className": "soldier",
+            "level": 6
+          },
+          {
+            "className": "nonheroic",
+            "level": 9
+          }
+        ],
+        "nonheroicLevels": 9
       },
       "defenses": {
         "reflex": 23,
@@ -17232,21 +18983,63 @@
         "speedLineRaw": "Speed 6 squares, fly 16 squares, fly 4 squa res (starship sca le)",
         "locomotionSystems": [
           {
-            "instanceId": "sgd-038-ground",
-            "mode": "ground",
-            "speedSquares": 6
-          },
-          {
-            "instanceId": "sgd-038-flight",
+            "instanceId": "SGD-DROID-038-MOVE-01",
             "mode": "flying",
             "speedSquares": 16,
-            "starshipSpeedSquares": 4
+            "starshipSpeedSquares": 4,
+            "raw": "Speed 6 squares, fly 16 squares, fly 4 squares (starship scale)",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 142,
+              "pdfPage1Based": 143,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-038",
+              "citationLabel": "Printed movement and scales"
+            }
+          }
+        ],
+        "specialMovement": [
+          {
+            "ruleId": "SGD-DROID-038-UNTYPED-BASE-SPEED",
+            "statement": "The published Speed line also gives 6 squares without identifying a locomotion type; do not interpret it as installed walking locomotion.",
+            "scope": "Shadow Droid character-scale movement",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 142,
+              "pdfPage1Based": 143,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-038",
+              "citationLabel": "UNTYPED-BASE-SPEED"
+            },
+            "executionStatus": "source-only"
           }
         ]
       },
-      "anatomy": {},
-      "processor": {},
-      "programming": {},
+      "anatomy": {
+        "bodyPlatformKind": "ordinary-chassis"
+      },
+      "processor": {
+        "type": "basic",
+        "processorInstanceId": "SGD-DROID-038-COMP-001"
+      },
+      "programming": {
+        "languagesSoftware": [
+          {
+            "ruleId": "SGD-DROID-038-UNASSIGNED-LANGUAGE-CHOICES",
+            "statement": "1 published language choices remain unassigned and understand-only; not selected language rights.",
+            "scope": "Printed unassigned language count",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 142,
+              "pdfPage1Based": 143,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-038",
+              "citationLabel": "UNASSIGNED-LANGUAGE-CHOICES"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "combat": {
         "baseAttackBonusPrinted": 12,
         "grapplePrinted": 32,
@@ -17281,13 +19074,104 @@
             "operationStatus": "source-only",
             "attackBonus": 17
           }
+        ],
+        "firingDelegation": [
+          {
+            "ruleId": "SGD-DROID-038-STARSHIP-FIRE",
+            "statement": "Weapon and missile attacks have starship-scale interactions and must use vehicle gunnery authority where applicable, not assumed normal hand-held attacks.",
+            "scope": "Shadow Droid starship-scale combat",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 142,
+              "pdfPage1Based": 143,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-038",
+              "citationLabel": "STARSHIP-FIRE"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
       "systems": {
-        "sourceSystemsRaw": "basic processor, f lying locomotion, duranium battle armor (+10 armor)"
+        "sourceSystemsRaw": "basic processor, f lying locomotion, duranium battle armor (+10 armor)",
+        "installed": [
+          {
+            "instanceId": "SGD-DROID-038-COMP-001",
+            "name": "basic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 142,
+              "pdfPage1Based": 143,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-038",
+              "citationLabel": "Printed Systems: basic processor"
+            },
+            "catalogRef": "basic-processor"
+          },
+          {
+            "instanceId": "SGD-DROID-038-COMP-002",
+            "name": "flying locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 142,
+              "pdfPage1Based": 143,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-038",
+              "citationLabel": "Printed Systems: flying locomotion"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-038-COMP-003",
+            "name": "duranium battle armor (+10 armor)",
+            "componentCategory": "armor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 142,
+              "pdfPage1Based": 143,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-038",
+              "citationLabel": "Printed Systems: duranium battle armor (+10 armor)"
+            }
+          }
+        ]
       },
-      "equipment": {},
+      "equipment": {
+        "possessions": [
+          {
+            "entryId": "SGD-DROID-038-POS-01",
+            "name": "laser cannon",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "SGD-DROID-038-POS-02",
+            "name": "ion cannon",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "SGD-DROID-038-POS-03",
+            "name": "proton torpedo launcher (4 torpedoes carried)",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "SGD-DROID-038-POS-04",
+            "name": "concussion missile launcher (8 missiles carried)",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "SGD-DROID-038-POS-05",
+            "name": "repeating blaster cannon",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          }
+        ]
+      },
       "modifications": {},
       "pcConstruction": {
         "heroEligibility": "prohibited"
@@ -17311,11 +19195,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.142-143 inspected: Shadow Droid has character-scale flight 16 and starship-scale flight 4, plus an untyped Speed 6 entry. Its starship weapons, missiles and owner-mediated Force Points demand bridge review, not standard hand-held attack permissions. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p142:PDF-page-143",
           "SGD-CENSUS:SGD-DROID-038",
-          "SGD:p142:PDF-p143:visual-statblock-field-review"
+          "SGD:p142:PDF-p143:visual-statblock-field-review",
+          "SGD:p142-p143:PDF-p143-p144:M4-printed-source-review"
         ]
       }
     },
@@ -17394,7 +19279,19 @@
           }
         ],
         "initiativePrinted": 17,
-        "perceptionPrinted": 5
+        "perceptionPrinted": 5,
+        "languages": [
+          {
+            "name": "Basic",
+            "raw": "Basic (understand only)",
+            "understands": true,
+            "speaks": false
+          },
+          {
+            "name": "Binary",
+            "raw": "Printed language capability"
+          }
+        ]
       },
       "progression": {
         "classLineRaw": "nonheroic 9",
@@ -17476,7 +19373,14 @@
               "sourceEntryKey": "SGD-DROID-039"
             }
           }
-        ]
+        ],
+        "classes": [
+          {
+            "className": "nonheroic",
+            "level": 9
+          }
+        ],
+        "nonheroicLevels": 9
       },
       "defenses": {
         "reflex": 14,
@@ -17490,10 +19394,73 @@
         "damageThreshold": 11
       },
       "movement": {
-        "speedLineRaw": "Speed 6 squares (walking)"
+        "speedLineRaw": "Speed 6 squares (walking)",
+        "locomotionSystems": [
+          {
+            "instanceId": "SGD-DROID-039-MOVE-01",
+            "mode": "walking",
+            "speedSquares": 6,
+            "raw": "6 squares (walking)",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 144,
+              "pdfPage1Based": 145,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-039",
+              "citationLabel": "Printed speed 6 squares (walking)"
+            },
+            "componentInstanceId": "SGD-DROID-039-COMP-002"
+          }
+        ]
       },
-      "anatomy": {},
-      "processor": {},
+      "anatomy": {
+        "bodyPlatformKind": "ordinary-chassis",
+        "physicalLocations": [
+          {
+            "locationId": "SGD-DROID-039-PHYSICAL-01",
+            "name": "Printed tool 1",
+            "locationKind": "tool",
+            "installedComponentIds": [
+              "SGD-DROID-039-COMP-003"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-039-PHYSICAL-02",
+            "name": "Printed tool 2",
+            "locationKind": "tool",
+            "installedComponentIds": [
+              "SGD-DROID-039-COMP-004"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-039-PHYSICAL-03",
+            "name": "Printed tool 3",
+            "locationKind": "tool",
+            "installedComponentIds": [
+              "SGD-DROID-039-COMP-005"
+            ]
+          }
+        ]
+      },
+      "processor": {
+        "autonomy": "remote-controlled",
+        "commandLink": [
+          {
+            "ruleId": "SGD-DROID-039-REMOTE-RECEIVER",
+            "statement": "A remote receiver is printed as installed; the record does not establish an internal active processor or unrestricted independent autonomy.",
+            "scope": "Printed control component only",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 144,
+              "pdfPage1Based": 145,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-039",
+              "citationLabel": "REMOTE-RECEIVER"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "programming": {},
       "combat": {
         "baseAttackBonusPrinted": 6,
@@ -17533,13 +19500,171 @@
             "operationStatus": "source-only",
             "attackBonus": 9
           }
+        ],
+        "conditions": [
+          {
+            "ruleId": "SGD-DROID-039-BLASTER-CANNON-MULTIATTACK",
+            "statement": "Blaster-cannon, Rapid Shot and grenade-launcher rows are alternative choices; no extra mounted/usable action is inferred.",
+            "scope": "Colicoid T4 printed attack alternatives",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 144,
+              "pdfPage1Based": 145,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-039",
+              "citationLabel": "BLASTER-CANNON-MULTIATTACK"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
       "systems": {
-        "sourceSystemsRaw": "remote receiver, walking locomotion, 3 tool appendages, darkvision, synchronized fire circuits, plasteel shell (+2 armor), shield generator (SR 20)"
+        "sourceSystemsRaw": "remote receiver, walking locomotion, 3 tool appendages, darkvision, synchronized fire circuits, plasteel shell (+2 armor), shield generator (SR 20)",
+        "installed": [
+          {
+            "instanceId": "SGD-DROID-039-COMP-001",
+            "name": "remote receiver",
+            "componentCategory": "control",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 144,
+              "pdfPage1Based": 145,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-039",
+              "citationLabel": "Printed Systems: remote receiver"
+            },
+            "catalogRef": "remote-receiver"
+          },
+          {
+            "instanceId": "SGD-DROID-039-COMP-002",
+            "name": "walking locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 144,
+              "pdfPage1Based": 145,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-039",
+              "citationLabel": "Printed Systems: walking locomotion"
+            },
+            "catalogRef": "walking"
+          },
+          {
+            "instanceId": "SGD-DROID-039-COMP-003",
+            "name": "3 tool appendages [1/3]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 144,
+              "pdfPage1Based": 145,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-039",
+              "citationLabel": "Printed Systems: 3 tool appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-039-PHYSICAL-01"
+          },
+          {
+            "instanceId": "SGD-DROID-039-COMP-004",
+            "name": "3 tool appendages [2/3]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 144,
+              "pdfPage1Based": 145,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-039",
+              "citationLabel": "Printed Systems: 3 tool appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-039-PHYSICAL-02"
+          },
+          {
+            "instanceId": "SGD-DROID-039-COMP-005",
+            "name": "3 tool appendages [3/3]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 144,
+              "pdfPage1Based": 145,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-039",
+              "citationLabel": "Printed Systems: 3 tool appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-039-PHYSICAL-03"
+          },
+          {
+            "instanceId": "SGD-DROID-039-COMP-006",
+            "name": "darkvision",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 144,
+              "pdfPage1Based": 145,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-039",
+              "citationLabel": "Printed Systems: darkvision"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-039-COMP-007",
+            "name": "synchronized fire circuits",
+            "componentCategory": "accessory",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 144,
+              "pdfPage1Based": 145,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-039",
+              "citationLabel": "Printed Systems: synchronized fire circuits"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-039-COMP-008",
+            "name": "plasteel shell (+2 armor)",
+            "componentCategory": "armor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 144,
+              "pdfPage1Based": 145,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-039",
+              "citationLabel": "Printed Systems: plasteel shell (+2 armor)"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-039-COMP-009",
+            "name": "shield generator (SR 20)",
+            "componentCategory": "other",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 144,
+              "pdfPage1Based": 145,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-039",
+              "citationLabel": "Printed Systems: shield generator (SR 20)"
+            }
+          }
+        ]
       },
-      "equipment": {},
+      "equipment": {
+        "possessions": [
+          {
+            "entryId": "SGD-DROID-039-POS-01",
+            "name": "blaster cannon",
+            "quantity": 2,
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "SGD-DROID-039-POS-02",
+            "name": "modified grenade launcher (4 thermal detonators)",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          }
+        ]
+      },
       "modifications": {},
       "pcConstruction": {
         "heroEligibility": "prohibited"
@@ -17552,7 +19677,36 @@
       "text": {
         "mechanicsNotes": "Source language line preserved in sidecar evidence; speaking vs understanding remains unverified."
       },
-      "exceptions": {},
+      "exceptions": {
+        "sourceContradictions": [
+          {
+            "issueId": "SGD-039-CUTTING-LASER-ACTION-CONFLICT",
+            "fieldPointers": [
+              "/rules/conditionalMechanics",
+              "/combat/specialActions"
+            ],
+            "statements": [
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 144,
+                "pdfPage1Based": 145,
+                "verifiedBy": "pdf-visual",
+                "sourceEntryKey": "SGD-DROID-039",
+                "citationLabel": "Cutting Laser main prose: standard action"
+              },
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 144,
+                "pdfPage1Based": 145,
+                "verifiedBy": "pdf-visual",
+                "sourceEntryKey": "SGD-DROID-039",
+                "citationLabel": "Cutting Laser protocol: two swift actions once per turn"
+              }
+            ],
+            "resolutionStatus": "unresolved"
+          }
+        ]
+      },
       "fieldStates": {
         "/abilities/con": "explicitly-none"
       },
@@ -17591,11 +19745,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.144-145 inspected: T4 has remote receiver and synchronized fire circuits, two blaster cannons, modified grenade launcher and exactly four thermal detonators; source Cutting Laser action conflicts between main prose and protocol action cost. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p144:PDF-page-145",
           "SGD-CENSUS:SGD-DROID-039",
-          "SGD:p144:PDF-p145:visual-statblock-field-review"
+          "SGD:p144:PDF-p145:visual-statblock-field-review",
+          "SGD:p144-p145:PDF-p145-p146:M4-printed-source-review"
         ]
       }
     },
@@ -17696,7 +19851,17 @@
           }
         ],
         "initiativePrinted": 3,
-        "perceptionPrinted": 5
+        "perceptionPrinted": 5,
+        "languages": [
+          {
+            "name": "Basic",
+            "raw": "Printed language capability"
+          },
+          {
+            "name": "Binary",
+            "raw": "Printed language capability"
+          }
+        ]
       },
       "progression": {
         "classLineRaw": "scoundrel 1",
@@ -17748,6 +19913,12 @@
               "sourceEntryKey": "SGD-DROID-040"
             }
           }
+        ],
+        "classes": [
+          {
+            "className": "scoundrel",
+            "level": 1
+          }
         ]
       },
       "defenses": {
@@ -17761,10 +19932,50 @@
         "damageThreshold": 11
       },
       "movement": {
-        "speedLineRaw": "Speed 6 squares (walking)"
+        "speedLineRaw": "Speed 6 squares (walking)",
+        "locomotionSystems": [
+          {
+            "instanceId": "SGD-DROID-040-MOVE-01",
+            "mode": "walking",
+            "speedSquares": 6,
+            "raw": "6 squares (walking)",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 146,
+              "pdfPage1Based": 147,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-040",
+              "citationLabel": "Printed speed 6 squares (walking)"
+            },
+            "componentInstanceId": "SGD-DROID-040-COMP-002"
+          }
+        ]
       },
-      "anatomy": {},
-      "processor": {},
+      "anatomy": {
+        "bodyPlatformKind": "ordinary-chassis",
+        "physicalLocations": [
+          {
+            "locationId": "SGD-DROID-040-PHYSICAL-01",
+            "name": "Printed hand 1",
+            "locationKind": "hand",
+            "installedComponentIds": [
+              "SGD-DROID-040-COMP-003"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-040-PHYSICAL-02",
+            "name": "Printed hand 2",
+            "locationKind": "hand",
+            "installedComponentIds": [
+              "SGD-DROID-040-COMP-004"
+            ]
+          }
+        ]
+      },
+      "processor": {
+        "type": "heuristic",
+        "processorInstanceId": "SGD-DROID-040-COMP-001"
+      },
       "programming": {},
       "combat": {
         "baseAttackBonusPrinted": 0,
@@ -17786,10 +19997,128 @@
       },
       "capacity": {},
       "systems": {
-        "sourceSystemsRaw": "heuristic processor, walking locomotion, 2 hand appendages with concealed weapons (see Possessions), holographic image disguiser, vocabulator"
+        "sourceSystemsRaw": "heuristic processor, walking locomotion, 2 hand appendages with concealed weapons (see Possessions), holographic image disguiser, vocabulator",
+        "installed": [
+          {
+            "instanceId": "SGD-DROID-040-COMP-001",
+            "name": "heuristic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 146,
+              "pdfPage1Based": 147,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-040",
+              "citationLabel": "Printed Systems: heuristic processor"
+            },
+            "catalogRef": "heuristic-processor"
+          },
+          {
+            "instanceId": "SGD-DROID-040-COMP-002",
+            "name": "walking locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 146,
+              "pdfPage1Based": 147,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-040",
+              "citationLabel": "Printed Systems: walking locomotion"
+            },
+            "catalogRef": "walking"
+          },
+          {
+            "instanceId": "SGD-DROID-040-COMP-003",
+            "name": "2 hand appendages with concealed weapons (see Possessions) [1/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 146,
+              "pdfPage1Based": 147,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-040",
+              "citationLabel": "Printed Systems: 2 hand appendages with concealed weapons (see Possessions)"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-040-PHYSICAL-01"
+          },
+          {
+            "instanceId": "SGD-DROID-040-COMP-004",
+            "name": "2 hand appendages with concealed weapons (see Possessions) [2/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 146,
+              "pdfPage1Based": 147,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-040",
+              "citationLabel": "Printed Systems: 2 hand appendages with concealed weapons (see Possessions)"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-040-PHYSICAL-02"
+          },
+          {
+            "instanceId": "SGD-DROID-040-COMP-005",
+            "name": "holographic image disguiser",
+            "componentCategory": "accessory",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 146,
+              "pdfPage1Based": 147,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-040",
+              "citationLabel": "Printed Systems: holographic image disguiser"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-040-COMP-006",
+            "name": "vocabulator",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 146,
+              "pdfPage1Based": 147,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-040",
+              "citationLabel": "Printed Systems: vocabulator"
+            }
+          }
+        ]
       },
-      "equipment": {},
-      "modifications": {},
+      "equipment": {
+        "possessions": [
+          {
+            "entryId": "SGD-DROID-040-POS-01",
+            "name": "concealed blaster pistol",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "SGD-DROID-040-POS-02",
+            "name": "concealed knife",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          }
+        ]
+      },
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "SGD-DROID-040-CONCEALED-WEAPON-MOUNTS",
+            "statement": "Printed concealed blaster pistol and knife require weapon-mount mapping to two hand appendages; do not create duplicate held attacks.",
+            "scope": "TC-SC physical weapon provenance",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 146,
+              "pdfPage1Based": 147,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-040",
+              "citationLabel": "CONCEALED-WEAPON-MOUNTS"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "allowed"
       },
@@ -17827,11 +20156,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.146-147 inspected: TC-SC's two concealed weapons are separate listed possessions and a source-described integrated loadout; Dastardly Strike requires its triggering target defense condition. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p146:PDF-page-147",
           "SGD-CENSUS:SGD-DROID-040",
-          "SGD:p146:PDF-p147:visual-statblock-field-review"
+          "SGD:p146:PDF-p147:visual-statblock-field-review",
+          "SGD:p146-p147:PDF-p147-p148:M4-printed-source-review"
         ]
       }
     },
@@ -17921,7 +20251,17 @@
           }
         ],
         "initiativePrinted": -3,
-        "perceptionPrinted": 14
+        "perceptionPrinted": 14,
+        "languages": [
+          {
+            "name": "Basic",
+            "raw": "Printed language capability"
+          },
+          {
+            "name": "Binary",
+            "raw": "Printed language capability"
+          }
+        ]
       },
       "progression": {
         "classLineRaw": "nonheroic 1",
@@ -17959,7 +20299,14 @@
               "sourceEntryKey": "SGD-DROID-041"
             }
           }
-        ]
+        ],
+        "classes": [
+          {
+            "className": "nonheroic",
+            "level": 1
+          }
+        ],
+        "nonheroicLevels": 1
       },
       "defenses": {
         "reflex": 6,
@@ -17975,16 +20322,71 @@
         "speedLineRaw": "Speed 0 squares",
         "locomotionSystems": [
           {
-            "instanceId": "sgd-041-stationary",
+            "instanceId": "SGD-DROID-041-MOVE-01",
             "mode": "stationary",
             "speedSquares": 0,
-            "raw": "Speed 0 squares"
+            "raw": "Speed 0 squares",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 148,
+              "pdfPage1Based": 149,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-041",
+              "citationLabel": "Printed Speed 0 squares"
+            }
           }
         ]
       },
-      "anatomy": {},
-      "processor": {},
-      "programming": {},
+      "anatomy": {
+        "bodyPlatformKind": "ordinary-chassis",
+        "physicalLocations": [
+          {
+            "locationId": "SGD-DROID-041-PHYSICAL-01",
+            "name": "Printed tool 1",
+            "locationKind": "tool",
+            "installedComponentIds": [
+              "SGD-DROID-041-COMP-002"
+            ]
+          }
+        ]
+      },
+      "processor": {
+        "autonomy": "remote-controlled",
+        "commandLink": [
+          {
+            "ruleId": "SGD-DROID-041-REMOTE-RECEIVER",
+            "statement": "A remote receiver is printed as installed; the record does not establish an internal active processor or unrestricted independent autonomy.",
+            "scope": "Printed control component only",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 148,
+              "pdfPage1Based": 149,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-041",
+              "citationLabel": "REMOTE-RECEIVER"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "programming": {
+        "languagesSoftware": [
+          {
+            "ruleId": "SGD-DROID-041-UNASSIGNED-LANGUAGE-CHOICES",
+            "statement": "3 published language choices remain unassigned; not selected language rights.",
+            "scope": "Printed unassigned language count",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 148,
+              "pdfPage1Based": 149,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-041",
+              "citationLabel": "UNASSIGNED-LANGUAGE-CHOICES"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "combat": {
         "baseAttackBonusPrinted": 0,
         "grapplePrinted": 5,
@@ -17999,7 +20401,79 @@
       },
       "capacity": {},
       "systems": {
-        "sourceSystemsRaw": "remote receiver, 1 telescopic tool appendage, improved sensor package, darkvision, vocabulator"
+        "sourceSystemsRaw": "remote receiver, 1 telescopic tool appendage, improved sensor package, darkvision, vocabulator",
+        "installed": [
+          {
+            "instanceId": "SGD-DROID-041-COMP-001",
+            "name": "remote receiver",
+            "componentCategory": "control",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 148,
+              "pdfPage1Based": 149,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-041",
+              "citationLabel": "Printed Systems: remote receiver"
+            },
+            "catalogRef": "remote-receiver"
+          },
+          {
+            "instanceId": "SGD-DROID-041-COMP-002",
+            "name": "1 telescopic tool appendage",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 148,
+              "pdfPage1Based": 149,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-041",
+              "citationLabel": "Printed Systems: 1 telescopic tool appendage"
+            },
+            "catalogRef": "tool",
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-041-PHYSICAL-01"
+          },
+          {
+            "instanceId": "SGD-DROID-041-COMP-003",
+            "name": "improved sensor package",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 148,
+              "pdfPage1Based": 149,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-041",
+              "citationLabel": "Printed Systems: improved sensor package"
+            },
+            "catalogRef": "improved-sensor-package"
+          },
+          {
+            "instanceId": "SGD-DROID-041-COMP-004",
+            "name": "darkvision",
+            "componentCategory": "sensor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 148,
+              "pdfPage1Based": 149,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-041",
+              "citationLabel": "Printed Systems: darkvision"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-041-COMP-005",
+            "name": "vocabulator",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 148,
+              "pdfPage1Based": 149,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-041",
+              "citationLabel": "Printed Systems: vocabulator"
+            }
+          }
+        ]
       },
       "equipment": {},
       "modifications": {},
@@ -18014,7 +20488,36 @@
       "text": {
         "mechanicsNotes": "Source language line preserved in sidecar evidence; speaking vs understanding remains unverified."
       },
-      "exceptions": {},
+      "exceptions": {
+        "sourceContradictions": [
+          {
+            "issueId": "SGD-041-STUBBORN-TARGET-CONFLICT",
+            "fieldPointers": [
+              "/rules/conditionalMechanics",
+              "/combat/specialActions"
+            ],
+            "statements": [
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 148,
+                "pdfPage1Based": 149,
+                "verifiedBy": "pdf-visual",
+                "sourceEntryKey": "SGD-DROID-041",
+                "citationLabel": "Stubborn main prose: Persuasion checks against droid"
+              },
+              {
+                "book": "Scavenger's Guide to Droids",
+                "page": 148,
+                "pdfPage1Based": 149,
+                "verifiedBy": "pdf-visual",
+                "sourceEntryKey": "SGD-DROID-041",
+                "citationLabel": "Stubborn protocol: Persuasion checks against droid's master"
+              }
+            ],
+            "resolutionStatus": "unresolved"
+          }
+        ]
+      },
       "fieldStates": {
         "/abilities/con": "explicitly-none"
       },
@@ -18040,11 +20543,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.148-149 inspected: TT-8L has printed Speed 0, no locomotion chassis part and a telescopic tool appendage, not a walking droid. Stubborn's protected subject differs in main prose versus protocol. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p148:PDF-page-149",
           "SGD-CENSUS:SGD-DROID-041",
-          "SGD:p148:PDF-p149:visual-statblock-field-review"
+          "SGD:p148:PDF-p149:visual-statblock-field-review",
+          "SGD:p148-p149:PDF-p149-p150:M4-printed-source-review"
         ]
       }
     },
@@ -18167,7 +20671,17 @@
           }
         ],
         "initiativePrinted": 7,
-        "perceptionPrinted": 6
+        "perceptionPrinted": 6,
+        "languages": [
+          {
+            "name": "Basic",
+            "raw": "Printed language capability"
+          },
+          {
+            "name": "Binary",
+            "raw": "Printed language capability"
+          }
+        ]
       },
       "progression": {
         "classLineRaw": "scout 1",
@@ -18208,6 +20722,12 @@
               "sourceEntryKey": "SGD-DROID-042"
             }
           }
+        ],
+        "classes": [
+          {
+            "className": "scout",
+            "level": 1
+          }
         ]
       },
       "defenses": {
@@ -18221,11 +20741,68 @@
         "damageThreshold": 12
       },
       "movement": {
-        "speedLineRaw": "Speed 6 squares (walking)"
+        "speedLineRaw": "Speed 6 squares (walking)",
+        "locomotionSystems": [
+          {
+            "instanceId": "SGD-DROID-042-MOVE-01",
+            "mode": "walking",
+            "speedSquares": 6,
+            "raw": "6 squares (walking)",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 150,
+              "pdfPage1Based": 151,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-042",
+              "citationLabel": "Printed speed 6 squares (walking)"
+            },
+            "componentInstanceId": "SGD-DROID-042-COMP-002"
+          }
+        ]
       },
-      "anatomy": {},
-      "processor": {},
-      "programming": {},
+      "anatomy": {
+        "bodyPlatformKind": "ordinary-chassis",
+        "physicalLocations": [
+          {
+            "locationId": "SGD-DROID-042-PHYSICAL-01",
+            "name": "Printed hand 1",
+            "locationKind": "hand",
+            "installedComponentIds": [
+              "SGD-DROID-042-COMP-003"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-042-PHYSICAL-02",
+            "name": "Printed hand 2",
+            "locationKind": "hand",
+            "installedComponentIds": [
+              "SGD-DROID-042-COMP-004"
+            ]
+          }
+        ]
+      },
+      "processor": {
+        "type": "heuristic",
+        "processorInstanceId": "SGD-DROID-042-COMP-001"
+      },
+      "programming": {
+        "languagesSoftware": [
+          {
+            "ruleId": "SGD-DROID-042-UNASSIGNED-LANGUAGE-CHOICES",
+            "statement": "1 published language choices remain unassigned; not selected language rights.",
+            "scope": "Printed unassigned language count",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 150,
+              "pdfPage1Based": 151,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-042",
+              "citationLabel": "UNASSIGNED-LANGUAGE-CHOICES"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "combat": {
         "baseAttackBonusPrinted": 0,
         "grapplePrinted": 2,
@@ -18246,9 +20823,91 @@
       },
       "capacity": {},
       "systems": {
-        "sourceSystemsRaw": "heuristic processor, walking locomotion, 2 hand appendages, vocabulator"
+        "sourceSystemsRaw": "heuristic processor, walking locomotion, 2 hand appendages, vocabulator",
+        "installed": [
+          {
+            "instanceId": "SGD-DROID-042-COMP-001",
+            "name": "heuristic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 150,
+              "pdfPage1Based": 151,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-042",
+              "citationLabel": "Printed Systems: heuristic processor"
+            },
+            "catalogRef": "heuristic-processor"
+          },
+          {
+            "instanceId": "SGD-DROID-042-COMP-002",
+            "name": "walking locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 150,
+              "pdfPage1Based": 151,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-042",
+              "citationLabel": "Printed Systems: walking locomotion"
+            },
+            "catalogRef": "walking"
+          },
+          {
+            "instanceId": "SGD-DROID-042-COMP-003",
+            "name": "2 hand appendages [1/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 150,
+              "pdfPage1Based": 151,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-042",
+              "citationLabel": "Printed Systems: 2 hand appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-042-PHYSICAL-01"
+          },
+          {
+            "instanceId": "SGD-DROID-042-COMP-004",
+            "name": "2 hand appendages [2/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 150,
+              "pdfPage1Based": 151,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-042",
+              "citationLabel": "Printed Systems: 2 hand appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-042-PHYSICAL-02"
+          },
+          {
+            "instanceId": "SGD-DROID-042-COMP-005",
+            "name": "vocabulator",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 150,
+              "pdfPage1Based": 151,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-042",
+              "citationLabel": "Printed Systems: vocabulator"
+            }
+          }
+        ]
       },
-      "equipment": {},
+      "equipment": {
+        "possessions": [
+          {
+            "entryId": "SGD-DROID-042-POS-01",
+            "name": "blaster rifle",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          }
+        ]
+      },
       "modifications": {},
       "pcConstruction": {
         "heroEligibility": "allowed"
@@ -18287,11 +20946,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.150-151 inspected: V2 owns a blaster rifle as printed Possessions and has an Improved Stealth talent; source-only ranged row does not license extra weapon actions. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p150:PDF-page-151",
           "SGD-CENSUS:SGD-DROID-042",
-          "SGD:p150:PDF-p151:visual-statblock-field-review"
+          "SGD:p150:PDF-p151:visual-statblock-field-review",
+          "SGD:p150-p151:PDF-p151-p152:M4-printed-source-review"
         ]
       }
     },
@@ -18403,7 +21063,17 @@
           }
         ],
         "initiativePrinted": 2,
-        "perceptionPrinted": 6
+        "perceptionPrinted": 6,
+        "languages": [
+          {
+            "name": "Basic",
+            "raw": "Printed language capability"
+          },
+          {
+            "name": "Binary",
+            "raw": "Printed language capability"
+          }
+        ]
       },
       "progression": {
         "classLineRaw": "nonheroic 2",
@@ -18430,7 +21100,14 @@
               "sourceEntryKey": "SGD-DROID-043"
             }
           }
-        ]
+        ],
+        "classes": [
+          {
+            "className": "nonheroic",
+            "level": 2
+          }
+        ],
+        "nonheroicLevels": 2
       },
       "defenses": {
         "reflex": 13,
@@ -18443,11 +21120,68 @@
         "damageThreshold": 10
       },
       "movement": {
-        "speedLineRaw": "Speed 6 squares (wheeled)"
+        "speedLineRaw": "Speed 6 squares (wheeled)",
+        "locomotionSystems": [
+          {
+            "instanceId": "SGD-DROID-043-MOVE-01",
+            "mode": "wheeled",
+            "speedSquares": 6,
+            "raw": "6 squares (wheeled)",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 152,
+              "pdfPage1Based": 153,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-043",
+              "citationLabel": "Printed speed 6 squares (wheeled)"
+            },
+            "componentInstanceId": "SGD-DROID-043-COMP-002"
+          }
+        ]
       },
-      "anatomy": {},
-      "processor": {},
-      "programming": {},
+      "anatomy": {
+        "bodyPlatformKind": "ordinary-chassis",
+        "physicalLocations": [
+          {
+            "locationId": "SGD-DROID-043-PHYSICAL-01",
+            "name": "Printed tool 1",
+            "locationKind": "tool",
+            "installedComponentIds": [
+              "SGD-DROID-043-COMP-003"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-043-PHYSICAL-02",
+            "name": "Printed tool 2",
+            "locationKind": "tool",
+            "installedComponentIds": [
+              "SGD-DROID-043-COMP-004"
+            ]
+          }
+        ]
+      },
+      "processor": {
+        "type": "heuristic",
+        "processorInstanceId": "SGD-DROID-043-COMP-001"
+      },
+      "programming": {
+        "languagesSoftware": [
+          {
+            "ruleId": "SGD-DROID-043-UNASSIGNED-LANGUAGE-CHOICES",
+            "statement": "3 published language choices remain unassigned; not selected language rights.",
+            "scope": "Printed unassigned language count",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 152,
+              "pdfPage1Based": 153,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-043",
+              "citationLabel": "UNASSIGNED-LANGUAGE-CHOICES"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "combat": {
         "baseAttackBonusPrinted": 1,
         "grapplePrinted": -2,
@@ -18468,7 +21202,80 @@
       },
       "capacity": {},
       "systems": {
-        "sourceSystemsRaw": "heuristic processor, wheeled locomotion, 2 tool appendages, vocabu lator"
+        "sourceSystemsRaw": "heuristic processor, wheeled locomotion, 2 tool appendages, vocabu lator",
+        "installed": [
+          {
+            "instanceId": "SGD-DROID-043-COMP-001",
+            "name": "heuristic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 152,
+              "pdfPage1Based": 153,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-043",
+              "citationLabel": "Printed Systems: heuristic processor"
+            },
+            "catalogRef": "heuristic-processor"
+          },
+          {
+            "instanceId": "SGD-DROID-043-COMP-002",
+            "name": "wheeled locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 152,
+              "pdfPage1Based": 153,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-043",
+              "citationLabel": "Printed Systems: wheeled locomotion"
+            },
+            "catalogRef": "wheeled"
+          },
+          {
+            "instanceId": "SGD-DROID-043-COMP-003",
+            "name": "2 tool appendages [1/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 152,
+              "pdfPage1Based": 153,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-043",
+              "citationLabel": "Printed Systems: 2 tool appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-043-PHYSICAL-01"
+          },
+          {
+            "instanceId": "SGD-DROID-043-COMP-004",
+            "name": "2 tool appendages [2/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 152,
+              "pdfPage1Based": 153,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-043",
+              "citationLabel": "Printed Systems: 2 tool appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-043-PHYSICAL-02"
+          },
+          {
+            "instanceId": "SGD-DROID-043-COMP-005",
+            "name": "vocabulator",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 152,
+              "pdfPage1Based": 153,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-043",
+              "citationLabel": "Printed Systems: vocabulator"
+            }
+          }
+        ]
       },
       "equipment": {},
       "modifications": {},
@@ -18509,11 +21316,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.152-153 inspected: V6 is wheeled-only pilot model; navigation/vehicle control skills are not standalone personal movement modes or attacks. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p152:PDF-page-153",
           "SGD-CENSUS:SGD-DROID-043",
-          "SGD:p152:PDF-p153:visual-statblock-field-review"
+          "SGD:p152:PDF-p153:visual-statblock-field-review",
+          "SGD:p152-p153:PDF-p153-p154:M4-printed-source-review"
         ]
       }
     },
@@ -18628,7 +21436,19 @@
           }
         ],
         "initiativePrinted": 14,
-        "perceptionPrinted": 14
+        "perceptionPrinted": 14,
+        "languages": [
+          {
+            "name": "Basic",
+            "raw": "Basic (understand only)",
+            "understands": true,
+            "speaks": false
+          },
+          {
+            "name": "Binary",
+            "raw": "Printed language capability"
+          }
+        ]
       },
       "progression": {
         "classLineRaw": "non heroic 12/soldier 4",
@@ -18757,7 +21577,18 @@
               "sourceEntryKey": "SGD-DROID-044"
             }
           }
-        ]
+        ],
+        "classes": [
+          {
+            "className": "nonheroic",
+            "level": 12
+          },
+          {
+            "className": "soldier",
+            "level": 4
+          }
+        ],
+        "nonheroicLevels": 12
       },
       "defenses": {
         "reflex": 18,
@@ -18770,11 +21601,84 @@
         "damageThreshold": 42
       },
       "movement": {
-        "speedLineRaw": "Speed 6 squares (walking)"
+        "speedLineRaw": "Speed 6 squares (walking)",
+        "locomotionSystems": [
+          {
+            "instanceId": "SGD-DROID-044-MOVE-01",
+            "mode": "walking",
+            "speedSquares": 6,
+            "raw": "6 squares (walking)",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 154,
+              "pdfPage1Based": 155,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-044",
+              "citationLabel": "Printed speed 6 squares (walking)"
+            },
+            "componentInstanceId": "SGD-DROID-044-COMP-002"
+          }
+        ]
       },
-      "anatomy": {},
-      "processor": {},
-      "programming": {},
+      "anatomy": {
+        "bodyPlatformKind": "ordinary-chassis",
+        "physicalLocations": [
+          {
+            "locationId": "SGD-DROID-044-PHYSICAL-01",
+            "name": "Printed claw 1",
+            "locationKind": "claw",
+            "installedComponentIds": [
+              "SGD-DROID-044-COMP-003"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-044-PHYSICAL-02",
+            "name": "Printed claw 2",
+            "locationKind": "claw",
+            "installedComponentIds": [
+              "SGD-DROID-044-COMP-004"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-044-PHYSICAL-03",
+            "name": "Printed tool 1",
+            "locationKind": "tool",
+            "installedComponentIds": [
+              "SGD-DROID-044-COMP-005"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-044-PHYSICAL-04",
+            "name": "Printed tool 2",
+            "locationKind": "tool",
+            "installedComponentIds": [
+              "SGD-DROID-044-COMP-006"
+            ]
+          }
+        ]
+      },
+      "processor": {
+        "type": "basic",
+        "processorInstanceId": "SGD-DROID-044-COMP-001"
+      },
+      "programming": {
+        "languagesSoftware": [
+          {
+            "ruleId": "SGD-DROID-044-UNASSIGNED-LANGUAGE-CHOICES",
+            "statement": "1 published language choices remain unassigned and understand-only; not selected language rights.",
+            "scope": "Printed unassigned language count",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 154,
+              "pdfPage1Based": 155,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-044",
+              "citationLabel": "UNASSIGNED-LANGUAGE-CHOICES"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "combat": {
         "baseAttackBonusPrinted": 13,
         "grapplePrinted": 34,
@@ -18809,13 +21713,147 @@
             "operationStatus": "source-only",
             "attackBonus": 9
           }
+        ],
+        "conditions": [
+          {
+            "ruleId": "SGD-DROID-044-TWIN-CANNON-ALTERNATIVES",
+            "statement": "Two twin blaster cannons and grenade launcher have different burst/area action and ammunition predicates; source rows grant no executable attacks.",
+            "scope": "X-1 printed attacks",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 154,
+              "pdfPage1Based": 155,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-044",
+              "citationLabel": "TWIN-CANNON-ALTERNATIVES"
+            },
+            "executionStatus": "source-only"
+          }
         ]
       },
       "capacity": {},
       "systems": {
-        "sourceSystemsRaw": "basic processor, walking locomotion, 2 claw appendages, 2 tool appendages, duranium plating (+8 armor)"
+        "sourceSystemsRaw": "basic processor, walking locomotion, 2 claw appendages, 2 tool appendages, duranium plating (+8 armor)",
+        "installed": [
+          {
+            "instanceId": "SGD-DROID-044-COMP-001",
+            "name": "basic processor",
+            "componentCategory": "processor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 154,
+              "pdfPage1Based": 155,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-044",
+              "citationLabel": "Printed Systems: basic processor"
+            },
+            "catalogRef": "basic-processor"
+          },
+          {
+            "instanceId": "SGD-DROID-044-COMP-002",
+            "name": "walking locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 154,
+              "pdfPage1Based": 155,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-044",
+              "citationLabel": "Printed Systems: walking locomotion"
+            },
+            "catalogRef": "walking"
+          },
+          {
+            "instanceId": "SGD-DROID-044-COMP-003",
+            "name": "2 claw appendages [1/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 154,
+              "pdfPage1Based": 155,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-044",
+              "citationLabel": "Printed Systems: 2 claw appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-044-PHYSICAL-01"
+          },
+          {
+            "instanceId": "SGD-DROID-044-COMP-004",
+            "name": "2 claw appendages [2/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 154,
+              "pdfPage1Based": 155,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-044",
+              "citationLabel": "Printed Systems: 2 claw appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-044-PHYSICAL-02"
+          },
+          {
+            "instanceId": "SGD-DROID-044-COMP-005",
+            "name": "2 tool appendages [1/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 154,
+              "pdfPage1Based": 155,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-044",
+              "citationLabel": "Printed Systems: 2 tool appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-044-PHYSICAL-03"
+          },
+          {
+            "instanceId": "SGD-DROID-044-COMP-006",
+            "name": "2 tool appendages [2/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 154,
+              "pdfPage1Based": 155,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-044",
+              "citationLabel": "Printed Systems: 2 tool appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-044-PHYSICAL-04"
+          },
+          {
+            "instanceId": "SGD-DROID-044-COMP-007",
+            "name": "duranium plating (+8 armor)",
+            "componentCategory": "armor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 154,
+              "pdfPage1Based": 155,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-044",
+              "citationLabel": "Printed Systems: duranium plating (+8 armor)"
+            }
+          }
+        ]
       },
-      "equipment": {},
+      "equipment": {
+        "possessions": [
+          {
+            "entryId": "SGD-DROID-044-POS-01",
+            "name": "twin blaster cannon",
+            "quantity": 2,
+            "factoryVsPresented": "unknown"
+          },
+          {
+            "entryId": "SGD-DROID-044-POS-02",
+            "name": "grenade launcher",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          }
+        ]
+      },
       "modifications": {},
       "pcConstruction": {
         "heroEligibility": "prohibited"
@@ -18867,11 +21905,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.154-155 inspected: X-1 has two twin blaster cannons and one grenade launcher; burst/autofire options, molecular-shielding reaction and deep-sea rules need independent action and ammo proof. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p154:PDF-page-155",
           "SGD-CENSUS:SGD-DROID-044",
-          "SGD:p154:PDF-p155:visual-statblock-field-review"
+          "SGD:p154:PDF-p155:visual-statblock-field-review",
+          "SGD:p154-p155:PDF-p155-p156:M4-printed-source-review"
         ]
       }
     },
@@ -18950,7 +21989,17 @@
           }
         ],
         "initiativePrinted": 0,
-        "perceptionPrinted": 12
+        "perceptionPrinted": 12,
+        "languages": [
+          {
+            "name": "Basic",
+            "raw": "Printed language capability"
+          },
+          {
+            "name": "Binary",
+            "raw": "Printed language capability"
+          }
+        ]
       },
       "progression": {
         "classLineRaw": "non heroic 1",
@@ -18988,7 +22037,14 @@
               "sourceEntryKey": "SGD-DROID-045"
             }
           }
-        ]
+        ],
+        "classes": [
+          {
+            "className": "nonheroic",
+            "level": 1
+          }
+        ],
+        "nonheroicLevels": 1
       },
       "defenses": {
         "reflex": 14,
@@ -19004,22 +22060,96 @@
         "speedLineRaw": "Speed 6 squares (walking). 6 squares (hovering)",
         "locomotionSystems": [
           {
-            "instanceId": "sgd-045-walking",
+            "instanceId": "SGD-DROID-045-MOVE-01",
             "mode": "walking",
-            "speedSquares": 6
+            "speedSquares": 6,
+            "raw": "6 squares (walking)",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 156,
+              "pdfPage1Based": 157,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-045",
+              "citationLabel": "Printed speed 6 squares (walking)"
+            },
+            "componentInstanceId": "SGD-DROID-045-COMP-002"
           },
           {
-            "instanceId": "sgd-045-hover",
+            "instanceId": "SGD-DROID-045-MOVE-02",
             "mode": "hovering",
             "speedSquares": 6,
-            "restricted": "limited",
-            "usageCondition": "Limited hovering locomotion per printed systems line"
+            "raw": "6 squares (hovering)",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 156,
+              "pdfPage1Based": 157,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-045",
+              "citationLabel": "Printed speed 6 squares (hovering)"
+            },
+            "componentInstanceId": "SGD-DROID-045-COMP-003",
+            "restricted": "limited"
           }
         ]
       },
-      "anatomy": {},
-      "processor": {},
-      "programming": {},
+      "anatomy": {
+        "bodyPlatformKind": "ordinary-chassis",
+        "physicalLocations": [
+          {
+            "locationId": "SGD-DROID-045-PHYSICAL-01",
+            "name": "Printed claw 1",
+            "locationKind": "claw",
+            "installedComponentIds": [
+              "SGD-DROID-045-COMP-004"
+            ]
+          },
+          {
+            "locationId": "SGD-DROID-045-PHYSICAL-02",
+            "name": "Printed claw 2",
+            "locationKind": "claw",
+            "installedComponentIds": [
+              "SGD-DROID-045-COMP-005"
+            ]
+          }
+        ]
+      },
+      "processor": {
+        "autonomy": "remote-controlled",
+        "commandLink": [
+          {
+            "ruleId": "SGD-DROID-045-REMOTE-RECEIVER",
+            "statement": "A remote receiver is printed as installed; the record does not establish an internal active processor or unrestricted independent autonomy.",
+            "scope": "Printed control component only",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 156,
+              "pdfPage1Based": 157,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-045",
+              "citationLabel": "REMOTE-RECEIVER"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "programming": {
+        "behaviorRestrictions": [
+          {
+            "ruleId": "SGD-DROID-045-LIMITED-HOVER",
+            "statement": "Hovering locomotion is explicitly limited and does not grant unlimited flying/hovering independent of printed switching and movement conditions.",
+            "scope": "XLT-014 printed model only",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 156,
+              "pdfPage1Based": 157,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-045",
+              "citationLabel": "LIMITED-HOVER"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "combat": {
         "baseAttackBonusPrinted": 0,
         "grapplePrinted": 2,
@@ -19040,9 +22170,117 @@
       },
       "capacity": {},
       "systems": {
-        "sourceSystemsRaw": "remote receiver, walking locomotion, hovering locomotion (limited). 2 claw appendages, durasteel shell (+4 armor)' vocabulator"
+        "sourceSystemsRaw": "remote receiver, walking locomotion, hovering locomotion (limited), 2 claw appendages, durasteel shell (+4 armor), vocabulator",
+        "installed": [
+          {
+            "instanceId": "SGD-DROID-045-COMP-001",
+            "name": "remote receiver",
+            "componentCategory": "control",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 156,
+              "pdfPage1Based": 157,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-045",
+              "citationLabel": "Printed Systems: remote receiver"
+            },
+            "catalogRef": "remote-receiver"
+          },
+          {
+            "instanceId": "SGD-DROID-045-COMP-002",
+            "name": "walking locomotion",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 156,
+              "pdfPage1Based": 157,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-045",
+              "citationLabel": "Printed Systems: walking locomotion"
+            },
+            "catalogRef": "walking"
+          },
+          {
+            "instanceId": "SGD-DROID-045-COMP-003",
+            "name": "hovering locomotion (limited)",
+            "componentCategory": "locomotion",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 156,
+              "pdfPage1Based": 157,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-045",
+              "citationLabel": "Printed Systems: hovering locomotion (limited)"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-045-COMP-004",
+            "name": "2 claw appendages [1/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 156,
+              "pdfPage1Based": 157,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-045",
+              "citationLabel": "Printed Systems: 2 claw appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-045-PHYSICAL-01"
+          },
+          {
+            "instanceId": "SGD-DROID-045-COMP-005",
+            "name": "2 claw appendages [2/2]",
+            "componentCategory": "appendage",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 156,
+              "pdfPage1Based": 157,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-045",
+              "citationLabel": "Printed Systems: 2 claw appendages"
+            },
+            "count": 1,
+            "physicalLocationId": "SGD-DROID-045-PHYSICAL-02"
+          },
+          {
+            "instanceId": "SGD-DROID-045-COMP-006",
+            "name": "durasteel shell (+4 armor)",
+            "componentCategory": "armor",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 156,
+              "pdfPage1Based": 157,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-045",
+              "citationLabel": "Printed Systems: durasteel shell (+4 armor)"
+            }
+          },
+          {
+            "instanceId": "SGD-DROID-045-COMP-007",
+            "name": "vocabulator",
+            "componentCategory": "communications",
+            "source": {
+              "book": "Scavenger's Guide to Droids",
+              "page": 156,
+              "pdfPage1Based": 157,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SGD-DROID-045",
+              "citationLabel": "Printed Systems: vocabulator"
+            }
+          }
+        ]
       },
-      "equipment": {},
+      "equipment": {
+        "possessions": [
+          {
+            "entryId": "SGD-DROID-045-POS-01",
+            "name": "video recorder",
+            "quantity": 1,
+            "factoryVsPresented": "unknown"
+          }
+        ]
+      },
       "modifications": {},
       "pcConstruction": {
         "heroEligibility": "allowed"
@@ -19094,11 +22332,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding.",
+        "reviewNotes": "PDF-OCR transcription is provisional; per-field visual verification and source-rules reconciliation outstanding. M4 printed source pp.156-157 inspected: XLT-014 has remote receiver and two printed locomotion modes; hovering explicitly limited. Video recorder is one possession, not a permanent unlimited sensing buff. Structured components, locomotion, progression and explicit possessions; strict source mechanics certification still partial pending cross-domain feat/talent, attack-mount and resource checks.",
         "reviewerEvidenceRefs": [
           "Scavenger's Guide to Droids:printed-p156:PDF-page-157",
           "SGD-CENSUS:SGD-DROID-045",
-          "SGD:p156:PDF-p157:visual-statblock-field-review"
+          "SGD:p156:PDF-p157:visual-statblock-field-review",
+          "SGD:p156-p157:PDF-p157-p158:M4-printed-source-review"
         ]
       }
     },
