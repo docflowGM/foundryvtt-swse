@@ -215,7 +215,7 @@ export class StoreAcquisitionService {
       name: data.name || 'Purchased Asset',
       type,
       img: data.img || 'icons/svg/mystery-man.svg',
-      source: 'store',
+      source: metadata.source,
       role: type === 'droid' ? 'droid' : 'vehicle',
       transactionId: metadata.transactionId,
       acquiredAt: metadata.acquiredAt,
@@ -234,8 +234,8 @@ export class StoreAcquisitionService {
       name: link.name,
       img: link.img,
       type: typeLabel,
-      notes: link.notes || 'Store-acquired asset',
-      source: 'store',
+      notes: link.notes || (link.source === 'store' ? 'Store-acquired asset' : `${link.source}-acquired asset`),
+      source: link.source,
       transactionId: link.transactionId,
       acquiredAt: link.acquiredAt
     };
