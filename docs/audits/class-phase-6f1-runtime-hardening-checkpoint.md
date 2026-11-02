@@ -11,6 +11,7 @@
 - **Temporary prerequisites:** `isOfficerSharedTalentPrerequisiteWaived` recognizes only typed, internally consistent temporary Officer grants; `PrerequisiteIntegrityChecker` exempts those, not ordinary talent Items. The waiver does not authorize arbitrary acquisition.
 - **Permanent talent ownership:** `isPermanentOfficerTalentItem` is the shared predicate used in both Officer acquisition options and activation's source Item lookup. Borrowed Share Talent clones, other temporary talents, and temporary-flagged Items are ineligible to become permanent selections or to be re-shared.
 - **Action economy:** Share Talent now uses `ActionEconomyConsumption.spend(officer,'standard',...)` and refuses a noncommitted/no-op result. This is the V2 action authority. `SWSECombatant.useAction('standard')` is a legacy path which incorrectly consumes a move action; no global combatant rewrite is attempted in this class-scoped PR.
+- **Encounter expiry / linked effects:** `planOfficerShareTalentExpiry` selects only proven temporary shared talents of the exact encounter and their owned ActiveEffects using the existing `foundryvtt-swse.talentEffect.talentItemId` provenance. One transactional ActorEngine delete removes effect IDs before Item IDs; permanent talents and effects from other encounters are untouched. Cleanup actor deduplication uses actor UUID to preserve separate synthetic token actors, not just shared world Actor IDs. The Officer's active turn is checked again just before action spend after asynchronous grant mutations.
 - **Enforcer Resources (Force Unleashed p. 44):** Delivery is a GM-approved equipment entitlement, not credits or a store purchase. Eligible entries must be priced Restricted/Military source documents that Store V2 actually loaded from a compendium (`__storeSource` match). World copies retaining old `sourceId` are rejected. Deliver and defer use one per-actor in-client decision lock, with ledger read inside that lock.
 - **Command Cover:** The existing `CombatStatusResolver` cover-suppression predicate is exported and reused by attack target-defense paths. Command Cover and ordinary cover remain the higher applicable cover bonus, not an additive pair; explicit cover suppression blocks both.
 
@@ -21,6 +22,8 @@
 - Share Talent scene mismatch, moved targets, repeated token and actor identities, combat membership, range in Foundry v13 scene-distance units, GM confirmation.
 - Share Talent typed provenance/waiver spoof resistance, canonical V2 action-spend wiring and touched-leg rollback evidence.
 - Officer talent picker and activation-source rejection of borrowed temporary talent Items.
+- Provenance-scoped temporary Item + ActiveEffect expiry with cross-encounter preservation, ambiguous identity refusals, and synthetic Actor UUID deduplication.
+- Second current-turn check immediately before spending a standard action.
 - Command Cover suppression use in both contextual target-defense and getTargetDefense access.
 
 ## Evidence / certification gates
@@ -31,7 +34,7 @@
 
 ## Known boundaries still requiring implementation or live verification
 
-1. Officer temporary talent **mechanical benefits** across the canonical talent effects system, including active-use talents, and encounter-end removal across linked/unlinked/synthetic actor cases.
+1. Officer temporary talent **mechanical benefits** across the canonical talent effects system, including active-use talents, and encounter-end removal on unloaded scenes and concurrent hook callbacks. The expiry plan now covers currently discoverable synthetic actors and linked effects, but live certification remains necessary.
 2. Multi-actor rollback and V2 action-spend recovery under simulated failure. `ActionEconomyConsumption` stores turn state separately from legacy `system.actionEconomy`; reconcile legacy consumers under a distinct controlled action-economy convergence effort.
 3. Enforcer Resources **cross-client** GM concurrency and level-up-vs-equipment-delivery races: the in-client lock does not guarantee distributed atomicity. Real Store V2 vehicle creation, linking, and rollback require Foundry runtime tests.
 4. Command Cover target context/cover suppression across unusual token topology, alternate attack callers, hex grids and elevation.
