@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   enforcerEligibleInventory,planEnforcerEquipmentDelivery,planEnforcerEquipmentDeferral,
-} from '../scripts/engine/progression/utils/enforcer-equipment-delivery.js';
+} from '../scripts/engine/progression/utils/enforcer-equipment-delivery-plan.js';
 
 const doc=(id,type,name,cost)=>({
  id,type,name,toObject:()=>({_id:id,type,name,system:{cost},flags:{core:{sourceId:`Compendium.test.Item.${id}`}}}),
@@ -19,12 +19,15 @@ const index={allItems:[
  listing('illegal','weapon',2000,'Illegal'),
  listing('free','equipment',0,'Military'),
 ]};
+const resolveSourceDocument = item => item?.doc?.toObject?.() ?? null;
+const eligible = index => enforcerEligibleInventory(index, resolveSourceDocument);
+const delivery = args => delivery({...args, resolveSourceDocument});
 const ledger=[{enforcerClassLevel:2,heroicLevel:9,amountCredits:18000,
  status:'awaiting-equipment-selection',delivery:'civilized-accessible-location'}];
 
 test('Enforcer equipment delivery uses source identities, published cost, availability and NO credit debit',()=>{
- assert.deepEqual(new Set(enforcerEligibleInventory(index).map(x=>x.id)),new Set(['kit','armor','speeder']));
- const plan=planEnforcerEquipmentDelivery({
+ assert.deepEqual(new Set(eligible(index).map(x=>x.id)),new Set(['kit','armor','speeder']));
+ const plan=delivery({
   actor:{id:'PC1'},entries:ledger,classLevel:2,index,
   selected:[{id:'kit',quantity:2},{id:'speeder',quantity:1}],
   location:'Coruscant Police Precinct',approvalUserId:'GM',
@@ -52,9 +55,9 @@ test('Enforcer delivery denies unsupported equipment, unknown pricing, overspend
   [{id:'free',quantity:1}], [{id:'unknown',quantity:1}],
   [{id:'kit',quantity:5}], [{id:'kit',quantity:1},{id:'kit',quantity:1}],
   [{id:'kit',quantity:0}],
- ])assert.throws(()=>planEnforcerEquipmentDelivery({...opts,selected}));
- assert.throws(()=>planEnforcerEquipmentDelivery({...opts,selected:[{id:'kit',quantity:1}],location:''}),/location/);
- assert.throws(()=>planEnforcerEquipmentDelivery({...opts,selected:[{id:'kit',quantity:1}],
+ ])assert.throws(()=>delivery({...opts,selected}));
+ assert.throws(()=>delivery({...opts,selected:[{id:'kit',quantity:1}],location:''}),/location/);
+ assert.throws(()=>delivery({...opts,selected:[{id:'kit',quantity:1}],
   entries:[{...ledger[0],status:'delivered'}]}),/already resolved/);
 });
 test('GM may defer full untouched resources once, preserving next-level carry accounting',()=>{
