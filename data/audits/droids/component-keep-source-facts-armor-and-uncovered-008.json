@@ -1,0 +1,706 @@
+{
+  "schema": "swse.droids.keep-source-review/0.1",
+  "sprint": "KEEP-008",
+  "date": "2026-11-02",
+  "baselineHead": "35e5f8d0ee2fa09ff3860d37bfe2cc9c68e3927a",
+  "sourceMethod": "Visually inspected supplied PDF pages Core printed 189,195,196 (PDF190,196,197), SGD printed54,56 (PDF55,57); OCR only for finding sections.",
+  "counts": {
+    "frozenPublishedIdentities": 122,
+    "frozenKeepIdentities": 92,
+    "priorDirectNameMatches": 74,
+    "priorExplicitAliasMatches": 2,
+    "priorMissingSourceRecords": 16,
+    "addedSourceReviews": 16,
+    "keepSourceFactCoverage": 92,
+    "remainingKeepWithoutSourceFact": 0,
+    "cumulativeSourceFactRows": 115,
+    "completeMechanicalCertifications": 0,
+    "productionChanges": 0,
+    "appParityTests": 0,
+    "foundryCertifications": 0
+  },
+  "records": [
+    {
+      "canonicalId": "droid-stationary",
+      "name": "Stationary",
+      "kind": "baseline_locomotion_state",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 189,
+          "pdfPage1Based": 190,
+          "method": "Rendered supplied PDF and visually checked 2026-11-02"
+        }
+      ],
+      "printed": {
+        "meaning": "No locomotion system; cannot move from fixed location",
+        "separateComponentPrice": null,
+        "separateComponentWeight": null,
+        "notPublishedAsAPurchasablePart": true
+      },
+      "repo": {
+        "rawId": "stationary",
+        "zeroCostCode": true,
+        "zeroWeightCode": true,
+        "interpretation": "Zero build state placeholder, not printed free purchasable item"
+      },
+      "status": {
+        "sourceFactReviewed": true,
+        "completeMechanicalCertificate": false,
+        "productionMigration": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-plasteel-shell",
+      "name": "Plasteel Shell",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "method": "Rendered supplied PDF and visually checked 2026-11-02"
+        }
+      ],
+      "kind": "built_in_armor",
+      "printed": {
+        "armorClass": "light",
+        "armorCheckPenalty": -2,
+        "armorBonusToReflex": 2,
+        "maxDexBonus": 5,
+        "creditsBaseTimesCostFactor": 400,
+        "weightKgBaseTimesCostFactor": 2,
+        "availability": "-",
+        "heavyRunningMultiplier": 4,
+        "special": null
+      },
+      "repo": {
+        "rawId": "plasteel-shell",
+        "baseTableNumerics": "ALIGNED_WITH_PRINTED",
+        "costFactorMismatchUnresolved": true,
+        "liveArmorMechanics": "NOT_TESTED"
+      },
+      "status": {
+        "sourceFactReviewed": true,
+        "completeMechanicalCertificate": false,
+        "productionMigration": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-quadanium-shell",
+      "name": "Quadanium Shell",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "method": "Rendered supplied PDF and visually checked 2026-11-02"
+        }
+      ],
+      "kind": "built_in_armor",
+      "printed": {
+        "armorClass": "light",
+        "armorCheckPenalty": -2,
+        "armorBonusToReflex": 3,
+        "maxDexBonus": 4,
+        "creditsBaseTimesCostFactor": 900,
+        "weightKgBaseTimesCostFactor": 3,
+        "availability": "-",
+        "heavyRunningMultiplier": 4,
+        "special": null
+      },
+      "repo": {
+        "rawId": "quadanium-shell",
+        "baseTableNumerics": "ALIGNED_WITH_PRINTED",
+        "costFactorMismatchUnresolved": true,
+        "liveArmorMechanics": "NOT_TESTED"
+      },
+      "status": {
+        "sourceFactReviewed": true,
+        "completeMechanicalCertificate": false,
+        "productionMigration": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-durasteel-shell",
+      "name": "Durasteel Shell",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "method": "Rendered supplied PDF and visually checked 2026-11-02"
+        }
+      ],
+      "kind": "built_in_armor",
+      "printed": {
+        "armorClass": "light",
+        "armorCheckPenalty": -2,
+        "armorBonusToReflex": 4,
+        "maxDexBonus": 4,
+        "creditsBaseTimesCostFactor": 1600,
+        "weightKgBaseTimesCostFactor": 8,
+        "availability": "-",
+        "heavyRunningMultiplier": 4,
+        "special": null
+      },
+      "repo": {
+        "rawId": "durasteel-shell",
+        "baseTableNumerics": "ALIGNED_WITH_PRINTED",
+        "costFactorMismatchUnresolved": true,
+        "liveArmorMechanics": "NOT_TESTED"
+      },
+      "status": {
+        "sourceFactReviewed": true,
+        "completeMechanicalCertificate": false,
+        "productionMigration": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-quadanium-plating",
+      "name": "Quadanium Plating",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "method": "Rendered supplied PDF and visually checked 2026-11-02"
+        }
+      ],
+      "kind": "built_in_armor",
+      "printed": {
+        "armorClass": "light",
+        "armorCheckPenalty": -2,
+        "armorBonusToReflex": 5,
+        "maxDexBonus": 3,
+        "creditsBaseTimesCostFactor": 2500,
+        "weightKgBaseTimesCostFactor": 10,
+        "availability": "Licensed",
+        "heavyRunningMultiplier": 4,
+        "special": null
+      },
+      "repo": {
+        "rawId": "quadanium-plating",
+        "baseTableNumerics": "ALIGNED_WITH_PRINTED",
+        "costFactorMismatchUnresolved": true,
+        "liveArmorMechanics": "NOT_TESTED"
+      },
+      "status": {
+        "sourceFactReviewed": true,
+        "completeMechanicalCertificate": false,
+        "productionMigration": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-durasteel-plating",
+      "name": "Durasteel Plating",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "method": "Rendered supplied PDF and visually checked 2026-11-02"
+        }
+      ],
+      "kind": "built_in_armor",
+      "printed": {
+        "armorClass": "light",
+        "armorCheckPenalty": -2,
+        "armorBonusToReflex": 6,
+        "maxDexBonus": 3,
+        "creditsBaseTimesCostFactor": 3600,
+        "weightKgBaseTimesCostFactor": 12,
+        "availability": "Licensed",
+        "heavyRunningMultiplier": 4,
+        "special": null
+      },
+      "repo": {
+        "rawId": "durasteel-plating",
+        "baseTableNumerics": "ALIGNED_WITH_PRINTED",
+        "costFactorMismatchUnresolved": true,
+        "liveArmorMechanics": "NOT_TESTED"
+      },
+      "status": {
+        "sourceFactReviewed": true,
+        "completeMechanicalCertificate": false,
+        "productionMigration": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-quadanium-battle-armor",
+      "name": "Quadanium Battle Armor",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "method": "Rendered supplied PDF and visually checked 2026-11-02"
+        }
+      ],
+      "kind": "built_in_armor",
+      "printed": {
+        "armorClass": "medium",
+        "armorCheckPenalty": -5,
+        "armorBonusToReflex": 7,
+        "maxDexBonus": 3,
+        "creditsBaseTimesCostFactor": 4900,
+        "weightKgBaseTimesCostFactor": 7,
+        "availability": "Restricted",
+        "heavyRunningMultiplier": 4,
+        "special": null
+      },
+      "repo": {
+        "rawId": "quadanium-battle-armor",
+        "baseTableNumerics": "ALIGNED_WITH_PRINTED",
+        "costFactorMismatchUnresolved": true,
+        "liveArmorMechanics": "NOT_TESTED"
+      },
+      "status": {
+        "sourceFactReviewed": true,
+        "completeMechanicalCertificate": false,
+        "productionMigration": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-duranium-plating",
+      "name": "Duranium Plating",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "method": "Rendered supplied PDF and visually checked 2026-11-02"
+        }
+      ],
+      "kind": "built_in_armor",
+      "printed": {
+        "armorClass": "medium",
+        "armorCheckPenalty": -5,
+        "armorBonusToReflex": 8,
+        "maxDexBonus": 2,
+        "creditsBaseTimesCostFactor": 6400,
+        "weightKgBaseTimesCostFactor": 16,
+        "availability": "Restricted",
+        "heavyRunningMultiplier": 4,
+        "special": null
+      },
+      "repo": {
+        "rawId": "duranium-plating",
+        "baseTableNumerics": "ALIGNED_WITH_PRINTED",
+        "costFactorMismatchUnresolved": true,
+        "liveArmorMechanics": "NOT_TESTED"
+      },
+      "status": {
+        "sourceFactReviewed": true,
+        "completeMechanicalCertificate": false,
+        "productionMigration": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-durasteel-battle-armor",
+      "name": "Durasteel Battle Armor",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "method": "Rendered supplied PDF and visually checked 2026-11-02"
+        }
+      ],
+      "kind": "built_in_armor",
+      "printed": {
+        "armorClass": "medium",
+        "armorCheckPenalty": -5,
+        "armorBonusToReflex": 8,
+        "maxDexBonus": 3,
+        "creditsBaseTimesCostFactor": 9600,
+        "weightKgBaseTimesCostFactor": 8,
+        "availability": "Restricted",
+        "heavyRunningMultiplier": 4,
+        "special": null
+      },
+      "repo": {
+        "rawId": "durasteel-battle-armor",
+        "baseTableNumerics": "ALIGNED_WITH_PRINTED",
+        "costFactorMismatchUnresolved": true,
+        "liveArmorMechanics": "NOT_TESTED"
+      },
+      "status": {
+        "sourceFactReviewed": true,
+        "completeMechanicalCertificate": false,
+        "productionMigration": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-mandalorian-steel-shell",
+      "name": "Mandalorian Steel Shell",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "method": "Rendered supplied PDF and visually checked 2026-11-02"
+        }
+      ],
+      "kind": "built_in_armor",
+      "printed": {
+        "armorClass": "heavy",
+        "armorCheckPenalty": -10,
+        "armorBonusToReflex": 9,
+        "maxDexBonus": 3,
+        "creditsBaseTimesCostFactor": 8100,
+        "weightKgBaseTimesCostFactor": 9,
+        "availability": "Military, Rare",
+        "heavyRunningMultiplier": 3,
+        "special": null
+      },
+      "repo": {
+        "rawId": "mandalorian-steel-shell",
+        "baseTableNumerics": "ALIGNED_WITH_PRINTED",
+        "costFactorMismatchUnresolved": true,
+        "liveArmorMechanics": "NOT_TESTED"
+      },
+      "status": {
+        "sourceFactReviewed": true,
+        "completeMechanicalCertificate": false,
+        "productionMigration": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-duranium-battle-armor",
+      "name": "Duranium Battle Armor",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "method": "Rendered supplied PDF and visually checked 2026-11-02"
+        }
+      ],
+      "kind": "built_in_armor",
+      "printed": {
+        "armorClass": "heavy",
+        "armorCheckPenalty": -10,
+        "armorBonusToReflex": 10,
+        "maxDexBonus": 2,
+        "creditsBaseTimesCostFactor": 10000,
+        "weightKgBaseTimesCostFactor": 10,
+        "availability": "Military",
+        "heavyRunningMultiplier": 3,
+        "special": null
+      },
+      "repo": {
+        "rawId": "duranium-battle-armor",
+        "baseTableNumerics": "ALIGNED_WITH_PRINTED",
+        "costFactorMismatchUnresolved": true,
+        "liveArmorMechanics": "NOT_TESTED"
+      },
+      "status": {
+        "sourceFactReviewed": true,
+        "completeMechanicalCertificate": false,
+        "productionMigration": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-neutronium-plating",
+      "name": "Neutronium Plating",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "method": "Rendered supplied PDF and visually checked 2026-11-02"
+        }
+      ],
+      "kind": "built_in_armor",
+      "printed": {
+        "armorClass": "heavy",
+        "armorCheckPenalty": -10,
+        "armorBonusToReflex": 11,
+        "maxDexBonus": 1,
+        "creditsBaseTimesCostFactor": 12100,
+        "weightKgBaseTimesCostFactor": 20,
+        "availability": "Military",
+        "heavyRunningMultiplier": 3,
+        "special": null
+      },
+      "repo": {
+        "rawId": "neutronium-plating",
+        "baseTableNumerics": "ALIGNED_WITH_PRINTED",
+        "costFactorMismatchUnresolved": true,
+        "liveArmorMechanics": "NOT_TESTED"
+      },
+      "status": {
+        "sourceFactReviewed": true,
+        "completeMechanicalCertificate": false,
+        "productionMigration": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-duravlex-shell",
+      "name": "Duravlex Shell",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 54,
+          "pdfPage1Based": 55,
+          "method": "Rendered supplied PDF and visually checked 2026-11-02"
+        }
+      ],
+      "kind": "built_in_armor",
+      "printed": {
+        "armorClass": "light",
+        "armorCheckPenalty": -2,
+        "armorBonusToReflex": 4,
+        "maxDexBonus": 3,
+        "creditsBaseTimesCostFactor": 1000,
+        "weightKgBaseTimesCostFactor": 10,
+        "availability": "Licensed",
+        "heavyRunningMultiplier": 4,
+        "special": {
+          "type": "equipment",
+          "bonusToFortitude": 10,
+          "scope": "fire and extreme heat only"
+        }
+      },
+      "repo": {
+        "rawId": "duravlex-shell",
+        "baseTableNumerics": "ALIGNED_WITH_PRINTED",
+        "costFactorMismatchUnresolved": true,
+        "liveArmorMechanics": "NOT_TESTED"
+      },
+      "status": {
+        "sourceFactReviewed": true,
+        "completeMechanicalCertificate": false,
+        "productionMigration": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-crystadurium-plating",
+      "name": "Crystadurium Plating",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 54,
+          "pdfPage1Based": 55,
+          "method": "Rendered supplied PDF and visually checked 2026-11-02"
+        }
+      ],
+      "kind": "built_in_armor",
+      "printed": {
+        "armorClass": "heavy",
+        "armorCheckPenalty": -10,
+        "armorBonusToReflex": 10,
+        "maxDexBonus": 2,
+        "creditsBaseTimesCostFactor": 50000,
+        "weightKgBaseTimesCostFactor": 30,
+        "availability": "Military, Rare",
+        "heavyRunningMultiplier": 3,
+        "special": {
+          "type": "blaster_damage_per_die",
+          "reductionPerDamageDie": 1,
+          "scope": "blaster damage only"
+        }
+      },
+      "repo": {
+        "rawId": "crystadurium-plating",
+        "baseTableNumerics": "ALIGNED_WITH_PRINTED",
+        "costFactorMismatchUnresolved": true,
+        "liveArmorMechanics": "NOT_TESTED"
+      },
+      "status": {
+        "sourceFactReviewed": true,
+        "completeMechanicalCertificate": false,
+        "productionMigration": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-concealed-item",
+      "name": "Concealed Item",
+      "kind": "selected_weapon_or_tool_concealment",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 56,
+          "pdfPage1Based": 57,
+          "method": "Rendered supplied PDF and visually checked 2026-11-02"
+        }
+      ],
+      "printed": {
+        "host": "Built-in weapon/tool in body, head or appendage; host and item usually similar size",
+        "priceBasis": "Selected item base cost plus appendage and/or storage cost, with x2 factor; mathematical grouping and GM multiplier not adjudicated",
+        "fixedPriceCredits": null,
+        "weightKg": null,
+        "availability": "not separately stated here",
+        "fullyConcealed": "Not detected by visual observation alone",
+        "partialExposureStealthBonus": 5,
+        "weaponSizeBonusAlsoApplies": true,
+        "deceptiveAppearanceBonus": 10,
+        "deployFullyConcealedAction": "swift; normal drawing restrictions and bonuses"
+      },
+      "repo": {
+        "overlayId": "concealed-item",
+        "rawSourceMissing": true,
+        "priceMissing": true,
+        "unconditionalStealthBonusNotAuthorized": true
+      },
+      "status": {
+        "sourceFactReviewed": true,
+        "completeMechanicalCertificate": false,
+        "productionMigration": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-self-destruct-system",
+      "name": "Self-Destruct System",
+      "kind": "internal_droid_explosive",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 195,
+          "pdfPage1Based": 196,
+          "method": "Rendered supplied PDF and visually checked 2026-11-02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "method": "Rendered supplied PDF and visually checked 2026-11-02"
+        }
+      ],
+      "printed": {
+        "availability": "Restricted",
+        "creditsFormula": "maximum damage * 20",
+        "weightKgFormula": "maximum damage * 0.1",
+        "damageDiceBySize": {
+          "tinyAndSmaller": "No collateral damage",
+          "small": "4d6",
+          "medium": "6d6",
+          "large": "8d6",
+          "huge": "10d6",
+          "gargantuanAndLarger": "20d6"
+        },
+        "areaAttackBonus": 5,
+        "burstRadiusSquares": "2 squares per 4d6, minimum 2 squares",
+        "selfDamage": "Destroys the droid internally, no attack needed vs itself",
+        "repair": "Droid cannot be repaired or salvaged",
+        "mediumExample": {
+          "maximumDamage": 36,
+          "credits": 720,
+          "weightKg": 3.6
+        }
+      },
+      "repo": {
+        "overlayId": "self-destruct-system",
+        "rawSourceMissing": true,
+        "priceMissing": true,
+        "weightMissing": true,
+        "defaultZeroPriceRisk": true,
+        "liveExecutionNotTested": true
+      },
+      "status": {
+        "sourceFactReviewed": true,
+        "completeMechanicalCertificate": false,
+        "productionMigration": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    }
+  ],
+  "findings": [
+    {
+      "id": "K008-FACTOR",
+      "severity": "CRITICAL",
+      "scope": "All 13 armor items",
+      "finding": "Printed base armor numerics align with raw code but published size factors differ from current shared Garage helper in seven of nine sizes; no actual quote/carry-weight certification."
+    },
+    {
+      "id": "K008-STACK",
+      "severity": "HIGH",
+      "scope": "Built-in and worn armor",
+      "finding": "Built-in armor Reflex bonus does not stack with worn armor Reflex bonus."
+    },
+    {
+      "id": "K008-ACP",
+      "severity": "HIGH",
+      "scope": "Built-in armor",
+      "finding": "Nonproficient built-in armor ACP affects attack rolls AND Acrobatics, Climb, Endurance, Initiative, Jump, Stealth, Swim. Relevant Armor Proficiency negates."
+    },
+    {
+      "id": "K008-SPEED",
+      "severity": "HIGH",
+      "scope": "Built-in armor",
+      "finding": "Built-in armor does not reduce normal movement speed; heavy armor limits run to 3x."
+    },
+    {
+      "id": "K008-BLASTER",
+      "severity": "HIGH",
+      "scope": "Crystadurium",
+      "finding": "Reduce blaster damage by one point per die, NOT generic DR."
+    },
+    {
+      "id": "K008-HEAT",
+      "severity": "HIGH",
+      "scope": "Duravlex",
+      "finding": "+10 equipment Fortitude only for fire and extreme heat."
+    },
+    {
+      "id": "K008-STATIONARY",
+      "severity": "MEDIUM",
+      "scope": "Stationary",
+      "finding": "No locomotion system; 0-price raw state is not proof of free purchasable part."
+    },
+    {
+      "id": "K008-CONCEAL-PRICE",
+      "severity": "BLOCKER",
+      "scope": "Concealed Item",
+      "finding": "Selected item and host must inform composite cost; printed x2 grouping/GM variation unresolved, do not invent price."
+    },
+    {
+      "id": "K008-CONCEAL-EFFECT",
+      "severity": "MEDIUM",
+      "scope": "Concealed Item",
+      "finding": "Conditionally +5 Stealth for partially exposed weapon, size modifier, +10 Deception; fully hidden not visible; swift deployment."
+    },
+    {
+      "id": "K008-SELFDESTRUCT",
+      "severity": "HIGH",
+      "scope": "Self-Destruct System",
+      "finding": "Published cost max explosion damage x20 credits / x0.1 kg; overlay only gives no price/weight and default zero is unsafe."
+    }
+  ],
+  "notes": [
+    "Historical KEEP-002 Markdown describes self destruct, but it was not present in its final 9-row machine packet: therefore KEEP-008 includes its first structured KEEP source-fact record.",
+    "Armor descriptions are compared to printed table, not trusted as runtime mechanics.",
+    "No production changes."
+  ]
+}
