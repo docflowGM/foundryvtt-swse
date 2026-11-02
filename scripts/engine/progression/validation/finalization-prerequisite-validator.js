@@ -200,16 +200,6 @@ async function resolveCandidate(domain, entry) {
 function evaluateClassSelection(actor, classSelection, pending, details) {
   const name = entryName(classSelection);
   if (!name) return null;
-  // Piracy is an ONGOING restriction, not the initial prestige-entry table.
-  // Validate it against the current Actor again immediately before finalization.
-  const piracy = evaluateMasterPrivateerPiracy({
-    actor,className:name,
-    darkSideScore:DSPEngine.getValue(actor),darkSideMax:DSPEngine.getMax(actor),
-  });
-  if (piracy.blocked) {
-    details.push({domain:'class',name,legal:false,missing:[piracy.reason],unresolved:[]});
-    return {error:`Progression finalization blocked: ${piracy.reason}.`};
-  }
   // Base classes carry no prerequisites in SWSE — only prestige classes do. Gating
   // on the prestige prerequisite table avoids any chance of spuriously blocking a
   // base-class chargen/level-up and scopes this check to where drift can occur.
@@ -294,6 +284,16 @@ export async function validateFinalProgressionPrerequisites({
     const classResult = evaluateClassSelection(actor, classSelection, pending, details);
     if (classResult?.error) errors.push(classResult.error);
     if (classResult?.warning) warnings.push(classResult.warning);
+    // "Fallen" is a GM ruling, never inferred from a score or automatic
+    // finalization blockade. Preserve the printed rule in visible warnings.
+    const piracy=evaluateMasterPrivateerPiracy({
+      actor,className:entryName(classSelection),
+      darkSideScore:DSPEngine.getValue(actor),darkSideMax:DSPEngine.getMax(actor),
+    });
+    if (piracy.advisory) {
+      warnings.push(piracy.reason);
+      details.push({domain:'class',name:entryName(classSelection),advisory:piracy.reason});
+    }
   }
 
   // Item-domain prerequisites (feats, talents, Force domains, medical secrets, maneuvers).
