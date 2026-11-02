@@ -74,7 +74,7 @@ test('Share Talent dispatch and level-up entitlements cannot masquerade as ordin
   assert.match(manifest, /share_talent_choice:\s*'shareTalentChoices'/);
   assert.match(dispatcher, /'share_talent_choice':\s*handleShareTalentChoice/);
   assert.match(finalAudit, /shareTalentChoices/);
-  assert.match(finalAudit, /dedicated existing-talent picker/);
+  assert.match(finalAudit, /Share Talent requires exactly one previously-owned canonical talent selection/);
 });
 
 test('all protected class identities and other feature schedules remain source-frozen', () => {
