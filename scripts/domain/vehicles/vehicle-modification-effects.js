@@ -45,6 +45,21 @@ const CITE3 = Object.freeze({
   hangar: 'Starships of the Galaxy, Accessories, Hangar Bay: each bay has (cost modifier)/50 units of hangar space'
 });
 
+// P6B weapon slice (V-P2-04 resolved): a weapon row is MECHANIC_SPECIFIED when its printed table row is PDF-verified
+// (damage, EP, cost, availability, size) and the Core vehicle-weapon rules cover it without special behaviour: attack =
+// gunner BAB + vehicle Int + range (Core Vehicle Combat), damage = weapon dice x multiplier (Core Damage). It is
+// executed only through the sealed ledger + GM/printed mount + owned Item + attack preflight.
+const CITE_WEAPON = 'Starships of the Galaxy, Table 3-5 Starship Weapons (p. 47, PDF-verified row); Core Rulebook, Vehicle Combat: attack and damage of vehicle weapons';
+const PLAIN_WEAPONS = Object.freeze({
+  'laser-cannon-light': { family: 'laser', damage: '3d10x2' },
+  'laser-cannon-medium': { family: 'laser', damage: '4d10x2' },
+  'laser-cannon-heavy': { family: 'laser', damage: '5d10x2' }
+});
+// Core (Vehicle Combat, Capital Ships): a vehicle of Colossal (frigate) size or larger takes -20 on attacks against
+// targets smaller than Colossal (point-defense weapons excepted). That penalty has no runtime consumer yet, so weapons
+// are not certified for those hulls rather than firing with a wrong bonus.
+const CAPITAL_HULL = /^colossal \((frigate|cruiser|station)\)$/i;
+
 const SHIELD_RATINGS = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 70, 80, 90, 100, 125, 150, 175, 200];
 const HYPERDRIVES = { 'hyperdrive-075': 0.75, 'hyperdrive-1': 1, 'hyperdrive-15': 1.5, 'hyperdrive-2': 2, 'hyperdrive-3': 3, 'hyperdrive-4': 4,
   'hyperdrive-5': 5, 'hyperdrive-6': 6, 'hyperdrive-8': 8, 'hyperdrive-10': 10, 'hyperdrive-15-class': 15 };
@@ -65,6 +80,7 @@ export const EFFECTS = Object.freeze({
   'cryogenic-chambers': { kind: 'capacity', capacity: 'cryogenic', divisor: 5, unit: 'Medium or smaller creatures in stasis', stackable: true, group: 'cryogenic', citation: CITE3.cryogenic },
   'hangar-bay': { kind: 'capacity', capacity: 'hangar', divisor: 50, unit: 'hangar units', stackable: true, group: 'hangar', citation: CITE3.hangar },
   'hangar-bay-concealed': { kind: 'capacity', capacity: 'hangar', divisor: 50, unit: 'hangar units (concealed)', stackable: true, group: 'hangar', citation: CITE3.hangar },
+  ...Object.fromEntries(Object.entries(PLAIN_WEAPONS).map(([id, w]) => [id, { kind: 'weapon', family: w.family, damage: w.damage, stackable: true, group: `weapon:${id}`, citation: CITE_WEAPON }])),
   'atmospheric-thrusters': { kind: 'atmospheric', percent: 10, group: 'atmospheric', citation: CITE.atmospheric },
   'atmospheric-thrusters-advanced': { kind: 'atmospheric', percent: 25, group: 'atmospheric', citation: CITE.atmospheric }
 });
@@ -98,6 +114,11 @@ export function effectInstallability({ catalogEntry, record, entries = [] }) {
     case 'hyperdrive': if (record?.hyperspace?.capability !== 'unavailable') reasons.push('HYPERDRIVE_REPLACEMENT_UNRULED'); break;
     case 'atmospheric': if (!flyModes(record).length) reasons.push('NO_ATMOSPHERIC_FLIGHT_MODE'); break;
     case 'recharge': break;
+    case 'weapon':
+      // the printed damage must be what the effect certifies (a changed catalog row is not silently trusted)
+      if (catalogEntry.damage !== effect.damage) reasons.push('WEAPON_DAMAGE_DIFFERS_FROM_CERTIFIED_ROW');
+      if (CAPITAL_HULL.test(String(record?.classification?.printedSize ?? '').trim())) reasons.push('CAPITAL_SHIP_TARGETING_PENALTY_NOT_IMPLEMENTED');
+      break;
     case 'intelligence': if (!finite(record?.abilities?.int)) reasons.push('INTELLIGENCE_UNKNOWN'); break;
     case 'cargo-pod': {
       if (!finite(record?.abilities?.dex) || !finite(record?.defenses?.reflex) || !finite(record?.abilities?.initiativePrinted)) { reasons.push('DEXTERITY_BASIS_UNKNOWN'); break; }
@@ -203,6 +224,7 @@ export function computeEffectiveStatistics({ record, entries = [], environment =
       }
       case 'hyperdrive': out.hyperdrive.effectiveClass = fx.value; out.hyperdrive.sources.push(src); break;
       case 'recharge': out.rechargeShields.effective = fx.value; out.rechargeShields.sources.push(src); break;
+      case 'weapon': break; // no statistic change: executed through the attack path (sealed mount + owned Item + preflight)
       case 'skill-bonus':
         for (const b of fx.bonuses ?? [fx]) out.skillBonuses.push({ skill: b.skill, use: b.use ?? null, purpose: b.purpose ?? null, value: b.value, allOutValue: b.allOutValue ?? null, sources: [src] });
         break;

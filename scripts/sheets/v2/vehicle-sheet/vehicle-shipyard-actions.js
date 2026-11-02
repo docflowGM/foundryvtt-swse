@@ -3,6 +3,11 @@
  * button calls a governed service method, which enforces ownership, GM authority, funds and the transaction.
  * Dependencies are injected so the glue is testable without Foundry.
  */
+import { EFFECTS } from '../../../domain/vehicles/vehicle-modification-effects.js';
+import { VEHICLE_FIRING_ARCS } from '../../../domain/vehicles/vehicle-firing-arc-geometry.js';
+import { WEAPON_OPERATOR_ROLES } from '../../../domain/vehicles/vehicle-installation-ledger.js';
+
+const isWeaponRow = catalogId => EFFECTS[catalogId]?.kind === 'weapon';
 
 const REASON_TEXT = {
   GM_REQUIRED: 'Only a GM can do that.',
@@ -18,7 +23,15 @@ const REASON_TEXT = {
   INSTALLATION_IN_PROGRESS: 'Another installation action is in progress on this vehicle.',
   STORE_CONTAINS_UNVERIFIED_ENTRIES: 'The installation records failed verification; new work is blocked.',
   MECHANICS_BONUS_UNKNOWN: 'No Mechanics skill total is available for the installing character.',
-  TRANSACTION_FAILED: 'The transaction failed; nothing was charged.'
+  TRANSACTION_FAILED: 'The transaction failed; nothing was charged.',
+  WEAPON_MOUNT_UNCERTIFIED: 'A weapon needs a mount certified by the GM (mount, firing arc, operator and reason).',
+  WEAPON_MOUNT_ARC_INVALID: 'That firing arc is not valid.',
+  WEAPON_MOUNT_OPERATOR_INVALID: 'A weapon is operated from the pilot or a gunner station.',
+  WEAPON_MOUNT_KEY_IN_USE: 'Another installed weapon already uses that mount.',
+  MOUNT_CERTIFICATION_REASON_REQUIRED: 'The GM must give a reason when certifying a weapon mount.',
+  MOUNT_PROVENANCE_SET_BY_SERVICE_ONLY: 'Mount provenance is recorded by the system, not supplied by the request.',
+  CAPITAL_SHIP_TARGETING_PENALTY_NOT_IMPLEMENTED: 'Weapons cannot be installed on frigate-size or larger ships yet (the capital-ship attack penalty is not automated).',
+  WEAPON_ITEM_SYNC_FAILED: 'The weapon was installed but its weapon item could not be created; ask the GM to resync weapons.'
 };
 export const describeReasons = reasons => (reasons ?? []).map(r => REASON_TEXT[r] ?? r).join(' ');
 
@@ -44,9 +57,16 @@ export async function runShipyardAction({ action, jobId, catalogId, vehicle }, d
   const installerActor = game?.user?.character ?? ownerActor;
   let r;
   switch (action) {
-    case 'start-job':
+    case 'start-job': {
       if (!catalogId) return { success: false, reasons: ['NOTHING_SELECTED'] };
-      r = await service.startJob({ ownerActor, vehicle, catalogId }); break;
+      // V-P2-04: a weapon's mount is certified by a GM when the work begins; players ask the GM to start weapon work.
+      let mount = null;
+      if (isWeaponRow(catalogId) && game?.user?.isGM === true) {
+        mount = await deps.askMount?.();
+        if (!mount) return { success: false, reasons: ['CANCELLED'] };
+      }
+      r = await service.startJob({ ownerActor, vehicle, catalogId, mount }); break;
+    }
     case 'record-check': r = await service.recordCheck({ ownerActor, vehicle, jobId, installerActor }); break;
     case 'retry-job': r = await service.retryJob({ ownerActor, vehicle, jobId }); break;
     case 'log-days': {
@@ -63,7 +83,9 @@ export async function runShipyardAction({ action, jobId, catalogId, vehicle }, d
       if (!catalogId) return { success: false, reasons: ['NOTHING_SELECTED'] };
       const reason = await deps.askReason('Install instantly (GM override)');
       if (reason === null || reason === undefined) return { success: false, reasons: ['CANCELLED'] };
-      r = await service.gmInstantInstall({ ownerActor, vehicle, catalogId, reason }); break;
+      let mount = null;
+      if (isWeaponRow(catalogId)) { mount = await deps.askMount?.(); if (!mount) return { success: false, reasons: ['CANCELLED'] }; }
+      r = await service.gmInstantInstall({ ownerActor, vehicle, catalogId, reason, mount }); break;
     }
     default: return { success: false, reasons: ['UNKNOWN_ACTION'] };
   }
@@ -97,8 +119,24 @@ export function createDefaultShipyardDeps(service) {
       return result ?? null;
     } catch { return null; }
   };
+  // GM mount certification (V-P2-04): recorded as GM-adjudicated, never as printed evidence.
+  const askMount = async () => {
+    const opt = values => [...values].map(v => `<option value="${v}">${v}</option>`).join('');
+    try {
+      const result = await foundry.applications.api.DialogV2.prompt({
+        window: { title: 'Certify weapon mount (GM)' },
+        content: `<label>Mount <input type="text" name="mountKey" placeholder="e.g. port wing" required autofocus></label>
+          <label>Firing arc <select name="arc">${opt(VEHICLE_FIRING_ARCS)}</select></label>
+          <label>Operator <select name="operatorRole">${opt(WEAPON_OPERATOR_ROLES)}</select></label>
+          <label>Reason <input type="text" name="reason" required></label>`,
+        ok: { label: 'Certify', callback: (_ev, button) => { const f = button.form.elements;
+          return { mountKey: f.mountKey.value.trim(), arc: f.arc.value, operatorRole: f.operatorRole.value, reason: f.reason.value.trim() }; } }
+      });
+      return result && result.mountKey && result.reason ? result : null;
+    } catch { return null; }
+  };
   return {
-    service, game: globalThis.game, notify: globalThis.ui.notifications,
+    service, game: globalThis.game, notify: globalThis.ui.notifications, askMount,
     askReason: title => ask(title, 'Reason (recorded with the override)'),
     askDays: async () => { const v = await ask('Log work days', 'Days of work completed', 'number'); const n = Number(v); return v === null || !Number.isFinite(n) || n <= 0 ? null : n; }
   };

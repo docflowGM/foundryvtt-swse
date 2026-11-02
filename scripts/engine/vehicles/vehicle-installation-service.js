@@ -17,6 +17,9 @@ import {
 } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-installation-jobs.js";
 import { makeUnusedEmplacementResolver } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-modification-rules.js";
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
+import { readCertifiedInstallations } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-installation-ledger.js";
+import { planInstalledWeaponItemSync } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-installed-weapon-items.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 
 const CATALOG_FILES = ['accessories', 'defense-systems', 'movement-systems', 'weapon-systems'];
@@ -108,7 +111,8 @@ export class VehicleInstallationService {
       reason: `Remove ${plan.entry.name}`,
       audit: { kind: 'vehicle-uninstall', installId, refundPolicyDecided: plan.refundPolicyDecided }
     }); } finally { clearLedgerWrite(vehicle.id); }
-    return tx.success ? { success: true, refundPolicyDecided: plan.refundPolicyDecided, transactionId: tx.transactionId }
+    const weaponItems = await this.#afterLedgerChange(vehicle, tx);
+    return tx.success ? { success: true, refundPolicyDecided: plan.refundPolicyDecided, transactionId: tx.transactionId, weaponItems }
       : { success: false, reasons: ['TRANSACTION_FAILED'], error: tx.error };
   }
 
@@ -118,6 +122,42 @@ export class VehicleInstallationService {
   // ---------------------------------------------------------------------------------------------
 
   static #isGM() { return globalThis.game?.user?.isGM === true; }
+
+  /**
+   * V-P2-04 trust boundary. Mount provenance is set HERE, never taken from the caller: printed "evidence" or a
+   * certification supplied by a caller is refused (no published mount data exists for newly installed weapons).
+   * A GM may certify the mount (recorded as GM-adjudicated with who, when and the stated reason); anyone else's mount
+   * stays uncertified, which the planner refuses for weapons.
+   */
+  static normalizeMount(mount, { isGM = this.#isGM(), userId = globalThis.game?.user?.id ?? null, now = Date.now() } = {}) {
+    if (!mount) return { mount: null };
+    if (mount.evidence || mount.certification) return { error: 'MOUNT_PROVENANCE_SET_BY_SERVICE_ONLY' };
+    const base = { mountKey: mount.mountKey, arc: mount.arc, operatorRole: mount.operatorRole };
+    if (!isGM) return { mount: base };
+    const reason = typeof mount.reason === 'string' ? mount.reason.trim() : '';
+    if (!reason) return { error: 'MOUNT_CERTIFICATION_REASON_REQUIRED' };
+    return { mount: { ...base, certification: { basis: 'GM_ADJUDICATED', gmUserId: userId, approvedAt: now, reason } } };
+  }
+
+  /**
+   * Owned weapon Items follow the sealed ledger: one Item per executable weapon installation; Shipyard-created weapon
+   * Items whose installation is gone are deleted. Idempotent; through ActorEngine. Called after every ledger change.
+   */
+  static async syncInstalledWeaponItems(vehicle) {
+    const src = this.#source(vehicle);
+    if (src.error) return { success: false, reasons: [src.error] };
+    const { entries } = readCertifiedInstallations(src.flags, src.record.identity.sourceEntryKey);
+    const plan = planInstalledWeaponItemSync({ items: Array.from(vehicle.items ?? []), entries });
+    if (plan.deleteIds.length) await ActorEngine.deleteEmbeddedDocuments(vehicle, 'Item', plan.deleteIds);
+    if (plan.create.length) await ActorEngine.createEmbeddedDocuments(vehicle, 'Item', plan.create);
+    return { success: true, created: plan.create.length, deleted: plan.deleteIds.length };
+  }
+
+  static async #afterLedgerChange(vehicle, tx) {
+    if (!tx?.success) return null;
+    try { return await this.syncInstalledWeaponItems(vehicle); }
+    catch (err) { return { success: false, reasons: ['WEAPON_ITEM_SYNC_FAILED'], error: err?.message ?? String(err) }; }
+  }
 
   /** One transaction: credits (if any) + the jobs store (+ ledger on completion). Rolls back only on a database failure. */
   static async #commit({ ownerActor, vehicle, cost = 0, nextJobs, nextLedger = null, reason, audit }) {
@@ -148,9 +188,12 @@ export class VehicleInstallationService {
 
   /** Begin an installation job: validates like an installation, reserves EP, charges the first attempt. */
   static async startJob(args) { return this.#exclusive(args?.vehicle, () => this.#startJob(args)); }
-  static async #startJob({ ownerActor, vehicle, catalogId, mount = null, nonstandard, catalog = null }) {
+  static async #startJob({ ownerActor, vehicle, catalogId, mount: requestedMount = null, nonstandard, catalog = null }) {
     const p = await this.#prepare({ ownerActor, vehicle, catalog, needCatalog: true });
     if (p.error) return { success: false, reasons: [p.error] };
+    const nm = this.normalizeMount(requestedMount);
+    if (nm.error) return { success: false, reasons: [nm.error] };
+    const mount = nm.mount;
     const plan = planJobStart({
       record: p.src.record, flags: p.src.flags, catalogEntry: p.entries.get(catalogId), jobId: foundry.utils.randomID(), installId: foundry.utils.randomID(),
       ownerActorId: ownerActor.id, availableCredits: LedgerService.getCurrentCredits(ownerActor), createdAt: Date.now(), rules: this.rules, mount, nonstandard
@@ -196,7 +239,8 @@ export class VehicleInstallationService {
     if (!plan.ok) return { success: false, reasons: plan.reasons };
     const tx = await this.#commit({ ownerActor, vehicle, nextJobs: plan.nextJobs, nextLedger: plan.nextLedger, reason: `Installation check: ${plan.outcome}`,
       audit: { kind: 'vehicle-install-check', jobId, outcome: plan.outcome, total: checkTotal } });
-    return this.#result(tx, { outcome: plan.outcome, job: plan.job, entry: plan.entry, total: checkTotal, roll });
+    const weaponItems = plan.nextLedger ? await this.#afterLedgerChange(vehicle, tx) : null;
+    return this.#result(tx, { outcome: plan.outcome, job: plan.job, entry: plan.entry, total: checkTotal, roll, weaponItems });
   }
 
   /** After a partial failure: pay for the retry (half the original time and money; +5 on its check). */
@@ -221,15 +265,19 @@ export class VehicleInstallationService {
     if (!plan.ok) return { success: false, reasons: plan.reasons };
     const tx = await this.#commit({ ownerActor, vehicle, nextJobs: plan.nextJobs, nextLedger: plan.nextLedger, reason: `GM-adjudicated installation (${plan.job.name})`,
       audit: { kind: 'vehicle-install-gm-complete', jobId, reason } });
-    return this.#result(tx, { job: plan.job, entry: plan.entry });
+    const weaponItems = await this.#afterLedgerChange(vehicle, tx);
+    return this.#result(tx, { job: plan.job, entry: plan.entry, weaponItems });
   }
 
   /** GM override: instant installation. Full cost, EP, ownership and certification rules still apply. */
   static async gmInstantInstall(args) { return this.#exclusive(args?.vehicle, () => this.#gmInstantInstall(args)); }
-  static async #gmInstantInstall({ ownerActor, vehicle, catalogId, mount = null, nonstandard, reason, catalog = null }) {
+  static async #gmInstantInstall({ ownerActor, vehicle, catalogId, mount: requestedMount = null, nonstandard, reason, catalog = null }) {
     if (!this.#isGM()) return { success: false, reasons: ['GM_REQUIRED'] };
     const p = await this.#prepare({ ownerActor, vehicle, catalog, needCatalog: true });
     if (p.error) return { success: false, reasons: [p.error] };
+    const nm = this.normalizeMount(requestedMount);
+    if (nm.error) return { success: false, reasons: [nm.error] };
+    const mount = nm.mount;
     const plan = planGmInstantInstall({
       record: p.src.record, flags: p.src.flags, catalogEntry: p.entries.get(catalogId), jobId: foundry.utils.randomID(), installId: foundry.utils.randomID(),
       ownerActorId: ownerActor.id, availableCredits: LedgerService.getCurrentCredits(ownerActor), createdAt: Date.now(), rules: this.rules, mount, nonstandard,
@@ -238,6 +286,7 @@ export class VehicleInstallationService {
     if (!plan.ok) return { success: false, reasons: plan.reasons };
     const tx = await this.#commit({ ownerActor, vehicle, cost: plan.charge, nextJobs: plan.nextJobs, nextLedger: plan.nextLedger, reason: `GM instant installation: ${plan.entry.name}`,
       audit: { kind: 'vehicle-install-gm-instant', catalogId, reason } });
-    return this.#result(tx, { job: plan.job, entry: plan.entry });
+    const weaponItems = await this.#afterLedgerChange(vehicle, tx);
+    return this.#result(tx, { job: plan.job, entry: plan.entry, weaponItems });
   }
 }

@@ -114,7 +114,7 @@
       {{#if view.shipyard.hasOptions}}
       <div class="swse-vehicle-job-start">
         <select data-shipyard-select="catalog">
-          {{#each view.shipyard.options}}<option value="{{id}}">{{name}} — {{category}} — EP {{ep}}</option>{{/each}}
+          {{#each view.shipyard.options}}<option value="{{id}}">{{name}} — {{category}} — EP {{ep}}{{#if requiresGmMount}} — GM certifies mount{{/if}}</option>{{/each}}
         </select>
         <button type="button" data-shipyard-action="start-job">Begin installation</button>
         {{#if view.shipyard.isGM}}<button type="button" data-shipyard-action="gm-instant">GM: install instantly</button>{{/if}}

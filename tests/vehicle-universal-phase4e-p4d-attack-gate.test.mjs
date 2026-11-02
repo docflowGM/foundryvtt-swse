@@ -13,7 +13,7 @@ const rec = a => a.flags.swse.universalVehicleSource.source;
 
 const token = (x, y, rotation = 0) => ({ center: { x, y }, document: { rotation } });
 function vehicleWith(a, items = [], pos = [0, 0]) {
-  const v = { ...a, id: 'veh1', type: 'vehicle', items: new Map(items.map(i => [i.id, i])),
+  const v = { ...a, id: 'veh1', type: 'vehicle', isOwner: true, items: new Map(items.map(i => [i.id, i])),
     getActiveTokens: () => [token(...pos, 0)] };
   return v;
 }
@@ -88,10 +88,15 @@ test('sealed but non-executable or unsealed ledger entries do not arm a weapon',
 test('an eligible certified installation fires only with target, crew station and legal arc', async () => {
   const { vehicle, weapon } = armed();
   assert.equal(classifyInstalledVehicleWeapon(vehicle, weapon).kind, 'CERTIFIED_INSTALLATION');
-  const ok = await authorizeVehicleAttackBeforeCosts({ vehicle, weapon, target: target(500, 0), attackId: 'a', crewStationResolved: true });
+  const user = { id: 'u1', isGM: false };
+  const ok = await authorizeVehicleAttackBeforeCosts({ vehicle, weapon, target: target(500, 0), attackId: 'a', crewStationResolved: true, user });
   assert.equal(ok.ok, true);
   assert.equal(ok.kind, 'CERTIFIED_INSTALLATION');
-  const call = over => authorizeVehicleAttackBeforeCosts({ vehicle, weapon, target: target(500, 0), attackId: 'a', crewStationResolved: true, ...over });
+  const call = over => authorizeVehicleAttackBeforeCosts({ vehicle, weapon, target: target(500, 0), attackId: 'a', crewStationResolved: true, user, ...over });
+  // P6B: the acting user must be allowed to operate the vehicle (and the named gunner); no user = denied
+  assert.equal((await call({ user: null })).reason, 'ATTACK_USER_NOT_AUTHORIZED');
+  assert.equal((await call({ operatorActor: { id: 'g', isOwner: false } })).reason, 'ATTACK_USER_NOT_AUTHORIZED');
+  assert.equal((await call({ user: { id: 'gm', isGM: true }, operatorActor: { id: 'g', isOwner: false } })).ok, true);
   assert.equal((await call({ target: null })).reason, 'TARGET_UNRESOLVED');
   assert.equal((await call({ crewStationResolved: false })).reason, 'CREW_STATION_UNRESOLVED');
   assert.equal((await call({ attackId: '' })).reason, 'ATTACK_SCOPE_UNRESOLVED');

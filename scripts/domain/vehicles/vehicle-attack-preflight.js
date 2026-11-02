@@ -36,11 +36,21 @@ export function classifyVehicleAttackPreflight({vehicle,weapon,sourceLookup=reso
  * The present 318-book source review alone NEVER automatically authorizes a
  * stock attack. Future bound groups get the D02/D03 policy gates below.
  */
-export async function authorizeVehicleAttackBeforeCosts({vehicle,weapon,target,attackId,crewStationResolved,gmDecision=null}) {
+/** May this user fire a weapon of this vehicle (and, for a named gunner, act as that gunner)? GMs always may. */
+function userMayOperate(user, vehicle, operatorActor) {
+  if (!user) return false;
+  if (user.isGM === true) return true;
+  const owns = doc => doc?.isOwner === true || (typeof doc?.testUserPermission === 'function' && doc.testUserPermission(user, 'OWNER') === true);
+  return owns(vehicle) && (!operatorActor || owns(operatorActor));
+}
+
+export async function authorizeVehicleAttackBeforeCosts({vehicle,weapon,target,attackId,crewStationResolved,gmDecision=null,user=globalThis.game?.user ?? null,operatorActor=null}) {
   const base = classifyVehicleAttackPreflight({vehicle,weapon});
   if (!base.ok) return base;
   if (base.kind==='CUSTOM_MODIFICATION') return base;
   if (base.kind==='CERTIFIED_INSTALLATION') {
+    // P6B weapon slice: the acting user must be allowed to operate this vehicle (and the named gunner, if any).
+    if (!userMayOperate(user, vehicle, operatorActor)) return block('ATTACK_USER_NOT_AUTHORIZED');
     // A certified mount still needs a target, a resolved crew station and a legal arc.
     if (!target || !nonempty(target.id)) return block('TARGET_UNRESOLVED');
     if (crewStationResolved !== true) return block('CREW_STATION_UNRESOLVED');

@@ -30,7 +30,7 @@ function build({ executable = true, ledger = true, itemOver = {}, crew = null, i
   if (crew) a.system.crewPositions = crew;
   const weapon = { id: 'item1', name: 'Fixture Cannon', type: 'weapon', system: { vehicleMount: { installId: 'inst1', crewRole: 'pilot' }, ...itemOver } };
   if (itemsAsRow) a.system.weapons = [{ name: 'Fixture Cannon', sourceModificationId: 'm', crewRole: 'pilot' }];
-  const vehicle = { ...a, id: 'veh1', type: 'vehicle', items: new Map(itemsAsRow ? [] : [[weapon.id, weapon]]), getActiveTokens: () => [token(0, 0)] };
+  const vehicle = { ...a, id: 'veh1', type: 'vehicle', isOwner: true, items: new Map(itemsAsRow ? [] : [[weapon.id, weapon]]), getActiveTokens: () => [token(0, 0)] };
   weapon.actor = vehicle;
   return { vehicle, weapon: itemsAsRow ? { id: 'system-weapons-0', name: 'Fixture Cannon', system: {} } : weapon };
 }

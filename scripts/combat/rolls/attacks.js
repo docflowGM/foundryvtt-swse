@@ -730,7 +730,9 @@ export async function rollAttack(actor, weapon, options = {}) {
     const sourceGate = await authorizeVehicleAttackBeforeCosts({
       vehicle, weapon, target, attackId,
       crewStationResolved: stationEvidence.crewStationResolved === true,
-      gmDecision: null
+      gmDecision: null,
+      user: globalThis.game?.user ?? null,
+      operatorActor: vehicleDomain.domain === 'vehicle-actor-gunner' ? (vehicleDomain.normalizedContext?.gunnerActor ?? null) : null
     });
     if (!sourceGate.ok) {
       ui?.notifications?.warn?.('Vehicle attack blocked by strict stock-source evidence policy: ' + sourceGate.reason);

@@ -765,3 +765,23 @@ V-P6-05 was engineering scope, not a rules question. P6B-1 delivered the runtime
 - **Revision 15 (2026-11-02):** appended V-P6B-02 and V-P6B-03. No existing entry changed.
 
 - **Revision 16 (2026-11-02):** recorded the owner's resolutions of V-P2-04 (GM-certified mount and arc for newly installed weapons) and V-P6B-02 (unit conversion calculation policy) in their Status and Resolution fields only; questions unchanged.
+
+### V-P6B-04 - Damage type of starship laser cannons
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6B-04 |
+| Rules domain | Vehicle weapons |
+| Feature | Laser cannons (light, medium, heavy) |
+| Source | *Starships of the Galaxy*, Table 3-5 (p. 47); Core Rulebook, Vehicle Combat |
+| Evidence | Table 3-5 prints "(Ion)" for ion weapons and no type for laser cannons. The Core vehicle damage rule is weapon damage x multiplier. |
+| Confirmed behavior | Damage dice and multiplier. |
+| Unresolved question | Is starship laser cannon damage typed (e.g. energy) for damage reduction and resistances, or untyped? |
+| Options | Untyped (as printed); energy. |
+| Recommended ruling | None |
+| Implementation impact | Laser cannon damage is untyped (P6B-D-029). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 17 (2026-11-02):** appended V-P6B-04. No existing entry changed.

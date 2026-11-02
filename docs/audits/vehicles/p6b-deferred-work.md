@@ -9,20 +9,23 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | Category | Count |
 |---|---|
 | RULES_DECISION_REQUIRED | 4 |
-| SOURCE_EVIDENCE_MISSING | 5 |
-| ENGINEERING_COMPLEXITY | 5 |
+| SOURCE_EVIDENCE_MISSING | 8 |
+| ENGINEERING_COMPLEXITY | 10 |
 | LIVE_RUNTIME_PENDING | 1 |
-| NONCRITICAL_DEFECT | 1 |
+| NONCRITICAL_DEFECT | 2 |
 | DEPENDENCY_BLOCKED | 6 |
 
 ## Items (by severity)
 
 | ID | Workstream | Component | Category | Severity | Owner ruling | Linked |
 |---|---|---|---|---|---|---|
-| P6B-D-019 | P6B-3 | weapon systems, launchers and ammunition (all weapon-systems.json rows) | DEPENDENCY_BLOCKED | BLOCKING | no | V-P2-04, V-P6A-01, V-P6A-02, V-P6A-03, V-P6A-04 |
 | P6B-D-001 | P6B-1 | reinforced-bulkheads-10, reinforced-bulkheads-20, reinforced-bulkheads-30 | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6-01 |
 | P6B-D-002 | P6B-1 | sublight-drive-1 .. sublight-drive-6 | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6-02 |
 | P6B-D-008 | P6B-1 | all 51 offline-integrated effects (P6B-0..3); P6B-0 environment and Pilot check; custom-ship effects | LIVE_RUNTIME_PENDING | IMPORTANT | no | - |
+| P6B-D-019 | P6B-3 | remaining weapon systems, launchers and ammunition (laser cannons light/medium/heavy are certified and executable since the weapon slice) | DEPENDENCY_BLOCKED | IMPORTANT | no | V-P2-04, V-P6A-01, V-P6A-02, V-P6A-03, V-P6A-04 |
+| P6B-D-023 | P6B-W | all weapons on Colossal (frigate) or larger hulls; turbolasers; capital ship weapons | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
+| P6B-D-024 | P6B-W | pilot-crewed vehicle weapons fired by a named pilot | SOURCE_EVIDENCE_MISSING | IMPORTANT | no | - |
+| P6B-D-026 | P6B-W | ion cannons (light/medium/heavy, Hapan triple) | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-003 | P6B-1 | jamming-suite, jamming-array | ENGINEERING_COMPLEXITY | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-004 | P6B-1 | combat-thrusters | DEPENDENCY_BLOCKED | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-005 | P6B-1 | navicomputer-limited | RULES_DECISION_REQUIRED | MINOR | yes | V-P6B-01 |
@@ -41,6 +44,12 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | P6B-D-020 | P6B-3 | printed stock payloads (e.g. "Printed payload: 6 proton torpedoes") | DEPENDENCY_BLOCKED | MINOR | no | V-P2-04 |
 | P6B-D-021 | P6B-3 | custom ships: cargo-dependent and consumables-dependent accessories | DEPENDENCY_BLOCKED | MINOR | no | V-P6B-02 |
 | P6B-D-022 | P6B-3 | custom ships: speed and movement effects | ENGINEERING_COMPLEXITY | MINOR | no | - |
+| P6B-D-025 | P6B-W | blaster-cannon-light/medium/heavy, autoblaster | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
+| P6B-D-027 | P6B-W | vehicle weapon range bands | ENGINEERING_COMPLEXITY | MINOR | no | - |
+| P6B-D-028 | P6B-W | player-requested weapon mounts | ENGINEERING_COMPLEXITY | MINOR | no | - |
+| P6B-D-029 | P6B-W | vehicle weapon damage types (laser cannons) | SOURCE_EVIDENCE_MISSING | MINOR | yes | V-P6B-04 |
+| P6B-D-030 | P6B-W | copilot as weapon operator | ENGINEERING_COMPLEXITY | MINOR | no | - |
+| P6B-D-031 | P6B-W | weapon mount key uniqueness across pending jobs | NONCRITICAL_DEFECT | MINOR | no | - |
 
 ## Details
 
@@ -228,11 +237,11 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 - **Impact:** Only fixed pods can be installed.
 - **Recommended action:** Add an option field to catalog rows and the quote.
 
-### P6B-D-019 - weapon systems, launchers and ammunition (all weapon-systems.json rows)
+### P6B-D-019 - remaining weapon systems, launchers and ammunition (laser cannons light/medium/heavy are certified and executable since the weapon slice)
 
 - **Source:** Starships of the Galaxy pp. 44-48; Core Rulebook vehicle combat
-- **Category / severity:** DEPENDENCY_BLOCKED / BLOCKING
-- **Reason:** No weapon row is MECHANIC_SPECIFIED, so none is installable, and attack execution is closed (0 trusted stock attack groups; installed-weapon firing arcs unresolved). Building ammunition inventory, loading and expenditure now would be unreachable code: there is no installable launcher to load and no attack to expend ammunition. Launcher capacity is also unpublished/ambiguous.
+- **Category / severity:** DEPENDENCY_BLOCKED / IMPORTANT
+- **Reason:** V-P2-04 is resolved (GM-certified mounts). The light, medium and heavy laser cannons now run end to end (certified spec, GM mount, sealed executable entry, owned Item, preflight, vehicle attack math, Core damage formula). Every other weapon row stays uncertified until its own rules are covered: see P6B-D-023..031. Launchers/ammunition still need loading and expenditure authorities.
 - **Missing:** Firing-arc policy (V-P2-04); launcher capacity and cost basis (V-P6A-03); armor-piercing missile price (V-P6A-02); triple cannon (V-P6A-01); weapon attack/damage consumer certification.
 - **Owner ruling needed:** no (V-P2-04, V-P6A-01, V-P6A-02, V-P6A-03, V-P6A-04)
 - **Impact:** Weapons, launchers and ammunition are reference-only; sealed ledger entries keep executable:false; the attack preflight keeps blocking.
@@ -267,3 +276,93 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 - **Owner ruling needed:** no
 - **Impact:** Atmospheric thrusters not installable on custom designs.
 - **Recommended action:** Parse frame speed into character/starship speed modes in the frame builder.
+
+### P6B-D-023 - all weapons on Colossal (frigate) or larger hulls; turbolasers; capital ship weapons
+
+- **Source:** Core Rulebook, Vehicle Combat (Capital Ships); SotG p. 45 (point-defense)
+- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
+- **Reason:** Core: a vehicle of Colossal (frigate) size or larger takes -20 on attack rolls against targets smaller than Colossal; point-defense weapons are exempt. The vehicle attack math has no target-size consumer for this, so certified weapons are refused on frigate+ hulls (CAPITAL_SHIP_TARGETING_PENALTY_NOT_IMPLEMENTED) rather than firing with a wrong bonus.
+- **Missing:** Target-size-aware attack component in vehicle-attack-math (and point-defense exemption).
+- **Owner ruling needed:** no
+- **Impact:** No weapon installable on frigate, cruiser or station hulls; turbolasers uncertified.
+- **Recommended action:** Add the -20 component (target size known; unknown size refuses) then lift the refusal and certify turbolasers.
+
+### P6B-D-024 - pilot-crewed vehicle weapons fired by a named pilot
+
+- **Source:** Core Rulebook, Vehicle Combat (attack modifiers)
+- **Category / severity:** SOURCE_EVIDENCE_MISSING / IMPORTANT
+- **Reason:** Core grants a pilot trained in Pilot a +2 bonus on attacks with vehicle weapons crewed by the pilot. The repository OCR of that line is partly unreadable, and the bonus is not applied anywhere today (pre-existing gap for every named-pilot vehicle attack, not introduced by the slice).
+- **Missing:** PDF confirmation of the exact wording (attack rolls vs checks).
+- **Owner ruling needed:** no
+- **Impact:** Named pilots firing pilot-crewed weapons may be 2 low; abstract crew unaffected.
+- **Recommended action:** Confirm the wording against the PDF, then add the component in vehicle-attack-math for the gunner domain.
+
+### P6B-D-025 - blaster-cannon-light/medium/heavy, autoblaster
+
+- **Source:** Core Rulebook Table 10-2; SotG pp. 44-47
+- **Category / severity:** SOURCE_EVIDENCE_MISSING / MINOR
+- **Reason:** The starship-scale range cells for blaster cannons are unreadable in the OCR (blasters are described as short-ranged, mostly on airspeeders); certifying them without the range row could allow starship-scale shots they cannot make. Autoblaster has a cost multiplier and autofire behaviour.
+- **Missing:** Table 10-2 blaster cannon starship-scale ranges from the PDF.
+- **Owner ruling needed:** no
+- **Impact:** Blaster cannons not installable.
+- **Recommended action:** Confirm the range row; then certify like laser cannons.
+
+### P6B-D-026 - ion cannons (light/medium/heavy, Hapan triple)
+
+- **Source:** Core Rulebook, ion damage; SotG p. 47
+- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
+- **Reason:** The damage formula resolves (e.g. 3d10 x 2, type ion), but ion damage against vehicles (shields, condition track, no hit point loss rules) has not been verified end to end in the damage application path.
+- **Missing:** Verified ion-vs-vehicle damage application tests.
+- **Owner ruling needed:** no
+- **Impact:** Ion cannons not installable.
+- **Recommended action:** Audit the ion branch of damage application for vehicle targets, then certify.
+
+### P6B-D-027 - vehicle weapon range bands
+
+- **Source:** Core Rulebook Table 10-2
+- **Category / severity:** ENGINEERING_COMPLEXITY / MINOR
+- **Reason:** Range penalties (0/-2/-5/-10) are applied from the attack's range band, which the attacker supplies; the band is not derived from token distance and scale (character vs starship).
+- **Missing:** Scale context and distance-to-band derivation per weapon family.
+- **Owner ruling needed:** no
+- **Impact:** An attack without a stated band takes no range penalty.
+- **Recommended action:** Derive the band from token distance once a scene scale setting exists.
+
+### P6B-D-028 - player-requested weapon mounts
+
+- **Source:** V-P2-04 owner ruling
+- **Category / severity:** ENGINEERING_COMPLEXITY / MINOR
+- **Reason:** The Shipyard asks a GM for the mount (key, arc, operator, reason) when a GM begins or instantly installs a certified weapon. A player cannot propose a mount for later GM approval; a player selecting a weapon is refused with WEAPON_MOUNT_UNCERTIFIED and must ask the GM to begin the work.
+- **Missing:** A proposed-mount state on installation jobs with a GM approve step.
+- **Owner ruling needed:** no
+- **Impact:** Weapon installation work is started by the GM.
+- **Recommended action:** Add mount proposals to jobs if players need to queue weapon work themselves.
+
+### P6B-D-029 - vehicle weapon damage types (laser cannons)
+
+- **Source:** SotG Table 3-5; Core vehicle weapons
+- **Category / severity:** SOURCE_EVIDENCE_MISSING / MINOR
+- **Reason:** Only ion weapons print a damage type. Laser cannon damage is left untyped (a name-based "energy" guess is not used).
+- **Missing:** A printed damage type for laser cannons, if any.
+- **Owner ruling needed:** yes (V-P6B-04)
+- **Impact:** Type-dependent DR/resistances do not see laser damage as energy.
+- **Recommended action:** Decide whether starship laser damage is typed.
+
+### P6B-D-030 - copilot as weapon operator
+
+- **Source:** Core Rulebook (vehicle weapons operated by pilot/copilot or gunner)
+- **Category / severity:** ENGINEERING_COMPLEXITY / MINOR
+- **Reason:** The attack-time crew station authority resolves only pilot and gunner stations, so mounts are limited to those operators.
+- **Missing:** A copilot station in vehicle-crew-station-evidence.
+- **Owner ruling needed:** no
+- **Impact:** Copilot-operated mounts cannot be certified.
+- **Recommended action:** Add the copilot station to the crew authority.
+
+### P6B-D-031 - weapon mount key uniqueness across pending jobs
+
+- **Source:** -
+- **Category / severity:** NONCRITICAL_DEFECT / MINOR
+- **Reason:** The planner refuses a mount key already used by an INSTALLED weapon; two pending jobs could still reserve the same key until one completes (the second then fails at completion only if re-planned).
+- **Missing:** Mount-key reservation for pending jobs.
+- **Owner ruling needed:** no
+- **Impact:** A GM could start two jobs on one hardpoint.
+- **Recommended action:** Pass pending-job mount keys into the planner like reserved EP.

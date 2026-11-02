@@ -324,7 +324,7 @@ function shipyardView({ record, flags, key, catalog, entries, supported, canAct 
   const views = jobs.map(describeJob);
   const options = supported && catalog
     ? [...catalog.values()].filter(c => c.certification?.status === 'MECHANIC_SPECIFIED' && !effectInstallability({ catalogEntry: c, record, entries }).length)
-      .map(c => ({ id: c.id, name: c.name, category: c.category, ep: c.emplacementPoints })).sort((a, b) => a.name.localeCompare(b.name))
+      .map(c => ({ id: c.id, name: c.name, category: c.category, ep: c.emplacementPoints, requiresGmMount: EFFECTS[c.id]?.kind === 'weapon' })).sort((a, b) => a.name.localeCompare(b.name))
     : [];
   return { supported, canAct, isGM, jobs: views, activeJobs: views.filter(j => j.active), reservedEp: reservedEpFromJobs(jobs), rejected, options, hasOptions: options.length > 0 };
 }

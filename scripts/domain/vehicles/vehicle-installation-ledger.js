@@ -12,7 +12,7 @@
  */
 import { digestUniversalVehicleSource } from './vehicle-source-digest.js';
 import { VEHICLE_FIRING_ARCS } from './vehicle-firing-arc-geometry.js';
-import { hasEffect, effectInstallability } from './vehicle-modification-effects.js';
+import { hasEffect, effectInstallability, EFFECTS } from './vehicle-modification-effects.js';
 import { costModifierForSize, nonstandardAssessment, quoteInstallation, systemCost } from './vehicle-modification-rules.js';
 
 export const VEHICLE_INSTALLATION_FLAG = 'vehicleInstallations';
@@ -123,6 +123,22 @@ const deny = (...reasons) => ({ ok: false, reasons });
  * @param {number} p.availableCredits owner funds
  * @param {object} [p.rules]
  */
+// The attack-time crew station authority (vehicle-crew-station-evidence.js) resolves pilot and gunner stations.
+export const WEAPON_OPERATOR_ROLES = new Set(['pilot', 'gunner']);
+
+/**
+ * Basis of a weapon mount: 'PUBLISHED' (printed book/page evidence) or 'GM_ADJUDICATED' (V-P2-04 owner ruling: a GM
+ * certified the mount of a newly installed weapon, recorded with who, when and why). A GM-adjudicated mount is never
+ * presented as printed evidence. null = not certified.
+ */
+export function weaponMountBasis(mount) {
+  if (!mount) return null;
+  if (mount.evidence?.book && mount.evidence?.page != null) return 'PUBLISHED';
+  const c = mount.certification;
+  if (c?.basis === 'GM_ADJUDICATED' && nonEmpty(c.gmUserId) && nonEmpty(c.reason) && c.approvedAt != null) return 'GM_ADJUDICATED';
+  return null;
+}
+
 export function planVehicleInstallation({ record, flags, catalogEntry, installId, availableCredits, installedAt, rules = DEFAULT_VEHICLE_INSTALLATION_RULES, mount = null, nonstandard = undefined, starshipDesigner = false, workers = null, reservedEp = 0 }) {
   const reasons = [];
   const key = record?.identity?.sourceEntryKey;
@@ -148,11 +164,18 @@ export function planVehicleInstallation({ record, flags, catalogEntry, installId
   const size = evaluateSizeRestriction(catalogEntry.sizeRestriction, record.classification?.printedSize);
   if (size !== 'ok') reasons.push('SIZE_' + size.toUpperCase());
 
+  let mountBasis = null;
   if (catalogEntry.category === 'Weapon' || catalogEntry.category === 'Ammunition') {
-    const ok = mount && nonEmpty(mount.mountKey) && nonEmpty(mount.arc) &&
-      nonEmpty(mount.operatorRole) && mount.evidence?.book && mount.evidence?.page != null;
+    mountBasis = weaponMountBasis(mount);
+    const ok = mount && nonEmpty(mount.mountKey) && nonEmpty(mount.arc) && nonEmpty(mount.operatorRole) && mountBasis;
     if (!ok) reasons.push('WEAPON_MOUNT_UNCERTIFIED');
-    else if (!VEHICLE_FIRING_ARCS.has(mount.arc)) reasons.push('WEAPON_MOUNT_ARC_INVALID');
+    else {
+      if (!VEHICLE_FIRING_ARCS.has(mount.arc)) reasons.push('WEAPON_MOUNT_ARC_INVALID');
+      // Core: a vehicle weapon is operated by the pilot (or copilot) or a gunner; the station authority resolves pilot/gunner.
+      if (!WEAPON_OPERATOR_ROLES.has(mount.operatorRole)) reasons.push('WEAPON_MOUNT_OPERATOR_INVALID');
+      const others = readCertifiedInstallations(flags, key).entries;
+      if (others.some(e => e.mount?.mountKey === mount.mountKey)) reasons.push('WEAPON_MOUNT_KEY_IN_USE');
+    }
   }
 
   const { entries } = readCertifiedInstallations(flags, key);
@@ -193,8 +216,11 @@ export function planVehicleInstallation({ record, flags, catalogEntry, installId
     epCost: quote.emplacementPoints, priceCredits: quote.credits,
     quote: { days: quote.days, mechanicsDC: quote.mechanicsDC, workForce: quote.workForce, shortfall: quote.shortfall,
       nonstandard: quote.nonstandard, nonstandardBasis: nsInput.basis, consequences: quote.consequences },
-    mount: mount ? { mountKey: mount.mountKey, arc: mount.arc, operatorRole: mount.operatorRole, evidence: mount.evidence } : null,
-    executable: false, // enabling a weapon is P4-D's separate gate
+    mount: mount ? { mountKey: mount.mountKey, arc: mount.arc, operatorRole: mount.operatorRole, evidence: mount.evidence ?? null,
+      basis: mountBasis, ...(mountBasis === 'GM_ADJUDICATED' ? { certification: { ...mount.certification } } : {}) } : null,
+    // V-P2-04 (owner ruling 2026-11-02): a weapon is executable only when its row has a certified weapon specification
+    // AND its physical mount is certified (printed evidence, or GM-adjudicated). Every attack-time check still applies.
+    executable: EFFECTS[catalogEntry.id]?.kind === 'weapon' && cert?.status === 'MECHANIC_SPECIFIED' && mountBasis !== null,
     installedAt: installedAt ?? null
   });
   return { ok: true, reasons: [], entry, cost: entry.priceCredits,

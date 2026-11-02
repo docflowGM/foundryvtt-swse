@@ -251,10 +251,12 @@ const worksheetResolution = pdf.reviewedWorksheetItems.map(w => {
 // P6B-0: atmospheric thrusters apply through the GM-set environment authority (vehicle-operating-context.js).
 // P6B-2: cargo pods (Dex -> Reflex/Initiative/Pilot, cargo), consumables and capacities (effective statistics).
 // 'intelligence' (sensor arrays) is NOT operational: no runtime consumer reads a vehicle's Intelligence yet.
-const OPERATIONAL_KINDS = new Set(['armor', 'shield', 'dexterity', 'hyperdrive', 'atmospheric', 'recharge', 'skill-bonus', 'cargo-pod', 'consumables', 'capacity']);
+// P6B weapon slice: 'weapon' rows are applied through the attack path (GM/printed mount + owned Item + preflight).
+const OPERATIONAL_KINDS = new Set(['armor', 'shield', 'dexterity', 'hyperdrive', 'atmospheric', 'recharge', 'skill-bonus', 'cargo-pod', 'consumables', 'capacity', 'weapon']);
 const certificationP6a = Object.fromEntries(pdfReconciliation.filter(r => r.disposition === 'MATCHED_CANONICAL' && r.evidence.startsWith('PDF') && !certification[r.catalogId])
   .map(r => [r.catalogId, { status: EFFECTS[r.catalogId] ? 'MECHANIC_SPECIFIED' : 'SOURCE_VERIFIED',
-    ...(EFFECTS[r.catalogId] ? { effectModule: 'scripts/domain/vehicles/vehicle-modification-effects.js', effectTest: 'tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs' } : {}),
+    ...(EFFECTS[r.catalogId] ? { effectModule: 'scripts/domain/vehicles/vehicle-modification-effects.js',
+      effectTest: EFFECTS[r.catalogId].kind === 'weapon' ? 'tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs' : 'tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs' } : {}),
     evidence: r.evidence === 'PDF_VISUAL_REVIEW' ? 'PDF_REVIEWED_P6A' : 'PDF_PROSE_REVIEWED_P6A', book: r.source.book,
     printedPage: r.source.printedPage, printedPageRange: [r.source.printedPage, r.source.printedPage], table: r.source.table ?? r.source.section, pageResolution: 'pdf-table-page' }]));
 const ledger = catalog.map(cat => {
@@ -275,12 +277,14 @@ const readiness = ledger.map(l => ({
   exposeAsReference: !!l.sourceListed,
   installable: !!l.mechanicSpecified,
   mechanicallyApplied: l.operationallyIntegrated === 'OFFLINE_INTEGRATED_LIVE_PENDING',
-  combatUsable: false,
+  // combat-usable = a certified weapon specification; firing still needs a certified mount, an owned Item and every
+  // attack-time check (vehicle-attack-preflight.js). Never true for printed stock attack groups.
+  combatUsable: EFFECTS[l.catalogId]?.kind === 'weapon' && !!l.mechanicSpecified,
   reasons: [
     ...(l.sourceListed ? [] : ['NOT_FOUND_IN_SOURCE']),
     ...(l.mechanicSpecified ? [] : [l.sourceVerified ? 'EFFECT_NOT_IMPLEMENTED' : 'NOT_SOURCE_VERIFIED']),
     ...(l.operationallyIntegrated === 'EXPOSED_NOT_APPLIED' ? ['CONDITIONAL_EFFECT_NOT_APPLIED'] : []),
-    'NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG'
+    ...(EFFECTS[l.catalogId]?.kind === 'weapon' && l.mechanicSpecified ? ['REQUIRES_CERTIFIED_MOUNT_OWNED_ITEM_AND_ATTACK_PREFLIGHT'] : ['NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG'])
   ]
 }));
 const worksheet = [
@@ -297,7 +301,7 @@ const files = {
   'certification-ledger.json': { schema: 'swse.vehicle.p6a.certification-ledger.v1', note: 'Audit dimensions alongside the production certification.json status (unchanged).', counts: {
     sourceListed: ledger.filter(l => l.sourceListed).length, sourceVerified: ledger.filter(l => l.sourceVerified).length, mechanicSpecified: ledger.filter(l => l.mechanicSpecified).length,
     operationallyIntegrated: ledger.filter(l => l.operationallyIntegrated === 'OFFLINE_INTEGRATED_LIVE_PENDING').length }, rows: ledger },
-  'readiness-manifest.json': { schema: 'swse.vehicle.p6a.readiness.v1', counts: { exposeAsReference: readiness.filter(r => r.exposeAsReference).length, installable: readiness.filter(r => r.installable).length, mechanicallyApplied: readiness.filter(r => r.mechanicallyApplied).length, combatUsable: 0 }, rows: readiness },
+  'readiness-manifest.json': { schema: 'swse.vehicle.p6a.readiness.v1', counts: { exposeAsReference: readiness.filter(r => r.exposeAsReference).length, installable: readiness.filter(r => r.installable).length, mechanicallyApplied: readiness.filter(r => r.mechanicallyApplied).length, combatUsable: readiness.filter(r => r.combatUsable).length }, rows: readiness },
   'pdf-review-worksheet.json': { schema: 'swse.vehicle.p6a.pdf-review-worksheet.v2', note: 'The 91 OCR review requests and their PDF dispositions (print-verified-components-v2.json), reconciled against the catalog.', items: worksheet, resolution: worksheetResolution,
     counts: count(worksheetResolution, 'reconciliation') },
   'pdf-reconciliation.json': { schema: 'swse.vehicle.p6a.pdf-reconciliation.v1', note: 'Catalog vs independently PDF-reviewed printed tables/prose. MATCHED = every printed cell equals the catalog. Dash = not stated (null), never zero.',

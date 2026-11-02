@@ -33,11 +33,12 @@ test('registry and certification agree exactly: MECHANIC_SPECIFIED <=> implement
   const certified = Object.entries(overlay).filter(([, r]) => r.status === 'MECHANIC_SPECIFIED').map(([id]) => id).sort();
   assert.deepEqual(certified, [...E.IMPLEMENTED_EFFECT_IDS].sort());
   assert.equal(certified.length, Object.keys(E.EFFECTS).length);
-  assert.equal(certified.length, 54, 'P6B-1 added 4 (regenerating shields, SLAM, navicomputers); P6B-2 added 11 accessories');
+  assert.equal(certified.length, 57, 'P6B-1 added 4; P6B-2 added 11 accessories; the weapon slice added light/medium/heavy laser cannons');
   for (const id of E.IMPLEMENTED_EFFECT_IDS) {
     assert.ok(catalog.some(c => c.id === id), id);
     assert.match(E.EFFECTS[id].citation, /Starships of the Galaxy/);
-    assert.equal(overlay[id].effectTest, baseCert[id] ? 'tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs' : 'tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs');
+    assert.equal(overlay[id].effectTest, baseCert[id] ? 'tests/vehicle-universal-phase4e-p10-modification-effects.test.mjs'
+      : E.EFFECTS[id].kind === 'weapon' ? 'tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs' : 'tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs');
   }
   for (const id of ['reinforced-bulkheads-10', 'jamming-suite', 'combat-thrusters', 'navicomputer-limited', 'sublight-drive-3', 'escape-pod-small', 'slave-circuits-basic', 'droid-repair-team', 'smuggler-compartments'])
     assert.equal(overlay[id].status, 'SOURCE_VERIFIED', id + ' stays deferred');

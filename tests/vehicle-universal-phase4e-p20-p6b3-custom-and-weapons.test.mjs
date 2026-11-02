@@ -84,17 +84,20 @@ test('custom ship sheet rows agree with the gameplay authority (Dex and Int now 
   assert.ok(labels.includes('Effect certified; shown in statistics (no rule consumer yet)'), 'sensor array is not claimed as applied');
 });
 
-test('weapons stay closed: no weapon, launcher or ammunition is installable, and no stock attack group is trusted', async () => {
+test('weapons: only certified weapon specifications are MECHANIC_SPECIFIED; launchers and ammunition stay closed; no stock group is trusted', async () => {
+  const { EFFECTS } = await import('../scripts/domain/vehicles/vehicle-modification-effects.js');
   const weapons = catalog.filter(c => c.category === 'Weapon' || c.category === 'Ammunition' || /launcher|missile|torpedo|mine|bomb/.test(c.id));
   assert.ok(weapons.length > 40);
-  for (const w of weapons) assert.notEqual(cert[w.id]?.status, 'MECHANIC_SPECIFIED', w.id);
+  for (const w of weapons) assert.equal(cert[w.id]?.status === 'MECHANIC_SPECIFIED', EFFECTS[w.id]?.kind === 'weapon', w.id);
+  for (const w of weapons.filter(x => /launcher|missile|torpedo|mine|bomb/.test(x.id))) assert.notEqual(cert[w.id]?.status, 'MECHANIC_SPECIFIED', w.id);
   const { TRUSTED_STOCK_WEAPON_GROUP_COUNT } = await import('../scripts/domain/vehicles/vehicle-stock-attack-authority.js');
   assert.equal(TRUSTED_STOCK_WEAPON_GROUP_COUNT, 0);
   const frame = frames.find(f => f.id === 'superiority-fighter');
   const v = C.validateDesign({ designId: 'd2', name: 'X', frame, systems: [{ catalogEntry: row('proton-torpedo-launcher'), installId: 'w1' }], authorship: claims, crewQuality: 'skilled', authority: { verified: true }, rules: RULES });
-  assert.ok(v.reasons.some(r => /MODIFICATION_EFFECT_NOT_IMPLEMENTED|WEAPON_MOUNT_UNCERTIFIED/.test(r)), 'a custom design cannot add a weapon either');
-  const ledger = readFileSync('scripts/domain/vehicles/vehicle-installation-ledger.js', 'utf8');
-  assert.match(ledger, /executable: false/);
+  assert.ok(v.reasons.some(r => /MODIFICATION_EFFECT_NOT_IMPLEMENTED|WEAPON_MOUNT_UNCERTIFIED/.test(r)), 'a custom design cannot add a launcher');
+  // the construction service never passes mount provenance from a stored player project
+  const svc = readFileSync('scripts/engine/vehicles/custom-vehicle-construction-service.js', 'utf8');
+  assert.match(svc, /mount: s\.mount \? \{ mountKey: s\.mount\.mountKey, arc: s\.mount\.arc, operatorRole: s\.mount\.operatorRole \} : null/);
 });
 
 test('custom designs refuse accessories whose base the stock frame does not provide (P6B-D-021, P6B-D-022)', () => {

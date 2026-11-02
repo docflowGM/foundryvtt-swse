@@ -84,7 +84,8 @@ export class CustomVehicleConstructionService {
   /** Rebuild and validate a design from its INPUTS only. */
   static async #evaluate({ project, designerActor, authority, catalog, frames, availableCredits }) {
     const frame = frames.find(f => f.id === project.frameId) ?? null;
-    const systems = project.systems.map(s => ({ catalogEntry: catalog.get(s.catalogId), installId: s.installId, mount: s.mount ?? null, nonstandard: s.nonstandard }));
+    const systems = project.systems.map(s => ({ catalogEntry: catalog.get(s.catalogId), installId: s.installId, // V-P2-04: mount provenance is never taken from a stored player project (no evidence/certification pass-through)
+      mount: s.mount ? { mountKey: s.mount.mountKey, arc: s.mount.arc, operatorRole: s.mount.operatorRole } : null, nonstandard: s.nonstandard }));
     const claims = project.authorshipKind === 'gm-homebrew'
       ? { kind: 'gm-homebrew', gmUserId: authority ? globalThis.game.user.id : project.submittedBy }
       : { kind: 'rules-legal', designerActorId: designerActor.id, starshipDesigner: hasFeat(designerActor),
