@@ -22,6 +22,8 @@ import { normalizeClassPrerequisites } from "/systems/foundryvtt-swse/scripts/en
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
+import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
+import { evaluateMasterPrivateerPiracy } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/master-privateer-piracy-rules.js";
 
 /**
  * In-memory cache: className → normalized prerequisites + eligibility
@@ -117,6 +119,20 @@ export function evaluateClassEligibility({
     actor,
     pendingData = {}
 }) {
+    // Class-specific ONGOING restriction; ordinary prestige entry prerequisites
+    // alone cannot prevent advancing an already-owned prestige class.
+    if (actor && String(className ?? '').trim()) {
+        const piracy = evaluateMasterPrivateerPiracy({
+            actor, className,
+            darkSideScore: DSPEngine.getValue(actor),
+            darkSideMax: DSPEngine.getMax(actor),
+        });
+        if (piracy.blocked) return {
+            eligible: false, className, isPrestige: true,
+            eligibilityResult: {legal:false,missingPrereqs:[piracy.reason],piracy},
+            reasons: {missing:[piracy.reason],met:[]},
+        };
+    }
     const cached = getCachedPrerequisites(className);
     const classDoc = ClassesRegistry.getByName?.(className) || ClassesRegistry.get?.(className) || null;
     const isPrestige = classDoc ? (classDoc.baseClass === false || classDoc.prestigeClass === true) : !!cached;
