@@ -791,3 +791,41 @@ V-P6-05 was engineering scope, not a rules question. P6B-1 delivered the runtime
 The owner located the printed standard capacities (*Starships of the Galaxy* pp. 45-46): concussion missile launchers light 6 / medium 16 / heavy 30 (+20% cost per additional missile, up to double); proton torpedo launcher 3 (+25% per torpedo, up to 16); shieldbuster torpedo launcher 4 (+25%, up to 8); all mine launchers 6 (+25%, up to 12). These are recorded as source data in `scripts/domain/vehicles/vehicle-launcher-capacity.js`. What remains open in V-P6A-03 is only the optional EXPANSION: whether added capacity costs emplacement points and which cost the percentage applies to. The V-P6A-03 entry above is unchanged.
 
 - **Revision 18 (2026-11-02):** appended the V-P6A-03 narrowing note. No existing entry changed.
+
+### V-P6B-05 - Escape pod (lifeboat) size restriction: prose versus table
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6B-05 |
+| Rules domain | Vehicle modifications |
+| Feature | Escape pod, small lifeboat; Escape pod, large lifeboat |
+| Source | *Starships of the Galaxy*, Accessories (Escape Pods prose; accessories table) |
+| Evidence | Prose: small lifeboats "can be installed on ships of Colossal (frigate) size or larger", one bay holds (cost modifier)/50 lifeboats; large lifeboats "Colossal (cruiser) size or larger", (cost modifier)/100 per bay. The catalog's table size cells read Colossal or larger and Colossal (frigate) or larger, where the per-bay count is fractional (5/50, 50/100). |
+| Confirmed behavior | Capacity per bay, multiple bays allowed, life support figures. |
+| Unresolved question | Which size restriction governs: the prose or the table cell? |
+| Options | Prose (frigate+ / cruiser+); table (Colossal+ / frigate+, with a rounding rule for fractional bays). |
+| Recommended ruling | None |
+| Implementation impact | Escape pods not installable (P6B-D-011). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6B-06 - "Starship's size modifier" in Medical Suite and Passenger Conversion capacities
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6B-06 |
+| Rules domain | Vehicle modifications |
+| Feature | Medical suite; Passenger seating / quarters |
+| Source | *Starships of the Galaxy*, Accessories (Medical Suite; Passenger Conversion) |
+| Evidence | Printed: a medical suite "includes (starship's size modifier)/5 medical beds and (starship's size modifier)/50 bacta tanks"; one section of passenger space holds "a number of passengers equal to the ship's size modifier". A starship's size modifier is negative (e.g. Colossal -10), so the literal text yields no usable count. Neighbouring accessories use the starship's cost modifier in the same pattern. |
+| Confirmed behavior | Section/suite structure; steerage-quality accommodations; medical bed treated as medpac, medical kit and surgical kit. |
+| Unresolved question | Is "size modifier" to be read as the cost modifier (Table 3-1), as the absolute size modifier, or otherwise? |
+| Options | Cost modifier; absolute value of the size modifier. |
+| Recommended ruling | None |
+| Implementation impact | Medical suite and passenger rows not installable (P6B-D-012). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 19 (2026-11-02):** appended V-P6B-05 and V-P6B-06. No existing entry changed.

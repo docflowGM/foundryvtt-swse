@@ -8,8 +8,8 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 
 | Category | Count |
 |---|---|
-| RULES_DECISION_REQUIRED | 4 |
-| SOURCE_EVIDENCE_MISSING | 8 |
+| RULES_DECISION_REQUIRED | 6 |
+| SOURCE_EVIDENCE_MISSING | 6 |
 | ENGINEERING_COMPLEXITY | 10 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 2 |
@@ -34,8 +34,8 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | P6B-D-007 | P6B-1 | com-jammers | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
 | P6B-D-009 | P6B-2 | sensor-array-2, sensor-array-4, sensor-array-6 | DEPENDENCY_BLOCKED | MINOR | no | V-P2-04 |
 | P6B-D-010 | P6B-2 | cargo pods / extended range on hulls with annotated or unknown printed quantities; smuggler compartments | SOURCE_EVIDENCE_MISSING | MINOR | yes | V-P6B-02 |
-| P6B-D-011 | P6B-2 | escape-pod-small, escape-pod-large | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
-| P6B-D-012 | P6B-2 | passenger-seating, passenger-quarters, medical-suite | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
+| P6B-D-011 | P6B-2 | escape-pod-small, escape-pod-large | RULES_DECISION_REQUIRED | MINOR | yes | V-P6B-05 |
+| P6B-D-012 | P6B-2 | passenger-seating, passenger-quarters, medical-suite | RULES_DECISION_REQUIRED | MINOR | yes | V-P6B-06 |
 | P6B-D-013 | P6B-2 | slave-circuits-basic, slave-circuits-advanced, slave-circuits-recall | RULES_DECISION_REQUIRED | MINOR | yes | V-P6B-03 |
 | P6B-D-014 | P6B-2 | droid-repair-team | ENGINEERING_COMPLEXITY | MINOR | no | - |
 | P6B-D-015 | P6B-2 | cargo-jettison, transponders (IFF, masked, disguised x3), cloaking (hibridium, stygium), docking clamps, holonet/hyper transceivers, luxury upgrades | DEPENDENCY_BLOCKED | MINOR | no | - |
@@ -160,22 +160,24 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 ### P6B-D-011 - escape-pod-small, escape-pod-large
 
 - **Source:** Starships of the Galaxy pp. 48-53 (Accessories)
-- **Category / severity:** SOURCE_EVIDENCE_MISSING / MINOR
-- **Reason:** The catalog size restriction (Colossal or larger / Colossal (frigate) or larger) disagrees with the paraphrased prose (frigate or larger / cruiser or larger), and the per-bay lifeboat count (cost modifier/50, /100) is fractional for the smaller sizes the catalog allows.
-- **Missing:** PDF confirmation of the size restriction and the per-bay count.
-- **Owner ruling needed:** no
+- **Category / severity:** RULES_DECISION_REQUIRED / MINOR
+- **Reason:** Checked against the SotG text: the prose restricts small lifeboats to Colossal (frigate)+ and large lifeboats to Colossal (cruiser)+ (where the per-bay counts cost modifier/50 and /100 are whole numbers), while the catalog table cells are one size smaller. This is a conflict inside the book.
+- **Missing:** Which restriction governs.
+- **Owner ruling needed:** yes (V-P6B-05)
+- **Source-supported options:** prose restriction; table restriction with a fractional-bay rounding rule
 - **Impact:** Not installable.
-- **Recommended action:** Confirm against the PDF; then a capacity effect like hangar bays.
+- **Recommended action:** Owner rules on V-P6B-05; then a per-bay capacity effect like hangar bays.
 
 ### P6B-D-012 - passenger-seating, passenger-quarters, medical-suite
 
 - **Source:** Starships of the Galaxy pp. 48-53 (Accessories)
-- **Category / severity:** SOURCE_EVIDENCE_MISSING / MINOR
-- **Reason:** The catalog paraphrase computes capacity from the ship's "size modifier" (a negative number for starships), which cannot be a passenger count; the printed basis is likely the cost modifier but this was not confirmed.
-- **Missing:** PDF wording of the capacity basis.
-- **Owner ruling needed:** no
+- **Category / severity:** RULES_DECISION_REQUIRED / MINOR
+- **Reason:** Checked against the SotG text: the printed formulas really do say "starship's size modifier" (negative for starships), so the catalog paraphrase is faithful and the book itself is defective here.
+- **Missing:** How to read "size modifier" in these two formulas.
+- **Owner ruling needed:** yes (V-P6B-06)
+- **Source-supported options:** cost modifier; absolute size modifier
 - **Impact:** Not installable.
-- **Recommended action:** Confirm against the PDF and correct the paraphrase; then a capacity effect.
+- **Recommended action:** Owner rules on V-P6B-06.
 
 ### P6B-D-013 - slave-circuits-basic, slave-circuits-advanced, slave-circuits-recall
 
@@ -212,11 +214,11 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 
 - **Source:** Starships of the Galaxy pp. 48-53 (Accessories)
 - **Category / severity:** SOURCE_EVIDENCE_MISSING / MINOR
-- **Reason:** P6A verified their printed cost/EP, but the effect strings are legacy text not matched to printed prose.
-- **Missing:** Printed effect wording for each row.
+- **Reason:** P6A verified the printed cost/EP of these Scum and Villainy p. 58 rows from the PDF, but their effect strings are legacy text. The repository OCR of the Scum and Villainy descriptions is largely unreadable, so the effects cannot be verified from it. A readable fragment suggests Personalized Controls grants +1 (one crew position), not the legacy "+2 to Pilot checks", so the legacy strings must not be trusted.
+- **Missing:** PDF wording of each Scum and Villainy accessory description.
 - **Owner ruling needed:** no
 - **Impact:** Reference only; not installable.
-- **Recommended action:** PDF prose review per row, then classify like the 11 P6B-2 rows.
+- **Recommended action:** PDF prose review of Scum and Villainy (accessory descriptions near p. 58); replace legacy effect strings before any of these rows is certified.
 
 ### P6B-D-017 - hangar bays / cryogenic chambers (contents)
 

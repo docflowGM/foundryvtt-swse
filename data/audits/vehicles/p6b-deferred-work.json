@@ -536,32 +536,42 @@
     {
       "workstream": "P6B-2",
       "source": "Starships of the Galaxy pp. 48-53 (Accessories)",
-      "ownerRulingNeeded": false,
-      "linkedDecisions": [],
-      "options": [],
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6B-05"
+      ],
+      "options": [
+        "prose restriction",
+        "table restriction with a fractional-bay rounding rule"
+      ],
       "id": "P6B-D-011",
       "component": "escape-pod-small, escape-pod-large",
-      "status": "SOURCE_EVIDENCE_MISSING",
-      "reason": "The catalog size restriction (Colossal or larger / Colossal (frigate) or larger) disagrees with the paraphrased prose (frigate or larger / cruiser or larger), and the per-bay lifeboat count (cost modifier/50, /100) is fractional for the smaller sizes the catalog allows.",
-      "missing": "PDF confirmation of the size restriction and the per-bay count.",
+      "status": "RULES_DECISION_REQUIRED",
+      "reason": "Checked against the SotG text: the prose restricts small lifeboats to Colossal (frigate)+ and large lifeboats to Colossal (cruiser)+ (where the per-bay counts cost modifier/50 and /100 are whole numbers), while the catalog table cells are one size smaller. This is a conflict inside the book.",
+      "missing": "Which restriction governs.",
       "impact": "Not installable.",
       "severity": "MINOR",
-      "recommendedAction": "Confirm against the PDF; then a capacity effect like hangar bays."
+      "recommendedAction": "Owner rules on V-P6B-05; then a per-bay capacity effect like hangar bays."
     },
     {
       "workstream": "P6B-2",
       "source": "Starships of the Galaxy pp. 48-53 (Accessories)",
-      "ownerRulingNeeded": false,
-      "linkedDecisions": [],
-      "options": [],
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6B-06"
+      ],
+      "options": [
+        "cost modifier",
+        "absolute size modifier"
+      ],
       "id": "P6B-D-012",
       "component": "passenger-seating, passenger-quarters, medical-suite",
-      "status": "SOURCE_EVIDENCE_MISSING",
-      "reason": "The catalog paraphrase computes capacity from the ship's \"size modifier\" (a negative number for starships), which cannot be a passenger count; the printed basis is likely the cost modifier but this was not confirmed.",
-      "missing": "PDF wording of the capacity basis.",
+      "status": "RULES_DECISION_REQUIRED",
+      "reason": "Checked against the SotG text: the printed formulas really do say \"starship's size modifier\" (negative for starships), so the catalog paraphrase is faithful and the book itself is defective here.",
+      "missing": "How to read \"size modifier\" in these two formulas.",
       "impact": "Not installable.",
       "severity": "MINOR",
-      "recommendedAction": "Confirm against the PDF and correct the paraphrase; then a capacity effect."
+      "recommendedAction": "Owner rules on V-P6B-06."
     },
     {
       "workstream": "P6B-2",
@@ -623,11 +633,11 @@
       "id": "P6B-D-016",
       "component": "25 legacy accessory rows with UNVERIFIED effect text (amphibious seals, auxiliary generators, baffled drive, hidden cargo, holding cells, sensor baffling/decoy/mask, workshop, etc.)",
       "status": "SOURCE_EVIDENCE_MISSING",
-      "reason": "P6A verified their printed cost/EP, but the effect strings are legacy text not matched to printed prose.",
-      "missing": "Printed effect wording for each row.",
+      "reason": "P6A verified the printed cost/EP of these Scum and Villainy p. 58 rows from the PDF, but their effect strings are legacy text. The repository OCR of the Scum and Villainy descriptions is largely unreadable, so the effects cannot be verified from it. A readable fragment suggests Personalized Controls grants +1 (one crew position), not the legacy \"+2 to Pilot checks\", so the legacy strings must not be trusted.",
+      "missing": "PDF wording of each Scum and Villainy accessory description.",
       "impact": "Reference only; not installable.",
       "severity": "MINOR",
-      "recommendedAction": "PDF prose review per row, then classify like the 11 P6B-2 rows."
+      "recommendedAction": "PDF prose review of Scum and Villainy (accessory descriptions near p. 58); replace legacy effect strings before any of these rows is certified."
     },
     {
       "workstream": "P6B-2",
