@@ -18,6 +18,7 @@ import { eligibleOfficerShareTalents, persistedOfficerShareTalents } from '/syst
 import { planOfficerShareTalentAction } from '/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-action-rules.js';
 import { resolveOfficerShareTalentScene } from '/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-scene.js';
 import { planOfficerShareTalentExpiry } from '/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-cleanup-plan.js';
+import { executeOfficerShareTalentTransaction } from '/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-transaction.js';
 
 const locks=new Set();
 import {
@@ -75,57 +76,25 @@ export class OfficerShareTalentService {
           officer,recipient,talent:owned,selection,encounterId:combat.id,day,
         }),
       }));
-      // Capture ALL actor states before any mutation; recover every affected
-      // actor if a later leg throws. No direct Item.create() outside ActorEngine.
-      const actors=uniqueActors([officer,...recipients]);
-      const snapshots=new Map();
-      for(const actor of actors)snapshots.set(actor.id,await ActorEngine.captureRecoverySnapshot(actor));
-      // Track a leg BEFORE entering ActorEngine. A failed transactional call
-      // can still have made a partial mutation (or had an indeterminate inner
-      // rollback); omitting that actor from outer verification is unsafe.
-      const touched=[];
-      try {
-        for(const entry of additions){
-          if(!entry.item)continue; // already owns this talent; no duplicate
-          touched.push(entry.actor);
-          await ActorEngine.applyMutationPlan(entry.actor,{
-            add:{items:[entry.item]},
-          },{source:'OfficerShareTalentService.activate.grant',transactional:true});
-        }
-        touched.push(officer);
-        await ActorEngine.applyMutationPlan(officer,{
-          set:{'flags.swse.classFeatures.officer.dailyShares':[
-            ...previous.filter(p=>p.day===day),
-            {talentId,day,encounterId:combat.id,recipientActorIds:recipients.map(a=>a.id)},
-          ]},
-        },{source:'OfficerShareTalentService.activate.usage',transactional:true});
-        // ActorEngine mutation legs can await asynchronous Foundry document
-        // work. A new combat turn may begin after initial preflight, so refuse
-        // to debit the Officer on another combatant's turn.
-        if(globalThis.game?.combat?.id!==combat.id || combat.started!==true
-          ||combat.combatant?.id!==combatant.id || combatant.canAct!==true) {
-          throw new Error('Officer Share Talent turn changed before action expenditure');
-        }
-        // Use the V2 action-economy SSOT, not SWSECombatant.useAction():
-        // the legacy method incorrectly consumes the MOVE action with STANDARD.
-        // A loose-mode advisory/no-op is not a valid once/day Share Talent spend.
-        const spent=await ActionEconomyConsumption.spend(officer,'standard',{
+      await executeOfficerShareTalentTransaction({
+        officer,additions,actorEngine:ActorEngine,
+        usage:[
+          ...previous.filter(p=>p.day===day),
+          {talentId,day,encounterId:combat.id,recipientActorIds:recipients.map(a=>a.id)},
+        ],
+        validateBeforeSpend:()=>{
+          // ActorEngine operations may have awaited other Foundry events;
+          // reject if the combat advanced to another turn before expenditure.
+          if(globalThis.game?.combat?.id!==combat.id || combat.started!==true
+            ||combat.combatant?.id!==combatant.id || combatant.canAct!==true) {
+            throw new Error('Officer Share Talent turn changed before action expenditure');
+          }
+        },
+        spendStandardAction:()=>ActionEconomyConsumption.spend(officer,'standard',{
           source:'officer.shareTalent',actionName:'Officer Share Talent',
           talentId,encounterId:combat.id,
-        },{notify:true});
-        if(spent?.committed!==true || spent?.engineResult?.allowed===false) {
-          throw new Error('Officer Share Talent standard action was not committed');
-        }
-      }catch(error){
-        const recovery=await Promise.allSettled([...touched].reverse().map(async actor=>{
-          const result=await ActorEngine.restoreSnapshotVerified(actor,snapshots.get(actor.id),'OfficerShareTalentService.rollback');
-          return {actorId:actor.id,verdict:result.verdict};
-        }));
-        if(recovery.some(r=>r.status!=='fulfilled'||r.value.verdict!=='EXACT')){
-          throw new Error(`Share Talent mutation INDETERMINATE; GM review required: ${error?.message||error}`);
-        }
-        throw error;
-      }
+        },{notify:true}),
+      });
       return {success:true,talentId,recipientActorIds:recipients.map(a=>a.id),
         encounterId:combat.id,day,temporaryUntil:'end-of-encounter'};
     }finally{locks.delete(officer.id);}
