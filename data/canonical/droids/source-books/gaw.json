@@ -1,0 +1,2076 @@
+{
+  "schema": "swse.droid.source-book-hydration-ledger/0.1-partial",
+  "bookId": "GAW",
+  "book": "Galaxy at War",
+  "draftSourceEntrySchema": "swse.droid.universal-source/0.1-draft",
+  "sourceBookPdf": "SW_Saga_Galaxy_at_War.pdf",
+  "scope": "22 GAW source identities; selected visible facts only after independent page inspection. No executable mechanics.",
+  "expectedPublicationClaims": 22,
+  "sourceEntries": [
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GAW-DROID-001",
+        "printedName": "A-Series Medical Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "bookId": "GAW",
+        "printedPageStart": 51,
+        "printedPageEnd": 51,
+        "pdfPageStart1Based": 52,
+        "textLineAnchor1Based": 4938,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Small",
+        "publishedDegree": 1,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 5,
+        "perceptionPrinted": 7
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 13,
+        "flatFootedReflex": 13,
+        "fortitude": 10,
+        "will": 15
+      },
+      "durability": {
+        "hitPoints": 18,
+        "damageThreshold": 10
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 9740
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Printed publication identity is source-only. No feat/talent grants, installed systems, weapon mounts or runtime effects certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "GAW-DROID-001-MEDICAL-TALENT",
+            "statement": "The model-specific Medical Droid talent changes Treat Injury healing benefits; no generic Treat Injury bonus is granted.",
+            "scope": "GAW-DROID-001",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 51,
+              "pdfPage1Based": 52,
+              "sourceEntryKey": "GAW-DROID-001",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewerEvidenceRefs": [
+          "GAW-CENSUS:GAW-DROID-001",
+          "Galaxy at War:printed-p51:TXT-line-4938",
+          "GAW-DROID-001:printed-p51:PDF-p52:selected-field-review"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GAW-DROID-002",
+        "printedName": "KDY-4 Tech Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "bookId": "GAW",
+        "printedPageStart": 52,
+        "printedPageEnd": 52,
+        "pdfPageStart1Based": 53,
+        "textLineAnchor1Based": 5042,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 2,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 1,
+        "perceptionPrinted": 1
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 10,
+        "flatFootedReflex": 10,
+        "fortitude": 13,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 4,
+        "damageThreshold": 13
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 4400
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Printed publication identity is source-only. No feat/talent grants, installed systems, weapon mounts or runtime effects certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "GAW-DROID-002-EXTRA-LEG",
+            "statement": "An additional leg grants a printed +5 stability bonus to resist being knocked prone.",
+            "scope": "GAW-DROID-002",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 52,
+              "pdfPage1Based": 53,
+              "sourceEntryKey": "GAW-DROID-002",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewerEvidenceRefs": [
+          "GAW-CENSUS:GAW-DROID-002",
+          "Galaxy at War:printed-p52:TXT-line-5042",
+          "GAW-DROID-002:printed-p52:PDF-p53:selected-field-review"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GAW-DROID-003",
+        "printedName": "Chiba-DR10 Protocol Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "bookId": "GAW",
+        "printedPageStart": 52,
+        "printedPageEnd": 52,
+        "pdfPageStart1Based": 53,
+        "textLineAnchor1Based": 5050,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Small",
+        "publishedDegree": 3,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 4,
+        "perceptionPrinted": 3
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 14,
+        "flatFootedReflex": 11,
+        "fortitude": 9,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 7,
+        "damageThreshold": 9
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 9500
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Printed publication identity is source-only. No feat/talent grants, installed systems, weapon mounts or runtime effects certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewerEvidenceRefs": [
+          "GAW-CENSUS:GAW-DROID-003",
+          "Galaxy at War:printed-p52:TXT-line-5050",
+          "GAW-DROID-003:printed-p52:PDF-p53:selected-field-review"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GAW-DROID-004",
+        "printedName": "Air Assault Super Battle Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "bookId": "GAW",
+        "printedPageStart": 53,
+        "printedPageEnd": 53,
+        "pdfPageStart1Based": 54,
+        "textLineAnchor1Based": 5173,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 4
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 6,
+        "perceptionPrinted": 4
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 21,
+        "flatFootedReflex": 19,
+        "fortitude": 15,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 26,
+        "damageThreshold": 15
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 16225
+      },
+      "text": {
+        "sourceWarnings": [
+          "Census reports related model CORE-DROID-005; relationship NOT an automatic system/stat inheritance permission."
+        ]
+      },
+      "exceptions": {
+        "notes": "Printed publication identity is source-only. No feat/talent grants, installed systems, weapon mounts or runtime effects certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "GAW-DROID-004-JET-PACK",
+            "statement": "The integrated jet pack has a model-specific capacity of 100 charges and a volatile fuel hazard; ordinary jet-pack defaults are insufficient.",
+            "scope": "GAW-DROID-004",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 53,
+              "pdfPage1Based": 54,
+              "sourceEntryKey": "GAW-DROID-004",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewerEvidenceRefs": [
+          "GAW-CENSUS:GAW-DROID-004",
+          "Galaxy at War:printed-p53:TXT-line-5173",
+          "GAW-DROID-004:printed-p53:PDF-p54:selected-field-review"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GAW-DROID-005",
+        "printedName": "Eradicator-Series Battle Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "bookId": "GAW",
+        "printedPageStart": 53,
+        "printedPageEnd": 53,
+        "pdfPageStart1Based": 54,
+        "textLineAnchor1Based": 5250,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Large",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 2
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 6,
+        "perceptionPrinted": 9
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 16,
+        "flatFootedReflex": 14,
+        "fortitude": 14,
+        "will": 10,
+        "shieldRating": 5
+      },
+      "durability": {
+        "hitPoints": 29,
+        "damageThreshold": 19
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 21500
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Printed publication identity is source-only. No feat/talent grants, installed systems, weapon mounts or runtime effects certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "GAW-DROID-005-REMOTE-SHUTDOWN",
+            "statement": "A central operating computer is a point of shutdown vulnerability, despite the printed basic processor.",
+            "scope": "GAW-DROID-005",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 53,
+              "pdfPage1Based": 54,
+              "sourceEntryKey": "GAW-DROID-005",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewerEvidenceRefs": [
+          "GAW-CENSUS:GAW-DROID-005",
+          "Galaxy at War:printed-p53:TXT-line-5250",
+          "GAW-DROID-005:printed-p53:PDF-p54:selected-field-review"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GAW-DROID-006",
+        "printedName": "Purge Trooper",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "bookId": "GAW",
+        "printedPageStart": 54,
+        "printedPageEnd": 54,
+        "pdfPageStart1Based": 55,
+        "textLineAnchor1Based": 5318,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Large",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 8
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 13,
+        "perceptionPrinted": 9
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 20,
+        "flatFootedReflex": 18,
+        "fortitude": 26,
+        "will": 17,
+        "damageReduction": 10
+      },
+      "durability": {
+        "hitPoints": 78,
+        "damageThreshold": 31
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 31900
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Printed publication identity is source-only. No feat/talent grants, installed systems, weapon mounts or runtime effects certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "GAW-DROID-006-CORTOSIS",
+            "statement": "The purge trooper has printed DR 10 with a particular lightsaber interaction requiring source-specific rule resolution.",
+            "scope": "GAW-DROID-006",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 54,
+              "pdfPage1Based": 55,
+              "sourceEntryKey": "GAW-DROID-006",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewerEvidenceRefs": [
+          "GAW-CENSUS:GAW-DROID-006",
+          "Galaxy at War:printed-p54:TXT-line-5318",
+          "GAW-DROID-006:printed-p54:PDF-p55:selected-field-review"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GAW-DROID-007",
+        "printedName": "Sniper Droideka",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "bookId": "GAW",
+        "printedPageStart": 55,
+        "printedPageEnd": 55,
+        "pdfPageStart1Based": 56,
+        "textLineAnchor1Based": 5394,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Large",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 7
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 9,
+        "perceptionPrinted": 21
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 19,
+        "flatFootedReflex": 16,
+        "fortitude": 17,
+        "will": 17,
+        "shieldRating": 20
+      },
+      "durability": {
+        "hitPoints": 41,
+        "damageThreshold": 22
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 30565
+      },
+      "text": {
+        "sourceWarnings": [
+          "Census reports related model CORE-DROID-006; relationship NOT an automatic system/stat inheritance permission."
+        ]
+      },
+      "exceptions": {
+        "notes": "Printed publication identity is source-only. No feat/talent grants, installed systems, weapon mounts or runtime effects certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "GAW-DROID-007-EXCLUSIVE-WHEELS",
+            "statement": "Wheeled locomotion is printed exclusive; walking and wheel modes must not be combined or freely executed.",
+            "scope": "GAW-DROID-007",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 55,
+              "pdfPage1Based": 56,
+              "sourceEntryKey": "GAW-DROID-007",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewerEvidenceRefs": [
+          "GAW-CENSUS:GAW-DROID-007",
+          "Galaxy at War:printed-p55:TXT-line-5394",
+          "GAW-DROID-007:printed-p55:PDF-p56:selected-field-review"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GAW-DROID-008",
+        "printedName": "Tactical Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "bookId": "GAW",
+        "printedPageStart": 55,
+        "printedPageEnd": 55,
+        "pdfPageStart1Based": 56,
+        "textLineAnchor1Based": 5404,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 6,
+        "perceptionPrinted": 7
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 18,
+        "flatFootedReflex": 17,
+        "fortitude": 13,
+        "will": 13
+      },
+      "durability": {
+        "hitPoints": 30,
+        "damageThreshold": 13
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 14005
+      },
+      "text": {
+        "sourceWarnings": [
+          "Reprinted Tactical Droid on p213 is same publication identity, not an extra droid claim."
+        ]
+      },
+      "exceptions": {
+        "notes": "Printed publication identity is source-only. No feat/talent grants, installed systems, weapon mounts or runtime effects certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "GAW-DROID-008-BATTLE-ANALYSIS",
+            "statement": "The Battle Analysis talent and Vehicle Combat feat are published traits but require canonical provenance and action certification.",
+            "scope": "GAW-DROID-008",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 55,
+              "pdfPage1Based": 56,
+              "sourceEntryKey": "GAW-DROID-008",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewerEvidenceRefs": [
+          "GAW-CENSUS:GAW-DROID-008",
+          "Galaxy at War:printed-p55:TXT-line-5404",
+          "GAW-DROID-008:printed-p55:PDF-p56:selected-field-review"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GAW-DROID-009",
+        "printedName": "Vigilant 2X Picket Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "bookId": "GAW",
+        "printedPageStart": 56,
+        "printedPageEnd": 56,
+        "pdfPageStart1Based": 57,
+        "textLineAnchor1Based": 5538,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 3
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 11,
+        "perceptionPrinted": 19
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 20,
+        "flatFootedReflex": 18,
+        "fortitude": 11,
+        "will": 13
+      },
+      "durability": {
+        "hitPoints": 22,
+        "damageThreshold": 11
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 32500
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Printed publication identity is source-only. No feat/talent grants, installed systems, weapon mounts or runtime effects certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "GAW-DROID-009-SELF-DESTRUCT",
+            "statement": "This model has a specified self-destruct mechanism and separate integrated repeating blaster and grenade launcher.",
+            "scope": "GAW-DROID-009",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 56,
+              "pdfPage1Based": 57,
+              "sourceEntryKey": "GAW-DROID-009",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewerEvidenceRefs": [
+          "GAW-CENSUS:GAW-DROID-009",
+          "Galaxy at War:printed-p56:TXT-line-5538",
+          "GAW-DROID-009:printed-p56:PDF-p57:selected-field-review"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GAW-DROID-010",
+        "printedName": "CLL-M2 Ordnance Lifter Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "bookId": "GAW",
+        "printedPageStart": 56,
+        "printedPageEnd": 56,
+        "pdfPageStart1Based": 57,
+        "textLineAnchor1Based": 5576,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Large",
+        "publishedDegree": 5,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 1,
+        "perceptionPrinted": 6
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 18,
+        "flatFootedReflex": 18,
+        "fortitude": 20,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 17,
+        "damageThreshold": 25
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 15000
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Printed publication identity is source-only. No feat/talent grants, installed systems, weapon mounts or runtime effects certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewerEvidenceRefs": [
+          "GAW-CENSUS:GAW-DROID-010",
+          "Galaxy at War:printed-p56:TXT-line-5576",
+          "GAW-DROID-010:printed-p56:PDF-p57:selected-field-review"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GAW-DROID-011",
+        "printedName": "MR-200 Series Minesweeper Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "bookId": "GAW",
+        "printedPageStart": 57,
+        "printedPageEnd": 57,
+        "pdfPageStart1Based": 58,
+        "textLineAnchor1Based": 5677,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Large",
+        "publishedDegree": 5,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 1,
+        "perceptionPrinted": 14
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 14,
+        "flatFootedReflex": 14,
+        "fortitude": 15,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 36,
+        "damageThreshold": 25
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 15000
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Printed publication identity is source-only. No feat/talent grants, installed systems, weapon mounts or runtime effects certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "GAW-DROID-011-MINE-SWEEP",
+            "statement": "The minesweeper has a chain roller offensive mode plus mine mapping and demolition equipment.",
+            "scope": "GAW-DROID-011",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 57,
+              "pdfPage1Based": 58,
+              "sourceEntryKey": "GAW-DROID-011",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewerEvidenceRefs": [
+          "GAW-CENSUS:GAW-DROID-011",
+          "Galaxy at War:printed-p57:TXT-line-5677",
+          "GAW-DROID-011:printed-p57:PDF-p58:selected-field-review"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GAW-DROID-012",
+        "printedName": "Automated Sentry Gun",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "bookId": "GAW",
+        "printedPageStart": 98,
+        "printedPageEnd": 98,
+        "pdfPageStart1Based": 99,
+        "textLineAnchor1Based": 10010,
+        "publicationKind": "other"
+      },
+      "classification": {
+        "size": "Small",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 2
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 8,
+        "perceptionPrinted": 16
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 15,
+        "flatFootedReflex": 14,
+        "fortitude": 10,
+        "will": 13,
+        "conditionalDefenseRules": [
+          {
+            "ruleId": "GAW-DROID-012-SENTRY-COVER",
+            "statement": "The p175 presentation adds +5 cover to Reflex Defense (20 vs base 15 on p98); do not apply +5 unconditionally.",
+            "scope": "GAW-DROID-012",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 175,
+              "pdfPage1Based": 176,
+              "sourceEntryKey": "GAW-DROID-012",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "durability": {
+        "hitPoints": 13,
+        "damageThreshold": 10
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 2500,
+        "usedCredits": 1000
+      },
+      "text": {
+        "sourceWarnings": [
+          "Stationary sentry with battlefield placement and cover conditions; p175 alternate contextual presentation."
+        ]
+      },
+      "exceptions": {
+        "notes": "Printed publication identity is source-only. No feat/talent grants, installed systems, weapon mounts or runtime effects certified."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "GAW-DROID-012-SENTRY-COVER",
+            "statement": "The p175 presentation adds +5 cover to Reflex Defense (20 vs base 15 on p98); do not apply +5 unconditionally.",
+            "scope": "GAW-DROID-012",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 175,
+              "pdfPage1Based": 176,
+              "sourceEntryKey": "GAW-DROID-012",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-012-SENTRY-FIXED-FIRE",
+            "statement": "The sentry is stationary with braced weapon housing and IFF, whose firing field is subject to placement and configuration.",
+            "scope": "GAW-DROID-012",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 98,
+              "pdfPage1Based": 99,
+              "sourceEntryKey": "GAW-DROID-012",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewerEvidenceRefs": [
+          "GAW-CENSUS:GAW-DROID-012",
+          "Galaxy at War:printed-p98:TXT-line-10010",
+          "GAW-DROID-012:printed-p98:PDF-p99:selected-field-review"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GAW-DROID-013",
+        "printedName": "Arakyd AZ-Series Battle Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "bookId": "GAW",
+        "printedPageStart": 181,
+        "printedPageEnd": 181,
+        "pdfPageStart1Based": 182,
+        "textLineAnchor1Based": 17777,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Large",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 6
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 10,
+        "perceptionPrinted": 12
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 21,
+        "flatFootedReflex": 19,
+        "fortitude": 23,
+        "will": 18
+      },
+      "durability": {
+        "hitPoints": 77,
+        "damageThreshold": 33
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 15630,
+        "usedCredits": 5210
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Printed publication identity is source-only. No feat/talent grants, installed systems, weapon mounts or runtime effects certified."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "GAW-DROID-013-DOUBLE-ATTACK",
+            "statement": "Two blaster cannon attack expressions are a printed option; weapon rights remain pending.",
+            "scope": "GAW-DROID-013",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 181,
+              "pdfPage1Based": 182,
+              "sourceEntryKey": "GAW-DROID-013",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewerEvidenceRefs": [
+          "GAW-CENSUS:GAW-DROID-013",
+          "Galaxy at War:printed-p181:TXT-line-17777",
+          "GAW-DROID-013:printed-p181:PDF-p182:selected-field-review"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GAW-DROID-014",
+        "printedName": "B1-Series Battle Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "bookId": "GAW",
+        "printedPageStart": 210,
+        "printedPageEnd": 210,
+        "pdfPageStart1Based": 211,
+        "textLineAnchor1Based": 20591,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 0,
+        "perceptionPrinted": 6
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 9,
+        "flatFootedReflex": 9,
+        "fortitude": 11,
+        "will": 11
+      },
+      "durability": {
+        "hitPoints": 10,
+        "damageThreshold": 11
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 1800
+      },
+      "text": {
+        "sourceWarnings": [
+          "Same factory family printed in a different source; this GAW statblock is a distinct publication claim, not a new canonical factory family by name alone.",
+          "Census reports related model CORE-DROID-004; relationship NOT an automatic system/stat inheritance permission."
+        ]
+      },
+      "exceptions": {
+        "notes": "Printed publication identity is source-only. No feat/talent grants, installed systems, weapon mounts or runtime effects certified."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewerEvidenceRefs": [
+          "GAW-CENSUS:GAW-DROID-014",
+          "Galaxy at War:printed-p210:TXT-line-20591",
+          "GAW-DROID-014:printed-p210:PDF-p211:selected-field-review"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GAW-DROID-015",
+        "printedName": "B2-Series Super Battle Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "bookId": "GAW",
+        "printedPageStart": 210,
+        "printedPageEnd": 210,
+        "pdfPageStart1Based": 211,
+        "textLineAnchor1Based": 20643,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 2
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 3,
+        "perceptionPrinted": 8
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 12,
+        "flatFootedReflex": 12,
+        "fortitude": 12,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 21,
+        "damageThreshold": 12
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 3300
+      },
+      "text": {
+        "sourceWarnings": [
+          "Same factory family printed in a different source; this GAW statblock is a distinct publication claim, not a new canonical factory family by name alone.",
+          "Census reports related model CORE-DROID-005; relationship NOT an automatic system/stat inheritance permission."
+        ]
+      },
+      "exceptions": {
+        "notes": "Printed publication identity is source-only. No feat/talent grants, installed systems, weapon mounts or runtime effects certified."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewerEvidenceRefs": [
+          "GAW-CENSUS:GAW-DROID-015",
+          "Galaxy at War:printed-p210:TXT-line-20643",
+          "GAW-DROID-015:printed-p210:PDF-p211:selected-field-review"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GAW-DROID-016",
+        "printedName": "Droideka Series Destroyer Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "bookId": "GAW",
+        "printedPageStart": 211,
+        "printedPageEnd": 211,
+        "pdfPageStart1Based": 212,
+        "textLineAnchor1Based": 20689,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Large",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 4
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 8,
+        "perceptionPrinted": 13
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 16,
+        "flatFootedReflex": 14,
+        "fortitude": 13,
+        "will": 12,
+        "shieldRating": 20
+      },
+      "durability": {
+        "hitPoints": 40,
+        "damageThreshold": 18
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 21000
+      },
+      "text": {
+        "sourceWarnings": [
+          "Same factory family printed in a different source; this GAW statblock is a distinct publication claim, not a new canonical factory family by name alone.",
+          "Census reports related model CORE-DROID-006; relationship NOT an automatic system/stat inheritance permission."
+        ]
+      },
+      "exceptions": {
+        "notes": "Printed publication identity is source-only. No feat/talent grants, installed systems, weapon mounts or runtime effects certified."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewerEvidenceRefs": [
+          "GAW-CENSUS:GAW-DROID-016",
+          "Galaxy at War:printed-p211:TXT-line-20689",
+          "GAW-DROID-016:printed-p211:PDF-p212:selected-field-review"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GAW-DROID-017",
+        "printedName": "Droid Commando",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "bookId": "GAW",
+        "printedPageStart": 214,
+        "printedPageEnd": 214,
+        "pdfPageStart1Based": 215,
+        "textLineAnchor1Based": 21095,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 6
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 13,
+        "perceptionPrinted": 13
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 19,
+        "flatFootedReflex": 16,
+        "fortitude": 17,
+        "will": 18
+      },
+      "durability": {
+        "hitPoints": 37,
+        "damageThreshold": 17
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 17900
+      },
+      "text": {
+        "sourceWarnings": [
+          "Census reports related model CLONE-DROID-024; relationship NOT an automatic system/stat inheritance permission."
+        ]
+      },
+      "exceptions": {
+        "notes": "Printed publication identity is source-only. No feat/talent grants, installed systems, weapon mounts or runtime effects certified."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewerEvidenceRefs": [
+          "GAW-CENSUS:GAW-DROID-017",
+          "Galaxy at War:printed-p214:TXT-line-21095",
+          "GAW-DROID-017:printed-p214:PDF-p215:selected-field-review"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GAW-DROID-018",
+        "printedName": "OOM-Series Battle Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "bookId": "GAW",
+        "printedPageStart": 215,
+        "printedPageEnd": 215,
+        "pdfPageStart1Based": 216,
+        "textLineAnchor1Based": 21169,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 2
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 3,
+        "perceptionPrinted": 7
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 10,
+        "flatFootedReflex": 10,
+        "fortitude": 11,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 21,
+        "damageThreshold": 11
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 900
+      },
+      "text": {
+        "sourceWarnings": [
+          "Census reports related model CLONE-DROID-031; relationship NOT an automatic system/stat inheritance permission."
+        ]
+      },
+      "exceptions": {
+        "notes": "Printed publication identity is source-only. No feat/talent grants, installed systems, weapon mounts or runtime effects certified."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewerEvidenceRefs": [
+          "GAW-CENSUS:GAW-DROID-018",
+          "Galaxy at War:printed-p215:TXT-line-21169",
+          "GAW-DROID-018:printed-p215:PDF-p216:selected-field-review"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GAW-DROID-019",
+        "printedName": "Ground Armored Tank",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "bookId": "GAW",
+        "printedPageStart": 216,
+        "printedPageEnd": 216,
+        "pdfPageStart1Based": 217,
+        "textLineAnchor1Based": 21327,
+        "publicationKind": "vehicle-format-droid"
+      },
+      "classification": {
+        "size": "Huge",
+        "statblockFormat": "vehicle",
+        "sourceStatblockFormat": "vehicle",
+        "primaryActorAuthority": "vehicle",
+        "ruleEntityNature": "vehicle-format-droid"
+      },
+      "challenge": {
+        "challengeLevel": 10
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Vehicle-primary droid brain: do not duplicate HP, defenses, speeds, weapons, crew and payload in a droid actor.",
+          "Census reports related model CLONE-DROID-034; relationship NOT an automatic system/stat inheritance permission."
+        ]
+      },
+      "exceptions": {
+        "notes": "Printed publication identity is source-only. No feat/talent grants, installed systems, weapon mounts or runtime effects certified."
+      },
+      "fieldStates": {
+        "/classification/publishedDegree": "not-stated",
+        "/pcConstruction/heroEligibility": "not-applicable"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "GAW-DROID-019-VEHICLE-OWNERSHIP",
+            "statement": "The Ground Armored Tank is a vehicle with a droid brain; attacks, durability and passenger/crew rules belong to the vehicle system.",
+            "scope": "GAW-DROID-019",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 216,
+              "pdfPage1Based": 217,
+              "sourceEntryKey": "GAW-DROID-019",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewerEvidenceRefs": [
+          "GAW-CENSUS:GAW-DROID-019",
+          "Galaxy at War:printed-p216:TXT-line-21327",
+          "GAW-DROID-019:printed-p216:PDF-p217:selected-field-review"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GAW-DROID-020",
+        "printedName": "B1-Series Battle Droid Squad",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "bookId": "GAW",
+        "printedPageStart": 217,
+        "printedPageEnd": 217,
+        "pdfPageStart1Based": 218,
+        "textLineAnchor1Based": 21399,
+        "publicationKind": "other"
+      },
+      "classification": {
+        "size": "Large",
+        "publishedDegree": 4,
+        "statblockFormat": "squad",
+        "sourceStatblockFormat": "droid-squad",
+        "primaryActorAuthority": "squad-aggregation",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 3
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Battle-droid squad is an aggregate of individual B1 droids; never treat Large squad size/HP as a chassis.",
+          "Census reports related model CLONE-DROID-014; relationship NOT an automatic system/stat inheritance permission.",
+          "Read-only census claims an alternate squad statblock on p220, but the rendered printed p220 contains other NPCs. No second presentation assigned. Source record at p217 remains valid."
+        ]
+      },
+      "exceptions": {
+        "notes": "Printed publication identity is source-only. No feat/talent grants, installed systems, weapon mounts or runtime effects certified."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "not-applicable"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "GAW-DROID-020-SQUAD-AGGREGATE",
+            "statement": "The printed squad consists of three B1 droids. Squad HP, damage, area attacks and size are aggregation rules, not individual chassis grants.",
+            "scope": "GAW-DROID-020",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 217,
+              "pdfPage1Based": 218,
+              "sourceEntryKey": "GAW-DROID-020",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewerEvidenceRefs": [
+          "GAW-CENSUS:GAW-DROID-020",
+          "Galaxy at War:printed-p217:TXT-line-21399",
+          "GAW-DROID-020:printed-p217:PDF-p218:selected-field-review"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GAW-DROID-021",
+        "printedName": "Battle Droid Assassin",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "bookId": "GAW",
+        "printedPageStart": 218,
+        "printedPageEnd": 218,
+        "pdfPageStart1Based": 219,
+        "textLineAnchor1Based": 21609,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 4
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 4,
+        "perceptionPrinted": 10
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 15,
+        "flatFootedReflex": 14,
+        "fortitude": 16,
+        "will": 13
+      },
+      "durability": {
+        "hitPoints": 24,
+        "damageThreshold": 16
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 6460
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Printed publication identity is source-only. No feat/talent grants, installed systems, weapon mounts or runtime effects certified."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "GAW-DROID-021-ASSASSIN-VARIANT",
+            "statement": "The Battle Droid Assassin is a distinct B1-derived adventure configuration with its own feat and attack choices.",
+            "scope": "GAW-DROID-021",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 218,
+              "pdfPage1Based": 219,
+              "sourceEntryKey": "GAW-DROID-021",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewerEvidenceRefs": [
+          "GAW-CENSUS:GAW-DROID-021",
+          "Galaxy at War:printed-p218:TXT-line-21609",
+          "GAW-DROID-021:printed-p218:PDF-p219:selected-field-review"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GAW-DROID-022",
+        "printedName": "LR-57 Combat Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "bookId": "GAW",
+        "printedPageStart": 219,
+        "printedPageEnd": 219,
+        "pdfPageStart1Based": 220,
+        "textLineAnchor1Based": 21681,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Large",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 3
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 5,
+        "perceptionPrinted": 18
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 16,
+        "flatFootedReflex": 15,
+        "fortitude": 17,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 33,
+        "damageThreshold": 22
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 16000
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Printed publication identity is source-only. No feat/talent grants, installed systems, weapon mounts or runtime effects certified."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "GAW-DROID-022-STANDBY",
+            "statement": "The LR-57 has model-specific passive standby, command activation and target-acquisition constraints.",
+            "scope": "GAW-DROID-022",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 219,
+              "pdfPage1Based": 220,
+              "sourceEntryKey": "GAW-DROID-022",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewerEvidenceRefs": [
+          "GAW-CENSUS:GAW-DROID-022",
+          "Galaxy at War:printed-p219:TXT-line-21681",
+          "GAW-DROID-022:printed-p219:PDF-p220:selected-field-review"
+        ]
+      }
+    }
+  ]
+}

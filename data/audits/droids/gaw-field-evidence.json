@@ -1,0 +1,1867 @@
+{
+  "schema": "swse.droid.gaw.source-evidence/0.1",
+  "book": "Galaxy at War",
+  "sourceTxt": "Galaxy At War_djvu.txt",
+  "sourceTxtSha256": "db3b4d75db7530e1c1a894f0f0fafee68f0e8f620787d16314f4170c7fa87391",
+  "sourcePdf": "SW_Saga_Galaxy_at_War.pdf",
+  "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+  "records": [
+    {
+      "sourceEntryKey": "GAW-DROID-001",
+      "printedName": "A-Series Medical Droid",
+      "printedPage": 51,
+      "pdfPage1Based": 52,
+      "txtAnchorLine1Based": 4938,
+      "txtWindowEnd1Based": 5041,
+      "txtWindowSha256": "93e19aef5af718d15d3d4f6760162a5ef4552ff4590757973185410de290500f",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +5; Senses Perception +7"
+        ],
+        "Languages": [
+          "Languages Basic, Binary, 2 unassigned"
+        ],
+        "Defenses": [
+          "Defenses Ref 13 (flat-footed 13), Fort 10, Will 15"
+        ],
+        "hp": [
+          "hp 18; Threshold 10"
+        ],
+        "Speed": [
+          "Speed 4 squares (walking)"
+        ],
+        "Melee": [
+          "Melee unarmed —1 (1d2—1)"
+        ],
+        "Base Atk": [
+          "Base Atk +0; Grp —5"
+        ],
+        "Abilities": [
+          "Abilities Str 8, Dex 10, Con —, Int 14, Wis 15, Cha 12"
+        ],
+        "Talents": [
+          "Talents Medical Droid"
+        ],
+        "Feats": [
+          "Feats Cybernetic Surgery’, Skill Focus (Knowledge [life sciences})*,"
+        ],
+        "Skills": [
+          "Skills Initiative +5, Knowledge (galactic lore) +7, Knowledge (life"
+        ],
+        "Systems": [
+          "Systems walking locomotion, heuristic processor, 2 hand appendages,"
+        ],
+        "Possessions": [
+          "Possessions medical kit, medpac x5, surgery kit"
+        ],
+        "Availability": [
+          "Availability Licensed; Cost 9,740 credits"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 51,
+        "pdfPage1Based": 52,
+        "sourceImage": "work/gaw_pdf_review/printed_p51.png",
+        "fieldValues": {
+          "/identity/printedName": "A-Series Medical Droid",
+          "/publication/printedPageStart": 51,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 1,
+          "/abilities/initiativePrinted": 5,
+          "/abilities/perceptionPrinted": 7,
+          "/defenses/reflex": 13,
+          "/defenses/flatFootedReflex": 13,
+          "/defenses/fortitude": 10,
+          "/defenses/will": 15,
+          "/durability/hitPoints": 18,
+          "/durability/damageThreshold": 10,
+          "/economics/newCredits": 9740,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 14,
+        "actorAuthority": "droid",
+        "limitations": "Only listed pointer fields visually checked. Vehicle/squad numbers deliberately kept in non-actor evidence. Narrative, feat/talent and runtime unreviewed."
+      },
+      "censusHeroStatus": "allowed",
+      "censusRelatedModelSourceKey": null,
+      "warnings": [
+        "OCR may interleave neighboring columns; never promote its numbers or hero statements without printed-PDF comparison."
+      ]
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-002",
+      "printedName": "KDY-4 Tech Droid",
+      "printedPage": 52,
+      "pdfPage1Based": 53,
+      "txtAnchorLine1Based": 5042,
+      "txtWindowEnd1Based": 5049,
+      "txtWindowSha256": "ca8c226385b5a25eb9d242d2918a5b5f13284fd2d6c6f9873634921a90e0a23b",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +1; Senses Perception +1"
+        ],
+        "Languages": [
+          "Languages Basic, Binary, 2 unassigned"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 52,
+        "pdfPage1Based": 53,
+        "sourceImage": "work/gaw_pdf_review/printed_p52.png",
+        "fieldValues": {
+          "/identity/printedName": "KDY-4 Tech Droid",
+          "/publication/printedPageStart": 52,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 1,
+          "/abilities/initiativePrinted": 1,
+          "/abilities/perceptionPrinted": 1,
+          "/defenses/reflex": 10,
+          "/defenses/flatFootedReflex": 10,
+          "/defenses/fortitude": 13,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 4,
+          "/durability/damageThreshold": 13,
+          "/economics/newCredits": 4400,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 14,
+        "actorAuthority": "droid",
+        "limitations": "Only listed pointer fields visually checked. Vehicle/squad numbers deliberately kept in non-actor evidence. Narrative, feat/talent and runtime unreviewed."
+      },
+      "censusHeroStatus": "allowed",
+      "censusRelatedModelSourceKey": null,
+      "warnings": [
+        "OCR may interleave neighboring columns; never promote its numbers or hero statements without printed-PDF comparison."
+      ]
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-003",
+      "printedName": "Chiba-DR10 Protocol Droid",
+      "printedPage": 52,
+      "pdfPage1Based": 53,
+      "txtAnchorLine1Based": 5050,
+      "txtWindowEnd1Based": 5172,
+      "txtWindowSha256": "c47e7e019c4bb3f7a06e336446c167a42e61ad3e5719c23b7ab2e6f1450541c6",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +4; Senses Perception +3"
+        ],
+        "Languages": [
+          "Languages Basic, Binary, 5 unassigned"
+        ],
+        "Defenses": [
+          "Defenses Ref 10 (flat-footed 10), Fort 13, Will 10",
+          "Defenses Ref 14 (flat-footed 11), Fort 9, Will 12"
+        ],
+        "hp": [
+          "hp 4; Threshold 13 hp 7; Threshold 9"
+        ],
+        "Speed": [
+          "Speed 6 squares (walking) Speed 6 squares (hovering)"
+        ],
+        "Melee": [
+          "Melee unarmed +4 (1d3+3)",
+          "Melee unarmed +1 (143-1)"
+        ],
+        "Ranged": [
+          "Ranged blaster pistol +5 (346)"
+        ],
+        "Base Atk": [
+          "Base Atk +1; Grp +1",
+          "Base Atk +2; Grp +0"
+        ],
+        "Abilities": [
+          "Abilities Str 16, Dex 10, Con —, Int 15, Wis 10, Cha 10",
+          "Abilities Str 8, Dex 16, Con —, Int 14, Wis 14, Cha 15"
+        ],
+        "Feats": [
+          "Feats Skill Focus (Knowledge [technology], Mechanics, Use Computer)",
+          "Feats Linguist, Skill Focus (Persuasion), Skill Training (Deception),"
+        ],
+        "Skills": [
+          "Skills Knowledge (technology) +13, Mechanics +13, Perception +1,",
+          "Skills Deception +7, Knowledge (bureaucracy) +7, Knowledge"
+        ],
+        "Systems": [
+          "Systems walking locomotion (extra leg), heuristic processor, 2 hand",
+          "Systems hovering locomotion, basic processor, translator unit (DC 5),"
+        ],
+        "Possessions": [
+          "Possessions blaster pistol (concealed)"
+        ],
+        "Availability": [
+          "Availability Licensed; Cost 4,400 credits",
+          "Availability Restricted; Cost 9,500 credits"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 52,
+        "pdfPage1Based": 53,
+        "sourceImage": "work/gaw_pdf_review/printed_p52.png",
+        "fieldValues": {
+          "/identity/printedName": "Chiba-DR10 Protocol Droid",
+          "/publication/printedPageStart": 52,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 1,
+          "/abilities/initiativePrinted": 4,
+          "/abilities/perceptionPrinted": 3,
+          "/defenses/reflex": 14,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 7,
+          "/durability/damageThreshold": 9,
+          "/economics/newCredits": 9500,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 14,
+        "actorAuthority": "droid",
+        "limitations": "Only listed pointer fields visually checked. Vehicle/squad numbers deliberately kept in non-actor evidence. Narrative, feat/talent and runtime unreviewed."
+      },
+      "censusHeroStatus": "allowed",
+      "censusRelatedModelSourceKey": null,
+      "warnings": [
+        "OCR may interleave neighboring columns; never promote its numbers or hero statements without printed-PDF comparison."
+      ]
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-004",
+      "printedName": "Air Assault Super Battle Droid",
+      "printedPage": 53,
+      "pdfPage1Based": 54,
+      "txtAnchorLine1Based": 5173,
+      "txtWindowEnd1Based": 5249,
+      "txtWindowSha256": "3aad90c15aca0134bc341c5209180378531bcba877bc15a872e901120fb8fb67",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +6; Senses Perception +4"
+        ],
+        "Languages": [
+          "Languages Basic, Binary"
+        ],
+        "Defenses": [
+          "Defenses Ref 21 (flat-footed 19), Fort 15, Will 12"
+        ],
+        "hp": [
+          "hp 26; Threshold 15"
+        ],
+        "Speed": [
+          "Speed 6 squares (walking), 6 squares (flying, jet pack)"
+        ],
+        "Melee": [
+          "Melee unarmed +7 (143+2)"
+        ],
+        "Ranged": [
+          "Ranged wrist blasters +8 (3d8+1) or",
+          "Ranged wrist blasters +6 (4d8+1) with Rapid Shot"
+        ],
+        "Base Atk": [
+          "Base Atk +6; Grp +8"
+        ],
+        "Abilities": [
+          "Abilities Str 13, Dex 15, Con —, Int 10, Wis 10, Cha 7"
+        ],
+        "Talents": [
+          "Talents Penetrating Attack (rifles)"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency (light, medium), Charging Fire, Dual Weapon"
+        ],
+        "Skills": [
+          "Skills Perception +4, Pilot +11"
+        ],
+        "Systems": [
+          "Systems walking locomotion, remote receiver, backup processor,"
+        ],
+        "Possessions": [
+          "Possessions wrist blasters (as blaster rifle) x2, integrated jet pack"
+        ],
+        "Availability": [
+          "Availability Military; Cost 16,225 credits"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 53,
+        "pdfPage1Based": 54,
+        "sourceImage": "work/gaw_pdf_review/printed_p53.png",
+        "fieldValues": {
+          "/identity/printedName": "Air Assault Super Battle Droid",
+          "/publication/printedPageStart": 53,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 4,
+          "/abilities/initiativePrinted": 6,
+          "/abilities/perceptionPrinted": 4,
+          "/defenses/reflex": 21,
+          "/defenses/flatFootedReflex": 19,
+          "/defenses/fortitude": 15,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 26,
+          "/durability/damageThreshold": 15,
+          "/economics/newCredits": 16225,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 14,
+        "actorAuthority": "droid",
+        "limitations": "Only listed pointer fields visually checked. Vehicle/squad numbers deliberately kept in non-actor evidence. Narrative, feat/talent and runtime unreviewed."
+      },
+      "censusHeroStatus": "prohibited",
+      "censusRelatedModelSourceKey": "CORE-DROID-005",
+      "warnings": [
+        "OCR may interleave neighboring columns; never promote its numbers or hero statements without printed-PDF comparison."
+      ]
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-005",
+      "printedName": "Eradicator-Series Battle Droid",
+      "printedPage": 53,
+      "pdfPage1Based": 54,
+      "txtAnchorLine1Based": 5250,
+      "txtWindowEnd1Based": 5317,
+      "txtWindowSha256": "fc66d4691c92dd193cf1a0da5070afd9177e503289d4d29f7e66c91bd94bc9a1",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +6; Senses Perception +9"
+        ],
+        "Languages": [
+          "Languages Basic (cannot speak), Binary"
+        ],
+        "Defenses": [
+          "Defenses Ref 16 (flat-footed 14), Fort 14, Will 10"
+        ],
+        "hp": [
+          "hp 29; SR 5; Threshold 19"
+        ],
+        "Speed": [
+          "Speed 8 squares (walking)"
+        ],
+        "Melee": [
+          "Melee unarmed +10 (1d6+4)"
+        ],
+        "Ranged": [
+          "Ranged light repeating blaster +9 (348) or",
+          "Ranged ion rifle +9 (3d8 ion)"
+        ],
+        "Base Atk": [
+          "Base Atk +6; Grp +15"
+        ],
+        "Abilities": [
+          "Abilities Str 18, Dex 15, Con —, Int 9, Wis 10, Cha 6"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency (light), Dual Weapon Mastery |, Dual Weapon"
+        ],
+        "Skills": [
+          "Skills Perception +9"
+        ],
+        "Systems": [
+          "Systems walking locomotion, basic processor, 2 claw appendages"
+        ],
+        "Possessions": [
+          "Possessions 2 light repeating blasters, 2 ion rifles"
+        ],
+        "Availability": [
+          "Availability Military; Cost 21,500 credits"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 53,
+        "pdfPage1Based": 54,
+        "sourceImage": "work/gaw_pdf_review/printed_p53.png",
+        "fieldValues": {
+          "/identity/printedName": "Eradicator-Series Battle Droid",
+          "/publication/printedPageStart": 53,
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 2,
+          "/abilities/initiativePrinted": 6,
+          "/abilities/perceptionPrinted": 9,
+          "/defenses/reflex": 16,
+          "/defenses/flatFootedReflex": 14,
+          "/defenses/fortitude": 14,
+          "/defenses/will": 10,
+          "/defenses/shieldRating": 5,
+          "/durability/hitPoints": 29,
+          "/durability/damageThreshold": 19,
+          "/economics/newCredits": 21500,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 15,
+        "actorAuthority": "droid",
+        "limitations": "Only listed pointer fields visually checked. Vehicle/squad numbers deliberately kept in non-actor evidence. Narrative, feat/talent and runtime unreviewed."
+      },
+      "censusHeroStatus": "prohibited",
+      "censusRelatedModelSourceKey": null,
+      "warnings": [
+        "OCR may interleave neighboring columns; never promote its numbers or hero statements without printed-PDF comparison."
+      ]
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-006",
+      "printedName": "Purge Trooper",
+      "printedPage": 54,
+      "pdfPage1Based": 55,
+      "txtAnchorLine1Based": 5318,
+      "txtWindowEnd1Based": 5393,
+      "txtWindowSha256": "be67883a39ca87f04bc069cb99ed41c0060b0e607c35a656cfff282fe295d350",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +13; Senses low-light vision; Perception +9"
+        ],
+        "Languages": [
+          "Languages Basic, Binary"
+        ],
+        "Defenses": [
+          "Defenses Ref 20 (flat-footed 18), Fort 26, Will 17"
+        ],
+        "hp": [
+          "hp 78; DR 10°; Threshold 31"
+        ],
+        "Speed": [
+          "Speed 8 squares (walking)"
+        ],
+        "Melee": [
+          "Melee purge blade +19 (2410+14/x3) or",
+          "Melee purge blade +17 (2d10+14/x3) with Staggering Attack —2 or",
+          "Melee purge blade +14 (2d10+14/x3) with Staggering Attack —5"
+        ],
+        "Ranged": [
+          "Ranged missile launcher +13 (6d6+3, 2-square splash)"
+        ],
+        "Base Atk": [
+          "Base Atk +10; Grp +28"
+        ],
+        "Talents": [
+          "Talents Indomitable, Melee Smash, Weapon Specialization (purge blade)"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency (light, medium), Bantha Rush, Battering Attack,"
+        ],
+        "Skills": [
+          "Skills Initiative +13, Perception +9"
+        ],
+        "Systems": [
+          "Systems walking locomotion, basic processor, 2 hand appendages,"
+        ],
+        "Possessions": [
+          "Possessions purge blade (as vibro-ax), missile launcher"
+        ],
+        "Availability": [
+          "Availability Military; Cost 31,900 credits"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 54,
+        "pdfPage1Based": 55,
+        "sourceImage": "work/gaw_pdf_review/printed_p54.png",
+        "fieldValues": {
+          "/identity/printedName": "Purge Trooper",
+          "/publication/printedPageStart": 54,
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 8,
+          "/abilities/initiativePrinted": 13,
+          "/abilities/perceptionPrinted": 9,
+          "/defenses/reflex": 20,
+          "/defenses/flatFootedReflex": 18,
+          "/defenses/fortitude": 26,
+          "/defenses/will": 17,
+          "/defenses/damageReduction": 10,
+          "/durability/hitPoints": 78,
+          "/durability/damageThreshold": 31,
+          "/economics/newCredits": 31900,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 15,
+        "actorAuthority": "droid",
+        "limitations": "Only listed pointer fields visually checked. Vehicle/squad numbers deliberately kept in non-actor evidence. Narrative, feat/talent and runtime unreviewed."
+      },
+      "censusHeroStatus": "prohibited",
+      "censusRelatedModelSourceKey": null,
+      "warnings": [
+        "OCR may interleave neighboring columns; never promote its numbers or hero statements without printed-PDF comparison."
+      ]
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-007",
+      "printedName": "Sniper Droideka",
+      "printedPage": 55,
+      "pdfPage1Based": 56,
+      "txtAnchorLine1Based": 5394,
+      "txtWindowEnd1Based": 5403,
+      "txtWindowSha256": "5d055b8baedbaf3a3fd8b6042135289797657845e3bc92cc9da7778ea4f07974",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +9; Senses low-light vision; Perception +21"
+        ],
+        "Languages": [
+          "Languages Basic, Binary"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 55,
+        "pdfPage1Based": 56,
+        "sourceImage": "work/gaw_pdf_review/printed_p55.png",
+        "fieldValues": {
+          "/identity/printedName": "Sniper Droideka",
+          "/publication/printedPageStart": 55,
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 7,
+          "/abilities/initiativePrinted": 9,
+          "/abilities/perceptionPrinted": 21,
+          "/defenses/reflex": 19,
+          "/defenses/flatFootedReflex": 16,
+          "/defenses/fortitude": 17,
+          "/defenses/will": 17,
+          "/defenses/shieldRating": 20,
+          "/durability/hitPoints": 41,
+          "/durability/damageThreshold": 22,
+          "/economics/newCredits": 30565,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 15,
+        "actorAuthority": "droid",
+        "limitations": "Only listed pointer fields visually checked. Vehicle/squad numbers deliberately kept in non-actor evidence. Narrative, feat/talent and runtime unreviewed."
+      },
+      "censusHeroStatus": "prohibited",
+      "censusRelatedModelSourceKey": "CORE-DROID-006",
+      "warnings": [
+        "OCR may interleave neighboring columns; never promote its numbers or hero statements without printed-PDF comparison."
+      ]
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-008",
+      "printedName": "Tactical Droid",
+      "printedPage": 55,
+      "pdfPage1Based": 56,
+      "txtAnchorLine1Based": 5404,
+      "txtWindowEnd1Based": 5537,
+      "txtWindowSha256": "649e82d7cf99a8f60390d817e8ef2d8abde1080ce4fec75b4dc5e7ba9acdd7ca",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +6; Senses Perception +7"
+        ],
+        "Languages": [
+          "Languages Basic, Binary, 2 others"
+        ],
+        "Defenses": [
+          "Defenses Ref 19 (flat-footed 16), Fort 17, Will 17",
+          "Defenses Ref 18 (flat-footed 17), Fort 13, Will 13"
+        ],
+        "hp": [
+          "hp 41; SR 20; Threshold 22",
+          "hp 30; Threshold 13"
+        ],
+        "Speed": [
+          "Speed 2 squares (walking), 10 squares (wheeled)"
+        ],
+        "Melee": [
+          "Melee unarmed +11 (1d4+4)",
+          "Melee unarmed +1 (143)"
+        ],
+        "Ranged": [
+          "Ranged blaster rifle +12 (348+2) or",
+          "Ranged blaster rifle +13 (4d8+2) when aiming or",
+          "Ranged blaster rifle +10 (4d8+2) with Rapid Shot"
+        ],
+        "Base Atk": [
+          "Base Atk +9; Grp +17",
+          "Base Atk +1; Grp +2"
+        ],
+        "Abilities": [
+          "Abilities Str 15, Dex 16, Con —, Int 8, Wis 16, Cha 7",
+          "Abilities Str 10, Dex 12, Con —, Int 14, Wis 14, Cha 12"
+        ],
+        "Talents": [
+          "Talents Acute Senses, Keen Shot",
+          "Talents Battle Analysis"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency (light), Careful Shot, Deadeye, Far Shot,",
+          "Feats Armor Proficiency (light, medium), Vehicular Combat, Weapon"
+        ],
+        "Skills": [
+          "Skills Perception +21 (can reroll), Stealth +14",
+          "Skills Initiative +6, Knowledge (tactics) +7; Perception +7, Pilot +6,"
+        ],
+        "Systems": [
+          "Systems walking locomotion, wheeled locomotion (exclusive), remote",
+          "systems to cut off enemy access to their guarded territory"
+        ],
+        "Possessions": [
+          "Possessions heavy blaster rifle",
+          "Possessions blaster carbine, electrobinoculars"
+        ],
+        "Availability": [
+          "Availability Military; Cost 30,565 credits",
+          "Availability Military; Cost 14,005 credits"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 55,
+        "pdfPage1Based": 56,
+        "sourceImage": "work/gaw_pdf_review/printed_p55.png",
+        "fieldValues": {
+          "/identity/printedName": "Tactical Droid",
+          "/publication/printedPageStart": 55,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 1,
+          "/abilities/initiativePrinted": 6,
+          "/abilities/perceptionPrinted": 7,
+          "/defenses/reflex": 18,
+          "/defenses/flatFootedReflex": 17,
+          "/defenses/fortitude": 13,
+          "/defenses/will": 13,
+          "/durability/hitPoints": 30,
+          "/durability/damageThreshold": 13,
+          "/economics/newCredits": 14005,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 14,
+        "actorAuthority": "droid",
+        "limitations": "Only listed pointer fields visually checked. Vehicle/squad numbers deliberately kept in non-actor evidence. Narrative, feat/talent and runtime unreviewed."
+      },
+      "censusHeroStatus": "allowed",
+      "censusRelatedModelSourceKey": null,
+      "warnings": [
+        "OCR may interleave neighboring columns; never promote its numbers or hero statements without printed-PDF comparison."
+      ],
+      "samePublicationPresentations": [
+        {
+          "printedPage": 213,
+          "pdfPage1Based": 214,
+          "status": "SECOND_PRESENTATION_NOT_NEW_IDENTITY"
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-009",
+      "printedName": "Vigilant 2X Picket Droid",
+      "printedPage": 56,
+      "pdfPage1Based": 57,
+      "txtAnchorLine1Based": 5538,
+      "txtWindowEnd1Based": 5575,
+      "txtWindowSha256": "aeb7569f6cd6a5de8c6ad3bb29941c2989bc025e04a51ca016c7661f1771647e",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +11; Senses darkvision; Perception +19"
+        ],
+        "Languages": [
+          "Languages Basic, Binary"
+        ],
+        "Defenses": [
+          "Defenses Ref 20 (flat-footed 18), Fort 11, Will 13"
+        ],
+        "hp": [
+          "hp 22; Threshold 11"
+        ],
+        "Speed": [
+          "Speed 6 squares (tracked)"
+        ],
+        "Melee": [
+          "Melee unarmed +7 (1d4+1)"
+        ],
+        "Ranged": [
+          "Ranged heavy repeating blaster +8 (3410) or",
+          "Ranged heavy repeating blaster +3 (5d10) with Burst Fire",
+          "Ranged grenade launcher +8 (4d6, 2-square burst)"
+        ],
+        "Base Atk": [
+          "Base Atk +6; Grp +8"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 56,
+        "pdfPage1Based": 57,
+        "sourceImage": "work/gaw_pdf_review/printed_p56.png",
+        "fieldValues": {
+          "/identity/printedName": "Vigilant 2X Picket Droid",
+          "/publication/printedPageStart": 56,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 3,
+          "/abilities/initiativePrinted": 11,
+          "/abilities/perceptionPrinted": 19,
+          "/defenses/reflex": 20,
+          "/defenses/flatFootedReflex": 18,
+          "/defenses/fortitude": 11,
+          "/defenses/will": 13,
+          "/durability/hitPoints": 22,
+          "/durability/damageThreshold": 11,
+          "/economics/newCredits": 32500,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 14,
+        "actorAuthority": "droid",
+        "limitations": "Only listed pointer fields visually checked. Vehicle/squad numbers deliberately kept in non-actor evidence. Narrative, feat/talent and runtime unreviewed."
+      },
+      "censusHeroStatus": "prohibited",
+      "censusRelatedModelSourceKey": null,
+      "warnings": [
+        "OCR may interleave neighboring columns; never promote its numbers or hero statements without printed-PDF comparison."
+      ]
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-010",
+      "printedName": "CLL-M2 Ordnance Lifter Droid",
+      "printedPage": 56,
+      "pdfPage1Based": 57,
+      "txtAnchorLine1Based": 5576,
+      "txtWindowEnd1Based": 5676,
+      "txtWindowSha256": "4590e89ad303be41b75ce6f3f849569a7af1e9fb1acb8ac7741b4482362f8da8",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +1; Senses Perception +6"
+        ],
+        "Languages": [
+          "Languages Basic (cannot speak), Binary"
+        ],
+        "Defenses": [
+          "Defenses Ref 18 (flat-footed 18), Fort 20, Will 10"
+        ],
+        "hp": [
+          "hp 17; Threshold 25,"
+        ],
+        "Speed": [
+          "Speed 8 squares (walking)"
+        ],
+        "Melee": [
+          "Melee unarmed +12 (1d4+10)"
+        ],
+        "Base Atk": [
+          "Base Atk +2; Grp +12"
+        ],
+        "Abilities": [
+          "Abilities Str 13, Dex 14, Con —, Int 10, Wis 16, Cha 8",
+          "Abilities Str 30, Dex 11, Con —, Int 6, Wis 10, Cha 8"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency (light, medium), Burst Fire, Point Blank Shot,",
+          "Feats Armor Proficiency (light, medium), Skill Focus (Mechanics),"
+        ],
+        "Skills": [
+          "Skills Initiative +11, Perception +19",
+          "Skills Climb +16, Mechanics +9, Perception +6"
+        ],
+        "Systems": [
+          "Systems tracked locomotion, darkvision, improved sensor package, 1 claw"
+        ],
+        "Possessions": [
+          "Possessions grenade launcher, heavy repeating blaster"
+        ],
+        "Availability": [
+          "Availability Military; Cost 32,500 credits",
+          "Availability Restricted; Cost 15,000 credits"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 56,
+        "pdfPage1Based": 57,
+        "sourceImage": "work/gaw_pdf_review/printed_p56.png",
+        "fieldValues": {
+          "/identity/printedName": "CLL-M2 Ordnance Lifter Droid",
+          "/publication/printedPageStart": 56,
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 1,
+          "/abilities/initiativePrinted": 1,
+          "/abilities/perceptionPrinted": 6,
+          "/defenses/reflex": 18,
+          "/defenses/flatFootedReflex": 18,
+          "/defenses/fortitude": 20,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 17,
+          "/durability/damageThreshold": 25,
+          "/economics/newCredits": 15000,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 14,
+        "actorAuthority": "droid",
+        "limitations": "Only listed pointer fields visually checked. Vehicle/squad numbers deliberately kept in non-actor evidence. Narrative, feat/talent and runtime unreviewed."
+      },
+      "censusHeroStatus": "prohibited",
+      "censusRelatedModelSourceKey": null,
+      "warnings": [
+        "OCR may interleave neighboring columns; never promote its numbers or hero statements without printed-PDF comparison."
+      ]
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-011",
+      "printedName": "MR-200 Series Minesweeper Droid",
+      "printedPage": 57,
+      "pdfPage1Based": 58,
+      "txtAnchorLine1Based": 5677,
+      "txtWindowEnd1Based": 5852,
+      "txtWindowSha256": "8b945bacd7c0eb2bb0b9ef36aa22f81e879523347db6044f23eae7104ffaeef8",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +1; Senses low-light vision; Perception +14",
+          "Init +4; Senses low-light vision; Perception +1",
+          "Init +5; Senses"
+        ],
+        "Languages": [
+          "Languages Basic (cannot speak), Binary"
+        ],
+        "Defenses": [
+          "Defenses Ref 14 (flat-footed 14), Fort 15, Will 12",
+          "Defenses Ref 19 (flat-footed 15), Fort 8, Will 11",
+          "Defenses Ref 17 (flat-"
+        ],
+        "hp": [
+          "hp 36; Threshold 25",
+          "hp 2; Threshold 8",
+          "hp 63; Threshold 21"
+        ],
+        "Speed": [
+          "Speed 6 squares (hovering)",
+          "Speed 8 squares (fly)",
+          "Speed 8 squares"
+        ],
+        "Melee": [
+          "Melee chain roller +5 (3d6+5)",
+          "Melee 2 claws +10 (1d6+9) and"
+        ],
+        "Base Atk": [
+          "Base Atk +2; Grp +7",
+          "Base Atk +0; Grp —11",
+          "Base Atk +4; Grp +15"
+        ],
+        "Abilities": [
+          "Abilities Str 20, Dex 10, Con —, Int 10, Wis 14, Cha 10",
+          "Abilities Str 2, Dex 18, Con 6, Int 2, Wis 13, Cha 16",
+          "Abilities Str 22, Dex 14, Con 22, Int 2, Wis 12, Cha 10"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency (light), Skill Focus (Perception),",
+          "Feats Skill Training (Deception)",
+          "Feats Bantha Rush, Skill Focus (Climb), Skill Training (Endurance)"
+        ],
+        "Skills": [
+          "Skills Mechanics +5, Perception +14 (+19 to locate explosives)",
+          "Skills Deception +8, Perception +1, Stealth +24",
+          "Skills Climb +19, Endurance +14, Perception +4"
+        ],
+        "Availability": [
+          "Availability Military; Cost 15,000 credits"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 57,
+        "pdfPage1Based": 58,
+        "sourceImage": "work/gaw_pdf_review/printed_p57.png",
+        "fieldValues": {
+          "/identity/printedName": "MR-200 Series Minesweeper Droid",
+          "/publication/printedPageStart": 57,
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 1,
+          "/abilities/initiativePrinted": 1,
+          "/abilities/perceptionPrinted": 14,
+          "/defenses/reflex": 14,
+          "/defenses/flatFootedReflex": 14,
+          "/defenses/fortitude": 15,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 36,
+          "/durability/damageThreshold": 25,
+          "/economics/newCredits": 15000,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 14,
+        "actorAuthority": "droid",
+        "limitations": "Only listed pointer fields visually checked. Vehicle/squad numbers deliberately kept in non-actor evidence. Narrative, feat/talent and runtime unreviewed."
+      },
+      "censusHeroStatus": "prohibited",
+      "censusRelatedModelSourceKey": null,
+      "warnings": [
+        "OCR may interleave neighboring columns; never promote its numbers or hero statements without printed-PDF comparison."
+      ]
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-012",
+      "printedName": "Automated Sentry Gun",
+      "printedPage": 98,
+      "pdfPage1Based": 99,
+      "txtAnchorLine1Based": 10010,
+      "txtWindowEnd1Based": 10185,
+      "txtWindowSha256": "1fa09c0f3e83f3967a9ab8be3289a994ebcc8794dc46fff09b268303d66b1686",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +8; Senses darkvision; Perception +16"
+        ],
+        "Languages": [
+          "Languages Basic, Binary"
+        ],
+        "Defenses": [
+          "Defenses Ref 15 (flat-footed 14), Fort 10, Will 13 i"
+        ],
+        "hp": [
+          "hp 13; Threshold 10"
+        ],
+        "Speed": [
+          "Speed 0 squares 1"
+        ],
+        "Ranged": [
+          "Ranged light repeating blaster +3 (348+2) with braced autofire |"
+        ],
+        "Base Atk": [
+          "Base Atk +3; Grp —5"
+        ],
+        "Abilities": [
+          "Abilities Str 4, Dex 12, Con —, Int 6, Wis 14, Cha 8"
+        ],
+        "Talents": [
+          "Talents Weapon Specialization (rifles) :"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency (light), Point Blank Shot, Skill Focus }"
+        ],
+        "Skills": [
+          "Skills Initiative +8, Perception +16"
+        ],
+        "Systems": [
+          "Systems basic processor, darkvision, improved sensor package, locked"
+        ],
+        "Possessions": [
+          "Possessions light repeating blaster, heavy power pack (150 shots)"
+        ],
+        "Availability": [
+          "Availability Military; Cost 2,500 credits (1,000 used)"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 98,
+        "pdfPage1Based": 99,
+        "sourceImage": "work/gaw_pdf_review/printed_p98.png",
+        "fieldValues": {
+          "/identity/printedName": "Automated Sentry Gun",
+          "/publication/printedPageStart": 98,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 2,
+          "/abilities/initiativePrinted": 8,
+          "/abilities/perceptionPrinted": 16,
+          "/defenses/reflex": 15,
+          "/defenses/flatFootedReflex": 14,
+          "/defenses/fortitude": 10,
+          "/defenses/will": 13,
+          "/durability/hitPoints": 13,
+          "/durability/damageThreshold": 10,
+          "/economics/newCredits": 2500,
+          "/economics/usedCredits": 1000
+        },
+        "fieldComparisonCount": 14,
+        "actorAuthority": "droid",
+        "limitations": "Only listed pointer fields visually checked. Vehicle/squad numbers deliberately kept in non-actor evidence. Narrative, feat/talent and runtime unreviewed."
+      },
+      "censusHeroStatus": "unset",
+      "censusRelatedModelSourceKey": null,
+      "warnings": [
+        "OCR may interleave neighboring columns; never promote its numbers or hero statements without printed-PDF comparison."
+      ],
+      "alternatePrintPresentation": {
+        "printedPage": 175,
+        "pdfPage1Based": 176,
+        "context": "Encounter sentry gun behind +5 cover",
+        "baseReflex": 15,
+        "baseFlatFootedReflex": 14,
+        "encounterReflex": 20,
+        "encounterFlatFootedReflex": 19,
+        "status": "PDF_VISUAL_CONTEXTUAL_NOT_GLOBAL",
+        "sourceImage": "work/gaw_pdf_review/printed_p175.png"
+      }
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-013",
+      "printedName": "Arakyd AZ-Series Battle Droid",
+      "printedPage": 181,
+      "pdfPage1Based": 182,
+      "txtAnchorLine1Based": 17777,
+      "txtWindowEnd1Based": 17952,
+      "txtWindowSha256": "87a7a834e8e2b1f5acc10599c538bfcfb0aa65fba1bfd2f48d13d8c9aaf6e21e",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +10; Senses darkvision, low light vision; Perception +12",
+          "Init +4; Senses Perception +8"
+        ],
+        "Languages": [
+          "Languages Basic (understand only), Binary",
+          "Languages Basic"
+        ],
+        "Defenses": [
+          "Defenses Ref 21 (flat-footed 19), Fort 23, Will 18",
+          "Defenses Ref 13 (flat-footed 12), Fort 11, Will 10"
+        ],
+        "hp": [
+          "hp 77; Threshold 33",
+          "hp 21; Threshold 11"
+        ],
+        "Speed": [
+          "Speed 8 squares (walking)",
+          "Speed 6 squares"
+        ],
+        "Melee": [
+          "Melee claw +11 (1d6+8)",
+          "Melee unarmed +4 (144)"
+        ],
+        "Ranged": [
+          "Ranged blaster cannon +9 (3d12+5) or",
+          "Ranged blaster cannon +9/+9 (3d12+5/3d12+5) with Double Attack",
+          "Ranged blaster rifle +5 (3d8) or"
+        ],
+        "Base Atk": [
+          "Base Atk +6; Grp +16",
+          "Base Atk +4; Grp +4"
+        ],
+        "Abilities": [
+          "Abilities Str 20, Dex 14, Con —, Int 12, Wis 14, Cha 6",
+          "Abilities Str 10, Dex 13, Con 12, Int 10, Wis 11, Cha 8"
+        ],
+        "Talents": [
+          "Talents Armored Defense, Improved Armored Defense, Weapon"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency (light, medium), Charging Fire, Double Attack",
+          "Feats Armor Proficiency (light), Point Blank Shot, Precise Shot, Skill"
+        ],
+        "Skills": [
+          "Skills Initiative +10, Jump +13, Knowledge (tactics) +9, Perception +12"
+        ],
+        "Possessions": [
+          "Possessions blaster cannon"
+        ],
+        "Availability": [
+          "Availability Military; Cost 15,630 credits (5,210 used)"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 181,
+        "pdfPage1Based": 182,
+        "sourceImage": "work/gaw_pdf_review/printed_p181.png",
+        "fieldValues": {
+          "/identity/printedName": "Arakyd AZ-Series Battle Droid",
+          "/publication/printedPageStart": 181,
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 6,
+          "/abilities/initiativePrinted": 10,
+          "/abilities/perceptionPrinted": 12,
+          "/defenses/reflex": 21,
+          "/defenses/flatFootedReflex": 19,
+          "/defenses/fortitude": 23,
+          "/defenses/will": 18,
+          "/durability/hitPoints": 77,
+          "/durability/damageThreshold": 33,
+          "/economics/newCredits": 15630,
+          "/economics/usedCredits": 5210
+        },
+        "fieldComparisonCount": 14,
+        "actorAuthority": "droid",
+        "limitations": "Only listed pointer fields visually checked. Vehicle/squad numbers deliberately kept in non-actor evidence. Narrative, feat/talent and runtime unreviewed."
+      },
+      "censusHeroStatus": "unset",
+      "censusRelatedModelSourceKey": null,
+      "warnings": [
+        "OCR may interleave neighboring columns; never promote its numbers or hero statements without printed-PDF comparison."
+      ]
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-014",
+      "printedName": "B1-Series Battle Droid",
+      "printedPage": 210,
+      "pdfPage1Based": 211,
+      "txtAnchorLine1Based": 20591,
+      "txtWindowEnd1Based": 20642,
+      "txtWindowSha256": "847a07c4fcb8244775d3dda894348e98ffda5405aefed6c9889b3bc17feda12c",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +0; Senses Perception +6"
+        ],
+        "Languages": [
+          "Languages Basic, Binary"
+        ],
+        "Defenses": [
+          "Defenses Ref 9 (flat-footed 9), Fort 11, Will 11"
+        ],
+        "hp": [
+          "hp 10; Threshold 11"
+        ],
+        "Speed": [
+          "Speed 6 squares (walking)"
+        ],
+        "Melee": [
+          "Melee unarmed +3 (1d3+1)"
+        ],
+        "Ranged": [
+          "Ranged blaster carbine +1 (348)"
+        ],
+        "Base Atk": [
+          "Base Atk +2; Grp +3"
+        ],
+        "Feats": [
+          "Feats Toughness, Weapon Proficiency (pistols, rifles, heavy weapons,"
+        ],
+        "Skills": [
+          "Skills Perception +6"
+        ],
+        "Systems": [
+          "Systems walking locomotion, remote receiver, 2 hand appendages,"
+        ],
+        "Possessions": [
+          "Possessions blaster carbine"
+        ],
+        "Availability": [
+          "Availability Military; Cost 1,800 credits"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 210,
+        "pdfPage1Based": 211,
+        "sourceImage": "work/gaw_pdf_review/printed_p210.png",
+        "fieldValues": {
+          "/identity/printedName": "B1-Series Battle Droid",
+          "/publication/printedPageStart": 210,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 1,
+          "/abilities/initiativePrinted": 0,
+          "/abilities/perceptionPrinted": 6,
+          "/defenses/reflex": 9,
+          "/defenses/flatFootedReflex": 9,
+          "/defenses/fortitude": 11,
+          "/defenses/will": 11,
+          "/durability/hitPoints": 10,
+          "/durability/damageThreshold": 11,
+          "/economics/newCredits": 1800
+        },
+        "fieldComparisonCount": 13,
+        "actorAuthority": "droid",
+        "limitations": "Only listed pointer fields visually checked. Vehicle/squad numbers deliberately kept in non-actor evidence. Narrative, feat/talent and runtime unreviewed."
+      },
+      "censusHeroStatus": "unset",
+      "censusRelatedModelSourceKey": "CORE-DROID-004",
+      "warnings": [
+        "OCR may interleave neighboring columns; never promote its numbers or hero statements without printed-PDF comparison."
+      ],
+      "samePublicationPresentations": [
+        {
+          "printedPage": 212,
+          "pdfPage1Based": 213,
+          "status": "SECOND_PRESENTATION_NOT_NEW_IDENTITY"
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-015",
+      "printedName": "B2-Series Super Battle Droid",
+      "printedPage": 210,
+      "pdfPage1Based": 211,
+      "txtAnchorLine1Based": 20643,
+      "txtWindowEnd1Based": 20688,
+      "txtWindowSha256": "5a02e34e6c69d676a0d918435a938ba617937cd74932c8ad87e2ce34d6c2511a",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +3; Senses Perception +8"
+        ],
+        "Languages": [
+          "Languages Basic, Binary"
+        ],
+        "Defenses": [
+          "Defenses Ref 12 (flat-footed 12), Fort 12, Will 10"
+        ],
+        "hp": [
+          "hp 21; Threshold 12"
+        ],
+        "Speed": [
+          "Speed 6 squares (walking)"
+        ],
+        "Melee": [
+          "Melee unarmed +6 (1d3+1)"
+        ],
+        "Ranged": [
+          "Ranged wrist blasters +4 (3d8) or",
+          "Ranged wrist blasters +2 (4d8) with Rapid Fire"
+        ],
+        "Base Atk": [
+          "Base Atk +4; Grp +6"
+        ],
+        "Abilities": [
+          "Abilities Str 14, Dex 11, Con —, Int 10, Wis 11, Cha 7"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency (light), Charging Fire, Rapid Shot, Toughness,"
+        ],
+        "Skills": [
+          "Skills Perception +8"
+        ],
+        "Systems": [
+          "Systems walking locomotion, remote receiver, backup processor,"
+        ],
+        "Possessions": [
+          "Possessions wrist blasters (as blaster rifle)"
+        ],
+        "Availability": [
+          "Availability Military; Cost 3,300 credits"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 210,
+        "pdfPage1Based": 211,
+        "sourceImage": "work/gaw_pdf_review/printed_p210.png",
+        "fieldValues": {
+          "/identity/printedName": "B2-Series Super Battle Droid",
+          "/publication/printedPageStart": 210,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 2,
+          "/abilities/initiativePrinted": 3,
+          "/abilities/perceptionPrinted": 8,
+          "/defenses/reflex": 12,
+          "/defenses/flatFootedReflex": 12,
+          "/defenses/fortitude": 12,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 21,
+          "/durability/damageThreshold": 12,
+          "/economics/newCredits": 3300
+        },
+        "fieldComparisonCount": 13,
+        "actorAuthority": "droid",
+        "limitations": "Only listed pointer fields visually checked. Vehicle/squad numbers deliberately kept in non-actor evidence. Narrative, feat/talent and runtime unreviewed."
+      },
+      "censusHeroStatus": "unset",
+      "censusRelatedModelSourceKey": "CORE-DROID-005",
+      "warnings": [
+        "OCR may interleave neighboring columns; never promote its numbers or hero statements without printed-PDF comparison."
+      ],
+      "samePublicationPresentations": [
+        {
+          "printedPage": 212,
+          "pdfPage1Based": 213,
+          "status": "SECOND_PRESENTATION_NOT_NEW_IDENTITY"
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-016",
+      "printedName": "Droideka Series Destroyer Droid",
+      "printedPage": 211,
+      "pdfPage1Based": 212,
+      "txtAnchorLine1Based": 20689,
+      "txtWindowEnd1Based": 20864,
+      "txtWindowSha256": "3d24b838c6e5249cb79929b766d54732d9547071b18539a371eaf1bdae2a80f7",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +8; Senses Perception +13",
+          "Init +0; Senses Perception +6"
+        ],
+        "Languages": [
+          "Languages Basic, Binary",
+          "Languages Basic, Binary"
+        ],
+        "Defenses": [
+          "Defenses Ref 16 (flat-footed 14), Fort 13, Will 12",
+          "Defenses Ref 9 (flat-footed 9), Fort 11, Will 11"
+        ],
+        "hp": [
+          "hp 40; SR 20; Threshold 18",
+          "hp 10; Threshold 11"
+        ],
+        "Speed": [
+          "Speed 2 squares (walking), 10 squares (wheeled)",
+          "Speed 6 squares (walking)"
+        ],
+        "Melee": [
+          "Melee unarmed +7 (1d4+3)",
+          "Melee unarmed +3 (1d3+1)"
+        ],
+        "Ranged": [
+          "Ranged laser cannon +12 (348) or",
+          "Ranged laser cannon +10 (448) with Rapid Shot or",
+          "Ranged laser cannon +7 (5d8) with Burst Fire or"
+        ],
+        "Base Atk": [
+          "Base Atk +9; Grp +17",
+          "Base Atk +2; Grp +3"
+        ],
+        "Abilities": [
+          "Abilities Str 16, Dex 15, Con —, Int 8, Wis 14, Cha 7",
+          "Abilities Str 13, Dex 9, Con —, Int 9, Wis 10, Cha 10"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency (light), Burst Fire, Dual Weapon Mastery |,",
+          "Feats Toughness, Weapon Proficiency (pistols, rifles, heavy weapons,"
+        ],
+        "Skills": [
+          "Skills Perception +13, Stealth +3"
+        ],
+        "Possessions": [
+          "Possessions 2 laser cannons (treat as blaster rifles)"
+        ],
+        "Availability": [
+          "Availability Military; Cost 21,000 credits"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 211,
+        "pdfPage1Based": 212,
+        "sourceImage": "work/gaw_pdf_review/printed_p211.png",
+        "fieldValues": {
+          "/identity/printedName": "Droideka Series Destroyer Droid",
+          "/publication/printedPageStart": 211,
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 4,
+          "/abilities/initiativePrinted": 8,
+          "/abilities/perceptionPrinted": 13,
+          "/defenses/reflex": 16,
+          "/defenses/flatFootedReflex": 14,
+          "/defenses/fortitude": 13,
+          "/defenses/will": 12,
+          "/defenses/shieldRating": 20,
+          "/durability/hitPoints": 40,
+          "/durability/damageThreshold": 18,
+          "/economics/newCredits": 21000
+        },
+        "fieldComparisonCount": 14,
+        "actorAuthority": "droid",
+        "limitations": "Only listed pointer fields visually checked. Vehicle/squad numbers deliberately kept in non-actor evidence. Narrative, feat/talent and runtime unreviewed."
+      },
+      "censusHeroStatus": "unset",
+      "censusRelatedModelSourceKey": "CORE-DROID-006",
+      "warnings": [
+        "OCR may interleave neighboring columns; never promote its numbers or hero statements without printed-PDF comparison."
+      ],
+      "samePublicationPresentations": [
+        {
+          "printedPage": 218,
+          "pdfPage1Based": 219,
+          "status": "SECOND_PRESENTATION_NOT_NEW_IDENTITY"
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-017",
+      "printedName": "Droid Commando",
+      "printedPage": 214,
+      "pdfPage1Based": 215,
+      "txtAnchorLine1Based": 21095,
+      "txtWindowEnd1Based": 21168,
+      "txtWindowSha256": "50f46db83d26734f7080a832aa7b555dfc0539ab5fcafea21112caba0329fa17",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +13; Senses low-light vision; Perception +13"
+        ],
+        "Languages": [
+          "Languages Basic, Binary"
+        ],
+        "Defenses": [
+          "Defenses Ref 19 (flat-footed 16), Fort 17, Will 18"
+        ],
+        "hp": [
+          "hp 37; Threshold 17"
+        ],
+        "Speed": [
+          "Speed 6 squares"
+        ],
+        "Melee": [
+          "Melee unarmed +8 (1d3+2)"
+        ],
+        "Ranged": [
+          "Ranged blaster rifle +12 (3d8+2)"
+        ],
+        "Base Atk": [
+          "Base Atk +8; Grp +11"
+        ],
+        "Abilities": [
+          "Abilities Str 10, Dex 16, Con —, Int 14, Wis 16, Cha 8"
+        ],
+        "Talents": [
+          "Talents Battle Analysis, Cover Fire"
+        ],
+        "Feats": [
+          "Feats Coordinated Attack, Improved Defenses, Point Blank Shot, Precise"
+        ],
+        "Skills": [
+          "Skills Initiative +13, Knowledge (tactics) +12, Perception +13, Stealth +13"
+        ],
+        "Systems": [
+          "Systems walking locomotion, 2 hand appendages, heuristic processor,"
+        ],
+        "Possessions": [
+          "Possessions blaster rifle, electrobinoculars"
+        ],
+        "Availability": [
+          "Availability Military; Cost 17,900"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 214,
+        "pdfPage1Based": 215,
+        "sourceImage": "work/gaw_pdf_review/printed_p214.png",
+        "fieldValues": {
+          "/identity/printedName": "Droid Commando",
+          "/publication/printedPageStart": 214,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 6,
+          "/abilities/initiativePrinted": 13,
+          "/abilities/perceptionPrinted": 13,
+          "/defenses/reflex": 19,
+          "/defenses/flatFootedReflex": 16,
+          "/defenses/fortitude": 17,
+          "/defenses/will": 18,
+          "/durability/hitPoints": 37,
+          "/durability/damageThreshold": 17,
+          "/economics/newCredits": 17900
+        },
+        "fieldComparisonCount": 13,
+        "actorAuthority": "droid",
+        "limitations": "Only listed pointer fields visually checked. Vehicle/squad numbers deliberately kept in non-actor evidence. Narrative, feat/talent and runtime unreviewed."
+      },
+      "censusHeroStatus": "unset",
+      "censusRelatedModelSourceKey": "CLONE-DROID-024",
+      "warnings": [
+        "OCR may interleave neighboring columns; never promote its numbers or hero statements without printed-PDF comparison."
+      ]
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-018",
+      "printedName": "OOM-Series Battle Droid",
+      "printedPage": 215,
+      "pdfPage1Based": 216,
+      "txtAnchorLine1Based": 21169,
+      "txtWindowEnd1Based": 21326,
+      "txtWindowSha256": "34684d6428f8b7baa4ea84ca097e2e2e959a2aa316b199c9dcbde43b146b769b",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +3; Senses Perception +7",
+          "Init +6; Senses Perception +5"
+        ],
+        "Languages": [
+          "Languages Basic, Binary"
+        ],
+        "Defenses": [
+          "Defenses Ref 10 (flat-footed 10), Fort 11, Will 10"
+        ],
+        "hp": [
+          "hp 21; Threshold 11"
+        ],
+        "Speed": [
+          "Speed 6 squares (walking)"
+        ],
+        "Melee": [
+          "Melee unarmed +5 (1d3+1)"
+        ],
+        "Ranged": [
+          "Ranged blaster carbine +4 (308)"
+        ],
+        "Base Atk": [
+          "Base Atk +4; Grp +5"
+        ],
+        "Abilities": [
+          "Abilities Str 12, Dex 11, Con —, Int 11, Wis 9, Cha 9"
+        ],
+        "Feats": [
+          "Feats Coordinated Attack, Toughness, Weapon Proficiency (pistols, rifles,"
+        ],
+        "Skills": [
+          "Skills Perception +7"
+        ],
+        "Systems": [
+          "Systems walking locomotion, remote receiver, 2 hand appendages,"
+        ],
+        "Possessions": [
+          "Possessions blaster carbine"
+        ],
+        "Availability": [
+          "Availability Military; Cost 900 credits"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 215,
+        "pdfPage1Based": 216,
+        "sourceImage": "work/gaw_pdf_review/printed_p215.png",
+        "fieldValues": {
+          "/identity/printedName": "OOM-Series Battle Droid",
+          "/publication/printedPageStart": 215,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 2,
+          "/abilities/initiativePrinted": 3,
+          "/abilities/perceptionPrinted": 7,
+          "/defenses/reflex": 10,
+          "/defenses/flatFootedReflex": 10,
+          "/defenses/fortitude": 11,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 21,
+          "/durability/damageThreshold": 11,
+          "/economics/newCredits": 900
+        },
+        "fieldComparisonCount": 13,
+        "actorAuthority": "droid",
+        "limitations": "Only listed pointer fields visually checked. Vehicle/squad numbers deliberately kept in non-actor evidence. Narrative, feat/talent and runtime unreviewed."
+      },
+      "censusHeroStatus": "unset",
+      "censusRelatedModelSourceKey": "CLONE-DROID-031",
+      "warnings": [
+        "OCR may interleave neighboring columns; never promote its numbers or hero statements without printed-PDF comparison."
+      ]
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-019",
+      "printedName": "Ground Armored Tank",
+      "printedPage": 216,
+      "pdfPage1Based": 217,
+      "txtAnchorLine1Based": 21327,
+      "txtWindowEnd1Based": 21398,
+      "txtWindowSha256": "38a3f6469c734f2faaece178a030974ccf81eac85b9f25980c26aad8aaa3fb16",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 17 (flat-footed 14), Fort 23; +6 armor, Vehicular Combat"
+        ],
+        "hp": [
+          "hp 175; DR 10; Threshold 33"
+        ],
+        "Speed": [
+          "Speed 8 squares (max. velocity 130 km/h)"
+        ],
+        "Ranged": [
+          "Ranged medium laser cannons +6 (see below) or",
+          "Ranged missile launchers +6 (see below)"
+        ],
+        "Base Atk": [
+          "Base Atk +2; Grp +25"
+        ],
+        "Abilities": [
+          "Abilities Str 36, Dex 17, Con —, Int 14"
+        ],
+        "Skills": [
+          "Skills Initiative +6, Perception +5, Pilot +6"
+        ],
+        "Availability": [
+          "Availability Military; Cost 17,500 (11,000 used)"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 216,
+        "pdfPage1Based": 217,
+        "sourceImage": "work/gaw_pdf_review/printed_p216.png",
+        "fieldValues": {
+          "/identity/printedName": "Ground Armored Tank",
+          "/publication/printedPageStart": 216,
+          "/classification/size": "Huge",
+          "/challenge/challengeLevel": 10
+        },
+        "fieldComparisonCount": 4,
+        "actorAuthority": "vehicle",
+        "limitations": "Only listed pointer fields visually checked. Vehicle/squad numbers deliberately kept in non-actor evidence. Narrative, feat/talent and runtime unreviewed."
+      },
+      "censusHeroStatus": "not-applicable",
+      "censusRelatedModelSourceKey": "CLONE-DROID-034",
+      "warnings": [
+        "OCR may interleave neighboring columns; never promote its numbers or hero statements without printed-PDF comparison."
+      ],
+      "nonActorPrintedStatblock": {
+        "owner": "vehicle",
+        "sourcePrintedPage": 216,
+        "selectedFields": {
+          "initiativePrinted": 6,
+          "perceptionPrinted": 5,
+          "reflex": 17,
+          "flatFootedReflex": 14,
+          "fortitude": 23,
+          "hitPoints": 175,
+          "damageThreshold": 33,
+          "damageReduction": 10,
+          "newCredits": 17500,
+          "usedCredits": 11000
+        },
+        "nonTransferableToDroidActor": true
+      }
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-020",
+      "printedName": "B1-Series Battle Droid Squad",
+      "printedPage": 217,
+      "pdfPage1Based": 218,
+      "txtAnchorLine1Based": 21399,
+      "txtWindowEnd1Based": 21574,
+      "txtWindowSha256": "059d3aa45fb8e07e532ea79b5e83879e22bcdcbb306e9950ed16a6fb8f4398f1",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +0; Senses Perception +6"
+        ],
+        "Languages": [
+          "Languages Basic"
+        ],
+        "Defenses": [
+          "Defenses Ref & (flat-footed 8), Fort 11, Will 1"
+        ],
+        "hp": [
+          "hp 20; Threshold 21"
+        ],
+        "Speed": [
+          "Speed 6 squares (walking)"
+        ],
+        "Melee": [
+          "Melee unarmed +7 (1d3+1)"
+        ],
+        "Ranged": [
+          "Ranged blaster carbine +5 (3d8, 1-square splast",
+          "ranged attacks have a splash radius, particularly t"
+        ],
+        "Base Atk": [
+          "Base Atk +2; Grp +8"
+        ],
+        "Abilities": [
+          "Abilities Str 13, Dex 9, Con —, Int 9, Wis 10, Cha 10"
+        ],
+        "Feats": [
+          "Feats Toughn"
+        ],
+        "Skills": [
+          "Skills Perception +6"
+        ],
+        "Systems": [
+          "Systems walking locomotion,"
+        ],
+        "Possessions": [
+          "Possessions blaster carbine"
+        ],
+        "Availability": [
+          "Availability Military; Cost 5,400 credit"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 217,
+        "pdfPage1Based": 218,
+        "sourceImage": "work/gaw_pdf_review/printed_p217.png",
+        "fieldValues": {
+          "/identity/printedName": "B1-Series Battle Droid Squad",
+          "/publication/printedPageStart": 217,
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 3
+        },
+        "fieldComparisonCount": 4,
+        "actorAuthority": "squad-aggregation",
+        "limitations": "Only listed pointer fields visually checked. Vehicle/squad numbers deliberately kept in non-actor evidence. Narrative, feat/talent and runtime unreviewed."
+      },
+      "censusHeroStatus": "not-applicable",
+      "censusRelatedModelSourceKey": "CLONE-DROID-014",
+      "warnings": [
+        "OCR may interleave neighboring columns; never promote its numbers or hero statements without printed-PDF comparison."
+      ],
+      "nonActorPrintedStatblock": {
+        "owner": "squad-aggregation",
+        "sourcePrintedPage": 217,
+        "selectedFields": {
+          "initiativePrinted": 0,
+          "perceptionPrinted": 6,
+          "reflex": 8,
+          "flatFootedReflex": 8,
+          "fortitude": 11,
+          "will": 10,
+          "hitPoints": 20,
+          "damageThreshold": 21,
+          "newCredits": 5400
+        },
+        "nonTransferableToDroidActor": true
+      },
+      "censusPresentationDiscrepancy": {
+        "censusAssertion": "p220 repeats the GAW B1-Series Battle Droid Squad statblock",
+        "pdfPrintedPageChecked": 220,
+        "pdfPage1Based": 221,
+        "observed": "p220 contains named organic character statblocks for Commander Zolghast and Braxus Lyn, not a B1 droid squad statblock",
+        "decision": "CENSUS_REPEAT_CLAIM_REJECTED_FOR_THIS_PAGE; GAW-DROID-020 remains a single publication identity grounded at p217",
+        "sourceImage": "work/gaw_pdf_review/printed_p220.png"
+      }
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-021",
+      "printedName": "Battle Droid Assassin",
+      "printedPage": 218,
+      "pdfPage1Based": 219,
+      "txtAnchorLine1Based": 21609,
+      "txtWindowEnd1Based": 21680,
+      "txtWindowSha256": "59e5a5e3306b5ec2e5d22f07470b8583e0d005c773d98797ead5f8d4a960f845",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +4; Senses low-light vision; Perception +10"
+        ],
+        "Languages": [
+          "Languages Basic, Binary"
+        ],
+        "Defenses": [
+          "Defenses Ref 15 (flat-footed 14), Fort 16, Will 13",
+          "Defenses Ref 16 (flat-footed 14), Fort 13, Will 12"
+        ],
+        "hp": [
+          "hp 24; Threshold 16",
+          "hp 40; SR 20; Threshold 18"
+        ],
+        "Melee": [
+          "Melee unarmed +6 (1d3+2) or",
+          "Melee unarmed +7 (1d4+3)"
+        ],
+        "Ranged": [
+          "Ranged heavy blaster rifle +6 (3d10+1, devastating 5) or",
+          "Ranged heavy blaster rifle +6 (4d10+1, devastating 5) with deadeye or",
+          "Ranged hold-out blaster pistol +6 (3d4+1) or"
+        ],
+        "Base Atk": [
+          "Base Atk +5; Grp +6"
+        ],
+        "Abilities": [
+          "Abilities Str 13, Dex 13, Con —, Int 10, Wis 10, Cha 9"
+        ],
+        "Talents": [
+          "Talents Battle Analysis, Devastating Attack (rifles)"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency (light), Deadeye, Far Shot, Point Blank Shot, ."
+        ],
+        "Skills": [
+          "Skills Perception +10"
+        ],
+        "Systems": [
+          "Systems walking locomotion, remote receiver, synchronized fire circuits,"
+        ],
+        "Possessions": [
+          "Possessions heavy blaster rifle with standard targeting scope, hold-out"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 218,
+        "pdfPage1Based": 219,
+        "sourceImage": "work/gaw_pdf_review/printed_p218.png",
+        "fieldValues": {
+          "/identity/printedName": "Battle Droid Assassin",
+          "/publication/printedPageStart": 218,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 4,
+          "/abilities/initiativePrinted": 4,
+          "/abilities/perceptionPrinted": 10,
+          "/defenses/reflex": 15,
+          "/defenses/flatFootedReflex": 14,
+          "/defenses/fortitude": 16,
+          "/defenses/will": 13,
+          "/durability/hitPoints": 24,
+          "/durability/damageThreshold": 16,
+          "/economics/newCredits": 6460
+        },
+        "fieldComparisonCount": 13,
+        "actorAuthority": "droid",
+        "limitations": "Only listed pointer fields visually checked. Vehicle/squad numbers deliberately kept in non-actor evidence. Narrative, feat/talent and runtime unreviewed."
+      },
+      "censusHeroStatus": "unset",
+      "censusRelatedModelSourceKey": null,
+      "warnings": [
+        "OCR may interleave neighboring columns; never promote its numbers or hero statements without printed-PDF comparison."
+      ]
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-022",
+      "printedName": "LR-57 Combat Droid",
+      "printedPage": 219,
+      "pdfPage1Based": 220,
+      "txtAnchorLine1Based": 21681,
+      "txtWindowEnd1Based": 21856,
+      "txtWindowSha256": "629207533c41c0620359d1eb0a216d0910e41da0c21a86010f324e5177862672",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +5; Senses low-light vision; Perception +18",
+          "Init +6; Senses Perception +5"
+        ],
+        "Languages": [
+          "Languages Binary _",
+          "Languages Basic, Bocce"
+        ],
+        "Defenses": [
+          "Defenses Ref 16 (flat-footed 15), Fort 17, Will 12; +6 armor",
+          "Defenses Ref 19 (flat-footed 16), Fort 15, Will 23"
+        ],
+        "hp": [
+          "hp 33; Threshold 22",
+          "hp 46; Threshold 20"
+        ],
+        "Speed": [
+          "Speed 8 squares",
+          "Speed 6 squares"
+        ],
+        "Melee": [
+          "Melee unarmed +6 (1d6+1)"
+        ],
+        "Ranged": [
+          "Ranged double heavy blaster rifle +7 (4410) or",
+          "Ranged double heavy blaster rifle +2 (6d10) with Burst Fire",
+          "Ranged heavy blaster pistol +8 (348+1)"
+        ],
+        "Base Atk": [
+          "Base Atk +6; Grp +18",
+          "Base Atk +6; Grp +8"
+        ],
+        "Abilities": [
+          "Abilities Str 24, Dex 12, Con —, Int 10, Wis 15, Cha 8",
+          "Abilities Str 10, Dex 14, Con 12, Int 12, Wis 12, Cha 16"
+        ],
+        "Talents": [
+          "Talents Anticipate Movement, Deployment Tactics"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency (light), Burst Fire, Skill Focus",
+          "Feats Improved Damage Threshold, Improved Defenses, Martial Arts |,"
+        ],
+        "Skills": [
+          "Skills Perception +18, Stealth +10",
+          "Skills Deception +12, Knowledge (Tactics) +10, Perception +5,"
+        ],
+        "Systems": [
+          "Systems walking locomotion, basic processor, remote receiver, 2"
+        ],
+        "Possessions": [
+          "Possessions double heavy blaster rifle, durasteel plating (+6 armor)",
+          "Possessions heavy blaster pistol, code cylinder, comlink"
+        ],
+        "Availability": [
+          "Availability Military; Cost 16,000 credits"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 219,
+        "pdfPage1Based": 220,
+        "sourceImage": "work/gaw_pdf_review/printed_p219.png",
+        "fieldValues": {
+          "/identity/printedName": "LR-57 Combat Droid",
+          "/publication/printedPageStart": 219,
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 3,
+          "/abilities/initiativePrinted": 5,
+          "/abilities/perceptionPrinted": 18,
+          "/defenses/reflex": 16,
+          "/defenses/flatFootedReflex": 15,
+          "/defenses/fortitude": 17,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 33,
+          "/durability/damageThreshold": 22,
+          "/economics/newCredits": 16000
+        },
+        "fieldComparisonCount": 13,
+        "actorAuthority": "droid",
+        "limitations": "Only listed pointer fields visually checked. Vehicle/squad numbers deliberately kept in non-actor evidence. Narrative, feat/talent and runtime unreviewed."
+      },
+      "censusHeroStatus": "unset",
+      "censusRelatedModelSourceKey": null,
+      "warnings": [
+        "OCR may interleave neighboring columns; never promote its numbers or hero statements without printed-PDF comparison."
+      ]
+    }
+  ]
+}

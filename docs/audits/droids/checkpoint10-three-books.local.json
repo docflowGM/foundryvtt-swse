@@ -1,0 +1,56 @@
+{
+  "checkpoint": "10",
+  "status": "LOCAL_SOURCE_REVIEW_COMPLETE_FOR_THREE_BOOKS_MECHANICS_UNCERTIFIED",
+  "books": {
+    "CORE": {
+      "sourceEntries": 13,
+      "selectedFieldReviews": 13,
+      "comparedFields": 263,
+      "mechanicalCertifications": 0
+    },
+    "LEGACY": {
+      "sourceEntries": 12,
+      "selectedFieldReviews": 12,
+      "comparedFields": 251,
+      "mechanicalCertifications": 0
+    },
+    "FORCE": {
+      "sourceEntries": 11,
+      "selectedFieldReviews": 11,
+      "comparedFields": 229,
+      "mechanicalCertifications": 0
+    }
+  },
+  "cumulative": {
+    "publicationClaimsTotal": 234,
+    "draftSourceEntries": 212,
+    "draftSourceCoveragePercent": 90.6,
+    "selectedFieldPdfVisuallyReviewedEntries": 212,
+    "selectedFieldPdfCoveragePercent": 90.6,
+    "independentlyMechanicalCertifiedEntries": 0,
+    "mechanicalCertificationPercent": 0.0,
+    "directPdfVisualFieldComparisons": 3375
+  },
+  "validation": {
+    "priorSixBookSemantic": "6/6 PASS",
+    "newThreeBookSemantic": "3/3 PASS",
+    "newThreeBookNegativeMutationTests": "36/36 PASS",
+    "allNineBookSemantic": "9/9 PASS",
+    "allNineBookMutationSuitesRerun": false,
+    "fullJsonSchemaValidated": false,
+    "foundryRuntimeValidated": false
+  },
+  "criticalSourceFindings": [
+    "Core Rulebook printed Droideka CL 4; earlier upstream census CL 6 is incorrect (local correction only).",
+    "Core Dwarf Spider Droid CL 3, IG-100 Series MagnaGuard CL 6, Viper Series Probe Droid CL 1 verified in print.",
+    "Core B1 droid hero prohibited; B2 explicitly allowed; stock models are not named R2-D2 or C-3PO.",
+    "Legacy LV8 does not print a degree, although under fourth-degree section.",
+    "Force Unleashed regular Junk Droid has Ref 14 (flat-footed 11), unlike its OCR neighboring Brute.",
+    "Force IT-O hero permission requires reprogramming.",
+    "Force PROXY Jedi levels/Force points do not grant droid-wide Force abilities.",
+    "Force BD-3000 25,000 new / 8,000 used credits are distinct economic claims."
+  ],
+  "githubWritesAuthorized": false,
+  "nextSourcebook": "Galaxy of Intrigue (8 claims)",
+  "otherOpenWork": "Full field/narrative review, feat/talent provenance, installed systems, mounts, hero construction, schema validation, runtime certification for all drafted claims."
+}

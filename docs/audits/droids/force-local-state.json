@@ -1,0 +1,11 @@
+{
+  "bookId": "FORCE",
+  "draftEntries": 11,
+  "selectedPdfReviewed": 11,
+  "comparisons": 229,
+  "mechanicallyCertified": 0,
+  "runtimeVerified": 0,
+  "status": "IN_PROGRESS_SOURCE_REVIEW_ONLY",
+  "githubWrites": false,
+  "publishedAuditScope": "selected-field-source-review-only"
+}

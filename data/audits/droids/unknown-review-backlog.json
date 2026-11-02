@@ -1,0 +1,78 @@
+{
+  "bookId": "UNKNOWN",
+  "mechanicallyCertified": 0,
+  "items": [
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-001",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Full narrative and source statblock field verification",
+        "Canonical feat/talent provenance and prerequisites",
+        "Installed components, separate possessions, weapon mounts and attack-group legality",
+        "Creation permission restrictions and exceptions",
+        "Official upstream JSON Schema validation",
+        "Foundry V13 execution verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-002",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Full narrative and source statblock field verification",
+        "Canonical feat/talent provenance and prerequisites",
+        "Installed components, separate possessions, weapon mounts and attack-group legality",
+        "Creation permission restrictions and exceptions",
+        "Official upstream JSON Schema validation",
+        "Foundry V13 execution verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-003",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Full narrative and source statblock field verification",
+        "Canonical feat/talent provenance and prerequisites",
+        "Installed components, separate possessions, weapon mounts and attack-group legality",
+        "Creation permission restrictions and exceptions",
+        "Official upstream JSON Schema validation",
+        "Foundry V13 execution verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-004",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Full narrative and source statblock field verification",
+        "Canonical feat/talent provenance and prerequisites",
+        "Installed components, separate possessions, weapon mounts and attack-group legality",
+        "Creation permission restrictions and exceptions",
+        "Official upstream JSON Schema validation",
+        "Foundry V13 execution verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-005",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Full narrative and source statblock field verification",
+        "Canonical feat/talent provenance and prerequisites",
+        "Installed components, separate possessions, weapon mounts and attack-group legality",
+        "Creation permission restrictions and exceptions",
+        "Official upstream JSON Schema validation",
+        "Foundry V13 execution verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-006",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Full narrative and source statblock field verification",
+        "Canonical feat/talent provenance and prerequisites",
+        "Installed components, separate possessions, weapon mounts and attack-group legality",
+        "Creation permission restrictions and exceptions",
+        "Official upstream JSON Schema validation",
+        "Foundry V13 execution verification"
+      ]
+    }
+  ]
+}

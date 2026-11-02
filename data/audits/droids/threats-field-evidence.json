@@ -1,0 +1,1467 @@
+{
+  "schema": "swse.droid.threats.source-evidence/0.1",
+  "book": "Threats of the Galaxy",
+  "sourceTxt": "Threats of the Galaxy_djvu.txt",
+  "sourceTxtSha256": "bb702c6c232a04b540553633a176d6228c05b9f5a5c0ad43c6cab0fa43a69ac6",
+  "sourcePdf": "SAGA EDITION - Threats of the Galaxy.pdf",
+  "sourcePdfSha256": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
+  "records": [
+    {
+      "sourceEntryKey": "THREATS-DROID-001",
+      "printedName": "VX Series Artillery Droid",
+      "printedPage": 134,
+      "pdfPage1Based": 135,
+      "txtAnchorLine1Based": 12933,
+      "txtWindowEnd1Based": 13040,
+      "txtWindowSha256": "155ff0cc7ff9eefa6b3d9d0a730ca742abf92087f104fb80c2016be268a8c100",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +8; Senses low-light vision; Perception +13",
+        "Languages": "Languages Binary",
+        "Defenses": [
+          "Defenses Ref 26 (flat-footed 24), Fort 26, Will 23",
+          "Defenses, Far Shot, Point Blank Shot, Precise Shot, Sniper, Triple Attack"
+        ],
+        "hp": "hp 90; Threshold 31",
+        "Speed": "Speed 6 squares (tracked)",
+        "Ranged": [
+          "Ranged missile launcher +15 (6d6+8, 2-square splash) or",
+          "Ranged fight concussion missile +15 (+5 against targets smaller than"
+        ],
+        "Base Atk": "Base Atk +12; Grp +14",
+        "Abilities": "Abilities Str 12, Dex 14, Con —, Int 10, Wis 10, Cha 8",
+        "Talents": "Talents Battle Analysis, Devastating Attack (heavy weapons), Indomitable,",
+        "Feats": "Feats Armor Proficiency (light, medium), Coordinated Attack, Double",
+        "Skills": "Skills Perception +13",
+        "Systems": "Systems tracked locomotion, 2 tool appendages, basic processor,",
+        "Possessions": "Possessions 2 missile launchers with 4 magazines, light concussion",
+        "Availability": "Availability Military; Cost 30,000"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 135,
+        "printedPage": 134,
+        "sourceImage": "work/threats_pdf_review/printed_p134.png",
+        "fieldValues": {
+          "/identity/printedName": "VX Series Artillery Droid",
+          "/publication/printedPageStart": 134,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 12,
+          "/durability/hitPoints": 90,
+          "/durability/damageThreshold": 31,
+          "/defenses/reflex": 26,
+          "/defenses/flatFootedReflex": 24,
+          "/defenses/fortitude": 26,
+          "/defenses/will": 23,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-002",
+      "printedName": "ASN-121 Assassin Droid",
+      "printedPage": 135,
+      "pdfPage1Based": 136,
+      "txtAnchorLine1Based": 13041,
+      "txtWindowEnd1Based": 13149,
+      "txtWindowSha256": "2b9ee7bf862d50aba82c4130f45003261f7b88ab2f3a9fea5ce3dc6b7bec6a89",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +12; Senses darkvision, low-light vision; Perception +17",
+        "Languages": "Languages Basic, Binary, 1 unassigned",
+        "Defenses": "Defenses Ref 26 (flat-footed 23), Fort 20, Will 21",
+        "hp": "hp 74; Threshold 25",
+        "Speed": "Speed 9 squares (flying)",
+        "Melee": "Melee claw +8 (1d3+3)",
+        "Ranged": "Ranged sniper blaster +12 (3d8 +4)",
+        "Base Atk": "Base Atk +9; Grp +7",
+        "Abilities": "Abilities Str 8, Dex 16, Con —, Int 12, Wis 14, Cha 10",
+        "Talents": "Talents Battle Analysis, Cover Fire, Demolitionist, Devastating Attack",
+        "Feats": "Feats Armor Proficiency (light, medium), Deadeye, Improved Damage",
+        "Skills": "Skills Initiative +12, Knowledge (Tactics) +10, Mechanics +10, Perception",
+        "Systems": "Systems flying locomotion, improved sensor package, darkvision, internal",
+        "Possessions": "Possessions sniper blaster (treat as heavy blaster pistol)",
+        "Availability": "Availability Military; Cost 5,730"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 136,
+        "printedPage": 135,
+        "sourceImage": "work/threats_pdf_review/printed_p135.png",
+        "fieldValues": {
+          "/identity/printedName": "ASN-121 Assassin Droid",
+          "/publication/printedPageStart": 135,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 9,
+          "/durability/hitPoints": 74,
+          "/durability/damageThreshold": 25,
+          "/defenses/reflex": 26,
+          "/defenses/flatFootedReflex": 23,
+          "/defenses/fortitude": 20,
+          "/defenses/will": 21,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-003",
+      "printedName": "R3 Series Astromech Droid",
+      "printedPage": 136,
+      "pdfPage1Based": 137,
+      "txtAnchorLine1Based": 13150,
+      "txtWindowEnd1Based": 13262,
+      "txtWindowSha256": "7dbe004e905f64b248e4fe9a5ff36707c0f613e305ab72f4ffdb0a9d434f83b2",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +4; Senses darkvision, low-light vision; Perception +3",
+        "Languages": "Languages Basic, Binary, 2 unassigned",
+        "Defenses": "Defenses Ref 14 [flat-footed 11), Fort 9, Will 10",
+        "hp": "hp 10; Threshold 9",
+        "Speed": "Speed 6 squares (wheeled), 4 squares (walking)",
+        "Melee": "Melee electroshock probe +1 (1d8 ion]",
+        "Base Atk": "Base Atk +2; Grp +0",
+        "Abilities": "Abilities Str 9, Dex 16, Con —, Int 15, Wis 10, Cha 7",
+        "Feats": "Feats Skill Focus (Mechanics), Skill Focus (Use Computer], Skill Training",
+        "Skills": "Skills Knowledge (physical sciences] +9, Mechanics +15, Perception +3,",
+        "Systems": "Systems wheeled locomotion, walking locomotion, magnetic feet,",
+        "Possessions": "Possessions astrogation buffer (storage device, 5 memory units),",
+        "Availability": "Availability Military; Cost 10,000"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 137,
+        "printedPage": 136,
+        "sourceImage": "work/threats_pdf_review/printed_p136.png",
+        "fieldValues": {
+          "/identity/printedName": "R3 Series Astromech Droid",
+          "/publication/printedPageStart": 136,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 1,
+          "/durability/hitPoints": 10,
+          "/durability/damageThreshold": 9,
+          "/defenses/reflex": 14,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 10,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-004",
+      "printedName": "R4 Series Astromech Droid",
+      "printedPage": 137,
+      "pdfPage1Based": 138,
+      "txtAnchorLine1Based": 13263,
+      "txtWindowEnd1Based": 13366,
+      "txtWindowSha256": "d18610d8a643a8ffb0ba9e707637f335faed31e0ccd1e089c9bf03afa8755041",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +3; Senses darkvision; Perception +1",
+        "Languages": "Languages Basic, Binary, 1 unassigned",
+        "Defenses": "Defenses Ref 13 (flat-footed 11), Fort 9, Will 10",
+        "hp": "hp 8; Threshold 9",
+        "Speed": "Speed 6 squares (wheeled), 4 squares (walking)",
+        "Melee": "Melee electroshock probe +0 (1d8 ion)",
+        "Base Atk": "Base Atk +1; Grp -2",
+        "Abilities": "Abilities Str 9, Dex 14, Con —, Int 13, Wis 10, Cha 10",
+        "Feats": "Feats Skill Focus (Mechanics), Skill Focus (Use Computer), Skill Training",
+        "Skills": "Skills Mechanics +14, Pilot +8, Stealth +8, Use Computer +12",
+        "Systems": "Systems wheeled locomotion, walking locomotion, heuristic processor, 6",
+        "Possessions": "Possessions circular saw, electric arc welder, electroshock probe, tool kit",
+        "Availability": "Availability Licensed; Cost 2,500"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 138,
+        "printedPage": 137,
+        "sourceImage": "work/threats_pdf_review/printed_p137.png",
+        "fieldValues": {
+          "/identity/printedName": "R4 Series Astromech Droid",
+          "/publication/printedPageStart": 137,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 1,
+          "/durability/hitPoints": 8,
+          "/durability/damageThreshold": 9,
+          "/defenses/reflex": 13,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 10,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-005",
+      "printedName": "R5 Series Astromech Droid",
+      "printedPage": 138,
+      "pdfPage1Based": 139,
+      "txtAnchorLine1Based": 13367,
+      "txtWindowEnd1Based": 13453,
+      "txtWindowSha256": "e90c3cf95eafd4244e823e962611b61884f89b8df9904bee9adec15895fd901c",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +1; Senses darkvision, low-light vision; Perception +3",
+        "Languages": "Languages Basic, Binary",
+        "Defenses": "Defenses Ref 11 (flat-footed 11), Fort 9, Will 10",
+        "hp": "hp 5; Threshold 9",
+        "Speed": "Speed 6 squares (wheeled), 4 squares (walking)",
+        "Melee": "Melee electroshock probe +0 (1d8 ion)",
+        "Base Atk": "Base Atk +1; Grp -4",
+        "Abilities": "Abilities Str 9, Dex 10, Con —, Int 10, Wis 10, Cha 7",
+        "Feats": "Feats Skill Focus (Mechanics), Skill Focus (Use Computer), Skill Training",
+        "Skills": "Skills Mechanics +13, Perception +3, Stealth +6, Use Computer +11",
+        "Systems": "Systems wheeled locomotion, walking locomotion, magnetic feet,",
+        "Possessions": "Possessions circular saw, electric arc welder, electroshock probe, fire",
+        "Availability": "Availability Licensed; Cost 1,500"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 139,
+        "printedPage": 138,
+        "sourceImage": "work/threats_pdf_review/printed_p138.png",
+        "fieldValues": {
+          "/identity/printedName": "R5 Series Astromech Droid",
+          "/publication/printedPageStart": 138,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 1,
+          "/durability/hitPoints": 5,
+          "/durability/damageThreshold": 9,
+          "/defenses/reflex": 11,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 10,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-006",
+      "printedName": "R7 Series Astromech Droid",
+      "printedPage": 138,
+      "pdfPage1Based": 139,
+      "txtAnchorLine1Based": 13454,
+      "txtWindowEnd1Based": 13534,
+      "txtWindowSha256": "061ba92e298996d8b7da6cb76fcbd5e8458e152fb9b169e5f030359209a55bb4",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +11; Senses darkvision, low-light vision; Perception +6",
+        "Languages": "Languages Basic, Binary, 3 unassigned",
+        "Defenses": "Defenses Ref 14 (flat-footed 11), Fort 9, Will 11",
+        "hp": "hp 21; Threshold 9",
+        "Speed": "Speed 6 squares (wheeled), 4 squares (walking)",
+        "Melee": "Melee electroshock probe +4 (1d8 ion)",
+        "Base Atk": "Base Atk +5; Grp +3",
+        "Abilities": "Abilities Str 9, Dex 16, Con —, Int 16, Wis 12, Cha 10",
+        "Feats": "Feats Skill Focus (Knowledge [physical sciences]), Skill Focus (Pilot), Skill",
+        "Skills": "Skills Initiative +11, Knowledge (physical sciences) +16, Mechanics +13,",
+        "Systems": "Systems wheeled locomotion, walking \\ocomotion, magnetic feet,",
+        "Possessions": "Possessions circular saw, electric arc welder, electroshock probe, fire",
+        "Availability": "Availability Military; Cost 8,000"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 139,
+        "printedPage": 138,
+        "sourceImage": "work/threats_pdf_review/printed_p138.png",
+        "fieldValues": {
+          "/identity/printedName": "R7 Series Astromech Droid",
+          "/publication/printedPageStart": 138,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 2,
+          "/durability/hitPoints": 21,
+          "/durability/damageThreshold": 9,
+          "/defenses/reflex": 14,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 11,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-007",
+      "printedName": "R2-R Series Reconnaissance Astromech Droid",
+      "printedPage": 139,
+      "pdfPage1Based": 140,
+      "txtAnchorLine1Based": 13535,
+      "txtWindowEnd1Based": 13587,
+      "txtWindowSha256": "35822ec2339deb240323cb2c1e6f650521bfe408589f2c3d51b70451c8016e4c",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +2; Senses darkvision, low-light vision; Perception +6",
+        "Languages": "Languages Binary, 2 unassigned {understand only)",
+        "Defenses": "Defenses Ref 16 [flat-footed 14], Fort 10, Will 13",
+        "hp": "hp 24; Threshold 10",
+        "Speed": "Speed 6 squares (wheeled), 4 squares (walking)",
+        "Ranged": "Ranged hold-out blaster pistol! +2 (304)",
+        "Base Atk": "Base Atk +0; Grp -3",
+        "Abilities": "Abilities Str 9, Dex 14, Con —, Int 14, Wis 12, Cha 7",
+        "Talents": "Talents Trace",
+        "Feats": "Feats Point Blank Shot, Skill Focus (Use Computer), Weapon Proficiency",
+        "Skills": "Skills Deception +3, Gather Information +12, Mechanics +7, Perception",
+        "Systems": "Systems wheeled locomotion, walking locomotion, magnetic feet,",
+        "Possessions": "Possessions hold-out blaster pistol, astrogation buffer (storage device, 10"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 140,
+        "printedPage": 139,
+        "sourceImage": "work/threats_pdf_review/printed_p139.png",
+        "fieldValues": {
+          "/identity/printedName": "R2-R Series Reconnaissance Astromech Droid",
+          "/publication/printedPageStart": 139,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 1,
+          "/durability/hitPoints": 24,
+          "/durability/damageThreshold": 10,
+          "/defenses/reflex": 16,
+          "/defenses/flatFootedReflex": 14,
+          "/defenses/fortitude": 10,
+          "/defenses/will": 13
+        },
+        "fieldComparisonCount": 10,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-008",
+      "printedName": "B3 Series Ultra Battle Droid",
+      "printedPage": 140,
+      "pdfPage1Based": 141,
+      "txtAnchorLine1Based": 13588,
+      "txtWindowEnd1Based": 13685,
+      "txtWindowSha256": "436e002c1f2d884cd8f0db15e7a36c6c93c88a8681bd462eb76fe160c379520b",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +4; Senses low-light vision; Perception +12",
+        "Languages": "Languages Basic, Binary",
+        "Defenses": "Defenses Ref 17 [flat-footed 16), Fort 17, Will 11",
+        "hp": "hp 42; Threshold 27",
+        "Speed": "Speed 8 squares (walking)",
+        "Melee": "Melee unarmed +13 (1d4+8)",
+        "Ranged": [
+          "Ranged 2 heavy repeating blasters +7 each (3d10+2) or",
+          "Ranged 2 heavy repeating blasters +2 each (5d10+2) with Burst Fire or",
+          "Ranged flamethrower +7 (3d6+1, 6-square cone) or"
+        ],
+        "Base Atk": "Base Atk +6; Grp +18",
+        "Abilities": "Abilities Str 24, Dex 13, Con —, Int 10, Wis 12, Cha 8",
+        "Feats": "Feats Armor Proficiency (light, medium}, Burst Fire, Dual Weapon Mastery",
+        "Skills": "Skills Perception +12",
+        "Systems": "Systems walking locomotion, remote receiver, backup processor,",
+        "Possessions": "Possessions 2 heavy repeating blasters, flamethrower with 2 chemical",
+        "Availability": "Availability Military; Cost 13,400"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 141,
+        "printedPage": 140,
+        "sourceImage": "work/threats_pdf_review/printed_p140.png",
+        "fieldValues": {
+          "/identity/printedName": "B3 Series Ultra Battle Droid",
+          "/publication/printedPageStart": 140,
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 3,
+          "/durability/hitPoints": 42,
+          "/durability/damageThreshold": 27,
+          "/defenses/reflex": 17,
+          "/defenses/flatFootedReflex": 16,
+          "/defenses/fortitude": 17,
+          "/defenses/will": 11,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-009",
+      "printedName": "B3-A Series Ultra Battle Droid",
+      "printedPage": 141,
+      "pdfPage1Based": 142,
+      "txtAnchorLine1Based": 13686,
+      "txtWindowEnd1Based": 13772,
+      "txtWindowSha256": "602bf6b85978b25fa1cfaa1f5d9f5527ad58528f3feb21b6a58c4307974f63f9",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +8; Senses low-light vision; Perception +10",
+        "Languages": "Languages Basic, Binary, 1 unassigned",
+        "Defenses": "Defenses Ref 19 [flat-footed 18), Fort 24, Will 16",
+        "hp": "hp 72; Threshold 34",
+        "Speed": "Speed 8 squares (walking)",
+        "Melee": "Melee unarmed +13 [1d4+9)",
+        "Ranged": [
+          "Ranged 2 heavy repeating blasters +7 each (3d10+2) or",
+          "Ranged 2 heavy repeating blasters +2 each (5d10+2) with Burst Fire or",
+          "Ranged flamethrower +7 (3d6+2, 6-square cone} or"
+        ],
+        "Base Atk": "Base Atk +6; Grp +18",
+        "Abilities": "Abilities Str 24, Dex 13, Con —, Int 12, Wis 12, Cha 8",
+        "Talents": "Talents Battle Analysis, Devastating Attack (heavy weapons), Penetrating",
+        "Feats": "Feats Armor Proficiency (light, medium), Burst Fire, Dual Weapon Mastery",
+        "Skills": "Skills Perception +10, Initiative +8, Knowledge (tactics} +8, Mechanics",
+        "Systems": "Systems walking locomotion, heuristic processor, quadanium battle armor",
+        "Possessions": "Possessions 2 heavy repeating blasters, flamethrower with 2 chemical",
+        "Availability": "Availability Military; Cost 16,200"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 142,
+        "printedPage": 141,
+        "sourceImage": "work/threats_pdf_review/printed_p141.png",
+        "fieldValues": {
+          "/identity/printedName": "B3-A Series Ultra Battle Droid",
+          "/publication/printedPageStart": 141,
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 5,
+          "/durability/hitPoints": 72,
+          "/durability/damageThreshold": 34,
+          "/defenses/reflex": 19,
+          "/defenses/flatFootedReflex": 18,
+          "/defenses/fortitude": 24,
+          "/defenses/will": 16,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-010",
+      "printedName": "IG Series Battle Droid",
+      "printedPage": 141,
+      "pdfPage1Based": 142,
+      "txtAnchorLine1Based": 13773,
+      "txtWindowEnd1Based": 13832,
+      "txtWindowSha256": "f2a6f01c2353cdf2e8bdcfae7b7d9aad90ba9a9d6dfefcb7776aa414d2d62206",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +11; Senses Perception +3",
+        "Languages": "Languages Binary",
+        "Defenses": "Defenses Ref 13 [flat-footed 10), Fort 12, Will 10",
+        "hp": "hp 15; Threshold 12",
+        "Speed": "Speed 6 squares (walking)",
+        "Melee": [
+          "Melee energy lance +6 (2d8+4) or",
+          "Melee energy lance +4 (3d8+4) with Rapid Strike or",
+          "Melee energy lance +8 (3d8+7) with Powerful Charge and Rapid Strike"
+        ],
+        "Base Atk": "Base Atk +4; Grp +7",
+        "Abilities": "Abilities Str 14, Dex 16, Con —, Int 13, Wis 10, Cha 8",
+        "Feats": "Feats Powerful Charge, Rapid Strike, Running Attack, Weapon Proficiency",
+        "Skills": "Skills Initiative +11, Pilot +11",
+        "Systems": "Systems walking locomotion, remote processor, 2 hand appendages,",
+        "Possessions": "Possessions energy lance (as force pike, +1 square reach)",
+        "Availability": "Availability Military; Cost 2,700"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 142,
+        "printedPage": 141,
+        "sourceImage": "work/threats_pdf_review/printed_p141.png",
+        "fieldValues": {
+          "/identity/printedName": "IG Series Battle Droid",
+          "/publication/printedPageStart": 141,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 2,
+          "/durability/hitPoints": 15,
+          "/durability/damageThreshold": 12,
+          "/defenses/reflex": 13,
+          "/defenses/flatFootedReflex": 10,
+          "/defenses/fortitude": 12,
+          "/defenses/will": 10
+        },
+        "fieldComparisonCount": 10,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-011",
+      "printedName": "Pistoeka Buzz Droid",
+      "printedPage": 142,
+      "pdfPage1Based": 143,
+      "txtAnchorLine1Based": 13833,
+      "txtWindowEnd1Based": 13962,
+      "txtWindowSha256": "bc2231e1767ba29461a29f6682ee4e995869f83b6759b2613680f12c8d7f4845",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +11; Senses low-light vision; Perception +10",
+        "Languages": "Languages Basic, Binary",
+        "Defenses": "Defenses Ref 21 (flat-footed 16), Fort 11, Will 15",
+        "hp": "hp 41; Threshold 11",
+        "Speed": "Speed 8 squares (flying), 4 squares (walking)",
+        "Melee": "Melee vibrosaw +8 (2d4+1)",
+        "Ranged": "Ranged plasma cutting torch +8 (2d6+1}",
+        "Base Atk": "Base Atk +3; Grp -2",
+        "Abilities": "Abilities Str 6, Dex 20, Con —, Int 10, Wis 14, Cha 8",
+        "Talents": "Talents Devastating Attack (advanced melee weapons}, Penetrating",
+        "Feats": "Feats Armor Proficiency (light, medium), Point Blank Shot, Weapon",
+        "Skills": "Skills Initiative +11, Mechanics +6, Perception +10, Stealth +16",
+        "Systems": "Systems flying locomotion, walking locomotion (limited), extra leg,",
+        "Possessions": "Possessions vibrosaw (treat as vibrodagger), plasma cutting torch (treat",
+        "Availability": "Availability Military; Cost 11,400"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 143,
+        "printedPage": 142,
+        "sourceImage": "work/threats_pdf_review/printed_p142.png",
+        "fieldValues": {
+          "/identity/printedName": "Pistoeka Buzz Droid",
+          "/publication/printedPageStart": 142,
+          "/classification/size": "Tiny",
+          "/challenge/challengeLevel": 3,
+          "/durability/hitPoints": 41,
+          "/durability/damageThreshold": 11,
+          "/defenses/reflex": 21,
+          "/defenses/flatFootedReflex": 16,
+          "/defenses/fortitude": 11,
+          "/defenses/will": 15,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-012",
+      "printedName": "EVS Construction Droid",
+      "printedPage": 143,
+      "pdfPage1Based": 144,
+      "txtAnchorLine1Based": 13963,
+      "txtWindowEnd1Based": 14044,
+      "txtWindowSha256": "b2c53d447527a00eecf9e5c6cc7ad5b11f05e3ad0a1b1f5f777fcde7c5ed0f62",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +5; Senses Perception +6",
+        "Languages": "Languages Binary",
+        "Defenses": "Defenses Ref 6 (flat-footed 6}, Fort 10, Will 9",
+        "hp": "hp 137; Threshold 65",
+        "Speed": "Speed 8 squares (walking)",
+        "Melee": "Melee 2 claws +31 each (2d8+20)",
+        "Ranged": [
+          "Ranged plasma cutter* +10 (3d6) or",
+          "Ranged implosion wrecking ball* +10 (3d10**)"
+        ],
+        "Base Atk": "Base Atk +11; Grp +51",
+        "Abilities": "Abilities Str 50, Dex 6, Con —, Int 8, Wis 8, Cha 4",
+        "Feats": "Feats Armor Proficiency (light, medium), Crush, Improved Damage",
+        "Skills": "Skills Climb +32, Endurance +32",
+        "Systems": "Systems walking locomotion, 2 claw appendages, 2 tool mounts, basic",
+        "Possessions": "Possessions implosion wrecking ball, plasma cutter, duranium plating (+8",
+        "Availability": "Availability Restricted; Cost 120,000"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 144,
+        "printedPage": 143,
+        "sourceImage": "work/threats_pdf_review/printed_p143.png",
+        "fieldValues": {
+          "/identity/printedName": "EVS Construction Droid",
+          "/publication/printedPageStart": 143,
+          "/classification/size": "Colossal",
+          "/challenge/challengeLevel": 8,
+          "/durability/hitPoints": 137,
+          "/durability/damageThreshold": 65,
+          "/defenses/reflex": 6,
+          "/defenses/flatFootedReflex": 6,
+          "/defenses/fortitude": 10,
+          "/defenses/will": 9,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-013",
+      "printedName": "GRZ-6B Demolitions Droid",
+      "printedPage": 144,
+      "pdfPage1Based": 145,
+      "txtAnchorLine1Based": 14045,
+      "txtWindowEnd1Based": 14170,
+      "txtWindowSha256": "0f895ed6c342017a6a0db111c518fe1127964a7415060d2c8e11162d831f7e7f",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +8; Senses Perception +14",
+        "Languages": "Languages Basic, Binary",
+        "Defenses": "Defenses Ref 11 (flat-footed 11}, Fort 22, Will 12",
+        "hp": "hp 106; Threshold 47",
+        "Speed": "Speed 8 squares (walking)",
+        "Melee": "Melee claw +12 (2d6+12}",
+        "Ranged": [
+          "Ranged plasma cannon +24 (3d10+8)",
+          "Ranged laser cutter +12 (3d8+8}"
+        ],
+        "Base Atk": "Base Atk +12; Grp +39",
+        "Abilities": "Abilities Str 35, Dex 10, Con —, Int 8, Wis 12, Cha 8",
+        "Feats": "Feats Armor Proficiency (light), Improved Damage Threshold, Pin,",
+        "Skills": "Skills Knowledge (technology) +12, Mechanics +12, Perception +14",
+        "Systems": "Systems walking locomotion, durasteel plating (+6 armor), integrated",
+        "Possessions": "Possessions plasma torch [treat as heavy blaster rifle), laser cutter (treat",
+        "Availability": "Availability Licensed; Cost 43,650"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 145,
+        "printedPage": 144,
+        "sourceImage": "work/threats_pdf_review/printed_p144.png",
+        "fieldValues": {
+          "/identity/printedName": "GRZ-6B Demolitions Droid",
+          "/publication/printedPageStart": 144,
+          "/classification/size": "Gargantuan",
+          "/challenge/challengeLevel": 8,
+          "/durability/hitPoints": 106,
+          "/durability/damageThreshold": 47,
+          "/defenses/reflex": 11,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 22,
+          "/defenses/will": 12,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-014",
+      "printedName": "3PX Espionage Droid",
+      "printedPage": 145,
+      "pdfPage1Based": 146,
+      "txtAnchorLine1Based": 14171,
+      "txtWindowEnd1Based": 14231,
+      "txtWindowSha256": "f67b67b9b0d25de531275b7c4bcb1dcf39d72abfd477a9ed5ab9a8544e22681b",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +4; Senses low-light vision; Perception +12",
+        "Languages": "Languages Basic, Binary, 1 unassigned; translator unit (DC 5)",
+        "Defenses": "Defenses Ref 20 (flat-footed 18), Fort 17, Will 19",
+        "hp": "hp 37; Threshold 17",
+        "Speed": "Speed 6 squares (walking)",
+        "Melee": "Melee unarmed +4 (1d3+4)",
+        "Ranged": "Ranged hold-out blaster pistol +3 (3d4+3)",
+        "Base Atk": "Base Atk +4; Grp +5",
+        "Abilities": "Abilities Str 12, Dex 13, Con —, Int 14, Wis 15, Cha 15",
+        "Talents": "Talents Dastardly Strike, Gimmick, Master Splicer |",
+        "Feats": "Feats Linguist, Quick Draw, Skill Focus (Persuasion), Skill Training",
+        "Skills": "Skills Deception +10, Knowledge (bureaucracy) +10, Knowledge (galactic",
+        "Systems": "Systems walking locomotion, heuristic processor, translator unit (DC 5),",
+        "Possessions": "Possessions holorecorder, hold-out blaster pistol (in interna!",
+        "Availability": "Availability Military; Cost 5,550"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 146,
+        "printedPage": 145,
+        "sourceImage": "work/threats_pdf_review/printed_p145.png",
+        "fieldValues": {
+          "/identity/printedName": "3PX Espionage Droid",
+          "/publication/printedPageStart": 145,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 6,
+          "/durability/hitPoints": 37,
+          "/durability/damageThreshold": 17,
+          "/defenses/reflex": 20,
+          "/defenses/flatFootedReflex": 18,
+          "/defenses/fortitude": 17,
+          "/defenses/will": 19,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-015",
+      "printedName": "TO-D Interrogation Droid",
+      "printedPage": 146,
+      "pdfPage1Based": 147,
+      "txtAnchorLine1Based": 14232,
+      "txtWindowEnd1Based": 14328,
+      "txtWindowSha256": "a0f32fe2e309d64a9348a091411cf0b87bcc7711de10beba99b7344b94391d6e",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +6; Senses low-light vision; Perception +14",
+        "Languages": "Languages Basic, Binary, 1 unassigned",
+        "Defenses": "Defenses Ref 16 (flat-footed 15), Fort 14, Wil} 13",
+        "hp": "hp 29; Threshold 14",
+        "Speed": "Speed 6 squares (wheeled)",
+        "Melee": [
+          "Melee 2 claws +9 each {1d44+1] or",
+          "Melee stun baton +9 (2d6+1 stun)"
+        ],
+        "Ranged": "Ranged sonic stunner +9 (3d6 stun)",
+        "Base Atk": "Base Atk +7; Grp +8",
+        "Abilities": "Abilities Str 12, Dex 12, Con —, Int 14, Wis 15, Cha 18",
+        "Talents": "Talents Devastating Attack (pistols)",
+        "Feats": "Feats Armor Proficiency (light), Point Blank Shot, Skill Focus (Persuasion),",
+        "Skills": "Skills Deception +14, Perception +14, Persuasion +19, Treat Injury +14",
+        "Systems": "Systems wheeled locomotion, basic processor, 2 claw appendages, 2",
+        "Possessions": "Possessions sonic stunner, stun baton, durasteel shell (+4 armor), medical",
+        "Availability": "Availability Military; Cost 5,500"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 147,
+        "printedPage": 146,
+        "sourceImage": "work/threats_pdf_review/printed_p146.png",
+        "fieldValues": {
+          "/identity/printedName": "TO-D Interrogation Droid",
+          "/publication/printedPageStart": 146,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 4,
+          "/durability/hitPoints": 29,
+          "/durability/damageThreshold": 14,
+          "/defenses/reflex": 16,
+          "/defenses/flatFootedReflex": 15,
+          "/defenses/fortitude": 14,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 10,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-016",
+      "printedName": "GH-7 Medical Droid",
+      "printedPage": 147,
+      "pdfPage1Based": 148,
+      "txtAnchorLine1Based": 14329,
+      "txtWindowEnd1Based": 14429,
+      "txtWindowSha256": "acc9ec5b51ac76a7ca0770264fdbadb1f3727765b738f5a3051a014730e84cb1",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +3; Senses low-light vision; Perception +10",
+        "Languages": "Languages Basic, Binary, 3 unassigned",
+        "Defenses": "Defenses Ref 13 (flat-footed 11), Fort 9, Will 12",
+        "hp": "hp 7; Threshold 9",
+        "Speed": "Speed 6 squares (hovering)",
+        "Melee": "Melee unarmed +4 (1d3)",
+        "Base Atk": "Base Atk +2; Grp -1",
+        "Abilities": "Abilities Str 8, Dex 14, Con —, Int 16, Wis 15, Cha 12",
+        "Feats": "Feats Cybernetic Surgery, Skill Focus (Knowledge [life sciences}}, Skill",
+        "Skills": "Skills Knowledge (life sciences] +14, Perception +10, Stealth +8, Treat",
+        "Systems": "Systems hovering locomotion, improved sensor package, integrated",
+        "Possessions": "Possessions medical kit (without stretcher), personal holoprojector",
+        "Availability": "Availability Licensed; Cost 4,840"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 148,
+        "printedPage": 147,
+        "sourceImage": "work/threats_pdf_review/printed_p147.png",
+        "fieldValues": {
+          "/identity/printedName": "GH-7 Medical Droid",
+          "/publication/printedPageStart": 147,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 1,
+          "/durability/hitPoints": 7,
+          "/durability/damageThreshold": 9,
+          "/defenses/reflex": 13,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 12,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-017",
+      "printedName": "EG-6 Series Power Droid",
+      "printedPage": 148,
+      "pdfPage1Based": 149,
+      "txtAnchorLine1Based": 14430,
+      "txtWindowEnd1Based": 14509,
+      "txtWindowSha256": "816d4ba49cfe788b568ef61510647e7cb897bb13a9e7a735bf160f84ab8e955d",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init -1; Senses darkvision; Perception -1",
+        "Languages": "Languages Basic, Binary",
+        "Defenses": "Defenses Ref 18 (flat-footed 18), Fort 12, Will 9",
+        "hp": "hp 5; Threshold 12",
+        "Speed": "Speed 4 squares (walking)",
+        "Melee": "Melee unarmed +2 (1d2+2)",
+        "Base Atk": "Base Atk +0; Grp -3",
+        "Abilities": "Abilities Str 14, Dex 8, Con —, Int 4, Wis 8, Cha 4",
+        "Feats": "Feats Armor Proficiency (light, medium), Toughness",
+        "Skills": "Skills Mechanics +5",
+        "Systems": "Systems walking locomotion, basic processor, 1 tool appendage,",
+        "Possessions": "Possessions power generator",
+        "Availability": "Availability Military: Cost 6,250"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 149,
+        "printedPage": 148,
+        "sourceImage": "work/threats_pdf_review/printed_p148.png",
+        "fieldValues": {
+          "/identity/printedName": "EG-6 Series Power Droid",
+          "/publication/printedPageStart": 148,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 1,
+          "/durability/hitPoints": 5,
+          "/durability/damageThreshold": 12,
+          "/defenses/reflex": 18,
+          "/defenses/flatFootedReflex": 18,
+          "/defenses/fortitude": 12,
+          "/defenses/will": 9,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-018",
+      "printedName": "DRK-1 Probe Droid",
+      "printedPage": 149,
+      "pdfPage1Based": 150,
+      "txtAnchorLine1Based": 14510,
+      "txtWindowEnd1Based": 14611,
+      "txtWindowSha256": "5bb609103f46ba6428356694b68221b01bf62f36ba8069394ea89aec2a01be28",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +11; Senses darkvision, low-light vision; Perception +15",
+        "Languages": "Languages Binary, Basic (understand only), 1 unassigned (understand",
+        "Defenses": "Defenses Ref 16 (flat-footed 11), Fort 10, Will 12",
+        "hp": "hp 12; Threshold 10",
+        "Speed": "Speed 6 squares (hovering)",
+        "Melee": "Melee unarmed +1 (1d4-1)",
+        "Ranged": "Ranged frag grenade +7 (4d6, 2-square burst)",
+        "Base Atk": "Base Atk +2; Grp +2",
+        "Abilities": "Abilities Str 8, Dex 20, Con —, Int 16, Wis 14, Cha 8",
+        "Feats": "Feats Skill Focus (Perception), Skill Focus (Stealth), Skill Training",
+        "Skills": "Skills Gather Information +5, Initiative +11, Perception +15, Stealth +23,",
+        "Systems": "Systems hovering locomotion, heuristic processor, integrated comiink,",
+        "Possessions": "Possessions holoprojector, grenade launcher with 6 frag grenades"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 150,
+        "printedPage": 149,
+        "sourceImage": "work/threats_pdf_review/printed_p149.png",
+        "fieldValues": {
+          "/identity/printedName": "DRK-1 Probe Droid",
+          "/publication/printedPageStart": 149,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 1,
+          "/durability/hitPoints": 12,
+          "/durability/damageThreshold": 10,
+          "/defenses/reflex": 16,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 10,
+          "/defenses/will": 12,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-019",
+      "printedName": "M-3PO Series Military Protocol Droid",
+      "printedPage": 150,
+      "pdfPage1Based": 151,
+      "txtAnchorLine1Based": 14612,
+      "txtWindowEnd1Based": 14723,
+      "txtWindowSha256": "90e2e0ca5283c58ff193fb6119e8e128c36f49a8cd1448bbb41000b0d6b291e5",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +0; Senses darkvision; Perception +1",
+        "Languages": "Languages Basic, Binary, 1 unassigned; translator unit (DC 70)",
+        "Defenses": "Defenses Ref 11 (flat-footed 11}, Fort 10, Will 10",
+        "hp": "hp 4; Threshold 10",
+        "Speed": "Speed 6 squares (waiking}",
+        "Melee": "Melee unarmed 41 (1d3+1}",
+        "Base Atk": "Base Atk +1; Grp +14",
+        "Abilities": "Abilities Str 10, Dex 9, Con —, Int 12, Wis 11, Cha 15",
+        "Feats": "Feats Armor Proficiency (light), Skill Training (Knowledge [bureaucracy]},",
+        "Skills": "Skills Knowledge (bureaucracy) +7, Knowledge (tactics) +7, Persuasion",
+        "Systems": "Systems walking /ocomotion, basic processor, translator unit (DC 10), 2",
+        "Possessions": "Possessions audio recorder",
+        "Availability": "Availability Military; Cost 3,700"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 151,
+        "printedPage": 150,
+        "sourceImage": "work/threats_pdf_review/printed_p150.png",
+        "fieldValues": {
+          "/identity/printedName": "M-3PO Series Military Protocol Droid",
+          "/publication/printedPageStart": 150,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 1,
+          "/durability/hitPoints": 4,
+          "/durability/damageThreshold": 10,
+          "/defenses/reflex": 11,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 10,
+          "/defenses/will": 10,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-020",
+      "printedName": "TC Series Protocol Droid",
+      "printedPage": 151,
+      "pdfPage1Based": 152,
+      "txtAnchorLine1Based": 14724,
+      "txtWindowEnd1Based": 14794,
+      "txtWindowSha256": "415866ff0761322f99173dbd7d69144cf61a237f7407c72c6e346fa4aad2c77e",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init -1; Senses Perception +7",
+        "Languages": "Languages Basic, Binary, 3 unassigned; translator unit (DC 5]",
+        "Defenses": "Defenses Ref 11 (flat-footed 11), Fort 10, Will 15",
+        "hp": "hp 18; Threshold 10",
+        "Speed": "Speed 6 squares (walking)",
+        "Melee": "Melee unarmed -1 (1d3-1)",
+        "Base Atk": "Base Atk +0; Grp -1",
+        "Abilities": "Abilities Str 8, Dex 8, Con —, Int 13, Wis 14, Cha 14",
+        "Talents": "Talents Coordinate",
+        "Feats": "Feats Linguist, Skill Focus (Persuasion), Weapon Proficiency (pistols,",
+        "Skills": "Skills Deception +7, Gather Information +7, Knowledge (bureaucracy]",
+        "Systems": "Systems walking locomotion, heuristic processor, translator unit (DC 5), 2",
+        "Possessions": "Possessions audio recorder",
+        "Availability": "Availability Licensed; Cost 5,000"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 152,
+        "printedPage": 151,
+        "sourceImage": "work/threats_pdf_review/printed_p151.png",
+        "fieldValues": {
+          "/identity/printedName": "TC Series Protocol Droid",
+          "/publication/printedPageStart": 151,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 1,
+          "/durability/hitPoints": 18,
+          "/durability/damageThreshold": 10,
+          "/defenses/reflex": 11,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 10,
+          "/defenses/will": 15,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-021",
+      "printedName": "Replica Droid",
+      "printedPage": 152,
+      "pdfPage1Based": 153,
+      "txtAnchorLine1Based": 14795,
+      "txtWindowEnd1Based": 14884,
+      "txtWindowSha256": "605b25b6c004471d31274294b2d720a746561ead4e3e439f3a111827043bc6d7",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +5; Senses darkvision, tow-light vision; Perception +10",
+        "Languages": "Languages Basic",
+        "Defenses": "Defenses Ref 20 (flat-footed 17}, Fort 19, Will 16; Dodge",
+        "hp": "hp 38; Threshold 19",
+        "Speed": "Speed 6 squares (walking)",
+        "Melee": "Melee unarmed +6 (1d4+5)",
+        "Ranged": "Ranged blaster pistol +6 (3d6+2)",
+        "Base Atk": "Base Atk +3; Grp +6",
+        "Abilities": "Abilities Str 17, Dex 16, Con =, Int 10, Wis 13, Cha 10",
+        "Talents": "Talents Acute Senses, Extreme Effort",
+        "Feats": "Feats Dodge, Improved Defenses, Skill Focus (Mechanics), Toughness,",
+        "Skills": "Skills Climb +10, Jump +10, Mechanics +12, Perception +10 (can reroll,",
+        "Systems": "Systems walking locomotion, heuristic processor, 2 hand appendages,",
+        "Possessions": "Possessions blaster pistol, integrated comlink",
+        "Availability": "Availability Restricted; Cost 9,000,000"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 153,
+        "printedPage": 152,
+        "sourceImage": "work/threats_pdf_review/printed_p152.png",
+        "fieldValues": {
+          "/identity/printedName": "Replica Droid",
+          "/publication/printedPageStart": 152,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 4,
+          "/durability/hitPoints": 38,
+          "/durability/damageThreshold": 19,
+          "/defenses/reflex": 20,
+          "/defenses/flatFootedReflex": 17,
+          "/defenses/fortitude": 19,
+          "/defenses/will": 16,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-022",
+      "printedName": "Guri",
+      "printedPage": 153,
+      "pdfPage1Based": 154,
+      "txtAnchorLine1Based": 14885,
+      "txtWindowEnd1Based": 15007,
+      "txtWindowSha256": "356fcc5368ccfff17e0940c5dc7e3253e4a3a9ad2799090e88337af56eef2e7b",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +14; Senses darkvision, !ow-light vision; Perception +13",
+        "Languages": "Languages Basic, Falleen, Huttese, Rodese, Ryl; translator unit (DC 5]",
+        "Defenses": "Defenses Ref 29 (flat-footed 25), Fort 28, Will 24",
+        "hp": "hp 89; Threshold 28",
+        "Speed": [
+          "Speed 6 squares (walking)",
+          "Speed: Replica droids of Medium size have a base speed of 6 squares,"
+        ],
+        "Melee": "Melee unarmed +14 (1d6+11)",
+        "Ranged": "Ranged blaster pistol +12 (3d6+5)",
+        "Base Atk": "Base Atk +8; Grp +14",
+        "Abilities": "Abilities Str 22, Dex 18, Con —, Int 18, Wis 13, Cha 17",
+        "Talents": "Talents Dastardly Strike, Expert Grappler, Presence, Sneak Attack +1d6,",
+        "Feats": "Feats Armor Proficiency (light, medium), Linguist, Martial Arts |, Point",
+        "Skills": "Skills Acrobatics +14, Deception +13, Gather Information +14, Initiative",
+        "Systems": "Systems walking locomotion, heuristic processor, 2 hand appendages,",
+        "Possessions": "Possessions blaster pistol, encrypted integrated comlink, credit chip,"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 154,
+        "printedPage": 153,
+        "sourceImage": "work/threats_pdf_review/printed_p153.png",
+        "fieldValues": {
+          "/identity/printedName": "Guri",
+          "/publication/printedPageStart": 153,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 10,
+          "/durability/hitPoints": 89,
+          "/durability/damageThreshold": 28,
+          "/defenses/reflex": 29,
+          "/defenses/flatFootedReflex": 25,
+          "/defenses/fortitude": 28,
+          "/defenses/will": 24
+        },
+        "fieldComparisonCount": 10,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-023",
+      "printedName": "WSB-15 Sabotage Droid",
+      "printedPage": 154,
+      "pdfPage1Based": 155,
+      "txtAnchorLine1Based": 15008,
+      "txtWindowEnd1Based": 15134,
+      "txtWindowSha256": "7edcfa2c8ed465d64f1aee3a8928daf8183ec52e21da376af66be174e1a990d9",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +7; Senses low-light vision; Perception +12",
+        "Languages": "Languages Basic, Binary",
+        "Defenses": "Defenses Ref 22 (flat-footed 19), Fort 16, Will 18",
+        "hp": "hp 37; Threshold 16",
+        "Speed": "Speed 4 squares (tracked)",
+        "Melee": "Melee 2 claws +6 each (1d3+4)",
+        "Ranged": "Ranged 2 plasma cutters +9 each (3d4+4)",
+        "Base Atk": "Base Atk +6; Grp +4",
+        "Abilities": "Abilities Str 10, Dex 16, Con —, Int 10, Wis 12, Cha 10",
+        "Talents": "Talents Gimmick, Dastardly Strike, Disruptive",
+        "Feats": "Feats Deadeye, Point Blank Shot, Precise Shot, Skill Focus (Deception),",
+        "Skills": [
+          "Skills Deception +14, Knowledge (technology) +9, Mechanics +14,",
+          "skills, allowing it to assist living police officers or security experts in the"
+        ],
+        "Systems": "Systems tracked locomotion, improved sensor package, heuristic",
+        "Possessions": "Possessions 2 plasma cutters (treat as hold-out blaster pistols)",
+        "Availability": "Availability Military; Cost 13,000"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 155,
+        "printedPage": 154,
+        "sourceImage": "work/threats_pdf_review/printed_p154.png",
+        "fieldValues": {
+          "/identity/printedName": "WSB-15 Sabotage Droid",
+          "/publication/printedPageStart": 154,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 7,
+          "/durability/hitPoints": 37,
+          "/durability/damageThreshold": 16,
+          "/defenses/reflex": 22,
+          "/defenses/flatFootedReflex": 19,
+          "/defenses/fortitude": 16,
+          "/defenses/will": 18,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-024",
+      "printedName": "501-Z Police/Security Droid",
+      "printedPage": 155,
+      "pdfPage1Based": 156,
+      "txtAnchorLine1Based": 15135,
+      "txtWindowEnd1Based": 15210,
+      "txtWindowSha256": "8c5fd44084bcaab214abd678cabc075dfd421aabb7f0c8c9f18d39a768291f17",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +10; Senses low-light vision; Perception +19",
+        "Languages": "Languages Basic",
+        "Defenses": "Defenses Ref 26 (flat-footed 26), Fort 26, Will 22",
+        "hp": "hp 76; Threshold 26",
+        "Speed": "Speed 6 squares (walking)",
+        "Melee": [
+          "Melee stun baton +14 (2d6+9 stun) or",
+          "Melee stun baton +18 (2d6+14 stun) with Powerful Charge"
+        ],
+        "Ranged": "Ranged stun pistol +10 (3d6+5 stun)",
+        "Base Atk": "Base Atk +9; Grp +13",
+        "Abilities": "Abilities Str 18, Dex 12, Con —, Int 10, Wis 14, Cha 73",
+        "Talents": "Talents Acute Senses, Armored Defense, Battle Analysis, Expert Tracker,",
+        "Feats": "Feats Armor Proficiency (light, medium), Point Blank Shot, Power ful",
+        "Skills": "Skills Endurance +14, Initiative +10, Knowledge (tactics) +10, Perception",
+        "Systems": "Systems walking tocomotion, basic processor, 2 hand appendages,",
+        "Possessions": "Possessions stun baton, stun pistol, duranium plating (+8 armor),",
+        "Availability": "Availability Restricted; Cost 14,000"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 156,
+        "printedPage": 155,
+        "sourceImage": "work/threats_pdf_review/printed_p155.png",
+        "fieldValues": {
+          "/identity/printedName": "501-Z Police/Security Droid",
+          "/publication/printedPageStart": 155,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 10,
+          "/durability/hitPoints": 76,
+          "/durability/damageThreshold": 26,
+          "/defenses/reflex": 26,
+          "/defenses/flatFootedReflex": 26,
+          "/defenses/fortitude": 26,
+          "/defenses/will": 22,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-025",
+      "printedName": "Mark VII Inquisitor Series Seeker Droid",
+      "printedPage": 156,
+      "pdfPage1Based": 157,
+      "txtAnchorLine1Based": 15211,
+      "txtWindowEnd1Based": 15298,
+      "txtWindowSha256": "d7e33a6594848a1725782b1290331c2cd167b35072a9efdabd8462351bdf7a17",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +12; Senses darkvision, low-light vision; Perception +18",
+        "Languages": "Languages Basic, Binary, 1 unassigned",
+        "Defenses": "Defenses Ref 27 (flat-footed 13), Fort 14, Will 19",
+        "hp": "hp 46; Threshold 14",
+        "Speed": "Speed 6 squares [hovering]",
+        "Ranged": [
+          "Ranged blaster pistol +8 (3d6+3) or",
+          "Ranged blaster pistol +3 (3d6+3) and"
+        ],
+        "Base Atk": "Base Atk +4; Grp -7",
+        "Abilities": "Abilities Str 5, Dex 18, Con —, Int 13, Wis 16, Cha 10",
+        "Talents": "Talents Acute Senses, Expert Tracker, Keen Shot",
+        "Feats": "Feats Dual Weapon Mastery |, Running Attack, Skill Focus (Perception),",
+        "Skills": "Skills Initiative +12, Knowledge (life sciences) +9, Perception +18 (can",
+        "Systems": "Systems hovering locomotion, heuristic processor, 2 weapon appendages,",
+        "Possessions": "Possessions 2 blaster pistols, audio recorder"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 157,
+        "printedPage": 156,
+        "sourceImage": "work/threats_pdf_review/printed_p156.png",
+        "fieldValues": {
+          "/identity/printedName": "Mark VII Inquisitor Series Seeker Droid",
+          "/publication/printedPageStart": 156,
+          "/classification/size": "Diminutive",
+          "/challenge/challengeLevel": 6,
+          "/durability/hitPoints": 46,
+          "/durability/damageThreshold": 14,
+          "/defenses/reflex": 27,
+          "/defenses/flatFootedReflex": 13,
+          "/defenses/fortitude": 14,
+          "/defenses/will": 19,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-026",
+      "printedName": "Imperial Mark IV Series Sentry Droid",
+      "printedPage": 157,
+      "pdfPage1Based": 158,
+      "txtAnchorLine1Based": 15299,
+      "txtWindowEnd1Based": 15394,
+      "txtWindowSha256": "829ca07e5607f26df6cf47e3d09aa05ebc04eff28b34e8437c052e7902b06d8e",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +5; Senses darkvision, low-light vision; Perception +17",
+        "Languages": "Languages Basic, Binary",
+        "Defenses": "Defenses Ref 17 (flat-footed 15), Fort 8, Will 12; Dodge",
+        "hp": "hp 16; Threshold 8",
+        "Speed": "Speed 6 squares (hovering)",
+        "Melee": "Melee —",
+        "Base Atk": "Base Atk +4; Grp -9",
+        "Abilities": "Abilities Str 6, Dex 14, Con —, Int 11, Wis 15, Cha 6",
+        "Feats": "Feats Dodge, Skill Focus (Gather Information), Skill Focus (Perception),",
+        "Skills": "Skills Gather Information +11, Perception +17, Stealth +20",
+        "Systems": "Systems hovering locomotion, basic processor, 2 tool appendages,",
+        "Availability": "Availability Military; Cost not available for sale (estimated cost 7,000)"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 158,
+        "printedPage": 157,
+        "sourceImage": "work/threats_pdf_review/printed_p157.png",
+        "fieldValues": {
+          "/identity/printedName": "Imperial Mark IV Series Sentry Droid",
+          "/publication/printedPageStart": 157,
+          "/classification/size": "Diminutive",
+          "/challenge/challengeLevel": 2,
+          "/durability/hitPoints": 16,
+          "/durability/damageThreshold": 8,
+          "/defenses/reflex": 17,
+          "/defenses/flatFootedReflex": 15,
+          "/defenses/fortitude": 8,
+          "/defenses/will": 12,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-027",
+      "printedName": "SD-6 Hulk Infantry Droid",
+      "printedPage": 158,
+      "pdfPage1Based": 159,
+      "txtAnchorLine1Based": 15395,
+      "txtWindowEnd1Based": 15532,
+      "txtWindowSha256": "7df4ecce7088d955ec0db52f93b877ff9eea6bd7714519cedfd1d8cbaaa5fa13",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +12; Senses Perception +7",
+        "Languages": "Languages Basic (understand only), Binary",
+        "Defenses": "Defenses Ref 29 (flat-footed 28), Fort 27, Will 24",
+        "hp": "hp 112; DR 3; Threshold 32",
+        "Speed": "Speed 8 squares (walking)",
+        "Melee": "Melee claw +23 (1d6+16)",
+        "Ranged": [
+          "Ranged E-Web heavy repeating blaster +13 (5d12+11] with Controlled",
+          "Ranged ion rifle +13 (3d8+7 ion} and"
+        ],
+        "Base Atk": "Base Atk +14; Grp +28",
+        "Abilities": "Abilities Str 28, Dex 8, Con —, Int 8, Wis 10, Cha 8",
+        "Talents": "Talents Armored Defense, Controlled Burst, Devastating Attack (heavy",
+        "Feats": "Feats Armor Proficiency (light, medium), Burst Fire, Dual Weapon Mastery",
+        "Skills": "Skills Endurance +21, Initiative +12",
+        "Systems": "Systems walking locomotion, basic processor, 2 claw appendages, 2 tool",
+        "Possessions": "Possessions 2 E-Web heavy repeating blasters, 2 ion rifles, duranium"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 159,
+        "printedPage": 158,
+        "sourceImage": "work/threats_pdf_review/printed_p158.png",
+        "fieldValues": {
+          "/identity/printedName": "SD-6 Hulk Infantry Droid",
+          "/publication/printedPageStart": 158,
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 14,
+          "/durability/hitPoints": 112,
+          "/durability/damageThreshold": 32,
+          "/defenses/reflex": 29,
+          "/defenses/flatFootedReflex": 28,
+          "/defenses/fortitude": 27,
+          "/defenses/will": 24,
+          "/defenses/damageReduction": 3
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-028",
+      "printedName": "Sith Elite Warbot",
+      "printedPage": 159,
+      "pdfPage1Based": 160,
+      "txtAnchorLine1Based": 15533,
+      "txtWindowEnd1Based": 15613,
+      "txtWindowSha256": "ab28651ebd5f59b9373ce78ed64be874b02b879671173d6eb9d5808d888d9348",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +11; Senses Perception +4",
+        "Languages": "Languages Basic, Binary",
+        "Defenses": "Defenses Ref 21 (flat-footed 19}, Fort 19, Will 13",
+        "hp": "hp 31; Threshold 19",
+        "Speed": "Speed 6 squares",
+        "Melee": [
+          "Melee Sith sword +11 (1d8+12) or",
+          "Melee Sith sword +11* (1d8+24)] with Powerful Charge"
+        ],
+        "Ranged": [
+          "Ranged biaster pistol +9 (3d6+1) or",
+          "Ranged blaster pisto! +7 (3d6+1) and"
+        ],
+        "Base Atk": "Base Atk +7; Grp +11",
+        "Abilities": "Abilities Str 18, Dex 15, Con —, Int 10, Wis 10, Cha 12",
+        "Talents": "Talents Melee Smash, Weapon Specialization (simple weapons)",
+        "Feats": "Feats Armor Proficiency (light, medium], Dual Weapon Mastery I, Dual",
+        "Skills": "Skills Initiative +11",
+        "Systems": "Systems basic processor, 2 hand appendages, 2 tool appendages, locked",
+        "Possessions": "Possessions Sith sword, 2 blaster pistols, duranium plating [+8 armor)"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 160,
+        "printedPage": 159,
+        "sourceImage": "work/threats_pdf_review/printed_p159.png",
+        "fieldValues": {
+          "/identity/printedName": "Sith Elite Warbot",
+          "/publication/printedPageStart": 159,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 5,
+          "/durability/hitPoints": 31,
+          "/durability/damageThreshold": 19,
+          "/defenses/reflex": 21,
+          "/defenses/flatFootedReflex": 19,
+          "/defenses/fortitude": 19,
+          "/defenses/will": 13
+        },
+        "fieldComparisonCount": 10,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-029",
+      "printedName": "PK Worker Droid",
+      "printedPage": 160,
+      "pdfPage1Based": 161,
+      "txtAnchorLine1Based": 15614,
+      "txtWindowEnd1Based": 15726,
+      "txtWindowSha256": "1515d9282d40a95f8ecb89d47971a0813b83ba36518398195e64d0d0b53befc5",
+      "ocrSelectedFieldCandidates": {
+        "Init": "Init +5; Senses Perception +9",
+        "Languages": "Languages Basic, Binary, 1 unassigned",
+        "Defenses": "Defenses Ref 13 (flat-footed 11), Fort 12, Will 11",
+        "hp": "hp 21; Threshold 12",
+        "Speed": "Speed 4 squares (walking)",
+        "Melee": "Melee unarmed +6 (1d2+5)",
+        "Base Atk": "Base Atk +4; Grp +1",
+        "Abilities": "Abilities Str 14, Dex 14, Con —, Int 9, Wis 12, Cha 8",
+        "Feats": "Feats Linguist, Skill Training (Acrobatics, Mechanic}, Toughness, 1",
+        "Skills": "Skills Acrobatics +10, Mechanic +7, Perception +9",
+        "Systems": "Systems walking locomotion, basic processor, 2 hand appendages,",
+        "Availability": "Availability Licensed; Cost 1,000"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "pdfPage1Based": 161,
+        "printedPage": 160,
+        "sourceImage": "work/threats_pdf_review/printed_p160.png",
+        "fieldValues": {
+          "/identity/printedName": "PK Worker Droid",
+          "/publication/printedPageStart": 160,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 2,
+          "/durability/hitPoints": 21,
+          "/durability/damageThreshold": 12,
+          "/defenses/reflex": 13,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 12,
+          "/defenses/will": 11,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 11,
+        "limitations": "Selected first-page fields only; no runtime authority; hero eligibility only when printed note confirmed."
+      },
+      "warnings": [
+        "Printed PDF has image-only text; OCR/TXT candidates are not executable or source-certification."
+      ]
+    }
+  ]
+}

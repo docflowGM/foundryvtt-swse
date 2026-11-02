@@ -1,0 +1,22 @@
+{
+  "schema": "swse.droid.local-checkpoint/0.2",
+  "bookId": "SGD",
+  "status": "IN_PROGRESS",
+  "expectedClaims": 46,
+  "identityRows": 46,
+  "pdfTextRows": 46,
+  "visuallyInspectedPageLayouts": 46,
+  "visualNumberFieldChecks": 811,
+  "visuallyFieldReviewedModels": 46,
+  "mechanicalCertifiedClaims": 0,
+  "schemaDraftStatus": "PROPOSED_NOT_FROZEN",
+  "fullAuthoritativeSchemaValidated": false,
+  "productionCompendiumsMutated": false,
+  "githubWritesThisLocalPass": false,
+  "repositorySyncState": "LOCAL_ONLY_UNPUSHED",
+  "sourcePdfSha256": "bd72d74278b812dab95a6ee9d0aef730afec4feb9c37daef59bc733842489361",
+  "ledgerSha256": "61a940fb5f1073c7220aacc9334e8d906591be6da19f26805c53f202ca851d2b",
+  "progressCounterPath": "data/audits/droids/droid-progress-counter.local.json",
+  "nextAction": "Source field review is complete for selected first-page values; now reconcile remaining secondary views, systems/mounts, scoped feats/talents and independent full schema/engine certification before sourcebook promotion.",
+  "publishedAuditScope": "selected-field-source-review-only"
+}

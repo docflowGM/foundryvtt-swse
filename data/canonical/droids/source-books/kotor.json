@@ -1,0 +1,2136 @@
+{
+  "schema": "swse.droid.source-book-hydration-ledger/0.1-partial",
+  "bookId": "KOTOR",
+  "book": "Knights of the Old Republic Campaign Guide",
+  "draftSourceEntrySchema": "swse.droid.universal-source/0.1-draft",
+  "sourceBookPdf": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+  "scope": "24 source identities only; printed PDF selected fields reviewed independently; no executable mechanics.",
+  "expectedPublicationClaims": 24,
+  "sourceEntries": [
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-001",
+        "printedName": "ET-74 Communications Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 81,
+        "printedPageEnd": 81,
+        "pdfPageStart1Based": 82,
+        "textLineAnchor1Based": 7661,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Small",
+        "publishedDegree": 1,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 1,
+        "perceptionPrinted": 0
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 12,
+        "flatFootedReflex": 11,
+        "fortitude": 8,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 3,
+        "damageThreshold": 8
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 2700
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "source-verified"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-001",
+          "Knights of the Old Republic Campaign Guide:printed-p81:TXT-line-7661",
+          "KOTOR-DROID-001:printed-p81:PDF-p82:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-002",
+        "printedName": "GO-TO Infrastructure-Planning Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 82,
+        "printedPageEnd": 82,
+        "pdfPageStart1Based": 83,
+        "textLineAnchor1Based": 7727,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Tiny",
+        "publishedDegree": 2,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 4,
+        "perceptionPrinted": 4
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 15,
+        "flatFootedReflex": 13,
+        "fortitude": 9,
+        "will": 11,
+        "shieldRating": 10
+      },
+      "durability": {
+        "hitPoints": 10,
+        "damageThreshold": 9
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 60000
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "source-verified"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-002",
+          "Knights of the Old Republic Campaign Guide:printed-p82:TXT-line-7727",
+          "KOTOR-DROID-002:printed-p82:PDF-p83:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-003",
+        "printedName": "T3-Series Utility Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 82,
+        "printedPageEnd": 82,
+        "pdfPageStart1Based": 83,
+        "textLineAnchor1Based": 7735,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Small",
+        "publishedDegree": 2,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 2,
+        "perceptionPrinted": 3
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 12,
+        "flatFootedReflex": 11,
+        "fortitude": 9,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 5,
+        "damageThreshold": 9
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 3500
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "source-verified"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-003",
+          "Knights of the Old Republic Campaign Guide:printed-p82:TXT-line-7735",
+          "KOTOR-DROID-003:printed-p82:PDF-p83:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-004",
+        "printedName": "GE3-Series Protocol Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 83,
+        "printedPageEnd": 83,
+        "pdfPageStart1Based": 84,
+        "textLineAnchor1Based": 7866,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 3,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 0,
+        "perceptionPrinted": 2
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 10,
+        "flatFootedReflex": 9,
+        "fortitude": 10,
+        "will": 11
+      },
+      "durability": {
+        "hitPoints": 5,
+        "damageThreshold": 9
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 2500
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "source-verified"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-004",
+          "Knights of the Old Republic Campaign Guide:printed-p83:TXT-line-7866",
+          "KOTOR-DROID-004:printed-p83:PDF-p84:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-005",
+        "printedName": "GG-Series Hospitality Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 84,
+        "printedPageEnd": 84,
+        "pdfPageStart1Based": 85,
+        "textLineAnchor1Based": 7957,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 3,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 3,
+        "perceptionPrinted": 7
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 12,
+        "flatFootedReflex": 10,
+        "fortitude": 9,
+        "will": 11
+      },
+      "durability": {
+        "hitPoints": 5,
+        "damageThreshold": 9
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 4000
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "source-verified"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-005",
+          "Knights of the Old Republic Campaign Guide:printed-p84:TXT-line-7957",
+          "KOTOR-DROID-005:printed-p84:PDF-p85:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-006",
+        "printedName": "HK-24 Series Assassin Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 84,
+        "printedPageEnd": 84,
+        "pdfPageStart1Based": 85,
+        "textLineAnchor1Based": 8033,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 7
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 12,
+        "perceptionPrinted": 8
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 22,
+        "flatFootedReflex": 19,
+        "fortitude": 19,
+        "will": 16
+      },
+      "durability": {
+        "hitPoints": 43,
+        "damageThreshold": 19
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "estimatedValueCredits": 24000,
+        "forSale": false
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "source-verified"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-006",
+          "Knights of the Old Republic Campaign Guide:printed-p84:TXT-line-8033",
+          "KOTOR-DROID-006:printed-p84:PDF-p85:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-007",
+        "printedName": "Independent HK-Series Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 85,
+        "printedPageEnd": 85,
+        "pdfPageStart1Based": 86,
+        "textLineAnchor1Based": 8097,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 8,
+        "perceptionPrinted": 8
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 18,
+        "flatFootedReflex": 15,
+        "fortitude": 15,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 30,
+        "damageThreshold": 15
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "conditional",
+        "heroEligibilityCondition": "Published independent HK-Series heroic baseline subject to GM approval; not the HK-24 or HK-50 factory model."
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "KOTOR-DROID-007-HK-HERO-ROUTE",
+            "statement": "The independent HK-Series heroic character template is GM-conditional, not a free licence to select either factory HK-24 or HK-50 build.",
+            "scope": "KOTOR-DROID-007",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 85,
+              "pdfPage1Based": 86,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "KOTOR-DROID-007"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-007",
+          "Knights of the Old Republic Campaign Guide:printed-p85:TXT-line-8097",
+          "KOTOR-DROID-007:printed-p85:PDF-p86:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-008",
+        "printedName": "HK-50 Series Assassin Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 85,
+        "printedPageEnd": 85,
+        "pdfPageStart1Based": 86,
+        "textLineAnchor1Based": 8139,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 12
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 15,
+        "perceptionPrinted": 11
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 26,
+        "flatFootedReflex": 22,
+        "fortitude": 26,
+        "will": 21,
+        "damageReduction": 2
+      },
+      "durability": {
+        "hitPoints": 75,
+        "damageThreshold": 26
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "estimatedValueCredits": 33000,
+        "forSale": false
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "source-verified"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-008",
+          "Knights of the Old Republic Campaign Guide:printed-p85:TXT-line-8139",
+          "KOTOR-DROID-008:printed-p85:PDF-p86:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-009",
+        "printedName": "Juggernaut War Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 86,
+        "printedPageEnd": 86,
+        "pdfPageStart1Based": 87,
+        "textLineAnchor1Based": 8232,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 4
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 12,
+        "perceptionPrinted": 6
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 20,
+        "flatFootedReflex": 17,
+        "fortitude": 16,
+        "will": 14
+      },
+      "durability": {
+        "hitPoints": 26,
+        "damageThreshold": 16
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 20000
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "source-verified"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "KOTOR-DROID-009-MULTIMODE",
+            "statement": "Juggernaut has flying, walking, swimming movement and multiple dissimilar weapons; confirm movement system and mounts before execution.",
+            "scope": "KOTOR-DROID-009",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 86,
+              "pdfPage1Based": 87,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "KOTOR-DROID-009"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-009",
+          "Knights of the Old Republic Campaign Guide:printed-p86:TXT-line-8232",
+          "KOTOR-DROID-009:printed-p86:PDF-p87:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-010",
+        "printedName": "K-X12 Probe Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 86,
+        "printedPageEnd": 86,
+        "pdfPageStart1Based": 87,
+        "textLineAnchor1Based": 8302,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Small",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 2
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 4,
+        "perceptionPrinted": 17
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 17,
+        "flatFootedReflex": 15,
+        "fortitude": 13,
+        "will": 16
+      },
+      "durability": {
+        "hitPoints": 12,
+        "damageThreshold": 13
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 6000
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "source-verified"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "KOTOR-DROID-010-SELF-DESTRUCT",
+            "statement": "K-X12 missile self-destruction requires source-specific conditions and owner certification, not a generic attack action.",
+            "scope": "KOTOR-DROID-010",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 86,
+              "pdfPage1Based": 87,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "KOTOR-DROID-010"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-010",
+          "Knights of the Old Republic Campaign Guide:printed-p86:TXT-line-8302",
+          "KOTOR-DROID-010:printed-p86:PDF-p87:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-011",
+        "printedName": "Municipal Patrol Droid Mark I",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 87,
+        "printedPageEnd": 87,
+        "pdfPageStart1Based": 88,
+        "textLineAnchor1Based": 8369,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Small",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 2
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 11,
+        "perceptionPrinted": 10
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 15,
+        "flatFootedReflex": 12,
+        "fortitude": 9,
+        "will": 13
+      },
+      "durability": {
+        "hitPoints": 12,
+        "damageThreshold": 9
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 4700
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "source-verified"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-011",
+          "Knights of the Old Republic Campaign Guide:printed-p87:TXT-line-8369",
+          "KOTOR-DROID-011:printed-p87:PDF-p88:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-012",
+        "printedName": "Devastator War Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 87,
+        "printedPageEnd": 87,
+        "pdfPageStart1Based": 88,
+        "textLineAnchor1Based": 8377,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 5
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 13,
+        "perceptionPrinted": 11
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 18,
+        "flatFootedReflex": 15,
+        "fortitude": 16,
+        "will": 13
+      },
+      "durability": {
+        "hitPoints": 46,
+        "damageThreshold": 16
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 12000
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "source-verified"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-012",
+          "Knights of the Old Republic Campaign Guide:printed-p87:TXT-line-8377",
+          "KOTOR-DROID-012:printed-p87:PDF-p88:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-013",
+        "printedName": "Sentinel Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 88,
+        "printedPageEnd": 88,
+        "pdfPageStart1Based": 89,
+        "textLineAnchor1Based": 8522,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 8,
+        "perceptionPrinted": 1
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 16,
+        "flatFootedReflex": 14,
+        "fortitude": 13,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 8,
+        "damageThreshold": 13
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 2400
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "source-verified"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-013",
+          "Knights of the Old Republic Campaign Guide:printed-p88:TXT-line-8522",
+          "KOTOR-DROID-013:printed-p88:PDF-p89:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-014",
+        "printedName": "S6-Series Security/Maintenance Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 88,
+        "printedPageEnd": 88,
+        "pdfPageStart1Based": 89,
+        "textLineAnchor1Based": 8592,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Diminutive",
+        "publishedDegree": 5,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 6,
+        "perceptionPrinted": 15
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 20,
+        "flatFootedReflex": 15,
+        "fortitude": 7,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 5,
+        "damageThreshold": 7
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 2000
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "source-verified"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-014",
+          "Knights of the Old Republic Campaign Guide:printed-p88:TXT-line-8592",
+          "KOTOR-DROID-014:printed-p88:PDF-p89:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-015",
+        "printedName": "T1 Bulk Loader Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 88,
+        "printedPageEnd": 88,
+        "pdfPageStart1Based": 89,
+        "textLineAnchor1Based": 8649,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Large",
+        "publishedDegree": 5,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 1,
+        "perceptionPrinted": 1
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 17,
+        "flatFootedReflex": 17,
+        "fortitude": 17,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 15,
+        "damageThreshold": 22
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 6000
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "source-verified"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-015",
+          "Knights of the Old Republic Campaign Guide:printed-p88:TXT-line-8649",
+          "KOTOR-DROID-015:printed-p88:PDF-p89:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-016",
+        "printedName": "R-8009 Utility Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 89,
+        "printedPageEnd": 89,
+        "pdfPageStart1Based": 90,
+        "textLineAnchor1Based": 8708,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Small",
+        "publishedDegree": 5,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": -2,
+        "perceptionPrinted": 5
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 10,
+        "flatFootedReflex": 10,
+        "fortitude": 9,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 4,
+        "damageThreshold": 9
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 800
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "source-verified"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-016",
+          "Knights of the Old Republic Campaign Guide:printed-p89:TXT-line-8708",
+          "KOTOR-DROID-016:printed-p89:PDF-p90:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-017",
+        "printedName": "Mark I Assault Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 165,
+        "printedPageEnd": 165,
+        "pdfPageStart1Based": 166,
+        "textLineAnchor1Based": 16671,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 6
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 8,
+        "perceptionPrinted": 13
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 20,
+        "flatFootedReflex": 18,
+        "fortitude": 12,
+        "will": 12,
+        "shieldRating": 10
+      },
+      "durability": {
+        "hitPoints": 30,
+        "damageThreshold": 12
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 14910
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "source-verified"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "KOTOR-DROID-017-TWO-RIFLES",
+            "statement": "Mark I printed single and combined rifle attacks are mutually contextual alternatives, not three installed fire rights.",
+            "scope": "KOTOR-DROID-017",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 165,
+              "pdfPage1Based": 166,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "KOTOR-DROID-017"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-017",
+          "Knights of the Old Republic Campaign Guide:printed-p165:TXT-line-16671",
+          "KOTOR-DROID-017:printed-p165:PDF-p166:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-018",
+        "printedName": "Mark IV Assault Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 165,
+        "printedPageEnd": 165,
+        "pdfPageStart1Based": 166,
+        "textLineAnchor1Based": 16705,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Large",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 6
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 12,
+        "perceptionPrinted": 12
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 19,
+        "flatFootedReflex": 18,
+        "fortitude": 14,
+        "will": 12,
+        "shieldRating": 10
+      },
+      "durability": {
+        "hitPoints": 52,
+        "damageThreshold": 19
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 16270
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "source-verified"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "KOTOR-DROID-018-LOGIC-UPGRADE",
+            "statement": "Mark IV source-specific Logic Upgrade: Self Defense is conditional; do not implement without registered authority.",
+            "scope": "KOTOR-DROID-018",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 165,
+              "pdfPage1Based": 166,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "KOTOR-DROID-018"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-018",
+          "Knights of the Old Republic Campaign Guide:printed-p165:TXT-line-16705",
+          "KOTOR-DROID-018:printed-p165:PDF-p166:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-019",
+        "printedName": "Basilisk War Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 203,
+        "printedPageEnd": 203,
+        "pdfPageStart1Based": 204,
+        "textLineAnchor1Based": 20759,
+        "publicationKind": "vehicle-format-droid"
+      },
+      "classification": {
+        "size": "Huge",
+        "publishedDegree": null,
+        "statblockFormat": "vehicle",
+        "sourceStatblockFormat": "vehicle-scale-droid",
+        "primaryActorAuthority": "vehicle",
+        "ruleEntityNature": "vehicle-format-droid"
+      },
+      "challenge": {
+        "challengeLevel": 6
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Vehicle-primary autonomous droid: vehicle defense, HP, weapons, velocity, crew, passenger and payload data must stay in vehicle authority."
+        ]
+      },
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/classification/publishedDegree": "not-stated",
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "KOTOR-DROID-019-PASSENGER-DELEGATION",
+            "statement": "Authorized passenger may substitute their attack or skill bonuses for the droid brain; commands of authorized passengers must be obeyed. Vehicle engine owns delegation.",
+            "scope": "KOTOR-DROID-019",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 203,
+              "pdfPage1Based": 204,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "KOTOR-DROID-019"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-019",
+          "Knights of the Old Republic Campaign Guide:printed-p203:TXT-line-20759",
+          "KOTOR-DROID-019:printed-p203:PDF-p204:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-020",
+        "printedName": "GO-TO (Dark Wars)",
+        "namedIndividual": true,
+        "baseModelSourceKey": "KOTOR-DROID-002"
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 212,
+        "printedPageEnd": 212,
+        "pdfPageStart1Based": 213,
+        "textLineAnchor1Based": 21651,
+        "publicationKind": "named-character"
+      },
+      "classification": {
+        "size": "Tiny",
+        "publishedDegree": 2,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 6
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 7,
+        "perceptionPrinted": 6
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 18,
+        "flatFootedReflex": 16,
+        "fortitude": 9,
+        "will": 12,
+        "shieldRating": 10
+      },
+      "durability": {
+        "hitPoints": 28,
+        "damageThreshold": 9
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Named NPC character statblock, not a generic factory starting model or PC starting package."
+        ]
+      },
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-020",
+          "Knights of the Old Republic Campaign Guide:printed-p212:TXT-line-21651",
+          "KOTOR-DROID-020:printed-p212:PDF-p213:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-021",
+        "printedName": "HK-47 (Jedi Civil War)",
+        "namedIndividual": true
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 213,
+        "printedPageEnd": 213,
+        "pdfPageStart1Based": 214,
+        "textLineAnchor1Based": 21768,
+        "publicationKind": "named-character"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 9
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 11,
+        "perceptionPrinted": 12
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 24,
+        "flatFootedReflex": 21,
+        "fortitude": 23,
+        "will": 20,
+        "damageReduction": 1
+      },
+      "durability": {
+        "hitPoints": 76,
+        "damageThreshold": 23
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "HK-47 named individual: Independent HK-Series heroic template is a sibling comparison, NOT a proven base-model derivation."
+        ]
+      },
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "KOTOR-DROID-021-NAMED-NPC",
+            "statement": "HK-47 is a named evolved character with DR and class levels; cannot be substituted for Independent HK-Series creation template.",
+            "scope": "KOTOR-DROID-021",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 213,
+              "pdfPage1Based": 214,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "KOTOR-DROID-021"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-021",
+          "Knights of the Old Republic Campaign Guide:printed-p213:TXT-line-21768",
+          "KOTOR-DROID-021:printed-p213:PDF-p214:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-022",
+        "printedName": "T3-M4 (Jedi Civil War)",
+        "namedIndividual": true,
+        "baseModelSourceKey": "KOTOR-DROID-003"
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 216,
+        "printedPageEnd": 216,
+        "pdfPageStart1Based": 217,
+        "textLineAnchor1Based": 22222,
+        "publicationKind": "named-character"
+      },
+      "classification": {
+        "size": "Small",
+        "publishedDegree": 2,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 6
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 2,
+        "perceptionPrinted": 3
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 21,
+        "flatFootedReflex": 11,
+        "fortitude": 15,
+        "will": 18
+      },
+      "durability": {
+        "hitPoints": 26,
+        "damageThreshold": 15
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Named NPC character statblock, not a generic factory starting model or PC starting package."
+        ]
+      },
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "KOTOR-DROID-022-NAMED-NPC",
+            "statement": "T3-M4 named instance has distinct heroic class levels and equipment; not the stock T3-series starting profile.",
+            "scope": "KOTOR-DROID-022",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 216,
+              "pdfPage1Based": 217,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "KOTOR-DROID-022"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-022",
+          "Knights of the Old Republic Campaign Guide:printed-p216:TXT-line-22222",
+          "KOTOR-DROID-022:printed-p216:PDF-p217:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-023",
+        "printedName": "Krath War Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 222,
+        "printedPageEnd": 222,
+        "pdfPageStart1Based": 223,
+        "textLineAnchor1Based": 23055,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 5
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 7,
+        "perceptionPrinted": 5
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 22,
+        "flatFootedReflex": 19,
+        "fortitude": 20,
+        "will": 14
+      },
+      "durability": {
+        "hitPoints": 26,
+        "damageThreshold": 20
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 11000
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "source-verified"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "KOTOR-DROID-023-LANGUAGE-LIMIT",
+            "statement": "Krath War Droid understands Basic but cannot speak it; keep speaking and understanding separate.",
+            "scope": "KOTOR-DROID-023",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 222,
+              "pdfPage1Based": 223,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "KOTOR-DROID-023"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-023",
+          "Knights of the Old Republic Campaign Guide:printed-p222:TXT-line-23055",
+          "KOTOR-DROID-023:printed-p222:PDF-p223:visual-selected"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "KOTOR-DROID-024",
+        "printedName": "Rakatan Guardian Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "bookId": "KOTOR",
+        "printedPageStart": 223,
+        "printedPageEnd": 223,
+        "pdfPageStart1Based": 224,
+        "textLineAnchor1Based": 23120,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Large",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 5
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 9,
+        "perceptionPrinted": 15
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 19,
+        "flatFootedReflex": 17,
+        "fortitude": 10,
+        "will": 11
+      },
+      "durability": {
+        "hitPoints": 38,
+        "damageThreshold": 10
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "No source-established hero permission; missing permission is not permission granted."
+        ]
+      },
+      "exceptions": {
+        "notes": "No feat/talent, installed-component, weapon-mount, PC build or source-specific mechanic has independent execution certification."
+      },
+      "fieldStates": {
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "KOTOR-DROID-024-INTEGRATED-MULTIWEAPON",
+            "statement": "Rakatan Guardian integrated weapons list three distinct modalities; possession label alone is not sufficient weapon-mount evidence.",
+            "scope": "KOTOR-DROID-024",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 223,
+              "pdfPage1Based": 224,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "KOTOR-DROID-024"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewerEvidenceRefs": [
+          "KOTOR-CENSUS:KOTOR-DROID-024",
+          "Knights of the Old Republic Campaign Guide:printed-p223:TXT-line-23120",
+          "KOTOR-DROID-024:printed-p223:PDF-p224:visual-selected"
+        ]
+      }
+    }
+  ]
+}

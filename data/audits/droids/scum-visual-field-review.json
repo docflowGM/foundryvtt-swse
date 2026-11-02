@@ -1,0 +1,51 @@
+{
+  "schema": "swse.droid.scum.selected-pdf-visual/0.1",
+  "sourceBook": "Scum and Villainy",
+  "manualVisualReviews": 5,
+  "directFieldComparisons": 32,
+  "sourcePdfHash": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+  "method": "Printed PDF page images, primary text where available, selected values only.",
+  "scope": "Selected printed-page facts, not mechanically certified fields.",
+  "items": [
+    {
+      "sourceEntryKey": "SCUM-DROID-001",
+      "printedName": "Industrial Automaton K-Series Spaceport Control Droid",
+      "printedPage": 96,
+      "verifiedFieldCount": 7,
+      "sourceImage": "work/scum_pdf_review/printed_p96.png",
+      "scope": "Selected first-page PDF review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "SCUM-DROID-002",
+      "printedName": "Industrial Automaton RX-Series Pilot Droid",
+      "printedPage": 96,
+      "verifiedFieldCount": 7,
+      "sourceImage": "work/scum_pdf_review/printed_p96.png",
+      "scope": "Selected first-page PDF review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "SCUM-DROID-003",
+      "printedName": "Roche 11-17 Series Mining Droid",
+      "printedPage": 156,
+      "verifiedFieldCount": 6,
+      "sourceImage": "work/scum_pdf_review/printed_p156.png",
+      "scope": "Selected first-page PDF review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "SCUM-DROID-004",
+      "printedName": "Roche 8D8 Smelting Operator Droid",
+      "printedPage": 157,
+      "verifiedFieldCount": 6,
+      "sourceImage": "work/scum_pdf_review/printed_p157.png",
+      "scope": "Selected first-page PDF review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "SCUM-DROID-005",
+      "printedName": "Roche J9 Worker Drone",
+      "printedPage": 157,
+      "verifiedFieldCount": 6,
+      "sourceImage": "work/scum_pdf_review/printed_p157.png",
+      "scope": "Selected first-page PDF review, not mechanical certification."
+    }
+  ]
+}

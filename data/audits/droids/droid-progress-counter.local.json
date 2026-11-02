@@ -1,0 +1,109 @@
+{
+  "schema": "swse.droid.local-progress-counter/0.3",
+  "workingBookId": "SOTG",
+  "workstream": "droid-mechanical-hydration",
+  "sourceBookTotal": 14,
+  "sourceBooksMechanicallyComplete": 0,
+  "overall": {
+    "publicationClaimsTotal": 234,
+    "draftSourceEntries": 234,
+    "draftSourceCoveragePercent": 100.0,
+    "selectedFieldPdfVisuallyReviewedEntries": 234,
+    "selectedFieldPdfCoveragePercent": 100.0,
+    "independentlyMechanicalCertifiedEntries": 0,
+    "mechanicalCertificationPercent": 0.0,
+    "directPdfVisualFieldComparisons": 3615
+  },
+  "currentBook": {
+    "id": "SOTG",
+    "title": "Starships of the Galaxy",
+    "publishedClaimsTotal": 3,
+    "draftSourceEntries": 3,
+    "selectedFieldPdfVisuallyReviewedEntries": 3,
+    "selectedFieldPdfPercent": 100.0,
+    "directPdfVisualFieldComparisons": 15,
+    "mechanicallyCertifiedEntries": 0,
+    "mechanicalCertificationPercent": 0.0,
+    "status": "IN_PROGRESS_NOT_CERTIFIED",
+    "remainingUnvisuallyReviewedFirstPages": 0,
+    "mechanicalCertificationsStillNeeded": 3
+  },
+  "previousBooks": {
+    "SGD": {
+      "draftSourceEntries": 46,
+      "selectedPdfFieldsReviewedEntries": 46,
+      "directPdfVisualFieldComparisons": 811,
+      "mechanicallyCertifiedEntries": 0
+    },
+    "CLONE": {
+      "draftSourceEntries": 40,
+      "selectedPdfFieldsReviewedEntries": 40,
+      "directPdfVisualFieldComparisons": 528,
+      "mechanicallyCertifiedEntries": 0
+    },
+    "THREATS": {
+      "draftSourceEntries": 29,
+      "selectedPdfFieldsReviewedEntries": 29,
+      "directPdfVisualFieldComparisons": 314,
+      "mechanicallyCertifiedEntries": 0
+    },
+    "KOTOR": {
+      "draftSourceEntries": 24,
+      "selectedPdfFieldsReviewedEntries": 24,
+      "directPdfVisualFieldComparisons": 369,
+      "mechanicallyCertifiedEntries": 0
+    },
+    "GAW": {
+      "draftSourceEntries": 22,
+      "selectedPdfFieldsReviewedEntries": 22,
+      "directPdfVisualFieldComparisons": 285,
+      "mechanicallyCertifiedEntries": 0
+    },
+    "REBELLION": {
+      "draftSourceEntries": 15,
+      "selectedPdfFieldsReviewedEntries": 15,
+      "directPdfVisualFieldComparisons": 325,
+      "mechanicallyCertifiedEntries": 0
+    },
+    "CORE": {
+      "draftSourceEntries": 13,
+      "selectedPdfFieldsReviewedEntries": 13,
+      "directPdfVisualFieldComparisons": 263,
+      "mechanicallyCertifiedEntries": 0
+    },
+    "LEGACY": {
+      "draftSourceEntries": 12,
+      "selectedPdfFieldsReviewedEntries": 12,
+      "directPdfVisualFieldComparisons": 251,
+      "mechanicallyCertifiedEntries": 0
+    },
+    "FORCE": {
+      "draftSourceEntries": 11,
+      "selectedPdfFieldsReviewedEntries": 11,
+      "directPdfVisualFieldComparisons": 229,
+      "mechanicallyCertifiedEntries": 0
+    },
+    "GOI": {
+      "draftSourceEntries": 8,
+      "selectedPdfFieldsReviewedEntries": 8,
+      "directPdfVisualFieldComparisons": 94,
+      "mechanicallyCertifiedEntries": 0
+    },
+    "UNKNOWN": {
+      "draftSourceEntries": 6,
+      "selectedPdfFieldsReviewedEntries": 6,
+      "directPdfVisualFieldComparisons": 99,
+      "mechanicallyCertifiedEntries": 0
+    },
+    "SCUM": {
+      "draftSourceEntries": 5,
+      "selectedPdfFieldsReviewedEntries": 5,
+      "directPdfVisualFieldComparisons": 32,
+      "mechanicallyCertifiedEntries": 0
+    }
+  },
+  "remainingUndraftedPublicationClaims": 0,
+  "caveat": "Draft source records and selected printed-PDF fields are not complete mechanical certification. Equipment, feats, talents, full rules, and Foundry V13 execution remain gated.",
+  "githubWritesAuthorized": false,
+  "repositorySyncState": "LOCAL_ONLY_UNPUSHED"
+}

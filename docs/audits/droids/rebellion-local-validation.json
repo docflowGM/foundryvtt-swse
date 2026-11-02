@@ -1,0 +1,17 @@
+{
+  "schema": "swse.droid.rebellion.local-validation/0.1",
+  "status": "PASS",
+  "scope": "LOCAL_SEMANTIC_AND_SELECTED_PDF_FIELD_VALIDATION_ONLY",
+  "errors": [],
+  "counts": {
+    "publicationClaims": 15,
+    "selectedFirstPageVisualReviews": 15,
+    "directFieldComparisons": 325,
+    "droidActorSourceRecords": 15,
+    "independentlyMechanicalCertified": 0
+  },
+  "fullUpstreamJsonSchema202012Validated": false,
+  "foundryRuntimeCertified": false,
+  "sourceLedgerSha256": "1bba7c59e4bf114e8a6292c4ae4211dc6a1e7d409ab5d81bba608158eff754ec",
+  "limitations": "Printed pages selected fields only; full rules, feats, talents, components/mounts, legal chargen, upstream schema and V13 runtime not verified."
+}

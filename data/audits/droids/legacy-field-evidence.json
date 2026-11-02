@@ -1,0 +1,511 @@
+{
+  "schema": "swse.droid.legacy.source-evidence/0.1",
+  "sourceBook": "Legacy Era Campaign Guide",
+  "sourcePdf": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+  "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+  "sourceTxt": "Legacy Era Campaign Guide_djvu.txt",
+  "sourceTxtSha256": "4630535be408e5a42989d8874d3ea026886f0d7c6d69706465b47a4c45dd9c83",
+  "records": [
+    {
+      "sourceEntryKey": "LEGACY-DROID-001",
+      "printedName": "PI-Series Medical Assistant Droid",
+      "printedPage": 69,
+      "pdfPage1Based": 70,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 6089,
+      "txtWindowSha256": "eb7a0476a64f832aee96f4dd15ab0eee7eb120cdb337676152cb33dc7e51c8c6",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/legacy_pdf_review/printed_p69.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "PI-Series Medical Assistant Droid",
+          "/publication/printedPageStart": 69,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 0,
+          "/classification/publishedDegree": 1,
+          "/abilities/initiativePrinted": 3,
+          "/abilities/perceptionPrinted": 12,
+          "/abilities/str": 8,
+          "/abilities/dex": 14,
+          "/abilities/int": 15,
+          "/abilities/wis": 13,
+          "/abilities/cha": 8,
+          "/progression/classLineRaw": "nonheroic 2",
+          "/defenses/reflex": 13,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 11,
+          "/durability/hitPoints": 7,
+          "/durability/damageThreshold": 9,
+          "/movement/speedLineRaw": "fly 6 squares (hover)",
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "Printed PI uses capital I; do not transform into P1.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-002",
+      "printedName": "3Z3 Medical Droid",
+      "printedPage": 70,
+      "pdfPage1Based": 71,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 6175,
+      "txtWindowSha256": "060094d425be1b9117135394dc2fc9b0262762584b878e3ed8df9e2a6e30c38e",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/legacy_pdf_review/printed_p70.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "3Z3 Medical Droid",
+          "/publication/printedPageStart": 70,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 1,
+          "/classification/publishedDegree": 1,
+          "/abilities/initiativePrinted": 3,
+          "/abilities/perceptionPrinted": 11,
+          "/abilities/str": 10,
+          "/abilities/dex": 12,
+          "/abilities/int": 14,
+          "/abilities/wis": 15,
+          "/abilities/cha": 8,
+          "/progression/classLineRaw": "nonheroic 4",
+          "/defenses/reflex": 11,
+          "/defenses/flatFootedReflex": 10,
+          "/defenses/fortitude": 10,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 10,
+          "/durability/damageThreshold": 10,
+          "/movement/speedLineRaw": "6 squares",
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-003",
+      "printedName": "BL-39 Interrogator Droid",
+      "printedPage": 71,
+      "pdfPage1Based": 72,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 6244,
+      "txtWindowSha256": "7b73b7d2b615613171cf1f3483318be3a89deb9b8da9a4d2b978b145a41b37ed",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/legacy_pdf_review/printed_p71.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "BL-39 Interrogator Droid",
+          "/publication/printedPageStart": 71,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 1,
+          "/classification/publishedDegree": 1,
+          "/abilities/initiativePrinted": 2,
+          "/abilities/perceptionPrinted": 11,
+          "/abilities/str": 8,
+          "/abilities/dex": 12,
+          "/abilities/int": 14,
+          "/abilities/wis": 17,
+          "/abilities/cha": 15,
+          "/progression/classLineRaw": "nonheroic 1/scoundrel 1",
+          "/defenses/reflex": 15,
+          "/defenses/flatFootedReflex": 14,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 15,
+          "/durability/hitPoints": 6,
+          "/durability/damageThreshold": 9,
+          "/movement/speedLineRaw": "fly 6 squares (hover); maximum altitude of 2 squares",
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "Medical reprogramming is narrative; no general free-chassis reconfiguration entitlement.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-004",
+      "printedName": "FEG-Series Pilot Droid",
+      "printedPage": 71,
+      "pdfPage1Based": 72,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 6328,
+      "txtWindowSha256": "0d00728190d7ed382739f87f9292c9deb41dfea714bc13e73abc4b99537b756f",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/legacy_pdf_review/printed_p71.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "FEG-Series Pilot Droid",
+          "/publication/printedPageStart": 71,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 1,
+          "/classification/publishedDegree": 2,
+          "/abilities/initiativePrinted": 2,
+          "/abilities/perceptionPrinted": 6,
+          "/abilities/str": 13,
+          "/abilities/dex": 15,
+          "/abilities/int": 14,
+          "/abilities/wis": 12,
+          "/abilities/cha": 10,
+          "/progression/classLineRaw": "scoundrel 1",
+          "/defenses/reflex": 15,
+          "/defenses/flatFootedReflex": 13,
+          "/defenses/fortitude": 12,
+          "/defenses/will": 13,
+          "/durability/hitPoints": 18,
+          "/durability/damageThreshold": 12,
+          "/movement/speedLineRaw": "6 squares",
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "FEG pilots vehicles but is itself a droid actor; do not transfer vehicle authority.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-005",
+      "printedName": "Holocam Droid",
+      "printedPage": 72,
+      "pdfPage1Based": 73,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 6399,
+      "txtWindowSha256": "4441491049e91466706b93fd0cc76a0ec4513f69136636927ea31d0ac0dd4eb6",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/legacy_pdf_review/printed_p72.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "Holocam Droid",
+          "/publication/printedPageStart": 72,
+          "/classification/size": "Tiny",
+          "/challenge/challengeLevel": 0,
+          "/classification/publishedDegree": 2,
+          "/abilities/initiativePrinted": 2,
+          "/abilities/perceptionPrinted": 14,
+          "/abilities/str": 6,
+          "/abilities/dex": 15,
+          "/abilities/int": 10,
+          "/abilities/wis": 14,
+          "/abilities/cha": 6,
+          "/progression/classLineRaw": "nonheroic 1",
+          "/defenses/reflex": 14,
+          "/defenses/flatFootedReflex": 12,
+          "/defenses/fortitude": 8,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 2,
+          "/durability/damageThreshold": 8,
+          "/movement/speedLineRaw": "fly 8 squares (hover)",
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-006",
+      "printedName": "Roving Eye Observation Droid",
+      "printedPage": 73,
+      "pdfPage1Based": 74,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 6479,
+      "txtWindowSha256": "516728d0f46a1ed12db83519b51e05119e3e46928f5626837be5713b73cdbc2e",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/legacy_pdf_review/printed_p73.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "Roving Eye Observation Droid",
+          "/publication/printedPageStart": 73,
+          "/classification/size": "Diminutive",
+          "/challenge/challengeLevel": 0,
+          "/classification/publishedDegree": 2,
+          "/abilities/initiativePrinted": 3,
+          "/abilities/perceptionPrinted": 14,
+          "/abilities/str": 4,
+          "/abilities/dex": 17,
+          "/abilities/int": 10,
+          "/abilities/wis": 14,
+          "/abilities/cha": 6,
+          "/progression/classLineRaw": "nonheroic 1",
+          "/defenses/reflex": 17,
+          "/defenses/flatFootedReflex": 15,
+          "/defenses/fortitude": 7,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 2,
+          "/durability/damageThreshold": 7,
+          "/movement/speedLineRaw": "fly 8 squares (hover)",
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-007",
+      "printedName": "Z65 Patrol Droid",
+      "printedPage": 74,
+      "pdfPage1Based": 75,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 6524,
+      "txtWindowSha256": "ea3f63797d217a1be5d7bc306cb2f414709b32af24486bb2ae3ba12bc154236c",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/legacy_pdf_review/printed_p74.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "Z65 Patrol Droid",
+          "/publication/printedPageStart": 74,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 3,
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 6,
+          "/abilities/perceptionPrinted": 12,
+          "/abilities/str": 14,
+          "/abilities/dex": 16,
+          "/abilities/int": 10,
+          "/abilities/wis": 14,
+          "/abilities/cha": 12,
+          "/progression/classLineRaw": "nonheroic 6/soldier 1",
+          "/defenses/reflex": 21,
+          "/defenses/flatFootedReflex": 18,
+          "/defenses/fortitude": 15,
+          "/defenses/will": 13,
+          "/durability/hitPoints": 21,
+          "/durability/damageThreshold": 15,
+          "/movement/speedLineRaw": "6 squares",
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-008",
+      "printedName": "LV8-Series Guard Droid",
+      "printedPage": 74,
+      "pdfPage1Based": 75,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 6622,
+      "txtWindowSha256": "b53a7f71a40eacc3de6a5be70cb8b865a18675d85abf5811df2471583a4eb230",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/legacy_pdf_review/printed_p74.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "LV8-Series Guard Droid",
+          "/publication/printedPageStart": 74,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 4,
+          "/abilities/initiativePrinted": 15,
+          "/abilities/perceptionPrinted": 9,
+          "/abilities/str": 14,
+          "/abilities/dex": 18,
+          "/abilities/int": 8,
+          "/abilities/wis": 16,
+          "/abilities/cha": 10,
+          "/progression/classLineRaw": "nonheroic 12",
+          "/defenses/reflex": 20,
+          "/defenses/flatFootedReflex": 17,
+          "/defenses/fortitude": 12,
+          "/defenses/will": 13,
+          "/durability/hitPoints": 30,
+          "/durability/damageThreshold": 12,
+          "/movement/speedLineRaw": "6 squares",
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 20,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "Printed statblock omits degree; fourth-degree is the contextual heading only.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-009",
+      "printedName": "Aggressor-Series Battle Droid",
+      "printedPage": 75,
+      "pdfPage1Based": 76,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 6688,
+      "txtWindowSha256": "a2c6fb9ae34fd431c2b28fa1e6a9d1bf222b98cf3d74d0c2aa1d056cd6a8a6c4",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/legacy_pdf_review/printed_p75.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "Aggressor-Series Battle Droid",
+          "/publication/printedPageStart": 75,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 1,
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 7,
+          "/abilities/perceptionPrinted": 6,
+          "/abilities/str": 15,
+          "/abilities/dex": 14,
+          "/abilities/int": 10,
+          "/abilities/wis": 13,
+          "/abilities/cha": 8,
+          "/progression/classLineRaw": "soldier 1",
+          "/defenses/reflex": 17,
+          "/defenses/flatFootedReflex": 15,
+          "/defenses/fortitude": 15,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 30,
+          "/durability/damageThreshold": 15,
+          "/movement/speedLineRaw": "6 squares",
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "Printed starting soldier bonus feat replacement is conditional on this starting route; not free feat stacking.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-010",
+      "printedName": "IX-6 Heavy Combat Droid",
+      "printedPage": 76,
+      "pdfPage1Based": 77,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 6780,
+      "txtWindowSha256": "da2c489d47bf736926aeeafb629d7279c3d3809f0ac9cd9612b816f47606218b",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/legacy_pdf_review/printed_p76.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "IX-6 Heavy Combat Droid",
+          "/publication/printedPageStart": 76,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 5,
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 10,
+          "/abilities/perceptionPrinted": 9,
+          "/abilities/str": 14,
+          "/abilities/dex": 16,
+          "/abilities/int": 13,
+          "/abilities/wis": 10,
+          "/abilities/cha": 9,
+          "/progression/classLineRaw": "soldier 5",
+          "/defenses/reflex": 23,
+          "/defenses/flatFootedReflex": 20,
+          "/defenses/fortitude": 20,
+          "/defenses/will": 16,
+          "/durability/hitPoints": 52,
+          "/durability/damageThreshold": 20,
+          "/movement/speedLineRaw": "6 squares",
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "Two blaster rifles in possessions do not establish two executable attacks.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-011",
+      "printedName": "LON-29 Battle Droid Commander",
+      "printedPage": 76,
+      "pdfPage1Based": 77,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 6861,
+      "txtWindowSha256": "4ebbe83761ce75f249b43fc0a04721e562553a8a7cb1d8e23a6cfab581af3b2d",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/legacy_pdf_review/printed_p76.png",
+        "extraVisualSourcePages": [
+          77
+        ],
+        "fieldValues": {
+          "/identity/printedName": "LON-29 Battle Droid Commander",
+          "/publication/printedPageStart": 76,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 6,
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 12,
+          "/abilities/perceptionPrinted": 13,
+          "/abilities/str": 11,
+          "/abilities/dex": 14,
+          "/abilities/int": 16,
+          "/abilities/wis": 13,
+          "/abilities/cha": 14,
+          "/progression/classLineRaw": "nonheroic 6/soldier 2/officer 2",
+          "/defenses/reflex": 23,
+          "/defenses/flatFootedReflex": 21,
+          "/defenses/fortitude": 17,
+          "/defenses/will": 20,
+          "/durability/hitPoints": 35,
+          "/durability/damageThreshold": 17,
+          "/movement/speedLineRaw": "6 squares",
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "Battle Analysis and Deployment Tactics require canonical rules and sharing conditions.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-012",
+      "printedName": "HV-7 Loading Droid",
+      "printedPage": 77,
+      "pdfPage1Based": 78,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 6953,
+      "txtWindowSha256": "eef6b28cbdb67a42b1ef5f973439c30797d18fb1d37d67b0b17498f8a2054671",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/legacy_pdf_review/printed_p77.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "HV-7 Loading Droid",
+          "/publication/printedPageStart": 77,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 1,
+          "/classification/publishedDegree": 5,
+          "/abilities/initiativePrinted": 3,
+          "/abilities/perceptionPrinted": 2,
+          "/abilities/str": 15,
+          "/abilities/dex": 14,
+          "/abilities/int": 10,
+          "/abilities/wis": 13,
+          "/abilities/cha": 6,
+          "/progression/classLineRaw": "nonheroic 3",
+          "/defenses/reflex": 13,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 12,
+          "/defenses/will": 11,
+          "/durability/hitPoints": 7,
+          "/durability/damageThreshold": 12,
+          "/movement/speedLineRaw": "fly 8 squares (hover)",
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "Repulsor-assisted lifting is source-specific, not a global cargo coefficient.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    }
+  ]
+}

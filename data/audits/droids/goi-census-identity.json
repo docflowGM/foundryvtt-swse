@@ -1,0 +1,102 @@
+{
+  "schema": "swse.droid.goi.census-parity/0.1",
+  "authority": "Published census identities checked against printed PDF.",
+  "claims": [
+    {
+      "sourceEntryKey": "GOI-DROID-001",
+      "printedName": "5-BT Threat Analysis Droid",
+      "printedPageStart": 72,
+      "printedPageEnd": 72,
+      "txtLine1Based": 6833,
+      "publishedDegree": 1,
+      "size": "Tiny",
+      "challengeLevel": 1,
+      "kind": "model",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-002",
+      "printedName": "NR-1100 Slicer Droid",
+      "printedPageStart": 72,
+      "printedPageEnd": 73,
+      "txtLine1Based": 6897,
+      "publishedDegree": 2,
+      "size": "Small",
+      "challengeLevel": 3,
+      "kind": "model",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-003",
+      "printedName": "3D-4 Administrative Droid",
+      "printedPageStart": 73,
+      "printedPageEnd": 73,
+      "txtLine1Based": 6961,
+      "publishedDegree": 3,
+      "size": "Medium",
+      "challengeLevel": 0,
+      "kind": "model",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-004",
+      "printedName": "M4-Series Messenger Droid",
+      "printedPageStart": 74,
+      "printedPageEnd": 74,
+      "txtLine1Based": 7026,
+      "publishedDegree": 3,
+      "size": "Diminutive",
+      "challengeLevel": 1,
+      "kind": "model",
+      "heroEligibility": "unset"
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-005",
+      "printedName": "FIII Footman Droid",
+      "printedPageStart": 74,
+      "printedPageEnd": 74,
+      "txtLine1Based": 7034,
+      "publishedDegree": 4,
+      "size": "Medium",
+      "challengeLevel": 9,
+      "kind": "model",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-006",
+      "printedName": "BL-Series Battle Legionnaire",
+      "printedPageStart": 75,
+      "printedPageEnd": 75,
+      "txtLine1Based": 7129,
+      "publishedDegree": 4,
+      "size": "Medium",
+      "challengeLevel": 3,
+      "kind": "model",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-007",
+      "printedName": "B4J4 Security Droid",
+      "printedPageStart": 75,
+      "printedPageEnd": 75,
+      "txtLine1Based": 7155,
+      "publishedDegree": 4,
+      "size": "Small",
+      "challengeLevel": 2,
+      "kind": "model",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-008",
+      "printedName": "MRD-39B Assassin Droid",
+      "printedPageStart": 208,
+      "printedPageEnd": 208,
+      "txtLine1Based": 19790,
+      "publishedDegree": 4,
+      "size": "Small",
+      "challengeLevel": 6,
+      "kind": "model",
+      "heroEligibility": "unset"
+    }
+  ]
+}

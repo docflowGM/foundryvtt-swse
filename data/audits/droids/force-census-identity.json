@@ -1,0 +1,138 @@
+{
+  "schema": "swse.droid.force.census-parity/0.1",
+  "authority": "Read-only upstream publication census cross-checked to printed PDF, with printed corrections recorded locally.",
+  "claims": [
+    {
+      "sourceEntryKey": "FORCE-DROID-001",
+      "printedName": "FX-6 Medical Droid",
+      "printedPageStart": 103,
+      "printedPageEnd": 103,
+      "txtLine1Based": 9835,
+      "publishedDegree": 1,
+      "size": "Medium",
+      "challengeLevel": 0,
+      "kind": "model",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-002",
+      "printedName": "Q7 Series Astromech Droid",
+      "printedPageStart": 104,
+      "printedPageEnd": 104,
+      "txtLine1Based": 9933,
+      "publishedDegree": 2,
+      "size": "Small",
+      "challengeLevel": 0,
+      "kind": "model",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-003",
+      "printedName": "BD-3000 Luxury Droid",
+      "printedPageStart": 105,
+      "printedPageEnd": 105,
+      "txtLine1Based": 10059,
+      "publishedDegree": 3,
+      "size": "Medium",
+      "challengeLevel": 0,
+      "kind": "model",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-004",
+      "printedName": "Junk Droid",
+      "printedPageStart": 106,
+      "printedPageEnd": 106,
+      "txtLine1Based": 10173,
+      "publishedDegree": null,
+      "size": "Medium",
+      "challengeLevel": 1,
+      "kind": "model",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-005",
+      "printedName": "Brute Junk Droid",
+      "printedPageStart": 107,
+      "printedPageEnd": 107,
+      "txtLine1Based": 10206,
+      "publishedDegree": null,
+      "size": "Large",
+      "challengeLevel": 3,
+      "kind": "model",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-006",
+      "printedName": "Behemoth Junk Droid",
+      "printedPageStart": 107,
+      "printedPageEnd": 107,
+      "txtLine1Based": 10243,
+      "publishedDegree": null,
+      "size": "Huge",
+      "challengeLevel": 4,
+      "kind": "model",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-007",
+      "printedName": "IT-O Interrogator",
+      "printedPageStart": 195,
+      "printedPageEnd": 195,
+      "txtLine1Based": 19621,
+      "publishedDegree": 2,
+      "size": "Small",
+      "challengeLevel": 1,
+      "kind": "model",
+      "heroEligibility": "conditional"
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-008",
+      "printedName": "RA-7 Protocol Droid",
+      "printedPageStart": 196,
+      "printedPageEnd": 196,
+      "txtLine1Based": 19732,
+      "publishedDegree": 3,
+      "size": "Medium",
+      "challengeLevel": 1,
+      "kind": "model",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-009",
+      "printedName": "PROXY",
+      "printedPageStart": 197,
+      "printedPageEnd": 197,
+      "txtLine1Based": 19802,
+      "publishedDegree": 4,
+      "size": "Medium",
+      "challengeLevel": 13,
+      "kind": "named",
+      "heroEligibility": "unset"
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-010",
+      "printedName": "R-1 Recon Droid",
+      "printedPageStart": 197,
+      "printedPageEnd": 197,
+      "txtLine1Based": 19876,
+      "publishedDegree": 4,
+      "size": "Small",
+      "challengeLevel": 1,
+      "kind": "model",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-011",
+      "printedName": "MSE-6 Repair Droid",
+      "printedPageStart": 198,
+      "printedPageEnd": 198,
+      "txtLine1Based": 19978,
+      "publishedDegree": 5,
+      "size": "Tiny",
+      "challengeLevel": 0,
+      "kind": "model",
+      "heroEligibility": "prohibited"
+    }
+  ]
+}

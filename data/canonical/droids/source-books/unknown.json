@@ -1,0 +1,657 @@
+{
+  "schema": "swse.droid.source-book-hydration-ledger/0.1-partial",
+  "bookId": "UNKNOWN",
+  "book": "The Unknown Regions",
+  "draftSourceEntrySchema": "swse.droid.universal-source/0.1-draft",
+  "sourceBookPdf": "SW_Saga_The_Unknown_Regions.pdf",
+  "scope": "Selected PDF fields and source-only constraints; not import-ready.",
+  "expectedPublicationClaims": 6,
+  "sourceEntries": [
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "UNKNOWN-DROID-001",
+        "printedName": "AS23 Aerial Survey Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "The Unknown Regions",
+        "bookId": "UNKNOWN",
+        "printedPageStart": 43,
+        "printedPageEnd": 43,
+        "pdfPageStart1Based": 44,
+        "textLineAnchor1Based": 4206,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 3,
+        "size": "Small",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 4,
+        "perceptionPrinted": 14
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 15,
+        "flatFootedReflex": 11,
+        "fortitude": 9,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 3,
+        "damageThreshold": 9
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 23500
+      },
+      "text": {
+        "sourceWarnings": [
+          "Selected PDF fields only; full mechanical certification outstanding.",
+          "Aerial survey spotting rules are model-specific, not vehicle targeting authority."
+        ]
+      },
+      "exceptions": {
+        "notes": "No mechanic execution. Feats/talents, inventory instances, legal attacks, full narrative rules and engine runtime remain uncertified."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleId": "UNKNOWN-DROID-001-BOUNDARY-1",
+            "statement": "Aerial survey spotting rules are model-specific, not vehicle targeting authority.",
+            "scope": "UNKNOWN-DROID-001",
+            "source": {
+              "book": "The Unknown Regions",
+              "page": 43,
+              "pdfPage1Based": 44,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "UNKNOWN-DROID-001"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page fields only; independently certified mechanical effects: zero.",
+        "reviewerEvidenceRefs": [
+          "UNKNOWN-DROID-001:pdf-p43",
+          "UNKNOWN-DROID-001:txt-line-4206"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "UNKNOWN-DROID-002",
+        "printedName": "DSH-3 Probe Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "The Unknown Regions",
+        "bookId": "UNKNOWN",
+        "printedPageStart": 44,
+        "printedPageEnd": 44,
+        "pdfPageStart1Based": 45,
+        "textLineAnchor1Based": 4305,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Small",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 5,
+        "perceptionPrinted": 15
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 15,
+        "flatFootedReflex": 11,
+        "fortitude": 8,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 8,
+        "damageThreshold": 8
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 13000
+      },
+      "text": {
+        "sourceWarnings": [
+          "Selected PDF fields only; full mechanical certification outstanding.",
+          "Probe droid reactions and tracking do not create generic droid actions."
+        ]
+      },
+      "exceptions": {
+        "notes": "No mechanic execution. Feats/talents, inventory instances, legal attacks, full narrative rules and engine runtime remain uncertified."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleId": "UNKNOWN-DROID-002-BOUNDARY-1",
+            "statement": "Probe droid reactions and tracking do not create generic droid actions.",
+            "scope": "UNKNOWN-DROID-002",
+            "source": {
+              "book": "The Unknown Regions",
+              "page": 44,
+              "pdfPage1Based": 45,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "UNKNOWN-DROID-002"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page fields only; independently certified mechanical effects: zero.",
+        "reviewerEvidenceRefs": [
+          "UNKNOWN-DROID-002:pdf-p44",
+          "UNKNOWN-DROID-002:txt-line-4305"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "UNKNOWN-DROID-003",
+        "printedName": "F1 Exploration Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "The Unknown Regions",
+        "bookId": "UNKNOWN",
+        "printedPageStart": 44,
+        "printedPageEnd": 45,
+        "pdfPageStart1Based": 45,
+        "textLineAnchor1Based": 4407,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 5,
+        "size": "Small",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 3
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 7,
+        "perceptionPrinted": 15
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 17,
+        "flatFootedReflex": 16,
+        "fortitude": 15,
+        "will": 15
+      },
+      "durability": {
+        "hitPoints": 33,
+        "damageThreshold": 15
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 12500
+      },
+      "text": {
+        "sourceWarnings": [
+          "Selected PDF fields only; full mechanical certification outstanding.",
+          "Force points printed on Scout model do not prove universal droid Force Sensitivity.",
+          "Full statblock and protocol view span adjacent pages; one source identity only."
+        ]
+      },
+      "exceptions": {
+        "notes": "No mechanic execution. Feats/talents, inventory instances, legal attacks, full narrative rules and engine runtime remain uncertified."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleId": "UNKNOWN-DROID-003-BOUNDARY-1",
+            "statement": "Force points printed on Scout model do not prove universal droid Force Sensitivity.",
+            "scope": "UNKNOWN-DROID-003",
+            "source": {
+              "book": "The Unknown Regions",
+              "page": 44,
+              "pdfPage1Based": 45,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "UNKNOWN-DROID-003"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "UNKNOWN-DROID-003-BOUNDARY-2",
+            "statement": "Full statblock and protocol view span adjacent pages; one source identity only.",
+            "scope": "UNKNOWN-DROID-003",
+            "source": {
+              "book": "The Unknown Regions",
+              "page": 44,
+              "pdfPage1Based": 45,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "UNKNOWN-DROID-003"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page fields only; independently certified mechanical effects: zero.",
+        "reviewerEvidenceRefs": [
+          "UNKNOWN-DROID-003:pdf-p44",
+          "UNKNOWN-DROID-003:txt-line-4407"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "UNKNOWN-DROID-004",
+        "printedName": "MULE Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "The Unknown Regions",
+        "bookId": "UNKNOWN",
+        "printedPageStart": 45,
+        "printedPageEnd": 46,
+        "pdfPageStart1Based": 46,
+        "textLineAnchor1Based": 4520,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 5,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 1,
+        "perceptionPrinted": 12
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 10,
+        "flatFootedReflex": 10,
+        "fortitude": 15,
+        "will": 11
+      },
+      "durability": {
+        "hitPoints": 9,
+        "damageThreshold": 15
+      },
+      "movement": {
+        "speedLineRaw": "4 squares (hovering)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 9000
+      },
+      "text": {
+        "sourceWarnings": [
+          "Selected PDF fields only; full mechanical certification outstanding.",
+          "Self-diagnostic grant is limited to source conditions.",
+          "Protocol view is a second presentation, not another droid."
+        ]
+      },
+      "exceptions": {
+        "notes": "No mechanic execution. Feats/talents, inventory instances, legal attacks, full narrative rules and engine runtime remain uncertified."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleId": "UNKNOWN-DROID-004-BOUNDARY-1",
+            "statement": "Self-diagnostic grant is limited to source conditions.",
+            "scope": "UNKNOWN-DROID-004",
+            "source": {
+              "book": "The Unknown Regions",
+              "page": 45,
+              "pdfPage1Based": 46,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "UNKNOWN-DROID-004"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "UNKNOWN-DROID-004-BOUNDARY-2",
+            "statement": "Protocol view is a second presentation, not another droid.",
+            "scope": "UNKNOWN-DROID-004",
+            "source": {
+              "book": "The Unknown Regions",
+              "page": 45,
+              "pdfPage1Based": 46,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "UNKNOWN-DROID-004"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page fields only; independently certified mechanical effects: zero.",
+        "reviewerEvidenceRefs": [
+          "UNKNOWN-DROID-004:pdf-p45",
+          "UNKNOWN-DROID-004:txt-line-4520"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "UNKNOWN-DROID-005",
+        "printedName": "Wanderer Scout Surveyor Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "The Unknown Regions",
+        "bookId": "UNKNOWN",
+        "printedPageStart": 46,
+        "printedPageEnd": 47,
+        "pdfPageStart1Based": 47,
+        "textLineAnchor1Based": 4663,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 5,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 3,
+        "perceptionPrinted": 6
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 16,
+        "flatFootedReflex": 16,
+        "fortitude": 14,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 26,
+        "damageThreshold": 14
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 9400
+      },
+      "text": {
+        "sourceWarnings": [
+          "Selected PDF fields only; full mechanical certification outstanding.",
+          "360-degree photoreceptor prevents flank and certain flat-footed effects only as printed; no unrestricted awareness."
+        ]
+      },
+      "exceptions": {
+        "notes": "No mechanic execution. Feats/talents, inventory instances, legal attacks, full narrative rules and engine runtime remain uncertified."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleId": "UNKNOWN-DROID-005-BOUNDARY-1",
+            "statement": "360-degree photoreceptor prevents flank and certain flat-footed effects only as printed; no unrestricted awareness.",
+            "scope": "UNKNOWN-DROID-005",
+            "source": {
+              "book": "The Unknown Regions",
+              "page": 46,
+              "pdfPage1Based": 47,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "UNKNOWN-DROID-005"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page fields only; independently certified mechanical effects: zero.",
+        "reviewerEvidenceRefs": [
+          "UNKNOWN-DROID-005:pdf-p46",
+          "UNKNOWN-DROID-005:txt-line-4663"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "UNKNOWN-DROID-006",
+        "printedName": "WED-20 Treadwell",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "The Unknown Regions",
+        "bookId": "UNKNOWN",
+        "printedPageStart": 47,
+        "printedPageEnd": 47,
+        "pdfPageStart1Based": 48,
+        "textLineAnchor1Based": 4771,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 1,
+        "size": "Small",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 3,
+        "perceptionPrinted": 13
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 13,
+        "flatFootedReflex": 11,
+        "fortitude": 9,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 5,
+        "damageThreshold": 9
+      },
+      "movement": {
+        "speedLineRaw": "4 squares (tracked)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 8300
+      },
+      "text": {
+        "sourceWarnings": [
+          "Selected PDF fields only; full mechanical certification outstanding.",
+          "Scientific Focus bonus limited to printed Knowledge checks; no blanket skill grant."
+        ]
+      },
+      "exceptions": {
+        "notes": "No mechanic execution. Feats/talents, inventory instances, legal attacks, full narrative rules and engine runtime remain uncertified."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleId": "UNKNOWN-DROID-006-BOUNDARY-1",
+            "statement": "Scientific Focus bonus limited to printed Knowledge checks; no blanket skill grant.",
+            "scope": "UNKNOWN-DROID-006",
+            "source": {
+              "book": "The Unknown Regions",
+              "page": 47,
+              "pdfPage1Based": 48,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "UNKNOWN-DROID-006"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page fields only; independently certified mechanical effects: zero.",
+        "reviewerEvidenceRefs": [
+          "UNKNOWN-DROID-006:pdf-p47",
+          "UNKNOWN-DROID-006:txt-line-4771"
+        ]
+      }
+    }
+  ]
+}

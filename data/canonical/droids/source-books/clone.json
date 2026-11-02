@@ -1,0 +1,4414 @@
+{
+  "schema": "swse.droid.source-book-hydration-ledger/0.1-partial",
+  "bookId": "CLONE",
+  "book": "Clone Wars Campaign Guide",
+  "draftSourceEntrySchema": "swse.droid.universal-source/0.1-draft",
+  "sourceBookPdf": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+  "scope": "All 40 source identities now have selected printed-PDF fields sight-read. This is NOT full secondary rules, canonical mechanics, schema or runtime certification.",
+  "expectedPublicationClaims": 40,
+  "sourceEntries": [
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-001",
+        "printedName": "DD-13 Medical Assistant Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 66,
+        "printedPageEnd": 66,
+        "pdfPageStart1Based": 67,
+        "textLineAnchor1Based": 5673,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 1,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 9,
+        "dex": 11,
+        "con": null,
+        "wis": 14,
+        "cha": 8,
+        "int": 15
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 10,
+        "flatFootedReflex": 10,
+        "fortitude": 9,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 8,
+        "damageThreshold": 9
+      },
+      "movement": {
+        "speedLineRaw": "Speed 6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee unarmed +1 (144-1)",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomotion, basic processor, 2 claw appendages,"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 4150,
+        "availability": "Licensed"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-001",
+          "Clone Wars Campaign Guide:printed-p66:TXT-line-5673",
+          "CLONE:printed-p66:PDF-page-67:selected-visual-fields"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-002",
+        "printedName": "EW-3 Midwife Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 67,
+        "printedPageEnd": 67,
+        "pdfPageStart1Based": 68,
+        "textLineAnchor1Based": 5730,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 1,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 10,
+        "dex": 10,
+        "con": null,
+        "int": 12,
+        "wis": 14,
+        "cha": 13
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 10,
+        "flatFootedReflex": 10,
+        "fortitude": 10,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 6,
+        "damageThreshold": 10
+      },
+      "movement": {
+        "speedLineRaw": "Speed 6 squares (hovering)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 1,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee unarmed +1 (1d3)",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "hovering locomotion, heuristic processor, 2 toal appendages,"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 5870,
+        "availability": "Licensed"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-002",
+          "Clone Wars Campaign Guide:printed-p67:TXT-line-5730",
+          "CLONE:printed-p67:PDF-page-68:selected-visual-fields"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-003",
+        "printedName": "IM-6 Medical Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 67,
+        "printedPageEnd": 67,
+        "pdfPageStart1Based": 68,
+        "textLineAnchor1Based": 5778,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Small",
+        "publishedDegree": 1,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 10,
+        "dex": 14,
+        "con": null,
+        "int": 14,
+        "wis": 14,
+        "cha": 13
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 13,
+        "flatFootedReflex": 11,
+        "fortitude": 10,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 7,
+        "damageThreshold": 12
+      },
+      "movement": {
+        "speedLineRaw": "Speed 6 squares (hovering)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee unarmed +2 (142)",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "hovering locomotion, internal eomlink, heuristic processor,"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 11800,
+        "availability": "Licensed"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-003",
+          "Clone Wars Campaign Guide:printed-p67:TXT-line-5778",
+          "CLONE:printed-p67:PDF-page-68:selected-visual-fields"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-004",
+        "printedName": "SP-4 Analysis Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 68,
+        "printedPageEnd": 68,
+        "pdfPageStart1Based": 69,
+        "textLineAnchor1Based": 5862,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Small",
+        "publishedDegree": 1,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 8,
+        "dex": 10,
+        "con": null,
+        "int": 15,
+        "wis": 14,
+        "cha": 12
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 11,
+        "flatFootedReflex": 11,
+        "fortitude": 9,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 8,
+        "damageThreshold": 9
+      },
+      "movement": {
+        "speedLineRaw": "Speed 4 squares"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee unarmed +1 (1d2-1)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-02",
+            "raw": "Ranged by weapon +2",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomotion, 2 hand appendages, heuristic processor,"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 3100,
+        "availability": "Licensed"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-004",
+          "Clone Wars Campaign Guide:printed-p68:TXT-line-5862",
+          "CLONE:printed-p68:PDF-page-69:selected-visual-fields"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-005",
+        "printedName": "LE Series Repair Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 69,
+        "printedPageEnd": 69,
+        "pdfPageStart1Based": 70,
+        "textLineAnchor1Based": 5955,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 2,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 10,
+        "dex": 8,
+        "int": 13,
+        "wis": 12,
+        "cha": 12,
+        "con": null
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 13,
+        "flatFootedReflex": 13,
+        "fortitude": 10,
+        "will": 11
+      },
+      "durability": {
+        "hitPoints": 7,
+        "damageThreshold": 10
+      },
+      "movement": {
+        "speedLineRaw": "Speed 6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee unarmed +2 (103)",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomotion, heuristic processor, 2 hand appendages,"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 6000,
+        "availability": "Licensed"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-005",
+          "Clone Wars Campaign Guide:printed-p69:TXT-line-5955",
+          "CLONE:printed-p69:PDF-page-70:selected-visual-fields"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-006",
+        "printedName": "P2 Series Astromech Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 69,
+        "printedPageEnd": 69,
+        "pdfPageStart1Based": 70,
+        "textLineAnchor1Based": 6013,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 2,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 15,
+        "dex": 9,
+        "con": null,
+        "int": 14,
+        "wis": 8,
+        "cha": 10
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 9,
+        "flatFootedReflex": 9,
+        "fortitude": 12,
+        "will": 9
+      },
+      "durability": {
+        "hitPoints": 5,
+        "damageThreshold": 12
+      },
+      "movement": {
+        "speedLineRaw": "Speed 8 squares (wheeled), 2 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee unarmed +2 (1d4+2)",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "wheeled locomotion, walking locomotion, magnetic feet,"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 4200,
+        "availability": "Licensed"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-006",
+          "Clone Wars Campaign Guide:printed-p69:TXT-line-6013",
+          "CLONE:printed-p69:PDF-page-70:selected-visual-fields"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-007",
+        "printedName": "Serv-O-Droid Pit Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 70,
+        "printedPageEnd": 70,
+        "pdfPageStart1Based": 71,
+        "textLineAnchor1Based": 6083,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Small",
+        "publishedDegree": 2,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 15,
+        "dex": 14,
+        "int": 10,
+        "wis": 8,
+        "cha": 12,
+        "con": null
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 13,
+        "flatFootedReflex": 11,
+        "fortitude": 12,
+        "will": 9
+      },
+      "durability": {
+        "hitPoints": 5,
+        "damageThreshold": 12
+      },
+      "movement": {
+        "speedLineRaw": "Speed 4 squares"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 1,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee unarmed +3 (14242)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-02",
+            "raw": "Ranged by weapon +3",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomotion, 2 hand appendages, basic processor"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "availability": "Licensed",
+        "newCredits": 1300
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-007",
+          "Clone Wars Campaign Guide:printed-p70:TXT-line-6083",
+          "CLONE:printed-p70:PDF-page-71:selected-visual-fields"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-008",
+        "printedName": "5YQ Protocol Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 70,
+        "printedPageEnd": 70,
+        "pdfPageStart1Based": 71,
+        "textLineAnchor1Based": 6157,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 3,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 8,
+        "dex": 10,
+        "con": null,
+        "int": 12,
+        "wis": 12,
+        "cha": 14
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 10,
+        "flatFootedReflex": 10,
+        "fortitude": 9,
+        "will": 11
+      },
+      "durability": {
+        "hitPoints": 2,
+        "damageThreshold": 6
+      },
+      "movement": {
+        "speedLineRaw": "Speed 6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee unarmed -1 (103-1)",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomotion, basic processor, translator unit (DC 10},"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 1460,
+        "availability": "Licensed"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-008",
+          "Clone Wars Campaign Guide:printed-p70:TXT-line-6157",
+          "CLONE:printed-p70:PDF-page-71:selected-visual-fields"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-009",
+        "printedName": "BCA-11/X Training Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 71,
+        "printedPageEnd": 71,
+        "pdfPageStart1Based": 72,
+        "textLineAnchor1Based": 6214,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 2
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 13,
+        "dex": 14,
+        "int": 9,
+        "wis": 11,
+        "cha": 8,
+        "con": null
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 20,
+        "flatFootedReflex": 18,
+        "fortitude": 13,
+        "will": 11
+      },
+      "durability": {
+        "hitPoints": 17,
+        "damageThreshold": 13
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 5860
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-009",
+          "Clone Wars Campaign Guide:printed-p71:TXT-line-6214",
+          "CLONE:printed-p71:PDF-page-72:selected-visual-fields"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-010",
+        "printedName": "IG-86 Sentinel Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 71,
+        "printedPageEnd": 71,
+        "pdfPageStart1Based": 72,
+        "textLineAnchor1Based": 6241,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 14,
+        "dex": 15,
+        "con": null,
+        "int": 10,
+        "wis": 12,
+        "cha": 8
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 17,
+        "flatFootedReflex": 15,
+        "fortitude": 15,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 30,
+        "damageThreshold": 15
+      },
+      "movement": {
+        "speedLineRaw": "Speed 6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 3,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee claw +4 (1d4+1)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-02",
+            "raw": "Ranged blaster carbine +6 (3d8+2)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-03",
+            "raw": "Melee unarmed +3 (1d3+2)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-04",
+            "raw": "Ranged blaster carbine +4 (3d8) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-05",
+            "raw": "Ranged blaster carbine +2 (4d8) with Rapid Shot",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomotion, basic processor, improved sensor package,"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 7800,
+        "availability": "Restricted"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-010",
+          "Clone Wars Campaign Guide:printed-p71:TXT-line-6241",
+          "CLONE:printed-p71:PDF-page-72:selected-visual-fields"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-011",
+        "printedName": "CLL-6 Binary Load Lifter"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 72,
+        "printedPageEnd": 72,
+        "pdfPageStart1Based": 73,
+        "textLineAnchor1Based": 6390,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Large",
+        "publishedDegree": 5,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 28,
+        "dex": 10,
+        "con": null,
+        "int": 8,
+        "wis": 10,
+        "cha": 5
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 9,
+        "flatFootedReflex": 9,
+        "will": 10,
+        "fortitude": 19
+      },
+      "durability": {
+        "hitPoints": 23,
+        "damageThreshold": 19
+      },
+      "movement": {
+        "speedLineRaw": "Speed 8 squares (waiking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee unarmed +9 (14449)",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomotion, basic processar, 2 toal appendages"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 4200,
+        "availability": "Licensed"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-011",
+          "Clone Wars Campaign Guide:printed-p72:TXT-line-6390",
+          "CLONE:printed-p72:PDF-page-73:selected-visual-fields"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-012",
+        "printedName": "FA-5 Valet Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 72,
+        "printedPageEnd": 72,
+        "pdfPageStart1Based": 73,
+        "textLineAnchor1Based": 6434,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 5,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 12,
+        "dex": 15,
+        "con": null,
+        "int": 10,
+        "wis": 10,
+        "cha": 12
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 12,
+        "flatFootedReflex": 10,
+        "fortitude": 11,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 3,
+        "damageThreshold": 10
+      },
+      "movement": {
+        "speedLineRaw": "Speed 6 squares"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee unarmed +1 (16341)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-02",
+            "raw": "Ranged by weapon +2",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomotion, 2 hand appendages, basic processor,"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 1100,
+        "availability": "Licensed"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-012",
+          "Clone Wars Campaign Guide:printed-p72:TXT-line-6434",
+          "CLONE:printed-p72:PDF-page-73:selected-visual-fields"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-013",
+        "printedName": "IW-37 Pincer Loader Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 73,
+        "printedPageEnd": 73,
+        "pdfPageStart1Based": 74,
+        "textLineAnchor1Based": 6483,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Large",
+        "publishedDegree": 5,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 24,
+        "dex": 11,
+        "con": null,
+        "wis": 8,
+        "cha": 6,
+        "int": 8
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 15,
+        "flatFootedReflex": 15,
+        "fortitude": 17,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 11,
+        "damageThreshold": 22
+      },
+      "movement": {
+        "speedLineRaw": "Speed 6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 3,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee 2 claws +10 (1d6+7)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-02",
+            "raw": "Ranged laser cannon +1 (see below)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-03",
+            "raw": "Ranged double light laser Cannons +3 {see below) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-04",
+            "raw": "Ranged 2 medium laser cannons +2 (see below)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-05",
+            "raw": "Ranged laser cannons +4 (see below)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-06",
+            "raw": "Ranged twin blaster cannons +5 (see below) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-07",
+            "raw": "Ranged ion cannons +5 (see below)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-08",
+            "raw": "Ranged laser cannon battery +2 (see below)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-09",
+            "raw": "Ranged laser cannons +2 [see below)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-10",
+            "raw": "Ranged laser cannons +2 (see below) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-11",
+            "raw": "Ranged heavy ion cannon +2 (see below)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-12",
+            "raw": "Ranged laser cannons +1 (see below) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-13",
+            "raw": "Ranged bomb chute +1 (see below)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-14",
+            "raw": "Ranged light laser cannans +3 (see below) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-15",
+            "raw": "Ranged concussian missile launcher +3 (see below]",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-16",
+            "raw": "Ranged heavy blaster canrons +3 (see below) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-17",
+            "raw": "Ranged light ion cannons +3 (see beiow)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-18",
+            "raw": "Ranged laser turret +7 (see below) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-19",
+            "raw": "Ranged bomblet generator +7\" (set below)",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomation, basic processor, 2 claw appendages,"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 8000,
+        "availability": "Licensed"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-013",
+          "Clone Wars Campaign Guide:printed-p73:TXT-line-6483",
+          "CLONE:printed-p73:PDF-page-74:selected-visual-fields"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-014",
+        "printedName": "B1-Series Battle Droid Squad"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 94,
+        "printedPageEnd": 94,
+        "pdfPageStart1Based": 95,
+        "textLineAnchor1Based": 8396,
+        "publicationKind": "squad"
+      },
+      "classification": {
+        "size": "Large",
+        "publishedDegree": 4,
+        "statblockFormat": "squad",
+        "sourceStatblockFormat": "droid-squad",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "squad-aggregation"
+      },
+      "challenge": {
+        "challengeLevel": 3
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Squad template/aggregation is not a stock droid individual, squad attack/HP/space are not an individual actor grant."
+        ]
+      },
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification.",
+        "transcriptionWarnings": [
+          "CENSUS PAGE CORRECTION: Original census says printed p95; printed PDF shows B1-Series Battle Droid Squad statblock on p94. Keep a correction receipt; do not alter upstream census until authorized."
+        ]
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-014",
+          "Clone Wars Campaign Guide:printed-p95:TXT-line-8396",
+          "CLONE:printed-p94:PDF-page-95:selected-visual-fields"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-015",
+        "printedName": "FX-6 Medical Assistance Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 160,
+        "printedPageEnd": 161,
+        "pdfPageStart1Based": 161,
+        "textLineAnchor1Based": 15307,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 1,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 8,
+        "dex": 11,
+        "con": null,
+        "int": 14,
+        "wis": 15,
+        "cha": 9
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 12,
+        "flatFootedReflex": 12,
+        "fortitude": 9,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 7,
+        "damageThreshold": 9
+      },
+      "movement": {
+        "speedLineRaw": "Speed 2 squares (tracked)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee instrument +1 (12-1)",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "tracked locomation, heuristic processor, 6 instruments,"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 4300,
+        "availability": "Licensed"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification.",
+        "transcriptionWarnings": [
+          "SPLIT STATBLOCK: FX-6 begins on printed p160 and continues at upper-left of p161; original census states p160 only."
+        ]
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-015",
+          "Clone Wars Campaign Guide:printed-p160:TXT-line-15307",
+          "CLONE:printed-p160:PDF-page-161:selected-visual-fields",
+          "CLONE:printed-p161:PDF-page-162:continued-statblock"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-016",
+        "printedName": "FA-4 Pilot Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 161,
+        "printedPageEnd": 161,
+        "pdfPageStart1Based": 162,
+        "textLineAnchor1Based": 15367,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Small",
+        "publishedDegree": 2,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 8,
+        "dex": 15,
+        "con": null,
+        "int": 14,
+        "wis": 12,
+        "cha": 7
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 13,
+        "flatFootedReflex": 11,
+        "fortitude": 9,
+        "will": 11
+      },
+      "durability": {
+        "hitPoints": 5,
+        "damageThreshold": 9
+      },
+      "movement": {
+        "speedLineRaw": "Speed 4 squares (wheeled)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 1,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee hand +0 (142-1)",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "wheeled locomotion, magnetic feet, 2 hands, improved sensor"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 4200,
+        "availability": "Licensed"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-016",
+          "Clone Wars Campaign Guide:printed-p161:TXT-line-15367",
+          "CLONE:printed-p161:PDF-page-162:selected-visual-fields"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-017",
+        "printedName": "Marksman-H Combat Remote"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 162,
+        "printedPageEnd": 162,
+        "pdfPageStart1Based": 163,
+        "textLineAnchor1Based": 15508,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Diminutive",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 3,
+        "dex": 18,
+        "int": 10,
+        "wis": 11,
+        "cha": 6,
+        "con": null
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 19,
+        "flatFootedReflex": 15,
+        "fortitude": 6,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 5,
+        "damageThreshold": 6
+      },
+      "movement": {
+        "speedLineRaw": "Speed 1 square (hovering)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 1,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Ranged light blaster +5 (1d4 stun)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-02",
+            "raw": "Ranged mass-driver cannon +7 (see below) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-03",
+            "raw": "Ranged double laser cannon +8 (see below) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-04",
+            "raw": "Ranged twin proton grenade launchers +8 (see below)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-05",
+            "raw": "Ranged repeating blaster cannon +5 (see below)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-06",
+            "raw": "Ranged rail cannon +7 (see below) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-07",
+            "raw": "Ranged twin light blaster cannans +8 (see below)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-08",
+            "raw": "Ranged medium turbolasers +10 (see below) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-09",
+            "raw": "Ranged twin blaster cannons +8 (see below) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-10",
+            "raw": "Ranged light laser cannons +9 {see below)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-11",
+            "raw": "Ranged laser cannons +!0 (sce below) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-12",
+            "raw": "Ranged heavy turbolaser +7 (see below) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-13",
+            "raw": "Ranged heavy ion cannon +7 (see below) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-14",
+            "raw": "Ranged heavy laser cannon +7 (see below) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-15",
+            "raw": "Ranged heavy missile launcher +7 (see below) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-16",
+            "raw": "Ranged heavy mass-driver cannon +7 (see below) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-17",
+            "raw": "Ranged laser cannons +3 (see below) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-18",
+            "raw": "Ranged laser cannons +1 {see below) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-19",
+            "raw": "Ranged heavy laser cannon +8 (see below) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-20",
+            "raw": "Ranged bomblet generator +8 (see below) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-21",
+            "raw": "Ranged 2 light turbolaser cannon batteries +8\" (see below) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-22",
+            "raw": "Ranged double blaster cannons +7 (starship scale; see below) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-23",
+            "raw": "Ranged 1 turbolaser battery +13 (sec beiow)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-24",
+            "raw": "Ranged 2 point-defenses laser cannon batteries +13 (see helow)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-25",
+            "raw": "Ranged tractor beam +5 (see below)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-26",
+            "raw": "Ranged medium laser cannons +7 (see below) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-27",
+            "raw": "Ranged medium laser cannons +7 {see below) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-28",
+            "raw": "Melee electro-staff +3 (2d6+2)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-29",
+            "raw": "melee weapons, rifles, simple weapons)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-30",
+            "raw": "Melee clectro-staff +6 (2d6+45)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-31",
+            "raw": "Ranged sonic blaster pistol +4 (2d6+1 sonict, devastating 5)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-32",
+            "raw": "Melee claw +7 (1d4+3) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-33",
+            "raw": "Melee bayonet +7 (10844)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-34",
+            "raw": "Ranged heavy blaster rifle +5 (3d10+2) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-35",
+            "raw": "Ranged heavy blaster rifle +3 (4d10+2) with Rapid Shot or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-36",
+            "raw": "Ranged stun grenade launcher +5 (40642 stun, 2-square burst) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-37",
+            "raw": "Melee claw +14 (1d6+8}",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-38",
+            "raw": "Ranged heavy blaster rifte +10 (3430+8, devastating 5) with autofire or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-39",
+            "raw": "Ranged heavy blaster rifle +10 (5d10+8, devastating 5) with Burst Fire or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-40",
+            "raw": "Ranged heavy blaster rifle +5/+5 (3d10+8, devastating 5) with Double",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-41",
+            "raw": "Ranged heavy blaster rifle +5/+5 (5d?0+8, devastating 5) with Double",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-42",
+            "raw": "Melee lightsaber +22 (2d8+9) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-43",
+            "raw": "Melee lightsaber +20 (248+9) with Rapid Strike",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-44",
+            "raw": "Melee lightsaber +19/+19 (2d8+9) with Double Attack or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-45",
+            "raw": "Melee lightsaber +17/+17 (3d8+9) with Double Attack and Rapid Strike or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-46",
+            "raw": "Melee lightsaber +14/+14/+14 (2d8+9) with Triple Attack or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-47",
+            "raw": "Melee lightsaber +12/+12/+12 (3d8+9) with Triple Attack and Rapid",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-48",
+            "raw": "Melee lightsaber +15 (2d8+7} ar",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-49",
+            "raw": "Melee lightsaber 215 (208 +7] and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-50",
+            "raw": "Melee spiked flail +141 (238+38) with Mighty Swing or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-51",
+            "raw": "Melee spiked fail +9/+91 (1d8+38] with Double Attack or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-52",
+            "raw": "Ranged blaster pistol +14 (3d6+8) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-53",
+            "raw": "Ranged biaster pistol +9/+9 (3d6+8) with Double Attack or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-54",
+            "raw": "Ranged blaster pistois +12 (4d648) with Rapid Shot or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-55",
+            "raw": "Ranged blaster pistols +7/+7 (40648) with Double Attack and Rapic Shot",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-56",
+            "raw": "Ranged blaster rifle +14 (3d8+8) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-57",
+            "raw": "Ranged blaster rifle +9/+9 (34848) with Double Attack or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-58",
+            "raw": "Ranged blaster rifle +12 (¢d8+8) with Rapid Shot or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-59",
+            "raw": "Ranged blaster rific +7/+7 (4d8+8) with Double Attack and Rapid Snot or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-60",
+            "raw": "Ranged flechette launcher +14 (40d6+8 slashing, 2x2 area) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-61",
+            "raw": "Ranged flamethrower +14 (4d6+8, G-square cone}",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-62",
+            "raw": "Melee unarmed +8 (1d4+2)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-63",
+            "raw": "Ranged by weapon +8",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "hovering locomotion, basic processor, weapon mount (stabilized)"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "availability": "Military",
+        "newCredits": 350
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-017",
+          "Clone Wars Campaign Guide:printed-p162:TXT-line-15508",
+          "CLONE:printed-p162:PDF-page-163:selected-visual-fields"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-018",
+        "printedName": "A-DSD Advanced Dwarf Spider Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 188,
+        "printedPageEnd": 189,
+        "pdfPageStart1Based": 189,
+        "textLineAnchor1Based": 18087,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Huge",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 6
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 26,
+        "dex": 7,
+        "con": null,
+        "wis": 9,
+        "cha": 7,
+        "int": 9
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 14,
+        "flatFootedReflex": 14,
+        "fortitude": 31,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 59,
+        "damageThreshold": 46
+      },
+      "movement": {
+        "speedLineRaw": "Speed 8 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 9,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee claw +12! (148414)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-02",
+            "raw": "Ranged blaster cannon +7 (3d12+1, 1-square splash) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-03",
+            "raw": "Ranged blaster cannon +5 (4d12+1, 1-square splash) with Rapid Shot or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-04",
+            "raw": "Ranged fire-linked missile launchers +7 (4d12+1, 2-square burst) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-05",
+            "raw": "Ranged self-destruct +5 (8d6, 4-square burst centered on droid)",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomotion, basic processor, claw, improved sensar"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 25000,
+        "availability": "Military"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification.",
+        "transcriptionWarnings": [
+          "A-DSD main statblock starts p188, continues on printed p189; Ref 14/18 is conditional leg-shield mode. Do not collapse alternate defenses."
+        ]
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "CLONE-DROID-018-SOURCE-LOCAL-01",
+            "statement": "As a move action, can pull legs close to increase armor bonus to +11 until start of next turn; printed Reflex 18 with shields vs 14 normally.",
+            "scope": "CLONE-DROID-018",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 188,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-018"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-018",
+          "Clone Wars Campaign Guide:printed-p188:TXT-line-18087",
+          "CLONE:printed-p188:PDF-page-189:selected-visual-fields:batch2",
+          "CLONE:printed-p189:PDF-page-190:A-DSD-continuation"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-019",
+        "printedName": "A-Series Assassin Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 189,
+        "printedPageEnd": 189,
+        "pdfPageStart1Based": 190,
+        "textLineAnchor1Based": 18169,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 11
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 14,
+        "dex": 14,
+        "con": null,
+        "int": 12,
+        "wis": 11,
+        "cha": 11
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 26,
+        "flatFootedReflex": 24,
+        "fortitude": 27,
+        "will": 19
+      },
+      "durability": {
+        "hitPoints": 67,
+        "damageThreshold": 27
+      },
+      "movement": {
+        "speedLineRaw": "Speed 6 squares (walking), 8 squares (wheeled)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 13,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee finger blades +15 (1d6+6) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-02",
+            "raw": "Melee finger blades +13 (2d6+6) with Rapid Strike or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-03",
+            "raw": "Melee finger blades +10/410 (1d6461 with Double Attack or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-04",
+            "raw": "Melee finger blades +8/+8 (2d6+6) with Double Attack and Rapid Strike",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-05",
+            "raw": "Ranged wrist blaster +15 (3d8+4) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-06",
+            "raw": "Ranged wrist blaster +13 (4d8+4) with Rapid Shot or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-07",
+            "raw": "Ranged wrist blaster +10/+10 (3d8+4) with Double Attack or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-08",
+            "raw": "Ranged wrist blaster +8/+8 (4d8+4)} with Double Attack and Rapid Shot",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking lacomotion, heuristic processor, improved sensor"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 14000,
+        "availability": "Illegal"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-019",
+          "Clone Wars Campaign Guide:printed-p189:TXT-line-18169",
+          "CLONE:printed-p189:PDF-page-190:selected-visual-fields:batch2"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-020",
+        "printedName": "B1-A Series Air Battle Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 190,
+        "printedPageEnd": 190,
+        "pdfPageStart1Based": 191,
+        "textLineAnchor1Based": 18260,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 4
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 13,
+        "dex": 13,
+        "int": 9,
+        "wis": 10,
+        "cha": 10,
+        "con": null
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 15,
+        "flatFootedReflex": 14,
+        "fortitude": 16,
+        "will": 13
+      },
+      "durability": {
+        "hitPoints": 24,
+        "damageThreshold": 16
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 2100
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification.",
+        "transcriptionWarnings": [
+          "SOURCE_INTERLEAVE_OR_SHORT_OCR_SEGMENT: skip mechanical extraction; inspect rendered PDF."
+        ]
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-020",
+          "Clone Wars Campaign Guide:printed-p190:TXT-line-18260",
+          "CLONE:printed-p190:PDF-page-191:selected-visual-fields:batch2"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-021",
+        "printedName": "Battle Droid Assassin"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 190,
+        "printedPageEnd": 190,
+        "pdfPageStart1Based": 191,
+        "textLineAnchor1Based": 18268,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 4
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 13,
+        "dex": 13,
+        "int": 10,
+        "wis": 10,
+        "cha": 9,
+        "con": null
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 15,
+        "flatFootedReflex": 14,
+        "fortitude": 16,
+        "will": 13
+      },
+      "durability": {
+        "hitPoints": 24,
+        "damageThreshold": 16
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 6460
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification.",
+        "transcriptionWarnings": [
+          "SOURCE_INTERLEAVE_OR_SHORT_OCR_SEGMENT: skip mechanical extraction; inspect rendered PDF."
+        ]
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-021",
+          "Clone Wars Campaign Guide:printed-p190:TXT-line-18268",
+          "CLONE:printed-p190:PDF-page-191:selected-visual-fields:batch2"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-022",
+        "printedName": "Cold Assault Battle Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 191,
+        "printedPageEnd": 191,
+        "pdfPageStart1Based": 192,
+        "textLineAnchor1Based": 18397,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Large",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 2
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 18,
+        "dex": 9,
+        "con": null,
+        "int": 10,
+        "wis": 11,
+        "cha": 7
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 10,
+        "fortitude": 14,
+        "will": 10,
+        "flatFootedReflex": 10
+      },
+      "durability": {
+        "hitPoints": 31,
+        "damageThreshold": 19
+      },
+      "movement": {
+        "speedLineRaw": "Speed 6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 4,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee unarmed +8 (id3+4)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-02",
+            "raw": "Ranged heavy diaster rifle +3 (3010) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-03",
+            "raw": "Ranged heavy biaster rifle +1 (4010) with Rapid Shat",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomotion, remote receiver, backup processor,"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 5500,
+        "availability": "Military"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-022",
+          "Clone Wars Campaign Guide:printed-p191:TXT-line-18397",
+          "CLONE:printed-p191:PDF-page-192:selected-visual-fields:batch2"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-023",
+        "printedName": "C-B3 Cortosis Battle Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 192,
+        "printedPageEnd": 192,
+        "pdfPageStart1Based": 193,
+        "textLineAnchor1Based": 18479,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 5
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 14,
+        "dex": 11,
+        "con": null,
+        "int": 10,
+        "wis": 11,
+        "cha": 7
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 19,
+        "flatFootedReflex": 19,
+        "fortitude": 17,
+        "will": 13
+      },
+      "durability": {
+        "hitPoints": 40,
+        "damageThreshold": 17
+      },
+      "movement": {
+        "speedLineRaw": "Speed 6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 7,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee unarmed +9 (1¢343)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-02",
+            "raw": "Ranged wrist blaster +7 (34841, devastating 5, penetrating 5) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-03",
+            "raw": "Ranged wrist blaster +2 (3d8+1, devastating 5, penetrating 5) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-04",
+            "raw": "Ranged wrist blaster +0 {4d8+1, devastating 5, penetrating 5} and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-05",
+            "raw": "Ranged wrist blaster +2 (5d8+1, devastating 5, penetrating 5) with Burst",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-06",
+            "raw": "Ranged wrist blaster -3 (5d8+1, devastating 5, penetrating 5) and",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomotion, remote receiver, backup processor."
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 25000,
+        "availability": "Military"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-023",
+          "Clone Wars Campaign Guide:printed-p192:TXT-line-18479",
+          "CLONE:printed-p192:PDF-page-193:selected-visual-fields:batch2",
+          "CLONE:printed-p191:model-hero-eligibility"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-024",
+        "printedName": "Droid Commando"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 192,
+        "printedPageEnd": 192,
+        "pdfPageStart1Based": 193,
+        "textLineAnchor1Based": 18559,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 6
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 10,
+        "dex": 16,
+        "con": null,
+        "int": 14,
+        "wis": 16,
+        "cha": 8
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 19,
+        "flatFootedReflex": 16,
+        "fortitude": 17,
+        "will": 18
+      },
+      "durability": {
+        "hitPoints": 37,
+        "damageThreshold": 17
+      },
+      "movement": {
+        "speedLineRaw": "Speed 6 squares"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 8,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee unarmed +8 (103+2) .",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-02",
+            "raw": "Ranged blaster rifle +12 (34842)",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomotion, 2 hand appendages, heuristic processor,"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 17900,
+        "availability": "Military"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-024",
+          "Clone Wars Campaign Guide:printed-p192:TXT-line-18559",
+          "CLONE:printed-p192:PDF-page-193:selected-visual-fields:batch2"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-025",
+        "printedName": "IG Lancer Combat Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 193,
+        "printedPageEnd": 193,
+        "pdfPageStart1Based": 194,
+        "textLineAnchor1Based": 18628,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 2
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 14,
+        "dex": 16,
+        "con": null,
+        "int": 13,
+        "wis": 10,
+        "cha": 8
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 13,
+        "flatFootedReflex": 10,
+        "will": 10,
+        "fortitude": 12
+      },
+      "durability": {
+        "hitPoints": 15,
+        "damageThreshold": 12
+      },
+      "movement": {
+        "speedLineRaw": "Speed 6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 4,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee energy lance +6 (2d8+4)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-02",
+            "raw": "Melee energy lance +10 (2d8+7) with Powerful Charge",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-03",
+            "raw": "Melee energy !ance +61 (2d8+15) with Powerful Charge and Power Attack",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomotion, remote receiver, 2 hand appendages,"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 2700,
+        "availability": "Military"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-025",
+          "Clone Wars Campaign Guide:printed-p193:TXT-line-18628",
+          "CLONE:printed-p193:PDF-page-194:selected-visual-fields:batch2",
+          "CLONE:printed-p192:model-hero-eligibility"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-026",
+        "printedName": "IG-110 Lightsaber Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 193,
+        "printedPageEnd": 193,
+        "pdfPageStart1Based": 194,
+        "textLineAnchor1Based": 18688,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 6
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 15,
+        "dex": 16,
+        "con": null,
+        "wis": 12,
+        "int": 10,
+        "cha": 8
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 21,
+        "fortitude": 20,
+        "flatFootedReflex": 18,
+        "will": 18
+      },
+      "durability": {
+        "hitPoints": 58,
+        "damageThreshold": 20
+      },
+      "movement": {
+        "speedLineRaw": "Speed 6 squares"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 6,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee tightsaber +10 (2d848) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-02",
+            "raw": "Melee lightsaber +8 (3d8+8) with Rapid Strike or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-03",
+            "raw": "Melee lightsaber +8/+8 (2d8+8/2d8+8) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-04",
+            "raw": "Melee lightsaber +6/+6 (3d8+8/3d8+8) with Rapid Strike",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomotion, magnetic feet, heuristic processor, 2 hand"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 27000,
+        "availability": "Military"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-026",
+          "Clone Wars Campaign Guide:printed-p193:TXT-line-18688",
+          "CLONE:printed-p193:PDF-page-194:selected-visual-fields:batch2"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-027",
+        "printedName": "JK-13 Security Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 194,
+        "printedPageEnd": 194,
+        "pdfPageStart1Based": 195,
+        "textLineAnchor1Based": 18778,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Large",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 12
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 17,
+        "dex": 14,
+        "con": null,
+        "int": 10,
+        "wis": 13,
+        "cha": 11
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 24,
+        "flatFootedReflex": 22,
+        "fortitude": 29,
+        "will": 23
+      },
+      "durability": {
+        "hitPoints": 120,
+        "damageThreshold": 44
+      },
+      "movement": {
+        "speedLineRaw": "Speed 8 squares (walking), climb 4 squares, Runining Attack"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 12,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee stun tentacles +161 (1d4+9, devastating 5) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-02",
+            "raw": "Melee stun tentacles +111/+11! (1d4+9, devastating 5) with Double",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-03",
+            "raw": "Melee stun tentacles +141 (2d4+9, devastating 5) with Rapid Strike or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-04",
+            "raw": "Melee stun tentacles +31/+91 (24449, devastating 5) with Double Attack",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-05",
+            "raw": "Melee Defense, Pin, Rapid Strike, Running Attack, Trip, Weapon Focus",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomotion (extra legs), climbing claws, organic"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 50000
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "CLONE-DROID-027-SOURCE-LOCAL-01",
+            "statement": "Reducing a target to 0 HP triggers +2 rage bonus on melee attack and damage and permits Use the Force checks; attacks nearest target until raging droid is destroyed.",
+            "scope": "CLONE-DROID-027",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 194,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-027"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-027",
+          "Clone Wars Campaign Guide:printed-p194:TXT-line-18778",
+          "CLONE:printed-p194:PDF-page-195:selected-visual-fields:batch2"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-028",
+        "printedName": "LM-432 Assault Crab Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 194,
+        "printedPageEnd": 194,
+        "pdfPageStart1Based": 195,
+        "textLineAnchor1Based": 18869,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Huge",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 6
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 32,
+        "dex": 7,
+        "con": null,
+        "int": 10,
+        "wis": 14,
+        "cha": 8
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 16,
+        "flatFootedReflex": 16,
+        "fortitude": 21,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 145,
+        "damageThreshold": 71
+      },
+      "movement": {
+        "speedLineRaw": "Speed 6 squares (walking), climb 3 squares"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 13,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee claw +141 (148421) with Power Attack",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-02",
+            "raw": "Melee claw +181 (1d8+301 with Power Attack and Powerful Charge",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-03",
+            "raw": "Ranged blaster cannon +11 (3d12, 2x2 area) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-04",
+            "raw": "Ranged jet sprayer +11 (3c10 stun, 6-square cone) or",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomation (extra legs), climbing claws, heuristic"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 40000,
+        "availability": "Military"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-028",
+          "Clone Wars Campaign Guide:printed-p194:TXT-line-18869",
+          "CLONE:printed-p194:PDF-page-195:selected-visual-fields:batch2"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-029",
+        "printedName": "LR-57 Combat Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 195,
+        "printedPageEnd": 195,
+        "pdfPageStart1Based": 196,
+        "textLineAnchor1Based": 18948,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Large",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 3
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 24,
+        "dex": 12,
+        "int": 10,
+        "wis": 15,
+        "cha": 8,
+        "con": null
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 16,
+        "flatFootedReflex": 15,
+        "fortitude": 17,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 33,
+        "damageThreshold": 22
+      },
+      "movement": {
+        "speedLineRaw": "Speed 8 squares"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 6,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Ranged double heavy blaster rifle +7 (4410) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-02",
+            "raw": "Ranged double heavy blaster rifle +2 (6d10) with Burst Fire",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomotion, basic processor, remote receiver, 2 tool"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 16000,
+        "availability": "Military"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-029",
+          "Clone Wars Campaign Guide:printed-p195:TXT-line-18948",
+          "CLONE:printed-p195:PDF-page-196:selected-visual-fields:batch2"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-030",
+        "printedName": "Octuptarra Combat Tri-Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 196,
+        "printedPageEnd": 196,
+        "pdfPageStart1Based": 197,
+        "textLineAnchor1Based": 19035,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Large",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 3
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 14,
+        "dex": 13,
+        "con": null,
+        "wis": 8,
+        "cha": 7,
+        "int": 11
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 10,
+        "flatFootedReflex": 9,
+        "fortitude": 12,
+        "will": 9
+      },
+      "durability": {
+        "hitPoints": 32,
+        "damageThreshold": 17
+      },
+      "movement": {
+        "speedLineRaw": "Speed 6 squares (walking), climb 3 squares"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 6,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Ranged laser turret +7 (348) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-02",
+            "raw": "Ranged laser turret +2 (Sd8) with Burst Fire or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-03",
+            "raw": "Ranged laser turret +2 (3d8) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-04",
+            "raw": "Ranged laser turret +5 (448) with Rapid Shot or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-05",
+            "raw": "Ranged laser turret -2 [5d8) and",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-06",
+            "raw": "Ranged laser turret +0 (4d8)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-07",
+            "raw": "Ranged self-destruct +5 (8d6, 4-square burst centered on droid) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-08",
+            "raw": "Ranged virus burst +5 vs. Fortitude Defense (-2 persistent steps down",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomotion, magnetic feet, basic pracessor, inte-nai"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 2500,
+        "availability": "Military"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "CLONE-DROID-030-SOURCE-LOCAL-01",
+            "statement": "Alternate version releases virus affecting living creatures in a burst; failed Fortitude hit imposes persistent condition-step effect and repeats daily until treated (DC 15 Treat Injury).",
+            "scope": "CLONE-DROID-030",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 196,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-030"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-030",
+          "Clone Wars Campaign Guide:printed-p196:TXT-line-19035",
+          "CLONE:printed-p196:PDF-page-197:selected-visual-fields:batch2"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-031",
+        "printedName": "OOM-Series Battle Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 196,
+        "printedPageEnd": 196,
+        "pdfPageStart1Based": 197,
+        "textLineAnchor1Based": 19104,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 2
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 12,
+        "dex": 11,
+        "con": null,
+        "int": 11,
+        "wis": 9,
+        "cha": 9
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 10,
+        "flatFootedReflex": 10,
+        "fortitude": 11,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 21,
+        "damageThreshold": 11
+      },
+      "movement": {
+        "speedLineRaw": "Speed 6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 4,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee unarmed +5 (1d341)",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-02",
+            "raw": "Ranged blaster carbine +4 (348)",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomotion, remote receiver, 2 hand appendages,"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 900,
+        "availability": "Military"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-031",
+          "Clone Wars Campaign Guide:printed-p196:TXT-line-19104",
+          "CLONE:printed-p196:PDF-page-197:selected-visual-fields:batch2"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-032",
+        "printedName": "Spelunker Probe Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 197,
+        "printedPageEnd": 197,
+        "pdfPageStart1Based": 198,
+        "textLineAnchor1Based": 19175,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 6
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 13,
+        "dex": 13,
+        "con": null,
+        "int": 12,
+        "wis": 10,
+        "cha": 9
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 18,
+        "flatFootedReflex": 17,
+        "fortitude": 17,
+        "will": 15
+      },
+      "durability": {
+        "hitPoints": 30,
+        "damageThreshold": 17
+      },
+      "movement": {
+        "speedLineRaw": "Speed 6 squares (walking), climb 3 squares"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 5,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Melee claw +6 [1d4+3) or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-02",
+            "raw": "Ranged laser cannons +1 (3d8+2) with autofire or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-03",
+            "raw": "Ranged laser cannons +1 (5d8+2I with Burst Fire",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-04",
+            "raw": "Ranged frag mine +6 (4d6, 2-square burst radius)",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomotion (extra legs), basic processor, claw (climbing"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 15750,
+        "availability": "Military"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-032",
+          "Clone Wars Campaign Guide:printed-p197:TXT-line-19175",
+          "CLONE:printed-p197:PDF-page-198:selected-visual-fields:batch2"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-033",
+        "printedName": "Ultra Droideka"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 198,
+        "printedPageEnd": 198,
+        "pdfPageStart1Based": 199,
+        "textLineAnchor1Based": 19251,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Huge",
+        "publishedDegree": 4,
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 6
+      },
+      "geometry": {},
+      "abilities": {
+        "str": 28,
+        "dex": 15,
+        "con": null,
+        "wis": 14,
+        "cha": 7,
+        "int": 8
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 17,
+        "flatFootedReflex": 15,
+        "fortitude": 20,
+        "will": 13
+      },
+      "durability": {
+        "hitPoints": 60,
+        "damageThreshold": 29
+      },
+      "movement": {
+        "speedLineRaw": "Speed 3 squares (walking), 12 squares (wheeled)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {
+        "baseAttackBonusPrinted": 12,
+        "attackGroups": [
+          {
+            "attackId": "printed-attack-01",
+            "raw": "Ranged heavy repeating blaster +10 (3412) with autofire or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-02",
+            "raw": "Ranged heavy repeating blaster +10 (5d12) with Burst Fire or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-03",
+            "raw": "Ranged heavy repeating blaster +8/+8 (3412) with autofire or",
+            "operationStatus": "source-only"
+          },
+          {
+            "attackId": "printed-attack-04",
+            "raw": "Ranged heavy repeating blaster +8/+8 (5d12) with Burst Fire",
+            "operationStatus": "source-only"
+          }
+        ]
+      },
+      "capacity": {},
+      "systems": {
+        "sourceSystemsRaw": "walking locomotion, wheeled locomotion (exclusive), remote"
+      },
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 29000,
+        "availability": "Military"
+      },
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-033",
+          "Clone Wars Campaign Guide:printed-p198:TXT-line-19251",
+          "CLONE:printed-p198:PDF-page-199:selected-visual-fields",
+          "CLONE:printed-p197:Ultra-Droideka-hero-prohibition"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-034",
+        "printedName": "Ground Armored Tank"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 198,
+        "printedPageEnd": 198,
+        "pdfPageStart1Based": 199,
+        "textLineAnchor1Based": 19329,
+        "publicationKind": "vehicle-format-droid"
+      },
+      "classification": {
+        "size": "Huge",
+        "statblockFormat": "vehicle",
+        "sourceStatblockFormat": "vehicle-scale-droid",
+        "ruleEntityNature": "vehicle-format-droid",
+        "primaryActorAuthority": "vehicle"
+      },
+      "challenge": {
+        "challengeLevel": 10
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Vehicle/starship primary actor authority. Printed vehicle stats and weapon firing groups retained in evidence only; no duplicated droid actor mechanics."
+        ]
+      },
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-034",
+          "Clone Wars Campaign Guide:printed-p198:TXT-line-19329",
+          "CLONE:printed-p198:PDF-page-199:selected-visual-fields"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-035",
+        "printedName": "IG-227 Hailfire-class Droid Tank"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 199,
+        "printedPageEnd": 199,
+        "pdfPageStart1Based": 200,
+        "textLineAnchor1Based": 19395,
+        "publicationKind": "vehicle-format-droid"
+      },
+      "classification": {
+        "size": "Huge",
+        "statblockFormat": "vehicle",
+        "sourceStatblockFormat": "vehicle-scale-droid",
+        "ruleEntityNature": "vehicle-format-droid",
+        "primaryActorAuthority": "vehicle"
+      },
+      "challenge": {
+        "challengeLevel": 12
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Vehicle/starship primary actor authority. Printed vehicle stats and weapon firing groups retained in evidence only; no duplicated droid actor mechanics."
+        ]
+      },
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-035",
+          "Clone Wars Campaign Guide:printed-p199:TXT-line-19395",
+          "CLONE:printed-p199:PDF-page-200:selected-visual-fields:batch2"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-036",
+        "printedName": "Manta Droid Subfighter"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 200,
+        "printedPageEnd": 200,
+        "pdfPageStart1Based": 201,
+        "textLineAnchor1Based": 19475,
+        "publicationKind": "vehicle-format-droid"
+      },
+      "classification": {
+        "size": "Huge",
+        "statblockFormat": "vehicle",
+        "sourceStatblockFormat": "vehicle-scale-droid",
+        "ruleEntityNature": "vehicle-format-droid",
+        "primaryActorAuthority": "vehicle"
+      },
+      "challenge": {
+        "challengeLevel": 9
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Vehicle/starship primary actor authority. Printed vehicle stats and weapon firing groups retained in evidence only; no duplicated droid actor mechanics."
+        ]
+      },
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-036",
+          "Clone Wars Campaign Guide:printed-p200:TXT-line-19475",
+          "CLONE:printed-p200:PDF-page-201:selected-visual-fields:batch2"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-037",
+        "printedName": "OG-9 Homing Spider Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 201,
+        "printedPageEnd": 201,
+        "pdfPageStart1Based": 202,
+        "textLineAnchor1Based": 19615,
+        "publicationKind": "vehicle-format-droid"
+      },
+      "classification": {
+        "size": "Huge",
+        "statblockFormat": "vehicle",
+        "sourceStatblockFormat": "vehicle-scale-droid",
+        "ruleEntityNature": "vehicle-format-droid",
+        "primaryActorAuthority": "vehicle"
+      },
+      "challenge": {
+        "challengeLevel": 7
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Vehicle/starship primary actor authority. Printed vehicle stats and weapon firing groups retained in evidence only; no duplicated droid actor mechanics."
+        ]
+      },
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "CLONE-DROID-037-SOURCE-LOCAL-01",
+            "statement": "When a critical hit equals or exceeds its damage threshold, OG-9 speed drops to zero until repaired; firing remains possible.",
+            "scope": "CLONE-DROID-037",
+            "source": {
+              "book": "Clone Wars Campaign Guide",
+              "page": 200,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CLONE-DROID-037"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-037",
+          "Clone Wars Campaign Guide:printed-p201:TXT-line-19615",
+          "CLONE:printed-p201:PDF-page-202:selected-visual-fields:batch2"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-038",
+        "printedName": "Persuader-class Droid Enforcer"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 201,
+        "printedPageEnd": 201,
+        "pdfPageStart1Based": 202,
+        "textLineAnchor1Based": 19662,
+        "publicationKind": "vehicle-format-droid"
+      },
+      "classification": {
+        "size": "Huge",
+        "statblockFormat": "vehicle",
+        "sourceStatblockFormat": "vehicle-scale-droid",
+        "ruleEntityNature": "vehicle-format-droid",
+        "primaryActorAuthority": "vehicle"
+      },
+      "challenge": {
+        "challengeLevel": 14
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Vehicle/starship primary actor authority. Printed vehicle stats and weapon firing groups retained in evidence only; no duplicated droid actor mechanics."
+        ]
+      },
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-038",
+          "Clone Wars Campaign Guide:printed-p201:TXT-line-19662",
+          "CLONE:printed-p201:PDF-page-202:selected-visual-fields:batch2"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-039",
+        "printedName": "Tri-Droid"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 202,
+        "printedPageEnd": 202,
+        "pdfPageStart1Based": 203,
+        "textLineAnchor1Based": 19825,
+        "publicationKind": "vehicle-format-droid"
+      },
+      "classification": {
+        "size": "Gargantuan",
+        "statblockFormat": "vehicle",
+        "sourceStatblockFormat": "vehicle-scale-droid",
+        "ruleEntityNature": "vehicle-format-droid",
+        "primaryActorAuthority": "vehicle"
+      },
+      "challenge": {
+        "challengeLevel": 9
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Vehicle/starship primary actor authority. Printed vehicle stats and weapon firing groups retained in evidence only; no duplicated droid actor mechanics."
+        ]
+      },
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-039",
+          "Clone Wars Campaign Guide:printed-p202:TXT-line-19825",
+          "CLONE:printed-p202:PDF-page-203:selected-visual-fields:batch2"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CLONE-DROID-040",
+        "printedName": "Hyena-class Bomber"
+      },
+      "publication": {
+        "book": "Clone Wars Campaign Guide",
+        "bookId": "CLONE",
+        "printedPageStart": 208,
+        "printedPageEnd": 208,
+        "pdfPageStart1Based": 209,
+        "textLineAnchor1Based": 20483,
+        "publicationKind": "vehicle-format-droid"
+      },
+      "classification": {
+        "size": "Huge",
+        "statblockFormat": "vehicle",
+        "sourceStatblockFormat": "starship-scale-droid",
+        "ruleEntityNature": "vehicle-format-droid",
+        "primaryActorAuthority": "vehicle"
+      },
+      "challenge": {
+        "challengeLevel": 7
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Vehicle/starship primary actor authority. Printed vehicle stats and weapon firing groups retained in evidence only; no duplicated droid actor mechanics."
+        ]
+      },
+      "exceptions": {
+        "notes": "Canonical feat/talent IDs, full stock systems, mounts, localized rules, and independent model hero eligibility remain pending certification."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Identity from upstream census. TXT/OCR field draft pending PDF visual confirmation, complete source and runtime reconciliation.",
+        "reviewerEvidenceRefs": [
+          "CLONE-CENSUS:CLONE-DROID-040",
+          "Clone Wars Campaign Guide:printed-p208:TXT-line-20483",
+          "CLONE:printed-p208:PDF-page-209:selected-visual-fields"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,203 @@
+{
+  "schema": "swse.droid.kotor.selected-pdf-visual/0.1",
+  "sourceBook": "Knights of the Old Republic Campaign Guide",
+  "manualVisualReviews": 24,
+  "directFieldComparisons": 369,
+  "method": "Printed book pages manually visually inspected as rendered PNGs; statblock field candidates independently transcribed. No text-extraction-only claim may be marked visual.",
+  "sourcePdfHash": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+  "scope": "Only explicit pointer fields listed in evidence are visually checked; model narrative, equipment, feats, talents and runtime not certified.",
+  "items": [
+    {
+      "sourceEntryKey": "KOTOR-DROID-001",
+      "printedName": "ET-74 Communications Droid",
+      "printedPage": 81,
+      "verifiedFieldCount": 15,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-002",
+      "printedName": "GO-TO Infrastructure-Planning Droid",
+      "printedPage": 82,
+      "verifiedFieldCount": 16,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-003",
+      "printedName": "T3-Series Utility Droid",
+      "printedPage": 82,
+      "verifiedFieldCount": 16,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-004",
+      "printedName": "GE3-Series Protocol Droid",
+      "printedPage": 83,
+      "verifiedFieldCount": 16,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-005",
+      "printedName": "GG-Series Hospitality Droid",
+      "printedPage": 84,
+      "verifiedFieldCount": 16,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-006",
+      "printedName": "HK-24 Series Assassin Droid",
+      "printedPage": 84,
+      "verifiedFieldCount": 17,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-007",
+      "printedName": "Independent HK-Series Droid",
+      "printedPage": 85,
+      "verifiedFieldCount": 15,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-008",
+      "printedName": "HK-50 Series Assassin Droid",
+      "printedPage": 85,
+      "verifiedFieldCount": 17,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-009",
+      "printedName": "Juggernaut War Droid",
+      "printedPage": 86,
+      "verifiedFieldCount": 16,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-010",
+      "printedName": "K-X12 Probe Droid",
+      "printedPage": 86,
+      "verifiedFieldCount": 16,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-011",
+      "printedName": "Municipal Patrol Droid Mark I",
+      "printedPage": 87,
+      "verifiedFieldCount": 16,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-012",
+      "printedName": "Devastator War Droid",
+      "printedPage": 87,
+      "verifiedFieldCount": 16,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-013",
+      "printedName": "Sentinel Droid",
+      "printedPage": 88,
+      "verifiedFieldCount": 16,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-014",
+      "printedName": "S6-Series Security/Maintenance Droid",
+      "printedPage": 88,
+      "verifiedFieldCount": 16,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-015",
+      "printedName": "T1 Bulk Loader Droid",
+      "printedPage": 88,
+      "verifiedFieldCount": 16,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-016",
+      "printedName": "R-8009 Utility Droid",
+      "printedPage": 89,
+      "verifiedFieldCount": 16,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-017",
+      "printedName": "Mark I Assault Droid",
+      "printedPage": 165,
+      "verifiedFieldCount": 17,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-018",
+      "printedName": "Mark IV Assault Droid",
+      "printedPage": 165,
+      "verifiedFieldCount": 17,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-019",
+      "printedName": "Basilisk War Droid",
+      "printedPage": 203,
+      "verifiedFieldCount": 5,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "vehicle"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-020",
+      "printedName": "GO-TO (Dark Wars)",
+      "printedPage": 212,
+      "verifiedFieldCount": 15,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-021",
+      "printedName": "HK-47 (Jedi Civil War)",
+      "printedPage": 213,
+      "verifiedFieldCount": 15,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-022",
+      "printedName": "T3-M4 (Jedi Civil War)",
+      "printedPage": 216,
+      "verifiedFieldCount": 14,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-023",
+      "printedName": "Krath War Droid",
+      "printedPage": 222,
+      "verifiedFieldCount": 16,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-024",
+      "printedName": "Rakatan Guardian Droid",
+      "printedPage": 223,
+      "verifiedFieldCount": 14,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid"
+    }
+  ]
+}

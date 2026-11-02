@@ -1,0 +1,30 @@
+{
+  "schema": "swse.droid.rebellion.local-state/0.1",
+  "bookId": "REBELLION",
+  "localCheckpoint": 9,
+  "sourceDraftEntries": 15,
+  "selectedFirstPageReviews": 15,
+  "directFieldComparisons": 325,
+  "printedPagesChecked": [
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    110,
+    127,
+    128,
+    129,
+    130,
+    143,
+    144
+  ],
+  "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+  "sourceTxtSha256": "36320e330519ad7a3d49f224b1cf41739ee59f0dc55a7217a2e0f2af17edea39",
+  "ledgerSha256": "1bba7c59e4bf114e8a6292c4ae4211dc6a1e7d409ab5d81bba608158eff754ec",
+  "mechanicallyCertifiedEntries": 0,
+  "gitHubWriteAuthorization": false,
+  "outstanding": "Full narrative source checks, canonical feat/talent mapping, installed components and weapon attack ownership, PC legality, schema and Foundry V13 testing.",
+  "publishedAuditScope": "selected-field-source-review-only"
+}

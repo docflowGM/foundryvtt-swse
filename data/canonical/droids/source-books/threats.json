@@ -1,0 +1,2342 @@
+{
+  "schema": "swse.droid.source-book-hydration-ledger/0.1-partial",
+  "bookId": "THREATS",
+  "book": "Threats of the Galaxy",
+  "draftSourceEntrySchema": "swse.droid.universal-source/0.1-draft",
+  "sourceBookPdf": "SAGA EDITION - Threats of the Galaxy.pdf",
+  "scope": "Publication-specific 29 entry source index. No source mechanics may execute until independent certification.",
+  "expectedPublicationClaims": 29,
+  "sourceEntries": [
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-001",
+        "printedName": "VX Series Artillery Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 134,
+        "printedPageEnd": 134,
+        "pdfPageStart1Based": 135,
+        "textLineAnchor1Based": 12933,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 4
+      },
+      "challenge": {
+        "challengeLevel": 12
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 26,
+        "flatFootedReflex": 24,
+        "fortitude": 26,
+        "will": 23
+      },
+      "durability": {
+        "hitPoints": 90,
+        "damageThreshold": 31
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "THREATS-DROID-001-LIGHT-CONCUSSION",
+            "statement": "Printed sidebar introduces a light concussion missile launcher with separately defined ammunition and splash damage; keep equipment and attack-group authority unresolved.",
+            "scope": "THREATS-DROID-001",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 134,
+              "pdfPage1Based": 135,
+              "sourceEntryKey": "THREATS-DROID-001",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-001",
+          "Threats of the Galaxy:printed-p134:TXT-line-12933",
+          "THREATS-DROID-001:printed-p134:PDF-p135:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-002",
+        "printedName": "ASN-121 Assassin Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 135,
+        "printedPageEnd": 135,
+        "pdfPageStart1Based": 136,
+        "textLineAnchor1Based": 13041,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Small",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 4
+      },
+      "challenge": {
+        "challengeLevel": 9
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 26,
+        "flatFootedReflex": 23,
+        "fortitude": 20,
+        "will": 21
+      },
+      "durability": {
+        "hitPoints": 74,
+        "damageThreshold": 25
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-002",
+          "Threats of the Galaxy:printed-p135:TXT-line-13041",
+          "THREATS-DROID-002:printed-p135:PDF-p136:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-003",
+        "printedName": "R3 Series Astromech Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 136,
+        "printedPageEnd": 136,
+        "pdfPageStart1Based": 137,
+        "textLineAnchor1Based": 13150,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Small",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 2
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 14,
+        "flatFootedReflex": 11,
+        "fortitude": 9,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 10,
+        "damageThreshold": 9
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-003",
+          "Threats of the Galaxy:printed-p136:TXT-line-13150",
+          "THREATS-DROID-003:printed-p136:PDF-p137:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-004",
+        "printedName": "R4 Series Astromech Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 137,
+        "printedPageEnd": 137,
+        "pdfPageStart1Based": 138,
+        "textLineAnchor1Based": 13263,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Small",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 2
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 13,
+        "flatFootedReflex": 11,
+        "fortitude": 9,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 8,
+        "damageThreshold": 9
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-004",
+          "Threats of the Galaxy:printed-p137:TXT-line-13263",
+          "THREATS-DROID-004:printed-p137:PDF-p138:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-005",
+        "printedName": "R5 Series Astromech Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 138,
+        "printedPageEnd": 138,
+        "pdfPageStart1Based": 139,
+        "textLineAnchor1Based": 13367,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Small",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 2
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 11,
+        "flatFootedReflex": 11,
+        "fortitude": 9,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 5,
+        "damageThreshold": 9
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-005",
+          "Threats of the Galaxy:printed-p138:TXT-line-13367",
+          "THREATS-DROID-005:printed-p138:PDF-p139:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-006",
+        "printedName": "R7 Series Astromech Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 138,
+        "printedPageEnd": 138,
+        "pdfPageStart1Based": 139,
+        "textLineAnchor1Based": 13454,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Small",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 2
+      },
+      "challenge": {
+        "challengeLevel": 2
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 14,
+        "flatFootedReflex": 11,
+        "fortitude": 9,
+        "will": 11
+      },
+      "durability": {
+        "hitPoints": 21,
+        "damageThreshold": 9
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-006",
+          "Threats of the Galaxy:printed-p138:TXT-line-13454",
+          "THREATS-DROID-006:printed-p138:PDF-p139:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-007",
+        "printedName": "R2-R Series Reconnaissance Astromech Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 139,
+        "printedPageEnd": 139,
+        "pdfPageStart1Based": 140,
+        "textLineAnchor1Based": 13535,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Small",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 2
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 16,
+        "flatFootedReflex": 14,
+        "fortitude": 10,
+        "will": 13
+      },
+      "durability": {
+        "hitPoints": 24,
+        "damageThreshold": 10
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "THREATS-DROID-007-RECON",
+            "statement": "R2-R series has a reconnaissance/intelligence mission profile and specialized systems; do not infer universal astromech feature grants.",
+            "scope": "THREATS-DROID-007",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 139,
+              "pdfPage1Based": 140,
+              "sourceEntryKey": "THREATS-DROID-007",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-007",
+          "Threats of the Galaxy:printed-p139:TXT-line-13535",
+          "THREATS-DROID-007:printed-p139:PDF-p140:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-008",
+        "printedName": "B3 Series Ultra Battle Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 140,
+        "printedPageEnd": 140,
+        "pdfPageStart1Based": 141,
+        "textLineAnchor1Based": 13588,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Large",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 4
+      },
+      "challenge": {
+        "challengeLevel": 3
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 17,
+        "flatFootedReflex": 16,
+        "fortitude": 17,
+        "will": 11
+      },
+      "durability": {
+        "hitPoints": 42,
+        "damageThreshold": 27
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "THREATS-DROID-008-ULTRA-BATTLE",
+            "statement": "B3 series has multiple specialized attack modes; OR/AND fire options require source attack-group reconciliation.",
+            "scope": "THREATS-DROID-008",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 140,
+              "pdfPage1Based": 141,
+              "sourceEntryKey": "THREATS-DROID-008",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-008",
+          "Threats of the Galaxy:printed-p140:TXT-line-13588",
+          "THREATS-DROID-008:printed-p140:PDF-p141:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-009",
+        "printedName": "B3-A Series Ultra Battle Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 141,
+        "printedPageEnd": 141,
+        "pdfPageStart1Based": 142,
+        "textLineAnchor1Based": 13686,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Large",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 4
+      },
+      "challenge": {
+        "challengeLevel": 5
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 19,
+        "flatFootedReflex": 18,
+        "fortitude": 24,
+        "will": 16
+      },
+      "durability": {
+        "hitPoints": 72,
+        "damageThreshold": 34
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "THREATS-DROID-009-BATTERY",
+            "statement": "B3-A series contains upgraded multiple-weapon firing arrangements; no implicit multiattack/mount execution.",
+            "scope": "THREATS-DROID-009",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 141,
+              "pdfPage1Based": 142,
+              "sourceEntryKey": "THREATS-DROID-009",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-009",
+          "Threats of the Galaxy:printed-p141:TXT-line-13686",
+          "THREATS-DROID-009:printed-p141:PDF-p142:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-010",
+        "printedName": "IG Series Battle Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 141,
+        "printedPageEnd": 141,
+        "pdfPageStart1Based": 142,
+        "textLineAnchor1Based": 13773,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 4
+      },
+      "challenge": {
+        "challengeLevel": 2
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 13,
+        "flatFootedReflex": 10,
+        "fortitude": 12,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 15,
+        "damageThreshold": 12
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-010",
+          "Threats of the Galaxy:printed-p141:TXT-line-13773",
+          "THREATS-DROID-010:printed-p141:PDF-p142:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-011",
+        "printedName": "Pistoeka Buzz Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 142,
+        "printedPageEnd": 142,
+        "pdfPageStart1Based": 143,
+        "textLineAnchor1Based": 13833,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Tiny",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 4
+      },
+      "challenge": {
+        "challengeLevel": 3
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 21,
+        "flatFootedReflex": 16,
+        "fortitude": 11,
+        "will": 15
+      },
+      "durability": {
+        "hitPoints": 41,
+        "damageThreshold": 11
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "THREATS-DROID-011-BUZZ",
+            "statement": "Pistoeka buzz droids have carrier/deployment and cutting behavior; distinction between model action and sidebar missile item required.",
+            "scope": "THREATS-DROID-011",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 142,
+              "pdfPage1Based": 143,
+              "sourceEntryKey": "THREATS-DROID-011",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-011",
+          "Threats of the Galaxy:printed-p142:TXT-line-13833",
+          "THREATS-DROID-011:printed-p142:PDF-p143:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-012",
+        "printedName": "EVS Construction Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 143,
+        "printedPageEnd": 143,
+        "pdfPageStart1Based": 144,
+        "textLineAnchor1Based": 13963,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Colossal",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 5
+      },
+      "challenge": {
+        "challengeLevel": 8
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 6,
+        "flatFootedReflex": 6,
+        "fortitude": 10,
+        "will": 9
+      },
+      "durability": {
+        "hitPoints": 137,
+        "damageThreshold": 65
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-012",
+          "Threats of the Galaxy:printed-p143:TXT-line-13963",
+          "THREATS-DROID-012:printed-p143:PDF-p144:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-013",
+        "printedName": "GRZ-6B Demolitions Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 144,
+        "printedPageEnd": 144,
+        "pdfPageStart1Based": 145,
+        "textLineAnchor1Based": 14045,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Gargantuan",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 5
+      },
+      "challenge": {
+        "challengeLevel": 8
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 11,
+        "flatFootedReflex": 11,
+        "fortitude": 22,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 106,
+        "damageThreshold": 47
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-013",
+          "Threats of the Galaxy:printed-p144:TXT-line-14045",
+          "THREATS-DROID-013:printed-p144:PDF-p145:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-014",
+        "printedName": "3PX Espionage Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 145,
+        "printedPageEnd": 145,
+        "pdfPageStart1Based": 146,
+        "textLineAnchor1Based": 14171,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 4
+      },
+      "challenge": {
+        "challengeLevel": 6
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 20,
+        "flatFootedReflex": 18,
+        "fortitude": 17,
+        "will": 19
+      },
+      "durability": {
+        "hitPoints": 37,
+        "damageThreshold": 17
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-014",
+          "Threats of the Galaxy:printed-p145:TXT-line-14171",
+          "THREATS-DROID-014:printed-p145:PDF-p146:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-015",
+        "printedName": "TO-D Interrogation Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 146,
+        "printedPageEnd": 146,
+        "pdfPageStart1Based": 147,
+        "textLineAnchor1Based": 14232,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 1
+      },
+      "challenge": {
+        "challengeLevel": 4
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 16,
+        "flatFootedReflex": 15,
+        "fortitude": 14
+      },
+      "durability": {
+        "hitPoints": 29,
+        "damageThreshold": 14
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "THREATS-DROID-015-STUNNER",
+            "statement": "Sonic stunner is a separately printed weapon sidebar; the statblock does not alone certify weapon construction or executable effect.",
+            "scope": "THREATS-DROID-015",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 146,
+              "pdfPage1Based": 147,
+              "sourceEntryKey": "THREATS-DROID-015",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-015",
+          "Threats of the Galaxy:printed-p146:TXT-line-14232",
+          "THREATS-DROID-015:printed-p146:PDF-p147:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-016",
+        "printedName": "GH-7 Medical Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 147,
+        "printedPageEnd": 147,
+        "pdfPageStart1Based": 148,
+        "textLineAnchor1Based": 14329,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Small",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 1
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 13,
+        "flatFootedReflex": 11,
+        "fortitude": 9,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 7,
+        "damageThreshold": 9
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-016",
+          "Threats of the Galaxy:printed-p147:TXT-line-14329",
+          "THREATS-DROID-016:printed-p147:PDF-p148:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-017",
+        "printedName": "EG-6 Series Power Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 148,
+        "printedPageEnd": 148,
+        "pdfPageStart1Based": 149,
+        "textLineAnchor1Based": 14430,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Small",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 5
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 18,
+        "flatFootedReflex": 18,
+        "fortitude": 12,
+        "will": 9
+      },
+      "durability": {
+        "hitPoints": 5,
+        "damageThreshold": 12
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-017",
+          "Threats of the Galaxy:printed-p148:TXT-line-14430",
+          "THREATS-DROID-017:printed-p148:PDF-p149:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-018",
+        "printedName": "DRK-1 Probe Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 149,
+        "printedPageEnd": 149,
+        "pdfPageStart1Based": 150,
+        "textLineAnchor1Based": 14510,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Small",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 4
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 16,
+        "flatFootedReflex": 11,
+        "fortitude": 10,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 12,
+        "damageThreshold": 10
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-018",
+          "Threats of the Galaxy:printed-p149:TXT-line-14510",
+          "THREATS-DROID-018:printed-p149:PDF-p150:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-019",
+        "printedName": "M-3PO Series Military Protocol Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 150,
+        "printedPageEnd": 150,
+        "pdfPageStart1Based": 151,
+        "textLineAnchor1Based": 14612,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 3
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 11,
+        "flatFootedReflex": 11,
+        "fortitude": 10,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 4,
+        "damageThreshold": 10
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-019",
+          "Threats of the Galaxy:printed-p150:TXT-line-14612",
+          "THREATS-DROID-019:printed-p150:PDF-p151:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-020",
+        "printedName": "TC Series Protocol Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 151,
+        "printedPageEnd": 151,
+        "pdfPageStart1Based": 152,
+        "textLineAnchor1Based": 14724,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 3
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 11,
+        "flatFootedReflex": 11,
+        "fortitude": 10,
+        "will": 15
+      },
+      "durability": {
+        "hitPoints": 18,
+        "damageThreshold": 10
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-020",
+          "Threats of the Galaxy:printed-p151:TXT-line-14724",
+          "THREATS-DROID-020:printed-p151:PDF-p152:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-021",
+        "printedName": "Replica Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 152,
+        "printedPageEnd": 152,
+        "pdfPageStart1Based": 153,
+        "textLineAnchor1Based": 14795,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "replica-droid-actor",
+        "ruleEntityNature": "replica-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 4
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 20,
+        "flatFootedReflex": 17,
+        "fortitude": 19,
+        "will": 16
+      },
+      "durability": {
+        "hitPoints": 38,
+        "damageThreshold": 19
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "pcIdentityKind": "replica-droid",
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Replica species rules are distinct from the printed individual NPC statblock; do not auto-apply traits a second time."
+        ]
+      },
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "globalRuleReferences": [
+          "Threats of the Galaxy, printed p153, Replica Droid Species Traits (source reference only; NO executable trait grant)"
+        ],
+        "conditionalMechanics": [
+          {
+            "ruleId": "THREATS-DROID-021-REPLICA-TRAITS",
+            "statement": "Replica Droid Species Traits are printed on p153, distinct from the example p152 NPC values; do not double apply starting modifiers or feats.",
+            "scope": "THREATS-DROID-021",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 153,
+              "pdfPage1Based": 154,
+              "sourceEntryKey": "THREATS-DROID-021",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-021",
+          "Threats of the Galaxy:printed-p152:TXT-line-14795",
+          "THREATS-DROID-021:printed-p152:PDF-p153:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-022",
+        "printedName": "Guri",
+        "namedIndividual": true
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 153,
+        "printedPageEnd": 153,
+        "pdfPageStart1Based": 154,
+        "textLineAnchor1Based": 14885,
+        "publicationKind": "named-character"
+      },
+      "classification": {
+        "size": "Medium",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "replica-droid-actor",
+        "ruleEntityNature": "replica-droid",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 10
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 29,
+        "flatFootedReflex": 25,
+        "fortitude": 28,
+        "will": 24
+      },
+      "durability": {
+        "hitPoints": 89,
+        "damageThreshold": 28
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "pcIdentityKind": "replica-droid"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Replica species rules are distinct from the printed individual NPC statblock; do not auto-apply traits a second time.",
+          "Guri is an individual named replica; do not convert into factory chassis or unrestricted PC model."
+        ]
+      },
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "globalRuleReferences": [
+          "Threats of the Galaxy, printed p153, Replica Droid Species Traits (source reference only; NO executable trait grant)"
+        ],
+        "conditionalMechanics": [
+          {
+            "ruleId": "THREATS-DROID-022-GURI-REPLICA",
+            "statement": "Named Guri statblock is distinct from the generic replica droid; shared species traits must be resolved once by the droid/person identity authority.",
+            "scope": "THREATS-DROID-022",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 153,
+              "pdfPage1Based": 154,
+              "sourceEntryKey": "THREATS-DROID-022",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-022",
+          "Threats of the Galaxy:printed-p153:TXT-line-14885",
+          "THREATS-DROID-022:printed-p153:PDF-p154:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-023",
+        "printedName": "WSB-15 Sabotage Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 154,
+        "printedPageEnd": 154,
+        "pdfPageStart1Based": 155,
+        "textLineAnchor1Based": 15008,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Small",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 4
+      },
+      "challenge": {
+        "challengeLevel": 7
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 22,
+        "flatFootedReflex": 19,
+        "fortitude": 16,
+        "will": 18
+      },
+      "durability": {
+        "hitPoints": 37,
+        "damageThreshold": 16
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-023",
+          "Threats of the Galaxy:printed-p154:TXT-line-15008",
+          "THREATS-DROID-023:printed-p154:PDF-p155:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-024",
+        "printedName": "501-Z Police/Security Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 155,
+        "printedPageEnd": 155,
+        "pdfPageStart1Based": 156,
+        "textLineAnchor1Based": 15135,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 4
+      },
+      "challenge": {
+        "challengeLevel": 10
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 26,
+        "flatFootedReflex": 26,
+        "fortitude": 26,
+        "will": 22
+      },
+      "durability": {
+        "hitPoints": 76,
+        "damageThreshold": 26
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-024",
+          "Threats of the Galaxy:printed-p155:TXT-line-15135",
+          "THREATS-DROID-024:printed-p155:PDF-p156:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-025",
+        "printedName": "Mark VII Inquisitor Series Seeker Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 156,
+        "printedPageEnd": 156,
+        "pdfPageStart1Based": 157,
+        "textLineAnchor1Based": 15211,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Diminutive",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 4
+      },
+      "challenge": {
+        "challengeLevel": 6
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 27,
+        "flatFootedReflex": 13,
+        "fortitude": 14,
+        "will": 19
+      },
+      "durability": {
+        "hitPoints": 46,
+        "damageThreshold": 14
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-025",
+          "Threats of the Galaxy:printed-p156:TXT-line-15211",
+          "THREATS-DROID-025:printed-p156:PDF-p157:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-026",
+        "printedName": "Imperial Mark IV Series Sentry Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 157,
+        "printedPageEnd": 157,
+        "pdfPageStart1Based": 158,
+        "textLineAnchor1Based": 15299,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Diminutive",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 4
+      },
+      "challenge": {
+        "challengeLevel": 2
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 17,
+        "flatFootedReflex": 15,
+        "fortitude": 8,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 16,
+        "damageThreshold": 8
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-026",
+          "Threats of the Galaxy:printed-p157:TXT-line-15299",
+          "THREATS-DROID-026:printed-p157:PDF-p158:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-027",
+        "printedName": "SD-6 Hulk Infantry Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 158,
+        "printedPageEnd": 158,
+        "pdfPageStart1Based": 159,
+        "textLineAnchor1Based": 15395,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Large",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 4
+      },
+      "challenge": {
+        "challengeLevel": 14
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 29,
+        "flatFootedReflex": 28,
+        "fortitude": 27,
+        "will": 24,
+        "damageReduction": 3
+      },
+      "durability": {
+        "hitPoints": 112,
+        "damageThreshold": 32
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "THREATS-DROID-027-CONTROLLED-BURST",
+            "statement": "SD-6 has controlled-burst weapon configurations and DR; weapon ownership and attack action costs remain source-only.",
+            "scope": "THREATS-DROID-027",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 158,
+              "pdfPage1Based": 159,
+              "sourceEntryKey": "THREATS-DROID-027",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-027",
+          "Threats of the Galaxy:printed-p158:TXT-line-15395",
+          "THREATS-DROID-027:printed-p158:PDF-p159:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-028",
+        "printedName": "Sith Elite Warbot",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 159,
+        "printedPageEnd": 159,
+        "pdfPageStart1Based": 160,
+        "textLineAnchor1Based": 15533,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Medium",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 4
+      },
+      "challenge": {
+        "challengeLevel": 5
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 21,
+        "flatFootedReflex": 19,
+        "fortitude": 19,
+        "will": 13
+      },
+      "durability": {
+        "hitPoints": 31,
+        "damageThreshold": 19
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {},
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "THREATS-DROID-028-SITH-SWORD",
+            "statement": "Sith sword and its separately printed special weapon traits need independent equipment/weapon provenance before execution.",
+            "scope": "THREATS-DROID-028",
+            "source": {
+              "book": "Threats of the Galaxy",
+              "page": 159,
+              "pdfPage1Based": 160,
+              "sourceEntryKey": "THREATS-DROID-028",
+              "verifiedBy": "pdf-visual"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-028",
+          "Threats of the Galaxy:printed-p159:TXT-line-15533",
+          "THREATS-DROID-028:printed-p159:PDF-p160:selected-field-visual"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "THREATS-DROID-029",
+        "printedName": "PK Worker Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Threats of the Galaxy",
+        "bookId": "THREATS",
+        "printedPageStart": 160,
+        "printedPageEnd": 160,
+        "pdfPageStart1Based": 161,
+        "textLineAnchor1Based": 15614,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "size": "Small",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "ruleEntityNature": "standard-droid",
+        "primaryActorAuthority": "droid",
+        "publishedDegree": 5
+      },
+      "challenge": {
+        "challengeLevel": 2
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {
+        "reflex": 13,
+        "flatFootedReflex": 11,
+        "fortitude": 12,
+        "will": 11
+      },
+      "durability": {
+        "hitPoints": 21,
+        "damageThreshold": 12
+      },
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {},
+      "exceptions": {
+        "notes": "Canonical feats, talents, systems, weapon provenance, conditional rules and PC creation routes are not independently certified."
+      },
+      "fieldStates": {},
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "PDF-selected first-page fields reviewed; narrative/continuations, feats/talents, equipment, hero build route, and live execution NOT certified.",
+        "reviewerEvidenceRefs": [
+          "THREATS-CENSUS:THREATS-DROID-029",
+          "Threats of the Galaxy:printed-p160:TXT-line-15614",
+          "THREATS-DROID-029:printed-p160:PDF-p161:selected-field-visual"
+        ]
+      }
+    }
+  ]
+}

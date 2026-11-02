@@ -1,0 +1,327 @@
+{
+  "schema": "swse.droid.clone.census-parity/0.1",
+  "source": "data/audits/droids/droid-publication-census.json",
+  "note": "Rows transcribed from read-only GitHub census branch. Independently not modified.",
+  "claims": [
+    {
+      "sourceEntryKey": "CLONE-DROID-001",
+      "name": "DD-13 Medical Assistant Droid",
+      "printedPage": 66,
+      "textAnchor1Based": 5673,
+      "format": "actor",
+      "challengeLevelCensus": 1
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-002",
+      "name": "EW-3 Midwife Droid",
+      "printedPage": 67,
+      "textAnchor1Based": 5730,
+      "format": "actor",
+      "challengeLevelCensus": 0
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-003",
+      "name": "IM-6 Medical Droid",
+      "printedPage": 67,
+      "textAnchor1Based": 5778,
+      "format": "actor",
+      "challengeLevelCensus": 1
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-004",
+      "name": "SP-4 Analysis Droid",
+      "printedPage": 68,
+      "textAnchor1Based": 5862,
+      "format": "actor",
+      "challengeLevelCensus": 1
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-005",
+      "name": "LE Series Repair Droid",
+      "printedPage": 69,
+      "textAnchor1Based": 5955,
+      "format": "actor",
+      "challengeLevelCensus": 1
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-006",
+      "name": "P2 Series Astromech Droid",
+      "printedPage": 69,
+      "textAnchor1Based": 6013,
+      "format": "actor",
+      "challengeLevelCensus": 0
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-007",
+      "name": "Serv-O-Droid Pit Droid",
+      "printedPage": 70,
+      "textAnchor1Based": 6083,
+      "format": "actor",
+      "challengeLevelCensus": 0
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-008",
+      "name": "5YQ Protocol Droid",
+      "printedPage": 70,
+      "textAnchor1Based": 6157,
+      "format": "actor",
+      "challengeLevelCensus": 0
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-009",
+      "name": "BCA-11/X Training Droid",
+      "printedPage": 71,
+      "textAnchor1Based": 6214,
+      "format": "actor",
+      "challengeLevelCensus": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-010",
+      "name": "IG-86 Sentinel Droid",
+      "printedPage": 71,
+      "textAnchor1Based": 6241,
+      "format": "actor",
+      "challengeLevelCensus": 1
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-011",
+      "name": "CLL-6 Binary Load Lifter",
+      "printedPage": 72,
+      "textAnchor1Based": 6390,
+      "format": "actor",
+      "challengeLevelCensus": 1
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-012",
+      "name": "FA-5 Valet Droid",
+      "printedPage": 72,
+      "textAnchor1Based": 6434,
+      "format": "actor",
+      "challengeLevelCensus": 0
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-013",
+      "name": "IW-37 Pincer Loader Droid",
+      "printedPage": 73,
+      "textAnchor1Based": 6483,
+      "format": "actor",
+      "challengeLevelCensus": 1
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-014",
+      "name": "B1-Series Battle Droid Squad",
+      "printedPage": 95,
+      "textAnchor1Based": 8396,
+      "format": "squad",
+      "challengeLevelCensus": 3
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-015",
+      "name": "FX-6 Medical Assistance Droid",
+      "printedPage": 160,
+      "textAnchor1Based": 15307,
+      "format": "actor",
+      "challengeLevelCensus": 1
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-016",
+      "name": "FA-4 Pilot Droid",
+      "printedPage": 161,
+      "textAnchor1Based": 15367,
+      "format": "actor",
+      "challengeLevelCensus": 0
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-017",
+      "name": "Marksman-H Combat Remote",
+      "printedPage": 162,
+      "textAnchor1Based": 15508,
+      "format": "actor",
+      "challengeLevelCensus": 0
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-018",
+      "name": "A-DSD Advanced Dwarf Spider Droid",
+      "printedPage": 188,
+      "textAnchor1Based": 18087,
+      "format": "actor",
+      "challengeLevelCensus": 6
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-019",
+      "name": "A-Series Assassin Droid",
+      "printedPage": 189,
+      "textAnchor1Based": 18169,
+      "format": "actor",
+      "challengeLevelCensus": 11
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-020",
+      "name": "B1-A Series Air Battle Droid",
+      "printedPage": 190,
+      "textAnchor1Based": 18260,
+      "format": "actor",
+      "challengeLevelCensus": 4
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-021",
+      "name": "Battle Droid Assassin",
+      "printedPage": 190,
+      "textAnchor1Based": 18268,
+      "format": "actor",
+      "challengeLevelCensus": 4
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-022",
+      "name": "Cold Assault Battle Droid",
+      "printedPage": 191,
+      "textAnchor1Based": 18397,
+      "format": "actor",
+      "challengeLevelCensus": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-023",
+      "name": "C-B3 Cortosis Battle Droid",
+      "printedPage": 192,
+      "textAnchor1Based": 18479,
+      "format": "actor",
+      "challengeLevelCensus": 5
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-024",
+      "name": "Droid Commando",
+      "printedPage": 192,
+      "textAnchor1Based": 18559,
+      "format": "actor",
+      "challengeLevelCensus": 6
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-025",
+      "name": "IG Lancer Combat Droid",
+      "printedPage": 193,
+      "textAnchor1Based": 18628,
+      "format": "actor",
+      "challengeLevelCensus": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-026",
+      "name": "IG-110 Lightsaber Droid",
+      "printedPage": 193,
+      "textAnchor1Based": 18688,
+      "format": "actor",
+      "challengeLevelCensus": 6
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-027",
+      "name": "JK-13 Security Droid",
+      "printedPage": 194,
+      "textAnchor1Based": 18778,
+      "format": "actor",
+      "challengeLevelCensus": 12
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-028",
+      "name": "LM-432 Assault Crab Droid",
+      "printedPage": 194,
+      "textAnchor1Based": 18869,
+      "format": "actor",
+      "challengeLevelCensus": 6
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-029",
+      "name": "LR-57 Combat Droid",
+      "printedPage": 195,
+      "textAnchor1Based": 18948,
+      "format": "actor",
+      "challengeLevelCensus": 3
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-030",
+      "name": "Octuptarra Combat Tri-Droid",
+      "printedPage": 196,
+      "textAnchor1Based": 19035,
+      "format": "actor",
+      "challengeLevelCensus": 3
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-031",
+      "name": "OOM-Series Battle Droid",
+      "printedPage": 196,
+      "textAnchor1Based": 19104,
+      "format": "actor",
+      "challengeLevelCensus": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-032",
+      "name": "Spelunker Probe Droid",
+      "printedPage": 197,
+      "textAnchor1Based": 19175,
+      "format": "actor",
+      "challengeLevelCensus": 6
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-033",
+      "name": "Ultra Droideka",
+      "printedPage": 198,
+      "textAnchor1Based": 19251,
+      "format": "actor",
+      "challengeLevelCensus": 6
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-034",
+      "name": "Ground Armored Tank",
+      "printedPage": 198,
+      "textAnchor1Based": 19329,
+      "format": "vehicle",
+      "challengeLevelCensus": 10
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-035",
+      "name": "IG-227 Hailfire-class Droid Tank",
+      "printedPage": 199,
+      "textAnchor1Based": 19395,
+      "format": "vehicle",
+      "challengeLevelCensus": 12
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-036",
+      "name": "Manta Droid Subfighter",
+      "printedPage": 200,
+      "textAnchor1Based": 19475,
+      "format": "vehicle",
+      "challengeLevelCensus": 9
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-037",
+      "name": "OG-9 Homing Spider Droid",
+      "printedPage": 201,
+      "textAnchor1Based": 19615,
+      "format": "vehicle",
+      "challengeLevelCensus": 7
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-038",
+      "name": "Persuader-class Droid Enforcer",
+      "printedPage": 201,
+      "textAnchor1Based": 19662,
+      "format": "vehicle",
+      "challengeLevelCensus": 14
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-039",
+      "name": "Tri-Droid",
+      "printedPage": 202,
+      "textAnchor1Based": 19825,
+      "format": "vehicle",
+      "challengeLevelCensus": 9
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-040",
+      "name": "Hyena-class Bomber",
+      "printedPage": 208,
+      "textAnchor1Based": 20483,
+      "format": "starship",
+      "challengeLevelCensus": 7
+    }
+  ]
+}

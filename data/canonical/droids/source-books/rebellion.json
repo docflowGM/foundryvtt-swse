@@ -1,0 +1,1814 @@
+{
+  "schema": "swse.droid.source-book-hydration-ledger/0.1-partial",
+  "bookId": "REBELLION",
+  "book": "Rebellion Era Campaign Guide",
+  "draftSourceEntrySchema": "swse.droid.universal-source/0.1-draft",
+  "sourceBookPdf": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+  "expectedPublicationClaims": 15,
+  "scope": "15 distinct publication statblocks; selected source-only visual facts; no executable mechanics.",
+  "sourceEntries": [
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "REBELLION-DROID-001",
+        "printedName": "FX-7 Medical Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Rebellion Era Campaign Guide",
+        "bookId": "REBELLION",
+        "printedPageStart": 53,
+        "printedPageEnd": 53,
+        "pdfPageStart1Based": 54,
+        "textLineAnchor1Based": 4659,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 1,
+        "size": "Medium",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 1,
+        "perceptionPrinted": 5,
+        "str": 9,
+        "dex": 10,
+        "con": null,
+        "int": 15,
+        "wis": 14,
+        "cha": 9
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 2"
+      },
+      "defenses": {
+        "reflex": 10,
+        "flatFootedReflex": 10,
+        "fortitude": 9,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 5,
+        "damageThreshold": 9
+      },
+      "movement": {
+        "speedLineRaw": "0 (stationary)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 3800
+      },
+      "text": {
+        "sourceWarnings": [
+          "All recorded values are publication-source evidence only, not executable mechanical or player-creation authorization.",
+          "Printed attack options, feat names and items are intentionally NOT converted into runtime grants without provenance and mount certification."
+        ]
+      },
+      "exceptions": {
+        "notes": "Complete source-field and provenance certification outstanding. Printed PDF is final authority."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "REBELLION-DROID-001-STATIONARY",
+            "statement": "Stationary chassis: printed Speed 0; no implied locomotion system.",
+            "scope": "REBELLION-DROID-001",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 53,
+              "pdfPage1Based": 54,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-001"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "REBELLION-DROID-001-REPROGRAMMING",
+            "statement": "Source mentions illicit interrogation reprogramming, but supplies no universal free reprogramming action.",
+            "scope": "REBELLION-DROID-001",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 52,
+              "pdfPage1Based": 53,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-001"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields only; full narrative, feat/talent, installed equipment/mount, PC construction and live Foundry certification outstanding.",
+        "reviewerEvidenceRefs": [
+          "REBELLION-DROID-001:pdf-printed-p53",
+          "REBELLION-DROID-001:txt-line-4659"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "REBELLION-DROID-002",
+        "printedName": "R4-Series Agromech Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Rebellion Era Campaign Guide",
+        "bookId": "REBELLION",
+        "printedPageStart": 53,
+        "printedPageEnd": 54,
+        "pdfPageStart1Based": 54,
+        "textLineAnchor1Based": 4736,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 2,
+        "size": "Small",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 4,
+        "perceptionPrinted": 3,
+        "str": 7,
+        "dex": 16,
+        "con": null,
+        "int": 15,
+        "wis": 10,
+        "cha": 7
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 2"
+      },
+      "defenses": {
+        "reflex": 14,
+        "flatFootedReflex": 11,
+        "fortitude": 8,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 7,
+        "damageThreshold": 8
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (wheeled)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 2500
+      },
+      "text": {
+        "sourceWarnings": [
+          "All recorded values are publication-source evidence only, not executable mechanical or player-creation authorization.",
+          "Printed attack options, feat names and items are intentionally NOT converted into runtime grants without provenance and mount certification."
+        ]
+      },
+      "exceptions": {
+        "notes": "Complete source-field and provenance certification outstanding. Printed PDF is final authority."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "REBELLION-DROID-002-ION-PROBE",
+            "statement": "Printed electroshock probe uses ion damage; any attack requires certified installed weapon/attack ownership.",
+            "scope": "REBELLION-DROID-002",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 53,
+              "pdfPage1Based": 54,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-002"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields only; full narrative, feat/talent, installed equipment/mount, PC construction and live Foundry certification outstanding.",
+        "reviewerEvidenceRefs": [
+          "REBELLION-DROID-002:pdf-printed-p53",
+          "REBELLION-DROID-002:txt-line-4736"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "REBELLION-DROID-003",
+        "printedName": "WED Treadwell Repair Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Rebellion Era Campaign Guide",
+        "bookId": "REBELLION",
+        "printedPageStart": 54,
+        "printedPageEnd": 54,
+        "pdfPageStart1Based": 55,
+        "textLineAnchor1Based": 4803,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 2,
+        "size": "Small",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 4,
+        "perceptionPrinted": 6,
+        "str": 7,
+        "dex": 16,
+        "con": null,
+        "int": 13,
+        "wis": 10,
+        "cha": 7
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 2"
+      },
+      "defenses": {
+        "reflex": 14,
+        "flatFootedReflex": 11,
+        "fortitude": 8,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 5,
+        "damageThreshold": 8
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (tracked)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 3000
+      },
+      "text": {
+        "sourceWarnings": [
+          "All recorded values are publication-source evidence only, not executable mechanical or player-creation authorization.",
+          "Printed attack options, feat names and items are intentionally NOT converted into runtime grants without provenance and mount certification."
+        ]
+      },
+      "exceptions": {
+        "notes": "Complete source-field and provenance certification outstanding. Printed PDF is final authority."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "REBELLION-DROID-003-SWAPPABLE-TOOLS",
+            "statement": "Specialty arms can be swapped, but the prose establishes no unlimited free equipment selection.",
+            "scope": "REBELLION-DROID-003",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 54,
+              "pdfPage1Based": 55,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-003"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields only; full narrative, feat/talent, installed equipment/mount, PC construction and live Foundry certification outstanding.",
+        "reviewerEvidenceRefs": [
+          "REBELLION-DROID-003:pdf-printed-p54",
+          "REBELLION-DROID-003:txt-line-4803"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "REBELLION-DROID-004",
+        "printedName": "LOM-Series Protocol Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Rebellion Era Campaign Guide",
+        "bookId": "REBELLION",
+        "printedPageStart": 55,
+        "printedPageEnd": 55,
+        "pdfPageStart1Based": 56,
+        "textLineAnchor1Based": 4916,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 3,
+        "size": "Medium",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 0,
+        "perceptionPrinted": 0,
+        "str": 8,
+        "dex": 11,
+        "con": null,
+        "int": 13,
+        "wis": 11,
+        "cha": 15
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 1"
+      },
+      "defenses": {
+        "reflex": 10,
+        "flatFootedReflex": 10,
+        "fortitude": 9,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 2,
+        "damageThreshold": 9
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 2000
+      },
+      "text": {
+        "sourceWarnings": [
+          "All recorded values are publication-source evidence only, not executable mechanical or player-creation authorization.",
+          "Printed attack options, feat names and items are intentionally NOT converted into runtime grants without provenance and mount certification.",
+          "OCR columns interleave LOM-series and BT-16 on printed p55; visual field receipt controls."
+        ]
+      },
+      "exceptions": {
+        "notes": "Complete source-field and provenance certification outstanding. Printed PDF is final authority."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "REBELLION-DROID-004-FACTORY-PROTOCOL",
+            "statement": "Factory LOM-series protocol chassis is not the same source identity as the named bounty hunter 4-LOM.",
+            "scope": "REBELLION-DROID-004",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 55,
+              "pdfPage1Based": 56,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-004"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields only; full narrative, feat/talent, installed equipment/mount, PC construction and live Foundry certification outstanding.",
+        "reviewerEvidenceRefs": [
+          "REBELLION-DROID-004:pdf-printed-p55",
+          "REBELLION-DROID-004:txt-line-4916"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "REBELLION-DROID-005",
+        "printedName": "BT-16 Perimeter Security Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Rebellion Era Campaign Guide",
+        "bookId": "REBELLION",
+        "printedPageStart": 55,
+        "printedPageEnd": 56,
+        "pdfPageStart1Based": 56,
+        "textLineAnchor1Based": 4906,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Large",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 5
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 6,
+        "perceptionPrinted": 18,
+        "str": 20,
+        "dex": 14,
+        "con": null,
+        "int": 9,
+        "wis": 14,
+        "cha": 10
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 6/scout 3"
+      },
+      "defenses": {
+        "reflex": 17,
+        "flatFootedReflex": 15,
+        "fortitude": 20,
+        "will": 16
+      },
+      "durability": {
+        "hitPoints": 39,
+        "damageThreshold": 25
+      },
+      "movement": {
+        "speedLineRaw": "6 squares"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 4100
+      },
+      "text": {
+        "sourceWarnings": [
+          "All recorded values are publication-source evidence only, not executable mechanical or player-creation authorization.",
+          "Printed attack options, feat names and items are intentionally NOT converted into runtime grants without provenance and mount certification.",
+          "OCR columns interleave LOM-series and BT-16 on printed p55; visual field receipt controls."
+        ]
+      },
+      "exceptions": {
+        "notes": "Complete source-field and provenance certification outstanding. Printed PDF is final authority."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "REBELLION-DROID-005-BOMARR-BRAIN",
+            "statement": "B'omarr conversion replaces factory electronics with a living brain and source-specific changes; not a factory trait or separate stock model.",
+            "scope": "REBELLION-DROID-005",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 56,
+              "pdfPage1Based": 57,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-005"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "REBELLION-DROID-005-VERTICAL-CLIMB",
+            "statement": "Climbing narrative and printed Climb skill require individual rules/movement reconciliation.",
+            "scope": "REBELLION-DROID-005",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 55,
+              "pdfPage1Based": 56,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-005"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields only; full narrative, feat/talent, installed equipment/mount, PC construction and live Foundry certification outstanding.",
+        "reviewerEvidenceRefs": [
+          "REBELLION-DROID-005:pdf-printed-p55",
+          "REBELLION-DROID-005:txt-line-4906"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "REBELLION-DROID-006",
+        "printedName": "RHTC-560 Hunter Trainer",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Rebellion Era Campaign Guide",
+        "bookId": "REBELLION",
+        "printedPageStart": 57,
+        "printedPageEnd": 57,
+        "pdfPageStart1Based": 58,
+        "textLineAnchor1Based": 5016,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Medium",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 6
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 10,
+        "perceptionPrinted": 11,
+        "str": 13,
+        "dex": 14,
+        "con": null,
+        "int": 14,
+        "wis": 13,
+        "cha": 10
+      },
+      "progression": {
+        "classLineRaw": "soldier 6"
+      },
+      "defenses": {
+        "reflex": 20,
+        "flatFootedReflex": 18,
+        "fortitude": 19,
+        "will": 17
+      },
+      "durability": {
+        "hitPoints": 47,
+        "damageThreshold": 19
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 5000
+      },
+      "text": {
+        "sourceWarnings": [
+          "All recorded values are publication-source evidence only, not executable mechanical or player-creation authorization.",
+          "Printed attack options, feat names and items are intentionally NOT converted into runtime grants without provenance and mount certification."
+        ]
+      },
+      "exceptions": {
+        "notes": "Complete source-field and provenance certification outstanding. Printed PDF is final authority."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "REBELLION-DROID-006-HT-CONTROL",
+            "statement": "Hunter Trainer directs a separate group of 6–12 HT Drone actors; drones are not free intrinsic attacks or included in 5,000-credit price.",
+            "scope": "REBELLION-DROID-006",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 56,
+              "pdfPage1Based": 57,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-006"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "REBELLION-DROID-006-DRONE-PRICE",
+            "statement": "Printed purchase price excludes its subordinate HT Drone units.",
+            "scope": "REBELLION-DROID-006",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 57,
+              "pdfPage1Based": 58,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-006"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields only; full narrative, feat/talent, installed equipment/mount, PC construction and live Foundry certification outstanding.",
+        "reviewerEvidenceRefs": [
+          "REBELLION-DROID-006:pdf-printed-p57",
+          "REBELLION-DROID-006:txt-line-5016"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "REBELLION-DROID-007",
+        "printedName": "HT Drone",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Rebellion Era Campaign Guide",
+        "bookId": "REBELLION",
+        "printedPageStart": 57,
+        "printedPageEnd": 57,
+        "pdfPageStart1Based": 58,
+        "textLineAnchor1Based": 5066,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Small",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 8,
+        "perceptionPrinted": 9,
+        "str": 10,
+        "dex": 16,
+        "con": null,
+        "int": 12,
+        "wis": 15,
+        "cha": 11
+      },
+      "progression": {
+        "classLineRaw": "scout 1"
+      },
+      "defenses": {
+        "reflex": 17,
+        "flatFootedReflex": 14,
+        "fortitude": 12,
+        "will": 13
+      },
+      "durability": {
+        "hitPoints": 24,
+        "damageThreshold": 11
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (hovering), 4 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 2000
+      },
+      "text": {
+        "sourceWarnings": [
+          "All recorded values are publication-source evidence only, not executable mechanical or player-creation authorization.",
+          "Printed attack options, feat names and items are intentionally NOT converted into runtime grants without provenance and mount certification."
+        ]
+      },
+      "exceptions": {
+        "notes": "Complete source-field and provenance certification outstanding. Printed PDF is final authority."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "REBELLION-DROID-007-LAST-COMMAND",
+            "statement": "A drone losing contact continues the last command for 20 hours before returning; not unrestricted autonomous AI.",
+            "scope": "REBELLION-DROID-007",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 56,
+              "pdfPage1Based": 57,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-007"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "REBELLION-DROID-007-DUAL-MOVEMENT",
+            "statement": "Hovering and walking speeds are separate source movement modes.",
+            "scope": "REBELLION-DROID-007",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 57,
+              "pdfPage1Based": 58,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-007"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields only; full narrative, feat/talent, installed equipment/mount, PC construction and live Foundry certification outstanding.",
+        "reviewerEvidenceRefs": [
+          "REBELLION-DROID-007:pdf-printed-p57",
+          "REBELLION-DROID-007:txt-line-5066"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "REBELLION-DROID-008",
+        "printedName": "LV-38 Spotter/Probe Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Rebellion Era Campaign Guide",
+        "bookId": "REBELLION",
+        "printedPageStart": 110,
+        "printedPageEnd": 110,
+        "pdfPageStart1Based": 111,
+        "textLineAnchor1Based": 10368,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Small",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 3
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 11,
+        "perceptionPrinted": 16,
+        "str": 8,
+        "dex": 18,
+        "con": null,
+        "int": 14,
+        "wis": 14,
+        "cha": 8
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 1/scout 3"
+      },
+      "defenses": {
+        "reflex": 21,
+        "flatFootedReflex": 17,
+        "fortitude": 13,
+        "will": 14
+      },
+      "durability": {
+        "hitPoints": 16,
+        "damageThreshold": 13
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (hovering)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "All recorded values are publication-source evidence only, not executable mechanical or player-creation authorization.",
+          "Printed attack options, feat names and items are intentionally NOT converted into runtime grants without provenance and mount certification."
+        ]
+      },
+      "exceptions": {
+        "notes": "Complete source-field and provenance certification outstanding. Printed PDF is final authority."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "REBELLION-DROID-008-SPOTTER-ROLE",
+            "statement": "Artillery spotter operates with a distinct vehicle and has no automatic weapon/firing permission.",
+            "scope": "REBELLION-DROID-008",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 110,
+              "pdfPage1Based": 111,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-008"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields only; full narrative, feat/talent, installed equipment/mount, PC construction and live Foundry certification outstanding.",
+        "reviewerEvidenceRefs": [
+          "REBELLION-DROID-008:pdf-printed-p110",
+          "REBELLION-DROID-008:txt-line-10368"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "REBELLION-DROID-009",
+        "printedName": "Imperial Espionage Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Rebellion Era Campaign Guide",
+        "bookId": "REBELLION",
+        "printedPageStart": 127,
+        "printedPageEnd": 127,
+        "pdfPageStart1Based": 128,
+        "textLineAnchor1Based": 12090,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 3,
+        "size": "Medium",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 0,
+        "perceptionPrinted": 8,
+        "str": 8,
+        "dex": 9,
+        "con": null,
+        "int": 13,
+        "wis": 14,
+        "cha": 15
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 3"
+      },
+      "defenses": {
+        "reflex": 9,
+        "flatFootedReflex": 9,
+        "fortitude": 9,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 6,
+        "damageThreshold": 9
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 5000
+      },
+      "text": {
+        "sourceWarnings": [
+          "All recorded values are publication-source evidence only, not executable mechanical or player-creation authorization.",
+          "Printed attack options, feat names and items are intentionally NOT converted into runtime grants without provenance and mount certification."
+        ]
+      },
+      "exceptions": {
+        "notes": "Complete source-field and provenance certification outstanding. Printed PDF is final authority."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "REBELLION-DROID-009-ESPIONAGE",
+            "statement": "Information-transmission function is model-specific and grants no generic remote control or eavesdropping action.",
+            "scope": "REBELLION-DROID-009",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 127,
+              "pdfPage1Based": 128,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-009"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields only; full narrative, feat/talent, installed equipment/mount, PC construction and live Foundry certification outstanding.",
+        "reviewerEvidenceRefs": [
+          "REBELLION-DROID-009:pdf-printed-p127",
+          "REBELLION-DROID-009:txt-line-12090"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "REBELLION-DROID-010",
+        "printedName": "Dark Trooper Phase I",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Rebellion Era Campaign Guide",
+        "bookId": "REBELLION",
+        "printedPageStart": 128,
+        "printedPageEnd": 128,
+        "pdfPageStart1Based": 129,
+        "textLineAnchor1Based": 12165,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Large",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 2
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 4,
+        "perceptionPrinted": 10,
+        "str": 14,
+        "dex": 12,
+        "con": null,
+        "int": 10,
+        "wis": 10,
+        "cha": 6
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 6"
+      },
+      "defenses": {
+        "reflex": 18,
+        "flatFootedReflex": 17,
+        "fortitude": 12,
+        "will": 10,
+        "conditionalDefenseRules": [
+          {
+            "ruleId": "REBELLION-DROID-010-BLAST-SHIELD",
+            "statement": "Wrist shield gives +2 armor only when this droid is not attacking; never permanent base defense.",
+            "scope": "REBELLION-DROID-010",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-010"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "durability": {
+        "hitPoints": 18,
+        "damageThreshold": 12
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 10000
+      },
+      "text": {
+        "sourceWarnings": [
+          "All recorded values are publication-source evidence only, not executable mechanical or player-creation authorization.",
+          "Printed attack options, feat names and items are intentionally NOT converted into runtime grants without provenance and mount certification."
+        ]
+      },
+      "exceptions": {
+        "notes": "Complete source-field and provenance certification outstanding. Printed PDF is final authority."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "REBELLION-DROID-010-BLAST-SHIELD",
+            "statement": "Wrist shield gives +2 armor only when this droid is not attacking; never permanent base defense.",
+            "scope": "REBELLION-DROID-010",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-010"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields only; full narrative, feat/talent, installed equipment/mount, PC construction and live Foundry certification outstanding.",
+        "reviewerEvidenceRefs": [
+          "REBELLION-DROID-010:pdf-printed-p128",
+          "REBELLION-DROID-010:txt-line-12165"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "REBELLION-DROID-011",
+        "printedName": "Dark Trooper Phase II",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Rebellion Era Campaign Guide",
+        "bookId": "REBELLION",
+        "printedPageStart": 128,
+        "printedPageEnd": 129,
+        "pdfPageStart1Based": 129,
+        "textLineAnchor1Based": 12219,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Large",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 5
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 5,
+        "perceptionPrinted": 11,
+        "str": 16,
+        "dex": 12,
+        "con": null,
+        "int": 10,
+        "wis": 10,
+        "cha": 6
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 6/soldier 2"
+      },
+      "defenses": {
+        "reflex": 21,
+        "flatFootedReflex": 20,
+        "fortitude": 17,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 39,
+        "damageThreshold": 22
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (walking), fly 6 squares (jet pack)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 50000
+      },
+      "text": {
+        "sourceWarnings": [
+          "All recorded values are publication-source evidence only, not executable mechanical or player-creation authorization.",
+          "Printed attack options, feat names and items are intentionally NOT converted into runtime grants without provenance and mount certification.",
+          "Printed Dark Trooper wearable armor is not the same object as the autonomous droid actor."
+        ]
+      },
+      "exceptions": {
+        "notes": "Complete source-field and provenance certification outstanding. Printed PDF is final authority."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "REBELLION-DROID-011-WEARABLE-ARMOR",
+            "statement": "Phase II is both a droid design and a separately wearable armor suit; droid chassis is not an equipable armor instance.",
+            "scope": "REBELLION-DROID-011",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-011"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "REBELLION-DROID-011-ASSAULT-CANNON",
+            "statement": "Integrated combined repeating blaster/missile launcher has multiple printed attack options requiring mount/ammunition provenance.",
+            "scope": "REBELLION-DROID-011",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 128,
+              "pdfPage1Based": 129,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-011"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields only; full narrative, feat/talent, installed equipment/mount, PC construction and live Foundry certification outstanding.",
+        "reviewerEvidenceRefs": [
+          "REBELLION-DROID-011:pdf-printed-p128",
+          "REBELLION-DROID-011:txt-line-12219"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "REBELLION-DROID-012",
+        "printedName": "Dark Trooper Phase III",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Rebellion Era Campaign Guide",
+        "bookId": "REBELLION",
+        "printedPageStart": 129,
+        "printedPageEnd": 129,
+        "pdfPageStart1Based": 130,
+        "textLineAnchor1Based": 12322,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Large",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 8
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 5,
+        "perceptionPrinted": 12,
+        "str": 18,
+        "dex": 10,
+        "con": null,
+        "int": 10,
+        "wis": 10,
+        "cha": 6
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 6/soldier 5"
+      },
+      "defenses": {
+        "reflex": 22,
+        "flatFootedReflex": 22,
+        "fortitude": 21,
+        "will": 15,
+        "shieldRating": 20,
+        "conditionalDefenseRules": [
+          {
+            "ruleId": "REBELLION-DROID-012-SHIELD",
+            "statement": "Printed SR20 is source evidence, not a second stacked shield effect.",
+            "scope": "REBELLION-DROID-012",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 129,
+              "pdfPage1Based": 130,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-012"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "durability": {
+        "hitPoints": 56,
+        "damageThreshold": 26
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 85000
+      },
+      "text": {
+        "sourceWarnings": [
+          "All recorded values are publication-source evidence only, not executable mechanical or player-creation authorization.",
+          "Printed attack options, feat names and items are intentionally NOT converted into runtime grants without provenance and mount certification.",
+          "Printed Dark Trooper wearable armor is not the same object as the autonomous droid actor."
+        ]
+      },
+      "exceptions": {
+        "notes": "Complete source-field and provenance certification outstanding. Printed PDF is final authority."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "REBELLION-DROID-012-WEARABLE-ARMOR",
+            "statement": "Phase III wearable armor is a distinct equipment use case from the autonomous droid statblock.",
+            "scope": "REBELLION-DROID-012",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 129,
+              "pdfPage1Based": 130,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-012"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "REBELLION-DROID-012-RECONFIGURABLE-MISSILES",
+            "statement": "Printed shoulder missile rack may be replaced with an alternate launcher; do not activate both simultaneously.",
+            "scope": "REBELLION-DROID-012",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 129,
+              "pdfPage1Based": 130,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-012"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "REBELLION-DROID-012-SHIELD",
+            "statement": "Printed SR20 is source evidence, not a second stacked shield effect.",
+            "scope": "REBELLION-DROID-012",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 129,
+              "pdfPage1Based": 130,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-012"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields only; full narrative, feat/talent, installed equipment/mount, PC construction and live Foundry certification outstanding.",
+        "reviewerEvidenceRefs": [
+          "REBELLION-DROID-012:pdf-printed-p129",
+          "REBELLION-DROID-012:txt-line-12322"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "REBELLION-DROID-013",
+        "printedName": "Imperial City Maintenance Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Rebellion Era Campaign Guide",
+        "bookId": "REBELLION",
+        "printedPageStart": 130,
+        "printedPageEnd": 130,
+        "pdfPageStart1Based": 131,
+        "textLineAnchor1Based": 12469,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 5,
+        "size": "Medium",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": -1,
+        "perceptionPrinted": -1,
+        "str": 8,
+        "dex": 8,
+        "con": null,
+        "int": 10,
+        "wis": 8,
+        "cha": 6
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 1"
+      },
+      "defenses": {
+        "reflex": 9,
+        "flatFootedReflex": 9,
+        "fortitude": 9,
+        "will": 9
+      },
+      "durability": {
+        "hitPoints": 3,
+        "damageThreshold": 14
+      },
+      "movement": {
+        "speedLineRaw": "4 squares (tracked)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 500
+      },
+      "text": {
+        "sourceWarnings": [
+          "All recorded values are publication-source evidence only, not executable mechanical or player-creation authorization.",
+          "Printed attack options, feat names and items are intentionally NOT converted into runtime grants without provenance and mount certification."
+        ]
+      },
+      "exceptions": {
+        "notes": "Complete source-field and provenance certification outstanding. Printed PDF is final authority."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "REBELLION-DROID-013-MODEL-ALIAS",
+            "statement": "Earlier designation RC-M and later designation IC-M are model history/aliases, not extra publication identities.",
+            "scope": "REBELLION-DROID-013",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 130,
+              "pdfPage1Based": 131,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-013"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields only; full narrative, feat/talent, installed equipment/mount, PC construction and live Foundry certification outstanding.",
+        "reviewerEvidenceRefs": [
+          "REBELLION-DROID-013:pdf-printed-p130",
+          "REBELLION-DROID-013:txt-line-12469"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "REBELLION-DROID-014",
+        "printedName": "4-LOM",
+        "namedIndividual": true
+      },
+      "publication": {
+        "book": "Rebellion Era Campaign Guide",
+        "bookId": "REBELLION",
+        "printedPageStart": 143,
+        "printedPageEnd": 143,
+        "pdfPageStart1Based": 144,
+        "textLineAnchor1Based": 13711,
+        "publicationKind": "named-character"
+      },
+      "classification": {
+        "publishedDegree": 3,
+        "size": "Medium",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 12
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 7,
+        "perceptionPrinted": 12,
+        "str": 10,
+        "dex": 12,
+        "con": null,
+        "int": 16,
+        "wis": 12,
+        "cha": 15
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 1/noble 1/scoundrel 5/scout 3/bounty hunter 3"
+      },
+      "defenses": {
+        "reflex": 27,
+        "flatFootedReflex": 26,
+        "fortitude": 24,
+        "will": 25
+      },
+      "durability": {
+        "hitPoints": 54,
+        "damageThreshold": 24
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "All recorded values are publication-source evidence only, not executable mechanical or player-creation authorization.",
+          "Printed attack options, feat names and items are intentionally NOT converted into runtime grants without provenance and mount certification.",
+          "Related stock LOM factory model: REBELLION-DROID-004; relationship is NOT automatic inherited mechanics."
+        ]
+      },
+      "exceptions": {
+        "notes": "Complete source-field and provenance certification outstanding. Printed PDF is final authority."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/pcConstruction/heroEligibility": "not-applicable"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "REBELLION-DROID-014-NAMED-LOM",
+            "statement": "4-LOM is a unique printed NPC linked narratively to LOM-series; factory and individual stats cannot be merged.",
+            "scope": "REBELLION-DROID-014",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 143,
+              "pdfPage1Based": 144,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-014"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields only; full narrative, feat/talent, installed equipment/mount, PC construction and live Foundry certification outstanding.",
+        "reviewerEvidenceRefs": [
+          "REBELLION-DROID-014:pdf-printed-p143",
+          "REBELLION-DROID-014:txt-line-13711"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "REBELLION-DROID-015",
+        "printedName": "IG-88",
+        "namedIndividual": true
+      },
+      "publication": {
+        "book": "Rebellion Era Campaign Guide",
+        "bookId": "REBELLION",
+        "printedPageStart": 144,
+        "printedPageEnd": 144,
+        "pdfPageStart1Based": 145,
+        "textLineAnchor1Based": 13829,
+        "publicationKind": "named-character"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Medium",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "ruleEntityNature": "standard-droid"
+      },
+      "challenge": {
+        "challengeLevel": 14
+      },
+      "geometry": {},
+      "abilities": {
+        "initiativePrinted": 15,
+        "perceptionPrinted": 16,
+        "str": 17,
+        "dex": 17,
+        "con": null,
+        "int": 16,
+        "wis": 14,
+        "cha": 12
+      },
+      "progression": {
+        "classLineRaw": "scout 4/soldier 5/scoundrel 1/bounty hunter 4"
+      },
+      "defenses": {
+        "reflex": 31,
+        "flatFootedReflex": 28,
+        "fortitude": 29,
+        "will": 28
+      },
+      "durability": {
+        "hitPoints": 91,
+        "damageThreshold": 29
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "All recorded values are publication-source evidence only, not executable mechanical or player-creation authorization.",
+          "Printed attack options, feat names and items are intentionally NOT converted into runtime grants without provenance and mount certification.",
+          "Several IG-88 personality copies discussed, one printed IG-88 statblock."
+        ]
+      },
+      "exceptions": {
+        "notes": "Complete source-field and provenance certification outstanding. Printed PDF is final authority."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/pcConstruction/heroEligibility": "not-applicable"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "REBELLION-DROID-015-CONSCIOUSNESS",
+            "statement": "IG-88 A/B/C/D and narrative copied consciousness are not extra full published statblocks.",
+            "scope": "REBELLION-DROID-015",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 143,
+              "pdfPage1Based": 144,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-015"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "REBELLION-DROID-015-NAMED-CHARACTER",
+            "statement": "This one printed IG-88 NPC statblock is not a generic starting model.",
+            "scope": "REBELLION-DROID-015",
+            "source": {
+              "book": "Rebellion Era Campaign Guide",
+              "page": 144,
+              "pdfPage1Based": 145,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "REBELLION-DROID-015"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page PDF fields only; full narrative, feat/talent, installed equipment/mount, PC construction and live Foundry certification outstanding.",
+        "reviewerEvidenceRefs": [
+          "REBELLION-DROID-015:pdf-printed-p144",
+          "REBELLION-DROID-015:txt-line-13829"
+        ]
+      }
+    }
+  ]
+}

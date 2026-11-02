@@ -1,0 +1,33 @@
+{
+  "validationScope": "LOCAL_SEMANTIC_GUARDS_ONLY",
+  "fullUpstreamJsonSchemaValidation": "NOT_RUN_upstream_schema_not_locally_mirrored",
+  "status": "PASS",
+  "errors": [],
+  "warnings": [],
+  "counts": {
+    "publicationClaims": 46,
+    "sourceBook": "SGD",
+    "sourceIdentitySlotsVerified": 46,
+    "droidActorFormats": 45,
+    "vehicleFormats": 1,
+    "visuallyInspectedPageLayouts": 46,
+    "manualVisualFieldReviewRows": 46,
+    "manualVisualFieldComparisons": 811,
+    "pdfTextProvisionalRows": 46,
+    "mechCertified": 0,
+    "runtimeCertified": 0,
+    "heroAllowedUncertified": 30,
+    "heroProhibitedUncertified": 16,
+    "recordsWithAbilities": 46,
+    "recordsWithDefenses": 45,
+    "recordsWithDurability": 45,
+    "recordsWithAttackTranscription": 45,
+    "recordsWithFeatPrintedLabels": 45,
+    "rawFeatPhrases": 224,
+    "rawTalentPhrases": 65,
+    "rawSkillRows": 202,
+    "unresolvedOCRWarnings": 1
+  },
+  "sha256Ledger": "61a940fb5f1073c7220aacc9334e8d906591be6da19f26805c53f202ca851d2b",
+  "nextGate": "First-page selected-field PDF verification is complete. Reconcile secondary/protocol text, mounts, scoped traits and exact full schema/independent runtime certification before any promotion."
+}

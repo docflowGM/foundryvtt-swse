@@ -1,0 +1,10 @@
+{
+  "bookId": "SOTG",
+  "draftEntries": 3,
+  "selectedPdfReviewed": 3,
+  "comparisons": 15,
+  "mechanicallyCertified": 0,
+  "runtimeVerified": 0,
+  "status": "IN_PROGRESS_SOURCE_REVIEW_ONLY",
+  "publishedAuditScope": "selected-field-source-review-only"
+}

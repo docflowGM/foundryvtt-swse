@@ -1,0 +1,41 @@
+{
+  "schema": "swse.droid.gaw.local-state/0.1",
+  "bookId": "GAW",
+  "localCheckpoint": 8,
+  "sourceDraftEntries": 22,
+  "selectedFirstPageReviews": 22,
+  "directFieldComparisons": 285,
+  "sourcePrintedPages": [
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    98,
+    181,
+    210,
+    211,
+    214,
+    215,
+    216,
+    217,
+    218,
+    219
+  ],
+  "extraPrintedPageReview": [
+    175,
+    212,
+    213,
+    218,
+    220
+  ],
+  "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+  "sourceTxtSha256": "db3b4d75db7530e1c1a894f0f0fafee68f0e8f620787d16314f4170c7fa87391",
+  "ledgerSha256": "41aa916a3922c38e310bc1e31857abc3acb61a1bfaa00be76311420e8e8dab0a",
+  "mechanicallyCertifiedEntries": 0,
+  "gitHubWriteAuthorization": false,
+  "outstanding": "Full narrative/feats/talents/systems/mount/PC-route certification, upstream JSON Schema and Foundry runtime.",
+  "publishedAuditScope": "selected-field-source-review-only"
+}

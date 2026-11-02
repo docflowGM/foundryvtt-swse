@@ -1,0 +1,19 @@
+{
+  "schema": "swse.droid.threats.local-state/0.1",
+  "bookId": "THREATS",
+  "checkpoint": "local-source-review-1",
+  "sourceBookPdf": "SAGA EDITION - Threats of the Galaxy.pdf",
+  "sourceBookPdfSha256": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
+  "sourceBookTxt": "Threats of the Galaxy_djvu.txt",
+  "sourceBookTxtSha256": "bb702c6c232a04b540553633a176d6228c05b9f5a5c0ad43c6cab0fa43a69ac6",
+  "sourceEntryCount": 29,
+  "selectedFirstPagePdfVisualReviews": 29,
+  "directVisualFieldComparisons": 314,
+  "mechanicallyCertified": 0,
+  "runtimeCertified": 0,
+  "ledgerSha256": "efee706b75b9ac55e9f5370bb2a6db53751208f9abae58d837976d5bec0a75ef",
+  "schemaVersion": "swse.droid.universal-source/0.1-draft",
+  "upstreamJsonSchemaFullPass": false,
+  "githubWrites": 0,
+  "publishedAuditScope": "selected-field-source-review-only"
+}

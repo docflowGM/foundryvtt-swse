@@ -1,0 +1,451 @@
+{
+  "schema": "swse.droid.clone.visual-review/0.1",
+  "sourceBook": "Clone Wars Campaign Guide",
+  "manualVisualReviews": 40,
+  "directFieldComparisons": 528,
+  "visualMethod": "Selected printed-page PDF visual checks for all 40 claims; source-owned vehicle stats remain sidecar-only",
+  "sourcePdfHash": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+  "items": [
+    {
+      "sourceEntryKey": "CLONE-DROID-001",
+      "printedName": "DD-13 Medical Assistant Droid",
+      "printedPage": 66,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-002",
+      "printedName": "EW-3 Midwife Droid",
+      "printedPage": 67,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-003",
+      "printedName": "IM-6 Medical Droid",
+      "printedPage": 67,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-004",
+      "printedName": "SP-4 Analysis Droid",
+      "printedPage": 68,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-005",
+      "printedName": "LE Series Repair Droid",
+      "printedPage": 69,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-006",
+      "printedName": "P2 Series Astromech Droid",
+      "printedPage": 69,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-007",
+      "printedName": "Serv-O-Droid Pit Droid",
+      "printedPage": 70,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-008",
+      "printedName": "5YQ Protocol Droid",
+      "printedPage": 70,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-009",
+      "printedName": "BCA-11/X Training Droid",
+      "printedPage": 71,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-010",
+      "printedName": "IG-86 Sentinel Droid",
+      "printedPage": 71,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-011",
+      "printedName": "CLL-6 Binary Load Lifter",
+      "printedPage": 72,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-012",
+      "printedName": "FA-5 Valet Droid",
+      "printedPage": 72,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-013",
+      "printedName": "IW-37 Pincer Loader Droid",
+      "printedPage": 73,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-014",
+      "printedName": "B1-Series Battle Droid Squad",
+      "printedPage": 94,
+      "verifiedFieldCount": 2,
+      "sourceOwnedNonActorValues": {
+        "reflex": 8,
+        "flatFootedReflex": 8,
+        "fortitude": 11,
+        "will": 11,
+        "hitPoints": 20,
+        "damageThreshold": 21
+      },
+      "scope": "source-authority-format"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-015",
+      "printedName": "FX-6 Medical Assistance Droid",
+      "printedPage": 160,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-016",
+      "printedName": "FA-4 Pilot Droid",
+      "printedPage": 161,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-017",
+      "printedName": "Marksman-H Combat Remote",
+      "printedPage": 162,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-033",
+      "printedName": "Ultra Droideka",
+      "printedPage": 198,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-034",
+      "printedName": "Ground Armored Tank",
+      "printedPage": 198,
+      "verifiedFieldCount": 2,
+      "sourceOwnedNonActorValues": {
+        "hitPoints": 175,
+        "damageReduction": 10,
+        "newCredits": 17500,
+        "usedCredits": 11000
+      },
+      "scope": "source-authority-format"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-040",
+      "printedName": "Hyena-class Bomber",
+      "printedPage": 208,
+      "verifiedFieldCount": 2,
+      "sourceOwnedNonActorValues": {
+        "hitPoints": 70,
+        "damageReduction": 5,
+        "newCredits": 23000
+      },
+      "scope": "source-authority-format"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-018",
+      "printedName": "A-DSD Advanced Dwarf Spider Droid",
+      "printedPage": 188,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {
+        "reflexWithLegShields": 18,
+        "flatFootedReflexWithLegShields": 18
+      },
+      "scope": "selected-fields",
+      "batch": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-019",
+      "printedName": "A-Series Assassin Droid",
+      "printedPage": 189,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields",
+      "batch": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-020",
+      "printedName": "B1-A Series Air Battle Droid",
+      "printedPage": 190,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields",
+      "batch": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-021",
+      "printedName": "Battle Droid Assassin",
+      "printedPage": 190,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields",
+      "batch": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-022",
+      "printedName": "Cold Assault Battle Droid",
+      "printedPage": 191,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields",
+      "batch": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-023",
+      "printedName": "C-B3 Cortosis Battle Droid",
+      "printedPage": 192,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {
+        "lightsaberOnlyDamageReduction": 5
+      },
+      "scope": "selected-fields",
+      "batch": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-024",
+      "printedName": "Droid Commando",
+      "printedPage": 192,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields",
+      "batch": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-025",
+      "printedName": "IG Lancer Combat Droid",
+      "printedPage": 193,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields",
+      "batch": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-026",
+      "printedName": "IG-110 Lightsaber Droid",
+      "printedPage": 193,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields",
+      "batch": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-027",
+      "printedName": "JK-13 Security Droid",
+      "printedPage": 194,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {
+        "shieldRating": 20
+      },
+      "scope": "selected-fields",
+      "batch": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-028",
+      "printedName": "LM-432 Assault Crab Droid",
+      "printedPage": 194,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields",
+      "batch": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-029",
+      "printedName": "LR-57 Combat Droid",
+      "printedPage": 195,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields",
+      "batch": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-030",
+      "printedName": "Octuptarra Combat Tri-Droid",
+      "printedPage": 196,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {
+        "virusBurst": "Persistent condition-track attack, not ordinary damage"
+      },
+      "scope": "selected-fields",
+      "batch": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-031",
+      "printedName": "OOM-Series Battle Droid",
+      "printedPage": 196,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields",
+      "batch": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-032",
+      "printedName": "Spelunker Probe Droid",
+      "printedPage": 197,
+      "verifiedFieldCount": 16,
+      "sourceOwnedNonActorValues": {},
+      "scope": "selected-fields",
+      "batch": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-035",
+      "printedName": "IG-227 Hailfire-class Droid Tank",
+      "printedPage": 199,
+      "verifiedFieldCount": 2,
+      "sourceOwnedNonActorValues": {
+        "reflex": 13,
+        "flatFootedReflex": 11,
+        "fortitude": 19,
+        "hitPoints": 60,
+        "damageReduction": 10,
+        "damageThreshold": 29,
+        "newCredits": 60000,
+        "crew": "droid brain (skilled)",
+        "weaponPayloadNotes": "30 hailfire missiles; missile launchers and laser cannon"
+      },
+      "scope": "source-authority-format",
+      "batch": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-036",
+      "printedName": "Manta Droid Subfighter",
+      "printedPage": 200,
+      "verifiedFieldCount": 2,
+      "sourceOwnedNonActorValues": {
+        "reflex": 14,
+        "flatFootedReflex": 11,
+        "fortitude": 17,
+        "hitPoints": 75,
+        "damageReduction": 10,
+        "damageThreshold": 27,
+        "newCredits": 22000,
+        "crew": "droid brain (normal)",
+        "weaponPayloadNotes": "12 torpedoes; laser cannons and torpedo launchers"
+      },
+      "scope": "source-authority-format",
+      "batch": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-037",
+      "printedName": "OG-9 Homing Spider Droid",
+      "printedPage": 201,
+      "verifiedFieldCount": 2,
+      "sourceOwnedNonActorValues": {
+        "reflex": 14,
+        "flatFootedReflex": 13,
+        "fortitude": 17,
+        "hitPoints": 70,
+        "damageReduction": 10,
+        "damageThreshold": 27,
+        "newCredits": 70000,
+        "crew": "droid brain (skilled)",
+        "weaponPayloadNotes": "laser cannon and heavy repeating blaster; 3x3 space"
+      },
+      "scope": "source-authority-format",
+      "batch": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-038",
+      "printedName": "Persuader-class Droid Enforcer",
+      "printedPage": 201,
+      "verifiedFieldCount": 2,
+      "sourceOwnedNonActorValues": {
+        "reflex": 14,
+        "flatFootedReflex": 13,
+        "fortitude": 20,
+        "hitPoints": 120,
+        "damageReduction": 15,
+        "damageThreshold": 30,
+        "newCredits": 49000,
+        "crew": "droid brain (skilled)",
+        "weaponPayloadNotes": "48 thermal detonators, 12 concussion missiles, 4 homing missiles, 2 dumbfire torpedoes"
+      },
+      "scope": "source-authority-format",
+      "batch": 2
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-039",
+      "printedName": "Tri-Droid",
+      "printedPage": 202,
+      "verifiedFieldCount": 2,
+      "sourceOwnedNonActorValues": {
+        "reflex": 14,
+        "flatFootedReflex": 13,
+        "fortitude": 22,
+        "hitPoints": 160,
+        "damageReduction": 15,
+        "damageThreshold": 32,
+        "newCredits": 100000,
+        "crew": "droid brain (skilled)",
+        "weaponPayloadNotes": "48 heavy ordnance shells; gunner-controlled launcher"
+      },
+      "scope": "source-authority-format",
+      "batch": 2
+    }
+  ],
+  "batch2": {
+    "additionalSourceEntries": 20,
+    "additionalComparisons": 250,
+    "printedPageCoverage": [
+      188,
+      189,
+      190,
+      191,
+      192,
+      193,
+      194,
+      195,
+      196,
+      197,
+      199,
+      200,
+      201,
+      202
+    ],
+    "importantBoundary": "All source-only; no executable weapon, trait grant or complete mechanics certification.",
+    "additionalSourceBookEligibilityVerification": {
+      "entry": "CLONE-DROID-033",
+      "printedPage": 197,
+      "printedProhibition": true
+    }
+  }
+}
