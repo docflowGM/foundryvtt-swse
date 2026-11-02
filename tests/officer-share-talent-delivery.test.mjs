@@ -46,6 +46,7 @@ test('encounter cleanup is registered and temporary talent items use ActorEngine
  assert.match(index,/officerShareTalent:\s*\{ open: openOfficerShareTalentAction/);
  assert.match(service,/Hooks\.on\('deleteCombat'/);
  assert.match(service,/Hooks\.on\('updateCombat'/);
+ assert.match(service,/Hooks\.once\?\.\('ready'/);
  assert.match(service,/ActorEngine\.restoreSnapshotVerified\(/);
  assert.match(service,/transactional:true/);
  assert.match(service,/await combatant\.useAction\('standard'\)/);
