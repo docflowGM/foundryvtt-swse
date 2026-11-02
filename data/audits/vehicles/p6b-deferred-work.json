@@ -1,6 +1,6 @@
 {
   "schema": "swse.vehicle.p6b.deferred-work.v1",
-  "purpose": "Side bucket for P6B items that could not be implemented safely. Items here are NOT certified and stay fail-closed (not installable / not executable). Rendered to docs/audits/vehicles/p6b-deferred-work.md by tools/audits/vehicles/build-p6b-deferred-work.mjs.",
+  "purpose": "Side bucket for P6B work that could not be implemented safely. Most items concern components that are not certified and stay fail-closed (not installable / not executable). A few concern components that ARE certified and installable where only additional functionality is deferred (P6B-D-009 sensor arrays: no Intelligence consumer; P6B-D-017 hangar bays and cryogenic chambers: no occupancy roster; P6B-D-021/022 custom-design limits). Rendered to docs/audits/vehicles/p6b-deferred-work.md by tools/audits/vehicles/build-p6b-deferred-work.mjs.",
   "categories": [
     "RULES_DECISION_REQUIRED",
     "SOURCE_EVIDENCE_MISSING",
@@ -148,11 +148,11 @@
     {
       "id": "P6B-D-008",
       "workstream": "P6B-1",
-      "component": "all 43 integrated effects; P6B-0 environment and Pilot check",
+      "component": "all 51 offline-integrated effects (P6B-0..3); P6B-0 environment and Pilot check; custom-ship effects",
       "source": "-",
       "status": "LIVE_RUNTIME_PENDING",
       "reason": "Verified offline (Node tests with Handlebars). Foundry V13 runtime is not available in this environment.",
-      "missing": "Live V13 session run of docs/audits/vehicles/p6a-final-acceptance-report.md checklist plus P6B-1 items (recharge shields restores 10 with regenerating shields; SLAM bonus in speed Pilot check; astrogation roll bonus).",
+      "missing": "Live V13 session run of docs/audits/vehicles/p6a-final-acceptance-report.md checklist plus the P6B items in docs/audits/vehicles/p6b-sprint-report.md (recharge shields restores 10 with regenerating shields; SLAM speed Pilot check; astrogation and sensor roll bonuses; cargo-pod Dex effects; a custom ship using installed systems in combat).",
       "ownerRulingNeeded": false,
       "linkedDecisions": [],
       "options": [],

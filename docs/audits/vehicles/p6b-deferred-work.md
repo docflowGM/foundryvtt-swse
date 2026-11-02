@@ -2,7 +2,7 @@
 
 Generated from `data/audits/vehicles/p6b-deferred-work.json` by `tools/audits/vehicles/build-p6b-deferred-work.mjs`; edit the JSON, not this file.
 
-Side bucket for P6B items that could not be implemented safely. Items here are NOT certified and stay fail-closed (not installable / not executable). Rendered to docs/audits/vehicles/p6b-deferred-work.md by tools/audits/vehicles/build-p6b-deferred-work.mjs.
+Side bucket for P6B work that could not be implemented safely. Most items concern components that are not certified and stay fail-closed (not installable / not executable). A few concern components that ARE certified and installable where only additional functionality is deferred (P6B-D-009 sensor arrays: no Intelligence consumer; P6B-D-017 hangar bays and cryogenic chambers: no occupancy roster; P6B-D-021/022 custom-design limits). Rendered to docs/audits/vehicles/p6b-deferred-work.md by tools/audits/vehicles/build-p6b-deferred-work.mjs.
 
 ## Summary
 
@@ -22,7 +22,7 @@ Side bucket for P6B items that could not be implemented safely. Items here are N
 | P6B-D-019 | P6B-3 | weapon systems, launchers and ammunition (all weapon-systems.json rows) | DEPENDENCY_BLOCKED | BLOCKING | no | V-P2-04, V-P6A-01, V-P6A-02, V-P6A-03, V-P6A-04 |
 | P6B-D-001 | P6B-1 | reinforced-bulkheads-10, reinforced-bulkheads-20, reinforced-bulkheads-30 | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6-01 |
 | P6B-D-002 | P6B-1 | sublight-drive-1 .. sublight-drive-6 | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6-02 |
-| P6B-D-008 | P6B-1 | all 43 integrated effects; P6B-0 environment and Pilot check | LIVE_RUNTIME_PENDING | IMPORTANT | no | - |
+| P6B-D-008 | P6B-1 | all 51 offline-integrated effects (P6B-0..3); P6B-0 environment and Pilot check; custom-ship effects | LIVE_RUNTIME_PENDING | IMPORTANT | no | - |
 | P6B-D-010 | P6B-2 | cargo pods / extended range / smuggler compartments on hulls whose printed unit needs conversion | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6B-02 |
 | P6B-D-003 | P6B-1 | jamming-suite, jamming-array | ENGINEERING_COMPLEXITY | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-004 | P6B-1 | combat-thrusters | DEPENDENCY_BLOCKED | MINOR | no | V-P6-05, V-P2-04 |
@@ -117,12 +117,12 @@ Side bucket for P6B items that could not be implemented safely. Items here are N
 - **Impact:** Row stays reference-only; not installable.
 - **Recommended action:** Locate a printed source or retire the legacy row.
 
-### P6B-D-008 - all 43 integrated effects; P6B-0 environment and Pilot check
+### P6B-D-008 - all 51 offline-integrated effects (P6B-0..3); P6B-0 environment and Pilot check; custom-ship effects
 
 - **Source:** -
 - **Category / severity:** LIVE_RUNTIME_PENDING / IMPORTANT
 - **Reason:** Verified offline (Node tests with Handlebars). Foundry V13 runtime is not available in this environment.
-- **Missing:** Live V13 session run of docs/audits/vehicles/p6a-final-acceptance-report.md checklist plus P6B-1 items (recharge shields restores 10 with regenerating shields; SLAM bonus in speed Pilot check; astrogation roll bonus).
+- **Missing:** Live V13 session run of docs/audits/vehicles/p6a-final-acceptance-report.md checklist plus the P6B items in docs/audits/vehicles/p6b-sprint-report.md (recharge shields restores 10 with regenerating shields; SLAM speed Pilot check; astrogation and sensor roll bonuses; cargo-pod Dex effects; a custom ship using installed systems in combat).
 - **Owner ruling needed:** no
 - **Impact:** Status stays OFFLINE_INTEGRATED_LIVE_PENDING; nothing is marked LIVE_RUNTIME_VERIFIED.
 - **Recommended action:** Run the live checklist in a V13 world.
