@@ -17,6 +17,7 @@ import { ImplantEffectRules } from "/systems/foundryvtt-swse/scripts/engine/impl
 import { TeamFeatRuntime } from "/systems/foundryvtt-swse/scripts/engine/feats/team-feat-runtime-patches.js";
 import { RebellionSpeciesSkillFeatRuntime } from "/systems/foundryvtt-swse/scripts/engine/feats/rebellion-species-skill-feat-runtime-patches.js";
 import { resolveEquipmentForSkillUse } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-skill-hook-resolver.js";
+import { shaperLoreBonus } from "/systems/foundryvtt-swse/scripts/engine/skills/class-shaper-lore.js";
 import { resolveArmorUsageEffects } from "/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js";
 
 
@@ -245,6 +246,11 @@ export async function rollSkill(actor, skillKey, options = {}) {
 
   const featSkillBonuses = SkillFeatResolver.getSkillCheckBonuses(actor, effectiveSkillKey, skillContext);
   const equipmentSkill = await resolveEquipmentSkillModifiers(actor, effectiveSkillKey, skillContext);
+  // Shaper Lore is situational: the GM/player must identify this as a check
+  // regarding a biotech device. Never grant it to every check of this skill.
+  const shaperLore = shaperLoreBonus(actor,effectiveSkillKey,{
+    biotechDevice:options?.biotechDevice === true,
+  });
   const skillCheckMode = String(options?.checkMode || (options?.take20 === true ? 'take20' : options?.take10 === true ? 'take10' : 'roll')).toLowerCase();
   const skillTakeXValue = skillCheckMode === 'take20' ? 20 : skillCheckMode === 'take10' ? 10 : 10;
   const skillIsTakeX = skillCheckMode === 'take10' || skillCheckMode === 'take20';
@@ -253,7 +259,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
   const rollResult = await RollCore.execute({
     actor,
     domain,
-    baseBonus: canonicalTotal + Number(options?.customModifier || 0) + Number(featSkillBonuses.total || 0) + Number(equipmentSkill.total || 0),
+    baseBonus: canonicalTotal + Number(options?.customModifier || 0) + Number(featSkillBonuses.total || 0) + Number(equipmentSkill.total || 0) + shaperLore,
     rollOptions: {
       baseDice: '1d20',
       useForce: options?.useForcePoint === true,
@@ -270,6 +276,8 @@ export async function rollSkill(actor, skillKey, options = {}) {
       useKey: skillContext.useKey,
       featSkillBonuses: featSkillBonuses.bonuses,
       equipmentSkillModifiers: equipmentSkill.modifiers,
+      shaperLoreBonus: shaperLore,
+      biotechDevice:options?.biotechDevice === true,
       teamFeatAllyCounts: skillContext.teamFeatAllyCounts ?? null,
       forcePointDieUpgrade: forcePointDieUpgrade ?? null,
       checkMode: skillCheckMode,
@@ -291,7 +299,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
     const total = chatRoll?.total ?? rollResult.finalTotal ?? 'unknown';
     const resultRiders = buildSkillResultRiders(actor, effectiveSkillKey, total, skillContext);
     const resultRiderText = resultRiders.length ? ` ${resultRiders.map(rider => rider.text).join(' ')}` : '';
-    const flavor = `${actor.name} used ${skillLabel} and got ${total}.${resultRiderText}`;
+    const flavor = `${actor.name} used ${skillLabel} and got ${total}.${shaperLore ? ` Shaper Lore +${shaperLore} (biotech device).` : ""}${resultRiderText}`;
 
     const rerollOptions = [
       ...SkillFeatResolver.buildRerollChatOptions(actor, effectiveSkillKey, chatRoll, skillContext),
@@ -310,6 +318,8 @@ export async function rollSkill(actor, skillKey, options = {}) {
           featSkillBonuses: featSkillBonuses.bonuses,
           equipmentSkillModifiers: equipmentSkill.modifiers,
           equipmentSkillNotes: equipmentSkill.notes,
+          shaperLoreBonus: shaperLore,
+          biotechDevice:options?.biotechDevice === true,
           teamFeatAllyCounts: skillContext.teamFeatAllyCounts ?? null,
           forcePointDieUpgrade: forcePointDieUpgrade ?? null,
           skillResultRiders: resultRiders,
@@ -325,7 +335,11 @@ export async function rollSkill(actor, skillKey, options = {}) {
         // the displayed Base is the DERIVED skill total only: the custom modifier, feat bonuses and gear modifiers are listed separately on the card, so
         // every modifier appears exactly once (Base + the listed lines = the rolled bonus)
         baseBonus: canonicalTotal,
-        situationalMods: rollResult.modifierTotal,
+        // The roll engine applies Shaper Lore in its base; display it once
+        // in the situational line so the card still reconciles to the roll.
+        situationalMods: (Number(rollResult.modifierTotal) || 0) + shaperLore,
+        shaperLoreBonus: shaperLore,
+        biotechDevice:options?.biotechDevice === true,
         customModifier: Number(options?.customModifier || 0),
         featSkillBonus: featSkillBonuses.total,
         featSkillBonuses: featSkillBonuses.bonuses,
