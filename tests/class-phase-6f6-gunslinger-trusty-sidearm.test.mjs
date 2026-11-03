@@ -33,6 +33,10 @@ test('combat composition adds the bonus to additive total once, BEFORE critical 
  assert.match(code,/trustySidearmDamageBonus\(actor,\{isPistol:isPistolWeapon\(weapon\)\}\)/);
  assert.match(code,/scopedFeatDamage \+ trustySidearm/);
  assert.match(code,/components\['Trusty Sidearm'\] = trustySidearm/);
+ const stock=code.slice(code.indexOf('export function resolveStockDroidDamageContract('),code.indexOf('export function resolveDamageBonus('));
+ assert.doesNotMatch(stock,/if \(trustySidearm !== 0\)/);
+ const ordinary=code.slice(code.indexOf('export function resolveDamageBonus('),code.indexOf('export function resolveDamageComposition('));
+ assert.match(ordinary,/components\['Trusty Sidearm'\] = trustySidearm/);
  const formula=code.slice(code.indexOf('export function buildDamageFormula('));
  assert.match(formula,/const bonusTotal = Number\(composition\?\.bonus\?\.total/);
  assert.ok(formula.includes('formula = `(${formula}) * ${multiplier}`;'));
