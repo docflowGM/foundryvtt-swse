@@ -28,6 +28,7 @@ export function resolveTrustedStockAttackGroup(vehicle, weapon) {
   return {
     bindingVerified: true, sourceComplete: true,
     weaponGroupKey: s.group.groupKey, sourceEntryKey: s.record.identity.sourceEntryKey, operator: s.operator,
-    arcEvidence: s.arcEvidence, attackBonusEvidence: { state: 'PRINTED_VALUE', value: s.group.attackBonusPrinted }
+    arcEvidence: s.arcEvidence, attackBonusEvidence: { state: 'PRINTED_VALUE', value: s.group.attackBonusPrinted },
+    battery: s.battery ?? null
   };
 }

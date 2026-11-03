@@ -27,6 +27,8 @@ import { AttackRollDiagnostics } from "/systems/foundryvtt-swse/scripts/engine/c
 import { resolveVehicleAttackBonus, resolveAbstractCrewAttackBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle-attack-math.js";
 import { resolveAttackDomain } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-domain-router.js";
 import { authorizeVehicleAttackBeforeCosts } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-attack-preflight.js";
+import { resolveVehicleWeaponAuthority } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
+import { batteryMarginHits } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-battery.js";
 import { resolveTrustedStockAttackGroup } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-attack-authority.js";
 import { classifyInstalledVehicleWeapon } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-attack-provenance.js";
 import { resolveVehicleCrewStationEvidence } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-crew-station-evidence.js";
@@ -939,10 +941,22 @@ export async function rollAttack(actor, weapon, options = {}) {
     critMultiplier
   });
 
+  // P6C-2B: a published weapon battery (Core p. 170) hits with one extra weapon per 3 points the attack beats the target's
+  // Reflex Defense, capped by the weapons actually participating. Computed once here from the roll and carried on the card;
+  // the damage authority re-validates it. Only a hit can produce extra hits; any other weapon has no battery outcome.
+  const vehicleWeaponAuthority = resolveVehicleWeaponAuthority(weapon);
+  let batteryOutcome = null;
+  if (vehicleWeaponAuthority?.ok && vehicleWeaponAuthority.battery) {
+    const m = batteryMarginHits({ attackTotal: roll.total, targetDefense: Number.isFinite(Number(targetReflex)) && (resolvedTarget.defenseType ?? 'reflex') === 'reflex' ? Number(targetReflex) : 0,
+      hit: isHit === true && Number.isFinite(Number(targetReflex)) && (resolvedTarget.defenseType ?? 'reflex') === 'reflex', participatingWeapons: vehicleWeaponAuthority.battery.participatingWeapons });
+    batteryOutcome = m.ok ? { extraHits: m.extraHits, participatingWeapons: vehicleWeaponAuthority.battery.participatingWeapons, margin: m.margin, attackTotal: roll.total, targetDefense: Number(targetReflex) } : null;
+  }
+
   const damageWorkflowContext = summarizeCombatWorkflowContext(workflowContext, {
     actor,
     weapon,
     target,
+    ...(batteryOutcome ? { battery: batteryOutcome } : {}),
     targetId: target?.id ?? null,
     targetName: resolvedTarget.targetName ?? target?.name ?? '',
     isCritical,

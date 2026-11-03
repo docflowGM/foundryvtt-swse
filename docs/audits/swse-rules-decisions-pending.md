@@ -877,3 +877,47 @@ refusal of capital-scale x5 groups is replaced by a consistency check that a siz
 printed figure minus the Core p. 171 -20 penalty. Result: 260 executable stock groups on 232 vehicles. No existing entry changed.
 
 - **Revision 25 (2026-11-03):** appended this status note. No existing entry changed.
+
+### V-P6C-02 - Number of identical weapons in a published weapon battery that prints only gunners
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-02 |
+| Rules domain | Vehicle weapons (weapon batteries) |
+| Feature | Participating weapons of a published weapon battery ("battery (N gunners)") |
+| Source | Core Rulebook, Vehicles, p. 170 (rule text verified by the project owner, 2026-11-03); Starships of the Galaxy battery statblocks (e.g. Krayt's Honor p. 91, Rendili Star Drive Light Corvette p. 102, Gamma-class Assault Shuttle p. 95); canonical vehicle records (`armament.firingGroups`, evidence key `hardwareCount`) |
+| Evidence | Core p. 170: a battery is up to six identical weapons; every 3 points by which the attack roll exceeds the target's Reflex Defense adds another weapon that hits, up to the identical weapons actually participating. The canonical records print 104 weapon-battery groups with a gunner count ("battery (N gunners)"). Two of them also print the number of weapons: Krayt's Honor turbolaser battery (3 gunners; p. 91 narrative: three turbolasers) and the Rendili Light Corvette double laser cannon battery (6 gunners; p. 102: six double laser cannon turrets). The other 102 print gunners only (the source is confirmed silent on the weapon count). The Gamma-class Assault Shuttle's turbolasers (not a battery) are "two gunners operate four weapons". Of the 116 groups that print a gunner count, 108 have a printed attack total exactly equal to crew Base Attack + vehicle Intelligence modifier + 2 per assisting gunner. |
+| Confirmed behavior | Assistance (+2 per assisting gunner), margin hits (1 per full 3 points over Reflex), the extra die per hit before the multiplier, the six-weapon limit and the rule that extra hits never exceed the participating weapons are implemented (`vehicle-weapon-battery.js`). A battery runs only when its gunner count and its weapon count are both printed and equal (2 groups; 1 passes every other gate). |
+| Unresolved question | How many identical weapons does a published battery have when the source prints only its gunners? Equivalently: may the participating weapons of such a battery be taken as the printed gunner count, which caps the margin hits? |
+| Options | (a) The weapon count equals the printed gunner count when only gunners are printed (both printed cases agree; the printed totals reflect the gunners). (b) The weapon count stays unestablished until a source prints it (current behavior; the gunners-versus-weapons mismatch of the Gamma-class shuttle shows the two are not always equal). |
+| Recommended ruling | None |
+| Implementation impact | 102 printed battery groups stay refused as `STOCK_BATTERY_WEAPON_COUNT_NOT_STATED`, many of which also carry other refusals (ion, point-defense, damage not printed). No code path infers the count. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6C-03 - Timing, duration and odd weapon counts of a battery aiding another battery
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-03 |
+| Rules domain | Vehicle weapons (weapon batteries) |
+| Feature | A battery assisting another battery |
+| Source | Core Rulebook, Vehicles, p. 170 (rule text verified by the project owner, 2026-11-03) |
+| Evidence | The assisting gunner makes an attack roll against Reflex Defense 10; on a success the assisted battery gains +2 per two weapons in the assisting battery; the assisting weapons generate no margin hits. |
+| Confirmed behavior | The arithmetic is implemented as a pure, tested function (`batteryAidsBattery`: success at 10 or more; +2 for each complete pair of weapons; no margin hits). It is not wired into any runtime. |
+| Unresolved question | (1) How long the bonus lasts and which attack of the assisted battery receives it. (2) Whether the bonus stacks with the gunner assistance and with a second assisting battery. (3) How an odd number of weapons is counted (the helper counts complete pairs only; this is an engineering placeholder, not a ruling). |
+| Options | None supported by the verified text. |
+| Recommended ruling | None |
+| Implementation impact | Battery-aids-battery is not offered at runtime (deferred item P6B-D-044). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 26 (2026-11-03):** appended V-P6C-02 and V-P6C-03. No existing entry changed.
+
+### Engineering status note: weapon batteries (2026-11-03; not a ruling)
+
+Core p. 170 (owner-verified) is implemented in `vehicle-weapon-battery.js` and wired into the stock gate, the attack roll and the damage authority. One published battery (Krayt's Honor turbolaser battery) is OFFLINE_EXECUTABLE; 102 printed batteries are refused until V-P6C-02 is ruled; named gunners on a battery are refused until a roster binding exists (P6B-D-043); the aid action is deferred (V-P6C-03). No existing entry changed.
+
+- **Revision 27 (2026-11-03):** appended this status note. No existing entry changed.

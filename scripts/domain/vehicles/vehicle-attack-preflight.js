@@ -10,6 +10,7 @@ import { resolveTrustedStockAttackGroup } from './vehicle-stock-attack-authority
 import { authorizeVehicleArcEvidence } from './vehicle-evidence-runtime-gate.js';
 import { isTargetWithinVehicleArc } from './vehicle-firing-arc-geometry.js';
 import { STOCK_ARC_POLICY, getStockSilentArcPolicy } from './vehicle-stock-arc-policy.js';
+import { BATTERY_REASONS } from './vehicle-weapon-battery.js';
 
 const block = reason => ({ok:false,reason,strictStockEnforcement:true});
 const nonempty = x => typeof x === 'string' && x.trim().length > 0;
@@ -66,6 +67,10 @@ export async function authorizeVehicleAttackBeforeCosts({vehicle,weapon,target,a
   if (!target || !nonempty(target.id)) return block('TARGET_UNRESOLVED');
   if (crewStationResolved !== true) return block('CREW_STATION_UNRESOLVED');
   if (!nonempty(attackId) || !nonempty(vehicle?.id)) return block('ATTACK_SCOPE_UNRESOLVED');
+  // A published weapon battery is run by its generic (published) crew, whose printed total already contains the printed
+  // gunners' assistance. Named gunners would need an explicit roster of the assisting gunners; until that exists the
+  // staffing evidence is incomplete and the attack is refused rather than guessed (nothing is inferred from the bonus).
+  if (source.battery && operatorActor) return block(BATTERY_REASONS.ASSIGNED_CREW_ROSTER_UNMODELED);
   const scope={vehicleId:vehicle.id,attackId,weaponGroupKey:source.weaponGroupKey,targetId:target.id};
   if (source.attackBonusEvidence?.state === 'PUBLISHED_CONFLICT') {
     // The computed vehicle INT math cannot consume a printed-flat override.

@@ -10,13 +10,16 @@
  * A group is EXECUTABLE as a plain stock weapon only when all of these hold:
  *   - the notes state damage as plain dice, with or without a printed multiplier (no splash/burst, ion or special);
  *   - exactly one operator is printed and it is the pilot or a single gunner;
- *   - the group is not a multi-gunner station battery, and any size-dependent figure it prints is the Core -20 (checked);
+ *   - the group is a single-operator weapon or a PRINTED weapon battery whose gunner count and identical-weapon count are
+ *     both printed and agree (Core p. 170, vehicle-weapon-battery.js); any size-dependent figure it prints is the Core -20;
  *   - the printed attack total reconciles with the printed crew Base Attack + the vehicle's Intelligence modifier
  *     (the Core vehicle attack formula), so applying the formula cannot contradict the statblock.
  * The firing arc follows determineStockArc() (owner ruling V-P6C-01): a stated, understood arc is enforced; a confirmed-
  * unstated arc imposes no automated restriction; a stated-but-uninterpreted or never-reviewed arc is refused.
  * Pure; no Foundry globals.
  */
+import { establishPublishedBattery, batteryAssistanceBonus } from './vehicle-weapon-battery.js';
+
 const abilityMod = s => Math.floor((s - 10) / 2);
 const finite = v => typeof v === 'number' && Number.isFinite(v);
 
@@ -50,15 +53,32 @@ export function parseStockFiringGroup(group) {
     if (!Number.isInteger(mult) || mult < 1) reasons.push('STOCK_DAMAGE_MULTIPLIER_UNREADABLE');
   }
 
+  const e = notes.match(EVIDENCE);
+  if (e) { try { out.evidence = JSON.parse(e[0]); } catch { reasons.push('STOCK_EVIDENCE_UNREADABLE'); } }
+
   const o = notes.match(OPERATOR);
   const opText = o ? String(o[1] ?? '').trim().toLowerCase() : '';
   const opDetail = o ? String(o[2] ?? '').trim().toLowerCase() : '';
+  // A weapon battery is understood only when the source PRINTS it as one ("battery (N gunners)" on a group the record
+  // marks as a printed weapon battery). Core p. 170 rules then apply (vehicle-weapon-battery.js); the number of identical
+  // weapons must also be PRINTED (hardwareCount) -- it is never inferred from the gunner count.
+  const gunnerMatch = /(\d+)\s*gunners?/.exec(`${opText} ${opDetail}`);
+  const printedBattery = group?.groupKind === 'weapon-battery' && group?.batteryMembershipStatus === 'printed' && /^battery$/.test(opText) && !!gunnerMatch;
   if (!o || !opText) reasons.push('STOCK_OPERATOR_NOT_PRINTED');
+  else if (printedBattery) {
+    const gunners = Number(gunnerMatch[1]);
+    const weaponCount = Number.isInteger(out.evidence?.hardwareCount) ? out.evidence.hardwareCount : null;
+    const established = establishPublishedBattery({ gunners, weaponCount });
+    out.operator = 'gunner';
+    out.battery = { gunners, weaponCount, weaponCountBasis: typeof out.evidence?.hardwareCountBasis === 'string' ? out.evidence.hardwareCountBasis : null,
+      established: established.ok, participatingWeapons: established.ok ? established.participatingWeapons : null, maxExtraHits: established.ok ? established.maxExtraHits : null };
+    if (!established.ok) reasons.push(`STOCK_${established.reason}`);
+  }
   else if (/^battery$/.test(opText) || /\d+\s*gunners/.test(`${opText} ${opDetail}`) || /batter/.test(opText)) reasons.push('STOCK_OPERATOR_IS_A_STATION_BATTERY');
   else if (opText === 'pilot' || opText === 'gunner') out.operator = opText;
   else if (opText === 'copilot' || opText === 'co-pilot') out.operator = 'copilot';
   else reasons.push('STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER');
-  if (group?.groupKind === 'weapon-battery') reasons.push('STOCK_GROUP_IS_A_WEAPON_BATTERY');
+  if (group?.groupKind === 'weapon-battery' && !printedBattery) reasons.push('STOCK_GROUP_IS_A_WEAPON_BATTERY');
   // Fail-closed denials by wording (a name can only DENY, never authorize): finite-ammunition weapons have no magazine
   // authority yet, torpedoes/missiles/mines/grenades carry splash and payload rules, and ion damage against vehicles is
   // unverified. These stay reference-only until those mechanics exist.
@@ -68,8 +88,6 @@ export function parseStockFiringGroup(group) {
   // point-defense status is never inferred from a label: such groups stay non-executable until it is classified from source
   if (/point[- ]?defen[cs]e/i.test(String(group?.label ?? '') + notes)) reasons.push('STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED');
 
-  const e = notes.match(EVIDENCE);
-  if (e) { try { out.evidence = JSON.parse(e[0]); } catch { reasons.push('STOCK_EVIDENCE_UNREADABLE'); } }
   out.reasons = [...new Set(reasons)];
   return out;
 }
@@ -105,8 +123,8 @@ export function determineStockArc(record, parsedGroup) {
  * published rule:
  *   delta 0                        crew Base Attack + Intelligence modifier;
  *   delta +2, pilot-operated       plus the trained-Pilot bonus (Core p. 171: +2 on attacks with a pilot-crewed weapon);
- * Any other difference is UNEXPLAINED and the group is refused rather than "corrected" to match. (Weapon batteries add +2 per
- * additional gunner; they are refused for the battery model, not for the arithmetic.)
+ *   delta 2(N-1), printed battery  the assistance of the N-1 assisting gunners of a weapon battery (Core p. 170).
+ * Any other difference is UNEXPLAINED and the group is refused rather than "corrected" to match.
  * @returns {{basis: object|null, reason: string|null}}
  */
 export function explainPrintedAttackTotal(parsed, bab, intScore) {
@@ -115,6 +133,14 @@ export function explainPrintedAttackTotal(parsed, bab, intScore) {
   if (!finite(bab) || !finite(intScore)) return { basis: null, reason: 'STOCK_CREW_ATTACK_BASIS_UNKNOWN' };
   const base = bab + abilityMod(intScore), delta = printed - base;
   const components = [{ id: 'crew-bab', label: 'Crew Base Attack (published statblock)', value: bab }, { id: 'vehicle-int', label: 'Vehicle Intelligence modifier', value: abilityMod(intScore) }];
+  // A printed weapon battery: the generic crew's total already contains the assistance of the printed gunners (Core p. 170:
+  // +2 for each assisting gunner). It is accepted only when the difference is EXACTLY that assistance.
+  if (parsed.battery?.gunners) {
+    const assistance = batteryAssistanceBonus(parsed.battery.gunners);
+    if (assistance.ok && delta === assistance.bonus)
+      return { basis: { kind: 'BAB_PLUS_INT_PLUS_BATTERY_ASSISTANCE', printed, delta, components: [...components, { id: 'battery-assistance', label: `Weapon battery: ${assistance.assistingGunners} assisting gunner(s) at +2 each (Core p. 170)`, value: assistance.bonus }] }, reason: null };
+    return { basis: { kind: 'UNEXPLAINED', printed, delta, components }, reason: 'STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA' };
+  }
   if (delta === 0) return { basis: { kind: 'BAB_PLUS_INT', printed, delta, components }, reason: null };
   if (delta === 2 && parsed.operator === 'pilot')
     return { basis: { kind: 'BAB_PLUS_INT_PLUS_TRAINED_PILOT', printed, delta, components: [...components, { id: 'pilot-trained', label: 'Trained Pilot, pilot-crewed weapon (Core p. 171)', value: 2 }] }, reason: null };

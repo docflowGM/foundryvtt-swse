@@ -20,7 +20,7 @@ record). Stock weapons never pass through the ledger, EP or credits and are neve
 
 ## Result (offline; nothing is live-verified)
 
-- 846 published groups; 466 SOURCE_VERIFIED (configuration established); **260 OFFLINE_EXECUTABLE on 232 vehicles** (110 vehicles have every group executable) after P6C-2A, each driven
+- 846 published groups; 468 SOURCE_VERIFIED (configuration established); **261 OFFLINE_EXECUTABLE on 233 vehicles** (110 vehicles have every group executable) after P6C-2B, each driven
   through arm -> attack -> damage by the CORPUS test; 0 LIVE_VERIFIED. See `stock-weapon-coverage.md`.
 - Includes the X-wing laser cannons (6d10 x 2, pilot, +5), TIE fighter, TIE interceptor, Y-wing, ARC-170, YT-1300, AAT and others.
   The X-wing proton torpedoes stay reference-only (splash, finite payload).
@@ -34,8 +34,8 @@ keep their certified mount and arc. The world setting can switch unstated arcs t
 
 ## What genuinely needs new mechanics (all recorded in the deferred register, P6B-D-033..039)
 
-- Printed attack totals: explained for the 260 executable groups (crew BAB + Int; +2 on pilot-crewed groups = Core p. 171); the battery +2 per additional gunner is documented but batteries need their own model; about 50 single-operator groups stay unexplained.
-- Batteries and multi-gunner stations (291), splash/ion/ammunition groups (142), point-defense.
+- Printed attack totals: explained for the 261 executable groups (crew BAB + Int; +2 on pilot-crewed groups = Core p. 171); the battery +2 per additional gunner is documented but batteries need their own model; about 50 single-operator groups stay unexplained.
+- Weapon batteries: 102 printed batteries do not print their number of weapons (owner ruling V-P6C-02); multi-gunner stations that are not printed batteries; splash/ion/ammunition groups (142); point-defense.
 - 12 groups on records with no arc evidence; 5 groups with arcs the system cannot yet interpret.
 
 ## Also fixed along the way
@@ -65,3 +65,30 @@ totals) stay refused for those reasons; the removed refusal only unlocks groups 
 
 Newly executable examples: BARC speeder twin light blaster cannons (5d10), SPHA-T heavy turbolaser (7d10 x5),
 Munificent-class heavy turbolasers (11d10 x5), Venator medium double turbolasers (6d10 x5), Lancet proton beam cannon (6d10 x5).
+
+## P6C-2B: weapon batteries (2026-11-03)
+
+Core p. 170 (rule text verified by the owner) is implemented once, as pure functions in `vehicle-weapon-battery.js`: +2 per
+assisting gunner (2 gunners +2 ... 6 gunners +10); one extra weapon hits per full 3 points the attack roll exceeds Reflex
+Defense (exactly Reflex, +2 over: none; +3: one; +6: two), capped by the identical weapons actually participating (never
+more than six); each extra hit adds ONE weapon die to the dice BEFORE the multiplier ((5d10 + 2d10) x 5); a battery aiding
+another battery rolls against Reflex 10 for +2 per two weapons and creates no margin hits.
+
+Where it plugs in (no second engine):
+- the stock gate reads a PRINTED battery ("battery (N gunners)" on a group the record marks as a printed weapon battery),
+  requires the gunner count and the number of identical weapons to be printed and to agree, and requires the printed total to
+  equal crew Base Attack + vehicle Intelligence modifier + 2 per assisting gunner exactly (basis `BAB_PLUS_INT_PLUS_BATTERY_ASSISTANCE`);
+- generic (published) crew: the printed total already contains the assistance, so it is applied once and the assistance is
+  shown as included (applied: false); range, the capital -20 and effects still stack on top;
+- the attack roll computes the margin hits once (against Reflex) and carries them on the card's workflow context; the damage
+  authority (`resolveVehicleWeaponDamage`) re-validates them against the weapons participating, adds the dice before the
+  multiplier and refuses hits for any weapon that is not an established battery; a critical still doubles the total once;
+- named gunners on a battery are refused (`BATTERY_ASSIGNED_CREW_ROSTER_UNMODELED`): crew assignment holds one actor per
+  station and does not say which gunners assist which battery, and the bonus is never inferred from a displayed number.
+
+Result: 104 published batteries print a gunner count; 2 also print the number of weapons (Krayt's Honor, p. 91; Rendili Light
+Corvette, p. 102); 1 passes every gate and is OFFLINE_EXECUTABLE (Krayt's Honor turbolaser battery, 5d10x5, driven through
+arm -> attack -> card -> damage by the P26 tests); the Rendili battery is refused only for its flank-turret arc. The other 102
+are refused as `STOCK_BATTERY_WEAPON_COUNT_NOT_STATED` pending owner ruling V-P6C-02; this is NOT a 291-group unlock. Not
+done and recorded: named-gunner rosters (P6B-D-043), battery-aids-battery runtime and independent firing (P6B-D-044, V-P6C-03).
+Reroll note: a reroll supersedes the attack card (its Damage button is refused), so a stale margin outcome cannot be reused.

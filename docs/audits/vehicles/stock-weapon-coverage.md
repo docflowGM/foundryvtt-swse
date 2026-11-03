@@ -8,20 +8,32 @@ Three claims are kept apart: **SOURCE_VERIFIED** (the published configuration is
 |---|---|
 | Published vehicles | 429 |
 | Published attack groups | 846 |
-| Groups SOURCE_VERIFIED | 466 (55.1%) |
-| Groups OFFLINE_EXECUTABLE | 260 (30.7%) |
-| Vehicles with at least one OFFLINE_EXECUTABLE group | 232 (54.1%) |
+| Groups SOURCE_VERIFIED | 468 (55.3%) |
+| Groups OFFLINE_EXECUTABLE | 261 (30.9%) |
+| Vehicles with at least one OFFLINE_EXECUTABLE group | 233 (54.3%) |
 | Vehicles with every group executable | 110 |
 | Vehicles LIVE_VERIFIED | 0 |
+
+## Weapon batteries (Core p. 170)
+
+| Measure | Groups |
+|---|---|
+| Printed weapon batteries ("battery (N gunners)") | 104 |
+| ... with the number of identical weapons printed | 2 |
+| ... battery facts established (gunners and weapons printed, equal) | 2 |
+| ... OFFLINE_EXECUTABLE (also passing every other gate) | 1 |
+
+The printed total of a battery already contains the printed gunners' assistance (+2 per assisting gunner): it is applied once. The weapon count caps the margin hits (one extra weapon die per 3 points over Reflex Defense) and is not inferred from the gunner count: the remaining batteries are refused as STOCK_BATTERY_WEAPON_COUNT_NOT_STATED until the owner rules on V-P6C-02. Named gunners on a battery are refused (BATTERY_ASSIGNED_CREW_ROSTER_UNMODELED). The two counts overlap with other refusal reasons.
 
 ## Why groups are refused (a group can have several reasons)
 
 | Reason | Groups |
 |---|---|
-| STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA | 336 |
-| STOCK_OPERATOR_IS_A_STATION_BATTERY | 291 |
-| STOCK_GROUP_IS_A_WEAPON_BATTERY | 283 |
+| STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA | 241 |
+| STOCK_OPERATOR_IS_A_STATION_BATTERY | 187 |
+| STOCK_GROUP_IS_A_WEAPON_BATTERY | 179 |
 | STOCK_AMMUNITION_LIMITED_UNTRACKED | 169 |
+| STOCK_BATTERY_WEAPON_COUNT_NOT_STATED | 102 |
 | STOCK_DAMAGE_NOT_PRINTED_IN_RECORD | 85 |
 | STOCK_DAMAGE_ION_UNVERIFIED | 73 |
 | STOCK_DAMAGE_AREA_OR_SPLASH | 71 |
@@ -51,7 +63,7 @@ Three claims are kept apart: **SOURCE_VERIFIED** (the published configuration is
 | Rebellion Era Campaign Guide | 53 | 94 | 38 | 33 |
 | Scum and Villainy | 13 | 24 | 10 | 9 |
 | Scavenger's Guide to Droids | 1 | 2 | 0 | 0 |
-| Starships of the Galaxy | 105 | 258 | 63 | 59 |
+| Starships of the Galaxy | 105 | 258 | 64 | 60 |
 | Threats of the Galaxy | 5 | 5 | 0 | 0 |
 | Unknown Regions | 26 | 33 | 17 | 16 |
 
@@ -60,7 +72,7 @@ Three claims are kept apart: **SOURCE_VERIFIED** (the published configuration is
 | Category | Vehicles | With an executable group |
 |---|---|---|
 | starfighter | 132 | 119 |
-| space-transport | 99 | 68 |
+| space-transport | 99 | 69 |
 | capital-ship | 84 | 5 |
 | walker | 15 | 8 |
 | airspeeder | 15 | 6 |
@@ -281,6 +293,7 @@ Three claims are kept apart: **SOURCE_VERIFIED** (the published configuration is
 | Koensayr BTL-S3 Y-wing | Starships of the Galaxy p. 158 | 1 / 3 | laser cannons (4d10x2, pilot, +7) |
 | Koensayr ILH-KK Citadel-Class Cruiser | Starships of the Galaxy p. 70 | 1 / 4 | laser cannons (5d10x2, gunner, +1) |
 | Koensayr Manufacturing BTL-58 K-wing | Starships of the Galaxy p. 105 | 1 / 5 | laser cannons (4d10x2, gunner, +7) |
+| Krayt's Honor | Starships of the Galaxy p. 91 | 1 / 4 | turbolaser battery (5d10x5, gunner, +13) |
 | Kuat Systems Engineering Alpha-3 Nimbus V-wing Starfighter | Starships of the Galaxy p. 150 | 1 / 1 | light laser cannons (3d10x2, pilot, +6) |
 | Kuat Systems Engineering Eta-2 Actis Interceptor | Starships of the Galaxy p. 82 | 1 / 2 | laser cannons (4d10x2, pilot, +14) |
 | Kuat Systems Engineering Firespray-31 Patrol Craft | Starships of the Galaxy p. 84 | 1 / 2 | blaster cannons (5d10x2, pilot, +6) |

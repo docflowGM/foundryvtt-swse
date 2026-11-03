@@ -1029,7 +1029,10 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
   // are consumed HERE, in the one composition -- never by a second damage engine. A stock-statblock flat contract is untouched.
   // P6B: a weapon installed on a vehicle through the sealed Shipyard ledger uses the Core vehicle formula
   // (weapon damage dice x damage multiplier) -- never the printed "NdMxK" string as dice, and no ability/half-level terms.
-  const vehicleDamage = (canonicalBase === null && !bonus.flags?.stockDamageFormula) ? resolveVehicleWeaponDamage(weapon) : null;
+  // P6C-2B: a published weapon battery's extra hits come from the attack outcome carried on the card (validated against the
+  // weapons actually participating inside resolveVehicleWeaponDamage); any other weapon refuses a non-zero value.
+  const batteryExtraHits = Number(context.batteryExtraHits ?? context.combatContext?.battery?.extraHits ?? context.workflowContext?.battery?.extraHits ?? 0);
+  const vehicleDamage = (canonicalBase === null && !bonus.flags?.stockDamageFormula) ? resolveVehicleWeaponDamage(weapon, { batteryExtraHits }) : null;
   if (vehicleDamage && !vehicleDamage.ok)
     throw new WeaponRuntimeError(ERROR_CODES.NO_ORDINARY_DAMAGE, `${weapon?.name ?? 'vehicle weapon'} has no ordinary damage roll (${vehicleDamage.reason})`, { reason: vehicleDamage.reason });
   if (vehicleDamage) bonus = { total: 0, components: {}, flags: { damageBaseOnly: true, vehicleWeaponFormula: true }, typedModifierLedger: [] };
@@ -1090,6 +1093,7 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
     })),
     ...(dieStepIncreases !== 0 ? [{ id: 'die-step', label: 'Die-Size Step', value: dieStepIncreases, category: 'dieStep', applied: true, stage: PRE }] : []),
     ...(extraWeaponDice !== 0 ? [{ id: 'extra-weapon-dice', label: 'Extra Weapon Dice', value: extraWeaponDice, category: 'extraWeaponDice', applied: true, stage: PRE }] : []),
+    ...(vehicleDamage?.battery ? [{ id: 'battery-extra-hit-dice', label: `Weapon battery: ${vehicleDamage.battery.extraHits} extra hit(s) of ${vehicleDamage.battery.participatingWeapons} weapons (Core p. 170)`, value: vehicleDamage.battery.extraDice, category: 'included', applied: false, stage: PRE }] : []),
     ...(weaponMultiplier > 1 ? [{ id: 'weapon-multiplier', label: vehicleDamage ? 'Vehicle Weapon Damage Multiplier (Core)' : 'Weapon Damage Multiplier', value: weaponMultiplier, category: 'weaponMultiplier', applied: true, stage: DAMAGE_STAGE.WEAPON_MULTIPLIER }] : []),
     ...talentContributions.breakdown.map((label, index) => ({ id: `talent-dice-${index}`, label, value: talentContributions.bonusDice[index] ?? null, category: 'additionalDice', applied: true, stage: POST })),
     ...otherDiceTerms.map((term, index) => ({ id: `other-dice-${index}`, label: 'Force Item / Inquisition', value: term, category: 'additionalDice', applied: true, stage: POST })),

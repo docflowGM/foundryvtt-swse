@@ -1031,6 +1031,58 @@
       "impact": "36 groups refused.",
       "severity": "MINOR",
       "recommendedAction": "Add the copilot station to the crew authority first; leave droid and ambiguous operators refused until defined."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6C-02"
+      ],
+      "options": [
+        "(a) when only gunners are printed, the identical-weapon count equals the printed gunner count",
+        "(b) the weapon count stays unestablished until a source prints it (current behavior)"
+      ],
+      "id": "P6B-D-042",
+      "component": "published weapon batteries that print gunners but not the number of identical weapons (102 of 104 printed batteries)",
+      "source": "canonical records (armament.firingGroups hardwareCount); Core Rulebook p. 170 (owner-verified)",
+      "status": "RULES_DECISION_REQUIRED",
+      "reason": "Core p. 170 caps extra hits by the identical weapons actually participating. A battery statblock prints \"battery (N gunners)\"; only Krayt's Honor and the Rendili Light Corvette also print the number of weapons (equal to the gunners). The Gamma-class Assault Shuttle (\"two gunners operate four weapons\", not a battery) shows gunners and weapons are not generally equal. 108 of 116 groups that print a gunner count have printed totals equal to BAB + Int + 2 per assisting gunner, which evidences the gunners but not the weapons.",
+      "missing": "The number of identical weapons of a published battery whose source states only gunners.",
+      "impact": "102 printed battery groups stay refused (STOCK_BATTERY_WEAPON_COUNT_NOT_STATED); several also carry other refusals (ion, point-defense, damage not printed).",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Owner ruling on V-P6C-02. No code path infers the weapon count."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-043",
+      "component": "weapon batteries crewed by named gunners (assisting roster)",
+      "source": "vehicle-crew-actor-authority.js; vehicle-crew-station-evidence.js; Core p. 170",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "Crew assignment holds one actor per station key (gunner, gunner-2, ...). Nothing says which gunner stations belong to which battery, so the assisting gunners of a battery cannot be established. A named gunner on a battery is refused (BATTERY_ASSIGNED_CREW_ROSTER_UNMODELED) rather than inferred from a displayed bonus. The pure arithmetic exists and is tested (resolveBatteryAttackTotal, crew 'assigned').",
+      "missing": "A binding from a battery weapon to its assisting gunner stations, validated against the existing crew assignment authority (distinct actors, real stations).",
+      "impact": "Named-gunner crews cannot fire published batteries; the generic published crew can.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Add a roster binding that references existing crew stations, then wire resolveBatteryAttackTotal('assigned') into the named-gunner attack math."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6C-03"
+      ],
+      "options": [],
+      "id": "P6B-D-044",
+      "component": "battery aiding another battery, and a battery's weapons firing independently",
+      "source": "Core Rulebook p. 170 (owner-verified)",
+      "status": "RULES_DECISION_REQUIRED",
+      "reason": "The aid arithmetic is implemented and tested as pure functions (attack vs Reflex 10; +2 per two weapons of the assisting battery; no margin hits). Running it needs a state that carries the bonus from the aiding attack to the aided battery's attack, and the verified text does not give that bonus's duration, timing or stacking. Independent firing of a battery's weapons needs separate firing groups that the published records do not contain.",
+      "missing": "Timing/duration/stacking of the aid bonus; odd weapon counts; per-weapon firing groups.",
+      "impact": "Not offered at runtime.",
+      "severity": "MINOR",
+      "recommendedAction": "Owner ruling on V-P6C-03, then add one action that records the aid on the existing effect/modifier authority."
     }
   ]
 }

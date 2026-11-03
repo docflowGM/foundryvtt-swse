@@ -374,7 +374,7 @@ test('CORPUS: each executable stock group arms, attacks at its printed total, an
     }
   }
   assert.deepEqual(failures, []);
-  assert.equal(proven.length, 260, 'the corpus-wide count of offline-executable stock groups');
+  assert.equal(proven.length, 261, 'the corpus-wide count of offline-executable stock groups (260 single-operator + 1 established battery)');
   setPolicy(undefined);
 });
 
@@ -383,9 +383,9 @@ test('COVERAGE REPORT: current, and its executable counts are exactly what the C
   execFileSync(process.execPath, ['tools/audits/vehicles/build-stock-weapon-coverage.mjs', '--check']);
   const { readFileSync } = await import('node:fs');
   const cov = JSON.parse(readFileSync('data/audits/vehicles/stock-weapon-coverage.json', 'utf8'));
-  assert.deepEqual([cov.totals.vehicles, cov.totals.groups, cov.totals.offlineExecutableGroups, cov.totals.vehiclesWithOfflineExecutableGroup, cov.totals.liveVerifiedVehicles], [429, 846, 260, 232, 0]);
+  assert.deepEqual([cov.totals.vehicles, cov.totals.groups, cov.totals.offlineExecutableGroups, cov.totals.vehiclesWithOfflineExecutableGroup, cov.totals.liveVerifiedVehicles], [429, 846, 261, 233, 0]);
   const exec = cov.vehicles.flatMap(v => v.groups.filter(g => g.offlineExecutable));
-  assert.equal(exec.length, 260);
+  assert.equal(exec.length, 261);
   for (const g of cov.vehicles.flatMap(v => v.groups)) {
     assert.equal(g.liveVerified, false);
     if (!g.offlineExecutable) { assert.ok(g.refusals.length > 0, g.groupKey + ' has a named refusal'); assert.equal(g.attackReadiness, 'REFUSED'); }
