@@ -102,8 +102,10 @@
       "tableBaseWeightKg": 10,
       "correctCredits": 5000,
       "sharedSchemaQuoteCredits": 1250,
-      "correctWeightKg": 20,
-      "sharedSchemaWeightKg": 5
+      "correctWeightKg": 10,
+      "sharedSchemaWeightKg": 5,
+      "preOfficialErrataWeightAssumptionKg": 20,
+      "sourceWeightCorrection": "Core official October 2008 errata p186: Small accessory weight uses 2/costFactor; Small CF 2 gives x1."
     },
     "otherImpactedDomains": [
       "appendages",
@@ -119,5 +121,11 @@
     "Use printed factor map and fail closed on unsupported sizes",
     "Test Garage, PC chargen, follower and Store quotes including actor wallet/costs",
     "Do not implement ad hoc per-part price overrides"
-  ]
+  ],
+  "officialErrata": {
+    "authority": "data/audits/droids/droid-component-official-errata-authority-001.json",
+    "costFactorForPrice": "Table 11-2 unchanged",
+    "accessoryWeightFactorForSmallAndSmaller": "2/sizeCostFactor",
+    "unresolvedSgdAccessoryHostScopes": true
+  }
 }
