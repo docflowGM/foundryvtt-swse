@@ -1,0 +1,1210 @@
+{
+  "schema": "swse.droids.sgd-errata-accessory-host-review/v1",
+  "date": "2026-11-03",
+  "sprint": "ERRATA-SGD-HOST-002",
+  "branch": "audit/droid-publication-census-2026-10-29",
+  "authorities": {
+    "sgd": "Original supplied Scavenger's Guide to Droids PDF, printed pp51-62",
+    "core": "Wizards official Saga errata Oct 2008 p186 accessory weight",
+    "priorOverlay": "data/audits/droids/droid-component-official-errata-authority-001.json",
+    "baseline": "data/audits/droids/component-122-identity-source-coverage.json"
+  },
+  "classificationPolicy": {
+    "integratedChassis": "Accessory printed as or installed into droid chassis/shell/armor: qualifies for errata Small-or-smaller accessory weight; a selected original subsystem may differ.",
+    "separateLocomotion": "Explicit SGD Locomotion category retained as locomotion, not automatically an accessory for the Core errata.",
+    "appendagePossession": "SGD p51 appendage-attached and carried equipment are possessions, not droid installed systems; portable/handheld weight must be distinguished from accessory-weight correction applicability.",
+    "unresolvedHost": "Fail closed for errata formula where original source does not establish integration or separates possession variants."
+  },
+  "counts": {
+    "reviewed": 15,
+    "errataEligibleChassis": 10,
+    "notAccessoryCategoryLocomotion": 3,
+    "hostOrVariantScopeHeld": 2,
+    "priorHoldPromotions": 0,
+    "productionChanges": 0,
+    "foundryCertifications": 0
+  },
+  "records": [
+    {
+      "canonicalId": "droid-burrower-drive",
+      "name": "Burrower Drive",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 52,
+          "pdfPage1Based": 53,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        }
+      ],
+      "tableSubcategory": "LOCOMOTION",
+      "host": {
+        "classification": "INTEGRATED_LOCOMOTION_DRIVE",
+        "sourceConfidence": "SOURCE_HOST_REVIEWED",
+        "reason": "Printed Table 3-2 places it explicitly under Locomotion, and page 52 introduces these as variations/add-ons to locomotion systems."
+      },
+      "published": {
+        "credits": "200 * sizeCostFactor * selectedSpeedSquared",
+        "weightFormulaBaseKg": 50,
+        "weightFormulaBaseKgPerShieldSR": null,
+        "normalSizeCostFactor": {
+          "fine": 20,
+          "diminutive": 10,
+          "tiny": 5,
+          "small": 2,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        }
+      },
+      "officialErrata": {
+        "accessoryWeightEligibility": "EXCLUDE_FROM_ACCESSORY_ERRATA",
+        "sourcePrintedPage": 186,
+        "correctedFactorBySize": {
+          "fine": 0.1,
+          "diminutive": 0.2,
+          "tiny": 0.4,
+          "small": 1,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        },
+        "examples": {
+          "smallKg": 100,
+          "tinyKg": 250,
+          "mediumKg": 50,
+          "largeKg": 100,
+          "priorSmallUsingPrintedFactorKg": 100
+        },
+        "formula": "baseWeight * original sizeCostFactor",
+        "priceFormulaUnchanged": true
+      },
+      "installation": {
+        "allowedPostCreationLedger": "installed locomotion state / approved chassis subsystem",
+        "gmOverrideNotCanonical": true,
+        "guards": "Use locomotion cost factor for printed weight; do not relabel this drive as a Miscellaneous Droid Accessory."
+      },
+      "verdict": {
+        "sourceHostAndWeightScope": "CLASSIFIED",
+        "completeMechanicalPassNotPromoted": true,
+        "productionCertified": false,
+        "appParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-gyroscopic-stabilizers",
+      "name": "Gyroscopic Stabilizers",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 52,
+          "pdfPage1Based": 53,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        }
+      ],
+      "tableSubcategory": "LOCOMOTION",
+      "host": {
+        "classification": "INTEGRATED_LOCOMOTION_STABILITY",
+        "sourceConfidence": "SOURCE_HOST_REVIEWED",
+        "reason": "Printed table groups this integrated stability system as Locomotion; integration alone does not convert its printed category to Accessory."
+      },
+      "published": {
+        "credits": "2 * sizeCostFactor * selectedSpeedSquared",
+        "weightFormulaBaseKg": 4,
+        "weightFormulaBaseKgPerShieldSR": null,
+        "normalSizeCostFactor": {
+          "fine": 20,
+          "diminutive": 10,
+          "tiny": 5,
+          "small": 2,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        }
+      },
+      "officialErrata": {
+        "accessoryWeightEligibility": "EXCLUDE_FROM_ACCESSORY_ERRATA",
+        "sourcePrintedPage": 186,
+        "correctedFactorBySize": {
+          "fine": 0.1,
+          "diminutive": 0.2,
+          "tiny": 0.4,
+          "small": 1,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        },
+        "examples": {
+          "smallKg": 8,
+          "tinyKg": 20,
+          "mediumKg": 4,
+          "largeKg": 8,
+          "priorSmallUsingPrintedFactorKg": 8
+        },
+        "formula": "baseWeight * original sizeCostFactor",
+        "priceFormulaUnchanged": true
+      },
+      "installation": {
+        "allowedPostCreationLedger": "installed locomotion state / approved chassis subsystem",
+        "gmOverrideNotCanonical": true,
+        "guards": "Preserve +5 stability scope and Extra Legs stacking; accessory-weight reinterpretation not licensed."
+      },
+      "verdict": {
+        "sourceHostAndWeightScope": "CLASSIFIED",
+        "completeMechanicalPassNotPromoted": true,
+        "productionCertified": false,
+        "appParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-underwater-drive",
+      "name": "Underwater Drive",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 52,
+          "pdfPage1Based": 53,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        }
+      ],
+      "tableSubcategory": "LOCOMOTION",
+      "host": {
+        "classification": "INTEGRATED_SWIM_DRIVE",
+        "sourceConfidence": "SOURCE_HOST_REVIEWED",
+        "reason": "Explicit locomotion table group and description of an installed water-propulsion drive."
+      },
+      "published": {
+        "credits": "20 * sizeCostFactor * selectedSpeedSquared",
+        "weightFormulaBaseKg": 10,
+        "weightFormulaBaseKgPerShieldSR": null,
+        "normalSizeCostFactor": {
+          "fine": 20,
+          "diminutive": 10,
+          "tiny": 5,
+          "small": 2,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        }
+      },
+      "officialErrata": {
+        "accessoryWeightEligibility": "EXCLUDE_FROM_ACCESSORY_ERRATA",
+        "sourcePrintedPage": 186,
+        "correctedFactorBySize": {
+          "fine": 0.1,
+          "diminutive": 0.2,
+          "tiny": 0.4,
+          "small": 1,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        },
+        "examples": {
+          "smallKg": 20,
+          "tinyKg": 50,
+          "mediumKg": 10,
+          "largeKg": 20,
+          "priorSmallUsingPrintedFactorKg": 20
+        },
+        "formula": "baseWeight * original sizeCostFactor",
+        "priceFormulaUnchanged": true
+      },
+      "installation": {
+        "allowedPostCreationLedger": "installed locomotion state / approved chassis subsystem",
+        "gmOverrideNotCanonical": true,
+        "guards": "Water-world factory inclusion context is not universal free purchase."
+      },
+      "verdict": {
+        "sourceHostAndWeightScope": "CLASSIFIED",
+        "completeMechanicalPassNotPromoted": true,
+        "productionCertified": false,
+        "appParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-laminanium-plating",
+      "name": "Laminanium Plating",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 54,
+          "pdfPage1Based": 55,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        }
+      ],
+      "tableSubcategory": "ARMOR",
+      "host": {
+        "classification": "CHASSIS_BUILT_IN_ARMOR",
+        "sourceConfidence": "SOURCE_HOST_REVIEWED",
+        "reason": "Table 3-1 identifies typed built-in armor; Core accessory treatment includes built-in armor. Armor remains an integrated chassis part."
+      },
+      "published": {
+        "credits": "light=3000*sizeCostFactor; heavy=20000*sizeCostFactor",
+        "weightFormulaBaseKg": 15,
+        "weightFormulaBaseKgPerShieldSR": null,
+        "normalSizeCostFactor": {
+          "fine": 20,
+          "diminutive": 10,
+          "tiny": 5,
+          "small": 2,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        }
+      },
+      "officialErrata": {
+        "accessoryWeightEligibility": "APPLY_ACCESSORY_WEIGHT_ERRATA",
+        "sourcePrintedPage": 186,
+        "correctedFactorBySize": {
+          "fine": 0.1,
+          "diminutive": 0.2,
+          "tiny": 0.4,
+          "small": 1,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        },
+        "examples": {
+          "smallKg": 15,
+          "tinyKg": 6,
+          "mediumKg": 15,
+          "largeKg": 30,
+          "priorSmallUsingPrintedFactorKg": 30
+        },
+        "formula": "baseWeight * (size <= Small ? 2/sizeCostFactor : sizeCostFactor)",
+        "priceFormulaUnchanged": true
+      },
+      "installation": {
+        "allowedPostCreationLedger": "system.installedSystems",
+        "gmOverrideNotCanonical": true,
+        "guards": "Light/heavy variants retain separate Reflex/Max Dex/availability; do not create healing without printed regeneration values."
+      },
+      "verdict": {
+        "sourceHostAndWeightScope": "CLASSIFIED",
+        "completeMechanicalPassNotPromoted": true,
+        "productionCertified": false,
+        "appParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-collapsible-construction",
+      "name": "Collapsible Construction",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 55,
+          "pdfPage1Based": 56,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        }
+      ],
+      "tableSubcategory": "ACCESSORY",
+      "host": {
+        "classification": "CHASSIS_INTEGRATED_FRAME",
+        "sourceConfidence": "SOURCE_HOST_REVIEWED",
+        "reason": "Intrinsic structural modification permits shutdown compression by a size category; not equipment carried in a hand or mounted on a separate appendage."
+      },
+      "published": {
+        "credits": "2000*sizeCostFactor",
+        "weightFormulaBaseKg": 10,
+        "weightFormulaBaseKgPerShieldSR": null,
+        "normalSizeCostFactor": {
+          "fine": 20,
+          "diminutive": 10,
+          "tiny": 5,
+          "small": 2,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        }
+      },
+      "officialErrata": {
+        "accessoryWeightEligibility": "APPLY_ACCESSORY_WEIGHT_ERRATA",
+        "sourcePrintedPage": 186,
+        "correctedFactorBySize": {
+          "fine": 0.1,
+          "diminutive": 0.2,
+          "tiny": 0.4,
+          "small": 1,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        },
+        "examples": {
+          "smallKg": 10,
+          "tinyKg": 4,
+          "mediumKg": 10,
+          "largeKg": 20,
+          "priorSmallUsingPrintedFactorKg": 20
+        },
+        "formula": "baseWeight * (size <= Small ? 2/sizeCostFactor : sizeCostFactor)",
+        "priceFormulaUnchanged": true
+      },
+      "installation": {
+        "allowedPostCreationLedger": "system.installedSystems",
+        "gmOverrideNotCanonical": true,
+        "guards": "Compress only on shutdown; reactivation is a standard action."
+      },
+      "verdict": {
+        "sourceHostAndWeightScope": "CLASSIFIED",
+        "completeMechanicalPassNotPromoted": true,
+        "productionCertified": false,
+        "appParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-courier-compartments",
+      "name": "Courier Compartments",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 56,
+          "pdfPage1Based": 57,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        }
+      ],
+      "tableSubcategory": "ACCESSORY",
+      "host": {
+        "classification": "CHASSIS_EMBEDDED_STORAGE",
+        "sourceConfidence": "SOURCE_HOST_REVIEWED",
+        "reason": "Printed description explicitly says compartments installed in the chassis, with specific torso, head, arm-or-leg locations."
+      },
+      "published": {
+        "credits": "200 credits flat",
+        "weightFormulaBaseKg": 2,
+        "weightFormulaBaseKgPerShieldSR": null,
+        "normalSizeCostFactor": {
+          "fine": 20,
+          "diminutive": 10,
+          "tiny": 5,
+          "small": 2,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        }
+      },
+      "officialErrata": {
+        "accessoryWeightEligibility": "APPLY_ACCESSORY_WEIGHT_ERRATA",
+        "sourcePrintedPage": 186,
+        "correctedFactorBySize": {
+          "fine": 0.1,
+          "diminutive": 0.2,
+          "tiny": 0.4,
+          "small": 1,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        },
+        "examples": {
+          "smallKg": 2,
+          "tinyKg": 0.8,
+          "mediumKg": 2,
+          "largeKg": 4,
+          "priorSmallUsingPrintedFactorKg": 4
+        },
+        "formula": "baseWeight * (size <= Small ? 2/sizeCostFactor : sizeCostFactor)",
+        "priceFormulaUnchanged": true
+      },
+      "installation": {
+        "allowedPostCreationLedger": "system.installedSystems",
+        "gmOverrideNotCanonical": true,
+        "guards": "Four placement locations, not four different size formulas; selected contents and toaster are not included in base cost."
+      },
+      "verdict": {
+        "sourceHostAndWeightScope": "CLASSIFIED",
+        "completeMechanicalPassNotPromoted": true,
+        "productionCertified": false,
+        "appParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-electric-defense-grid",
+      "name": "Electric Defense Grid",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 57,
+          "pdfPage1Based": 58,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        }
+      ],
+      "tableSubcategory": "ACCESSORY",
+      "host": {
+        "classification": "ARMOR_OR_OUTER_SHELL_INSTALLED_GRID",
+        "sourceConfidence": "SOURCE_HOST_REVIEWED",
+        "reason": "Printed source explicitly installs the grid on top of or as part of a droid's armor or outer shell."
+      },
+      "published": {
+        "credits": "3000*sizeCostFactor",
+        "weightFormulaBaseKg": 100,
+        "weightFormulaBaseKgPerShieldSR": null,
+        "normalSizeCostFactor": {
+          "fine": 20,
+          "diminutive": 10,
+          "tiny": 5,
+          "small": 2,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        }
+      },
+      "officialErrata": {
+        "accessoryWeightEligibility": "APPLY_ACCESSORY_WEIGHT_ERRATA",
+        "sourcePrintedPage": 186,
+        "correctedFactorBySize": {
+          "fine": 0.1,
+          "diminutive": 0.2,
+          "tiny": 0.4,
+          "small": 1,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        },
+        "examples": {
+          "smallKg": 100,
+          "tinyKg": 40,
+          "mediumKg": 100,
+          "largeKg": 200,
+          "priorSmallUsingPrintedFactorKg": 200
+        },
+        "formula": "baseWeight * (size <= Small ? 2/sizeCostFactor : sizeCostFactor)",
+        "priceFormulaUnchanged": true
+      },
+      "installation": {
+        "allowedPostCreationLedger": "system.installedSystems",
+        "gmOverrideNotCanonical": true,
+        "guards": "Automatic 5 energy damage only when a qualifying non-energy melee attack damages the droid."
+      },
+      "verdict": {
+        "sourceHostAndWeightScope": "CLASSIFIED",
+        "completeMechanicalPassNotPromoted": true,
+        "productionCertified": false,
+        "appParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-hidden-holster",
+      "name": "Hidden Holster",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 57,
+          "pdfPage1Based": 58,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        }
+      ],
+      "tableSubcategory": "ACCESSORY",
+      "host": {
+        "classification": "EMBEDDED_LEG_HOUSING",
+        "sourceConfidence": "SOURCE_HOST_REVIEWED",
+        "reason": "Printed 'installed in a droid's leg' describes a housing integrated inside the limb, distinct from a handheld holster attached outside the appendage."
+      },
+      "published": {
+        "credits": "500*sizeCostFactor",
+        "weightFormulaBaseKg": 2,
+        "weightFormulaBaseKgPerShieldSR": null,
+        "normalSizeCostFactor": {
+          "fine": 20,
+          "diminutive": 10,
+          "tiny": 5,
+          "small": 2,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        }
+      },
+      "officialErrata": {
+        "accessoryWeightEligibility": "APPLY_ACCESSORY_WEIGHT_ERRATA",
+        "sourcePrintedPage": 186,
+        "correctedFactorBySize": {
+          "fine": 0.1,
+          "diminutive": 0.2,
+          "tiny": 0.4,
+          "small": 1,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        },
+        "examples": {
+          "smallKg": 2,
+          "tinyKg": 0.8,
+          "mediumKg": 2,
+          "largeKg": 4,
+          "priorSmallUsingPrintedFactorKg": 4
+        },
+        "formula": "baseWeight * (size <= Small ? 2/sizeCostFactor : sizeCostFactor)",
+        "priceFormulaUnchanged": true
+      },
+      "installation": {
+        "allowedPostCreationLedger": "system.installedSystems",
+        "gmOverrideNotCanonical": true,
+        "guards": "Stored weapon separately owned and within printed relative size limit; +1 BAB gate for Quick Draw benefit."
+      },
+      "verdict": {
+        "sourceHostAndWeightScope": "CLASSIFIED",
+        "completeMechanicalPassNotPromoted": true,
+        "productionCertified": false,
+        "appParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-holographic-image-disguiser",
+      "name": "Holographic Image Disguiser",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        }
+      ],
+      "tableSubcategory": "ACCESSORY",
+      "host": {
+        "classification": "CHASSIS_PROCESSOR_AND_PROJECTORS",
+        "sourceConfidence": "SOURCE_HOST_REVIEWED",
+        "reason": "Descriptive text specifies central processor installed in chassis and holoprojectors at body locations."
+      },
+      "published": {
+        "credits": "basic=20000*sizeCostFactor; advanced=2*basic credits",
+        "weightFormulaBaseKg": 20,
+        "weightFormulaBaseKgPerShieldSR": null,
+        "normalSizeCostFactor": {
+          "fine": 20,
+          "diminutive": 10,
+          "tiny": 5,
+          "small": 2,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        }
+      },
+      "officialErrata": {
+        "accessoryWeightEligibility": "APPLY_ACCESSORY_WEIGHT_ERRATA",
+        "sourcePrintedPage": 186,
+        "correctedFactorBySize": {
+          "fine": 0.1,
+          "diminutive": 0.2,
+          "tiny": 0.4,
+          "small": 1,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        },
+        "examples": {
+          "smallKg": 20,
+          "tinyKg": 8,
+          "mediumKg": 20,
+          "largeKg": 40,
+          "priorSmallUsingPrintedFactorKg": 40
+        },
+        "formula": "baseWeight * (size <= Small ? 2/sizeCostFactor : sizeCostFactor)",
+        "priceFormulaUnchanged": true
+      },
+      "installation": {
+        "allowedPostCreationLedger": "system.installedSystems",
+        "gmOverrideNotCanonical": true,
+        "guards": "Advanced variant has distinct price; do not assume separate advanced weight when source does not state one."
+      },
+      "verdict": {
+        "sourceHostAndWeightScope": "CLASSIFIED",
+        "completeMechanicalPassNotPromoted": true,
+        "productionCertified": false,
+        "appParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-internal-defenses",
+      "name": "Internal Defenses",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        }
+      ],
+      "tableSubcategory": "ACCESSORY",
+      "host": {
+        "classification": "CHASSIS_ACCESS_PANEL_DEFENSES",
+        "sourceConfidence": "SOURCE_HOST_REVIEWED",
+        "reason": "Built-in independently operating safeguards activate when droid maintenance/access panels are opened without permission."
+      },
+      "published": {
+        "credits": "10*sizeCostFactor",
+        "weightFormulaBaseKg": 1,
+        "weightFormulaBaseKgPerShieldSR": null,
+        "normalSizeCostFactor": {
+          "fine": 20,
+          "diminutive": 10,
+          "tiny": 5,
+          "small": 2,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        }
+      },
+      "officialErrata": {
+        "accessoryWeightEligibility": "APPLY_ACCESSORY_WEIGHT_ERRATA",
+        "sourcePrintedPage": 186,
+        "correctedFactorBySize": {
+          "fine": 0.1,
+          "diminutive": 0.2,
+          "tiny": 0.4,
+          "small": 1,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        },
+        "examples": {
+          "smallKg": 1,
+          "tinyKg": 0.4,
+          "mediumKg": 1,
+          "largeKg": 2,
+          "priorSmallUsingPrintedFactorKg": 2
+        },
+        "formula": "baseWeight * (size <= Small ? 2/sizeCostFactor : sizeCostFactor)",
+        "priceFormulaUnchanged": true
+      },
+      "installation": {
+        "allowedPostCreationLedger": "system.installedSystems",
+        "gmOverrideNotCanonical": true,
+        "guards": "Ten reactive attacks maximum and DC25 Mechanics 1-hour disabling rule."
+      },
+      "verdict": {
+        "sourceHostAndWeightScope": "CLASSIFIED",
+        "completeMechanicalPassNotPromoted": true,
+        "productionCertified": false,
+        "appParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-internal-grapple-gun",
+      "name": "Internal Grapple Gun",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        }
+      ],
+      "tableSubcategory": "ACCESSORY",
+      "host": {
+        "classification": "CHASSIS_INTERNAL_GRAPPLE_REEL",
+        "sourceConfidence": "SOURCE_HOST_REVIEWED",
+        "reason": "Description gives internal compartment holding a cord reel and a magnetic grapple launcher."
+      },
+      "published": {
+        "credits": "100*sizeCostFactor",
+        "weightFormulaBaseKg": 2,
+        "weightFormulaBaseKgPerShieldSR": null,
+        "normalSizeCostFactor": {
+          "fine": 20,
+          "diminutive": 10,
+          "tiny": 5,
+          "small": 2,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        }
+      },
+      "officialErrata": {
+        "accessoryWeightEligibility": "APPLY_ACCESSORY_WEIGHT_ERRATA",
+        "sourcePrintedPage": 186,
+        "correctedFactorBySize": {
+          "fine": 0.1,
+          "diminutive": 0.2,
+          "tiny": 0.4,
+          "small": 1,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        },
+        "examples": {
+          "smallKg": 2,
+          "tinyKg": 0.8,
+          "mediumKg": 2,
+          "largeKg": 4,
+          "priorSmallUsingPrintedFactorKg": 4
+        },
+        "formula": "baseWeight * (size <= Small ? 2/sizeCostFactor : sizeCostFactor)",
+        "priceFormulaUnchanged": true
+      },
+      "installation": {
+        "allowedPostCreationLedger": "system.installedSystems",
+        "gmOverrideNotCanonical": true,
+        "guards": "15m internal cord vs distinct external 100m magazine; standard action to fire."
+      },
+      "verdict": {
+        "sourceHostAndWeightScope": "CLASSIFIED",
+        "completeMechanicalPassNotPromoted": true,
+        "productionCertified": false,
+        "appParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-radiant-heat-element",
+      "name": "Radiant Heat Element",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 61,
+          "pdfPage1Based": 62,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        }
+      ],
+      "tableSubcategory": "ACCESSORY",
+      "host": {
+        "classification": "TORSO_INTEGRATED_HEATER",
+        "sourceConfidence": "SOURCE_HOST_REVIEWED",
+        "reason": "Described as radiating heat from the droid torso and cooking on its exterior, with no handheld variant."
+      },
+      "published": {
+        "credits": "200 credits flat",
+        "weightFormulaBaseKg": 20,
+        "weightFormulaBaseKgPerShieldSR": null,
+        "normalSizeCostFactor": {
+          "fine": 20,
+          "diminutive": 10,
+          "tiny": 5,
+          "small": 2,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        }
+      },
+      "officialErrata": {
+        "accessoryWeightEligibility": "APPLY_ACCESSORY_WEIGHT_ERRATA",
+        "sourcePrintedPage": 186,
+        "correctedFactorBySize": {
+          "fine": 0.1,
+          "diminutive": 0.2,
+          "tiny": 0.4,
+          "small": 1,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        },
+        "examples": {
+          "smallKg": 20,
+          "tinyKg": 8,
+          "mediumKg": 20,
+          "largeKg": 40,
+          "priorSmallUsingPrintedFactorKg": 40
+        },
+        "formula": "baseWeight * (size <= Small ? 2/sizeCostFactor : sizeCostFactor)",
+        "priceFormulaUnchanged": true
+      },
+      "installation": {
+        "allowedPostCreationLedger": "system.installedSystems",
+        "gmOverrideNotCanonical": true,
+        "guards": "1d4 to creatures ending turn adjacent, and 1 HP to operating droid every turn at maximum setting."
+      },
+      "verdict": {
+        "sourceHostAndWeightScope": "CLASSIFIED",
+        "completeMechanicalPassNotPromoted": true,
+        "productionCertified": false,
+        "appParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-silence-bubble-generator",
+      "name": "Silence-Bubble Generator",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 62,
+          "pdfPage1Based": 63,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        }
+      ],
+      "tableSubcategory": "ACCESSORY",
+      "host": {
+        "classification": "DROID_CENTERED_GENERATOR_HOUSING_UNSPECIFIED",
+        "sourceConfidence": "HOLD_FOR_CONFIGURATION",
+        "reason": "The system projects a bubble centered on a droid but the description does not specify where the apparatus is physically mounted. The general installation default does not prove a chassis-integrated host in every offered configuration."
+      },
+      "published": {
+        "credits": "3500 credits flat",
+        "weightFormulaBaseKg": 20,
+        "weightFormulaBaseKgPerShieldSR": null,
+        "normalSizeCostFactor": {
+          "fine": 20,
+          "diminutive": 10,
+          "tiny": 5,
+          "small": 2,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        }
+      },
+      "officialErrata": {
+        "accessoryWeightEligibility": "HOLD_HOST_SCOPE",
+        "sourcePrintedPage": 186,
+        "correctedFactorBySize": {
+          "fine": 0.1,
+          "diminutive": 0.2,
+          "tiny": 0.4,
+          "small": 1,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        },
+        "examples": {
+          "smallKg": null,
+          "tinyKg": null,
+          "mediumKg": 20,
+          "largeKg": 40,
+          "priorSmallUsingPrintedFactorKg": 40
+        },
+        "formula": "UNRESOLVED_UNTIL_HOST_OR_VARIANT_ADJUDICATED",
+        "priceFormulaUnchanged": true
+      },
+      "installation": {
+        "allowedPostCreationLedger": "UNRESOLVED; do not auto-install",
+        "gmOverrideNotCanonical": true,
+        "guards": "Do not force system.installedSystems without actual integration authority; conditional Small mass is 20kg under errata and 40kg with unadjusted printed factor."
+      },
+      "verdict": {
+        "sourceHostAndWeightScope": "HOLD_SCOPE",
+        "completeMechanicalPassNotPromoted": true,
+        "productionCertified": false,
+        "appParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-shield-expansion-module",
+      "name": "Shield Expansion Module",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 62,
+          "pdfPage1Based": 63,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        }
+      ],
+      "tableSubcategory": "SHIELD_GENERATOR",
+      "host": {
+        "classification": "CHASSIS_INSTALLED_SHIELD_PROJECTOR",
+        "sourceConfidence": "SOURCE_HOST_REVIEWED",
+        "reason": "Prose explicitly calls it an accessory installed on a droid with shield generator; it expands an adjacent square, so it is chassis-integrated even though placed in a separate table subgroup."
+      },
+      "published": {
+        "credits": "50*currentInstalledShieldSR*sizeCostFactor",
+        "weightFormulaBaseKg": null,
+        "weightFormulaBaseKgPerShieldSR": 2,
+        "normalSizeCostFactor": {
+          "fine": 20,
+          "diminutive": 10,
+          "tiny": 5,
+          "small": 2,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        }
+      },
+      "officialErrata": {
+        "accessoryWeightEligibility": "APPLY_ACCESSORY_WEIGHT_ERRATA",
+        "sourcePrintedPage": 186,
+        "correctedFactorBySize": {
+          "fine": 0.1,
+          "diminutive": 0.2,
+          "tiny": 0.4,
+          "small": 1,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        },
+        "examples": {
+          "smallKg": 10,
+          "tinyKg": 4,
+          "mediumKg": 10,
+          "largeKg": 20,
+          "priorSmallUsingPrintedFactorKg": 20
+        },
+        "formula": "baseWeight * (size <= Small ? 2/sizeCostFactor : sizeCostFactor)",
+        "priceFormulaUnchanged": true
+      },
+      "installation": {
+        "allowedPostCreationLedger": "system.installedSystems",
+        "gmOverrideNotCanonical": true,
+        "guards": "Shield SR must come from installed generator, and recipient must remain in selected adjacent square."
+      },
+      "verdict": {
+        "sourceHostAndWeightScope": "CLASSIFIED",
+        "completeMechanicalPassNotPromoted": true,
+        "productionCertified": false,
+        "appParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "canonicalId": "droid-micro-shield",
+      "name": "Micro Shield",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "method": "Uploaded SGD PDF render + page text cross-check"
+        }
+      ],
+      "tableSubcategory": "ACCESSORY",
+      "host": {
+        "classification": "APPENDAGE_ATTACHED_OR_HANDHELD",
+        "sourceConfidence": "HOLD_FOR_CONFIGURATION",
+        "reason": "The device attaches to a droid appendage, and a separate handheld model exists. SGD p51 explicitly classifies attached-to-appendage and carried accessories as possessions rather than chassis systems."
+      },
+      "published": {
+        "credits": "installed model=600*sizeCostFactor; handheld=400 flat",
+        "weightFormulaBaseKg": 10,
+        "weightFormulaBaseKgPerShieldSR": null,
+        "normalSizeCostFactor": {
+          "fine": 20,
+          "diminutive": 10,
+          "tiny": 5,
+          "small": 2,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        }
+      },
+      "officialErrata": {
+        "accessoryWeightEligibility": "HOLD_HOST_SCOPE",
+        "sourcePrintedPage": 186,
+        "correctedFactorBySize": {
+          "fine": 0.1,
+          "diminutive": 0.2,
+          "tiny": 0.4,
+          "small": 1,
+          "medium": 1,
+          "large": 2,
+          "huge": 5,
+          "gargantuan": 10,
+          "colossal": 20
+        },
+        "examples": {
+          "smallKg": null,
+          "tinyKg": null,
+          "mediumKg": 10,
+          "largeKg": 20,
+          "priorSmallUsingPrintedFactorKg": 20
+        },
+        "formula": "UNRESOLVED_UNTIL_HOST_OR_VARIANT_ADJUDICATED",
+        "priceFormulaUnchanged": true
+      },
+      "installation": {
+        "allowedPostCreationLedger": "UNRESOLVED; do not auto-install",
+        "gmOverrideNotCanonical": true,
+        "guards": "Never normalize either form as a chassis-installed system; 10*factor listed mass for installed model is not a certified handheld weight; determine whether errata accessory-weight qualifier includes possession configuration."
+      },
+      "verdict": {
+        "sourceHostAndWeightScope": "HOLD_SCOPE",
+        "completeMechanicalPassNotPromoted": true,
+        "productionCertified": false,
+        "appParity": false,
+        "foundryRuntime": false
+      }
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "SGDHOST-W01",
+      "name": "Small shield expansion SR5",
+      "expectedCredits": 500,
+      "expectedWeightKg": 10,
+      "notes": "Cost 50xSRxCF=500; mass 2xSRx(2/CF)=10; selected SR must be actual installed SR."
+    },
+    {
+      "id": "SGDHOST-W02",
+      "name": "Small electric defense grid",
+      "expectedCredits": 6000,
+      "expectedWeightKg": 100,
+      "notes": "Base 3000*2 price; base 100*1 errata weight."
+    },
+    {
+      "id": "SGDHOST-W03",
+      "name": "Tiny courier compartments",
+      "expectedCredits": 200,
+      "expectedWeightKg": 0.8,
+      "notes": "Flat credit price; 2kg base times (2/5)=0.4."
+    },
+    {
+      "id": "SGDHOST-W04",
+      "name": "Small underwater drive",
+      "expectedWeightKg": 20,
+      "notes": "Locomotion category weight 10*sizeFactor2, not accessory errata 10kg."
+    },
+    {
+      "id": "SGDHOST-W05",
+      "name": "Small micro shield appendage possession",
+      "expectedWeightKg": "HOLD_NO_SINGLE_ASSERTION",
+      "notes": "Printed normal 20kg vs accessory errata eligible candidate 10kg; handheld weight absent; do not claim installedSystems host."
+    },
+    {
+      "id": "SGDHOST-W06",
+      "name": "Small silence-bubble generator",
+      "expectedWeightKg": "HOLD_UNTIL_HOST",
+      "notes": "Conditional installed accessory=20kg vs literal pre-errata factor=40kg; housing not described."
+    }
+  ],
+  "notes": [
+    "This source-only tranche does not recertify earlier full mechanical PASS or promote any of the 23 prior HOLD cases.",
+    "Errata weight correction does not change listed credit price factors or fixed listed weights.",
+    "Actual post-creation item encumbrance is distinct from starting droid component encumbrance exclusion in official errata.",
+    "No droid production catalog, compendium, actor or application files modified."
+  ]
+}
