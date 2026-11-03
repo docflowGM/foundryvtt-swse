@@ -212,7 +212,13 @@ async function resolveOpportunityChoice(weapon, rollOptions) {
  */
 function withCanonicalWeaponRuntime(weapon, rollOptions, actor = null) {
   try {
-    const weaponRuntime = resolveAttackWeaponRuntime(weapon, rollOptions);
+    // Infiltrator's class stun is not a native weapon profile. Resolve
+    // the selected canonical unarmed form under its normal weapon mode,
+    // then preserve the declared stun mode in the actual attack context.
+    const declaredClassStun=rollOptions.damageMode==='stun'
+      && canDeclareInfiltratorUnarmedStun(actor,weapon);
+    const weaponRuntime = resolveAttackWeaponRuntime(weapon,
+      declaredClassStun ? { ...rollOptions,damageMode:'normal' } : rollOptions);
     if (weaponRuntime.source !== 'canonical') return { rollOptions };
     // Phase 5D-C/5D-D: refuse before any cost if the selected damage mode or range band does not exist for the selected form
     // Phase 5D-E: a native-stun form deals stun damage only (structured stun capability) -- the effective mode is what is
