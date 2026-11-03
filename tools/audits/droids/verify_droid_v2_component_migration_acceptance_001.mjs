@@ -1,0 +1,40 @@
+#!/usr/bin/env node
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const load=p=>JSON.parse(readFileSync(new URL('../../../'+p,import.meta.url),'utf8'));
+const f=load('data/audits/droids/droid-v2-component-migration-acceptance-001.json');
+const err=load('data/audits/droids/droid-component-official-errata-authority-001.json');
+const host=load('data/audits/droids/droid-component-sgd-errata-host-002.json');
+const ledger=load('data/audits/droids/component-mechanical-certification-ledger.json');
+assert.equal(f.cases.length,26);
+assert.equal(new Set(f.cases.map(x=>x.id)).size,26);
+assert.equal(f.codeSnapshots.length,6);
+assert.equal(host.counts.reviewed,15);
+assert.equal(host.counts.accessoryWeightErrataApplicable,12);
+assert.equal(err.corrections.synchronizedFireCircuits.errataReplacementTotalBonus,5);
+assert.equal(ledger.counts.totalSourceMechanicalCertified,99);
+assert.equal(ledger.counts.sourceMechanicsOnHold,23);
+const one=id=>{const x=f.cases.find(y=>y.id===id);assert(x,'missing '+id);return x};
+assert.equal(one('F06').expected.priceCredits,5000);
+assert.equal(one('F06').expected.weightKg,10);
+assert.equal(one('F07').expected.weightKg,0.8);
+assert.equal(one('F08').expected.priceCredits,200);
+assert.equal(one('F09').expected.weightKg,20);
+assert.equal(one('F11').expected.priceCredits,500);
+assert.equal(one('F12').expected.ledger,'POSSESSION_NOT_INSTALLED_SYSTEM');
+assert.equal(one('F13').expected.weightKg,'SOURCE_UNLISTED');
+assert.equal(one('F14').expected.installedSystems,'BLOCK_UNLESS_HOST_AUTHORIZED');
+assert.equal(one('F15').expected.totalAidBonus,5);
+assert.equal(one('F16').expected.storeCashBack,false);
+assert.equal(one('F20').expected.ledger,'SHIP_OR_FACILITY_NOT_DROID_CHASSIS');
+assert.equal(one('F21').expected.carryingCapacityAddedKg,0);
+assert.equal(one('F22').expected.carryingCapacityAddedKg,2);
+assert.equal(one('F23').expected.creditDebit,0);
+assert.equal(one('F24').expected.garageCredits,one('F24').expected.storeCredits);
+for(const x of f.cases){
+ assert.equal(x.sourceTestStatus,'SPECIFICATION_ONLY');
+ for(const app of ['garage','chargen','follower','store','foundryV13'])assert.equal(x[app],'NOT_TESTED');
+}
+assert.equal(f.counts.executedApplicationChecks,0);
+assert.equal(f.counts.executedFoundryChecks,0);
+console.log('PASS V2 quote-host acceptance specification: 26 unique source expectations, 0 applications or Foundry certified');
