@@ -67,14 +67,16 @@
       "context": "Garage offer/quote/install",
       "sourceExpected": {
         "credits": 5000,
-        "weightKg": 20
+        "weightKg": 10,
+        "preErrataWeightAssumptionKg": 20,
+        "errataAuthority": "Core official p186; cf weight=2/2=1"
       },
       "currentStatic": {
         "credits": 1250,
         "weightKg": 5,
         "derivation": "droid-part-schema costFactor 0.5 rather than printed 2"
       },
-      "check": "All affected apps quote 5000 and 20kg before permitted discounts; correct actor debit and installed ledger.",
+      "check": "All affected applications quote Small SR5 at 5000 credits and 10 kg under official errata; validate actor debit and installed ledger.",
       "readiness": "SPECIFICATION_ONLY_NOT_EXECUTED",
       "applicationStatus": {
         "garage": "NOT_TESTED",
