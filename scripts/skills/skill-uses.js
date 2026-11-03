@@ -13,6 +13,7 @@ import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
+import { rollMasterSaboteurMechanicsCheck, masterSaboteurRerollSummary } from "/systems/foundryvtt-swse/scripts/engine/combat/class-master-saboteur-reroll.js";
 
 // ============================================================================
 // JUMP SKILL (STR)
@@ -478,7 +479,11 @@ export class MechanicsUses {
       dc += 5;
     }
 
-    const roll = await RollEngine.safeRoll('1d20');
+    const masterSaboteurRoll=await rollMasterSaboteurMechanicsCheck({
+      actor,application:'disable-device',rollD20:()=>RollEngine.safeRoll('1d20')
+    });
+    const roll=masterSaboteurRoll.roll;
+    const masterSaboteur=masterSaboteurRerollSummary(masterSaboteurRoll);
     const checkResult = roll.total + mechanicsBonus;
     const success = checkResult >= dc;
     const springsOrFails = (dc - checkResult) >= 5;
@@ -486,7 +491,7 @@ export class MechanicsUses {
     await SWSEChat.postRoll({
       roll,
       actor: actor,
-      flavor: `<strong>Disable Device</strong> - ${complexity} ${deviceType}<br>Base DC: ${dcByComplexity[complexity.toLowerCase()]}<br>${leaveNoTrace ? 'No Trace Modifier: +5<br>' : ''}Final DC: ${dc}<br>Mechanics Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action<br>Required: Security Kit${springsOrFails ? '<br><strong style="color:red">TRAP SPRUNG/DEVICE FAILS!</strong>' : ''}`
+      flavor: `<strong>Disable Device</strong> - ${complexity} ${deviceType}<br>Base DC: ${dcByComplexity[complexity.toLowerCase()]}<br>${leaveNoTrace ? 'No Trace Modifier: +5<br>' : ''}Final DC: ${dc}<br>${masterSaboteur ? `Master Saboteur d20: ${masterSaboteur.original} → ${masterSaboteur.reroll} (kept ${masterSaboteur.selected})<br>` : ''}Mechanics Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action<br>Required: Security Kit${springsOrFails ? '<br><strong style="color:red">TRAP SPRUNG/DEVICE FAILS!</strong>' : ''}`
     });
 
     SWSELogger.log(
@@ -503,6 +508,7 @@ export class MechanicsUses {
       leaveNoTrace: leaveNoTrace,
       action: 'Full-Round Action',
       required: 'Security Kit',
+      masterSaboteur,
       springsOrFails: springsOrFails,
       message: success
         ? `Disables ${deviceType} device`
@@ -538,7 +544,11 @@ export class MechanicsUses {
       actionName = `Booby Trap (${explosivePower} damage)`;
     }
 
-    const roll = await RollEngine.safeRoll('1d20');
+    const masterSaboteurRoll=await rollMasterSaboteurMechanicsCheck({
+      actor,application:'handle-explosives',rollD20:()=>RollEngine.safeRoll('1d20')
+    });
+    const roll=masterSaboteurRoll.roll;
+    const masterSaboteur=masterSaboteurRerollSummary(masterSaboteurRoll);
     const checkResult = roll.total + mechanicsBonus;
     const success = checkResult >= dc;
     const failureMargin = dc - checkResult;
@@ -546,7 +556,7 @@ export class MechanicsUses {
     await SWSEChat.postRoll({
       roll,
       actor: actor,
-      flavor: `<strong>Handle Explosives</strong> - ${actionName}<br>DC: ${dc}<br>Mechanics Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action${failureMargin >= 10 && action.toLowerCase() === 'connect' ? '<br><strong style="color:red">EXPLOSION!</strong>' : ''}${failureMargin >= 5 && action.toLowerCase() === 'disarm' ? '<br><strong style="color:red">DETONATES WHILE ADJACENT!</strong>' : ''}`
+      flavor: `<strong>Handle Explosives</strong> - ${actionName}<br>DC: ${dc}<br>${masterSaboteur ? `Master Saboteur d20: ${masterSaboteur.original} → ${masterSaboteur.reroll} (kept ${masterSaboteur.selected})<br>` : ''}Mechanics Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action${failureMargin >= 10 && action.toLowerCase() === 'connect' ? '<br><strong style="color:red">EXPLOSION!</strong>' : ''}${failureMargin >= 5 && action.toLowerCase() === 'disarm' ? '<br><strong style="color:red">DETONATES WHILE ADJACENT!</strong>' : ''}`
     });
 
     SWSELogger.log(
@@ -559,6 +569,7 @@ export class MechanicsUses {
       dc: dc,
       action: action,
       actionName: actionName,
+      masterSaboteur,
       explosion: action.toLowerCase() === 'connect' && failureMargin >= 10,
       detonates: action.toLowerCase() === 'disarm' && failureMargin >= 5,
       message: success ? `${actionName} successful` : `${actionName} failed`
