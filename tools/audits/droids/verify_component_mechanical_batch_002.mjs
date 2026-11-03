@@ -23,7 +23,11 @@ assert.equal(p.records.find(x=>x.canonicalName==='Synchronized Fire Circuits').p
 assert.equal(p.records.find(x=>x.canonicalName==='Remote Receiver').printed.price.credits,-500);
 assert.equal(p.records.find(x=>x.canonicalName==='Diagnostics Package').printed.mechanics.equipmentBonus,2);
 assert.equal(p.records.find(x=>x.canonicalName==='Secondary Battery').printed.price.credits,400);
-assert.equal(fx.cases.length,25);assert.equal(ledger.counts.totalSourceMechanicalCertified,44);
-assert.equal(ledger.counts.remainingSourceMechanicalNotYetCertified,78);
-assert.equal(new Set(ledger.certifiedIdentityIds).size,44);
-console.log('PASS MECH002: 25 unique, 19 printed-rule passes, 6 source holds, cumulative 44/122');
+assert.equal(fx.cases.length,25);assert.equal(ledger.batches.find(x=>x.id==='MECH-002')?.certifiedPrintedMechanics,19);
+assert.equal(ledger.counts.totalSourceMechanicalCertified,99);
+assert.equal(new Set(ledger.certifiedIdentityIds).size,99);
+const official=load('../../../data/audits/droids/droid-component-official-errata-authority-001.json');
+assert.equal(official.corrections.synchronizedFireCircuits.errataReplacementTotalBonus,5);
+assert.equal(official.corrections.synchronizedFireCircuits.baseBookPreErrataAidAnotherBonus,4);
+assert.equal(ledger.errataAuthority.overlayPath,'data/audits/droids/droid-component-official-errata-authority-001.json');
+console.log('PASS MECH002 historical 19 base-book PASS/6 HOLD; Synchronized Fire +4 in archival packet is superseded by official +5');
