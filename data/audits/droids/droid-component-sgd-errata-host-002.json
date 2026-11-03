@@ -11,15 +11,18 @@
   },
   "classificationPolicy": {
     "integratedChassis": "Accessory printed as or installed into droid chassis/shell/armor: qualifies for errata Small-or-smaller accessory weight; a selected original subsystem may differ.",
-    "separateLocomotion": "Explicit SGD Locomotion category retained as locomotion, not automatically an accessory for the Core errata.",
-    "appendagePossession": "SGD p51 appendage-attached and carried equipment are possessions, not droid installed systems; portable/handheld weight must be distinguished from accessory-weight correction applicability.",
-    "unresolvedHost": "Fail closed for errata formula where original source does not establish integration or separates possession variants."
+    "separateLocomotion": "Three named Locomotion-category add-ons do not inherit accessory-weight correction just because they are integrated into the droid.",
+    "appendagePossession": "A droid Accessory attached to appendage is considered a possession, NOT an installed chassis system. The printed mass of that accessory may still be subject to the official accessory-weight factor. Handheld variant must have separately supported mass.",
+    "unresolvedHost": "Do not infer installedSystems ownership from a corrected weight. Physical host/installation and handheld variant price/weight remain separately validated.",
+    "errataCategoryGate": "Official p186 changes droid ACCESSORY weight based on the printed accessory classification. Chassis integration is not a prerequisite for weight arithmetic. Source p51 independently controls whether an accessory is a chassis system or appendage-attached/carried possession."
   },
   "counts": {
     "reviewed": 15,
-    "errataEligibleChassis": 10,
-    "notAccessoryCategoryLocomotion": 3,
-    "hostOrVariantScopeHeld": 2,
+    "accessoryWeightErrataApplicable": 12,
+    "locomotionExcluded": 3,
+    "weightClassificationPending": 0,
+    "integratedSystemHostsEstablished": 10,
+    "placementOrVariantOwnershipQuestionsRemaining": 2,
     "priorHoldPromotions": 0,
     "productionChanges": 0,
     "foundryCertifications": 0
@@ -952,7 +955,7 @@
       "host": {
         "classification": "DROID_CENTERED_GENERATOR_HOUSING_UNSPECIFIED",
         "sourceConfidence": "HOLD_FOR_CONFIGURATION",
-        "reason": "The system projects a bubble centered on a droid but the description does not specify where the apparatus is physically mounted. The general installation default does not prove a chassis-integrated host in every offered configuration."
+        "reason": "The system projects a bubble centered on a droid but the description does not specify where the apparatus is physically mounted. The general installation default does not prove a chassis-integrated host in every offered configuration. Printed SGD Table 3-2 labels the item Accessory, so its listed accessory weight uses errata regardless of installation ledger state. Physical location remains unprinted."
       },
       "published": {
         "credits": "3500 credits flat",
@@ -971,7 +974,7 @@
         }
       },
       "officialErrata": {
-        "accessoryWeightEligibility": "HOLD_HOST_SCOPE",
+        "accessoryWeightEligibility": "APPLY_ACCESSORY_WEIGHT_ERRATA",
         "sourcePrintedPage": 186,
         "correctedFactorBySize": {
           "fine": 0.1,
@@ -985,22 +988,22 @@
           "colossal": 20
         },
         "examples": {
-          "smallKg": null,
-          "tinyKg": null,
+          "smallKg": 20,
+          "tinyKg": 8,
           "mediumKg": 20,
           "largeKg": 40,
           "priorSmallUsingPrintedFactorKg": 40
         },
-        "formula": "UNRESOLVED_UNTIL_HOST_OR_VARIANT_ADJUDICATED",
+        "formula": "baseWeight * (size <= Small ? 2/sizeCostFactor : sizeCostFactor) for printed accessory model; handheld variant mass must be separately sourced",
         "priceFormulaUnchanged": true
       },
       "installation": {
-        "allowedPostCreationLedger": "UNRESOLVED; do not auto-install",
+        "allowedPostCreationLedger": "NOT_AUTOMATIC; physical hosting must be established",
         "gmOverrideNotCanonical": true,
-        "guards": "Do not force system.installedSystems without actual integration authority; conditional Small mass is 20kg under errata and 40kg with unadjusted printed factor."
+        "guards": "Small accessory model weight 20kg under errata; physical mounting and actor ledger authorization must be established separately."
       },
       "verdict": {
-        "sourceHostAndWeightScope": "HOLD_SCOPE",
+        "sourceHostAndWeightScope": "WEIGHT_CLASSIFIED_HOST_OR_VARIANT_OPEN",
         "completeMechanicalPassNotPromoted": true,
         "productionCertified": false,
         "appParity": false,
@@ -1104,7 +1107,7 @@
       "host": {
         "classification": "APPENDAGE_ATTACHED_OR_HANDHELD",
         "sourceConfidence": "HOLD_FOR_CONFIGURATION",
-        "reason": "The device attaches to a droid appendage, and a separate handheld model exists. SGD p51 explicitly classifies attached-to-appendage and carried accessories as possessions rather than chassis systems."
+        "reason": "The device attaches to a droid appendage, and a separate handheld model exists. SGD p51 explicitly classifies attached-to-appendage and carried accessories as possessions rather than chassis systems. The appendage-attached device remains an accessory for published weight calculations even while classified a possession under p51. Handheld model mass is not separately printed."
       },
       "published": {
         "credits": "installed model=600*sizeCostFactor; handheld=400 flat",
@@ -1123,7 +1126,7 @@
         }
       },
       "officialErrata": {
-        "accessoryWeightEligibility": "HOLD_HOST_SCOPE",
+        "accessoryWeightEligibility": "APPLY_ACCESSORY_WEIGHT_ERRATA",
         "sourcePrintedPage": 186,
         "correctedFactorBySize": {
           "fine": 0.1,
@@ -1137,22 +1140,22 @@
           "colossal": 20
         },
         "examples": {
-          "smallKg": null,
-          "tinyKg": null,
+          "smallKg": 10,
+          "tinyKg": 4,
           "mediumKg": 10,
           "largeKg": 20,
           "priorSmallUsingPrintedFactorKg": 20
         },
-        "formula": "UNRESOLVED_UNTIL_HOST_OR_VARIANT_ADJUDICATED",
+        "formula": "baseWeight * (size <= Small ? 2/sizeCostFactor : sizeCostFactor) for printed accessory model; handheld variant mass must be separately sourced",
         "priceFormulaUnchanged": true
       },
       "installation": {
-        "allowedPostCreationLedger": "UNRESOLVED; do not auto-install",
+        "allowedPostCreationLedger": "NOT_AUTOMATIC; physical hosting must be established",
         "gmOverrideNotCanonical": true,
-        "guards": "Never normalize either form as a chassis-installed system; 10*factor listed mass for installed model is not a certified handheld weight; determine whether errata accessory-weight qualifier includes possession configuration."
+        "guards": "Small appendage-attached model: 1200 credits and 10kg corrected accessory weight, but it is NOT a chassis installedSystem. Handheld model: 400 credits, separately stated weight absent; block weight quote."
       },
       "verdict": {
-        "sourceHostAndWeightScope": "HOLD_SCOPE",
+        "sourceHostAndWeightScope": "WEIGHT_CLASSIFIED_HOST_OR_VARIANT_OPEN",
         "completeMechanicalPassNotPromoted": true,
         "productionCertified": false,
         "appParity": false,
@@ -1191,20 +1194,25 @@
     {
       "id": "SGDHOST-W05",
       "name": "Small micro shield appendage possession",
-      "expectedWeightKg": "HOLD_NO_SINGLE_ASSERTION",
-      "notes": "Printed normal 20kg vs accessory errata eligible candidate 10kg; handheld weight absent; do not claim installedSystems host."
+      "expectedWeightKg": 10,
+      "notes": "Installed-on-appendage (not chassis) model uses accessory weight: 10*(2/2)=10kg. Separate handheld version 400cr has no independently stated weight.",
+      "expectedCredits": 1200,
+      "hostClassification": "APPENDAGE_ATTACHED_POSSESSION"
     },
     {
       "id": "SGDHOST-W06",
       "name": "Small silence-bubble generator",
-      "expectedWeightKg": "HOLD_UNTIL_HOST",
-      "notes": "Conditional installed accessory=20kg vs literal pre-errata factor=40kg; housing not described."
+      "expectedWeightKg": 20,
+      "notes": "Printed Accessory category makes Small weight 20*(2/2)=20kg. Does NOT authorize installing in chassis ledger without physical host proof.",
+      "expectedCredits": 3500,
+      "hostClassification": "PLACEMENT_UNSPECIFIED"
     }
   ],
   "notes": [
     "This source-only tranche does not recertify earlier full mechanical PASS or promote any of the 23 prior HOLD cases.",
     "Errata weight correction does not change listed credit price factors or fixed listed weights.",
     "Actual post-creation item encumbrance is distinct from starting droid component encumbrance exclusion in official errata.",
-    "No droid production catalog, compendium, actor or application files modified."
+    "No droid production catalog, compendium, actor or application files modified.",
+    "Weight category and installed-host status are orthogonal: both unresolved host/variant entries still have listed accessory-model weight authority."
   ]
 }
