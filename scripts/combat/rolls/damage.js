@@ -106,7 +106,7 @@ export async function rollDamage(actor, weapon, context = {}) {
   // payload fails closed here -- never the default profile; a form with no ordinary damage is refused, not invented.
   let canonicalDamage;
   try {
-    canonicalDamage = resolveCanonicalDamage(weapon, rollContext);
+    canonicalDamage = resolveCanonicalDamage(weapon, { ...rollContext, actor });
   } catch (err) {
     if (!(err instanceof WeaponRuntimeError)) throw err;
     reportWeaponRuntimeError(err, { notify: false });
