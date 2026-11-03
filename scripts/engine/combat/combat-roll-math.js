@@ -48,6 +48,7 @@ import { resolveArmorUsageEffects } from "/systems/foundryvtt-swse/scripts/engin
 import { ResolutionContext } from "/systems/foundryvtt-swse/scripts/engine/resolution/resolution-context.js";
 import { RULES } from "/systems/foundryvtt-swse/scripts/engine/execution/rules/rule-enum.js";
 import { resolveTalentDamageContributions } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-talent-contributions.js";
+import { infiltratorUnarmedStunDice } from "/systems/foundryvtt-swse/scripts/engine/combat/class-infiltrator-unarmed-stun.js";
 import { collectSharedDamageDiceTerms } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-item-dice-contributions.js";
 import { canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
 import { criticalPostMultiplierDice } from "/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-effects.js";
@@ -1012,7 +1013,7 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
   // and passed as context.canonicalDamage, or resolved here from the carried/explicit form ids); everything below -- die
   // steps, extra dice, ability/half-level/enhancement, typed stacking, critical -- is the unchanged certified arithmetic.
   // An invalid canonical selection throws (never the Item default); a form with no ordinary damage cannot be composed.
-  const canonicalDamage = context.canonicalDamage ?? resolveCanonicalDamage(weapon, context);
+  const canonicalDamage = context.canonicalDamage ?? resolveCanonicalDamage(weapon, { ...context, actor });
   if (canonicalDamage.source === 'canonical' && (canonicalDamage.status === 'no-damage' || canonicalDamage.status === 'special')) {
     throw new WeaponRuntimeError(ERROR_CODES.NO_ORDINARY_DAMAGE, `${canonicalDamage.selection?.identityKey}/${canonicalDamage.selection?.profileId} has no ordinary damage roll (${canonicalDamage.reason})`, { ...canonicalDamage.selection, reason: canonicalDamage.reason });
   }
@@ -1042,7 +1043,11 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
   // this composition reads ONLY the canonical damageExtraWeaponDice field,
   // never damageDiceStepBonus, so a source populating both can never be
   // double-counted.
-  const extraWeaponDice = Number(optionModifiers.damageExtraWeaponDice || 0);
+  // Declared Unarmed Stun contributes extra dice of the same weapon die
+  // through the existing PRE-multiplier weapon-dice compositor.
+  const infiltratorDice = infiltratorUnarmedStunDice(actor,weapon,
+    context.damageMode ?? context.workflowContext?.attack?.damageMode ?? null);
+  const extraWeaponDice = Number(optionModifiers.damageExtraWeaponDice || 0) + infiltratorDice;
 
   // Phase 5D-I-A: weapon-declared conditional damage terms (point-blank equipment bonus, adjacent-target die) of the selected form
   const conditionalDamage = shape
@@ -1085,6 +1090,7 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
     })),
     ...(dieStepIncreases !== 0 ? [{ id: 'die-step', label: 'Die-Size Step', value: dieStepIncreases, category: 'dieStep', applied: true, stage: PRE }] : []),
     ...(extraWeaponDice !== 0 ? [{ id: 'extra-weapon-dice', label: 'Extra Weapon Dice', value: extraWeaponDice, category: 'extraWeaponDice', applied: true, stage: PRE }] : []),
+    ...(infiltratorDice ? [{ id: 'infiltrator-unarmed-stun', label: 'Unarmed Stun', value: infiltratorDice, category: 'classWeaponDice', applied: true, stage: PRE }] : []),
     ...(shape && shape.baseMultiplier > 1 ? [{ id: 'weapon-multiplier', label: 'Weapon Damage Multiplier', value: shape.baseMultiplier, category: 'weaponMultiplier', applied: true, stage: DAMAGE_STAGE.WEAPON_MULTIPLIER }] : []),
     ...talentContributions.breakdown.map((label, index) => ({ id: `talent-dice-${index}`, label, value: talentContributions.bonusDice[index] ?? null, category: 'additionalDice', applied: true, stage: POST })),
     ...otherDiceTerms.map((term, index) => ({ id: `other-dice-${index}`, label: 'Force Item / Inquisition', value: term, category: 'additionalDice', applied: true, stage: POST })),
