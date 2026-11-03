@@ -1270,5 +1270,16 @@
     "validator": "tools/audits/droids/verify_droid_component_mechanical_hold_triage_001.mjs",
     "status": "ALL_23_CLASSIFIED_NONE_PROMOTED",
     "decisionAuthority": "Printed source, then official errata; GM selections are not official source certification"
+  },
+  "v2MigrationReadiness": {
+    "specification": "data/audits/droids/droid-v2-component-migration-acceptance-001.json",
+    "validator": "tools/audits/droids/verify_droid_v2_component_migration_acceptance_001.mjs",
+    "handoff": "docs/audits/droids/droid-v2-component-authority-migration-gate.md",
+    "sourceExpectationScenarios": 26,
+    "sgdWeightAndHostExpectedCases": 137,
+    "productionImplementationAuthorized": false,
+    "applicationParityCertified": false,
+    "foundryRuntimeCertified": false,
+    "currentStatus": "SPECIFIED_NOT_IMPLEMENTED"
   }
 }
