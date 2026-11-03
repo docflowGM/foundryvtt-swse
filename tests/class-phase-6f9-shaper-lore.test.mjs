@@ -53,9 +53,20 @@ test('canonical skill roll adds Shaper Lore once, with audit evidence',()=>{
  assert.match(code,/const shaperLore = shaperLoreBonus\(actor,effectiveSkillKey,/);
  assert.match(code,/biotechDevice:options\?\.biotechDevice === true/);
  assert.match(code,/baseBonus: canonicalTotal[\s\S]{0,220}\+ shaperLore,/);
- assert.match(code,/situationalMods: \(Number\(rollResult\.modifierTotal\) \|\| 0\) \+ shaperLore/);
+ assert.match(code,/situationalMods: rollResult\.modifierTotal/);
+ assert.match(code,/classSkillBonuses: shaperLore \? \[\{name:'Shaper Lore',value:shaperLore\}\] : \[\]/);
  assert.match(code,/Shaper Lore \+\$\{shaperLore\}/);
  assert.match(code,/shaperLoreBonus: shaperLore/);
+});
+
+test('roll card presents a single named class bonus without merging it into feats or gear',()=>{
+ const renderer=source(path.join(root,'scripts/engine/rolls/swse-roll-engine.js'));
+ assert.match(renderer,/category === 'skill' && Array\.isArray\(context\?\.classSkillBonuses\)/);
+ assert.match(renderer,/context\.classSkillBonuses/);
+ assert.match(renderer,/label: this\._stripHtml\(bonus\?\.name \|\| 'Class Feature'\)/);
+ const code=source(path.join(root,'scripts/rolls/skills.js'));
+ assert.match(code,/classSkillBonuses: shaperLore \? \[\{name:'Shaper Lore',value:shaperLore\}\] : \[\]/);
+ assert.doesNotMatch(code,/situationalMods:[^\n]*\+ shaperLore/);
 });
 
 test('skill dialog exposes a context check and preview only for eligible Shapers',()=>{
