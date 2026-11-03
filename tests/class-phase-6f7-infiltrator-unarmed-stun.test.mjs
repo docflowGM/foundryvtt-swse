@@ -40,6 +40,7 @@ test('attack dialog offers Infiltrator stun, declares and validates before actio
  assert.match(ui,/damageModeChoices: buildDamageModeChoices\(weapon,actor\)/);
  const attacks=read('scripts/combat/rolls/attacks.js');
  assert.match(attacks,/const infiltratorStun = damageMode === 'stun' && canDeclareInfiltratorUnarmedStun\(actor,weapon\)/);
+ assert.match(attacks,/declaredClassStun \? \{ \.\.\.rollOptions,damageMode:'normal' \} : rollOptions/);
  assert.match(attacks,/assertAttackFormResolvable\(weaponRuntime, \{ damageMode: weaponProfileMode/);
  assert.ok(attacks.indexOf('assertAttackFormResolvable(weaponRuntime, { damageMode: weaponProfileMode')
    <attacks.indexOf('spendCoreAttackOptionCosts(actor, weapon, rollOptions)'));
