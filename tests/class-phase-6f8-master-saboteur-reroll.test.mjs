@@ -92,7 +92,7 @@ test('both Mechanics consumers use the selected better die for DC and mishap cal
  assert.match(mechanics,/const springsOrFails = \(dc - checkResult\) >= 5/);
  assert.match(mechanics,/const failureMargin = dc - checkResult/);
  assert.equal((mechanics.match(/masterSaboteurRerollSummary\(masterSaboteurRoll\)/g)||[]).length,2);
- assert.equal((mechanics.match(/masterSaboteur d20/gi)||[]).length,2);
+ assert.equal((mechanics.match(/Master Saboteur d20/g)||[]).length,2);
  assert.match(mechanics,/masterSaboteur,/);
  const juryRig=s.slice(end,s.indexOf('  /**\n   * REPAIR',end));
  assert.doesNotMatch(juryRig,/masterSaboteurRoll/);
