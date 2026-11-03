@@ -1,0 +1,1191 @@
+{
+  "schema": "swse.droids.component.acceptance-fixtures/v2",
+  "batch": "MECH-004",
+  "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+  "cases": [
+    {
+      "id": "MECH004-01",
+      "canonicalId": "droid-remote-receiver-jammer",
+      "canonicalName": "Remote Receiver Jammer",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 61,
+          "pdfPage1Based": 62,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "FIXED",
+          "credits": 2000,
+          "weightKg": 2,
+          "availability": "Military"
+        },
+        "host": "Portable backpack transmitter + handheld controller; external equipment",
+        "prerequisites": {
+          "target": "Droid with Remote Receiver, NO Backup Processor",
+          "coverage": "Extremely short; numeric range not stated"
+        },
+        "mechanics": {
+          "activate": "standard action EACH user turn",
+          "skill": "Use Computer activation roll",
+          "compare": "at start of each affected droid turn, roll >= target Will Defense",
+          "success": "Target no actions and flat-footed until start of following turn",
+          "backupProcessorImmune": true
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "HOLD",
+      "blockingQuestion": "Narrative says extremely short range but gives no numerical maximum, preventing deterministic range eligibility.",
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-02",
+      "canonicalId": "droid-remote-receiver-signal-booster",
+      "canonicalName": "Remote Receiver Signal Booster",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 61,
+          "pdfPage1Based": 62,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "FIXED",
+          "credits": 500,
+          "weightKg": 2,
+          "availability": "Licensed"
+        },
+        "host": "Installed modification to Remote Receiver",
+        "prerequisites": {
+          "requires": "Remote Receiver with external Remote Processor link"
+        },
+        "mechanics": {
+          "passiveRangeMultiplier": 1.5,
+          "boostCheck": {
+            "skill": "Use Computer",
+            "DC": 30
+          },
+          "enhancedRangeText": "further extend range up to 100% for 1 hour",
+          "durationHours": 1
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "HOLD",
+      "blockingQuestion": "Printed 50% passive extension and up-to-100% temporary extension lack explicit combination/precedence.",
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-03",
+      "canonicalId": "droid-antitheft-comlink-locator",
+      "canonicalName": "Antitheft Comlink Locator",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 55,
+          "pdfPage1Based": 56,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "FIXED",
+          "credits": 100,
+          "weightKg": 0.5,
+          "availability": "-"
+        },
+        "host": "Droid chassis concealed communications locator",
+        "prerequisites": {
+          "requires": "Owner/master comlink to receive traceable distress beacon"
+        },
+        "mechanics": {
+          "sendDistress": "No apparent droid activity or speech",
+          "distressContent": "None; signal traceable",
+          "continuesWhileDeactivated": true,
+          "stopsWhenDestroyed": true
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "PASS",
+      "blockingQuestion": null,
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-04",
+      "canonicalId": "droid-audio-enhancers",
+      "canonicalName": "Audio Enhancers",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 55,
+          "pdfPage1Based": 56,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "FIXED",
+          "credits": 2000,
+          "weightKg": 1,
+          "availability": "-"
+        },
+        "host": "Droid audio-sensor enhancement",
+        "prerequisites": {
+          "requires": "Aural sensors and relevant Perception listening task"
+        },
+        "mechanics": {
+          "trigger": "Eavesdropping, distant or ambient sounds",
+          "perceptionReroll": true,
+          "keep": "Better of two results",
+          "otherPerceptionModifiersPreserved": true,
+          "notAllPerception": true
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "PASS",
+      "blockingQuestion": null,
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-05",
+      "canonicalId": "droid-audio-radial-stunner",
+      "canonicalName": "Audio-Radial Stunner",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 55,
+          "pdfPage1Based": 56,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "FIXED",
+          "credits": 5000,
+          "weightKg": 3,
+          "availability": "Restricted"
+        },
+        "host": "Droid-integrated sonic defense",
+        "prerequisites": {
+          "requires": "Active and not destroyed droid"
+        },
+        "mechanics": {
+          "activation": "standard action",
+          "duration": "through end of droid next turn",
+          "trigger": "Each adjacent creature STARTING its turn",
+          "check": "Endurance DC20",
+          "failure": "-1 condition-track step",
+          "onDeactivation": "ends immediately"
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "PASS",
+      "blockingQuestion": null,
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-06",
+      "canonicalId": "droid-automap",
+      "canonicalName": "Automap",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 55,
+          "pdfPage1Based": 56,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "FIXED",
+          "credits": 1000,
+          "weightKg": 2,
+          "availability": "-"
+        },
+        "host": "Integrated active mapping sensor",
+        "prerequisites": {
+          "requires": "Line/scan unobstructed by solid object"
+        },
+        "mechanics": {
+          "scanRadiusSquares": 12,
+          "reveals": [
+            "terrain",
+            "atmospheric conditions",
+            "electromagnetic signatures",
+            "lifeforms"
+          ],
+          "cannotPenetrate": [
+            "walls",
+            "closed doors"
+          ],
+          "recordsDirectionAndSpeed": true,
+          "globalCoordinatesRequires": "Orbiting starship or satellite link"
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "PASS",
+      "blockingQuestion": null,
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-07",
+      "canonicalId": "droid-blaster-recharge-interface",
+      "canonicalName": "Blaster Recharge Interface",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 55,
+          "pdfPage1Based": 56,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "FIXED",
+          "credits": 300,
+          "weightKg": 1,
+          "availability": "Licensed"
+        },
+        "host": "Hand-mounted power transfer device",
+        "prerequisites": {
+          "requires": "Standard blaster power pack and accessible droid HP reservoir"
+        },
+        "mechanics": {
+          "action": "swift",
+          "powerPackRecharged": true,
+          "droidHpCost": "Damage DIE TYPE value (3d8 -> 8 HP)",
+          "sourceExample": {
+            "damageDice": "3d8",
+            "hpCost": 8
+          },
+          "noFreeRecharge": true
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "PASS",
+      "blockingQuestion": null,
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-08",
+      "canonicalId": "droid-collapsible-construction",
+      "canonicalName": "Collapsible Construction",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 55,
+          "pdfPage1Based": 56,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "SIZE_FACTOR",
+          "creditsBase": 2000,
+          "weightKgBase": 10,
+          "availability": "-"
+        },
+        "host": "Droid chassis compression modification",
+        "prerequisites": {
+          "requires": "Droid can shut down/enter standby"
+        },
+        "mechanics": {
+          "when": "on droid shutdown",
+          "sizeCategoryChange": -1,
+          "processor": "standby during collapse",
+          "reactivation": "standard action",
+          "doesNotGrantMobileMovementWhileCollapsed": true
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "PASS",
+      "blockingQuestion": null,
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-09",
+      "canonicalId": "droid-concealed-item",
+      "canonicalName": "Concealed Item",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 56,
+          "pdfPage1Based": 57,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "COMPOSITE",
+          "tableCredits": "See text",
+          "printedProse": "Cost of item plus cost of appendage and/or storage compartment x2; GM may increase multiplier",
+          "printedWeight": "Appendage + weapon",
+          "availability": "Restricted"
+        },
+        "host": "Concealed item within chassis, head or appendage",
+        "prerequisites": {
+          "requires": "Actual selected weapon or tool and sufficiently sized housing"
+        },
+        "mechanics": {
+          "visualFullyCovered": "Cannot be detected by visual observation alone",
+          "partiallyVisibleStealthBonus": 5,
+          "plusWeaponSizeModifier": true,
+          "deceptiveAppearanceBonus": 10,
+          "fullyConcealedDeployAction": "swift, normal draw constraints"
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "HOLD",
+      "blockingQuestion": "The composite cost expression has ambiguous multiplication grouping and may be adjusted by the GM; exact host/item price not certified.",
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-10",
+      "canonicalId": "droid-courier-compartments",
+      "canonicalName": "Courier Compartments",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 56,
+          "pdfPage1Based": 57,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "FIXED",
+          "credits": 200,
+          "weightKg": "2 * size cost factor kg",
+          "availability": "-"
+        },
+        "host": "Droid chassis compartments: torso/head/arm/leg",
+        "prerequisites": {
+          "requires": "Chosen body placement and concealed item fits size limit"
+        },
+        "mechanics": {
+          "maxItemSizeSmallerThanDroid": {
+            "torso": 3,
+            "arm": 4,
+            "leg": 4,
+            "head": 5
+          },
+          "detect": "Perception DC = droid Will Defense + 5",
+          "optionalToaster": "Destroys contents on owner trigger, doubles compartment price",
+          "tableBaseCredits": 200
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "PASS",
+      "blockingQuestion": null,
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-11",
+      "canonicalId": "droid-droid-oil-bath",
+      "canonicalName": "Droid Oil Bath",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 56,
+          "pdfPage1Based": 57,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "PUBLISHED_CONFLICT",
+          "tableCredits": 500,
+          "tableWeight": "600 x cost factor",
+          "proseCreditsBySize": {
+            "smallOrSmaller": 100,
+            "medium": 1000,
+            "large": 5000,
+            "hugeOrLarger": 10000
+          },
+          "availability": "-"
+        },
+        "host": "External maintenance station/bath, NOT installed actor component",
+        "prerequisites": {
+          "requires": "Immersion for at least 30 minutes"
+        },
+        "mechanics": {
+          "effect": "Droid may activate second wind even if already used today",
+          "recommendedHarshEnvironment": "weekly",
+          "recommendedTemperateOrShip": "monthly"
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "HOLD",
+      "blockingQuestion": "Printed Table 3-2 500-credit price conflicts with 100/1,000/5,000/10,000 size-price tiers in prose. External ownership also must be respected.",
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-12",
+      "canonicalId": "droid-earphone-binary-to-basic-translator",
+      "canonicalName": "Earphone Binary-to-Basic Translator",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 57,
+          "pdfPage1Based": 58,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "BASE_AND_UNPRICED_VARIANT",
+          "tableBaseCredits": 20,
+          "tableWeightKg": 0.5,
+          "availability": "-",
+          "earbudCost": "NOT_PUBLISHED"
+        },
+        "host": "External earphone/headset and droid Basic-output jack",
+        "prerequisites": {
+          "requires": "Compatible droid Basic-output jack; receiver for listener"
+        },
+        "mechanics": {
+          "translate": "Audible Binary into spoken Basic at listener receiver",
+          "basicReceiver": "Large headphone",
+          "premiumReceiver": "Earbud, detection Perception DC20"
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "HOLD",
+      "blockingQuestion": "Text describes more expensive earbud version but prints no price or differentiated mass for that version.",
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-13",
+      "canonicalId": "droid-electric-defense-grid",
+      "canonicalName": "Electric Defense Grid",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 57,
+          "pdfPage1Based": 58,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "SIZE_FACTOR",
+          "creditsBase": 3000,
+          "weightKgBase": 100,
+          "availability": "Restricted"
+        },
+        "host": "Armor/outer shell integrated reactive energy grid",
+        "prerequisites": {
+          "requires": "Melee attack actually damages droid"
+        },
+        "mechanics": {
+          "reactiveDamage": 5,
+          "damageType": "energy",
+          "automaticAttackRoll": false,
+          "exception": "Melee weapon using energy to cause damage (e.g., lightsaber) is immune",
+          "noTriggerOnMissOrZeroDamage": true
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "PASS",
+      "blockingQuestion": null,
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-14",
+      "canonicalId": "droid-emergency-oxygen-supply",
+      "canonicalName": "Emergency Oxygen Supply",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 57,
+          "pdfPage1Based": 58,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "TABLE_WITH_UNLABELLED_WEIGHT",
+          "credits": 200,
+          "weightText": "20",
+          "weightUnit": "NOT_PRINTED",
+          "availability": "-"
+        },
+        "host": "Oxygen cylinder attached to droid torso",
+        "prerequisites": {
+          "requires": "Medium or smaller recipient for printed 30-minute supply"
+        },
+        "mechanics": {
+          "oxygenMinutesForMediumCreature": 30,
+          "useMode": [
+            "refill vac suit",
+            "breath mask"
+          ],
+          "connectVacSuitAction": "swift",
+          "secureBreathMaskAction": "standard"
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "HOLD",
+      "blockingQuestion": "Table 3-2 weight cell prints 20 without mass unit, and prose does not clarify. Cannot certify physical mass or burden.",
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-15",
+      "canonicalId": "droid-hidden-holster",
+      "canonicalName": "Hidden Holster",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 57,
+          "pdfPage1Based": 58,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "SIZE_FACTOR",
+          "creditsBase": 500,
+          "weightKgBase": 2,
+          "availability": "Licensed"
+        },
+        "host": "In droid leg, separate weapon not included",
+        "prerequisites": {
+          "requires": "Weapon at least one size category smaller than droid; BAB +1 to access Quick Draw benefit"
+        },
+        "mechanics": {
+          "openAction": "free",
+          "drawOrHolsterAction": "swift when BAB prerequisite met",
+          "grantsQuickDrawBenefitFor": "Weapon stored in holster only",
+          "doesNotGrantExtraWeaponOrAttacks": true
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "PASS",
+      "blockingQuestion": null,
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-16",
+      "canonicalId": "droid-high-speed-cutting-torch-and-welder",
+      "canonicalName": "High-Speed Cutting Torch and Welder",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 57,
+          "pdfPage1Based": 58,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "FIXED",
+          "credits": 2500,
+          "weightKg": 500,
+          "availability": "Licensed"
+        },
+        "host": "Chassis cutting/welding tool, large physical mount",
+        "prerequisites": {
+          "minimumDroidSize": "Medium",
+          "requires": "Contact with object to modify DR/threshold"
+        },
+        "mechanics": {
+          "torchRangeSquares": 1,
+          "torchDamage": "4d10",
+          "weldingDuration": "Typically half of ordinary welding",
+          "afterConsecutiveContactRounds": 2,
+          "objectDRIgnored": 5,
+          "objectDamageThresholdReduction": 10,
+          "notUniversalCreatureDRDebuff": true
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "PASS",
+      "blockingQuestion": null,
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-17",
+      "canonicalId": "droid-holographic-game-system",
+      "canonicalName": "Holographic Game System",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 57,
+          "pdfPage1Based": 58,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "FIXED",
+          "credits": 300,
+          "weightKg": 3,
+          "availability": "-"
+        },
+        "host": "Droid computational entertainment system plus separate projector",
+        "prerequisites": {
+          "requires": "Holoprojector sold separately to display board"
+        },
+        "mechanics": {
+          "includedGames": 15,
+          "canPlayVsMasterOrRunGame": true,
+          "extraGamesLimit": 10,
+          "addGamesCheck": "Use Computer DC15",
+          "holographicPiecesInteractable": true
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "PASS",
+      "blockingQuestion": null,
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-18",
+      "canonicalId": "droid-holographic-image-disguiser",
+      "canonicalName": "Holographic Image Disguiser",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "BASE_PLUS_MULTIPLIED_VARIANT",
+          "baseCreditsTimesSizeFactor": 20000,
+          "baseWeightKgTimesSizeFactor": 20,
+          "advancedPriceMultiplier": 2,
+          "advancedWeight": "NOT_SEPARATELY_LISTED",
+          "availability": "Restricted"
+        },
+        "host": "Integrated chassis holoprojector nodes and processor",
+        "prerequisites": {
+          "requires": "Body-wide emitters and Vocabulator synchronization where present"
+        },
+        "mechanics": {
+          "basic": "Deception Deceptive Appearance +10 equipment",
+          "advanced": "Additional environmental sensor cues; can disguise appearance as full-round action without penalty",
+          "advancedPowerNotFree": true
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "PASS",
+      "blockingQuestion": null,
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-19",
+      "canonicalId": "droid-id-dodge",
+      "canonicalName": "ID Dodge",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "FIXED",
+          "credits": 5000,
+          "weightKg": 1,
+          "availability": "Illegal"
+        },
+        "host": "Droid biometric emulation interface",
+        "prerequisites": {
+          "requires": "Security device relies on organic biometric identification"
+        },
+        "mechanics": {
+          "checkSubstitution": "Deception instead of Use Computer",
+          "cannotSubstituteForGenericSlicing": true
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "PASS",
+      "blockingQuestion": null,
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-20",
+      "canonicalId": "droid-improved-coordination-circuitry",
+      "canonicalName": "Improved Coordination Circuitry",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "FIXED",
+          "credits": 1000,
+          "weightKg": 1,
+          "availability": "-"
+        },
+        "host": "Droid skill coordination circuit, keyed to one skill",
+        "prerequisites": {
+          "requires": "Acting droid TRAINED in selected skill; recipient droid has matching circuitry"
+        },
+        "mechanics": {
+          "action": "Successful Aid Another",
+          "totalAidBonus": 4,
+          "incrementOverNormalAid": 2,
+          "notAddFourToBaseTwo": true
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "PASS",
+      "blockingQuestion": null,
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-21",
+      "canonicalId": "droid-interference-generator",
+      "canonicalName": "Interference Generator",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "STANDARD_WITH_UNPRICED_DELUXE",
+          "baseCredits": 2500,
+          "baseWeightKg": 1,
+          "availability": "Restricted",
+          "deluxePrice": "NOT_PRINTED"
+        },
+        "host": "Integrated droid area privacy generator",
+        "prerequisites": {
+          "requires": "Device active and listeners/recorders attempting to monitor adjacent squares"
+        },
+        "mechanics": {
+          "protectedArea": "Squares adjacent to droid",
+          "audio": "Muffle listening equipment",
+          "deluxe": "Also video/holographic recording",
+          "eavesdropCheck": [
+            "Perception DC30",
+            "Use Computer DC30"
+          ],
+          "onlyScatteredWordsOnSuccess": true
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "HOLD",
+      "blockingQuestion": "Deluxe model expands protection to video/holo but does not have separately printed price/weight; no typed purchasable deluxe variant certified.",
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-22",      "canonicalId": "droid-internal-defenses",
+      "canonicalName": "Internal Defenses",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "SIZE_FACTOR",
+          "creditsBase": 10,
+          "weightKgBase": 1,
+          "availability": "Licensed"
+        },
+        "host": "Secured maintenance and access-panel mechanism",
+        "prerequisites": {
+          "requires": "Someone opens maintenance/access panel without droid permission"
+        },
+        "mechanics": {
+          "attackRoll": "1d20 + 5 vs target Fortitude Defense",
+          "damageOnHit": "1d8 + half droid heroic level",
+          "maxAttackUses": 10,
+          "permanentUntilResetOrDisabled": "System disabled DC25 Mechanics, one hour work",
+          "independentOfHostDroidAction": true
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "PASS",
+      "blockingQuestion": null,
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-23",
+      "canonicalId": "droid-internal-grapple-gun",
+      "canonicalName": "Internal Grapple Gun",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "SIZE_FACTOR",
+          "creditsBase": 100,
+          "weightKgBase": 2,
+          "availability": "-"
+        },
+        "host": "Integrated rope launcher and cord reel",
+        "prerequisites": {
+          "requires": "Available cord; deployable magnetic grapple attachment"
+        },
+        "mechanics": {
+          "fireAction": "standard",
+          "internalCordMeters": 15,
+          "internalCordSquares": 10,
+          "externalMagazineMaxMeters": 100,
+          "detachCordAction": "free",
+          "externalMagazinePrice": "NOT_LISTED",
+          "notUnlimitedRope": true
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "PASS",
+      "blockingQuestion": null,
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-24",
+      "canonicalId": "droid-mesh-tape-dispenser",
+      "canonicalName": "Mesh Tape Dispenser",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "SIZED_COST_FLAT_WEIGHT",
+          "creditsBaseTimesSizeFactor": 10,
+          "weightKg": 5,
+          "availability": "-"
+        },
+        "host": "Appendage-mounted mesh tape applicator",
+        "prerequisites": {
+          "requires": "Manipulator in reach and successful melee attack for entangle"
+        },
+        "mechanics": {
+          "armPenalty": {
+            "attackRoll": -2,
+            "dexteritySkillChecks": -2
+          },
+          "legPenalty": {
+            "speedSquares": -2,
+            "cannotRun": true
+          },
+          "PinFeatAndGrapple": "Enemy remains pinned until tape removed",
+          "distance": "appendage reach usually adjacent"
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "PASS",
+      "blockingQuestion": null,
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "MECH004-25",
+      "canonicalId": "droid-micro-shield",
+      "canonicalName": "Micro Shield",
+      "printedSourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_PDF_VISUAL"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "verification": "RENDERED_PDF_VISUAL"
+        }
+      ],
+      "expected": {
+        "priceWeightAvailability": {
+          "kind": "INSTALL_AND_HANDHELD_VARIANTS",
+          "installedCreditsBaseTimesSizeFactor": 600,
+          "installedWeightKgBaseTimesSizeFactor": 10,
+          "handheldCredits": 400,
+          "handheldWeight": "NOT_LISTED",
+          "availability": "Licensed"
+        },
+        "host": "Installed on droid appendage OR separate handheld equipment",
+        "prerequisites": {
+          "requires": "Physical appendage for installed model, energy cell for handheld model"
+        },
+        "mechanics": {
+          "activateAction": "swift",
+          "reflexDefenseEquipmentBonus": 1,
+          "handheldEnergyCellOperatingHours": 1,
+          "cannotBeConfusedWithShieldGeneratorSR": true
+        },
+        "modificationAuthority": "Core p197 applies by physical modification type; external gear is not automatically an installed droid system"
+      },
+      "expectedSourceStatus": "PASS",
+      "blockingQuestion": null,
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    }
+  ]
+}
