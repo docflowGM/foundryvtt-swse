@@ -335,9 +335,10 @@ export async function rollSkill(actor, skillKey, options = {}) {
         // the displayed Base is the DERIVED skill total only: the custom modifier, feat bonuses and gear modifiers are listed separately on the card, so
         // every modifier appears exactly once (Base + the listed lines = the rolled bonus)
         baseBonus: canonicalTotal,
-        // The roll engine applies Shaper Lore in its base; display it once
-        // in the situational line so the card still reconciles to the roll.
-        situationalMods: (Number(rollResult.modifierTotal) || 0) + shaperLore,
+        // Display class-granted skill bonuses by provenance, separately
+        // from other situational modifiers, feat and equipment sources.
+        situationalMods: rollResult.modifierTotal,
+        classSkillBonuses: shaperLore ? [{name:'Shaper Lore',value:shaperLore}] : [],
         shaperLoreBonus: shaperLore,
         biotechDevice:options?.biotechDevice === true,
         customModifier: Number(options?.customModifier || 0),
