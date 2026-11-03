@@ -26,7 +26,11 @@ for(const r of a.records.filter(r=>r.group==='APPENDAGE')){
 }
 const rarer=a.records.find(r=>r.canonicalName==='Crystadurium Plating');assert.equal(rarer.mechanics.special.subtractPerDamageDie,1);
 const inc=a.records.find(r=>r.canonicalName==='Credit Reader');assert.equal(inc.price.credits,50);
-assert.equal(c.counts.totalSourceMechanicalCertified,25);
-assert.equal(c.counts.remainingSourceMechanicalNotYetCertified,97);
+assert.equal(c.batches.find(x=>x.id==='MECH-001')?.certifiedPrintedMechanics,25);
+assert.equal(c.counts.sourceMechanicallyReviewed,122);
 assert.equal(c.counts.foundryRuntimeCertified,0);
-console.log('PASS MECH001 25/25 source-mechanical certifications; 0 app/Foundry certifications');
+const official=load('../../../data/audits/droids/droid-component-official-errata-authority-001.json');
+assert.equal(official.corrections.accessoryWeight.accessoryWeightFactorBySize.tiny,0.4);
+assert.equal(official.corrections.accessoryWeight.sourceClassConfirmedTargetCount,21);
+assert.equal(c.errataAuthority.overlayPath,'data/audits/droids/droid-component-official-errata-authority-001.json');
+console.log('PASS MECH001 archival 25 base-book claims; official errata weight corrections are mandatory for current source use');
