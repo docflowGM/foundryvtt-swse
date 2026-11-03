@@ -20,7 +20,7 @@ record). Stock weapons never pass through the ledger, EP or credits and are neve
 
 ## Result (offline; nothing is live-verified)
 
-- 846 published groups; 446 SOURCE_VERIFIED (configuration established); **230 OFFLINE_EXECUTABLE on 207 vehicles** (after V-P6C-01, reading both field-state key styles, and explaining printed attack totals by published rules), each driven
+- 846 published groups; 466 SOURCE_VERIFIED (configuration established); **260 OFFLINE_EXECUTABLE on 232 vehicles** (110 vehicles have every group executable) after P6C-2A, each driven
   through arm -> attack -> damage by the CORPUS test; 0 LIVE_VERIFIED. See `stock-weapon-coverage.md`.
 - Includes the X-wing laser cannons (6d10 x 2, pilot, +5), TIE fighter, TIE interceptor, Y-wing, ARC-170, YT-1300, AAT and others.
   The X-wing proton torpedoes stay reference-only (splash, finite payload).
@@ -34,8 +34,8 @@ keep their certified mount and arc. The world setting can switch unstated arcs t
 
 ## What genuinely needs new mechanics (all recorded in the deferred register, P6B-D-033..039)
 
-- Printed attack totals: explained for the 230 executable groups (crew BAB + Int; +2 on pilot-crewed groups = Core p. 171); the battery +2 per additional gunner is documented but batteries need their own model; about 50 single-operator groups stay unexplained.
-- Batteries and multi-gunner stations (291), capital-scale x5 damage (192), splash/ion/ammunition groups (142), point-defense.
+- Printed attack totals: explained for the 260 executable groups (crew BAB + Int; +2 on pilot-crewed groups = Core p. 171); the battery +2 per additional gunner is documented but batteries need their own model; about 50 single-operator groups stay unexplained.
+- Batteries and multi-gunner stations (291), splash/ion/ammunition groups (142), point-defense.
 - 12 groups on records with no arc evidence; 5 groups with arcs the system cannot yet interpret.
 
 ## Also fixed along the way
@@ -50,3 +50,18 @@ The first push of the printed-total work (8f88c34) counted 274 executable groups
 weapons (concussion missiles, proton and shieldbuster torpedoes, mines) and one ion cannon, which have no magazine or
 ion-versus-vehicle authority. They are now denied by wording (a name can only deny, never authorize): the executable set is
 **230 groups on 207 vehicles**, all laser, blaster and mass-driver cannons. Copilot-operated groups were added (11).
+
+## P6C-2A: ordinary damage closure (2026-11-03)
+
+Owner ruling: an omitted multiplier is x1 (a valid vehicle weapon, not a personal weapon; no x2 is invented). Any printed
+`xN` multiplier (x1, x2, x5, x10...) is read by the one damage authority (`resolveDamageComposition` / `buildDamageFormula`),
+which emits `(NdM) * N`; Foundry never sees `xN` as exploding dice. Critical handling doubles the composed total once and adds
+no second multiplier. The capital-scale attack penalty (-20, Core p. 171) and the point-defense exceptions are untouched.
+
+The previous blanket "capital-scale x5 damage" refusal is removed. Replacing it is a consistency check: a size-dependent figure
+on a capital ship is accepted only when the verified figure equals the printed one minus the 20 attack penalty. Groups that
+still carry other unsupported mechanics (finite ammunition, splash, ion, battery staffing, point-defense, unexplained attack
+totals) stay refused for those reasons; the removed refusal only unlocks groups that had no other blocker.
+
+Newly executable examples: BARC speeder twin light blaster cannons (5d10), SPHA-T heavy turbolaser (7d10 x5),
+Munificent-class heavy turbolasers (11d10 x5), Venator medium double turbolasers (6d10 x5), Lancet proton beam cannon (6d10 x5).

@@ -8,9 +8,9 @@
  * family or mechanics from a label.
  *
  * A group is EXECUTABLE as a plain stock weapon only when all of these hold:
- *   - the notes state damage as plain dice with a x2 multiplier (no splash/burst, ion, special, capital x5 or other);
+ *   - the notes state damage as plain dice, with or without a printed multiplier (no splash/burst, ion or special);
  *   - exactly one operator is printed and it is the pilot or a single gunner;
- *   - the group is not a multi-gunner station battery, and states no size-dependent attack adjustments;
+ *   - the group is not a multi-gunner station battery, and any size-dependent figure it prints is the Core -20 (checked);
  *   - the printed attack total reconciles with the printed crew Base Attack + the vehicle's Intelligence modifier
  *     (the Core vehicle attack formula), so applying the formula cannot contradict the statblock.
  * The firing arc follows determineStockArc() (owner ruling V-P6C-01): a stated, understood arc is enforced; a confirmed-
@@ -23,6 +23,8 @@ const finite = v => typeof v === 'number' && Number.isFinite(v);
 const DAMAGE = /(?:printed damage|published damage|damage)\s*:?\s*(\d+)d(\d+)(?:\s*([+-])\s*(\d+))?\s*(?:x\s*(\d+))?([^;.]*)/i;
 const OPERATOR = /(?:printed operator|operator|station)\s*:?\s*([^;.(]*?)\s*(?:\(([^)]*)\))?\s*(?:;|\.|\s+(?:printed|source|damage|physical)\b|$)/i;
 const EVIDENCE = /\{[^{}]*\}/;
+// weapon names that suggest an area effect the notes may not state; they can only deny
+const POSSIBLE_AREA = /\b(flak|pulse-wave|barrage|cluster)\b/i;
 const AMMUNITION_LIMITED = /\b(missiles?|torpedo(?:es)?|rockets?|mines?|bombs?|bomblets?|grenades?|launchers?|projectiles?|shells?|canisters?|payload)\b/i;
 
 /** Parse one printed group. Never throws; `reasons` names everything that makes it non-executable. */
@@ -42,7 +44,10 @@ export function parseStockFiringGroup(group) {
     if (/splash|burst|radius|area/.test(suffix)) reasons.push('STOCK_DAMAGE_AREA_OR_SPLASH');
     if (/ion/.test(suffix)) reasons.push('STOCK_DAMAGE_ION_UNVERIFIED');
     if (suffix && !/splash|burst|radius|area|ion/.test(suffix.replace(/^,\s*/, '')) && suffix.replace(/[\s,]/g, '') !== '') reasons.push('STOCK_DAMAGE_QUALIFIED');
-    if (mult !== 2) reasons.push(mult === 1 ? 'STOCK_DAMAGE_NO_MULTIPLIER' : 'STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER');
+    // Core: weapon damage x the listed multiplier. A plain expression (no multiplier) is simply the dice (x1; owner ruling
+    // 2026-11-03: an omitted multiplier neither invalidates a vehicle weapon nor makes it a personal weapon); x2, x5, x10...
+    // are applied exactly as printed. The multiplier is never guessed.
+    if (!Number.isInteger(mult) || mult < 1) reasons.push('STOCK_DAMAGE_MULTIPLIER_UNREADABLE');
   }
 
   const o = notes.match(OPERATOR);
@@ -59,12 +64,12 @@ export function parseStockFiringGroup(group) {
   // unverified. These stay reference-only until those mechanics exist.
   if (AMMUNITION_LIMITED.test(`${group?.label ?? ''} ${notes}`)) reasons.push('STOCK_AMMUNITION_LIMITED_UNTRACKED');
   if (/\bion\b/i.test(String(group?.label ?? ''))) reasons.push('STOCK_DAMAGE_ION_UNVERIFIED');
+  if (POSSIBLE_AREA.test(String(group?.label ?? ''))) reasons.push('STOCK_POSSIBLE_AREA_WEAPON_UNVERIFIED');
   // point-defense status is never inferred from a label: such groups stay non-executable until it is classified from source
   if (/point[- ]?defen[cs]e/i.test(String(group?.label ?? '') + notes)) reasons.push('STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED');
 
   const e = notes.match(EVIDENCE);
   if (e) { try { out.evidence = JSON.parse(e[0]); } catch { reasons.push('STOCK_EVIDENCE_UNREADABLE'); } }
-  for (const k of Object.keys(out.evidence)) if (/smaller|vs|against/i.test(k)) { reasons.push('STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT'); break; }
   out.reasons = [...new Set(reasons)];
   return out;
 }
@@ -117,6 +122,25 @@ export function explainPrintedAttackTotal(parsed, bab, intScore) {
 }
 
 /**
+ * Size-dependent attack figures printed with a group. The Core capital-ship rule (-20 against targets smaller than Colossal,
+ * applied at attack time by the vehicle attack math) is what these statblock figures express: a printed "vs smaller than
+ * Colossal" total equals the printed total minus 20. That is accepted as a CONSISTENCY CHECK only when the ship is Colossal
+ * (frigate) or larger (so the runtime applies the same -20 once). Any other size-dependent figure, a different value, or a
+ * ship the rule does not cover is refused rather than guessed.
+ * @returns {string|null} refusal reason
+ */
+export function checkSizeDependentAdjustments(parsed, record) {
+  const keys = Object.keys(parsed.evidence ?? {}).filter(k => /smaller|vs|against/i.test(k));
+  if (!keys.length) return null;
+  const capital = ['colossal (frigate)', 'colossal (cruiser)', 'colossal (station)'].includes(String(record?.classification?.printedSize ?? '').trim().toLowerCase());
+  for (const k of keys) {
+    const v = parsed.evidence[k];
+    if (!/smaller/i.test(k) || !finite(v) || !finite(parsed.attackBonusPrinted) || v !== parsed.attackBonusPrinted - 20 || !capital) return 'STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT';
+  }
+  return null;
+}
+
+/**
  * Assess every printed group of a verified record.
  * @returns {{groups: object[]}} each group: parse fields + `executable` + final `reasons`
  */
@@ -130,6 +154,8 @@ export function assessStockWeaponGroups(record) {
       const arc = determineStockArc(record, p);
       if (arc.state === 'NOT_REVIEWED') reasons.push('STOCK_FIRING_ARC_NOT_REVIEWED');
       if (arc.state === 'STATED_UNPARSED') reasons.push('STOCK_FIRING_ARC_STATED_UNPARSED');
+      const sizeReason = checkSizeDependentAdjustments(p, record);
+      if (sizeReason) reasons.push(sizeReason);
       const attack = explainPrintedAttackTotal(p, bab, intScore);
       if (attack.reason) reasons.push(attack.reason);
       return { ...p, arc, attackBasis: attack.basis, reasons: [...new Set(reasons)], executable: reasons.length === 0 };

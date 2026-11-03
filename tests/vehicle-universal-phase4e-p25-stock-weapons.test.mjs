@@ -368,13 +368,13 @@ test('CORPUS: each executable stock group arms, attacks at its printed total, an
       let ok = r.result && r.result.atkBonus === expectBonus && !r.blocked;
       let formula = null;
       try { formula = buildDamageFormula(resolveDamageComposition(v, w, { weapon: w })); } catch (e) { ok = false; failures.push(`${g.groupKey}: damage ${e.message}`); }
-      if (formula !== `(${g.damage.formula}) * ${g.damage.multiplier}`) ok = false;
+      if (formula !== (g.damage.multiplier > 1 ? `(${g.damage.formula}) * ${g.damage.multiplier}` : g.damage.formula)) ok = false;
       if (!ok) failures.push(`${g.groupKey}: attack ${r.result?.atkBonus} expected ${expectBonus}; ${r.log.join('|')}; damage ${formula}`);
       else proven.push(g.groupKey);
     }
   }
   assert.deepEqual(failures, []);
-  assert.equal(proven.length, 230, 'the corpus-wide count of offline-executable stock groups');
+  assert.equal(proven.length, 260, 'the corpus-wide count of offline-executable stock groups');
   setPolicy(undefined);
 });
 
@@ -383,9 +383,9 @@ test('COVERAGE REPORT: current, and its executable counts are exactly what the C
   execFileSync(process.execPath, ['tools/audits/vehicles/build-stock-weapon-coverage.mjs', '--check']);
   const { readFileSync } = await import('node:fs');
   const cov = JSON.parse(readFileSync('data/audits/vehicles/stock-weapon-coverage.json', 'utf8'));
-  assert.deepEqual([cov.totals.vehicles, cov.totals.groups, cov.totals.offlineExecutableGroups, cov.totals.vehiclesWithOfflineExecutableGroup, cov.totals.liveVerifiedVehicles], [429, 846, 230, 207, 0]);
+  assert.deepEqual([cov.totals.vehicles, cov.totals.groups, cov.totals.offlineExecutableGroups, cov.totals.vehiclesWithOfflineExecutableGroup, cov.totals.liveVerifiedVehicles], [429, 846, 260, 232, 0]);
   const exec = cov.vehicles.flatMap(v => v.groups.filter(g => g.offlineExecutable));
-  assert.equal(exec.length, 230);
+  assert.equal(exec.length, 260);
   for (const g of cov.vehicles.flatMap(v => v.groups)) {
     assert.equal(g.liveVerified, false);
     if (!g.offlineExecutable) { assert.ok(g.refusals.length > 0, g.groupKey + ' has a named refusal'); assert.equal(g.attackReadiness, 'REFUSED'); }
@@ -420,4 +420,70 @@ test('COPILOT-operated stock groups: armed, fire from the copilot station, and g
   assert.equal(r.result.componentLedger.some(e => e.id === 'pilot-trained-weapon-crew'), false);
   v.system.crewPositions = { copilot: { id: 'gone', name: 'Ghost' } };          // an assigned copilot that no longer exists
   assert.equal((await fire(v, w)).result, null);
+});
+
+// ---------------------------------------------------------------------------------------------------------------------
+// P6C-2A: plain dice and generalized multipliers
+// ---------------------------------------------------------------------------------------------------------------------
+const stockOf = async (key, label) => { const v = await armed(key); const w = stockItems(v).find(i => i.name === label); assert.ok(w, `${key}: ${label} armed`); return { v, w }; };
+
+test('P6C-2A plain damage: a printed expression with no multiplier is the dice (x1), never x2; real published examples', async () => {
+  setPolicy(undefined);
+  for (const [key, label, dice] of [['cw-barc-speeder', 'twin light blaster cannons', '5d10'], ['cw-republic-troop-transport', 'laser cannons', '4d10'], ['le-quickfire-speeder-bike', 'Blaster cannon', '3d10'], ['ur-wind-skiff', 'Debris Clearing Laser Cannon', '3d10']]) {
+    const { v, w } = await stockOf(key, label);
+    assert.equal(w.system.damage, dice, 'the Item mirrors the printed dice');
+    assert.deepEqual(resolveVehicleWeaponDamage(w), { ok: true, formula: dice, multiplier: 1, damageType: null, printed: dice });
+    const f = ctx => buildDamageFormula(resolveDamageComposition(v, w, { weapon: w, ...ctx }));
+    assert.equal(f({}), dice, `${key}: plain dice, no multiplier, no added modifier`);
+    assert.equal(f({ isCritical: true }), `(${dice}) * 2`, 'a critical doubles the plain damage once');
+    const r = await fire(v, w);
+    assert.equal(r.blocked, false, `${key}: ${r.log.join('|')}`);
+  }
+});
+
+test('P6C-2A capital multipliers: x5 is multiplication, never exploding dice; critical and ordering are correct', async () => {
+  setPolicy(undefined);
+  for (const [key, label, dice, mult] of [['cw-self-propelled-heavy-artillery', 'SPHA-T heavy turbolaser', '7d10', 5], ['sotg-banking-clan-munificent-class-frigate', 'heavy turbolasers', '11d10', 5], ['sotg-venator-class-star-destroyer', 'medium double turbolasers', '6d10', 5], ['re-lancet-aerial-artillery', 'Proton beam cannon', '6d10', 5]]) {
+    const { v, w } = await stockOf(key, label);
+    assert.equal(w.system.damage, `${dice}x${mult}`);
+    assert.deepEqual(resolveVehicleWeaponDamage(w), { ok: true, formula: dice, multiplier: mult, damageType: null, printed: `${dice}x${mult}` });
+    const f = ctx => buildDamageFormula(resolveDamageComposition(v, w, { weapon: w, ...ctx }));
+    assert.equal(f({}), `(${dice}) * ${mult}`);
+    assert.doesNotMatch(f({}), /x\d/, 'the printed x5 never reaches Foundry as an exploding-dice modifier');
+    assert.equal(f({ isCritical: true }), `((${dice}) * ${mult}) * 2`, 'critical doubles the multiplied total once');
+    const r = await fire(v, w, target('medium'));
+    assert.equal(r.blocked, false, `${key}: ${r.log.join('|')}`);
+  }
+});
+
+test('P6C-2A capital ships: the Core -20 is applied once at attack time and the statblock\'s vs-small figure is only a consistency check', async () => {
+  setPolicy(undefined);
+  const { v, w } = await stockOf('sotg-venator-class-star-destroyer', 'medium double turbolasers');
+  const rec = v.flags.swse.universalVehicleSource.source;
+  const g = assessStockWeaponGroups(rec).groups.find(x => x.label === 'medium double turbolasers');
+  assert.equal(g.executable, true);
+  const evKey = Object.keys(g.evidence).find(k => /smaller/i.test(k));
+  assert.equal(g.evidence[evKey], g.attackBonusPrinted - 20, 'the printed vs-smaller-than-Colossal figure is the printed total minus 20');
+  const small = await fire(v, w, target('medium')), big = await fire(v, w, target('colossal', 'vehicle'));
+  assert.equal(small.result.componentLedger.filter(e => e.id === 'capital-ship-attack-penalty').length, 1);
+  assert.equal(small.result.atkBonus, g.evidence[evKey], 'attack against a small target equals the statblock\'s own figure');
+  assert.equal(big.result.atkBonus, g.attackBonusPrinted);
+  // a size-dependent figure that is NOT printed - 20, or a ship the rule does not cover, is refused
+  const bad = structuredClone(rec); bad.armament.firingGroups.find(x => x.label === 'medium double turbolasers').specialNotes = bad.armament.firingGroups.find(x => x.label === 'medium double turbolasers').specialNotes.replace(/"(\w*[Ss]maller\w*)":-?\d+/, '"$1":-3');
+  assert.ok(assessStockWeaponGroups(bad).groups.find(x => x.label === 'medium double turbolasers').reasons.includes('STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT'));
+  for (const key of ['sotg-eclipse', 'sotg-sienar-fleet-systems-gat-12h']) {
+    const r2 = docs.find(d => keyOf(d) === key).flags.swse.universalVehicleSource.source;
+    assert.ok(assessStockWeaponGroups(r2).groups.some(x => x.reasons.includes('STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT')), key);
+  }
+});
+
+test('P6C-2A: a group with a plain multiplier but another special mechanic stays refused; area-looking names only deny', () => {
+  const find = (key, label) => assessStockWeaponGroups(docs.find(d => keyOf(d) === key).flags.swse.universalVehicleSource.source).groups.find(x => x.label === label);
+  const flak = find('re-at-aa-anti-aircraft-platform', 'Flak pod');
+  assert.deepEqual([flak.executable, flak.damage.multiplier], [false, 5]);
+  assert.ok(flak.reasons.includes('STOCK_POSSIBLE_AREA_WEAPON_UNVERIFIED'));
+  const pulse = find('kotor-basilisk-war-droid', 'pulse-wave cannons');
+  assert.equal(pulse.executable, false);
+  const torp = find('cw-cr-20-troop-carrier', 'fire-linked medium turbolasers');
+  assert.ok(torp, 'turbolaser group parsed');
 });

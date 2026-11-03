@@ -748,7 +748,7 @@
       "component": "turbolasers and capital-scale (x5) weapons",
       "source": "Core Rulebook, Vehicle Combat (Capital Ships); SotG p. 45 (point-defense)",
       "status": "ENGINEERING_COMPLEXITY",
-      "reason": "The Core -20 against targets smaller than Colossal is implemented (vehicle-capital-penalty.js, in the vehicle attack math) and weapons may now be installed on frigate-size and larger hulls. Turbolasers stay uncertified: capital-scale (x5) damage against smaller-scale targets and their starship-scale ranges have not been verified end to end (the Core range cells are unreadable in the OCR).",
+      "reason": "The Core -20 against targets smaller than Colossal is implemented (vehicle-capital-penalty.js, in the vehicle attack math) and weapons may now be installed on frigate-size and larger hulls. Turbolasers stay uncertified: capital-scale (x5) damage against smaller-scale targets and their starship-scale ranges have not been verified end to end (the Core range cells are unreadable in the OCR). Update: 4 capital-ship single-gunner turbolaser groups on Colossal (cruiser) hulls (Munificent, Recusant, Venator, Rendili) are executable with the -20 applied once; the statblock vs-smaller figure (printed - 20 in 105 of 107 cases) is verified as a consistency check.",
       "missing": "Verified starship-scale range cells and capital-scale damage application for turbolasers.",
       "impact": "Turbolasers (light/medium/heavy, Hapan triple ion) are reference-only.",
       "severity": "MINOR",
@@ -902,7 +902,7 @@
       "component": "published stock groups whose printed attack total is not explained by a published rule (336 groups, mostly batteries)",
       "source": "canonical records, armament.firingGroups",
       "status": "SOURCE_EVIDENCE_MISSING",
-      "reason": "Investigated across 836 groups and 12 books. A printed total is the generic crew's complete attack modifier. It equals crew Base Attack + vehicle Int in 272 groups (delta 0), and exceeds it by exactly +2 on pilot-crewed groups in 231 of 313 cases (the Core p. 171 trained-Pilot rule; Core Rulebook statblocks omit it, later books include it, and the same crew quality prints both, so it is a per-statblock convention). Weapon batteries add +2 per gunner beyond the first (2 gunners +2, 3 +4, 4 +6, 5 +8, 6 +10; 85-98% of each size), matching the SotG fighter-group sentence \"+2 on attacks per additional vehicle ... as a weapon battery\"; the Core p. 170 battery text itself is unreadable in the OCR. Accepted and executable: delta 0, and +2 on pilot-crewed groups (230 groups, laser/blaster/mass-driver cannons); the printed total is applied ONCE and its components are shown as included, never added again. Still unexplained: about 50 non-battery groups (mostly burst-fire / autofire modes and isolated cases, e.g. -5 printed on \"Burst Fire mode\" groups) and the battery groups, which also need the battery damage rules.",
+      "reason": "Investigated across 836 groups and 12 books. A printed total is the generic crew's complete attack modifier. It equals crew Base Attack + vehicle Int in 272 groups (delta 0), and exceeds it by exactly +2 on pilot-crewed groups in 231 of 313 cases (the Core p. 171 trained-Pilot rule; Core Rulebook statblocks omit it, later books include it, and the same crew quality prints both, so it is a per-statblock convention). Weapon batteries add +2 per gunner beyond the first (2 gunners +2, 3 +4, 4 +6, 5 +8, 6 +10; 85-98% of each size), matching the SotG fighter-group sentence \"+2 on attacks per additional vehicle ... as a weapon battery\"; the Core p. 170 battery text itself is unreadable in the OCR. Accepted and executable: delta 0, and +2 on pilot-crewed groups (260 groups after P6C-2A: laser/blaster/mass-driver cannons, plain or xN damage); the printed total is applied ONCE and its components are shown as included, never added again. Still unexplained: about 50 non-battery groups (mostly burst-fire / autofire modes and isolated cases, e.g. -5 printed on \"Burst Fire mode\" groups) and the battery groups, which also need the battery damage rules.",
       "missing": "Core p. 170 weapon battery text (PDF); the source of the residual single-operator deltas.",
       "impact": "Batteries and about 50 single-operator groups stay refused (STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA).",
       "severity": "IMPORTANT",
@@ -936,7 +936,8 @@
       "missing": "Verified capital-scale damage application and range cells.",
       "impact": "Capital weapons reference-only.",
       "severity": "MINOR",
-      "recommendedAction": "Verify with the same PDF check as turbolasers (P6B-D-023)."
+      "recommendedAction": "Verify with the same PDF check as turbolasers (P6B-D-023).",
+      "resolution": "Multipliers other than x2 (x5, x10, ...) are applied exactly as printed through the one damage composition authority (P6C-2A); the groups that remain refused are blocked by batteries, ion, ammunition or other mechanics, not by the multiplier."
     },
     {
       "workstream": "STOCK",
@@ -1013,7 +1014,8 @@
       "missing": "Whether a plain dice expression on a vehicle statblock is character-scale damage and how it applies to vehicle targets.",
       "impact": "Mostly ground vehicles (speeders, droids).",
       "severity": "IMPORTANT",
-      "recommendedAction": "Check the Core scale rules in the PDF and a handful of statblocks, then decide the x1 treatment."
+      "recommendedAction": "Check the Core scale rules in the PDF and a handful of statblocks, then decide the x1 treatment.",
+      "resolution": "Owner ruling 2026-11-03: an omitted multiplier is x1 and neither invalidates a vehicle weapon nor makes it a personal weapon (Core vehicle examples print plain 4d10/5d10). Implemented in vehicle-stock-weapon-groups.js (P6C-2A)."
     },
     {
       "workstream": "STOCK",

@@ -867,3 +867,13 @@ Investigation of the 564 groups whose printed attack total did not match crew Ba
 - **Revision 23 (2026-11-03):** appended this status note. No existing entry changed.
 
 - **Revision 24 (2026-11-03):** correction to the revision 23 note: the executable count is 230 groups (laser, blaster and mass-driver cannons), not 274; finite-ammunition and ion-labelled groups were wrongly counted and are now denied. No existing entry changed.
+
+### Engineering status note: omitted multiplier and capital-scale damage (2026-11-03; not a new ruling)
+
+Owner ruling recorded in the P6C directive (no new register question): a published vehicle-weapon damage line with no
+multiplier is x1, because a vehicle weapon is not a personal weapon and no x2 is invented. Printed multipliers (x1, x2, x5, x10)
+are applied through the one damage authority as `(dice) * multiplier`; critical handling adds no second multiplier. The blanket
+refusal of capital-scale x5 groups is replaced by a consistency check that a size-dependent figure on a capital ship equals the
+printed figure minus the Core p. 171 -20 penalty. Result: 260 executable stock groups on 232 vehicles. No existing entry changed.
+
+- **Revision 25 (2026-11-03):** appended this status note. No existing entry changed.

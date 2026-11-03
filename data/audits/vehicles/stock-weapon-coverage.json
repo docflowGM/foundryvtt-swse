@@ -5,30 +5,29 @@
   "vehicles": 429,
   "groups": 846,
   "sourceVerifiedGroups": 466,
-  "offlineExecutableGroups": 230,
-  "vehiclesWithOfflineExecutableGroup": 207,
-  "vehiclesAllGroupsExecutable": 91,
+  "offlineExecutableGroups": 260,
+  "vehiclesWithOfflineExecutableGroup": 232,
+  "vehiclesAllGroupsExecutable": 110,
   "liveVerifiedVehicles": 0
  },
  "refusalReasons": {
   "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA": 336,
   "STOCK_OPERATOR_IS_A_STATION_BATTERY": 291,
   "STOCK_GROUP_IS_A_WEAPON_BATTERY": 283,
-  "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER": 192,
   "STOCK_AMMUNITION_LIMITED_UNTRACKED": 169,
-  "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT": 107,
   "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD": 85,
   "STOCK_DAMAGE_ION_UNVERIFIED": 73,
   "STOCK_DAMAGE_AREA_OR_SPLASH": 71,
   "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED": 60,
-  "STOCK_DAMAGE_NO_MULTIPLIER": 52,
   "STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER": 47,
   "STOCK_OPERATOR_NOT_PRINTED": 17,
   "STOCK_DAMAGE_QUALIFIED": 14,
   "STOCK_FIRING_ARC_NOT_REVIEWED": 12,
+  "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT": 9,
   "STOCK_ATTACK_TOTAL_NOT_PRINTED": 8,
   "STOCK_FIRING_ARC_STATED_UNPARSED": 4,
-  "STOCK_CREW_ATTACK_BASIS_UNKNOWN": 2
+  "STOCK_CREW_ATTACK_BASIS_UNKNOWN": 2,
+  "STOCK_POSSIBLE_AREA_WEAPON_UNVERIFIED": 2
  },
  "byBook": {
   "Core Rulebook": {
@@ -40,20 +39,20 @@
   "Clone Wars Campaign Guide": {
    "vehicles": 67,
    "groups": 124,
-   "executableGroups": 42,
-   "vehiclesWithExecutable": 34
+   "executableGroups": 49,
+   "vehiclesWithExecutable": 39
   },
   "Force Unleashed Campaign Guide": {
    "vehicles": 34,
    "groups": 58,
-   "executableGroups": 15,
-   "vehiclesWithExecutable": 15
+   "executableGroups": 19,
+   "vehiclesWithExecutable": 18
   },
   "Galaxy at War": {
    "vehicles": 11,
    "groups": 17,
-   "executableGroups": 6,
-   "vehiclesWithExecutable": 5
+   "executableGroups": 7,
+   "vehiclesWithExecutable": 6
   },
   "Galaxy of Intrigue": {
    "vehicles": 8,
@@ -70,20 +69,20 @@
   "Knights of the Old Republic Campaign Guide": {
    "vehicles": 39,
    "groups": 73,
-   "executableGroups": 18,
-   "vehiclesWithExecutable": 17
+   "executableGroups": 19,
+   "vehiclesWithExecutable": 18
   },
   "Legacy Era Campaign Guide": {
    "vehicles": 49,
    "groups": 109,
-   "executableGroups": 28,
-   "vehiclesWithExecutable": 25
+   "executableGroups": 30,
+   "vehiclesWithExecutable": 27
   },
   "Rebellion Era Campaign Guide": {
    "vehicles": 53,
    "groups": 94,
-   "executableGroups": 36,
-   "vehiclesWithExecutable": 32
+   "executableGroups": 38,
+   "vehiclesWithExecutable": 33
   },
   "Scum and Villainy": {
    "vehicles": 13,
@@ -100,8 +99,8 @@
   "Starships of the Galaxy": {
    "vehicles": 105,
    "groups": 258,
-   "executableGroups": 58,
-   "vehiclesWithExecutable": 54
+   "executableGroups": 63,
+   "vehiclesWithExecutable": 59
   },
   "Threats of the Galaxy": {
    "vehicles": 5,
@@ -112,8 +111,8 @@
   "Unknown Regions": {
    "vehicles": 26,
    "groups": 33,
-   "executableGroups": 9,
-   "vehiclesWithExecutable": 9
+   "executableGroups": 17,
+   "vehiclesWithExecutable": 16
   }
  },
  "byCategory": {
@@ -123,27 +122,27 @@
   },
   "speeder-bike": {
    "vehicles": 9,
-   "vehiclesWithExecutable": 0
+   "vehiclesWithExecutable": 4
   },
   "starfighter": {
    "vehicles": 132,
-   "vehiclesWithExecutable": 118
+   "vehiclesWithExecutable": 119
   },
   "walker": {
    "vehicles": 15,
-   "vehiclesWithExecutable": 7
+   "vehiclesWithExecutable": 8
   },
   "space-transport": {
    "vehicles": 99,
-   "vehiclesWithExecutable": 64
+   "vehiclesWithExecutable": 68
   },
   "capital-ship": {
    "vehicles": 84,
-   "vehiclesWithExecutable": 1
+   "vehiclesWithExecutable": 5
   },
   "airspeeder": {
    "vehicles": 15,
-   "vehiclesWithExecutable": 3
+   "vehiclesWithExecutable": 6
   },
   "speeder": {
    "vehicles": 1,
@@ -159,7 +158,7 @@
   },
   "ground-speeder": {
    "vehicles": 14,
-   "vehiclesWithExecutable": 4
+   "vehiclesWithExecutable": 6
   },
   "water-speeder": {
    "vehicles": 2,
@@ -167,7 +166,7 @@
   },
   "tracked-vehicle": {
    "vehicles": 10,
-   "vehiclesWithExecutable": 0
+   "vehiclesWithExecutable": 3
   },
   "ornithopter": {
    "vehicles": 1,
@@ -183,7 +182,7 @@
   },
   "ground-speeder-bike": {
    "vehicles": 4,
-   "vehiclesWithExecutable": 0
+   "vehiclesWithExecutable": 1
   },
   "wheeled-groundcar": {
    "vehicles": 1,
@@ -191,7 +190,7 @@
   },
   "landspeeder": {
    "vehicles": 7,
-   "vehiclesWithExecutable": 0
+   "vehiclesWithExecutable": 2
   },
   "command-speeder": {
    "vehicles": 1,
@@ -327,7 +326,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_AREA_OR_SPLASH",
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_FIRING_ARC_NOT_REVIEWED"
      ]
@@ -362,7 +360,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_FIRING_ARC_NOT_REVIEWED"
      ]
     }
@@ -744,7 +741,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -766,7 +762,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -1000,7 +995,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_FIRING_ARC_NOT_REVIEWED"
      ]
     },
@@ -1019,7 +1013,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_FIRING_ARC_NOT_REVIEWED"
      ]
     }
@@ -1053,7 +1046,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_FIRING_ARC_NOT_REVIEWED"
      ]
     },
@@ -1072,7 +1064,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_FIRING_ARC_NOT_REVIEWED"
      ]
     },
@@ -1333,7 +1324,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED"
      ]
     }
@@ -1398,8 +1388,7 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER"
+      "STOCK_DAMAGE_ION_UNVERIFIED"
      ]
     },
     {
@@ -1480,8 +1469,8 @@
    "size": "Large",
    "groupCount": 1,
    "sourceVerifiedGroups": 1,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -1491,16 +1480,14 @@
      "printedDamage": "5d10",
      "operator": "pilot",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "pilot station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER"
-     ]
+     "refusals": []
     }
    ]
   },
@@ -1738,10 +1725,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -1774,8 +1759,8 @@
    "size": "Colossal",
    "groupCount": 2,
    "sourceVerifiedGroups": 2,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 2,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -1785,16 +1770,14 @@
      "printedDamage": "6d10x5",
      "operator": "pilot",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "pilot station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER"
-     ]
+     "refusals": []
     },
     {
      "groupKey": "cw-cr-20-troop-carrier-source-attack-2",
@@ -1803,16 +1786,14 @@
      "printedDamage": "6d10x5",
      "operator": "copilot",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "copilot station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER"
-     ]
+     "refusals": []
     }
    ]
   },
@@ -2198,7 +2179,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED"
      ]
@@ -2280,8 +2260,7 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_QUALIFIED",
-      "STOCK_DAMAGE_NO_MULTIPLIER"
+      "STOCK_DAMAGE_QUALIFIED"
      ]
     }
    ]
@@ -2331,7 +2310,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_AREA_OR_SPLASH",
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED"
      ]
     }
@@ -2599,10 +2577,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -2641,9 +2617,7 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT"
+      "STOCK_DAMAGE_ION_UNVERIFIED"
      ]
     },
     {
@@ -2735,7 +2709,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
@@ -2920,7 +2893,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_AREA_OR_SPLASH",
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED"
      ]
     }
@@ -2968,7 +2940,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -3171,8 +3142,7 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_QUALIFIED",
-      "STOCK_DAMAGE_NO_MULTIPLIER"
+      "STOCK_DAMAGE_QUALIFIED"
      ]
     }
    ]
@@ -3186,8 +3156,8 @@
    "size": "Huge",
    "groupCount": 2,
    "sourceVerifiedGroups": 2,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_PARTIAL",
    "liveVerified": false,
    "groups": [
     {
@@ -3197,16 +3167,14 @@
      "printedDamage": "5d10",
      "operator": "pilot",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "pilot station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER"
-     ]
+     "refusals": []
     },
     {
      "groupKey": "cw-og-9-homing-spider-droid-source-attack-2",
@@ -3224,7 +3192,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_QUALIFIED",
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -3258,10 +3225,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -3304,7 +3269,6 @@
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -3357,7 +3321,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_QUALIFIED",
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -3378,7 +3341,6 @@
      "refusals": [
       "STOCK_DAMAGE_AREA_OR_SPLASH",
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED"
      ]
     }
@@ -3412,10 +3374,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -3455,8 +3415,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -3616,8 +3574,7 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_QUALIFIED",
-      "STOCK_DAMAGE_NO_MULTIPLIER"
+      "STOCK_DAMAGE_QUALIFIED"
      ]
     }
    ]
@@ -3631,8 +3588,8 @@
    "size": "Colossal",
    "groupCount": 2,
    "sourceVerifiedGroups": 2,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_PARTIAL",
    "liveVerified": false,
    "groups": [
     {
@@ -3642,16 +3599,14 @@
      "printedDamage": "4d10",
      "operator": "pilot",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "pilot station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER"
-     ]
+     "refusals": []
     },
     {
      "groupKey": "cw-republic-troop-transport-source-attack-2",
@@ -3669,7 +3624,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_AREA_OR_SPLASH",
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED"
      ]
     }
@@ -3773,10 +3727,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -3875,7 +3827,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT"
      ]
@@ -3891,7 +3842,7 @@
    "size": "Colossal",
    "groupCount": 6,
    "sourceVerifiedGroups": 5,
-   "offlineExecutableGroups": 2,
+   "offlineExecutableGroups": 3,
    "status": "OFFLINE_EXECUTABLE_PARTIAL",
    "liveVerified": false,
    "groups": [
@@ -3902,16 +3853,14 @@
      "printedDamage": "7d10x5",
      "operator": "gunner",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "gunner station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER"
-     ]
+     "refusals": []
     },
     {
      "groupKey": "cw-self-propelled-heavy-artillery-source-attack-2",
@@ -3928,8 +3877,7 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER"
+      "STOCK_DAMAGE_ION_UNVERIFIED"
      ]
     },
     {
@@ -3963,7 +3911,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED"
      ]
     },
@@ -3998,7 +3945,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
@@ -4028,8 +3974,8 @@
    "size": "Large",
    "groupCount": 1,
    "sourceVerifiedGroups": 1,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -4039,16 +3985,14 @@
      "printedDamage": "4d10",
      "operator": "pilot",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "pilot station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER"
-     ]
+     "refusals": []
     }
    ]
   },
@@ -4111,7 +4055,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
@@ -4133,7 +4076,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
@@ -4198,8 +4140,7 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER"
+      "STOCK_DAMAGE_ION_UNVERIFIED"
      ]
     }
    ]
@@ -4247,7 +4188,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_AREA_OR_SPLASH",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED"
      ]
     }
@@ -4313,7 +4253,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -4333,7 +4272,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_AREA_OR_SPLASH",
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -4354,7 +4292,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -4473,7 +4410,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
@@ -4494,7 +4430,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED"
      ]
     }
@@ -4610,7 +4545,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_AREA_OR_SPLASH",
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
@@ -4626,8 +4560,8 @@
    "size": "Large",
    "groupCount": 1,
    "sourceVerifiedGroups": 1,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -4637,16 +4571,14 @@
      "printedDamage": "4d10",
      "operator": "pilot",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "pilot station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER"
-     ]
+     "refusals": []
     }
    ]
   },
@@ -4690,8 +4622,8 @@
    "size": "Huge",
    "groupCount": 2,
    "sourceVerifiedGroups": 2,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_PARTIAL",
    "liveVerified": false,
    "groups": [
     {
@@ -4701,16 +4633,14 @@
      "printedDamage": "4d10",
      "operator": "pilot",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "pilot station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER"
-     ]
+     "refusals": []
     },
     {
      "groupKey": "fucg-arrow-23-landspeeder-paramilitary-attack-2",
@@ -4728,7 +4658,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_AREA_OR_SPLASH",
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED"
      ]
     }
@@ -4814,7 +4743,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_AREA_OR_SPLASH",
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED"
      ]
     }
@@ -4948,7 +4876,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -5148,8 +5075,8 @@
    "size": "Gargantuan",
    "groupCount": 2,
    "sourceVerifiedGroups": 2,
-   "offlineExecutableGroups": 1,
-   "status": "OFFLINE_EXECUTABLE_PARTIAL",
+   "offlineExecutableGroups": 2,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -5175,16 +5102,14 @@
      "printedDamage": "4d10",
      "operator": "gunner",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "gunner station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER"
-     ]
+     "refusals": []
     }
    ]
   },
@@ -5292,8 +5217,8 @@
    "size": "Large",
    "groupCount": 1,
    "sourceVerifiedGroups": 1,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -5303,16 +5228,14 @@
      "printedDamage": "4d10",
      "operator": "pilot",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "pilot station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER"
-     ]
+     "refusals": []
     }
    ]
   },
@@ -5344,7 +5267,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -5835,7 +5757,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -5856,7 +5777,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -5972,7 +5892,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -5993,7 +5912,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -6015,7 +5933,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_AREA_OR_SPLASH",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
@@ -6118,7 +6035,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -6140,7 +6056,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -6213,8 +6128,8 @@
    "size": "Huge",
    "groupCount": 1,
    "sourceVerifiedGroups": 1,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -6224,16 +6139,14 @@
      "printedDamage": "5d10",
      "operator": "pilot",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "pilot station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER"
-     ]
+     "refusals": []
     }
    ]
   },
@@ -6282,7 +6195,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_AREA_OR_SPLASH",
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED"
      ]
     }
@@ -6714,7 +6626,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_QUALIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -7051,7 +6962,7 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER"
+      "STOCK_POSSIBLE_AREA_WEAPON_UNVERIFIED"
      ]
     },
     {
@@ -7296,8 +7207,7 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_QUALIFIED",
-      "STOCK_DAMAGE_NO_MULTIPLIER"
+      "STOCK_DAMAGE_QUALIFIED"
      ]
     }
    ]
@@ -7447,7 +7357,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -7469,7 +7378,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -7490,7 +7398,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
@@ -7527,7 +7434,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -7569,7 +7475,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
@@ -7658,7 +7563,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -7680,7 +7584,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -7780,7 +7683,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -7801,7 +7703,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
@@ -7936,7 +7837,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -7957,7 +7857,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -8035,7 +7934,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -8056,7 +7954,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -8134,7 +8031,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -8292,7 +8188,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -8392,7 +8287,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -8500,7 +8394,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -8522,7 +8415,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -8621,7 +8513,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
@@ -8639,8 +8530,8 @@
    "size": "Colossal",
    "groupCount": 2,
    "sourceVerifiedGroups": 2,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_PARTIAL",
    "liveVerified": false,
    "groups": [
     {
@@ -8650,16 +8541,14 @@
      "printedDamage": "3d10x5",
      "operator": "pilot",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "pilot station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER"
-     ]
+     "refusals": []
     },
     {
      "groupKey": "kotor-star-forge-manufacture-herald-class-shuttle-printed-attack-2",
@@ -8709,7 +8598,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -9062,7 +8950,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -9083,7 +8970,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -9234,7 +9120,6 @@
      "refusals": [
       "STOCK_DAMAGE_AREA_OR_SPLASH",
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
@@ -9366,7 +9251,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -9606,7 +9490,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -9648,7 +9531,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
@@ -9852,7 +9734,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -9873,7 +9754,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -9895,7 +9775,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -9937,7 +9816,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
@@ -9994,7 +9872,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -10015,7 +9892,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -10037,7 +9913,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -10080,7 +9955,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_AREA_OR_SPLASH",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
@@ -10179,8 +10053,8 @@
    "size": "Large",
    "groupCount": 1,
    "sourceVerifiedGroups": 1,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -10190,16 +10064,14 @@
      "printedDamage": "4d10",
      "operator": "pilot",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "pilot station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER"
-     ]
+     "refusals": []
     }
    ]
   },
@@ -10498,7 +10370,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -10519,7 +10390,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -10541,7 +10411,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -10583,7 +10452,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
@@ -10663,8 +10531,8 @@
    "size": "Large",
    "groupCount": 1,
    "sourceVerifiedGroups": 1,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -10674,16 +10542,14 @@
      "printedDamage": "3d10",
      "operator": "pilot",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "pilot station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER"
-     ]
+     "refusals": []
     }
    ]
   },
@@ -10814,7 +10680,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -10892,7 +10757,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -11001,7 +10865,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -11022,7 +10885,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -11044,7 +10906,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY"
      ]
@@ -11085,7 +10946,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_AREA_OR_SPLASH",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
@@ -11122,7 +10982,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -11165,7 +11024,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_AREA_OR_SPLASH",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
@@ -11394,7 +11252,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -11437,7 +11294,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -11494,7 +11350,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -11558,7 +11413,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_AREA_OR_SPLASH",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
@@ -11691,7 +11545,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -11821,7 +11674,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
@@ -11941,7 +11793,7 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER"
+      "STOCK_POSSIBLE_AREA_WEAPON_UNVERIFIED"
      ]
     },
     {
@@ -12009,7 +11861,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_AREA_OR_SPLASH",
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED"
      ]
     }
@@ -12318,7 +12169,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -12375,7 +12225,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -12397,7 +12246,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -12654,7 +12502,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -12676,7 +12523,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -12698,7 +12544,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_AREA_OR_SPLASH",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -12786,8 +12631,8 @@
    "size": "Gargantuan",
    "groupCount": 2,
    "sourceVerifiedGroups": 2,
-   "offlineExecutableGroups": 1,
-   "status": "OFFLINE_EXECUTABLE_PARTIAL",
+   "offlineExecutableGroups": 2,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -12797,16 +12642,14 @@
      "printedDamage": "6d10x5",
      "operator": "pilot",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "pilot station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER"
-     ]
+     "refusals": []
     },
     {
      "groupKey": "re-lancet-aerial-artillery-published-attack-2",
@@ -13038,7 +12881,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED"
      ]
     },
@@ -13667,7 +13509,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_NOT_PRINTED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
@@ -13702,8 +13543,8 @@
    "size": "Huge",
    "groupCount": 1,
    "sourceVerifiedGroups": 1,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -13713,16 +13554,14 @@
      "printedDamage": "3d10x5",
      "operator": "pilot",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "pilot station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER"
-     ]
+     "refusals": []
     }
    ]
   },
@@ -13966,7 +13805,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_AREA_OR_SPLASH",
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_OPERATOR_NOT_PRINTED",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -14430,7 +14268,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -14451,7 +14288,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -14494,7 +14330,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -14549,7 +14384,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -14657,7 +14491,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -14854,7 +14687,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_QUALIFIED",
-      "STOCK_DAMAGE_NO_MULTIPLIER",
       "STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER"
      ]
     },
@@ -15025,10 +14857,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -15047,10 +14877,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -15069,8 +14897,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -15137,8 +14963,8 @@
    "size": "Colossal (cruiser)",
    "groupCount": 5,
    "sourceVerifiedGroups": 2,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_PARTIAL",
    "liveVerified": false,
    "groups": [
     {
@@ -15148,17 +14974,14 @@
      "printedDamage": "11d10x5",
      "operator": "gunner",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
-     "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT"
-     ]
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "gunner station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
+     "capitalShipPenaltyApplies": true,
+     "refusals": []
     },
     {
      "groupKey": "sotg-banking-clan-munificent-class-frigate-group-2",
@@ -15175,8 +14998,7 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT"
+      "STOCK_DAMAGE_ION_UNVERIFIED"
      ]
     },
     {
@@ -15194,10 +15016,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -15216,10 +15036,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -15507,10 +15325,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -15544,9 +15360,7 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
-      "STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT"
+      "STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER"
      ]
     },
     {
@@ -15585,9 +15399,7 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
-      "STOCK_AMMUNITION_LIMITED_UNTRACKED",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT"
+      "STOCK_AMMUNITION_LIMITED_UNTRACKED"
      ]
     }
    ]
@@ -15713,10 +15525,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -15758,8 +15568,7 @@
      "refusals": [
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
-      "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT"
+      "STOCK_GROUP_IS_A_WEAPON_BATTERY"
      ]
     }
    ]
@@ -15854,9 +15663,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_FIRING_ARC_STATED_UNPARSED",
+      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -15875,10 +15683,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -15897,10 +15703,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -15941,10 +15745,8 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -15966,7 +15768,6 @@
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -16045,10 +15846,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -16067,10 +15866,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -16090,10 +15887,8 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -16115,7 +15910,6 @@
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -16134,11 +15928,9 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -16391,10 +16183,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -16414,7 +16204,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -16456,8 +16245,7 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER"
+      "STOCK_DAMAGE_ION_UNVERIFIED"
      ]
     },
     {
@@ -16475,8 +16263,7 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT"
+      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD"
      ]
     },
     {
@@ -16530,10 +16317,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -16574,7 +16359,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -16610,10 +16394,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -16632,10 +16414,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -16690,10 +16470,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -16712,10 +16490,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -16770,10 +16546,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -16807,10 +16581,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -16830,10 +16602,8 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -16855,7 +16625,6 @@
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -16920,10 +16689,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -17220,7 +16987,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED"
      ]
     },
@@ -17239,8 +17005,7 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_AMMUNITION_LIMITED_UNTRACKED",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT"
+      "STOCK_AMMUNITION_LIMITED_UNTRACKED"
      ]
     }
    ]
@@ -17729,7 +17494,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -17805,10 +17569,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -17827,7 +17589,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -17849,7 +17610,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -17942,10 +17702,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -17985,8 +17743,7 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT"
+      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD"
      ]
     }
    ]
@@ -18019,10 +17776,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -18041,7 +17796,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -18063,7 +17817,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -18105,7 +17858,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
@@ -18142,10 +17894,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -18164,8 +17914,7 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_AMMUNITION_LIMITED_UNTRACKED",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT"
+      "STOCK_AMMUNITION_LIMITED_UNTRACKED"
      ]
     }
    ]
@@ -18327,10 +18076,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -18349,10 +18096,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -18372,10 +18117,8 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -18397,7 +18140,6 @@
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -18431,10 +18173,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -18453,10 +18193,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -18497,10 +18235,8 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -18522,7 +18258,6 @@
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -18541,11 +18276,9 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -18665,8 +18398,7 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_QUALIFIED",
-      "STOCK_DAMAGE_NO_MULTIPLIER"
+      "STOCK_DAMAGE_QUALIFIED"
      ]
     }
    ]
@@ -18680,8 +18412,8 @@
    "size": "Colossal",
    "groupCount": 1,
    "sourceVerifiedGroups": 1,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -18691,16 +18423,14 @@
      "printedDamage": "3d10x5",
      "operator": "pilot",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "pilot station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER"
-     ]
+     "refusals": []
     }
    ]
   },
@@ -18732,10 +18462,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -18755,10 +18483,8 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -18780,7 +18506,6 @@
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -18814,10 +18539,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -18836,10 +18559,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -18880,10 +18601,8 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -18905,7 +18624,6 @@
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -18924,11 +18642,9 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -18962,10 +18678,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -18984,10 +18698,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -19007,10 +18719,8 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -19032,7 +18742,6 @@
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -19051,11 +18760,9 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -19188,10 +18895,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -19210,10 +18915,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -19368,10 +19071,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -19390,10 +19091,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -19412,10 +19111,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -19449,10 +19146,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -19471,10 +19166,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -19493,10 +19186,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -19530,10 +19221,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -19552,10 +19241,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -19574,10 +19261,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -19592,8 +19277,8 @@
    "size": "Colossal (cruiser)",
    "groupCount": 5,
    "sourceVerifiedGroups": 1,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_PARTIAL",
    "liveVerified": false,
    "groups": [
     {
@@ -19603,17 +19288,14 @@
      "printedDamage": "10d10x5",
      "operator": "gunner",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
-     "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT"
-     ]
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "gunner station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
+     "capitalShipPenaltyApplies": true,
+     "refusals": []
     },
     {
      "groupKey": "sotg-recusant-class-light-destroyer-group-2",
@@ -19630,10 +19312,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -19747,8 +19427,8 @@
    "size": "Colossal (cruiser)",
    "groupCount": 3,
    "sourceVerifiedGroups": 1,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_PARTIAL",
    "liveVerified": false,
    "groups": [
     {
@@ -19766,10 +19446,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -19788,10 +19466,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -19802,17 +19478,14 @@
      "printedDamage": "2d10x5",
      "operator": "gunner",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
-     "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT"
-     ]
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "gunner station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
+     "capitalShipPenaltyApplies": true,
+     "refusals": []
     }
    ]
   },
@@ -19844,10 +19517,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -19866,7 +19537,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -19888,7 +19558,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -19945,10 +19614,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -20021,10 +19688,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -20043,7 +19708,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -20096,7 +19760,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_ION_UNVERIFIED",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT"
      ]
     },
@@ -20491,10 +20154,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -20516,7 +20177,6 @@
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -20951,7 +20611,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER",
       "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT"
      ]
@@ -21183,8 +20842,8 @@
    "size": "Colossal (cruiser)",
    "groupCount": 5,
    "sourceVerifiedGroups": 2,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_PARTIAL",
    "liveVerified": false,
    "groups": [
     {
@@ -21202,10 +20861,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -21216,17 +20873,14 @@
      "printedDamage": "6d10x5",
      "operator": "gunner",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
-     "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT"
-     ]
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "gunner station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
+     "capitalShipPenaltyApplies": true,
+     "refusals": []
     },
     {
      "groupKey": "sotg-venator-class-star-destroyer-group-3",
@@ -21267,7 +20921,6 @@
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -21286,8 +20939,7 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_AMMUNITION_LIMITED_UNTRACKED",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT"
+      "STOCK_AMMUNITION_LIMITED_UNTRACKED"
      ]
     }
    ]
@@ -21320,10 +20972,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -21342,10 +20992,8 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -21410,7 +21058,6 @@
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
-      "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -21655,8 +21302,8 @@
    "size": "Large",
    "groupCount": 1,
    "sourceVerifiedGroups": 1,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -21666,16 +21313,14 @@
      "printedDamage": "5d10",
      "operator": "pilot",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "pilot station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER"
-     ]
+     "refusals": []
     }
    ]
   },
@@ -21815,8 +21460,8 @@
    "size": "Colossal",
    "groupCount": 1,
    "sourceVerifiedGroups": 1,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -21826,16 +21471,14 @@
      "printedDamage": "5d10",
      "operator": "gunner",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "gunner station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER"
-     ]
+     "refusals": []
     }
    ]
   },
@@ -21881,8 +21524,8 @@
    "size": "Gargantuan",
    "groupCount": 1,
    "sourceVerifiedGroups": 1,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -21892,16 +21535,14 @@
      "printedDamage": "5d10",
      "operator": "gunner",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "gunner station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER"
-     ]
+     "refusals": []
     }
    ]
   },
@@ -21995,7 +21636,6 @@
      "damageReadiness": "REFUSED",
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -22095,8 +21735,8 @@
    "size": "Colossal (frigate)",
    "groupCount": 2,
    "sourceVerifiedGroups": 2,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_PARTIAL",
    "liveVerified": false,
    "groups": [
     {
@@ -22106,16 +21746,14 @@
      "printedDamage": "6d10x5",
      "operator": "gunner",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
-     "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER"
-     ]
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "gunner station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
+     "capitalShipPenaltyApplies": true,
+     "refusals": []
     },
     {
      "groupKey": "ur-mesens-corporation-sct-scout-craft-published-attack-2",
@@ -22399,8 +22037,8 @@
    "size": "Huge",
    "groupCount": 1,
    "sourceVerifiedGroups": 1,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -22410,16 +22048,14 @@
      "printedDamage": "4d10",
      "operator": "gunner",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "gunner station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER"
-     ]
+     "refusals": []
     }
    ]
   },
@@ -22472,7 +22108,6 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_AREA_OR_SPLASH",
-      "STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED"
      ]
     },
@@ -22505,8 +22140,8 @@
    "size": "Large",
    "groupCount": 1,
    "sourceVerifiedGroups": 1,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -22516,16 +22151,14 @@
      "printedDamage": "4d10",
      "operator": "pilot",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "pilot station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER"
-     ]
+     "refusals": []
     }
    ]
   },
@@ -22538,8 +22171,8 @@
    "size": "Gargantuan",
    "groupCount": 2,
    "sourceVerifiedGroups": 2,
-   "offlineExecutableGroups": 1,
-   "status": "OFFLINE_EXECUTABLE_PARTIAL",
+   "offlineExecutableGroups": 2,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -22549,16 +22182,14 @@
      "printedDamage": "4d10",
      "operator": "gunner",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "gunner station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER"
-     ]
+     "refusals": []
     },
     {
      "groupKey": "ur-uulshos-manufacturing-deep-x-explorer-published-attack-2",
@@ -22587,8 +22218,8 @@
    "size": "Huge",
    "groupCount": 1,
    "sourceVerifiedGroups": 1,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -22598,16 +22229,14 @@
      "printedDamage": "3d10",
      "operator": "pilot",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "pilot station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NO_MULTIPLIER"
-     ]
+     "refusals": []
     }
    ]
   }

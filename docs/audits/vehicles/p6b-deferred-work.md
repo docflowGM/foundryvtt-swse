@@ -9,11 +9,13 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | Category | Count |
 |---|---|
 | RULES_DECISION_REQUIRED | 6 |
-| SOURCE_EVIDENCE_MISSING | 8 |
-| ENGINEERING_COMPLEXITY | 14 |
+| SOURCE_EVIDENCE_MISSING | 7 |
+| ENGINEERING_COMPLEXITY | 13 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 4 |
 | DEPENDENCY_BLOCKED | 8 |
+
+Open items: 39. Resolved items: 2 (listed at the end).
 
 ## Items (by severity)
 
@@ -28,7 +30,6 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | P6B-D-033 | STOCK | published stock groups whose printed attack total is not explained by a published rule (336 groups, mostly batteries) | SOURCE_EVIDENCE_MISSING | IMPORTANT | no | - |
 | P6B-D-034 | STOCK | published stock weapon batteries and multi-gunner stations (291 groups) | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-036 | STOCK | published stock splash, ion and ammunition-limited groups (torpedoes, missiles, ion cannons; 71 splash + 71 ion groups) | DEPENDENCY_BLOCKED | IMPORTANT | no | V-P6A-03 |
-| P6B-D-040 | STOCK | published stock groups printing a damage dice expression with no multiplier (52 groups; 20 blocked by this alone) | SOURCE_EVIDENCE_MISSING | IMPORTANT | no | - |
 | P6B-D-003 | P6B-1 | jamming-suite, jamming-array | ENGINEERING_COMPLEXITY | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-004 | P6B-1 | combat-thrusters | DEPENDENCY_BLOCKED | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-005 | P6B-1 | navicomputer-limited | RULES_DECISION_REQUIRED | MINOR | yes | V-P6B-01 |
@@ -55,7 +56,6 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | P6B-D-029 | P6B-W | vehicle weapon damage types (laser cannons) | SOURCE_EVIDENCE_MISSING | MINOR | yes | V-P6B-04 |
 | P6B-D-030 | P6B-W | copilot as weapon operator | ENGINEERING_COMPLEXITY | MINOR | no | - |
 | P6B-D-031 | P6B-W | weapon mount key uniqueness across pending jobs | NONCRITICAL_DEFECT | MINOR | no | - |
-| P6B-D-035 | STOCK | published stock groups with capital-scale (x5 or other) multipliers (192 groups) and turbolasers | ENGINEERING_COMPLEXITY | MINOR | no | - |
 | P6B-D-037 | STOCK | published stock groups whose firing arc is stated but not interpreted, or never reviewed | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
 | P6B-D-038 | STOCK | legacy abstract-crew attack tier table (CREW_QUALITY_BONUS) for actors that are not source-backed or constructed | NONCRITICAL_DEFECT | MINOR | no | - |
 | P6B-D-039 | STOCK | point-defense weapon modification (catalog row "point-defense", +4,000 credits) | ENGINEERING_COMPLEXITY | MINOR | no | - |
@@ -293,7 +293,7 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 
 - **Source:** Core Rulebook, Vehicle Combat (Capital Ships); SotG p. 45 (point-defense)
 - **Category / severity:** ENGINEERING_COMPLEXITY / MINOR
-- **Reason:** The Core -20 against targets smaller than Colossal is implemented (vehicle-capital-penalty.js, in the vehicle attack math) and weapons may now be installed on frigate-size and larger hulls. Turbolasers stay uncertified: capital-scale (x5) damage against smaller-scale targets and their starship-scale ranges have not been verified end to end (the Core range cells are unreadable in the OCR).
+- **Reason:** The Core -20 against targets smaller than Colossal is implemented (vehicle-capital-penalty.js, in the vehicle attack math) and weapons may now be installed on frigate-size and larger hulls. Turbolasers stay uncertified: capital-scale (x5) damage against smaller-scale targets and their starship-scale ranges have not been verified end to end (the Core range cells are unreadable in the OCR). Update: 4 capital-ship single-gunner turbolaser groups on Colossal (cruiser) hulls (Munificent, Recusant, Venator, Rendili) are executable with the -20 applied once; the statblock vs-smaller figure (printed - 20 in 105 of 107 cases) is verified as a consistency check.
 - **Missing:** Verified starship-scale range cells and capital-scale damage application for turbolasers.
 - **Owner ruling needed:** no
 - **Impact:** Turbolasers (light/medium/heavy, Hapan triple ion) are reference-only.
@@ -393,7 +393,7 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 
 - **Source:** canonical records, armament.firingGroups
 - **Category / severity:** SOURCE_EVIDENCE_MISSING / IMPORTANT
-- **Reason:** Investigated across 836 groups and 12 books. A printed total is the generic crew's complete attack modifier. It equals crew Base Attack + vehicle Int in 272 groups (delta 0), and exceeds it by exactly +2 on pilot-crewed groups in 231 of 313 cases (the Core p. 171 trained-Pilot rule; Core Rulebook statblocks omit it, later books include it, and the same crew quality prints both, so it is a per-statblock convention). Weapon batteries add +2 per gunner beyond the first (2 gunners +2, 3 +4, 4 +6, 5 +8, 6 +10; 85-98% of each size), matching the SotG fighter-group sentence "+2 on attacks per additional vehicle ... as a weapon battery"; the Core p. 170 battery text itself is unreadable in the OCR. Accepted and executable: delta 0, and +2 on pilot-crewed groups (230 groups, laser/blaster/mass-driver cannons); the printed total is applied ONCE and its components are shown as included, never added again. Still unexplained: about 50 non-battery groups (mostly burst-fire / autofire modes and isolated cases, e.g. -5 printed on "Burst Fire mode" groups) and the battery groups, which also need the battery damage rules.
+- **Reason:** Investigated across 836 groups and 12 books. A printed total is the generic crew's complete attack modifier. It equals crew Base Attack + vehicle Int in 272 groups (delta 0), and exceeds it by exactly +2 on pilot-crewed groups in 231 of 313 cases (the Core p. 171 trained-Pilot rule; Core Rulebook statblocks omit it, later books include it, and the same crew quality prints both, so it is a per-statblock convention). Weapon batteries add +2 per gunner beyond the first (2 gunners +2, 3 +4, 4 +6, 5 +8, 6 +10; 85-98% of each size), matching the SotG fighter-group sentence "+2 on attacks per additional vehicle ... as a weapon battery"; the Core p. 170 battery text itself is unreadable in the OCR. Accepted and executable: delta 0, and +2 on pilot-crewed groups (260 groups after P6C-2A: laser/blaster/mass-driver cannons, plain or xN damage); the printed total is applied ONCE and its components are shown as included, never added again. Still unexplained: about 50 non-battery groups (mostly burst-fire / autofire modes and isolated cases, e.g. -5 printed on "Burst Fire mode" groups) and the battery groups, which also need the battery damage rules.
 - **Missing:** Core p. 170 weapon battery text (PDF); the source of the residual single-operator deltas.
 - **Owner ruling needed:** no
 - **Impact:** Batteries and about 50 single-operator groups stay refused (STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA).
@@ -408,16 +408,6 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 - **Owner ruling needed:** no
 - **Impact:** Capital-ship stock weapons are reference-only.
 - **Recommended action:** Design the battery model on top of the stock group authority once single-weapon groups are live-verified.
-
-### P6B-D-035 - published stock groups with capital-scale (x5 or other) multipliers (192 groups) and turbolasers
-
-- **Source:** canonical records; Core vehicle damage
-- **Category / severity:** ENGINEERING_COMPLEXITY / MINOR
-- **Reason:** Weapon damage x multiplier is the Core rule, but capital-scale damage against smaller-scale targets and starship-scale ranges are not verified end to end, so only the x2 multiplier is executable.
-- **Missing:** Verified capital-scale damage application and range cells.
-- **Owner ruling needed:** no
-- **Impact:** Capital weapons reference-only.
-- **Recommended action:** Verify with the same PDF check as turbolasers (P6B-D-023).
 
 ### P6B-D-036 - published stock splash, ion and ammunition-limited groups (torpedoes, missiles, ion cannons; 71 splash + 71 ion groups)
 
@@ -459,16 +449,6 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 - **Impact:** Capital ships cannot field point-defense weapons yet.
 - **Recommended action:** Add modifier entries targeting an installed weapon to the sealed ledger.
 
-### P6B-D-040 - published stock groups printing a damage dice expression with no multiplier (52 groups; 20 blocked by this alone)
-
-- **Source:** canonical records
-- **Category / severity:** SOURCE_EVIDENCE_MISSING / IMPORTANT
-- **Reason:** Core says vehicle weapon damage is dice x the listed multiplier, but groups printing plain dice (e.g. "5d10") mix character-scale weapons and autofire/burst values. Treating them as x1 vehicle damage could be wrong, so they are refused (STOCK_DAMAGE_NO_MULTIPLIER).
-- **Missing:** Whether a plain dice expression on a vehicle statblock is character-scale damage and how it applies to vehicle targets.
-- **Owner ruling needed:** no
-- **Impact:** Mostly ground vehicles (speeders, droids).
-- **Recommended action:** Check the Core scale rules in the PDF and a handful of statblocks, then decide the x1 treatment.
-
 ### P6B-D-041 - published stock groups with droid, remote or ambiguous operators
 
 - **Source:** canonical records; vehicle-crew-station-evidence.js
@@ -478,3 +458,15 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 - **Owner ruling needed:** no
 - **Impact:** 36 groups refused.
 - **Recommended action:** Add the copilot station to the crew authority first; leave droid and ambiguous operators refused until defined.
+
+## Resolved items
+
+### P6B-D-035 - published stock groups with capital-scale (x5 or other) multipliers (192 groups) and turbolasers
+
+- **Resolved:** Multipliers other than x2 (x5, x10, ...) are applied exactly as printed through the one damage composition authority (P6C-2A); the groups that remain refused are blocked by batteries, ion, ammunition or other mechanics, not by the multiplier.
+- **Was:** Weapon damage x multiplier is the Core rule, but capital-scale damage against smaller-scale targets and starship-scale ranges are not verified end to end, so only the x2 multiplier is executable.
+
+### P6B-D-040 - published stock groups printing a damage dice expression with no multiplier (52 groups; 20 blocked by this alone)
+
+- **Resolved:** Owner ruling 2026-11-03: an omitted multiplier is x1 and neither invalidates a vehicle weapon nor makes it a personal weapon (Core vehicle examples print plain 4d10/5d10). Implemented in vehicle-stock-weapon-groups.js (P6C-2A).
+- **Was:** Core says vehicle weapon damage is dice x the listed multiplier, but groups printing plain dice (e.g. "5d10") mix character-scale weapons and autofire/burst values. Treating them as x1 vehicle damage could be wrong, so they are refused (STOCK_DAMAGE_NO_MULTIPLIER).
