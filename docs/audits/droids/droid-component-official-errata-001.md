@@ -1,3 +1,5 @@
+> **SGD SOURCE FOLLOW-UP, 2026-11-03:** The 15 earlier-pending SGD weight-category reviews are now completed in `data/audits/droids/droid-component-sgd-errata-host-002.json`: **12 printed accessory-weight categories** use the official Small-or-smaller factor, **3 printed Locomotion systems** retain their normal factor. **Two separate physical host/variant issues remain** (Silence-Bubble Generator's unspecified physical mounting; Micro Shield's appendage possession vs separate handheld mass). The corrected 137 source expected-value and host-gate fixtures are in `data/audits/droids/droid-component-sgd-errata-host-002-fixtures.json`. Weight eligibility is distinct from permission to write `system.installedSystems`. No mechanical HOLDs promoted and no runtime behavior certified.
+
 # Droid component official errata correction - ERRATA-001
 
 **Date:** 2026-11-02. **Status:** Source-authority correction only. This overrides conflicting statements in MECH-001/002 and the initial 122-identity closeout without rewriting historical evidence.
