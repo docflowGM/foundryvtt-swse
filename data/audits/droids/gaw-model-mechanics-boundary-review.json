@@ -1,0 +1,285 @@
+{
+  "schema": "swse.droids.gaw.model-mechanics-boundary-review/0.1",
+  "date": "2026-11-02",
+  "branch": "audit/droid-publication-census-2026-10-29",
+  "bookId": "GAW",
+  "scope": "Source-specific narrative/printed-statblock mechanical boundary review of 22/22 frozen publication identities; full feat/talent/systems/weapon field capture NOT completed by this checkpoint.",
+  "sourcePdf": "SW_Saga_Galaxy_at_War.pdf",
+  "sourceTxtAid": "Galaxy At War_djvu.txt",
+  "records": [
+    {
+      "id": "GAW-DROID-001",
+      "name": "A-Series Medical Droid",
+      "printedPage": 51,
+      "authority": "droid",
+      "claimIds": [
+        "GAW-DROID-001-CONSTRAINT-01",
+        "GAW-DROID-001-CONSTRAINT-02"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "GAW-DROID-002",
+      "name": "KDY-4 Tech Droid",
+      "printedPage": 52,
+      "authority": "droid",
+      "claimIds": [
+        "GAW-DROID-002-CONSTRAINT-01",
+        "GAW-DROID-002-CONSTRAINT-02"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "GAW-DROID-003",
+      "name": "Chiba-DR10 Protocol Droid",
+      "printedPage": 52,
+      "authority": "droid",
+      "claimIds": [
+        "GAW-DROID-003-CONSTRAINT-01",
+        "GAW-DROID-003-CONSTRAINT-02"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "GAW-DROID-004",
+      "name": "Air Assault Super Battle Droid",
+      "printedPage": 53,
+      "authority": "droid",
+      "claimIds": [
+        "GAW-DROID-004-CONSTRAINT-01",
+        "GAW-DROID-004-CONSTRAINT-02"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "GAW-DROID-005",
+      "name": "Eradicator-Series Battle Droid",
+      "printedPage": 53,
+      "authority": "droid",
+      "claimIds": [
+        "GAW-DROID-005-CONSTRAINT-01",
+        "GAW-DROID-005-CONSTRAINT-02"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "GAW-DROID-006",
+      "name": "Purge Trooper",
+      "printedPage": 54,
+      "authority": "droid",
+      "claimIds": [
+        "GAW-DROID-006-CONSTRAINT-01",
+        "GAW-DROID-006-CONSTRAINT-02"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "GAW-DROID-007",
+      "name": "Sniper Droideka",
+      "printedPage": 55,
+      "authority": "droid",
+      "claimIds": [
+        "GAW-DROID-007-CONSTRAINT-01",
+        "GAW-DROID-007-CONSTRAINT-02"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "GAW-DROID-008",
+      "name": "Tactical Droid",
+      "printedPage": 55,
+      "authority": "droid",
+      "claimIds": [
+        "GAW-DROID-008-CONSTRAINT-01",
+        "GAW-DROID-008-CONSTRAINT-02"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "GAW-DROID-009",
+      "name": "Vigilant 2X Picket Droid",
+      "printedPage": 56,
+      "authority": "droid",
+      "claimIds": [
+        "GAW-DROID-009-CONSTRAINT-01",
+        "GAW-DROID-009-CONSTRAINT-02"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "GAW-DROID-010",
+      "name": "CLL-M2 Ordnance Lifter Droid",
+      "printedPage": 56,
+      "authority": "droid",
+      "claimIds": [
+        "GAW-DROID-010-CONSTRAINT-01",
+        "GAW-DROID-010-CONSTRAINT-02"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "GAW-DROID-011",
+      "name": "MR-200 Series Minesweeper Droid",
+      "printedPage": 57,
+      "authority": "droid",
+      "claimIds": [
+        "GAW-DROID-011-CONSTRAINT-01",
+        "GAW-DROID-011-CONSTRAINT-02"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "GAW-DROID-012",
+      "name": "Automated Sentry Gun",
+      "printedPage": 98,
+      "authority": "droid",
+      "claimIds": [
+        "GAW-DROID-012-CONSTRAINT-01",
+        "GAW-DROID-012-CONSTRAINT-02"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "GAW-DROID-013",
+      "name": "Arakyd AZ-Series Battle Droid",
+      "printedPage": 181,
+      "authority": "droid",
+      "claimIds": [
+        "GAW-DROID-013-CONSTRAINT-01",
+        "GAW-DROID-013-CONSTRAINT-02"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "GAW-DROID-014",
+      "name": "B1-Series Battle Droid",
+      "printedPage": 210,
+      "authority": "droid",
+      "claimIds": [
+        "GAW-DROID-014-CONSTRAINT-01",
+        "GAW-DROID-014-CONSTRAINT-02"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "GAW-DROID-015",
+      "name": "B2-Series Super Battle Droid",
+      "printedPage": 210,
+      "authority": "droid",
+      "claimIds": [
+        "GAW-DROID-015-CONSTRAINT-01",
+        "GAW-DROID-015-CONSTRAINT-02"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "GAW-DROID-016",
+      "name": "Droideka Series Destroyer Droid",
+      "printedPage": 211,
+      "authority": "droid",
+      "claimIds": [
+        "GAW-DROID-016-CONSTRAINT-01",
+        "GAW-DROID-016-CONSTRAINT-02"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "GAW-DROID-017",
+      "name": "Droid Commando",
+      "printedPage": 214,
+      "authority": "droid",
+      "claimIds": [
+        "GAW-DROID-017-CONSTRAINT-01",
+        "GAW-DROID-017-CONSTRAINT-02"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "GAW-DROID-018",
+      "name": "OOM-Series Battle Droid",
+      "printedPage": 215,
+      "authority": "droid",
+      "claimIds": [
+        "GAW-DROID-018-CONSTRAINT-01",
+        "GAW-DROID-018-CONSTRAINT-02"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "GAW-DROID-019",
+      "name": "Ground Armored Tank",
+      "printedPage": 216,
+      "authority": "vehicle",
+      "claimIds": [
+        "GAW-DROID-019-CONSTRAINT-01",
+        "GAW-DROID-019-CONSTRAINT-02"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "GAW-DROID-020",
+      "name": "B1-Series Battle Droid Squad",
+      "printedPage": 217,
+      "authority": "squad-aggregation",
+      "claimIds": [
+        "GAW-DROID-020-CONSTRAINT-01",
+        "GAW-DROID-020-CONSTRAINT-02"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "GAW-DROID-021",
+      "name": "Battle Droid Assassin",
+      "printedPage": 218,
+      "authority": "droid",
+      "claimIds": [
+        "GAW-DROID-021-CONSTRAINT-01",
+        "GAW-DROID-021-CONSTRAINT-02"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "GAW-DROID-022",
+      "name": "LR-57 Combat Droid",
+      "printedPage": 219,
+      "authority": "droid",
+      "claimIds": [
+        "GAW-DROID-022-CONSTRAINT-01",
+        "GAW-DROID-022-CONSTRAINT-02"
+      ],
+      "mechanicalStatus": "partial"
+    }
+  ],
+  "totals": {
+    "identities": 22,
+    "modelBoundariesReviewed": 22,
+    "addedSourceConstraints": 44,
+    "droidActorIdentities": 20,
+    "vehiclePrimary": 1,
+    "squadAggregations": 1,
+    "strictMechanicalCertifications": 0,
+    "originalSelectedFieldComparisons": 285
+  },
+  "crossBookGuards": [
+    "B1 Squad GAW has 3 members, different from Clone Wars squad of 4",
+    "GAW GAT p216 is vehicle-primary even if listed as droid brain",
+    "Sentry p175 +5 cover scenario is not factory +5 Reflex",
+    "GAW Sniper Droideka distinct from Core Droideka and GAW p211 Droideka",
+    "p220 census duplicate squad mention not confirmed by page"
+  ],
+  "outstanding": [
+    "Printed feat/talent/skill inventory and class legality verification on each individual record",
+    "Complete source System and Possession inventory with physical mount identifiers",
+    "Attack and action option/frequency resolution",
+    "Full mechanical certification and cross-book identity",
+    "JSON Schema and Foundry runtime tests"
+  ],
+  "qa": {
+    "frozenIDsPreserved": true,
+    "allSourceConstraintsNonExecutable": true,
+    "vehicleAndSquadNotActor": true,
+    "recordedP220Issue": true,
+    "noProductionMutations": true,
+    "noCertificationPromotion": true
+  }
+}
