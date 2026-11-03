@@ -1,0 +1,262 @@
+{
+  "schema": "swse.droids.component.official-errata-authority/1",
+  "date": "2026-11-02",
+  "phase": "ERRATA-001",
+  "historicalLedger": "data/audits/droids/component-mechanical-certification-ledger.json",
+  "sourceAuthority": {
+    "type": "WIZARDS_OF_THE_COAST_OFFICIAL_ERRATA",
+    "edition": "Saga Edition Core Rulebook",
+    "publicationDate": "2008-10-21",
+    "mirroredOriginalWebPage": "https://swse.xphilesrealm.com/WizardsOfTheCoast/WotcWebPages/Star%20Wars%20Roleplaying%20Game%20Saga%20Edition%20Errata%20and%20Official%20Clarifications.htm",
+    "scannedErrataPdf": "https://terceiraterra.com/wp-content/uploads/2025/01/SW_errata_A4_Out2008.pdf",
+    "baseBook": "Star Wars Saga Edition.pdf",
+    "basePdfVisualReferences": [
+      {
+        "printedPage": 186,
+        "pdfPage1Based": 187,
+        "label": "cost factor and initial systems"
+      },
+      {
+        "printedPage": 187,
+        "pdfPage1Based": 188,
+        "label": "Table 11-2 size factors"
+      },
+      {
+        "printedPage": 193,
+        "pdfPage1Based": 194,
+        "label": "Accessories definition and armor classification"
+      }
+    ],
+    "errataSections": [
+      "Core p186 Droid Cost Factor",
+      "Core p191 Synchronized Fire Circuits",
+      "Core p186 Systems and Accessories clarification",
+      "Core p120 Simple Weapons clarification"
+    ]
+  },
+  "publicationOrder": "OFFICIAL_ERRATA_OVERRIDES_BASE_CORE_TEXT; DO_NOT_APPLY_ORIGINAL_SOURCE_CLAIMS_IN_CONFLICT",
+  "corrections": {
+    "accessoryWeight": {
+      "authorityPrintedPage": 186,
+      "appliesOnlyTo": "Factor-multiplied accessory weight for Small or smaller droids",
+      "costFactorBySize": {
+        "fine": 20,
+        "diminutive": 10,
+        "tiny": 5,
+        "small": 2,
+        "medium": 1,
+        "large": 2,
+        "huge": 5,
+        "gargantuan": 10,
+        "colossal": 20
+      },
+      "accessoryWeightFactorBySize": {
+        "fine": 0.1,
+        "diminutive": 0.2,
+        "tiny": 0.4,
+        "small": 1.0,
+        "medium": 1,
+        "large": 2,
+        "huge": 5,
+        "gargantuan": 10,
+        "colossal": 20
+      },
+      "formula": "baseAccessoryWeightKg * (size <= Small ? 2/sizeCostFactor : sizeCostFactor)",
+      "costFormulaUnaffected": "baseCredits * sizeCostFactor",
+      "flatListedWeightsUnaffected": true,
+      "sourceClassConfirmedTargets": [
+        "Plasteel Shell",
+        "Quadanium Shell",
+        "Durasteel Shell",
+        "Quadanium Plating",
+        "Durasteel Plating",
+        "Quadanium Battle Armor",
+        "Duranium Plating",
+        "Durasteel Battle Armor",
+        "Mandalorian Steel Shell",
+        "Duranium Battle Armor",
+        "Neutronium Plating",
+        "Duravlex Shell",
+        "Crystadurium Plating",
+        "Hardened Systems x2",
+        "Hardened Systems x3",
+        "Hardened Systems x4",
+        "Hardened Systems x5",
+        "Shield Generator, SR 5",
+        "Shield Generator, SR 10",
+        "Shield Generator, SR 15",
+        "Shield Generator, SR 20"
+      ],
+      "sourceClassConfirmedTargetCount": 21,
+      "sgdSystemsRequiringHostScopeReview": [
+        "Burrower Drive",
+        "Gyroscopic Stabilizers",
+        "Underwater Drive",
+        "Laminanium Plating",
+        "Collapsible Construction",
+        "Courier Compartments",
+        "Electric Defense Grid",
+        "Hidden Holster",
+        "Holographic Image Disguiser",
+        "Internal Defenses",
+        "Internal Grapple Gun",
+        "Radiant Heat Element",
+        "Silence-Bubble Generator",
+        "Shield Expansion Module",
+        "Micro Shield"
+      ],
+      "notAutomaticallyAdjustedAppendageOrPossessionTargets": [
+        "Probe",
+        "Instrument",
+        "Tool",
+        "Claw",
+        "Hand",
+        "Magnetic Hands",
+        "Projectile Hand",
+        "Quick-Release Coupling",
+        "Rocket Arm",
+        "Multifunction Apparatus"
+      ],
+      "physicalScopeGate": "Core p193 defines Accessories separately from Appendages; SGD p51 distinguishes chassis integration from possessions. Apply weight rule to qualified accessories only. Other categories require source-based host ruling.",
+      "invariants": [
+        "Do not change credit cost factors",
+        "Do not multiply fixed listed kg amounts",
+        "Do not set missing weight to zero",
+        "Starting carrying-capacity exclusion is a distinct rule"
+      ]
+    },
+    "synchronizedFireCircuits": {
+      "authorityPrintedPage": 191,
+      "canonicalId": "droid-synchronized-fire-circuits",
+      "baseBookPreErrataAidAnotherBonus": 4,
+      "errataReplacementTotalBonus": 5,
+      "ordinaryAidAnotherBonus": 2,
+      "bonusIsReplacementNotAdditional": true,
+      "prerequisites": "Successful Aid Another by droid with circuits for another remote receiver droid linked to same remote processor",
+      "supersedes": [
+        "MECH-002 source published.mechanics.totalAidBonus=4",
+        "MECH-002 validator assertion totalAidBonus=4",
+        "Previously reported code defect +5 vs +4"
+      ],
+      "effectOnProductionDiagnosis": "A +5 entry is not automatically a production defect; still must test gating, action use, matched controller and success"
+    },
+    "startingSystemsCarryingCapacity": {
+      "authorityPrintedPage": 186,
+      "appliesTo": "Starting locomotion, appendages, and accessories in new droid creation",
+      "encumbranceAddedForStartingSystemsKg": 0,
+      "notEstablishedFor": "All later purchases/installations; carried possessions or cargo",
+      "consumer": "PC droid chargen, stock-model starting-equipment import"
+    },
+    "unarmedProficiency": {
+      "authorityPrintedPage": 120,
+      "appliesTo": "Unarmed attacks and natural weapons",
+      "weaponType": "light simple weapon",
+      "proficiency": "All characters",
+      "affectedBasicAppendageTypes": [
+        "Probe",
+        "Instrument",
+        "Tool",
+        "Claw",
+        "Hand"
+      ],
+      "scope": "Only size/appendage damage pairings with a printed attack; no free extra attacks or granted weapon equipment"
+    }
+  },
+  "sourceValueFixtures": [
+    {
+      "case": "ERR-WT-001",
+      "part": "Plasteel Shell",
+      "size": "small",
+      "baseKg": 2,
+      "printedBaseCredits": 400,
+      "expectedCostCredits": 800,
+      "expectedAccessoryWeightKg": 2,
+      "supersededPreErrataWeightKg": 4
+    },
+    {
+      "case": "ERR-WT-002",
+      "part": "Plasteel Shell",
+      "size": "tiny",
+      "baseKg": 2,
+      "printedBaseCredits": 400,
+      "expectedCostCredits": 2000,
+      "expectedAccessoryWeightKg": 0.8,
+      "supersededPreErrataWeightKg": 10
+    },
+    {
+      "case": "ERR-WT-003",
+      "part": "Plasteel Shell",
+      "size": "fine",
+      "baseKg": 2,
+      "printedBaseCredits": 400,
+      "expectedCostCredits": 8000,
+      "expectedAccessoryWeightKg": 0.2,
+      "supersededPreErrataWeightKg": 40
+    },
+    {
+      "case": "ERR-WT-004",
+      "part": "Shield Generator, SR 10",
+      "size": "small",
+      "baseKg": 20,
+      "printedBaseCredits": 5000,
+      "expectedCostCredits": 10000,
+      "expectedAccessoryWeightKg": 20,
+      "supersededPreErrataWeightKg": 40
+    },
+    {
+      "case": "ERR-WT-005",
+      "part": "Shield Generator, SR 10",
+      "size": "huge",
+      "baseKg": 20,
+      "printedBaseCredits": 5000,
+      "expectedCostCredits": 25000,
+      "expectedAccessoryWeightKg": 100,
+      "supersededPreErrataWeightKg": 100
+    },
+    {
+      "case": "ERR-WT-006",
+      "part": "Hardened Systems x2",
+      "size": "large",
+      "baseKg": 100,
+      "printedBaseCredits": 1000,
+      "expectedCostCredits": 2000,
+      "expectedAccessoryWeightKg": 200,
+      "supersededPreErrataWeightKg": 200
+    },
+    {
+      "case": "ERR-WT-007",
+      "part": "Quadanium Plating",
+      "size": "diminutive",
+      "baseKg": 10,
+      "printedBaseCredits": 2500,
+      "expectedCostCredits": 25000,
+      "expectedAccessoryWeightKg": 2,
+      "supersededPreErrataWeightKg": 100
+    }
+  ],
+  "historicalCertificationReconciliation": {
+    "oldSourcePassCount": 99,
+    "oldSourceHoldCount": 23,
+    "identitiesEvaluated": 122,
+    "countChangeAuthorized": false,
+    "reason": "Old batch source claims remain immutable historical evidence; errata overlay must be applied before stating a merged rules contract is current",
+    "runtimePassCount": 0,
+    "productionPassCount": 0,
+    "sourceValidationNext": "Cross-book SGD factor-multiplied systems need host categorization; historical PASS cannot itself certify price/weight correctness under official errata"
+  },
+  "implementationAcceptance": [
+    "Use separate pricing factor vs accessory weight factor; Small and smaller must never reuse price factor as weight factor",
+    "Core appendix-style appendages are not automatically in the accessory weight class",
+    "Synchronized Fire Circuits yield +5 total, gated by qualifying successful Aid Another and shared remote processor",
+    "Initial locomotion/appendages/accessories do not consume carrying capacity; later installed equipment evaluated separately",
+    "A normal unarmed/natural attack is a light simple weapon for proficiency, but existence and damage by size still obey canonical table",
+    "Do not alter production files or reduce Source HOLD count without independent source adjudication"
+  ],
+  "certification": {
+    "correctedErrataSourceVerified": true,
+    "productionChanges": 0,
+    "applicationParityTestsRun": 0,
+    "foundryRuntimeTestsRun": 0,
+    "unresolvedHolds": 23
+  }
+}
