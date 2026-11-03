@@ -1246,5 +1246,11 @@
     "startingSystemsDoNotConsumeCapacity": true,
     "unarmedAttacksAndNaturalWeaponsProficientAs": "light simple weapons",
     "caveat": "Historical 99 PASS is not an errata-complete certification count until overlay is applied and remaining source host classifications are revalidated. No production code touched."
+  },
+  "holdTriage": {
+    "path": "data/audits/droids/droid-component-mechanical-hold-triage-001.json",
+    "validator": "tools/audits/droids/verify_droid_component_mechanical_hold_triage_001.mjs",
+    "status": "ALL_23_CLASSIFIED_NONE_PROMOTED",
+    "decisionAuthority": "Printed source, then official errata; GM selections are not official source certification"
   }
 }
