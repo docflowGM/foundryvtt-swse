@@ -6,6 +6,7 @@ import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engin
 import { ReactionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-engine.js";
 import { mergeCombatWorkflowContextIntoRollOptions, summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
 import { resolveDamagePacketType } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
+import { canDeclareInfiltratorUnarmedStun } from "/systems/foundryvtt-swse/scripts/engine/combat/class-infiltrator-unarmed-stun.js";
 import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
 import { prepareCoreAttackOptionRollContext, spendCoreAttackOptionCosts } from "/systems/foundryvtt-swse/scripts/engine/feats/core-attack-option-action-economy.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
@@ -217,13 +218,18 @@ function withCanonicalWeaponRuntime(weapon, rollOptions, actor = null) {
     // Phase 5D-E: a native-stun form deals stun damage only (structured stun capability) -- the effective mode is what is
     // validated, costed, recorded in the carried form and tagged on the workflow context
     const damageMode = effectiveDamageMode(weaponRuntime, rollOptions.damageMode ?? null);
-    assertAttackFormResolvable(weaponRuntime, { damageMode: damageMode ?? null, rangeBand: rollOptions.rangeBand ?? null, distanceSquares: rollOptions.distanceSquares ?? null, actor });
+    // Declared Unarmed Stun is a CLASS feature, not a weapon stun profile.
+    // Validate the underlying canonical unarmed form as normal before any
+    // cost is spent, but keep 'stun' as the committed attack mode.
+    const infiltratorStun = damageMode === 'stun' && canDeclareInfiltratorUnarmedStun(actor,weapon);
+    const weaponProfileMode = infiltratorStun ? 'normal' : damageMode;
+    assertAttackFormResolvable(weaponRuntime, { damageMode: weaponProfileMode ?? null, rangeBand: rollOptions.rangeBand ?? null, distanceSquares: rollOptions.distanceSquares ?? null, actor });
     // Phase 5D-D: the selected form's canonical per-attack resource units feed the existing AmmoSystem cost rule (read-only here;
     // spending still happens exactly once, in AmmoSystem.spendForWorkflow). 'pending' leaves the existing rule untouched.
     // Phase 5D-F: attack-shape legality of the selected form (firing constraints / fire modes) -- refused BEFORE any cost is spent
     const shape = resolveAttackShapeFor(weaponRuntime, rollOptions);
     assertAttackShapeLegal(shape, rollOptions);
-    const resource = resolveAttackResourceCost(weaponRuntime, { damageMode: damageMode ?? null });
+    const resource = resolveAttackResourceCost(weaponRuntime, { damageMode: weaponProfileMode ?? null });
     let canonicalAmmoUnits = resource && resource.status !== 'pending' ? resource.units : undefined;
     // Phase 5D-I-D-F: the Mortar Launcher's single-shell firing method draws nothing from the magazine (the player supplies the shell). Honoured only
     // for a form that declares it; the option on any other weapon changes nothing.
@@ -249,7 +255,7 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions, actor = wea
   // Phase 5D-I-B: a payload-delegating launcher fires the LOADED canonical grenade (explicit choice, else the owned loaded identity)
   const loadedIdentityKey = rollOptions.loadedIdentityKey ?? FireStateStore.readFireState(weapon)?.loadedIdentityKey ?? undefined;
   try {
-    cd = resolveCanonicalDamage(weapon, { weaponForm: { ...weaponFormRecord(runtime, rollOptions.damageMode ?? null), ...(loadedIdentityKey ? { loadedIdentityKey } : {}) }, damageMode: rollOptions.damageMode ?? null, weaponRuntime: runtime });
+    cd = resolveCanonicalDamage(weapon, { actor, weaponForm: { ...weaponFormRecord(runtime, rollOptions.damageMode ?? null), ...(loadedIdentityKey ? { loadedIdentityKey } : {}) }, damageMode: rollOptions.damageMode ?? null, weaponRuntime: runtime });
   } catch (err) {
     if (!(err instanceof WeaponRuntimeError)) throw err;
     if (err.code === ERROR_CODES.PAYLOAD_NOT_ACCEPTED) return { rollOptions, mechanics: [], answers: {}, unresolved: [], refusal: { reason: 'payload-not-accepted', failed: [`loaded payload: ${loadedIdentityKey}`] } };
