@@ -59,7 +59,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "GAW-DROID-001-CONSTRAINT-01",
+            "statement": "A-Series medical model's printed Medical Droid talent changes Treat Injury healing under its specific published trigger; not a universal healing bonus to all medical droids.",
+            "scope": "A-Series Medical Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 51,
+              "pdfPage1Based": 52,
+              "sourceEntryKey": "GAW-DROID-001",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-001-CONSTRAINT-02",
+            "statement": "Medical chassis, appendages and carried patient care items need distinct source ownership before surgery/healing automation.",
+            "scope": "A-Series Medical Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 51,
+              "pdfPage1Based": 52,
+              "sourceEntryKey": "GAW-DROID-001",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "allowed"
       },
@@ -94,11 +125,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-001",
           "Galaxy at War:printed-p51:TXT-line-4938",
-          "GAW-DROID-001:printed-p51:PDF-p52:selected-field-review"
+          "GAW-DROID-001:printed-p51:PDF-p52:selected-field-review",
+          "GAW:printed-p51:PDF-p52:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -154,7 +186,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "GAW-DROID-002-CONSTRAINT-01",
+            "statement": "KDY-4 has its own stabilization and repair mechanics; do not combine neighboring Chiba-DR10 p52 statblock fields from interleaved OCR.",
+            "scope": "KDY-4 Tech Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 52,
+              "pdfPage1Based": 53,
+              "sourceEntryKey": "GAW-DROID-002",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-002-CONSTRAINT-02",
+            "statement": "KDY repair tools and physical appendages are not Chiba protocol software or universally usable weapon mounts.",
+            "scope": "KDY-4 Tech Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 52,
+              "pdfPage1Based": 53,
+              "sourceEntryKey": "GAW-DROID-002",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "allowed"
       },
@@ -189,11 +252,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-002",
           "Galaxy at War:printed-p52:TXT-line-5042",
-          "GAW-DROID-002:printed-p52:PDF-p53:selected-field-review"
+          "GAW-DROID-002:printed-p52:PDF-p53:selected-field-review",
+          "GAW:printed-p52:PDF-p53:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -249,7 +313,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "GAW-DROID-003-CONSTRAINT-01",
+            "statement": "Chiba-DR10 is the separate protocol droid in the other p52 column; its programming, social skills and equipment may not inherit KDY-4 stability values.",
+            "scope": "Chiba-DR10 Protocol Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 52,
+              "pdfPage1Based": 53,
+              "sourceEntryKey": "GAW-DROID-003",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-003-CONSTRAINT-02",
+            "statement": "Protocol communication and specialized skills do not automatically create covert access or direct combat actions.",
+            "scope": "Chiba-DR10 Protocol Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 52,
+              "pdfPage1Based": 53,
+              "sourceEntryKey": "GAW-DROID-003",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "allowed"
       },
@@ -269,11 +364,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-003",
           "Galaxy at War:printed-p52:TXT-line-5050",
-          "GAW-DROID-003:printed-p52:PDF-p53:selected-field-review"
+          "GAW-DROID-003:printed-p52:PDF-p53:selected-field-review",
+          "GAW:printed-p52:PDF-p53:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -329,7 +425,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "GAW-DROID-004-CONSTRAINT-01",
+            "statement": "Air Assault Super Battle Droid jet-pack charges and volatile fuel are bounded model hardware; no generic permanent flight speed or explosion trigger without printed cost.",
+            "scope": "Air Assault Super Battle Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 53,
+              "pdfPage1Based": 54,
+              "sourceEntryKey": "GAW-DROID-004",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-004-CONSTRAINT-02",
+            "statement": "Integrated blaster attacks, flying and fuel use require distinct mount/locomotion/resource rules, not copied stock B2 abilities.",
+            "scope": "Air Assault Super Battle Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 53,
+              "pdfPage1Based": 54,
+              "sourceEntryKey": "GAW-DROID-004",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -368,11 +495,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-004",
           "Galaxy at War:printed-p53:TXT-line-5173",
-          "GAW-DROID-004:printed-p53:PDF-p54:selected-field-review"
+          "GAW-DROID-004:printed-p53:PDF-p54:selected-field-review",
+          "GAW:printed-p53:PDF-p54:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -429,7 +557,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "GAW-DROID-005-CONSTRAINT-01",
+            "statement": "Eradicator-Series controller dependency is conditional: disruption or deactivation of its central controller may shut down affected droids according to the printed model rule.",
+            "scope": "Eradicator-Series Battle Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 53,
+              "pdfPage1Based": 54,
+              "sourceEntryKey": "GAW-DROID-005",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-005-CONSTRAINT-02",
+            "statement": "Its controller link and weapons are not equivalent to every remote-receiver droid's default behavior.",
+            "scope": "Eradicator-Series Battle Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 53,
+              "pdfPage1Based": 54,
+              "sourceEntryKey": "GAW-DROID-005",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -464,11 +623,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-005",
           "Galaxy at War:printed-p53:TXT-line-5250",
-          "GAW-DROID-005:printed-p53:PDF-p54:selected-field-review"
+          "GAW-DROID-005:printed-p53:PDF-p54:selected-field-review",
+          "GAW:printed-p53:PDF-p54:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -525,7 +685,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "GAW-DROID-006-CONSTRAINT-01",
+            "statement": "Purge Trooper DR10 is an explicit damage reduction value, separate from armor and the model's lightsaber/cortosis exception.",
+            "scope": "Purge Trooper",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 54,
+              "pdfPage1Based": 55,
+              "sourceEntryKey": "GAW-DROID-006",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-006-CONSTRAINT-02",
+            "statement": "Printed special combat and armament are not automatic source grants to all soldier droids or organic Purge Troopers.",
+            "scope": "Purge Trooper",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 54,
+              "pdfPage1Based": 55,
+              "sourceEntryKey": "GAW-DROID-006",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -560,11 +751,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-006",
           "Galaxy at War:printed-p54:TXT-line-5318",
-          "GAW-DROID-006:printed-p54:PDF-p55:selected-field-review"
+          "GAW-DROID-006:printed-p54:PDF-p55:selected-field-review",
+          "GAW:printed-p54:PDF-p55:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -621,7 +813,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "GAW-DROID-007-CONSTRAINT-01",
+            "statement": "Sniper Droideka has exclusive wheeled locomotion alongside its combat stance; switching modes is not simultaneous double movement.",
+            "scope": "Sniper Droideka",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 55,
+              "pdfPage1Based": 56,
+              "sourceEntryKey": "GAW-DROID-007",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-007-CONSTRAINT-02",
+            "statement": "SR, sniper weapon mode and ammo/mount identity require independent source proof; the name does not automatically clone Core Droideka attacks.",
+            "scope": "Sniper Droideka",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 55,
+              "pdfPage1Based": 56,
+              "sourceEntryKey": "GAW-DROID-007",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -660,11 +883,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-007",
           "Galaxy at War:printed-p55:TXT-line-5394",
-          "GAW-DROID-007:printed-p55:PDF-p56:selected-field-review"
+          "GAW-DROID-007:printed-p55:PDF-p56:selected-field-review",
+          "GAW:printed-p55:PDF-p56:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -720,7 +944,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "GAW-DROID-008-CONSTRAINT-01",
+            "statement": "Tactical Droid's Battle Analysis and vehicle-combat contributions are talent- and target-scoped, not blanket bonuses to every allied droid or vehicle.",
+            "scope": "Tactical Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 55,
+              "pdfPage1Based": 56,
+              "sourceEntryKey": "GAW-DROID-008",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-008-CONSTRAINT-02",
+            "statement": "The printed factory price is 14,005 credits; preserve the verified full figure rather than truncated OCR or adventure variant prices.",
+            "scope": "Tactical Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 55,
+              "pdfPage1Based": 56,
+              "sourceEntryKey": "GAW-DROID-008",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "allowed"
       },
@@ -759,11 +1014,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-008",
           "Galaxy at War:printed-p55:TXT-line-5404",
-          "GAW-DROID-008:printed-p55:PDF-p56:selected-field-review"
+          "GAW-DROID-008:printed-p55:PDF-p56:selected-field-review",
+          "GAW:printed-p55:PDF-p56:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -819,7 +1075,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "GAW-DROID-009-CONSTRAINT-01",
+            "statement": "Vigilant 2X firepower, launcher, power requirements and self-destruct are distinct source claims, not one unconditional attack package.",
+            "scope": "Vigilant 2X Picket Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 56,
+              "pdfPage1Based": 57,
+              "sourceEntryKey": "GAW-DROID-009",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-009-CONSTRAINT-02",
+            "statement": "Installed components, finite weapon payload, self-destruct trigger and defensive equipment must be reconciled before execution.",
+            "scope": "Vigilant 2X Picket Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 56,
+              "pdfPage1Based": 57,
+              "sourceEntryKey": "GAW-DROID-009",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -854,11 +1141,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-009",
           "Galaxy at War:printed-p56:TXT-line-5538",
-          "GAW-DROID-009:printed-p56:PDF-p57:selected-field-review"
+          "GAW-DROID-009:printed-p56:PDF-p57:selected-field-review",
+          "GAW:printed-p56:PDF-p57:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -914,7 +1202,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "GAW-DROID-010-CONSTRAINT-01",
+            "statement": "CLL-M2 is an ordnance lifter rather than a weapon-firing soldier; its loading and carrying function does not imply ownership of the ammunition it transports.",
+            "scope": "CLL-M2 Ordnance Lifter Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 56,
+              "pdfPage1Based": 57,
+              "sourceEntryKey": "GAW-DROID-010",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-010-CONSTRAINT-02",
+            "statement": "Heavy lifting systems and appendages are not generic dexterous hands, firearm mounts or free loading actions unless printed.",
+            "scope": "CLL-M2 Ordnance Lifter Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 56,
+              "pdfPage1Based": 57,
+              "sourceEntryKey": "GAW-DROID-010",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -934,11 +1253,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-010",
           "Galaxy at War:printed-p56:TXT-line-5576",
-          "GAW-DROID-010:printed-p56:PDF-p57:selected-field-review"
+          "GAW-DROID-010:printed-p56:PDF-p57:selected-field-review",
+          "GAW:printed-p56:PDF-p57:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -994,7 +1314,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "GAW-DROID-011-CONSTRAINT-01",
+            "statement": "MR-200 minesweeper procedures depend on the specific hazard and removal checks; no unconditional discovery or immunity to mines.",
+            "scope": "MR-200 Series Minesweeper Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 57,
+              "pdfPage1Based": 58,
+              "sourceEntryKey": "GAW-DROID-011",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-011-CONSTRAINT-02",
+            "statement": "Detection and disposal are separate actions with separate equipment authority; an explosive payload is not inferred from a description of minesweeping.",
+            "scope": "MR-200 Series Minesweeper Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 57,
+              "pdfPage1Based": 58,
+              "sourceEntryKey": "GAW-DROID-011",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -1029,11 +1380,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-011",
           "Galaxy at War:printed-p57:TXT-line-5677",
-          "GAW-DROID-011:printed-p57:PDF-p58:selected-field-review"
+          "GAW-DROID-011:printed-p57:PDF-p58:selected-field-review",
+          "GAW:printed-p57:PDF-p58:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -1104,7 +1456,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "GAW-DROID-012-CONSTRAINT-01",
+            "statement": "Automated Sentry Gun's printed base Reflex is 15 (flat-footed 14), while encounter p175 displays Reflex 20 (flat-footed 19) due to +5 cover; do not change factory base defense.",
+            "scope": "Automated Sentry Gun",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 98,
+              "pdfPage1Based": 99,
+              "sourceEntryKey": "GAW-DROID-012",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-012-CONSTRAINT-02",
+            "statement": "Stationary sentry attacks, target detection and cover require scene position and actor/emplacement ownership; p175 is a repeated scenario, not a second publication identity.",
+            "scope": "Automated Sentry Gun",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 98,
+              "pdfPage1Based": 99,
+              "sourceEntryKey": "GAW-DROID-012",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": null
       },
@@ -1159,11 +1542,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-012",
           "Galaxy at War:printed-p98:TXT-line-10010",
-          "GAW-DROID-012:printed-p98:PDF-p99:selected-field-review"
+          "GAW-DROID-012:printed-p98:PDF-p99:selected-field-review",
+          "GAW:printed-p98:PDF-p99:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -1219,7 +1603,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "GAW-DROID-013-CONSTRAINT-01",
+            "statement": "Arakyd AZ adventure droid is a separate p181 actor from named or factory model families elsewhere; its multiple printed attack options are conditional.",
+            "scope": "Arakyd AZ-Series Battle Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 181,
+              "pdfPage1Based": 182,
+              "sourceEntryKey": "GAW-DROID-013",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-013-CONSTRAINT-02",
+            "statement": "The source's Double Attack options do not prove two separately mounted weapons, ammunition or extra free actions.",
+            "scope": "Arakyd AZ-Series Battle Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 181,
+              "pdfPage1Based": 182,
+              "sourceEntryKey": "GAW-DROID-013",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": null
       },
@@ -1257,11 +1672,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-013",
           "Galaxy at War:printed-p181:TXT-line-17777",
-          "GAW-DROID-013:printed-p181:PDF-p182:selected-field-review"
+          "GAW-DROID-013:printed-p181:PDF-p182:selected-field-review",
+          "GAW:printed-p181:PDF-p182:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -1317,7 +1733,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "GAW-DROID-014-CONSTRAINT-01",
+            "statement": "B1 battle droid p210 is an individual source actor, not the separate p217 B1 squad; never apply squad attack/hit-point transformations to this droid.",
+            "scope": "B1-Series Battle Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 210,
+              "pdfPage1Based": 211,
+              "sourceEntryKey": "GAW-DROID-014",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-014-CONSTRAINT-02",
+            "statement": "This Galaxy at War encounter B1 has book-specific statblock provenance and should not silently overwrite the Core/Clone Wars factory records.",
+            "scope": "B1-Series Battle Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 210,
+              "pdfPage1Based": 211,
+              "sourceEntryKey": "GAW-DROID-014",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": null
       },
@@ -1344,11 +1791,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-014",
           "Galaxy at War:printed-p210:TXT-line-20591",
-          "GAW-DROID-014:printed-p210:PDF-p211:selected-field-review"
+          "GAW-DROID-014:printed-p210:PDF-p211:selected-field-review",
+          "GAW:printed-p210:PDF-p211:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -1404,7 +1852,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "GAW-DROID-015-CONSTRAINT-01",
+            "statement": "B2 p210 is a distinct individual super battle droid rather than the B1 or its squad; retain its printed attack and armor choices separately.",
+            "scope": "B2-Series Super Battle Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 210,
+              "pdfPage1Based": 211,
+              "sourceEntryKey": "GAW-DROID-015",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-015-CONSTRAINT-02",
+            "statement": "Same-name appearances across Core/Clone Wars/GAW are publication-specific claims; no auto-transitive equipment grants.",
+            "scope": "B2-Series Super Battle Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 210,
+              "pdfPage1Based": 211,
+              "sourceEntryKey": "GAW-DROID-015",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": null
       },
@@ -1431,11 +1910,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-015",
           "Galaxy at War:printed-p210:TXT-line-20643",
-          "GAW-DROID-015:printed-p210:PDF-p211:selected-field-review"
+          "GAW-DROID-015:printed-p210:PDF-p211:selected-field-review",
+          "GAW:printed-p210:PDF-p211:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -1492,7 +1972,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "GAW-DROID-016-CONSTRAINT-01",
+            "statement": "Droideka p211 uses its own wheeled deployment and shield/melee/ranged source lines; no simultaneous wheeled movement and unrestricted firing implied.",
+            "scope": "Droideka Series Destroyer Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 211,
+              "pdfPage1Based": 212,
+              "sourceEntryKey": "GAW-DROID-016",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-016-CONSTRAINT-02",
+            "statement": "Its source presentation must not overwrite the Sniper Droideka on p55 or the Core Droideka model.",
+            "scope": "Droideka Series Destroyer Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 211,
+              "pdfPage1Based": 212,
+              "sourceEntryKey": "GAW-DROID-016",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": null
       },
@@ -1519,11 +2030,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-016",
           "Galaxy at War:printed-p211:TXT-line-20689",
-          "GAW-DROID-016:printed-p211:PDF-p212:selected-field-review"
+          "GAW-DROID-016:printed-p211:PDF-p212:selected-field-review",
+          "GAW:printed-p211:PDF-p212:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -1579,7 +2091,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "GAW-DROID-017-CONSTRAINT-01",
+            "statement": "Droid Commando p214 is an encounter-specific droid combat presentation, not a factory generic starting class template.",
+            "scope": "Droid Commando",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 214,
+              "pdfPage1Based": 215,
+              "sourceEntryKey": "GAW-DROID-017",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-017-CONSTRAINT-02",
+            "statement": "Printed commando talents and support-fire interactions require actual qualifying teammates and chosen actions; not always-on extra attacks.",
+            "scope": "Droid Commando",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 214,
+              "pdfPage1Based": 215,
+              "sourceEntryKey": "GAW-DROID-017",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": null
       },
@@ -1605,11 +2148,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-017",
           "Galaxy at War:printed-p214:TXT-line-21095",
-          "GAW-DROID-017:printed-p214:PDF-p215:selected-field-review"
+          "GAW-DROID-017:printed-p214:PDF-p215:selected-field-review",
+          "GAW:printed-p214:PDF-p215:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -1665,7 +2209,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "GAW-DROID-018-CONSTRAINT-01",
+            "statement": "OOM battle droid p215 is distinct from the B1 and B2 p210 and from other OOM factory variants.",
+            "scope": "OOM-Series Battle Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 215,
+              "pdfPage1Based": 216,
+              "sourceEntryKey": "GAW-DROID-018",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-018-CONSTRAINT-02",
+            "statement": "Commander/tactical features are model-or-role scoped; no global shared extra feat, Pilot skill, or held weapon is granted by family label.",
+            "scope": "OOM-Series Battle Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 215,
+              "pdfPage1Based": 216,
+              "sourceEntryKey": "GAW-DROID-018",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": null
       },
@@ -1691,11 +2266,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-018",
           "Galaxy at War:printed-p215:TXT-line-21169",
-          "GAW-DROID-018:printed-p215:PDF-p216:selected-field-review"
+          "GAW-DROID-018:printed-p215:PDF-p216:selected-field-review",
+          "GAW:printed-p215:PDF-p216:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -1739,11 +2315,45 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "GAW-DROID-019-CONSTRAINT-01",
+            "statement": "Ground Armored Tank p216 is vehicle-primary with 175 vehicle HP, DR10 and vehicle weapon/crew authority; it is not a personal droid actor.",
+            "scope": "Ground Armored Tank",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 216,
+              "pdfPage1Based": 217,
+              "sourceEntryKey": "GAW-DROID-019",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-019-CONSTRAINT-02",
+            "statement": "The vehicle brain and tank weapon arrays cannot become handheld droid weapons or transferable droid class feats.",
+            "scope": "Ground Armored Tank",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 216,
+              "pdfPage1Based": 217,
+              "sourceEntryKey": "GAW-DROID-019",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": null
       },
-      "vehicleLink": {},
+      "vehicleLink": {
+        "auditAuthority": "vehicle-primary-source-only",
+        "sourceReviewCaveat": "GAT vehicle statistics, droid brain and weapons belong to vehicle-only actor, not individual droid."
+      },
       "economics": {},
       "text": {
         "sourceWarnings": [
@@ -1780,11 +2390,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-019",
           "Galaxy at War:printed-p216:TXT-line-21327",
-          "GAW-DROID-019:printed-p216:PDF-p217:selected-field-review"
+          "GAW-DROID-019:printed-p216:PDF-p217:selected-field-review",
+          "GAW:printed-p216:PDF-p217:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -1829,7 +2440,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "GAW-DROID-020-CONSTRAINT-01",
+            "statement": "B1 Squad p217 consists of THREE B1 droids, with Large squad format and 20 hit points; do not substitute the Clone Wars four-member squad construction.",
+            "scope": "B1-Series Battle Droid Squad",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 217,
+              "pdfPage1Based": 218,
+              "sourceEntryKey": "GAW-DROID-020",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-020-CONSTRAINT-02",
+            "statement": "The census p220 alternate B1-squad assertion is not supported by the printed p220 page; preserve it as an unresolved source-census disagreement rather than another source identity.",
+            "scope": "B1-Series Battle Droid Squad",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 217,
+              "pdfPage1Based": 218,
+              "sourceEntryKey": "GAW-DROID-020",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": null
       },
@@ -1864,17 +2506,24 @@
             },
             "executionStatus": "source-only"
           }
-        ]
+        ],
+        "squadCountEvidence": {
+          "members": 3,
+          "sourcePage": 217,
+          "executionStatus": "source-only",
+          "censusConflictPage220": "unverified and not counted"
+        }
       },
       "certification": {
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-020",
           "Galaxy at War:printed-p217:TXT-line-21399",
-          "GAW-DROID-020:printed-p217:PDF-p218:selected-field-review"
+          "GAW-DROID-020:printed-p217:PDF-p218:selected-field-review",
+          "GAW:printed-p217:PDF-p218:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -1930,7 +2579,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "GAW-DROID-021-CONSTRAINT-01",
+            "statement": "Battle Droid Assassin p218 is a distinct adventure combat profile; its stealth and attack options are not stock universal B1 package grants.",
+            "scope": "Battle Droid Assassin",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 218,
+              "pdfPage1Based": 219,
+              "sourceEntryKey": "GAW-DROID-021",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-021-CONSTRAINT-02",
+            "statement": "Its factory/variant weapon and feat fields must not be conflated with the p210 B1 or Clone Wars assassin profile.",
+            "scope": "Battle Droid Assassin",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 218,
+              "pdfPage1Based": 219,
+              "sourceEntryKey": "GAW-DROID-021",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": null
       },
@@ -1967,11 +2647,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-021",
           "Galaxy at War:printed-p218:TXT-line-21609",
-          "GAW-DROID-021:printed-p218:PDF-p219:selected-field-review"
+          "GAW-DROID-021:printed-p218:PDF-p219:selected-field-review",
+          "GAW:printed-p218:PDF-p219:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -2027,7 +2708,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "GAW-DROID-022-CONSTRAINT-01",
+            "statement": "LR-57 p219 passive standby/activation and ambush mechanics are scenario/contextual conditions, not universal free attack reactions.",
+            "scope": "LR-57 Combat Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 219,
+              "pdfPage1Based": 220,
+              "sourceEntryKey": "GAW-DROID-022",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GAW-DROID-022-CONSTRAINT-02",
+            "statement": "Printed LR-57 source identity remains distinct from the Clone Wars LR-57 entry and needs independently verified equipment ownership.",
+            "scope": "LR-57 Combat Droid",
+            "source": {
+              "book": "Galaxy at War",
+              "page": 219,
+              "pdfPage1Based": 220,
+              "sourceEntryKey": "GAW-DROID-022",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": null
       },
@@ -2064,11 +2776,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-022",
           "Galaxy at War:printed-p219:TXT-line-21681",
-          "GAW-DROID-022:printed-p219:PDF-p220:selected-field-review"
+          "GAW-DROID-022:printed-p219:PDF-p220:selected-field-review",
+          "GAW:printed-p219:PDF-p220:M1-mechanical-boundary-source-review"
         ]
       }
     }
