@@ -63,86 +63,86 @@
           {
             "instanceId": "GAW-DROID-001-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 51,
               "pdfPage1Based": 52,
               "sourceEntryKey": "GAW-DROID-001",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-001-SYS-TOKEN-02",
             "name": "heuristic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 51,
               "pdfPage1Based": 52,
               "sourceEntryKey": "GAW-DROID-001",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-001-SYS-TOKEN-03",
             "name": "2 hand appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 51,
               "pdfPage1Based": 52,
               "sourceEntryKey": "GAW-DROID-001",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-001-SYS-TOKEN-04",
             "name": "3 tool appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 51,
               "pdfPage1Based": 52,
               "sourceEntryKey": "GAW-DROID-001",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-001-SYS-TOKEN-05",
             "name": "diagnostics package",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 51,
               "pdfPage1Based": 52,
               "sourceEntryKey": "GAW-DROID-001",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-001-SYS-TOKEN-06",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 51,
               "pdfPage1Based": 52,
               "sourceEntryKey": "GAW-DROID-001",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -152,46 +152,19 @@
             "entryId": "GAW-DROID-001-POS-01",
             "name": "medical kit",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 51,
-              "pdfPage1Based": 52,
-              "sourceEntryKey": "GAW-DROID-001",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "GAW-DROID-001-POS-02",
             "name": "5 medpacs",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 51,
-              "pdfPage1Based": 52,
-              "sourceEntryKey": "GAW-DROID-001",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "GAW-DROID-001-POS-03",
             "name": "surgery kit",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 51,
-              "pdfPage1Based": 52,
-              "sourceEntryKey": "GAW-DROID-001",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -206,7 +179,7 @@
               "page": 51,
               "pdfPage1Based": 52,
               "sourceEntryKey": "GAW-DROID-001",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
             },
             "executionStatus": "source-only"
@@ -220,7 +193,7 @@
               "page": 51,
               "pdfPage1Based": 52,
               "sourceEntryKey": "GAW-DROID-001",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
             },
             "executionStatus": "source-only"
@@ -327,142 +300,142 @@
           {
             "instanceId": "GAW-DROID-002-SYS-TOKEN-01",
             "name": "walking locomotion (extra leg)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 52,
               "pdfPage1Based": 53,
               "sourceEntryKey": "GAW-DROID-002",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-002-SYS-TOKEN-02",
             "name": "heuristic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 52,
               "pdfPage1Based": 53,
               "sourceEntryKey": "GAW-DROID-002",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-002-SYS-TOKEN-03",
             "name": "2 hand appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 52,
               "pdfPage1Based": 53,
               "sourceEntryKey": "GAW-DROID-002",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-002-SYS-TOKEN-04",
             "name": "2 telescopic tool appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 52,
               "pdfPage1Based": 53,
               "sourceEntryKey": "GAW-DROID-002",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-002-SYS-TOKEN-05",
             "name": "magnetic feet",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 52,
               "pdfPage1Based": 53,
               "sourceEntryKey": "GAW-DROID-002",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-002-SYS-TOKEN-06",
             "name": "circular saw",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 52,
               "pdfPage1Based": 53,
               "sourceEntryKey": "GAW-DROID-002",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-002-SYS-TOKEN-07",
             "name": "electric arc welder",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 52,
               "pdfPage1Based": 53,
               "sourceEntryKey": "GAW-DROID-002",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-002-SYS-TOKEN-08",
             "name": "fire extinguisher",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 52,
               "pdfPage1Based": 53,
               "sourceEntryKey": "GAW-DROID-002",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-002-SYS-TOKEN-09",
             "name": "spotlight (glowrod, 10-square range)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 52,
               "pdfPage1Based": 53,
               "sourceEntryKey": "GAW-DROID-002",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-002-SYS-TOKEN-10",
             "name": "compartment space (2 kg)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 52,
               "pdfPage1Based": 53,
               "sourceEntryKey": "GAW-DROID-002",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -480,7 +453,7 @@
               "page": 52,
               "pdfPage1Based": 53,
               "sourceEntryKey": "GAW-DROID-002",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
             },
             "executionStatus": "source-only"
@@ -494,7 +467,7 @@
               "page": 52,
               "pdfPage1Based": 53,
               "sourceEntryKey": "GAW-DROID-002",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
             },
             "executionStatus": "source-only"
@@ -601,86 +574,86 @@
           {
             "instanceId": "GAW-DROID-003-SYS-TOKEN-01",
             "name": "hovering locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 52,
               "pdfPage1Based": 53,
               "sourceEntryKey": "GAW-DROID-003",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-003-SYS-TOKEN-02",
             "name": "basic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 52,
               "pdfPage1Based": 53,
               "sourceEntryKey": "GAW-DROID-003",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-003-SYS-TOKEN-03",
             "name": "translator unit (DC 5)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 52,
               "pdfPage1Based": 53,
               "sourceEntryKey": "GAW-DROID-003",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-003-SYS-TOKEN-04",
             "name": "probe appendage",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 52,
               "pdfPage1Based": 53,
               "sourceEntryKey": "GAW-DROID-003",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-003-SYS-TOKEN-05",
             "name": "internal comlink",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 52,
               "pdfPage1Based": 53,
               "sourceEntryKey": "GAW-DROID-003",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-003-SYS-TOKEN-06",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 52,
               "pdfPage1Based": 53,
               "sourceEntryKey": "GAW-DROID-003",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -690,16 +663,7 @@
             "entryId": "GAW-DROID-003-POS-01",
             "name": "blaster pistol (concealed)",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 52,
-              "pdfPage1Based": 53,
-              "sourceEntryKey": "GAW-DROID-003",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -714,7 +678,7 @@
               "page": 52,
               "pdfPage1Based": 53,
               "sourceEntryKey": "GAW-DROID-003",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
             },
             "executionStatus": "source-only"
@@ -728,7 +692,7 @@
               "page": 52,
               "pdfPage1Based": 53,
               "sourceEntryKey": "GAW-DROID-003",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
             },
             "executionStatus": "source-only"
@@ -820,128 +784,128 @@
           {
             "instanceId": "GAW-DROID-004-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 53,
               "pdfPage1Based": 54,
               "sourceEntryKey": "GAW-DROID-004",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-004-SYS-TOKEN-02",
             "name": "remote receiver",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 53,
               "pdfPage1Based": 54,
               "sourceEntryKey": "GAW-DROID-004",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-004-SYS-TOKEN-03",
             "name": "backup processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 53,
               "pdfPage1Based": 54,
               "sourceEntryKey": "GAW-DROID-004",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-004-SYS-TOKEN-04",
             "name": "synchronized fire circuits",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 53,
               "pdfPage1Based": 54,
               "sourceEntryKey": "GAW-DROID-004",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-004-SYS-TOKEN-05",
             "name": "2 hand appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 53,
               "pdfPage1Based": 54,
               "sourceEntryKey": "GAW-DROID-004",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-004-SYS-TOKEN-06",
             "name": "integrated comlink",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 53,
               "pdfPage1Based": 54,
               "sourceEntryKey": "GAW-DROID-004",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-004-SYS-TOKEN-07",
             "name": "self-destruct system (5d6)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 53,
               "pdfPage1Based": 54,
               "sourceEntryKey": "GAW-DROID-004",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-004-SYS-TOKEN-08",
             "name": "durasteel battle armor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 53,
               "pdfPage1Based": 54,
               "sourceEntryKey": "GAW-DROID-004",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-004-SYS-TOKEN-09",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 53,
               "pdfPage1Based": 54,
               "sourceEntryKey": "GAW-DROID-004",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -951,31 +915,13 @@
             "entryId": "GAW-DROID-004-POS-01",
             "name": "2 wrist blasters (blaster rifle equivalents)",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 53,
-              "pdfPage1Based": 54,
-              "sourceEntryKey": "GAW-DROID-004",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "GAW-DROID-004-POS-02",
             "name": "integrated jet pack",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 53,
-              "pdfPage1Based": 54,
-              "sourceEntryKey": "GAW-DROID-004",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -990,7 +936,7 @@
               "page": 53,
               "pdfPage1Based": 54,
               "sourceEntryKey": "GAW-DROID-004",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
             },
             "executionStatus": "source-only"
@@ -1004,7 +950,7 @@
               "page": 53,
               "pdfPage1Based": 54,
               "sourceEntryKey": "GAW-DROID-004",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
             },
             "executionStatus": "source-only"
@@ -1116,86 +1062,86 @@
           {
             "instanceId": "GAW-DROID-005-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 53,
               "pdfPage1Based": 54,
               "sourceEntryKey": "GAW-DROID-005",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-005-SYS-TOKEN-02",
             "name": "basic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 53,
               "pdfPage1Based": 54,
               "sourceEntryKey": "GAW-DROID-005",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-005-SYS-TOKEN-03",
             "name": "2 retractable claw appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 53,
               "pdfPage1Based": 54,
               "sourceEntryKey": "GAW-DROID-005",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-005-SYS-TOKEN-04",
             "name": "internal comlink",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 53,
               "pdfPage1Based": 54,
               "sourceEntryKey": "GAW-DROID-005",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-005-SYS-TOKEN-05",
             "name": "shield generator (SR 5)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 53,
               "pdfPage1Based": 54,
               "sourceEntryKey": "GAW-DROID-005",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-005-SYS-TOKEN-06",
             "name": "bronzium shell (+5 armor, quadanium equivalent)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 53,
               "pdfPage1Based": 54,
               "sourceEntryKey": "GAW-DROID-005",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -1205,31 +1151,13 @@
             "entryId": "GAW-DROID-005-POS-01",
             "name": "2 light repeating blasters",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 53,
-              "pdfPage1Based": 54,
-              "sourceEntryKey": "GAW-DROID-005",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "GAW-DROID-005-POS-02",
             "name": "2 ion rifles",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 53,
-              "pdfPage1Based": 54,
-              "sourceEntryKey": "GAW-DROID-005",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -1244,7 +1172,7 @@
               "page": 53,
               "pdfPage1Based": 54,
               "sourceEntryKey": "GAW-DROID-005",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
             },
             "executionStatus": "source-only"
@@ -1258,7 +1186,7 @@
               "page": 53,
               "pdfPage1Based": 54,
               "sourceEntryKey": "GAW-DROID-005",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
             },
             "executionStatus": "source-only"
@@ -1366,114 +1294,114 @@
           {
             "instanceId": "GAW-DROID-006-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 54,
               "pdfPage1Based": 55,
               "sourceEntryKey": "GAW-DROID-006",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-006-SYS-TOKEN-02",
             "name": "basic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 54,
               "pdfPage1Based": 55,
               "sourceEntryKey": "GAW-DROID-006",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-006-SYS-TOKEN-03",
             "name": "2 hand appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 54,
               "pdfPage1Based": 55,
               "sourceEntryKey": "GAW-DROID-006",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-006-SYS-TOKEN-04",
             "name": "2 tool appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 54,
               "pdfPage1Based": 55,
               "sourceEntryKey": "GAW-DROID-006",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-006-SYS-TOKEN-05",
             "name": "hardened systems (x3)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 54,
               "pdfPage1Based": 55,
               "sourceEntryKey": "GAW-DROID-006",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-006-SYS-TOKEN-06",
             "name": "improved sensor package",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 54,
               "pdfPage1Based": 55,
               "sourceEntryKey": "GAW-DROID-006",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-006-SYS-TOKEN-07",
             "name": "magnetic grappler boots",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 54,
               "pdfPage1Based": 55,
               "sourceEntryKey": "GAW-DROID-006",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-006-SYS-TOKEN-08",
             "name": "duranium plating with cortosis fiber",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 54,
               "pdfPage1Based": 55,
               "sourceEntryKey": "GAW-DROID-006",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -1483,31 +1411,13 @@
             "entryId": "GAW-DROID-006-POS-01",
             "name": "purge blade (vibro-ax equivalent)",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 54,
-              "pdfPage1Based": 55,
-              "sourceEntryKey": "GAW-DROID-006",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "GAW-DROID-006-POS-02",
             "name": "missile launcher",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 54,
-              "pdfPage1Based": 55,
-              "sourceEntryKey": "GAW-DROID-006",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -1522,7 +1432,7 @@
               "page": 54,
               "pdfPage1Based": 55,
               "sourceEntryKey": "GAW-DROID-006",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
             },
             "executionStatus": "source-only"
@@ -1536,7 +1446,7 @@
               "page": 54,
               "pdfPage1Based": 55,
               "sourceEntryKey": "GAW-DROID-006",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
             },
             "executionStatus": "source-only"
@@ -1644,114 +1554,114 @@
           {
             "instanceId": "GAW-DROID-007-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 55,
               "pdfPage1Based": 56,
               "sourceEntryKey": "GAW-DROID-007",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-007-SYS-TOKEN-02",
             "name": "wheeled locomotion (exclusive)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 55,
               "pdfPage1Based": 56,
               "sourceEntryKey": "GAW-DROID-007",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-007-SYS-TOKEN-03",
             "name": "remote receiver",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 55,
               "pdfPage1Based": 56,
               "sourceEntryKey": "GAW-DROID-007",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-007-SYS-TOKEN-04",
             "name": "tool appendage",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 55,
               "pdfPage1Based": 56,
               "sourceEntryKey": "GAW-DROID-007",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-007-SYS-TOKEN-05",
             "name": "shield generator (SR 20)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 55,
               "pdfPage1Based": 56,
               "sourceEntryKey": "GAW-DROID-007",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-007-SYS-TOKEN-06",
             "name": "improved sensor package",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 55,
               "pdfPage1Based": 56,
               "sourceEntryKey": "GAW-DROID-007",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-007-SYS-TOKEN-07",
             "name": "integrated comlink",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 55,
               "pdfPage1Based": 56,
               "sourceEntryKey": "GAW-DROID-007",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-007-SYS-TOKEN-08",
             "name": "bronzium shell (+5 armor, quadanium equivalent)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 55,
               "pdfPage1Based": 56,
               "sourceEntryKey": "GAW-DROID-007",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -1761,16 +1671,7 @@
             "entryId": "GAW-DROID-007-POS-01",
             "name": "heavy blaster rifle",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 55,
-              "pdfPage1Based": 56,
-              "sourceEntryKey": "GAW-DROID-007",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -1785,7 +1686,7 @@
               "page": 55,
               "pdfPage1Based": 56,
               "sourceEntryKey": "GAW-DROID-007",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
             },
             "executionStatus": "source-only"
@@ -1799,7 +1700,7 @@
               "page": 55,
               "pdfPage1Based": 56,
               "sourceEntryKey": "GAW-DROID-007",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
             },
             "executionStatus": "source-only"
@@ -1910,100 +1811,100 @@
           {
             "instanceId": "GAW-DROID-008-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 55,
               "pdfPage1Based": 56,
               "sourceEntryKey": "GAW-DROID-008",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-008-SYS-TOKEN-02",
             "name": "heuristic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 55,
               "pdfPage1Based": 56,
               "sourceEntryKey": "GAW-DROID-008",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-008-SYS-TOKEN-03",
             "name": "2 hand appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 55,
               "pdfPage1Based": 56,
               "sourceEntryKey": "GAW-DROID-008",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-008-SYS-TOKEN-04",
             "name": "internal comlink",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 55,
               "pdfPage1Based": 56,
               "sourceEntryKey": "GAW-DROID-008",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-008-SYS-TOKEN-05",
             "name": "synchronized fire circuits",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 55,
               "pdfPage1Based": 56,
               "sourceEntryKey": "GAW-DROID-008",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-008-SYS-TOKEN-06",
             "name": "durasteel plating",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 55,
               "pdfPage1Based": 56,
               "sourceEntryKey": "GAW-DROID-008",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-008-SYS-TOKEN-07",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 55,
               "pdfPage1Based": 56,
               "sourceEntryKey": "GAW-DROID-008",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -2013,31 +1914,13 @@
             "entryId": "GAW-DROID-008-POS-01",
             "name": "blaster carbine",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 55,
-              "pdfPage1Based": 56,
-              "sourceEntryKey": "GAW-DROID-008",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "GAW-DROID-008-POS-02",
             "name": "electrobinoculars",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 55,
-              "pdfPage1Based": 56,
-              "sourceEntryKey": "GAW-DROID-008",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -2052,7 +1935,7 @@
               "page": 55,
               "pdfPage1Based": 56,
               "sourceEntryKey": "GAW-DROID-008",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
             },
             "executionStatus": "source-only"
@@ -2066,7 +1949,7 @@
               "page": 55,
               "pdfPage1Based": 56,
               "sourceEntryKey": "GAW-DROID-008",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
             },
             "executionStatus": "source-only"
@@ -2177,114 +2060,114 @@
           {
             "instanceId": "GAW-DROID-009-SYS-TOKEN-01",
             "name": "tracked locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 56,
               "pdfPage1Based": 57,
               "sourceEntryKey": "GAW-DROID-009",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-009-SYS-TOKEN-02",
             "name": "darkvision",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 56,
               "pdfPage1Based": 57,
               "sourceEntryKey": "GAW-DROID-009",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-009-SYS-TOKEN-03",
             "name": "improved sensor package",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 56,
               "pdfPage1Based": 57,
               "sourceEntryKey": "GAW-DROID-009",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-009-SYS-TOKEN-04",
             "name": "claw appendage",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 56,
               "pdfPage1Based": 57,
               "sourceEntryKey": "GAW-DROID-009",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-009-SYS-TOKEN-05",
             "name": "internal comlink",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 56,
               "pdfPage1Based": 57,
               "sourceEntryKey": "GAW-DROID-009",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-009-SYS-TOKEN-06",
             "name": "locked power generator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 56,
               "pdfPage1Based": 57,
               "sourceEntryKey": "GAW-DROID-009",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-009-SYS-TOKEN-07",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 56,
               "pdfPage1Based": 57,
               "sourceEntryKey": "GAW-DROID-009",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-009-SYS-TOKEN-08",
             "name": "duranium plating",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 56,
               "pdfPage1Based": 57,
               "sourceEntryKey": "GAW-DROID-009",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -2294,31 +2177,13 @@
             "entryId": "GAW-DROID-009-POS-01",
             "name": "grenade launcher",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 56,
-              "pdfPage1Based": 57,
-              "sourceEntryKey": "GAW-DROID-009",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "GAW-DROID-009-POS-02",
             "name": "heavy repeating blaster",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 56,
-              "pdfPage1Based": 57,
-              "sourceEntryKey": "GAW-DROID-009",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -2333,7 +2198,7 @@
               "page": 56,
               "pdfPage1Based": 57,
               "sourceEntryKey": "GAW-DROID-009",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
             },
             "executionStatus": "source-only"
@@ -2347,7 +2212,7 @@
               "page": 56,
               "pdfPage1Based": 57,
               "sourceEntryKey": "GAW-DROID-009",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
             },
             "executionStatus": "source-only"
@@ -2454,100 +2319,100 @@
           {
             "instanceId": "GAW-DROID-010-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 56,
               "pdfPage1Based": 57,
               "sourceEntryKey": "GAW-DROID-010",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-010-SYS-TOKEN-02",
             "name": "basic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 56,
               "pdfPage1Based": 57,
               "sourceEntryKey": "GAW-DROID-010",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-010-SYS-TOKEN-03",
             "name": "2 tool appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 56,
               "pdfPage1Based": 57,
               "sourceEntryKey": "GAW-DROID-010",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-010-SYS-TOKEN-04",
             "name": "compartment space (5 kg)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 56,
               "pdfPage1Based": 57,
               "sourceEntryKey": "GAW-DROID-010",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-010-SYS-TOKEN-05",
             "name": "magnetic feet",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 56,
               "pdfPage1Based": 57,
               "sourceEntryKey": "GAW-DROID-010",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-010-SYS-TOKEN-06",
             "name": "secondary battery",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 56,
               "pdfPage1Based": 57,
               "sourceEntryKey": "GAW-DROID-010",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-010-SYS-TOKEN-07",
             "name": "durasteel battle armor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 56,
               "pdfPage1Based": 57,
               "sourceEntryKey": "GAW-DROID-010",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -2565,7 +2430,7 @@
               "page": 56,
               "pdfPage1Based": 57,
               "sourceEntryKey": "GAW-DROID-010",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
             },
             "executionStatus": "source-only"
@@ -2579,7 +2444,7 @@
               "page": 56,
               "pdfPage1Based": 57,
               "sourceEntryKey": "GAW-DROID-010",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
             },
             "executionStatus": "source-only"
@@ -2671,142 +2536,142 @@
           {
             "instanceId": "GAW-DROID-011-SYS-TOKEN-01",
             "name": "hovering locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 57,
               "pdfPage1Based": 58,
               "sourceEntryKey": "GAW-DROID-011",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-011-SYS-TOKEN-02",
             "name": "demolition sensor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 57,
               "pdfPage1Based": 58,
               "sourceEntryKey": "GAW-DROID-011",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-011-SYS-TOKEN-03",
             "name": "hardened systems (x2)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 57,
               "pdfPage1Based": 58,
               "sourceEntryKey": "GAW-DROID-011",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-011-SYS-TOKEN-04",
             "name": "improved sensor package",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 57,
               "pdfPage1Based": 58,
               "sourceEntryKey": "GAW-DROID-011",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-011-SYS-TOKEN-05",
             "name": "integrated comlink",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 57,
               "pdfPage1Based": 58,
               "sourceEntryKey": "GAW-DROID-011",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-011-SYS-TOKEN-06",
             "name": "locked access",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 57,
               "pdfPage1Based": 58,
               "sourceEntryKey": "GAW-DROID-011",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-011-SYS-TOKEN-07",
             "name": "remote receiver",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 57,
               "pdfPage1Based": 58,
               "sourceEntryKey": "GAW-DROID-011",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-011-SYS-TOKEN-08",
             "name": "self-destruct system (4d6)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 57,
               "pdfPage1Based": 58,
               "sourceEntryKey": "GAW-DROID-011",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-011-SYS-TOKEN-09",
             "name": "2 tool appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 57,
               "pdfPage1Based": 58,
               "sourceEntryKey": "GAW-DROID-011",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-011-SYS-TOKEN-10",
             "name": "quadanium plating",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 57,
               "pdfPage1Based": 58,
               "sourceEntryKey": "GAW-DROID-011",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -2824,7 +2689,7 @@
               "page": 57,
               "pdfPage1Based": 58,
               "sourceEntryKey": "GAW-DROID-011",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
             },
             "executionStatus": "source-only"
@@ -2838,7 +2703,7 @@
               "page": 57,
               "pdfPage1Based": 58,
               "sourceEntryKey": "GAW-DROID-011",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
             },
             "executionStatus": "source-only"
@@ -2960,86 +2825,86 @@
           {
             "instanceId": "GAW-DROID-012-SYS-TOKEN-01",
             "name": "basic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 98,
               "pdfPage1Based": 99,
               "sourceEntryKey": "GAW-DROID-012",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-012-SYS-TOKEN-02",
             "name": "darkvision",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 98,
               "pdfPage1Based": 99,
               "sourceEntryKey": "GAW-DROID-012",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-012-SYS-TOKEN-03",
             "name": "improved sensor package",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 98,
               "pdfPage1Based": 99,
               "sourceEntryKey": "GAW-DROID-012",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-012-SYS-TOKEN-04",
             "name": "locked access",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 98,
               "pdfPage1Based": 99,
               "sourceEntryKey": "GAW-DROID-012",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-012-SYS-TOKEN-05",
             "name": "plasteel shell",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 98,
               "pdfPage1Based": 99,
               "sourceEntryKey": "GAW-DROID-012",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-012-SYS-TOKEN-06",
             "name": "weapon housing (braced)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 98,
               "pdfPage1Based": 99,
               "sourceEntryKey": "GAW-DROID-012",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -3049,31 +2914,13 @@
             "entryId": "GAW-DROID-012-POS-01",
             "name": "light repeating blaster",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 98,
-              "pdfPage1Based": 99,
-              "sourceEntryKey": "GAW-DROID-012",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "GAW-DROID-012-POS-02",
             "name": "heavy power pack (150 shots)",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 98,
-              "pdfPage1Based": 99,
-              "sourceEntryKey": "GAW-DROID-012",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -3088,7 +2935,7 @@
               "page": 98,
               "pdfPage1Based": 99,
               "sourceEntryKey": "GAW-DROID-012",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
             },
             "executionStatus": "source-only"
@@ -3102,7 +2949,7 @@
               "page": 98,
               "pdfPage1Based": 99,
               "sourceEntryKey": "GAW-DROID-012",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
             },
             "executionStatus": "source-only"
@@ -3229,156 +3076,156 @@
           {
             "instanceId": "GAW-DROID-013-SYS-TOKEN-01",
             "name": "heuristic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 181,
               "pdfPage1Based": 182,
               "sourceEntryKey": "GAW-DROID-013",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-013-SYS-TOKEN-02",
             "name": "durasteel plating",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 181,
               "pdfPage1Based": 182,
               "sourceEntryKey": "GAW-DROID-013",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-013-SYS-TOKEN-03",
             "name": "claw appendage",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 181,
               "pdfPage1Based": 182,
               "sourceEntryKey": "GAW-DROID-013",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-013-SYS-TOKEN-04",
             "name": "tool appendage",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 181,
               "pdfPage1Based": 182,
               "sourceEntryKey": "GAW-DROID-013",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-013-SYS-TOKEN-05",
             "name": "walking locomotion with 2 extra legs",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 181,
               "pdfPage1Based": 182,
               "sourceEntryKey": "GAW-DROID-013",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-013-SYS-TOKEN-06",
             "name": "darkvision",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 181,
               "pdfPage1Based": 182,
               "sourceEntryKey": "GAW-DROID-013",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-013-SYS-TOKEN-07",
             "name": "hardened systems (x2)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 181,
               "pdfPage1Based": 182,
               "sourceEntryKey": "GAW-DROID-013",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-013-SYS-TOKEN-08",
             "name": "improved sensor package",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 181,
               "pdfPage1Based": 182,
               "sourceEntryKey": "GAW-DROID-013",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-013-SYS-TOKEN-09",
             "name": "internal comlink",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 181,
               "pdfPage1Based": 182,
               "sourceEntryKey": "GAW-DROID-013",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-013-SYS-TOKEN-10",
             "name": "locked access",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 181,
               "pdfPage1Based": 182,
               "sourceEntryKey": "GAW-DROID-013",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-013-SYS-TOKEN-11",
             "name": "secondary battery",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 181,
               "pdfPage1Based": 182,
               "sourceEntryKey": "GAW-DROID-013",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -3388,16 +3235,7 @@
             "entryId": "GAW-DROID-013-POS-01",
             "name": "blaster cannon",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 181,
-              "pdfPage1Based": 182,
-              "sourceEntryKey": "GAW-DROID-013",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -3412,7 +3250,7 @@
               "page": 181,
               "pdfPage1Based": 182,
               "sourceEntryKey": "GAW-DROID-013",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
             },
             "executionStatus": "source-only"
@@ -3426,7 +3264,7 @@
               "page": 181,
               "pdfPage1Based": 182,
               "sourceEntryKey": "GAW-DROID-013",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
             },
             "executionStatus": "source-only"
@@ -3536,72 +3374,72 @@
           {
             "instanceId": "GAW-DROID-014-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 210,
               "pdfPage1Based": 211,
               "sourceEntryKey": "GAW-DROID-014",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-014-SYS-TOKEN-02",
             "name": "remote receiver",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 210,
               "pdfPage1Based": 211,
               "sourceEntryKey": "GAW-DROID-014",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-014-SYS-TOKEN-03",
             "name": "2 hand appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 210,
               "pdfPage1Based": 211,
               "sourceEntryKey": "GAW-DROID-014",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-014-SYS-TOKEN-04",
             "name": "internal comlink",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 210,
               "pdfPage1Based": 211,
               "sourceEntryKey": "GAW-DROID-014",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-014-SYS-TOKEN-05",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 210,
               "pdfPage1Based": 211,
               "sourceEntryKey": "GAW-DROID-014",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -3611,16 +3449,7 @@
             "entryId": "GAW-DROID-014-POS-01",
             "name": "blaster carbine",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 210,
-              "pdfPage1Based": 211,
-              "sourceEntryKey": "GAW-DROID-014",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -3635,7 +3464,7 @@
               "page": 210,
               "pdfPage1Based": 211,
               "sourceEntryKey": "GAW-DROID-014",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
             },
             "executionStatus": "source-only"
@@ -3649,7 +3478,7 @@
               "page": 210,
               "pdfPage1Based": 211,
               "sourceEntryKey": "GAW-DROID-014",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
             },
             "executionStatus": "source-only"
@@ -3748,114 +3577,114 @@
           {
             "instanceId": "GAW-DROID-015-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 210,
               "pdfPage1Based": 211,
               "sourceEntryKey": "GAW-DROID-015",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-015-SYS-TOKEN-02",
             "name": "remote receiver",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 210,
               "pdfPage1Based": 211,
               "sourceEntryKey": "GAW-DROID-015",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-015-SYS-TOKEN-03",
             "name": "backup processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 210,
               "pdfPage1Based": 211,
               "sourceEntryKey": "GAW-DROID-015",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-015-SYS-TOKEN-04",
             "name": "synchronized fire circuits",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 210,
               "pdfPage1Based": 211,
               "sourceEntryKey": "GAW-DROID-015",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-015-SYS-TOKEN-05",
             "name": "2 hand appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 210,
               "pdfPage1Based": 211,
               "sourceEntryKey": "GAW-DROID-015",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-015-SYS-TOKEN-06",
             "name": "integrated comlink",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 210,
               "pdfPage1Based": 211,
               "sourceEntryKey": "GAW-DROID-015",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-015-SYS-TOKEN-07",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 210,
               "pdfPage1Based": 211,
               "sourceEntryKey": "GAW-DROID-015",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-015-SYS-TOKEN-08",
             "name": "plasteel shell (+2 armor)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 210,
               "pdfPage1Based": 211,
               "sourceEntryKey": "GAW-DROID-015",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -3865,16 +3694,7 @@
             "entryId": "GAW-DROID-015-POS-01",
             "name": "wrist blasters (blaster rifle equivalents)",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 210,
-              "pdfPage1Based": 211,
-              "sourceEntryKey": "GAW-DROID-015",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -3889,7 +3709,7 @@
               "page": 210,
               "pdfPage1Based": 211,
               "sourceEntryKey": "GAW-DROID-015",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
             },
             "executionStatus": "source-only"
@@ -3903,7 +3723,7 @@
               "page": 210,
               "pdfPage1Based": 211,
               "sourceEntryKey": "GAW-DROID-015",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
             },
             "executionStatus": "source-only"
@@ -4003,100 +3823,100 @@
           {
             "instanceId": "GAW-DROID-016-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 211,
               "pdfPage1Based": 212,
               "sourceEntryKey": "GAW-DROID-016",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-016-SYS-TOKEN-02",
             "name": "wheeled locomotion (exclusive)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 211,
               "pdfPage1Based": 212,
               "sourceEntryKey": "GAW-DROID-016",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-016-SYS-TOKEN-03",
             "name": "remote receiver",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 211,
               "pdfPage1Based": 212,
               "sourceEntryKey": "GAW-DROID-016",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-016-SYS-TOKEN-04",
             "name": "2 tool appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 211,
               "pdfPage1Based": 212,
               "sourceEntryKey": "GAW-DROID-016",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-016-SYS-TOKEN-05",
             "name": "shield generator (SR 20)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 211,
               "pdfPage1Based": 212,
               "sourceEntryKey": "GAW-DROID-016",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-016-SYS-TOKEN-06",
             "name": "integrated comlink",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 211,
               "pdfPage1Based": 212,
               "sourceEntryKey": "GAW-DROID-016",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-016-SYS-TOKEN-07",
             "name": "bronzium shell (+5 armor, quadanium equivalent)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 211,
               "pdfPage1Based": 212,
               "sourceEntryKey": "GAW-DROID-016",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -4106,16 +3926,7 @@
             "entryId": "GAW-DROID-016-POS-01",
             "name": "2 laser cannons (blaster rifle equivalents)",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 211,
-              "pdfPage1Based": 212,
-              "sourceEntryKey": "GAW-DROID-016",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -4130,7 +3941,7 @@
               "page": 211,
               "pdfPage1Based": 212,
               "sourceEntryKey": "GAW-DROID-016",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
             },
             "executionStatus": "source-only"
@@ -4144,7 +3955,7 @@
               "page": 211,
               "pdfPage1Based": 212,
               "sourceEntryKey": "GAW-DROID-016",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
             },
             "executionStatus": "source-only"
@@ -4243,72 +4054,72 @@
           {
             "instanceId": "GAW-DROID-017-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 214,
               "pdfPage1Based": 215,
               "sourceEntryKey": "GAW-DROID-017",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-017-SYS-TOKEN-02",
             "name": "2 hand appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 214,
               "pdfPage1Based": 215,
               "sourceEntryKey": "GAW-DROID-017",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-017-SYS-TOKEN-03",
             "name": "heuristic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 214,
               "pdfPage1Based": 215,
               "sourceEntryKey": "GAW-DROID-017",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-017-SYS-TOKEN-04",
             "name": "internal comlink",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 214,
               "pdfPage1Based": 215,
               "sourceEntryKey": "GAW-DROID-017",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-017-SYS-TOKEN-05",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 214,
               "pdfPage1Based": 215,
               "sourceEntryKey": "GAW-DROID-017",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -4318,31 +4129,13 @@
             "entryId": "GAW-DROID-017-POS-01",
             "name": "blaster rifle",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 214,
-              "pdfPage1Based": 215,
-              "sourceEntryKey": "GAW-DROID-017",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "GAW-DROID-017-POS-02",
             "name": "electrobinoculars",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 214,
-              "pdfPage1Based": 215,
-              "sourceEntryKey": "GAW-DROID-017",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -4357,7 +4150,7 @@
               "page": 214,
               "pdfPage1Based": 215,
               "sourceEntryKey": "GAW-DROID-017",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
             },
             "executionStatus": "source-only"
@@ -4371,7 +4164,7 @@
               "page": 214,
               "pdfPage1Based": 215,
               "sourceEntryKey": "GAW-DROID-017",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
             },
             "executionStatus": "source-only"
@@ -4469,72 +4262,72 @@
           {
             "instanceId": "GAW-DROID-018-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 215,
               "pdfPage1Based": 216,
               "sourceEntryKey": "GAW-DROID-018",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-018-SYS-TOKEN-02",
             "name": "remote receiver",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 215,
               "pdfPage1Based": 216,
               "sourceEntryKey": "GAW-DROID-018",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-018-SYS-TOKEN-03",
             "name": "2 hand appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 215,
               "pdfPage1Based": 216,
               "sourceEntryKey": "GAW-DROID-018",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-018-SYS-TOKEN-04",
             "name": "internal comlink",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 215,
               "pdfPage1Based": 216,
               "sourceEntryKey": "GAW-DROID-018",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-018-SYS-TOKEN-05",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 215,
               "pdfPage1Based": 216,
               "sourceEntryKey": "GAW-DROID-018",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -4544,16 +4337,7 @@
             "entryId": "GAW-DROID-018-POS-01",
             "name": "blaster carbine",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 215,
-              "pdfPage1Based": 216,
-              "sourceEntryKey": "GAW-DROID-018",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -4568,7 +4352,7 @@
               "page": 215,
               "pdfPage1Based": 216,
               "sourceEntryKey": "GAW-DROID-018",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
             },
             "executionStatus": "source-only"
@@ -4582,7 +4366,7 @@
               "page": 215,
               "pdfPage1Based": 216,
               "sourceEntryKey": "GAW-DROID-018",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
             },
             "executionStatus": "source-only"
@@ -4675,7 +4459,7 @@
               "page": 216,
               "pdfPage1Based": 217,
               "sourceEntryKey": "GAW-DROID-019",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
             },
             "executionStatus": "source-only"
@@ -4689,7 +4473,7 @@
               "page": 216,
               "pdfPage1Based": 217,
               "sourceEntryKey": "GAW-DROID-019",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
             },
             "executionStatus": "source-only"
@@ -4699,11 +4483,7 @@
       "pcConstruction": {
         "heroEligibility": null
       },
-      "vehicleLink": {
-        "auditAuthority": "vehicle-primary-source-only",
-        "sourceReviewCaveat": "GAT vehicle statistics, droid brain and weapons belong to vehicle-only actor, not individual droid.",
-        "sourceEquipmentReviewStatus": "vehicle only; pending vehicle-specific systems and weapon payload record"
-      },
+      "vehicleLink": {},
       "economics": {},
       "text": {
         "sourceWarnings": [
@@ -4740,7 +4520,7 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate. Vehicle source audit note auditAuthority: vehicle-primary-source-only. Vehicle source audit note sourceReviewCaveat: GAT vehicle statistics, droid brain and weapons belong to vehicle-only actor, not individual droid.. Vehicle source audit note sourceEquipmentReviewStatus: vehicle only; pending vehicle-specific systems and weapon payload record.",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-019",
           "Galaxy at War:printed-p216:TXT-line-21327",
@@ -4801,7 +4581,7 @@
               "page": 217,
               "pdfPage1Based": 218,
               "sourceEntryKey": "GAW-DROID-020",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
             },
             "executionStatus": "source-only"
@@ -4815,7 +4595,7 @@
               "page": 217,
               "pdfPage1Based": 218,
               "sourceEntryKey": "GAW-DROID-020",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
             },
             "executionStatus": "source-only"
@@ -4856,20 +4636,13 @@
             },
             "executionStatus": "source-only"
           }
-        ],
-        "squadCountEvidence": {
-          "members": 3,
-          "sourcePage": 217,
-          "executionStatus": "source-only",
-          "censusConflictPage220": "unverified and not counted"
-        },
-        "squadEquipmentReviewStatus": "group source identity; constituent B1 equipment not independently duplicated"
+        ]
       },
       "certification": {
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate.",
+        "reviewNotes": "Selected first-page PDF fields verified; full narrative/continuation, feats/talents, equipment, mounts, chargen and runtime NOT certified. M1 model-specific mechanical-boundary second pass from rendered primary PDF plus indexed TXT. Two bounded source-only claims recorded; complete feat/talent/system/weapon transcription is a separate remaining gate. Squad source audit note squadCountEvidence: {\"members\":3,\"sourcePage\":217,\"executionStatus\":\"source-only\",\"censusConflictPage220\":\"unverified and not counted\"}. Squad source audit note squadEquipmentReviewStatus: \"group source identity; constituent B1 equipment not independently duplicated\".",
         "reviewerEvidenceRefs": [
           "GAW-CENSUS:GAW-DROID-020",
           "Galaxy at War:printed-p217:TXT-line-21399",
@@ -4934,100 +4707,100 @@
           {
             "instanceId": "GAW-DROID-021-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 218,
               "pdfPage1Based": 219,
               "sourceEntryKey": "GAW-DROID-021",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-021-SYS-TOKEN-02",
             "name": "remote receiver",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 218,
               "pdfPage1Based": 219,
               "sourceEntryKey": "GAW-DROID-021",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-021-SYS-TOKEN-03",
             "name": "synchronized fire circuits",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 218,
               "pdfPage1Based": 219,
               "sourceEntryKey": "GAW-DROID-021",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-021-SYS-TOKEN-04",
             "name": "2 hand appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 218,
               "pdfPage1Based": 219,
               "sourceEntryKey": "GAW-DROID-021",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-021-SYS-TOKEN-05",
             "name": "improved sensor package",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 218,
               "pdfPage1Based": 219,
               "sourceEntryKey": "GAW-DROID-021",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-021-SYS-TOKEN-06",
             "name": "internal comlink",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 218,
               "pdfPage1Based": 219,
               "sourceEntryKey": "GAW-DROID-021",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-021-SYS-TOKEN-07",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 218,
               "pdfPage1Based": 219,
               "sourceEntryKey": "GAW-DROID-021",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -5037,46 +4810,19 @@
             "entryId": "GAW-DROID-021-POS-01",
             "name": "heavy blaster rifle with standard targeting scope",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 218,
-              "pdfPage1Based": 219,
-              "sourceEntryKey": "GAW-DROID-021",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "GAW-DROID-021-POS-02",
             "name": "hold-out blaster pistol",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 218,
-              "pdfPage1Based": 219,
-              "sourceEntryKey": "GAW-DROID-021",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "GAW-DROID-021-POS-03",
             "name": "2 frag grenades",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 218,
-              "pdfPage1Based": 219,
-              "sourceEntryKey": "GAW-DROID-021",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -5091,7 +4837,7 @@
               "page": 218,
               "pdfPage1Based": 219,
               "sourceEntryKey": "GAW-DROID-021",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
             },
             "executionStatus": "source-only"
@@ -5105,7 +4851,7 @@
               "page": 218,
               "pdfPage1Based": 219,
               "sourceEntryKey": "GAW-DROID-021",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
             },
             "executionStatus": "source-only"
@@ -5214,114 +4960,114 @@
           {
             "instanceId": "GAW-DROID-022-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 219,
               "pdfPage1Based": 220,
               "sourceEntryKey": "GAW-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-022-SYS-TOKEN-02",
             "name": "basic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 219,
               "pdfPage1Based": 220,
               "sourceEntryKey": "GAW-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-022-SYS-TOKEN-03",
             "name": "remote receiver",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 219,
               "pdfPage1Based": 220,
               "sourceEntryKey": "GAW-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-022-SYS-TOKEN-04",
             "name": "2 tool mounts",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 219,
               "pdfPage1Based": 220,
               "sourceEntryKey": "GAW-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-022-SYS-TOKEN-05",
             "name": "improved sensor package",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 219,
               "pdfPage1Based": 220,
               "sourceEntryKey": "GAW-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-022-SYS-TOKEN-06",
             "name": "internal comlink",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 219,
               "pdfPage1Based": 220,
               "sourceEntryKey": "GAW-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-022-SYS-TOKEN-07",
             "name": "locked access",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 219,
               "pdfPage1Based": 220,
               "sourceEntryKey": "GAW-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "GAW-DROID-022-SYS-TOKEN-08",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Galaxy at War",
               "page": 219,
               "pdfPage1Based": 220,
               "sourceEntryKey": "GAW-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems; grouped quantities are unexpanded"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -5331,31 +5077,13 @@
             "entryId": "GAW-DROID-022-POS-01",
             "name": "double heavy blaster rifle",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 219,
-              "pdfPage1Based": 220,
-              "sourceEntryKey": "GAW-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "GAW-DROID-022-POS-02",
             "name": "durasteel plating (+6 armor)",
             "quantity": null,
-            "source": {
-              "book": "Galaxy at War",
-              "page": 219,
-              "pdfPage1Based": 220,
-              "sourceEntryKey": "GAW-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions; actual quantities only when named in label"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -5370,7 +5098,7 @@
               "page": 219,
               "pdfPage1Based": 220,
               "sourceEntryKey": "GAW-DROID-022",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 1"
             },
             "executionStatus": "source-only"
@@ -5384,7 +5112,7 @@
               "page": 219,
               "pdfPage1Based": 220,
               "sourceEntryKey": "GAW-DROID-022",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and narrative mechanical boundary 2"
             },
             "executionStatus": "source-only"
