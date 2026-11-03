@@ -25,7 +25,7 @@ import { parseVehicleWeaponDamageSpec } from '../../engine/combat/vehicle-weapon
 import { getVerifiedPublishedRecord } from './vehicle-source-identity.js';
 import { readCertifiedInstallations } from './vehicle-installation-ledger.js';
 import { EFFECTS } from './vehicle-modification-effects.js';
-import { assessStockWeaponGroups } from './vehicle-stock-weapon-groups.js';
+import { assessStockWeaponGroups, stockItemName, stockMountKey } from './vehicle-stock-weapon-groups.js';
 import { expandBatteryDamage, BATTERY_REASONS } from './vehicle-weapon-battery.js';
 
 export const INSTALLED_WEAPON_FLAG = 'vehicleInstalledWeapon';
@@ -102,17 +102,29 @@ export function resolveStockWeapon(weapon) {
   const group = assessStockWeaponGroups(record).groups.find(g => g.groupKey === flag.groupKey);
   if (!group) return { ok: false, reason: 'STOCK_WEAPON_GROUP_NOT_IN_SOURCE' };
   if (!group.executable) return { ok: false, reason: `STOCK_WEAPON_GROUP_NOT_EXECUTABLE:${group.reasons[0]}` };
+  // A printed battery runs in a declared MODE (Core p. 170): the Item flag names it and the SOURCE must still support it.
+  const fireMode = text(flag.fireMode) || null;
+  let modeInfo = null;
+  if (group.modes) {
+    if (fireMode !== 'full-battery' && fireMode !== 'independent-weapon') return { ok: false, reason: 'STOCK_WEAPON_ITEM_FIRE_MODE_MISMATCH' };
+    modeInfo = group.modes[fireMode];
+    if (!modeInfo?.executable) return { ok: false, reason: `STOCK_WEAPON_MODE_NOT_EXECUTABLE:${modeInfo?.reasons?.[0] ?? fireMode}` };
+  } else if (fireMode) return { ok: false, reason: 'STOCK_WEAPON_ITEM_FIRE_MODE_MISMATCH' };
   const vm = weapon.system?.vehicleMount ?? {};
   if (text(vm.installId) !== '') return { ok: false, reason: 'STOCK_WEAPON_ITEM_CLAIMS_AN_INSTALLATION' };
-  if (!sameLabel(group.label, weapon.name)) return { ok: false, reason: 'STOCK_WEAPON_ITEM_NAME_MISMATCH' };
-  if (vm.stockGroupKey !== group.groupKey || vm.mountKey !== `stock:${group.groupKey}` || vm.crewRole !== group.operator)
+  const mode = fireMode ?? 'single';
+  if (!sameLabel(stockItemName(group, mode), weapon.name)) return { ok: false, reason: 'STOCK_WEAPON_ITEM_NAME_MISMATCH' };
+  if (vm.stockGroupKey !== group.groupKey || vm.mountKey !== stockMountKey(group, mode) || vm.crewRole !== group.operator)
     return { ok: false, reason: 'STOCK_WEAPON_ITEM_MOUNT_MISMATCH' };
   if (text(weapon.system?.damage) !== group.damage.raw) return { ok: false, reason: 'STOCK_WEAPON_ITEM_DAMAGE_DIVERGES_FROM_SOURCE' };
   // arc evidence in the shape the attack preflight understands (V-P6C-01 hierarchy: see determineStockArc)
   const arcEvidence = group.arc.state === 'PUBLISHED' ? { state: 'PRINTED_VALUE', value: group.arc.value }
     : group.arc.state === 'UNSTATED' ? { state: 'SOURCE_SILENT_CONFIRMED' } : { state: 'NOT_REVIEWED' };
-  // a PRINTED weapon battery (Core p. 170) carries its established facts; the Item never does
-  return { ok: true, origin: 'stock', operator: group.operator, group, record, spec: { damage: group.damage.raw, ...(group.damage.type ? { type: group.damage.type } : {}) }, arcEvidence, battery: group.battery?.established ? group.battery : null };
+  // Only FULL-BATTERY mode carries battery rules (assistance already inside the printed total + margin hits); the independent
+  // weapon is an ordinary single-weapon attack on the printed total with the assistance removed.
+  const battery = fireMode === 'full-battery' ? group.battery : null;
+  return { ok: true, origin: 'stock', operator: group.operator, group, record, fireMode: fireMode ?? undefined, attackBasis: modeInfo?.attackBasis ?? group.attackBasis,
+    spec: { damage: group.damage.raw, ...(group.damage.type ? { type: group.damage.type } : {}) }, arcEvidence, battery };
 }
 
 /**

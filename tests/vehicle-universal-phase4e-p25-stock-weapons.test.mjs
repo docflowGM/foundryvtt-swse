@@ -350,31 +350,36 @@ const CAPITAL_SIZES = new Set(['Colossal (frigate)', 'Colossal (cruiser)', 'Colo
 
 test('CORPUS: each executable stock group arms, attacks at its printed total, and resolves its published damage', async () => {
   setPolicy('unrestricted');
-  const proven = [];
+  const provenGroups = new Set(); let provenModes = 0;
   const failures = [];
+  const modesOf = g => (g.modes ? Object.entries(g.modes).filter(([, m]) => m.executable).map(([k, m]) => [k, m.attackBasis.printed]) : [['single', g.attackBonusPrinted]]);
   for (const d of docs) {
     const rec = d.flags.swse.universalVehicleSource.source;
     const groups = assessStockWeaponGroups(rec).groups.filter(g => g.executable);
     if (!groups.length) continue;
     const v = await armed(keyOf(d));
     const items = stockItems(v);
-    if (items.length !== groups.length) { failures.push(`${keyOf(d)}: armed ${items.length} of ${groups.length}`); continue; }
+    const expectedItems = groups.reduce((n, g) => n + modesOf(g).length, 0);
+    if (items.length !== expectedItems) { failures.push(`${keyOf(d)}: armed ${items.length} of ${expectedItems}`); continue; }
     for (const g of groups) {
-      const w = items.find(i => i.flags.swse.vehicleStockWeapon.groupKey === g.groupKey);
-      const capital = CAPITAL_SIZES.has(rec.classification.printedSize);
-      const r = await fire(v, w, target('medium'));
-      const penalty = capital ? -20 : 0;
-      const expectBonus = g.attackBonusPrinted + penalty;
-      let ok = r.result && r.result.atkBonus === expectBonus && !r.blocked;
-      let formula = null;
-      try { formula = buildDamageFormula(resolveDamageComposition(v, w, { weapon: w })); } catch (e) { ok = false; failures.push(`${g.groupKey}: damage ${e.message}`); }
-      if (formula !== (g.damage.multiplier > 1 ? `(${g.damage.formula}) * ${g.damage.multiplier}` : g.damage.formula)) ok = false;
-      if (!ok) failures.push(`${g.groupKey}: attack ${r.result?.atkBonus} expected ${expectBonus}; ${r.log.join('|')}; damage ${formula}`);
-      else proven.push(g.groupKey);
+      for (const [mode, printed] of modesOf(g)) {
+        const w = items.find(i => i.flags.swse.vehicleStockWeapon.groupKey === g.groupKey && (i.flags.swse.vehicleStockWeapon.fireMode ?? 'single') === mode);
+        if (!w) { failures.push(`${g.groupKey}|${mode}: not armed`); continue; }
+        const capital = CAPITAL_SIZES.has(rec.classification.printedSize);
+        const r = await fire(v, w, target('medium'));
+        const expectBonus = printed + (capital ? -20 : 0);
+        let ok = r.result && r.result.atkBonus === expectBonus && !r.blocked;
+        let formula = null;
+        try { formula = buildDamageFormula(resolveDamageComposition(v, w, { weapon: w })); } catch (e) { ok = false; failures.push(`${g.groupKey}|${mode}: damage ${e.message}`); }
+        if (formula !== (g.damage.multiplier > 1 ? `(${g.damage.formula}) * ${g.damage.multiplier}` : g.damage.formula)) ok = false;
+        if (!ok) failures.push(`${g.groupKey}|${mode}: attack ${r.result?.atkBonus} expected ${expectBonus}; ${r.log.join('|')}; damage ${formula}`);
+        else { provenGroups.add(g.groupKey); provenModes++; }
+      }
     }
   }
   assert.deepEqual(failures, []);
-  assert.equal(proven.length, 293, 'the corpus-wide count of offline-executable stock groups (260 plain + 1 established battery + 32 source-typed ion)');
+  assert.equal(provenGroups.size, 356, 'the corpus-wide count of offline-executable stock GROUPS (each counted once): 260 plain + 32 ion + 64 batteries');
+  assert.equal(provenModes, 357, 'one group (Krayt\'s Honor turbolaser battery) supports two modes');
   setPolicy(undefined);
 });
 
@@ -383,9 +388,9 @@ test('COVERAGE REPORT: current, and its executable counts are exactly what the C
   execFileSync(process.execPath, ['tools/audits/vehicles/build-stock-weapon-coverage.mjs', '--check']);
   const { readFileSync } = await import('node:fs');
   const cov = JSON.parse(readFileSync('data/audits/vehicles/stock-weapon-coverage.json', 'utf8'));
-  assert.deepEqual([cov.totals.vehicles, cov.totals.groups, cov.totals.offlineExecutableGroups, cov.totals.vehiclesWithOfflineExecutableGroup, cov.totals.liveVerifiedVehicles], [429, 846, 293, 238, 0]);
+  assert.deepEqual([cov.totals.vehicles, cov.totals.groups, cov.totals.offlineExecutableGroups, cov.totals.vehiclesWithOfflineExecutableGroup, cov.totals.liveVerifiedVehicles], [429, 846, 356, 263, 0]);
   const exec = cov.vehicles.flatMap(v => v.groups.filter(g => g.offlineExecutable));
-  assert.equal(exec.length, 293);
+  assert.equal(exec.length, 356);
   for (const g of cov.vehicles.flatMap(v => v.groups)) {
     assert.equal(g.liveVerified, false);
     if (!g.offlineExecutable) { assert.ok(g.refusals.length > 0, g.groupKey + ' has a named refusal'); assert.equal(g.attackReadiness, 'REFUSED'); }

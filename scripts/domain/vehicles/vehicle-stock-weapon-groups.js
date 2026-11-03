@@ -19,7 +19,11 @@
  * unstated arc imposes no automated restriction; a stated-but-uninterpreted or never-reviewed arc is refused.
  * Pure; no Foundry globals.
  */
-import { establishPublishedBattery, batteryAssistanceBonus } from './vehicle-weapon-battery.js';
+import { establishPublishedBattery, establishIndependentBatteryWeapon, batteryAssistanceBonus } from './vehicle-weapon-battery.js';
+
+/** Names the sheet shows: the battery keeps the printed label; its independent single weapon is plainly labelled so it is never mistaken for the battery. */
+export const stockItemName = (group, mode = 'single') => (mode === 'independent-weapon' ? `${group.label} (single weapon)` : group.label);
+export const stockMountKey = (group, mode = 'single') => (mode === 'independent-weapon' ? `stock:${group.groupKey}#independent-weapon` : `stock:${group.groupKey}`);
 
 const abilityMod = s => Math.floor((s - 10) / 2);
 const finite = v => typeof v === 'number' && Number.isFinite(v);
@@ -69,25 +73,35 @@ export function parseStockFiringGroup(group) {
   const o = notes.match(OPERATOR);
   const opText = o ? String(o[1] ?? '').trim().toLowerCase() : '';
   const opDetail = o ? String(o[2] ?? '').trim().toLowerCase() : '';
-  // A weapon battery is understood only when the source PRINTS it as one ("battery (N gunners)" on a group the record
-  // marks as a printed weapon battery). Core p. 170 rules then apply (vehicle-weapon-battery.js); the number of identical
-  // weapons must also be PRINTED (hardwareCount) -- it is never inferred from the gunner count.
+  // A weapon battery is understood only when the source PRINTS it as one ("battery (N gunners)" on a group the record marks
+  // as a printed weapon battery). Fire-linked weapons that a statblock loosely calls "batteries" are NOT weapon batteries in
+  // game terms (Starships of the Galaxy, Fire-Linked Weapons) and never get battery rules. A printed battery runs in up to two
+  // MODES (Core p. 170, owner direction V-P6C-02): FULL-BATTERY needs the printed gunner count AND the printed number of
+  // identical weapons (independent quantities, neither inferred from the other); INDEPENDENT-WEAPON (one weapon, no
+  // assistance, no margin hits) needs only the printed gunner count, to remove the assistance inside the printed total.
   const gunnerMatch = /(\d+)\s*gunners?/.exec(`${opText} ${opDetail}`);
-  const printedBattery = group?.groupKind === 'weapon-battery' && group?.batteryMembershipStatus === 'printed' && /^battery$/.test(opText) && !!gunnerMatch;
+  const fireLinked = /fire[- ]?linked/i.test(`${group?.label ?? ''} ${notes}`);
+  const printedBattery = group?.groupKind === 'weapon-battery' && group?.batteryMembershipStatus === 'printed' && /^battery$/.test(opText) && !!gunnerMatch && !fireLinked;
   if (!o || !opText) reasons.push('STOCK_OPERATOR_NOT_PRINTED');
   else if (printedBattery) {
     const gunners = Number(gunnerMatch[1]);
     const weaponCount = Number.isInteger(out.evidence?.hardwareCount) ? out.evidence.hardwareCount : null;
-    const established = establishPublishedBattery({ gunners, weaponCount });
+    const full = establishPublishedBattery({ gunners, weaponCount });
+    const independent = establishIndependentBatteryWeapon({ gunners });
     out.operator = 'gunner';
-    out.battery = { gunners, weaponCount, weaponCountBasis: typeof out.evidence?.hardwareCountBasis === 'string' ? out.evidence.hardwareCountBasis : null,
-      established: established.ok, participatingWeapons: established.ok ? established.participatingWeapons : null, maxExtraHits: established.ok ? established.maxExtraHits : null };
-    if (!established.ok) reasons.push(`STOCK_${established.reason}`);
+    out.battery = {
+      gunners, weaponCount, weaponCountBasis: typeof out.evidence?.hardwareCountBasis === 'string' ? out.evidence.hardwareCountBasis : null,
+      fullBattery: full.ok, independentWeapon: independent.ok,
+      participatingWeapons: full.ok ? full.participatingWeapons : null, maxExtraHits: full.ok ? full.maxExtraHits : null,
+      modeReasons: { 'full-battery': full.ok ? [] : [`STOCK_${full.reason}`], 'independent-weapon': independent.ok ? [] : [`STOCK_${independent.reason}`] }
+    };
+    if (!independent.ok) reasons.push(`STOCK_${independent.reason}`);          // without the gunner count neither mode can remove/credit the assistance
   }
   else if (/^battery$/.test(opText) || /\d+\s*gunners/.test(`${opText} ${opDetail}`) || /batter/.test(opText)) reasons.push('STOCK_OPERATOR_IS_A_STATION_BATTERY');
   else if (opText === 'pilot' || opText === 'gunner') out.operator = opText;
   else if (opText === 'copilot' || opText === 'co-pilot') out.operator = 'copilot';
   else reasons.push('STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER');
+  if (fireLinked && group?.groupKind === 'weapon-battery') reasons.push('STOCK_FIRE_LINKED_IS_NOT_A_WEAPON_BATTERY');
   if (group?.groupKind === 'weapon-battery' && !printedBattery) reasons.push('STOCK_GROUP_IS_A_WEAPON_BATTERY');
   // Fail-closed denials by wording (a name can only DENY, never authorize): finite-ammunition weapons have no magazine
   // authority yet and torpedoes/missiles/mines/grenades carry splash and payload rules; a name that says "ion" while the
@@ -186,15 +200,38 @@ export function assessStockWeaponGroups(record) {
   return {
     groups: (record?.armament?.firingGroups ?? []).map(g => {
       const p = parseStockFiringGroup(g);
-      const reasons = [...p.reasons];
+      const common = [...p.reasons];
       const arc = determineStockArc(record, p);
-      if (arc.state === 'NOT_REVIEWED') reasons.push('STOCK_FIRING_ARC_NOT_REVIEWED');
-      if (arc.state === 'STATED_UNPARSED') reasons.push('STOCK_FIRING_ARC_STATED_UNPARSED');
+      if (arc.state === 'NOT_REVIEWED') common.push('STOCK_FIRING_ARC_NOT_REVIEWED');
+      if (arc.state === 'STATED_UNPARSED') common.push('STOCK_FIRING_ARC_STATED_UNPARSED');
       const sizeReason = checkSizeDependentAdjustments(p, record);
-      if (sizeReason) reasons.push(sizeReason);
+      if (sizeReason) common.push(sizeReason);
       const attack = explainPrintedAttackTotal(p, bab, intScore);
-      if (attack.reason) reasons.push(attack.reason);
-      return { ...p, arc, attackBasis: attack.basis, reasons: [...new Set(reasons)], executable: reasons.length === 0 };
+
+      if (!p.battery) {
+        if (attack.reason) common.push(attack.reason);
+        const reasons = [...new Set(common)];
+        return { ...p, arc, attackBasis: attack.basis, reasons, executable: reasons.length === 0 };
+      }
+
+      // A printed battery: two execution modes sharing one group (counted ONCE). The printed total contains the printed
+      // gunners' assistance; both modes need that arithmetic to reconcile exactly.
+      const total = attack.reason ? [attack.reason] : [];
+      const independentBasis = attack.basis?.kind === 'BAB_PLUS_INT_PLUS_BATTERY_ASSISTANCE' ? (() => {
+        const removed = attack.basis.components.find(c => c.id === 'battery-assistance').value;
+        return { kind: 'BAB_PLUS_INT_BATTERY_ASSISTANCE_REMOVED', printed: attack.basis.printed - removed, publishedPrinted: attack.basis.printed, delta: 0, removedAssistance: removed,
+          components: attack.basis.components.filter(c => c.id !== 'battery-assistance') };
+      })() : null;
+      const base = common.length === 0;
+      const modes = {
+        'full-battery': { reasons: [...p.battery.modeReasons['full-battery'], ...total], attackBasis: attack.basis },
+        'independent-weapon': { reasons: [...p.battery.modeReasons['independent-weapon'], ...total], attackBasis: independentBasis }
+      };
+      for (const m of Object.values(modes)) m.executable = base && m.reasons.length === 0;
+      const executable = modes['full-battery'].executable || modes['independent-weapon'].executable;
+      // a refused group lists every reason of both modes (overlapping, never summed); an executable one lists none
+      const reasons = executable ? [] : [...new Set([...common, ...modes['full-battery'].reasons, ...modes['independent-weapon'].reasons])];
+      return { ...p, arc, attackBasis: attack.basis, modes, reasons, executable };
     })
   };
 }

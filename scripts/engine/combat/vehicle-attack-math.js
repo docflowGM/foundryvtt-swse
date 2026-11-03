@@ -336,7 +336,8 @@ export async function resolveAbstractCrewAttackBonus(vehicleActor, weapon, crewQ
   // (applied: false) so the breakdown shows what the number contains. Range, conditions, the capital-ship penalty and
   // registered effects are the genuine attack-time modifiers and stack on top.
   const stockAuthority = resolveVehicleWeaponAuthority(weapon);
-  const stockBasis = stockAuthority?.ok && stockAuthority.origin === 'stock' ? stockAuthority.stock.group : null;
+  // the basis of the MODE this Item runs in (a printed battery's independent weapon has the battery assistance removed)
+  const stockBasis = stockAuthority?.ok && stockAuthority.origin === 'stock' ? { label: stockAuthority.stock.group.label, attackBasis: stockAuthority.stock.attackBasis } : null;
   const rangeEntry = ledgerEntry({
     id: 'range', label: 'Range', value: rangeModifier, category: 'range',
     sourceId: weapon?.id ?? null, sourceName: weapon?.name ?? null,

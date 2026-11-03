@@ -67,9 +67,10 @@ export async function authorizeVehicleAttackBeforeCosts({vehicle,weapon,target,a
   if (!target || !nonempty(target.id)) return block('TARGET_UNRESOLVED');
   if (crewStationResolved !== true) return block('CREW_STATION_UNRESOLVED');
   if (!nonempty(attackId) || !nonempty(vehicle?.id)) return block('ATTACK_SCOPE_UNRESOLVED');
-  // A published weapon battery is run by its generic (published) crew, whose printed total already contains the printed
-  // gunners' assistance. Named gunners would need an explicit roster of the assisting gunners; until that exists the
-  // staffing evidence is incomplete and the attack is refused rather than guessed (nothing is inferred from the bonus).
+  // FULL-BATTERY mode is run by the battery's generic (published) crew, whose printed total already contains the printed
+  // gunners' assistance. Named gunners would need an explicit roster of the assisting gunners; until that exists the staffing
+  // evidence is incomplete and the attack is refused rather than guessed (nothing is inferred from a displayed bonus). The
+  // independent-weapon mode carries no battery (source.battery is null) and accepts a named gunner like any single weapon.
   if (source.battery && operatorActor) return block(BATTERY_REASONS.ASSIGNED_CREW_ROSTER_UNMODELED);
   const scope={vehicleId:vehicle.id,attackId,weaponGroupKey:source.weaponGroupKey,targetId:target.id};
   if (source.attackBonusEvidence?.state === 'PUBLISHED_CONFLICT') {

@@ -79,7 +79,9 @@ export class DamageSystem {
       const typeLabel = targetPacket.type && targetPacket.type !== 'normal' ? ` ${targetPacket.type}` : '';
       const specialLabel = targetPacket.flags?.ionHpHalved
         ? ' (ion HP halved)'
-        : targetPacket.flags?.ionOrganicHalved
+        : targetPacket.flags?.ionFullHpDamage
+          ? ' (ion: full damage to a creature with cybernetic prosthetics)'
+          : targetPacket.flags?.ionOrganicHalved
           ? ' (ion: HP halved, no ion effects)'
           : targetPacket.flags?.stunHpHalved
           ? ' (stun HP halved)'
@@ -90,7 +92,8 @@ export class DamageSystem {
               : result?.resolution?.mitigation?.componentMitigation === true
                 ? ' (component-aware mitigation)'
                 : '';
-      ui.notifications.info(`${actor.name} takes ${applied}${typeLabel} damage${specialLabel}.`);
+      const deferredLabel = result?.resolution?.ionRuleDeferred?.length ? ' (ion interaction unresolved: V-P6C-04)' : (targetPacket.flags?.damageVulnerabilityDeferred ? ` (vulnerability not applied: ${targetPacket.flags.damageVulnerabilityDeferred})` : '');
+      ui.notifications.info(`${actor.name} takes ${applied}${typeLabel} damage${specialLabel}${deferredLabel}.`);
       return result;
     } catch (err) {
       swseLogger.error(err);

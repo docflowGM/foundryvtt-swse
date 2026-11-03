@@ -245,6 +245,13 @@ export class DamageResolutionEngine {
     result.damageToHP = Math.max(0, Math.floor(hpDamageBeforeSpecial * hpDamageMultiplier));
     result.hpAfter = Math.max(0, result.hpBefore - result.damageToHP);
 
+    // Ion: the published text orders shield rating before damage reduction but does not say whether the FULL ion amount compared
+    // to the threshold is taken before or after them (V-P6C-04). The engine keeps its existing reading (the rolled amount) and
+    // SAYS when the two readings would differ, rather than presenting the outcome as settled.
+    if (damageType === 'ion' && (Number(mitigationResult.shield?.applied) > 0 || Number(mitigationResult.damageReduction?.applied) > 0)) {
+      (result.ionRuleDeferred ??= []).push('V-P6C-04:shield-damage-reduction-order');
+    }
+
     result.mitigation = {
       originalDamage: mitigationResult.originalDamage,
       shield: mitigationResult.shield,
@@ -285,11 +292,13 @@ export class DamageResolutionEngine {
       result.thresholdBreakdown = thresholdData.breakdown;
 
       const thresholdOverride = Number(options?.thresholdDamageOverride ?? options?.thresholdMeasuredDamage);
-      // An ion hit on a target the ion rules do not reach is plain half damage: its threshold (the ordinary rule) is judged on the
-      // damage actually dealt to HP, not on the pre-halving amount (owner question V-P6C-04).
-      const thresholdDamage = Number.isFinite(thresholdOverride)
+      // Ion on an ordinary organic (Core p. 159): the creature is "singed... but suffers no other ill effects", so no threshold
+      // or condition-track effect is evaluated for that hit (only the halved hit-point loss applies).
+      const thresholdSuppressed = options?.thresholdEffectsSuppressed === true;
+      result.thresholdSuppressed = thresholdSuppressed;
+      const thresholdDamage = thresholdSuppressed ? 0 : (Number.isFinite(thresholdOverride)
         ? Math.max(0, thresholdOverride)
-        : (options?.thresholdMeasuredFromHpDamage === true ? result.damageToHP : (mitigationResult?.afterDR ?? mitigationResult?.hpDamage ?? damage));
+        : (mitigationResult?.afterDR ?? mitigationResult?.hpDamage ?? damage));
       result.thresholdMeasuredDamage = thresholdDamage;
       result.thresholdRuleResult = ThresholdEngine.evaluateThreshold({
         target: actor,
@@ -425,6 +434,10 @@ export class DamageResolutionEngine {
         result.conditionDelta = steps;
         result.conditionAfter = result.conditionBefore + steps;
         result.ionDisabled = true;
+        // The generic 0-HP rule says a droid, object or vehicle whose reducing damage also meets its threshold is DESTROYED (a creature
+        // is killed) instead; the ion text says only "disabled". Which governs an ion hit that does both is unsettled (V-P6C-04): the
+        // reversible outcome is applied and the conflict is reported.
+        if (result.thresholdExceeded) (result.ionRuleDeferred ??= []).push('V-P6C-04:zero-hit-points-and-threshold');
         result.dead = false;
         result.destroyed = false;
         result.forceRescueEligible = false;

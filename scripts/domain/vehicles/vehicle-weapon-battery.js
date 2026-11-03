@@ -17,6 +17,11 @@
  *
  * Published statblock totals for GENERIC crews already contain the assistance of the printed gunners. A caller must never
  * add a published modifier on top of a player's independently calculated total, nor add assistance a second time.
+ *
+ * Two execution modes exist, never conflated: FULL-BATTERY (assistance + margin hits; needs the printed weapon count) and
+ * INDEPENDENT-WEAPON (one weapon, no assistance, no margin hits; needs only the printed gunner count). Fire-linked weapons
+ * that a statblock loosely calls "batteries" are NOT weapon batteries in game terms (Starships of the Galaxy, Fire-Linked
+ * Weapons) and are never routed here.
  */
 export const BATTERY_MAX_WEAPONS = 6;
 export const BATTERY_ASSIST_PER_ADDITIONAL_GUNNER = 2;
@@ -31,7 +36,6 @@ export const BATTERY_REASONS = Object.freeze({
   GUNNERS_OUT_OF_RANGE: 'BATTERY_GUNNER_COUNT_OUT_OF_RANGE',
   WEAPONS_OUT_OF_RANGE: 'BATTERY_WEAPON_COUNT_OUT_OF_RANGE',
   WEAPON_COUNT_NOT_STATED: 'BATTERY_WEAPON_COUNT_NOT_STATED',
-  GUNNERS_NOT_EQUAL_WEAPONS: 'BATTERY_GUNNERS_NOT_EQUAL_TO_PRINTED_WEAPONS',
   ASSIGNED_CREW_ROSTER_UNMODELED: 'BATTERY_ASSIGNED_CREW_ROSTER_UNMODELED',
   EXTRA_HITS_EXCEED_PARTICIPATING_WEAPONS: 'BATTERY_EXTRA_HITS_EXCEED_PARTICIPATING_WEAPONS',
   EXTRA_HITS_ON_A_NON_BATTERY: 'BATTERY_EXTRA_HITS_ON_A_NON_BATTERY',
@@ -110,16 +114,42 @@ export function resolveBatteryAttackTotal({ crew, publishedTotal, printedGunners
 }
 
 /**
- * Whether a published battery group's facts establish a battery the system can run, and its participating weapons. The
- * printed weapon count is required: a source that states only gunners does not establish how many identical weapons the
- * battery has (see rules register V-P6C-02), so nothing is inferred from the gunner count.
+ * The weapon quantities of a battery, kept apart (owner direction V-P6C-02): the identical weapons it HAS, the ones still
+ * AVAILABLE (not destroyed, disabled or removed) and the ones PARTICIPATING in this attack. The gunner count is a different
+ * quantity and does not constrain them: Core p. 170 says only that a battery is up to six identical weapons.
+ * @returns {{ok:true, totalWeapons:number, availableWeapons:number, participatingWeapons:number, maxExtraHits:number}|{ok:false, reason:string}}
+ */
+export function resolveBatteryWeapons({ totalWeapons, availableWeapons = totalWeapons, participatingWeapons = availableWeapons } = {}) {
+  const ok = n => isInt(n) && n >= 1 && n <= BATTERY_MAX_WEAPONS;
+  if (!ok(totalWeapons) || !ok(availableWeapons) || !ok(participatingWeapons)) return fail(BATTERY_REASONS.WEAPONS_OUT_OF_RANGE);
+  if (participatingWeapons > availableWeapons || availableWeapons > totalWeapons) return fail(BATTERY_REASONS.WEAPONS_OUT_OF_RANGE);
+  return { ok: true, totalWeapons, availableWeapons, participatingWeapons, maxExtraHits: participatingWeapons - 1 };
+}
+
+/**
+ * FULL-BATTERY mode of a published battery: needs the printed gunner count (for the assistance contained in the printed total)
+ * AND the printed number of identical weapons (the cap on margin hits). The two are independent quantities: there is no
+ * requirement that they be equal, and neither is ever inferred from the other (the source may print only the gunners).
  * @param {{gunners:number|null, weaponCount:number|null}} facts
  */
 export function establishPublishedBattery(facts = {}) {
   const { gunners, weaponCount } = facts;
   if (!isInt(gunners) || gunners < 2 || gunners > BATTERY_MAX_WEAPONS) return fail(BATTERY_REASONS.GUNNERS_OUT_OF_RANGE);
   if (weaponCount === null || weaponCount === undefined) return fail(BATTERY_REASONS.WEAPON_COUNT_NOT_STATED);
-  if (!isInt(weaponCount) || weaponCount < 2 || weaponCount > BATTERY_MAX_WEAPONS) return fail(BATTERY_REASONS.WEAPONS_OUT_OF_RANGE);
-  if (weaponCount !== gunners) return fail(BATTERY_REASONS.GUNNERS_NOT_EQUAL_WEAPONS);
-  return { ok: true, gunners, weaponCount, participatingWeapons: weaponCount, maxExtraHits: weaponCount - 1 };
+  const w = resolveBatteryWeapons({ totalWeapons: weaponCount });
+  if (!w.ok) return w;
+  return { ok: true, mode: 'full-battery', gunners, weaponCount, availableWeapons: w.availableWeapons, participatingWeapons: w.participatingWeapons, maxExtraHits: w.maxExtraHits };
+}
+
+/**
+ * INDEPENDENT-WEAPON mode (Core p. 170: a battery's weapons may fire independently, without battery assistance): ONE weapon
+ * of the battery attacks on its own. It needs no weapon count -- a printed battery proves the weapons exist, not how many --
+ * only the printed gunner count, so that the assistance contained in the printed total can be removed exactly. It never
+ * produces margin hits and is never full-battery execution.
+ * @param {{gunners:number|null}} facts
+ */
+export function establishIndependentBatteryWeapon(facts = {}) {
+  const a = batteryAssistanceBonus(facts.gunners);
+  if (!a.ok || facts.gunners < 2) return fail(BATTERY_REASONS.GUNNERS_OUT_OF_RANGE);
+  return { ok: true, mode: 'independent-weapon', gunners: facts.gunners, removedAssistance: a.bonus, participatingWeapons: 1, maxExtraHits: 0 };
 }

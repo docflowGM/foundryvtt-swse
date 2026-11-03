@@ -54,6 +54,13 @@ const target = ({ type = 'vehicle', hp = 100, dt = 40, ct = 0, sr = 0, dr = 0, c
     derived: { damageThreshold: dt, damage: { threshold: dt, reduction: dr }, hp: { value: hp, max: 100 }, shield: { current: sr, stored: false }, ...(dr ? { damageReduction: { value: dr, highestValue: dr } } : {}) } },
   _cyber: cyber
 });
+const prosthesis = () => ({ id: 'pros1', type: 'equipment', name: 'Cybernetic Prosthesis', system: { tags: ['cybernetic', 'tech', 'gear', 'prosthesis'] } });
+const importedVehicle = (key, { hp = 100, dt = 40, sr = 0, dr = 0 } = {}) => {
+  const v = Object.assign(structuredClone(docs.find(d => keyOf(d) === key)), { id: `imp-${key}`, items: new Items(), flags: structuredClone(docs.find(d => keyOf(d) === key).flags) });
+  v.system = { ...v.system, hp: { value: hp, max: 100 }, conditionTrack: { current: 0 },
+    derived: { damageThreshold: dt, damage: { threshold: dt, reduction: dr }, hp: { value: hp, max: 100 }, shield: { current: sr, stored: false }, ...(dr ? { damageReduction: { value: dr, highestValue: dr } } : {}) } };
+  return v;
+};
 const updates = [];
 const realUpdate = ActorEngine.updateActor;
 ActorEngine.updateActor = async (_a, u) => { updates.push(u); };
@@ -97,11 +104,11 @@ test('SOURCE: ion is a typed damage only where the source types it (printed dama
   assert.ok(conflict.reasons.includes('STOCK_DAMAGE_TYPE_CONFLICT'));
 });
 
-test('COVERAGE: exactly the typed, plain, single-operator ion groups are executable; the rest keep a named refusal', () => {
+test('COVERAGE: exactly the typed, plain ion groups that pass every other gate are executable; the rest keep a named refusal', () => {
   const all = docs.flatMap(d => assessStockWeaponGroups(d.flags.swse.universalVehicleSource.source).groups.map(g => ({ key: keyOf(d), g })));
   const ion = all.filter(x => x.g.damage?.type === 'ion');
   assert.equal(ion.length, 69);
-  assert.equal(ion.filter(x => x.g.executable).length, 32);
+  assert.equal(ion.filter(x => x.g.executable).length, 44, '32 single-operator groups + 12 ion batteries as one independent weapon each');
   assert.ok(ion.filter(x => !x.g.executable).every(x => x.g.reasons.length > 0));
   assert.equal(all.filter(x => x.g.executable && /\bion\b/i.test(x.g.label) && x.g.damage?.type !== 'ion').length, 0, 'no executable ion-named group lacks a source-stated ion type');
 });
@@ -168,9 +175,11 @@ test('VEHICLE: ion that reduces HP to 0 moves it 5 steps and DISABLES it; one ou
   assert.deepEqual([res.hpAfter, res.thresholdExceeded, res.conditionBefore, res.conditionDelta, res.conditionAfter], [0, true, 0, 5, 5], '5 steps, not 5 + 2');
   assert.deepEqual([res.disabled, res.destroyed, res.dead], [true, false, false], 'disabled, not destroyed');
   assert.equal(res.ionDisabled, true);
+  assert.deepEqual(res.ionRuleDeferred, ['V-P6C-04:zero-hit-points-and-threshold'], 'a hit that does both is reported as unsettled (the reversible outcome is applied)');
   // from partway down the track: 5 steps, capped by the track
   t = target({ hp: 10, dt: 999, ct: 2 }); ({ res } = await apply(t, 30));
   assert.deepEqual([res.hpAfter, res.thresholdExceeded, res.conditionAfter, res.conditionDelta, res.disabled, res.destroyed], [0, false, 5, 3, true, false]);
+  assert.equal(res.ionRuleDeferred, undefined, 'reaching 0 HP below the threshold is fully settled by the ion text');
   // the same hit as ordinary energy damage is the standard outcome (threshold + 0 HP), not the ion outcome
   t = target({ hp: 20, dt: 40 }); ({ res } = await apply(t, 50, { type: 'energy' }));
   assert.equal(res.ionDisabled, undefined);
@@ -185,27 +194,51 @@ test('DROID: the ion rules apply (half HP, full to threshold, 2 steps; 0 HP disa
   assert.equal(droidUpdate['system.droidState.status'], 'disabled', 'the droid state is disabled, not destroyed');
 });
 
-test('ORGANIC: an ordinary organic takes only the half-damage HP effect; no ion threshold or condition-track effect', async () => {
+test('ORGANIC (Core p. 159): an ordinary organic is singed: half hit-point damage and NO other ill effect, however large the hit', async () => {
   const t = target({ type: 'character', hp: 100, dt: 20 });
   const { res, packet } = await apply(t, 60);
   assert.equal(packet.type, 'normal', 'the ion special rules are suppressed for an ordinary organic');
-  assert.equal(packet.flags.ionOrganicHalved, true);
-  assert.equal(res.damageToHP, 30, 'half of 60');
+  assert.deepEqual([packet.flags.ionOrganicHalved, packet.options.thresholdEffectsSuppressed], [true, true]);
+  assert.deepEqual([res.damageToHP, res.hpAfter], [30, 70], 'half of 60');
+  assert.deepEqual([res.thresholdExceeded, res.thresholdSuppressed, res.conditionDelta, res.conditionAfter], [false, true, 0, 0], '60 and 30 both exceed DT 20, yet there is no threshold or condition-track effect');
   assert.equal(res.ionDisabled, undefined);
-  // the ordinary threshold rule is judged on the damage actually dealt (30 >= DT 20): ONE step, not the ion two
-  assert.deepEqual([res.thresholdMeasuredDamage, res.conditionDelta], [30, 1]);
-  const small = await apply(target({ type: 'character', hp: 100, dt: 50 }), 60);
-  assert.deepEqual([small.res.damageToHP, small.res.thresholdExceeded, small.res.conditionDelta], [30, false, 0]);
+  // the half damage reaching 0 HP is the ordinary hit-point rule (unconscious), not an ion effect, and it never kills through the threshold
+  const low = await apply(target({ type: 'character', hp: 10, dt: 5 }), 60);
+  assert.deepEqual([low.res.hpAfter, low.res.unconscious, low.res.dead, low.res.ionDisabled], [0, true, false, undefined]);
 });
 
-test('ELECTRONIC DEVICES and CYBERNETIC CREATURES are reached by the ion rules (class-flagged organics included)', async () => {
-  const dev = target({ type: 'device', hp: 100, dt: 20 });
-  assert.equal((await apply(dev, 60)).res.conditionDelta, 2);
+test('CYBERNETIC PROSTHETICS (Core p. 137): a creature with prosthetics takes FULL ion damage and the ion effects apply', async () => {
+  const t = target({ type: 'character', hp: 100, dt: 40 });
+  t.items.set('pros1', prosthesis());
+  const { res, packet } = await apply(t, 60);
+  assert.equal(packet.type, 'ion');
+  assert.deepEqual([packet.flags.ionFullHpDamage, packet.flags.ionHpHalved, packet.options.hpDamageMultiplier], [true, false, 1]);
+  assert.deepEqual([res.damageToHP, res.hpAfter, res.thresholdExceeded, res.conditionDelta], [60, 40, true, 2], 'full 60 to HP; the full amount reaches DT 40: -2 steps');
+  // below the threshold: full HP damage, no condition-track move
+  const small = target({ type: 'character', hp: 100, dt: 40 }); small.items.set('pros1', prosthesis());
+  const r2 = await apply(small, 30);
+  assert.deepEqual([r2.res.damageToHP, r2.res.thresholdExceeded, r2.res.conditionDelta], [30, false, 0]);
+  // reduced to 0 HP: -5 steps and unconscious, as one outcome (not killed, not -5 plus -2)
+  const down = target({ type: 'character', hp: 30, dt: 40 }); down.items.set('pros1', prosthesis());
+  const r3 = await apply(down, 60);
+  assert.deepEqual([r3.res.hpAfter, r3.res.conditionDelta, r3.res.conditionAfter, r3.res.unconscious, r3.res.dead, r3.res.ionDisabled], [0, 5, 5, true, false, true]);
+  // only the structured tags count: an item merely NAMED like a prosthesis, or a non-prosthetic cybernetic, does not
+  const named = target({ type: 'character', hp: 100, dt: 40 }); named.items.set('x', { id: 'x', type: 'equipment', name: 'Cybernetic Prosthesis', system: { tags: ['gear'] } });
+  assert.equal((await apply(named, 60)).res.damageToHP, 30);
+  const other = target({ type: 'character', hp: 100, dt: 40 }); other.items.set('y', { id: 'y', type: 'equipment', name: 'Biocomputer', system: { tags: ['cybernetic', 'tech'] } });
+  assert.equal((await apply(other, 60)).res.damageToHP, 30, 'a cybernetic device that is not a prosthesis is not covered by the prosthesis rule');
+  // the existing per-attack "cybernetically enhanced?" class answer is the same target class: full HP damage, extra effects
   const cyber = target({ type: 'character', hp: 100, dt: 20 });
-  const packet = finalizeDamagePacketForTarget({ ...buildDamagePacket({ attacker: null, target: cyber, weapon: null, amount: 60, options: { damageType: 'ion', hit: true }, workflowContext: { damage: { hit: true, damageType: 'ion' } } }), flags: { ionEligibleByClass: true } }, cyber);
-  const options = buildDamageApplyOptions(packet);
-  const r = await ActorEngine.applyDamage(cyber, { amount: packet.amount, type: options.damageType, source: 'x', sourceActor: null, options });
-  assert.deepEqual([packet.type, r.resolution.damageToHP, r.resolution.thresholdExceeded, r.resolution.conditionDelta], ['ion', 30, true, 2]);
+  const packet2 = finalizeDamagePacketForTarget({ ...buildDamagePacket({ attacker: null, target: null, weapon: null, amount: 60, options: { damageType: 'ion', hit: true }, workflowContext: { damage: { hit: true, damageType: 'ion' } } }), flags: { ionEligibleByClass: true } }, cyber);
+  const options = buildDamageApplyOptions(packet2);
+  const r4 = await ActorEngine.applyDamage(cyber, { amount: packet2.amount, type: options.damageType, source: 'x', sourceActor: null, options });
+  assert.deepEqual([packet2.type, r4.resolution.damageToHP, r4.resolution.thresholdExceeded, r4.resolution.conditionDelta], ['ion', 60, true, 2]);
+});
+
+test('ELECTRONIC DEVICES are reached by the ion rules (half HP, full to the threshold, 2 steps)', async () => {
+  const dev = target({ type: 'device', hp: 100, dt: 20 });
+  const { res } = await apply(dev, 60);
+  assert.deepEqual([res.damageToHP, res.conditionDelta], [30, 2]);
 });
 
 test('NO DUPLICATE APPLICATION: one applyDamage = one HP write and one condition-track write; Ion Shielding caps the threshold shift at one step', async () => {
@@ -231,12 +264,17 @@ test('ORDERING AS IMPLEMENTED (owner question V-P6C-04): shield rating and damag
   // SR 15 on a vehicle: 50 -> 35 after the shields -> half = 17 to HP; the full rolled 50 is what meets DT 40
   let t = target({ hp: 100, dt: 40, sr: 15 }); let { res } = await apply(t, 50);
   assert.deepEqual([res.damageToHP, res.thresholdMeasuredDamage, res.thresholdExceeded, res.conditionDelta], [17, 50, true, 2]);
+  assert.deepEqual(res.ionRuleDeferred, ['V-P6C-04:shield-damage-reduction-order'], 'the result says the order against the shields is unsettled');
   // the same SR does not stop an ordinary (non-ion) threshold from being judged AFTER the shields
   t = target({ hp: 100, dt: 40, sr: 15 }); ({ res } = await apply(t, 50, { type: 'energy' }));
   assert.deepEqual([res.damageToHP, res.thresholdMeasuredDamage, res.thresholdExceeded], [35, 35, false]);
   // DR 10: 50 -> 40 -> half 20
   t = target({ hp: 100, dt: 999, dr: 10 }); ({ res } = await apply(t, 50));
   assert.equal(res.damageToHP, 20);
+  assert.deepEqual(res.ionRuleDeferred, ['V-P6C-04:shield-damage-reduction-order']);
+  // with NO shield rating and NO damage reduction the two readings coincide: the case is fully settled and carries no flag
+  t = target({ hp: 100, dt: 40 }); ({ res } = await apply(t, 60));
+  assert.equal(res.ionRuleDeferred, undefined);
 });
 
 test('ATTACK -> CARD -> DAMAGE: the typed ion Item attacks and rolls through the same runtime as every stock weapon', async () => {
@@ -250,15 +288,60 @@ test('ATTACK -> CARD -> DAMAGE: the typed ion Item attacks and rolls through the
   } finally { RollEngine.safeRoll = real; }
 });
 
-test('AAT-1: the published "takes double damage from ion weapons" is preserved text only; nothing generalizes or guesses it', async () => {
+test('AAT-1 (Core p. 176): the vulnerability is read from the SOURCE record, recorded on the packet, and NOT applied while its ordering is unsettled', async () => {
   const rec = recordOf('core-aat-1');
   assert.match(rec.text.mechanicalNotes, /Ion Vulnerability: takes double damage from ion weapons/);
   const all = readFileSync('data/canonical/vehicles/vehicles.json', 'utf8').trim().split('\n').map(JSON.parse);
-  const carriers = all.filter(r => /ion vulnerab/i.test(JSON.stringify([r.text, r.exceptions, r.rules])));
-  assert.deepEqual(carriers.map(r => r.identity.sourceEntryKey), ['core-aat-1'], 'one published vehicle states it');
-  // an AAT-1 and a Y-wing take the same ion outcome: no per-vehicle doubling exists in any damage authority
-  const aat = { ...target({ hp: 100, dt: 60 }), name: 'AAT-1' }; const other = { ...target({ hp: 100, dt: 60 }), name: 'Y-wing' };
-  assert.equal((await apply(aat, 40)).res.damageToHP, (await apply(other, 40)).res.damageToHP);
+  assert.deepEqual(all.filter(r => /ion vulnerab/i.test(JSON.stringify([r.text, r.exceptions, r.rules]))).map(r => r.identity.sourceEntryKey), ['core-aat-1'], 'one published vehicle states it');
+  const aat = importedVehicle('core-aat-1', { hp: 100, dt: 60, dr: 15 });
+  const other = importedVehicle('core-incom-t-65b-x-wing-starfighter', { hp: 100, dt: 60, dr: 15 });
+  const a = await apply(aat, 40), o = await apply(other, 40);
+  assert.equal(a.packet.flags.damageVulnerability.id, 'ion-double-damage');
+  assert.deepEqual([a.packet.flags.damageVulnerability.multiplier, a.packet.flags.damageVulnerability.state, a.packet.flags.damageVulnerability.applied, a.packet.flags.damageVulnerabilityDeferred], [2, 'DEFERRED_RULES_REVIEW', false, 'V-P6C-05']);
+  assert.deepEqual(a.packet.flags.damageVulnerability.interactions, ['ion-halving', 'shield-rating', 'damage-reduction', 'damage-threshold', 'weapon-multiplier', 'battery-extra-dice']);
+  assert.equal(o.packet.flags.damageVulnerability, undefined, 'an ordinary vehicle has none: this is a property of one source entry, not of vehicles');
+  assert.equal(a.packet.amount, 40, 'the amount is not doubled');
+  assert.equal(a.res.damageToHP, o.res.damageToHP, 'identical outcome until the owner rules on the ordering');
+  // a vehicle that merely carries the AAT-1 NAME gets nothing (no name test anywhere): only a digest-verified record does
+  const fake = { ...target({ hp: 100, dt: 60 }), name: 'AAT-1' };
+  assert.equal((await apply(fake, 40)).packet.flags.damageVulnerability, undefined);
+  // it applies to ion only
+  assert.equal((await apply(importedVehicle('core-aat-1', { hp: 100, dt: 60 }), 40, { type: 'energy' })).packet.flags.damageVulnerability, undefined);
+});
+
+test('END TO END: weapon authority -> attack -> hit -> ion card -> packet -> defenses -> HP -> threshold -> condition track -> disabled', async () => {
+  const v = await armed(YWING); const w = stockItem(v, 'ion cannons');
+  const realSafe = RollEngine.safeRoll, realPost = SWSEChat.postRoll, realSWSE = globalThis.SWSE;
+  const damageRoll = { total: 44, toJSON() { return { total: 44 }; } };
+  const posted = [];
+  SWSEChat.postRoll = async arg => { posted.push(arg); return { id: 'm' }; };
+  let attack;
+  try {
+    RollEngine.safeRoll = async formula => { const b = Number(/1d20\s*\+\s*(-?\d+)/.exec(String(formula))?.[1] ?? 0); return { total: 15 + b, formula, dice: [{ results: [{ result: 15 }] }], toJSON() { return { total: 15 + b }; } }; };
+    attack = await rollAttack(v, w, { abstractCrewQuality: 'normal', target: { ...target(), getActiveTokens: () => [token(300, 0)] } });
+    const roller = { safeRoll: async f => ({ ...damageRoll, formula: f }) };
+    RollEngine.safeRoll = roller.safeRoll; globalThis.SWSE = { ...(realSWSE ?? {}), RollEngine: roller };
+    await rollDamage(v, w, { target: target(), combatContext: attack.workflowContext, workflowContext: attack.workflowContext });
+  } finally { RollEngine.safeRoll = realSafe; SWSEChat.postRoll = realPost; globalThis.SWSE = realSWSE; }
+  assert.equal(attack.isHit, true);
+  const card = posted.at(-1).context;
+  assert.equal(card.damageType, 'ion', 'the card carries the source-stated type');
+  // the Apply Damage step on three targets, with the card's rolled amount (44)
+  const amount = 44;
+  const run = async (t) => { const packet = finalizeDamagePacketForTarget(buildDamagePacket({ attacker: null, target: t, weapon: null, amount, options: { damageType: card.damageType, hit: true }, workflowContext: { damage: { hit: true, damageType: card.damageType } } }), t); const o = buildDamageApplyOptions(packet); return (await ActorEngine.applyDamage(t, { amount: packet.amount, type: o.damageType, source: 'x', sourceActor: null, options: o })).resolution; };
+  // droid, 50 HP, DT 40: half (22) to HP; 44 >= 40 -> 2 steps; not disabled
+  let res = await run(target({ type: 'droid', hp: 50, dt: 40 }));
+  assert.deepEqual([res.damageToHP, res.hpAfter, res.thresholdExceeded, res.conditionDelta, !!res.disabled], [22, 28, true, 2, false]);
+  // unshielded vehicle with 20 HP: 22 >= 20 -> 0 HP: -5 steps and disabled (one outcome)
+  res = await run(target({ type: 'vehicle', hp: 20, dt: 40 }));
+  assert.deepEqual([res.hpAfter, res.conditionDelta, res.conditionAfter, res.disabled, res.destroyed], [0, 5, 5, true, false]);
+  // shielded vehicle (SR 20): 44 -> 24 after the shields -> 12 to HP; the rolled 44 reaches DT 40 (ordering reported as unsettled)
+  res = await run(target({ type: 'vehicle', hp: 100, dt: 40, sr: 20 }));
+  assert.deepEqual([res.damageToHP, res.thresholdExceeded, res.conditionDelta], [12, true, 2]);
+  assert.deepEqual(res.ionRuleDeferred, ['V-P6C-04:shield-damage-reduction-order']);
+  // ordinary organic: half, nothing else
+  res = await run(target({ type: 'character', hp: 100, dt: 10 }));
+  assert.deepEqual([res.damageToHP, res.thresholdExceeded, res.conditionDelta], [22, false, 0]);
 });
 
 test.after(() => { ActorEngine.updateActor = realUpdate; });

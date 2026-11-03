@@ -1,5 +1,6 @@
 import { applyDamageTypeProtectionToPacket, damageTypesFromContext } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 import { applyTargetComponentProtections } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-component-rules.js";
+import { resolveSourceDamageVulnerability, VULNERABILITY_STATE } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-vulnerability-authority.js";
 
 function asArray(value) {
   if (Array.isArray(value)) return value;
@@ -182,6 +183,19 @@ export function getDamageTargetCategory(target = null) {
 
 export function isIonEligibleDamageTarget(target = null) {
   return ['droid', 'vehicle', 'object', 'device'].includes(getDamageTargetCategory(target));
+}
+
+/**
+ * Does this creature carry cybernetic prosthetics (Core, Cybernetic Prosthesis, p. 137: such a creature "takes full damage
+ * from weapons and attacks that deal ion damage")? Read from the creature's own equipment, by the structured item tags
+ * (`cybernetic` + `prosthesis`) -- never by an item name. Installation is a manual GM procedure in this system (see
+ * data/cybernetics), so an owned prosthesis item is the record of having one.
+ */
+export function creatureHasCyberneticProsthetics(target = null) {
+  const items = target?.items;
+  if (!items) return false;
+  const list = Array.isArray(items) ? items : Array.from(items.contents ?? items);
+  return list.some(i => i?.type === 'equipment' && Array.isArray(i.system?.tags) && i.system.tags.includes('cybernetic') && i.system.tags.includes('prosthesis'));
 }
 
 export function isStunEligibleDamageTarget(target = null) {
@@ -390,7 +404,13 @@ export function applyTargetDamagePacketRules(packet = {}, target = null) {
   }
 
   if (requestedType === 'ion') {
-    const eligible = target ? (isIonEligibleDamageTarget(target) || next.flags.ionEligibleByClass === true) : undefined;
+    // Core pp. 159-160 (owner-verified), three kinds of target:
+    //   electronic (droid, vehicle, object, device): HP takes HALF; the full amount is compared to the threshold; the extra effects apply;
+    //   cybernetic (a creature with prosthetics, or class-flagged): HP takes FULL damage (Cybernetic Prosthesis, p. 137); the extra effects apply;
+    //   ordinary organic: HP takes HALF and the creature suffers "no other ill effects" (no threshold or condition-track effect).
+    const electronic = target ? isIonEligibleDamageTarget(target) : undefined;
+    const cybernetic = target && !electronic ? (next.flags.ionEligibleByClass === true || creatureHasCyberneticProsthetics(target)) : false;
+    const eligible = target ? (electronic || cybernetic) : undefined;
     next.originalType = 'ion';
     next.flags.ion = true;
     next.flags.ionEligible = eligible;
@@ -401,11 +421,12 @@ export function applyTargetDamagePacketRules(packet = {}, target = null) {
       next.options.damageType = 'ion';
       next.options.ion = true;
       next.options.ionEligible = true;
-      next.options.hpDamageMultiplier = asNumber(next.options.hpDamageMultiplier, 0.5);
+      next.options.hpDamageMultiplier = asNumber(next.options.hpDamageMultiplier, cybernetic ? 1 : 0.5);
       if (next.disposition?.damageAllowed !== false && amount > 0) {
         next.options.thresholdDamageOverride = Math.max(0, asNumber(next.options.thresholdDamageOverride, amount));
       }
-      next.flags.ionHpHalved = true;
+      next.flags.ionHpHalved = !cybernetic;
+      next.flags.ionFullHpDamage = cybernetic;
       next.flags.ionThresholdUsesOriginalDamage = true;
     } else if (eligible === false) {
       next.type = 'normal';
@@ -417,12 +438,18 @@ export function applyTargetDamagePacketRules(packet = {}, target = null) {
       next.flags.ionSuppressed = true;
       next.flags.ionHpHalved = false;
       next.flags.ionThresholdUsesOriginalDamage = false;
-      // Core pp. 159-160 (owner-verified): a target the ion rules do not reach (an ordinary organic) takes only the half-damage
-      // HP effect -- no ion threshold or condition-track effect. The packet stays ordinary damage with halved HP damage.
       next.options.hpDamageMultiplier = asNumber(next.options.hpDamageMultiplier, 0.5);
-      next.options.thresholdMeasuredFromHpDamage = true;
+      next.options.thresholdEffectsSuppressed = true;
       next.flags.ionOrganicHalved = true;
     }
+  }
+
+  // A published vulnerability (the AAT-1's double ion damage, Core p. 176) is recorded on the packet. It is NOT applied while
+  // its interaction with the other steps of the event is unsettled (V-P6C-05); the packet says so instead of guessing.
+  const vulnerability = resolveSourceDamageVulnerability(target, requestedType);
+  if (vulnerability) {
+    next.flags.damageVulnerability = vulnerability;
+    if (vulnerability.state !== VULNERABILITY_STATE.ACTIVE) next.flags.damageVulnerabilityDeferred = vulnerability.decision;
   }
 
   next.amount = amount;
@@ -438,6 +465,7 @@ export function applyTargetDamagePacketRules(packet = {}, target = null) {
 export const DamagePacketRules = {
   getDamageTargetCategory,
   isIonEligibleDamageTarget,
+  creatureHasCyberneticProsthetics,
   isStunEligibleDamageTarget,
   getEvasionState,
   applyTargetDamagePacketRules

@@ -20,7 +20,7 @@ record). Stock weapons never pass through the ledger, EP or credits and are neve
 
 ## Result (offline; nothing is live-verified)
 
-- 846 published groups; 468 SOURCE_VERIFIED (configuration established); **293 OFFLINE_EXECUTABLE on 238 vehicles** (119 vehicles have every group executable) after P6C-2C, each driven
+- 846 published groups; 557 SOURCE_VERIFIED (configuration established); **356 OFFLINE_EXECUTABLE on 263 vehicles** (125 vehicles have every group executable; each group counted once however many modes it supports) after the P6C-2B correction and P6C-2C, each driven
   through arm -> attack -> damage by the CORPUS test; 0 LIVE_VERIFIED. See `stock-weapon-coverage.md`.
 - Includes the X-wing laser cannons (6d10 x 2, pilot, +5), TIE fighter, TIE interceptor, Y-wing, ARC-170, YT-1300, AAT and others.
   The X-wing proton torpedoes stay reference-only (splash, finite payload).
@@ -34,7 +34,7 @@ keep their certified mount and arc. The world setting can switch unstated arcs t
 
 ## What genuinely needs new mechanics (all recorded in the deferred register, P6B-D-033..039)
 
-- Printed attack totals: explained for the 293 executable groups (crew BAB + Int; +2 on pilot-crewed groups = Core p. 171); the battery +2 per additional gunner is documented but batteries need their own model; about 50 single-operator groups stay unexplained.
+- Printed attack totals: explained for the 356 executable groups (crew BAB + Int; +2 on pilot-crewed groups = Core p. 171); the battery +2 per additional gunner is documented but batteries need their own model; about 50 single-operator groups stay unexplained.
 - Weapon batteries: 102 printed batteries do not print their number of weapons (owner ruling V-P6C-02); multi-gunner stations that are not printed batteries; splash/ammunition groups; ion groups that are batteries or fail another gate; point-defense.
 - 12 groups on records with no arc evidence; 5 groups with arcs the system cannot yet interpret.
 
@@ -119,3 +119,22 @@ Core pp. 159-160 (rule text verified by the owner) runs on the EXISTING damage a
 
 Result: 69 groups are typed ion by their source; 32 are OFFLINE_EXECUTABLE (single-operator, plain, no other blocker); the others
 are batteries (the same weapon-count refusal as every battery), unexplained attack totals, point-defense, ammunition or splash.
+
+## P6C correction (2026-11-03): batteries and ion, per the owner's review of fc510fc
+
+**Batteries (V-P6C-02).** The 2B model required a battery's gunner count to equal its weapon count. That is not in Core p. 170
+("up to six identical weapons") and is removed. Weapon quantities (total, available, participating) and the gunners are now
+independent, and neither is inferred from the other. A printed battery runs in up to two MODES, each its own owned Item,
+one group counted once:
+- FULL-BATTERY (assistance already inside the printed total + margin hits): needs the printed gunners AND the printed weapon count (1 group: Krayt's Honor turbolaser battery);
+- INDEPENDENT-WEAPON (Core p. 170: a battery's weapons may fire independently without battery assistance): ONE weapon, no assistance, no margin hits, no weapon count needed; the printed total less exactly 2 x (gunners - 1), accepted only when that arithmetic reconciles. 64 printed batteries (63 independent-only) pass every other gate; the named-gunner roster is not needed for it, so a named gunner may fire it.
+Fire-linked weapons that a statblock calls "batteries" are not weapon batteries in game terms (Starships of the Galaxy, Fire-Linked
+Weapons): a group text-marked fire-linked is never given battery rules (none of the 104 printed batteries is).
+
+**Ion (Core pp. 159-160, p. 137).** Corrected: an ordinary organic takes half hit-point damage and NO other ill effect (no threshold or
+condition-track effect); a creature with cybernetic prosthetics (structured equipment tags `cybernetic` + `prosthesis`, or the per-attack
+cybernetic class answer) takes FULL ion damage and the extra effects; droids, vehicles, devices and objects take half and the extra effects.
+The AAT-1's double ion damage is read from its source record by a vulnerability authority and recorded, not applied. Shield rating is
+applied before damage reduction (Core); the order of the ion threshold comparison against them, and an ion hit that both reaches 0 HP
+and the threshold, are reported on the result as unsettled (`ionRuleDeferred`, V-P6C-04). 44 ion groups are OFFLINE_EXECUTABLE (32
+single-operator + 12 batteries as one independent weapon).

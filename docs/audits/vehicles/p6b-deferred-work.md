@@ -8,14 +8,14 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 
 | Category | Count |
 |---|---|
-| RULES_DECISION_REQUIRED | 10 |
+| RULES_DECISION_REQUIRED | 9 |
 | SOURCE_EVIDENCE_MISSING | 7 |
 | ENGINEERING_COMPLEXITY | 14 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 4 |
 | DEPENDENCY_BLOCKED | 8 |
 
-Open items: 44. Resolved items: 2 (listed at the end).
+Open items: 43. Resolved items: 3 (listed at the end).
 
 ## Items (by severity)
 
@@ -30,7 +30,6 @@ Open items: 44. Resolved items: 2 (listed at the end).
 | P6B-D-033 | STOCK | published stock groups whose printed attack total is not explained by a published rule (336 groups, mostly batteries) | SOURCE_EVIDENCE_MISSING | IMPORTANT | no | - |
 | P6B-D-034 | STOCK | published stock weapon batteries and multi-gunner stations (291 groups) | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-036 | STOCK | published stock splash, ion and ammunition-limited groups (torpedoes, missiles, ion cannons; 71 splash + 71 ion groups) | DEPENDENCY_BLOCKED | IMPORTANT | no | V-P6A-03 |
-| P6B-D-042 | STOCK | published weapon batteries that print gunners but not the number of identical weapons (102 of 104 printed batteries) | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-02 |
 | P6B-D-043 | STOCK | weapon batteries crewed by named gunners (assisting roster) | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-045 | STOCK | ion damage: ordering with shield rating / damage reduction, organics, and interplay with optional variants | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-04 |
 | P6B-D-003 | P6B-1 | jamming-suite, jamming-array | ENGINEERING_COMPLEXITY | MINOR | no | V-P6-05, V-P2-04 |
@@ -63,7 +62,7 @@ Open items: 44. Resolved items: 2 (listed at the end).
 | P6B-D-038 | STOCK | legacy abstract-crew attack tier table (CREW_QUALITY_BONUS) for actors that are not source-backed or constructed | NONCRITICAL_DEFECT | MINOR | no | - |
 | P6B-D-039 | STOCK | point-defense weapon modification (catalog row "point-defense", +4,000 credits) | ENGINEERING_COMPLEXITY | MINOR | no | - |
 | P6B-D-041 | STOCK | published stock groups with droid, remote or ambiguous operators | ENGINEERING_COMPLEXITY | MINOR | no | - |
-| P6B-D-044 | STOCK | battery aiding another battery, and a battery's weapons firing independently | RULES_DECISION_REQUIRED | MINOR | yes | V-P6C-03 |
+| P6B-D-044 | STOCK | battery aiding another battery (independent firing is now implemented) | RULES_DECISION_REQUIRED | MINOR | yes | V-P6C-03 |
 | P6B-D-046 | STOCK | AAT-1 ion vulnerability ("takes double damage from ion weapons", Core p. 176) and R-28 ion naming (Legacy Era p. 85) | RULES_DECISION_REQUIRED | MINOR | yes | V-P6C-05 |
 
 ## Details
@@ -464,17 +463,6 @@ Open items: 44. Resolved items: 2 (listed at the end).
 - **Impact:** 36 groups refused.
 - **Recommended action:** Add the copilot station to the crew authority first; leave droid and ambiguous operators refused until defined.
 
-### P6B-D-042 - published weapon batteries that print gunners but not the number of identical weapons (102 of 104 printed batteries)
-
-- **Source:** canonical records (armament.firingGroups hardwareCount); Core Rulebook p. 170 (owner-verified)
-- **Category / severity:** RULES_DECISION_REQUIRED / IMPORTANT
-- **Reason:** Core p. 170 caps extra hits by the identical weapons actually participating. A battery statblock prints "battery (N gunners)"; only Krayt's Honor and the Rendili Light Corvette also print the number of weapons (equal to the gunners). The Gamma-class Assault Shuttle ("two gunners operate four weapons", not a battery) shows gunners and weapons are not generally equal. 108 of 116 groups that print a gunner count have printed totals equal to BAB + Int + 2 per assisting gunner, which evidences the gunners but not the weapons.
-- **Missing:** The number of identical weapons of a published battery whose source states only gunners.
-- **Owner ruling needed:** yes (V-P6C-02)
-- **Source-supported options:** (a) when only gunners are printed, the identical-weapon count equals the printed gunner count; (b) the weapon count stays unestablished until a source prints it (current behavior)
-- **Impact:** 102 printed battery groups stay refused (STOCK_BATTERY_WEAPON_COUNT_NOT_STATED); several also carry other refusals (ion, point-defense, damage not printed).
-- **Recommended action:** Owner ruling on V-P6C-02. No code path infers the weapon count.
-
 ### P6B-D-043 - weapon batteries crewed by named gunners (assisting roster)
 
 - **Source:** vehicle-crew-actor-authority.js; vehicle-crew-station-evidence.js; Core p. 170
@@ -485,34 +473,34 @@ Open items: 44. Resolved items: 2 (listed at the end).
 - **Impact:** Named-gunner crews cannot fire published batteries; the generic published crew can.
 - **Recommended action:** Add a roster binding that references existing crew stations, then wire resolveBatteryAttackTotal('assigned') into the named-gunner attack math.
 
-### P6B-D-044 - battery aiding another battery, and a battery's weapons firing independently
+### P6B-D-044 - battery aiding another battery (independent firing is now implemented)
 
 - **Source:** Core Rulebook p. 170 (owner-verified)
 - **Category / severity:** RULES_DECISION_REQUIRED / MINOR
-- **Reason:** The aid arithmetic is implemented and tested as pure functions (attack vs Reflex 10; +2 per two weapons of the assisting battery; no margin hits). Running it needs a state that carries the bonus from the aiding attack to the aided battery's attack, and the verified text does not give that bonus's duration, timing or stacking. Independent firing of a battery's weapons needs separate firing groups that the published records do not contain.
-- **Missing:** Timing/duration/stacking of the aid bonus; odd weapon counts; per-weapon firing groups.
+- **Reason:** The aid arithmetic is implemented and tested as pure functions (attack vs Reflex 10; +2 per two weapons of the assisting battery; no margin hits). Running it needs a state that carries the bonus from the aiding attack to the aided battery's attack, and the verified text does not give that bonus's duration, timing or stacking. A battery's weapons firing independently (Core p. 170) IS implemented as the independent-weapon mode (P6B-D-042).
+- **Missing:** Timing/duration/stacking of the aid bonus; odd weapon counts.
 - **Owner ruling needed:** yes (V-P6C-03)
-- **Impact:** Not offered at runtime.
+- **Impact:** Battery-aids-battery is not offered at runtime.
 - **Recommended action:** Owner ruling on V-P6C-03, then add one action that records the aid on the existing effect/modifier authority.
 
 ### P6B-D-045 - ion damage: ordering with shield rating / damage reduction, organics, and interplay with optional variants
 
 - **Source:** Core Rulebook pp. 159-160 (owner-verified); damage-resolution-engine.js; damage-packet-rules.js
 - **Category / severity:** RULES_DECISION_REQUIRED / IMPORTANT
-- **Reason:** The verified rule gives: half to HP, full (unhalved) to the threshold, 2 steps at the threshold, 5 steps and disabled at 0 HP, organics only the half effect. It does not say whether the full amount is taken before or after shield rating and damage reduction (the existing engine compares the full ROLLED amount for ion and stun, but the amount AFTER shields and DR for ordinary damage), whether an ion hit that both reaches the threshold and reduces HP to 0 can also destroy (implemented as disabled only, per the verified outcome), or what threshold basis an ordinary organic uses (implemented as the half damage actually dealt).
-- **Missing:** Order of shield rating / damage reduction relative to the ion threshold comparison; confirmation of the two implemented readings.
+- **Reason:** The verified rule gives: half to HP, full (unhalved) to the threshold, 2 steps at the threshold, 5 steps and disabled at 0 HP, ordinary organics only the half effect with no other ill effect, creatures with prosthetics full damage with the extra effects. Shield rating is applied before damage reduction (Core). The text does not say whether the FULL ion amount compared to the threshold is taken before or after shields and damage reduction (the engine compares the rolled amount for ion and stun, the amount after them for ordinary damage), and the generic 0-HP rule destroys a droid/object/vehicle (kills a creature) whose reducing damage also meets its threshold while the ion text says only "disabled". Ion hits that touch either point are reported with `ionRuleDeferred` (the reversible outcome, disabled, is applied).
+- **Missing:** Order of shield rating / damage reduction relative to the ion threshold comparison; whether the generic destroyed/killed rule governs an ion hit that reaches 0 HP and the threshold.
 - **Owner ruling needed:** yes (V-P6C-04)
-- **Impact:** Ion results on shielded or damage-reduced targets, ion hits at 0 HP that also reach the threshold, and ion hits on ordinary organics.
-- **Recommended action:** Owner ruling on V-P6C-04; the p27 ORDERING test pins the current behavior so a ruling changes it deliberately.
+- **Impact:** Ion results on shielded or damage-reduced targets, and ion hits at 0 HP that also reach the threshold, carry an explicit unresolved flag.
+- **Recommended action:** Owner ruling on V-P6C-04; the p27 ORDERING and 0-HP tests pin the current behavior so a ruling changes it deliberately.
 
 ### P6B-D-046 - AAT-1 ion vulnerability ("takes double damage from ion weapons", Core p. 176) and R-28 ion naming (Legacy Era p. 85)
 
 - **Source:** canonical records core-aat-1 (text.mechanicalNotes), le-r-28-starfighter
 - **Category / severity:** RULES_DECISION_REQUIRED / MINOR
-- **Reason:** The AAT-1's vulnerability is preserved text; what doubles (the rolled ion damage before halving, the HP damage, the threshold comparison) is not stated, and no other published vehicle carries such text. The R-28's weapon is NAMED medium ion cannons but its printed damage line (6d10x2) does not type it as ion.
-- **Missing:** What the AAT-1 vulnerability multiplies; whether the R-28 weapon deals ion damage.
+- **Reason:** The AAT-1 vulnerability is read from the verified source record by an exact pattern (damage-vulnerability-authority.js) and recorded on the damage packet, but NOT applied: the text does not order the doubling against ion halving, shield rating, damage reduction (the AAT-1 has DR 15), the threshold, the weapon multiplier or battery dice, so no combination is fully settled. The R-28's weapon is NAMED medium ion cannons but its printed damage line (6d10x2) does not type it as ion.
+- **Missing:** What the AAT-1 vulnerability multiplies and where in the damage event; whether the R-28 weapon deals ion damage.
 - **Owner ruling needed:** yes (V-P6C-05)
-- **Impact:** AAT-1 ion vulnerability is not automated (no vehicle receives it); the R-28 ion cannons stay refused.
+- **Impact:** AAT-1 receives no ion vulnerability (it is flagged as not applied); the R-28 ion cannons stay refused.
 - **Recommended action:** Owner ruling on V-P6C-05.
 
 ## Resolved items
@@ -526,3 +514,8 @@ Open items: 44. Resolved items: 2 (listed at the end).
 
 - **Resolved:** Owner ruling 2026-11-03: an omitted multiplier is x1 and neither invalidates a vehicle weapon nor makes it a personal weapon (Core vehicle examples print plain 4d10/5d10). Implemented in vehicle-stock-weapon-groups.js (P6C-2A).
 - **Was:** Core says vehicle weapon damage is dice x the listed multiplier, but groups printing plain dice (e.g. "5d10") mix character-scale weapons and autofire/burst values. Treating them as x1 vehicle damage could be wrong, so they are refused (STOCK_DAMAGE_NO_MULTIPLIER).
+
+### P6B-D-042 - published weapon batteries that print gunners but not the number of identical weapons: FULL-BATTERY mode only (independent-weapon mode is implemented)
+
+- **Resolved:** Owner direction 2026-11-03: do not guess the weapon count; support independent single-weapon firing. Implemented in vehicle-weapon-battery.js, vehicle-stock-weapon-groups.js (modes), vehicle-stock-weapon-items.js (one Item per mode).
+- **Was:** Core p. 170 caps extra hits by the identical weapons actually participating. A battery statblock prints "battery (N gunners)"; only Krayt's Honor and the Rendili Light Corvette also print the number of weapons. Owner direction 2026-11-03 (V-P6C-02): the weapon count and the gunner count are independent and neither is inferred from the other; the equality requirement written in 2B was an invented restriction and is removed. A battery's weapons may fire independently without battery assistance (Core p. 170), which needs only the printed gunner count: that independent-weapon mode is executable for 64 printed batteries (63 of them independent-only). Full-battery mode (assistance + margin hits) still needs a printed weapon count.
