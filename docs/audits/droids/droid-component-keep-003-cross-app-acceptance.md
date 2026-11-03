@@ -1,3 +1,5 @@
+> **Official 2008 Core errata correction:** for Small SR5, the correct accessory mass is **10kg**, not 20kg. Other Small-or-smaller accessory weights must use `2 / size cost factor` rather than the price factor. See `data/audits/droids/droid-component-official-errata-authority-001.json`.
+
 # Droid component cross-application pricing authority — KEEP-003 acceptance fixtures
 
 **Date:** 2026-11-02. **Scope:** Source-grounded *test specifications*, not executed tests. **Evidence:** `data/audits/droids/component-keep-003-cross-app-fixtures.json`. Source: Core pp.187–190,194–195,197, rendered and visually checked in prior KEEP packets. Live code inspected on `audit/droid-publication-census-2026-10-29`.
@@ -24,7 +26,7 @@ Follower builder is a consumer of draft droid state, while Store checkout is the
 | PAR-LOCO-008 | Climbing Claws printed cost conflict | **BLOCKED: printed prices conflict** | specification only |
 | PAR-LOCO-009 | Jump Servos printed cost conflict | **BLOCKED: printed prices conflict** | specification only |
 
-Important examples: **Small SR5** costs 5,000 credits and weighs 20kg, while shared Garage factor gives 1,250 credits/5kg; **Medium Telescopic Hand** should price at 100 credits/10kg (twice 50-credit, 5kg Hand), while generic function-value handling receives CF 1 and computes 2; **Medium Stabilized Mount** is 50 credits/10kg, current raw formulas produce 125/2. **Medium Walking** base is 360 credits; the default chargen grant may correctly waive that purchase debit while preserving its printed source value.
+Important examples: **Small SR5** costs 5,000 credits and weighs **10kg after official errata** (the earlier 20kg base-book calculation was incorrect), while shared Garage factor gives 1,250 credits/5kg; **Medium Telescopic Hand** should price at 100 credits/10kg (twice 50-credit, 5kg Hand), while generic function-value handling receives CF 1 and computes 2; **Medium Stabilized Mount** is 50 credits/10kg, current raw formulas produce 125/2. **Medium Walking** base is 360 credits; the default chargen grant may correctly waive that purchase debit while preserving its printed source value.
 
 Core p188 additional locomotion costs (second: 500×CF, etc) and p189 exclusive/limited restrictions (1/10 ordinary cost) are distinct adjustments needing complete host-level tests. **Climbing Claws and Jump Servos are deliberately blocked from assigning canonical prices**, because printed descriptive paragraph and Table 11-5 differ in cost base. The packet preserves both possible examples, not an adjudication.
 
