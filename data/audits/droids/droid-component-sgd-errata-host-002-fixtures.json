@@ -5,12 +5,12 @@
     "packet": "data/audits/droids/droid-component-sgd-errata-host-002.json",
     "officialErrata": "data/audits/droids/droid-component-official-errata-authority-001.json"
   },
-  "scope": "Independent numeric rules, not installed-part transaction permissions; no application/Foundry checks executed.",
+  "scope": "Independent numeric accessory weight arithmetic even for possession/unlocated variants; physical host and actor installation permissions validated separately. No application/Foundry tests executed.",
   "summary": {
-    "integratedAccessoryCases": 108,
+    "accessoryCategoryCases": 126,
     "locomotionExceptions": 9,
     "blockedHostVariantCases": 2,
-    "total": 119,
+    "total": 137,
     "applicationExecuted": 0,
     "foundryExecuted": 0
   },
@@ -63,7 +63,135 @@
       }
     ]
   },
-  "integratedAccessoryFixtures": [
+  "locomotionFixtures": [
+    {
+      "caseId": "HOST002-LOCO-burrower-drive-small",
+      "component": "Burrower Drive",
+      "size": "small",
+      "chosenSpeedSquares": 6,
+      "expectedCredits": 14400,
+      "expectedKg": 100,
+      "errataApplied": false,
+      "host": "LOCOMOTION_ADDON",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-LOCO-burrower-drive-medium",
+      "component": "Burrower Drive",
+      "size": "medium",
+      "chosenSpeedSquares": 6,
+      "expectedCredits": 7200,
+      "expectedKg": 50,
+      "errataApplied": false,
+      "host": "LOCOMOTION_ADDON",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-LOCO-burrower-drive-large",
+      "component": "Burrower Drive",
+      "size": "large",
+      "chosenSpeedSquares": 6,
+      "expectedCredits": 14400,
+      "expectedKg": 100,
+      "errataApplied": false,
+      "host": "LOCOMOTION_ADDON",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-LOCO-gyroscopic-stabilizers-small",
+      "component": "Gyroscopic Stabilizers",
+      "size": "small",
+      "chosenSpeedSquares": 6,
+      "expectedCredits": 144,
+      "expectedKg": 8,
+      "errataApplied": false,
+      "host": "LOCOMOTION_ADDON",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-LOCO-gyroscopic-stabilizers-medium",
+      "component": "Gyroscopic Stabilizers",
+      "size": "medium",
+      "chosenSpeedSquares": 6,
+      "expectedCredits": 72,
+      "expectedKg": 4,
+      "errataApplied": false,
+      "host": "LOCOMOTION_ADDON",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-LOCO-gyroscopic-stabilizers-large",
+      "component": "Gyroscopic Stabilizers",
+      "size": "large",
+      "chosenSpeedSquares": 6,
+      "expectedCredits": 144,
+      "expectedKg": 8,
+      "errataApplied": false,
+      "host": "LOCOMOTION_ADDON",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-LOCO-underwater-drive-small",
+      "component": "Underwater Drive",
+      "size": "small",
+      "chosenSpeedSquares": 6,
+      "expectedCredits": 1440,
+      "expectedKg": 20,
+      "errataApplied": false,
+      "host": "LOCOMOTION_ADDON",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-LOCO-underwater-drive-medium",
+      "component": "Underwater Drive",
+      "size": "medium",
+      "chosenSpeedSquares": 6,
+      "expectedCredits": 720,
+      "expectedKg": 10,
+      "errataApplied": false,
+      "host": "LOCOMOTION_ADDON",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-LOCO-underwater-drive-large",
+      "component": "Underwater Drive",
+      "size": "large",
+      "chosenSpeedSquares": 6,
+      "expectedCredits": 1440,
+      "expectedKg": 20,
+      "errataApplied": false,
+      "host": "LOCOMOTION_ADDON",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    }
+  ],
+  "blockedHostFixtures": [
+    {
+      "component": "Silence-Bubble Generator",
+      "size": "small",
+      "sourceListedAccessoryCredits": 3500,
+      "sourceListedAccessoryKg": 20,
+      "hostLedgerPermission": "NOT_ESTABLISHED_BY_SOURCE_LOCATION",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "component": "Micro Shield",
+      "size": "small",
+      "sourceAppendageModelCredits": 1200,
+      "sourceAppendageModelKg": 10,
+      "hostLedgerPermission": "POSSESSION_NOT_SYSTEM",
+      "handheldCredits": 400,
+      "handheldWeightKg": "NOT_SEPARATELY_LISTED",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    }
+  ],
+  "invariants": [
+    "Small-or-smaller accessory weight uses 2 / size cost factor independent of chassis/possession classification; printed accessory price cost factor stays unchanged.",
+    "Three Locomotion-subcategory entries keep normal locomotion cost factors for mass.",
+    "Appendage-attached Micro Shield is a possession, not chassis installedSystem; handheld model separately weighs NOT_LISTED.",
+    "Silence-Bubble Generator accessory mass is source-known, but physical installation location cannot be assumed.",
+    "Arithmetic fixtures do not confer legal size or host eligibility and are not Store quotes without other gates."
+  ],
+  "accessoryCategoryFixtures": [
     {
       "caseId": "HOST002-laminanium-plating-light-fine",
       "component": "Laminanium Plating",
@@ -1575,132 +1703,258 @@
       },
       "installEligibility": "MEETS_SIZE_MINIMUM_ONLY",
       "validation": "RULE_EXPECTATION_NOT_EXECUTED"
-    }
-  ],
-  "locomotionFixtures": [
-    {
-      "caseId": "HOST002-LOCO-burrower-drive-small",
-      "component": "Burrower Drive",
-      "size": "small",
-      "chosenSpeedSquares": 6,
-      "expectedCredits": 14400,
-      "expectedKg": 100,
-      "errataApplied": false,
-      "host": "LOCOMOTION_ADDON",
-      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
     },
     {
-      "caseId": "HOST002-LOCO-burrower-drive-medium",
-      "component": "Burrower Drive",
-      "size": "medium",
-      "chosenSpeedSquares": 6,
-      "expectedCredits": 7200,
-      "expectedKg": 50,
-      "errataApplied": false,
-      "host": "LOCOMOTION_ADDON",
-      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
-    },
-    {
-      "caseId": "HOST002-LOCO-burrower-drive-large",
-      "component": "Burrower Drive",
-      "size": "large",
-      "chosenSpeedSquares": 6,
-      "expectedCredits": 14400,
-      "expectedKg": 100,
-      "errataApplied": false,
-      "host": "LOCOMOTION_ADDON",
-      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
-    },
-    {
-      "caseId": "HOST002-LOCO-gyroscopic-stabilizers-small",
-      "component": "Gyroscopic Stabilizers",
-      "size": "small",
-      "chosenSpeedSquares": 6,
-      "expectedCredits": 144,
-      "expectedKg": 8,
-      "errataApplied": false,
-      "host": "LOCOMOTION_ADDON",
-      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
-    },
-    {
-      "caseId": "HOST002-LOCO-gyroscopic-stabilizers-medium",
-      "component": "Gyroscopic Stabilizers",
-      "size": "medium",
-      "chosenSpeedSquares": 6,
-      "expectedCredits": 72,
-      "expectedKg": 4,
-      "errataApplied": false,
-      "host": "LOCOMOTION_ADDON",
-      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
-    },
-    {
-      "caseId": "HOST002-LOCO-gyroscopic-stabilizers-large",
-      "component": "Gyroscopic Stabilizers",
-      "size": "large",
-      "chosenSpeedSquares": 6,
-      "expectedCredits": 144,
-      "expectedKg": 8,
-      "errataApplied": false,
-      "host": "LOCOMOTION_ADDON",
-      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
-    },
-    {
-      "caseId": "HOST002-LOCO-underwater-drive-small",
-      "component": "Underwater Drive",
-      "size": "small",
-      "chosenSpeedSquares": 6,
-      "expectedCredits": 1440,
-      "expectedKg": 20,
-      "errataApplied": false,
-      "host": "LOCOMOTION_ADDON",
-      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
-    },
-    {
-      "caseId": "HOST002-LOCO-underwater-drive-medium",
-      "component": "Underwater Drive",
-      "size": "medium",
-      "chosenSpeedSquares": 6,
-      "expectedCredits": 720,
-      "expectedKg": 10,
-      "errataApplied": false,
-      "host": "LOCOMOTION_ADDON",
-      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
-    },
-    {
-      "caseId": "HOST002-LOCO-underwater-drive-large",
-      "component": "Underwater Drive",
-      "size": "large",
-      "chosenSpeedSquares": 6,
-      "expectedCredits": 1440,
-      "expectedKg": 20,
-      "errataApplied": false,
-      "host": "LOCOMOTION_ADDON",
-      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
-    }
-  ],
-  "blockedHostFixtures": [
-    {
+      "caseId": "HOST002-silence-bubble-generator-standard-fine",
       "component": "Silence-Bubble Generator",
-      "size": "small",
-      "expectedQuote": "BLOCKED_UNTIL_HOST",
-      "conditionalChassisInstalledKg": 20,
-      "unadjustedPrintedKg": 40,
+      "variant": "standard",
+      "size": "fine",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 0.1,
+      "sourceArithmetic": {
+        "credits": 3500,
+        "kg": 2
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
       "validation": "RULE_EXPECTATION_NOT_EXECUTED"
     },
     {
-      "component": "Micro Shield",
+      "caseId": "HOST002-silence-bubble-generator-standard-diminutive",
+      "component": "Silence-Bubble Generator",
+      "variant": "standard",
+      "size": "diminutive",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 0.2,
+      "sourceArithmetic": {
+        "credits": 3500,
+        "kg": 4
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-silence-bubble-generator-standard-tiny",
+      "component": "Silence-Bubble Generator",
+      "variant": "standard",
+      "size": "tiny",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 0.4,
+      "sourceArithmetic": {
+        "credits": 3500,
+        "kg": 8
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-silence-bubble-generator-standard-small",
+      "component": "Silence-Bubble Generator",
+      "variant": "standard",
       "size": "small",
-      "expectedQuote": "BLOCKED_UNTIL_HOST_VARIANT",
-      "appendageInstalledPreErrataKg": 20,
-      "conditionalAccessoryErrataKg": 10,
-      "handheldWeightKg": "NOT_PRINTED_SEPARATELY",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 3500,
+        "kg": 20
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-silence-bubble-generator-standard-medium",
+      "component": "Silence-Bubble Generator",
+      "variant": "standard",
+      "size": "medium",
+      "priceCostFactor": 1,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 3500,
+        "kg": 20
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-silence-bubble-generator-standard-large",
+      "component": "Silence-Bubble Generator",
+      "variant": "standard",
+      "size": "large",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 2,
+      "sourceArithmetic": {
+        "credits": 3500,
+        "kg": 40
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-silence-bubble-generator-standard-huge",
+      "component": "Silence-Bubble Generator",
+      "variant": "standard",
+      "size": "huge",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 5,
+      "sourceArithmetic": {
+        "credits": 3500,
+        "kg": 100
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-silence-bubble-generator-standard-gargantuan",
+      "component": "Silence-Bubble Generator",
+      "variant": "standard",
+      "size": "gargantuan",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 10,
+      "sourceArithmetic": {
+        "credits": 3500,
+        "kg": 200
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-silence-bubble-generator-standard-colossal",
+      "component": "Silence-Bubble Generator",
+      "variant": "standard",
+      "size": "colossal",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 20,
+      "sourceArithmetic": {
+        "credits": 3500,
+        "kg": 400
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-micro-shield-appendage-attached-fine",
+      "component": "Micro Shield",
+      "variant": "appendage-attached",
+      "size": "fine",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 0.1,
+      "sourceArithmetic": {
+        "credits": 12000,
+        "kg": 1
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-micro-shield-appendage-attached-diminutive",
+      "component": "Micro Shield",
+      "variant": "appendage-attached",
+      "size": "diminutive",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 0.2,
+      "sourceArithmetic": {
+        "credits": 6000,
+        "kg": 2
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-micro-shield-appendage-attached-tiny",
+      "component": "Micro Shield",
+      "variant": "appendage-attached",
+      "size": "tiny",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 0.4,
+      "sourceArithmetic": {
+        "credits": 3000,
+        "kg": 4
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-micro-shield-appendage-attached-small",
+      "component": "Micro Shield",
+      "variant": "appendage-attached",
+      "size": "small",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 1200,
+        "kg": 10
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-micro-shield-appendage-attached-medium",
+      "component": "Micro Shield",
+      "variant": "appendage-attached",
+      "size": "medium",
+      "priceCostFactor": 1,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 600,
+        "kg": 10
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-micro-shield-appendage-attached-large",
+      "component": "Micro Shield",
+      "variant": "appendage-attached",
+      "size": "large",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 2,
+      "sourceArithmetic": {
+        "credits": 1200,
+        "kg": 20
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-micro-shield-appendage-attached-huge",
+      "component": "Micro Shield",
+      "variant": "appendage-attached",
+      "size": "huge",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 5,
+      "sourceArithmetic": {
+        "credits": 3000,
+        "kg": 50
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-micro-shield-appendage-attached-gargantuan",
+      "component": "Micro Shield",
+      "variant": "appendage-attached",
+      "size": "gargantuan",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 10,
+      "sourceArithmetic": {
+        "credits": 6000,
+        "kg": 100
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-micro-shield-appendage-attached-colossal",
+      "component": "Micro Shield",
+      "variant": "appendage-attached",
+      "size": "colossal",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 20,
+      "sourceArithmetic": {
+        "credits": 12000,
+        "kg": 200
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
       "validation": "RULE_EXPECTATION_NOT_EXECUTED"
     }
-  ],
-  "invariants": [
-    "Small-or-smaller accessory mass uses 2/size cost factor; source price cost factor unchanged.",
-    "Locomotion subsystem mass is not silently adjusted as accessory mass.",
-    "Independent pricing fixture never asserts install eligibility except explicit shield-size gate.",
-    "Missing alternative device or handheld mass remains NOT_PRINTED."
   ]
 }
