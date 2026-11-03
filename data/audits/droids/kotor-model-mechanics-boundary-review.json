@@ -1,0 +1,325 @@
+{
+  "schema": "swse.droids.kotor.model-mechanics-boundary-review/0.1",
+  "date": "2026-11-02",
+  "branch": "audit/droid-publication-census-2026-10-29",
+  "bookId": "KOTOR",
+  "scope": "Evidence-backed model-specific narrative and statblock mechanical boundary review for 24/24 frozen publication identities. Unlike SGD/CLONE/THREATS feat-and-systems second passes, exact feat/system/possession transcription is NOT claimed complete by this checkpoint.",
+  "sourcePdf": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+  "sourceTxtAid": "Knights of the Old Republic Campaign Guide_djvu.txt",
+  "records": [
+    {
+      "id": "KOTOR-DROID-001",
+      "name": "ET-74 Communications Droid",
+      "page": 81,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-001-CONSTRAINT-01",
+        "KOTOR-DROID-001-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-002",
+      "name": "GO-TO Infrastructure-Planning Droid",
+      "page": 82,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-002-CONSTRAINT-01",
+        "KOTOR-DROID-002-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-003",
+      "name": "T3-Series Utility Droid",
+      "page": 82,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-003-CONSTRAINT-01",
+        "KOTOR-DROID-003-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-004",
+      "name": "GE3-Series Protocol Droid",
+      "page": 83,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-004-CONSTRAINT-01",
+        "KOTOR-DROID-004-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-005",
+      "name": "GG-Series Hospitality Droid",
+      "page": 84,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-005-CONSTRAINT-01",
+        "KOTOR-DROID-005-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-006",
+      "name": "HK-24 Series Assassin Droid",
+      "page": 84,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-006-CONSTRAINT-01",
+        "KOTOR-DROID-006-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-007",
+      "name": "Independent HK-Series Droid",
+      "page": 85,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-007-CONSTRAINT-01",
+        "KOTOR-DROID-007-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-008",
+      "name": "HK-50 Series Assassin Droid",
+      "page": 85,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-008-CONSTRAINT-01",
+        "KOTOR-DROID-008-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-009",
+      "name": "Juggernaut War Droid",
+      "page": 86,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-009-CONSTRAINT-01",
+        "KOTOR-DROID-009-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-010",
+      "name": "K-X12 Probe Droid",
+      "page": 86,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-010-CONSTRAINT-01",
+        "KOTOR-DROID-010-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-011",
+      "name": "Municipal Patrol Droid Mark I",
+      "page": 87,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-011-CONSTRAINT-01",
+        "KOTOR-DROID-011-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-012",
+      "name": "Devastator War Droid",
+      "page": 87,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-012-CONSTRAINT-01",
+        "KOTOR-DROID-012-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-013",
+      "name": "Sentinel Droid",
+      "page": 88,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-013-CONSTRAINT-01",
+        "KOTOR-DROID-013-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-014",
+      "name": "S6-Series Security/Maintenance Droid",
+      "page": 88,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-014-CONSTRAINT-01",
+        "KOTOR-DROID-014-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-015",
+      "name": "T1 Bulk Loader Droid",
+      "page": 88,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-015-CONSTRAINT-01",
+        "KOTOR-DROID-015-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-016",
+      "name": "R-8009 Utility Droid",
+      "page": 89,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-016-CONSTRAINT-01",
+        "KOTOR-DROID-016-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-017",
+      "name": "Mark I Assault Droid",
+      "page": 165,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-017-CONSTRAINT-01",
+        "KOTOR-DROID-017-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-018",
+      "name": "Mark IV Assault Droid",
+      "page": 165,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-018-CONSTRAINT-01",
+        "KOTOR-DROID-018-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-019",
+      "name": "Basilisk War Droid",
+      "page": 203,
+      "kind": "vehicle",
+      "claimIds": [
+        "KOTOR-DROID-019-CONSTRAINT-01",
+        "KOTOR-DROID-019-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-020",
+      "name": "GO-TO (Dark Wars)",
+      "page": 212,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-020-CONSTRAINT-01",
+        "KOTOR-DROID-020-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-021",
+      "name": "HK-47 (Jedi Civil War)",
+      "page": 213,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-021-CONSTRAINT-01",
+        "KOTOR-DROID-021-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-022",
+      "name": "T3-M4 (Jedi Civil War)",
+      "page": 216,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-022-CONSTRAINT-01",
+        "KOTOR-DROID-022-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-023",
+      "name": "Krath War Droid",
+      "page": 222,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-023-CONSTRAINT-01",
+        "KOTOR-DROID-023-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "KOTOR-DROID-024",
+      "name": "Rakatan Guardian Droid",
+      "page": 223,
+      "kind": "droid",
+      "claimIds": [
+        "KOTOR-DROID-024-CONSTRAINT-01",
+        "KOTOR-DROID-024-CONSTRAINT-02"
+      ],
+      "featStatus": "not-canonically-certificated",
+      "mechanicalStatus": "partial"
+    }
+  ],
+  "totals": {
+    "identities": 24,
+    "modelBoundariesReviewed": 24,
+    "addedSourceConstraints": 48,
+    "droidActorIdentities": 23,
+    "vehiclePrimary": 1,
+    "strictMechanicalCertifications": 0,
+    "originalSelectedFieldComparisons": 369
+  },
+  "remainingGates": [
+    "Full exact printed feat/talent/skill inventories for every record, not completed here",
+    "Full Systems versus Possessions physical source capture and mount identity",
+    "All printed action/weapon alternatives and resource-consumption rules",
+    "Canonical class and heroic creation legality",
+    "Printed narrative contradictions / vehicle operations",
+    "Full upstream schema and Foundry tests"
+  ],
+  "qa": {
+    "identitiesPreserved": true,
+    "sourceConstraintsNonExecutable": true,
+    "basiliskVehicleOnly": true,
+    "namedIndividualsDistinct": true,
+    "noProductionMutations": true,
+    "noCertificationPromotion": true
+  },
+  "next": "Advance detailed field-level source mechanics and strict certification independently; GAW model-boundary review follows on this branch."
+}

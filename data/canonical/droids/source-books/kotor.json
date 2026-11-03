@@ -59,7 +59,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-001-CONSTRAINT-01",
+            "statement": "ET-74 communicates through its factory language/communications equipment; the printed communications role does not create a generic remote-computer takeover or combat action.",
+            "scope": "ET-74 Communications Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 81,
+              "pdfPage1Based": 82,
+              "sourceEntryKey": "KOTOR-DROID-001",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-001-CONSTRAINT-02",
+            "statement": "Separate any carried comlink/recorder from installed communications hardware before granting equipment or storage.",
+            "scope": "ET-74 Communications Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 81,
+              "pdfPage1Based": 82,
+              "sourceEntryKey": "KOTOR-DROID-001",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "allowed"
       },
@@ -81,11 +112,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-001",
           "Knights of the Old Republic Campaign Guide:printed-p81:TXT-line-7661",
-          "KOTOR-DROID-001:printed-p81:PDF-p82:visual-selected"
+          "KOTOR-DROID-001:printed-p81:PDF-p82:visual-selected",
+          "KOTOR:printed-p81:PDF-p82:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -142,7 +174,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-002-CONSTRAINT-01",
+            "statement": "GO-TO coordinates reconstruction through planetary information networks; plugging into a cooperating network is not universal administrator access or an attack.",
+            "scope": "GO-TO Infrastructure-Planning Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 82,
+              "pdfPage1Based": 83,
+              "sourceEntryKey": "KOTOR-DROID-002",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-002-CONSTRAINT-02",
+            "statement": "The factory GO-TO model is explicitly hero-prohibited; Dark Wars GO-TO is a separate named character and does not upgrade every factory unit.",
+            "scope": "GO-TO Infrastructure-Planning Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 82,
+              "pdfPage1Based": 83,
+              "sourceEntryKey": "KOTOR-DROID-002",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -164,11 +227,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-002",
           "Knights of the Old Republic Campaign Guide:printed-p82:TXT-line-7727",
-          "KOTOR-DROID-002:printed-p82:PDF-p83:visual-selected"
+          "KOTOR-DROID-002:printed-p82:PDF-p83:visual-selected",
+          "KOTOR:printed-p82:PDF-p83:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -224,7 +288,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-003-CONSTRAINT-01",
+            "statement": "T3-Series does not have a vocabulator and should not receive spoken Basic from its astromech-like utility role.",
+            "scope": "T3-Series Utility Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 82,
+              "pdfPage1Based": 83,
+              "sourceEntryKey": "KOTOR-DROID-003",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-003-CONSTRAINT-02",
+            "statement": "Starship engineer/copilot uses the actual Pilot, Mechanics and Use Computer authority; owner modifications are not baseline factory parts.",
+            "scope": "T3-Series Utility Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 82,
+              "pdfPage1Based": 83,
+              "sourceEntryKey": "KOTOR-DROID-003",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "allowed"
       },
@@ -246,11 +341,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-003",
           "Knights of the Old Republic Campaign Guide:printed-p82:TXT-line-7735",
-          "KOTOR-DROID-003:printed-p82:PDF-p83:visual-selected"
+          "KOTOR-DROID-003:printed-p82:PDF-p83:visual-selected",
+          "KOTOR:printed-p82:PDF-p83:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -306,7 +402,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-004-CONSTRAINT-01",
+            "statement": "GE3's translation, knowledge and language proficiencies remain sourced to the printed unit; no automatic universal language or unexplained specialist skill grants.",
+            "scope": "GE3-Series Protocol Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 83,
+              "pdfPage1Based": 84,
+              "sourceEntryKey": "KOTOR-DROID-004",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-004-CONSTRAINT-02",
+            "statement": "Recorder and communications possessions must be separated from the chassis Systems line.",
+            "scope": "GE3-Series Protocol Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 83,
+              "pdfPage1Based": 84,
+              "sourceEntryKey": "KOTOR-DROID-004",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "allowed"
       },
@@ -328,11 +455,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-004",
           "Knights of the Old Republic Campaign Guide:printed-p83:TXT-line-7866",
-          "KOTOR-DROID-004:printed-p83:PDF-p84:visual-selected"
+          "KOTOR-DROID-004:printed-p83:PDF-p84:visual-selected",
+          "KOTOR:printed-p83:PDF-p84:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -388,7 +516,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-005-CONSTRAINT-01",
+            "statement": "GG hospitality is a service/protocol model and its social programming does not authorize unlisted combat or concealment functions.",
+            "scope": "GG-Series Hospitality Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 84,
+              "pdfPage1Based": 85,
+              "sourceEntryKey": "KOTOR-DROID-005",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-005-CONSTRAINT-02",
+            "statement": "Installed appendages and customer-service devices are not automatically combat hands or free weapons.",
+            "scope": "GG-Series Hospitality Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 84,
+              "pdfPage1Based": 85,
+              "sourceEntryKey": "KOTOR-DROID-005",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "allowed"
       },
@@ -410,11 +569,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-005",
           "Knights of the Old Republic Campaign Guide:printed-p84:TXT-line-7957",
-          "KOTOR-DROID-005:printed-p84:PDF-p85:visual-selected"
+          "KOTOR-DROID-005:printed-p84:PDF-p85:visual-selected",
+          "KOTOR:printed-p84:PDF-p85:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -470,7 +630,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-006-CONSTRAINT-01",
+            "statement": "HK-24 is an assassin factory model explicitly unsuitable for heroes; printed soldier/combat abilities are NPC source claims.",
+            "scope": "HK-24 Series Assassin Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 84,
+              "pdfPage1Based": 85,
+              "sourceEntryKey": "KOTOR-DROID-006",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-006-CONSTRAINT-02",
+            "statement": "Do not inherit HK-50, Independent HK-Series or HK-47 equipment/talents from a shared HK-series label.",
+            "scope": "HK-24 Series Assassin Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 84,
+              "pdfPage1Based": 85,
+              "sourceEntryKey": "KOTOR-DROID-006",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -493,11 +684,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-006",
           "Knights of the Old Republic Campaign Guide:printed-p84:TXT-line-8033",
-          "KOTOR-DROID-006:printed-p84:PDF-p85:visual-selected"
+          "KOTOR-DROID-006:printed-p84:PDF-p85:visual-selected",
+          "KOTOR:printed-p84:PDF-p85:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -553,7 +745,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-007-CONSTRAINT-01",
+            "statement": "Independent HK-Series is a distinct first-level heroic starting template and usable only with GM approval, not an additional stock HK-24/50 factory variant.",
+            "scope": "Independent HK-Series Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 85,
+              "pdfPage1Based": 86,
+              "sourceEntryKey": "KOTOR-DROID-007",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-007-CONSTRAINT-02",
+            "statement": "Printed class, equipment and feat baseline applies only to the conditional hero profile, not automatically to named HK-47.",
+            "scope": "Independent HK-Series Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 85,
+              "pdfPage1Based": 86,
+              "sourceEntryKey": "KOTOR-DROID-007",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "conditional",
         "heroEligibilityCondition": "Published independent HK-Series heroic baseline subject to GM approval; not the HK-24 or HK-50 factory model."
@@ -587,11 +810,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-007",
           "Knights of the Old Republic Campaign Guide:printed-p85:TXT-line-8097",
-          "KOTOR-DROID-007:printed-p85:PDF-p86:visual-selected"
+          "KOTOR-DROID-007:printed-p85:PDF-p86:visual-selected",
+          "KOTOR:printed-p85:PDF-p86:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -648,7 +872,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-008-CONSTRAINT-01",
+            "statement": "HK-50 is a separate assassin factory model explicitly unsuitable as a droid hero.",
+            "scope": "HK-50 Series Assassin Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 85,
+              "pdfPage1Based": 86,
+              "sourceEntryKey": "KOTOR-DROID-008",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-008-CONSTRAINT-02",
+            "statement": "Its printed Burst Fire/Power Blast and rifle attack alternatives are conditional attack presentations; no freely stacked extra attacks or universal weapon grant.",
+            "scope": "HK-50 Series Assassin Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 85,
+              "pdfPage1Based": 86,
+              "sourceEntryKey": "KOTOR-DROID-008",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -671,11 +926,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-008",
           "Knights of the Old Republic Campaign Guide:printed-p85:TXT-line-8139",
-          "KOTOR-DROID-008:printed-p85:PDF-p86:visual-selected"
+          "KOTOR-DROID-008:printed-p85:PDF-p86:visual-selected",
+          "KOTOR:printed-p85:PDF-p86:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -731,7 +987,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-009-CONSTRAINT-01",
+            "statement": "Juggernaut War Droid is an NPC war-droid identity, not a generic legal PC chassis.",
+            "scope": "Juggernaut War Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 86,
+              "pdfPage1Based": 87,
+              "sourceEntryKey": "KOTOR-DROID-009",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-009-CONSTRAINT-02",
+            "statement": "Separate its printed armor, heavy combat equipment and melee attack groups from installed physical mounts before activation.",
+            "scope": "Juggernaut War Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 86,
+              "pdfPage1Based": 87,
+              "sourceEntryKey": "KOTOR-DROID-009",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -768,11 +1055,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-009",
           "Knights of the Old Republic Campaign Guide:printed-p86:TXT-line-8232",
-          "KOTOR-DROID-009:printed-p86:PDF-p87:visual-selected"
+          "KOTOR-DROID-009:printed-p86:PDF-p87:visual-selected",
+          "KOTOR:printed-p86:PDF-p87:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -828,7 +1116,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-010-CONSTRAINT-01",
+            "statement": "K-X12 deployment inside hollowed concussion missiles is a delivery scenario; it does not create an ordinary reusable personal missile launcher.",
+            "scope": "K-X12 Probe Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 86,
+              "pdfPage1Based": 87,
+              "sourceEntryKey": "KOTOR-DROID-010",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-010-CONSTRAINT-02",
+            "statement": "Self-destruct is a destructive resource/effect requiring source trigger and blast rules; printed Perception reroll, where present, must keep second result.",
+            "scope": "K-X12 Probe Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 86,
+              "pdfPage1Based": 87,
+              "sourceEntryKey": "KOTOR-DROID-010",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -865,11 +1184,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-010",
           "Knights of the Old Republic Campaign Guide:printed-p86:TXT-line-8302",
-          "KOTOR-DROID-010:printed-p86:PDF-p87:visual-selected"
+          "KOTOR-DROID-010:printed-p86:PDF-p87:visual-selected",
+          "KOTOR:printed-p86:PDF-p87:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -925,7 +1245,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-011-CONSTRAINT-01",
+            "statement": "Municipal Patrol Droid Mark I police tools and printed weapons remain stock-model-specific, not automatic grants to all security models.",
+            "scope": "Municipal Patrol Droid Mark I",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 87,
+              "pdfPage1Based": 88,
+              "sourceEntryKey": "KOTOR-DROID-011",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-011-CONSTRAINT-02",
+            "statement": "Patrol detection and lawful security behavior do not create unconditional extra reactions or perfect target detection.",
+            "scope": "Municipal Patrol Droid Mark I",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 87,
+              "pdfPage1Based": 88,
+              "sourceEntryKey": "KOTOR-DROID-011",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -947,11 +1298,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-011",
           "Knights of the Old Republic Campaign Guide:printed-p87:TXT-line-8369",
-          "KOTOR-DROID-011:printed-p87:PDF-p88:visual-selected"
+          "KOTOR-DROID-011:printed-p87:PDF-p88:visual-selected",
+          "KOTOR:printed-p87:PDF-p88:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -1007,7 +1359,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-012-CONSTRAINT-01",
+            "statement": "Devastator War Droid combat actions, armor and alternate attack lines belong to this model; do not transfer them to Juggernaut or Mark assault models.",
+            "scope": "Devastator War Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 87,
+              "pdfPage1Based": 88,
+              "sourceEntryKey": "KOTOR-DROID-012",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-012-CONSTRAINT-02",
+            "statement": "Its distinct installed and possessed equipment must be reconciled before multiple-attack or special-shot execution.",
+            "scope": "Devastator War Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 87,
+              "pdfPage1Based": 88,
+              "sourceEntryKey": "KOTOR-DROID-012",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -1029,11 +1412,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-012",
           "Knights of the Old Republic Campaign Guide:printed-p87:TXT-line-8377",
-          "KOTOR-DROID-012:printed-p87:PDF-p88:visual-selected"
+          "KOTOR-DROID-012:printed-p87:PDF-p88:visual-selected",
+          "KOTOR:printed-p87:PDF-p88:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -1089,7 +1473,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-013-CONSTRAINT-01",
+            "statement": "Sentinel Droid is a security combat model whose guarding description is not blanket surprise immunity or unrestricted off-turn attacks.",
+            "scope": "Sentinel Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 88,
+              "pdfPage1Based": 89,
+              "sourceEntryKey": "KOTOR-DROID-013",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-013-CONSTRAINT-02",
+            "statement": "Weapon actions require independently established owned weapons, target state and normal action costs.",
+            "scope": "Sentinel Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 88,
+              "pdfPage1Based": 89,
+              "sourceEntryKey": "KOTOR-DROID-013",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "allowed"
       },
@@ -1111,11 +1526,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-013",
           "Knights of the Old Republic Campaign Guide:printed-p88:TXT-line-8522",
-          "KOTOR-DROID-013:printed-p88:PDF-p89:visual-selected"
+          "KOTOR-DROID-013:printed-p88:PDF-p89:visual-selected",
+          "KOTOR:printed-p88:PDF-p89:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -1171,7 +1587,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-014-CONSTRAINT-01",
+            "statement": "S6 security/maintenance model combines specialized tool and patrol functions, not universal hacking, combat, or repairs.",
+            "scope": "S6-Series Security/Maintenance Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 88,
+              "pdfPage1Based": 89,
+              "sourceEntryKey": "KOTOR-DROID-014",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-014-CONSTRAINT-02",
+            "statement": "No source claim implies a generic bonus to all Mechanics and Perception checks without a printed predicate.",
+            "scope": "S6-Series Security/Maintenance Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 88,
+              "pdfPage1Based": 89,
+              "sourceEntryKey": "KOTOR-DROID-014",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -1193,11 +1640,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-014",
           "Knights of the Old Republic Campaign Guide:printed-p88:TXT-line-8592",
-          "KOTOR-DROID-014:printed-p88:PDF-p89:visual-selected"
+          "KOTOR-DROID-014:printed-p88:PDF-p89:visual-selected",
+          "KOTOR:printed-p88:PDF-p89:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -1253,7 +1701,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-015-CONSTRAINT-01",
+            "statement": "T1 Bulk Loader is a load-handling droid; load capacity and loader appendages do not automatically qualify as generic dexterous hands.",
+            "scope": "T1 Bulk Loader Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 88,
+              "pdfPage1Based": 89,
+              "sourceEntryKey": "KOTOR-DROID-015",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-015-CONSTRAINT-02",
+            "statement": "No extra grappling or weapon-mount abilities are inferred from cargo-lifting narrative.",
+            "scope": "T1 Bulk Loader Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 88,
+              "pdfPage1Based": 89,
+              "sourceEntryKey": "KOTOR-DROID-015",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -1275,11 +1754,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-015",
           "Knights of the Old Republic Campaign Guide:printed-p88:TXT-line-8649",
-          "KOTOR-DROID-015:printed-p88:PDF-p89:visual-selected"
+          "KOTOR-DROID-015:printed-p88:PDF-p89:visual-selected",
+          "KOTOR:printed-p88:PDF-p89:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -1335,7 +1815,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-016-CONSTRAINT-01",
+            "statement": "R-8009 is a distinct utility model and not interchangeable with T1 or T3 chassis Systems.",
+            "scope": "R-8009 Utility Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 89,
+              "pdfPage1Based": 90,
+              "sourceEntryKey": "KOTOR-DROID-016",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-016-CONSTRAINT-02",
+            "statement": "The source utility/repair narrative does not waive normal tool-kit, skill, possession and action prerequisites.",
+            "scope": "R-8009 Utility Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 89,
+              "pdfPage1Based": 90,
+              "sourceEntryKey": "KOTOR-DROID-016",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "allowed"
       },
@@ -1357,11 +1868,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-016",
           "Knights of the Old Republic Campaign Guide:printed-p89:TXT-line-8708",
-          "KOTOR-DROID-016:printed-p89:PDF-p90:visual-selected"
+          "KOTOR-DROID-016:printed-p89:PDF-p90:visual-selected",
+          "KOTOR:printed-p89:PDF-p90:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -1418,7 +1930,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-017-CONSTRAINT-01",
+            "statement": "Mark I Assault Droid and Mark IV Assault Droid are separate printed sources on p165 with distinct attacks and durability.",
+            "scope": "Mark I Assault Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 165,
+              "pdfPage1Based": 166,
+              "sourceEntryKey": "KOTOR-DROID-017",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-017-CONSTRAINT-02",
+            "statement": "This Mark I source's attack rows are not factory grants to the upgraded Mark IV or other Sith battle droids.",
+            "scope": "Mark I Assault Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 165,
+              "pdfPage1Based": 166,
+              "sourceEntryKey": "KOTOR-DROID-017",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -1455,11 +1998,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-017",
           "Knights of the Old Republic Campaign Guide:printed-p165:TXT-line-16671",
-          "KOTOR-DROID-017:printed-p165:PDF-p166:visual-selected"
+          "KOTOR-DROID-017:printed-p165:PDF-p166:visual-selected",
+          "KOTOR:printed-p165:PDF-p166:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -1516,7 +2060,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-018-CONSTRAINT-01",
+            "statement": "Mark IV is not merely a cosmetic label on Mark I: preserve its individual attack-mode, armor and equipment claims.",
+            "scope": "Mark IV Assault Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 165,
+              "pdfPage1Based": 166,
+              "sourceEntryKey": "KOTOR-DROID-018",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-018-CONSTRAINT-02",
+            "statement": "Higher-tier combat ability does not grant extra physical mounts or unlimited ammunition before equipment authority is certified.",
+            "scope": "Mark IV Assault Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 165,
+              "pdfPage1Based": 166,
+              "sourceEntryKey": "KOTOR-DROID-018",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -1553,11 +2128,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-018",
           "Knights of the Old Republic Campaign Guide:printed-p165:TXT-line-16705",
-          "KOTOR-DROID-018:printed-p165:PDF-p166:visual-selected"
+          "KOTOR-DROID-018:printed-p165:PDF-p166:visual-selected",
+          "KOTOR:printed-p165:PDF-p166:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -1602,11 +2178,45 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-019-CONSTRAINT-01",
+            "statement": "Basilisk is a vehicle-primary droid with published vehicle HP 70, DR 5, crew/droid-brain, passenger and air-vehicle rules; do not create an individual droid actor.",
+            "scope": "Basilisk War Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 203,
+              "pdfPage1Based": 204,
+              "sourceEntryKey": "KOTOR-DROID-019",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-019-CONSTRAINT-02",
+            "statement": "Basilisk passenger substitution/control and integrated vehicle weapon payload require vehicle action and mount authority, not creature multiattack rules.",
+            "scope": "Basilisk War Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 203,
+              "pdfPage1Based": 204,
+              "sourceEntryKey": "KOTOR-DROID-019",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": null
       },
-      "vehicleLink": {},
+      "vehicleLink": {
+        "auditAuthority": "vehicle-primary-source-only",
+        "sourceReviewCaveat": "Basilisk hp/DR/weapons/actions and pilot/passenger belong to vehicle, not droid actor."
+      },
       "economics": {},
       "text": {
         "sourceWarnings": [
@@ -1642,11 +2252,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-019",
           "Knights of the Old Republic Campaign Guide:printed-p203:TXT-line-20759",
-          "KOTOR-DROID-019:printed-p203:PDF-p204:visual-selected"
+          "KOTOR-DROID-019:printed-p203:PDF-p204:visual-selected",
+          "KOTOR:printed-p203:PDF-p204:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -1704,7 +2315,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-020-CONSTRAINT-01",
+            "statement": "GO-TO (Dark Wars) is a named individual/source identity, independent from the GO-TO infrastructure-planning factory model.",
+            "scope": "GO-TO (Dark Wars)",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 212,
+              "pdfPage1Based": 213,
+              "sourceEntryKey": "KOTOR-DROID-020",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-020-CONSTRAINT-02",
+            "statement": "Named personality's class progression, possessions, and resources are not factory PC chassis equipment or feat grants.",
+            "scope": "GO-TO (Dark Wars)",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 212,
+              "pdfPage1Based": 213,
+              "sourceEntryKey": "KOTOR-DROID-020",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": null
       },
@@ -1728,11 +2370,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-020",
           "Knights of the Old Republic Campaign Guide:printed-p212:TXT-line-21651",
-          "KOTOR-DROID-020:printed-p212:PDF-p213:visual-selected"
+          "KOTOR-DROID-020:printed-p212:PDF-p213:visual-selected",
+          "KOTOR:printed-p212:PDF-p213:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -1789,7 +2432,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-021-CONSTRAINT-01",
+            "statement": "HK-47 (Jedi Civil War) is a named advanced individual, not the GM-conditional level-one Independent HK template.",
+            "scope": "HK-47 (Jedi Civil War)",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 213,
+              "pdfPage1Based": 214,
+              "sourceEntryKey": "KOTOR-DROID-021",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-021-CONSTRAINT-02",
+            "statement": "Printed HK-47 skills, talents, class levels and weapons remain character-specific; a shared HK family name is insufficient for inheritance.",
+            "scope": "HK-47 (Jedi Civil War)",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 213,
+              "pdfPage1Based": 214,
+              "sourceEntryKey": "KOTOR-DROID-021",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": null
       },
@@ -1828,11 +2502,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-021",
           "Knights of the Old Republic Campaign Guide:printed-p213:TXT-line-21768",
-          "KOTOR-DROID-021:printed-p213:PDF-p214:visual-selected"
+          "KOTOR-DROID-021:printed-p213:PDF-p214:visual-selected",
+          "KOTOR:printed-p213:PDF-p214:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -1889,7 +2564,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-022-CONSTRAINT-01",
+            "statement": "T3-M4 (Jedi Civil War) is a named individual distinct from the factory T3-Series utility model.",
+            "scope": "T3-M4 (Jedi Civil War)",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 216,
+              "pdfPage1Based": 217,
+              "sourceEntryKey": "KOTOR-DROID-022",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-022-CONSTRAINT-02",
+            "statement": "Named-character equipment/skills and campaign-specific status are not stock T3 chassis grants.",
+            "scope": "T3-M4 (Jedi Civil War)",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 216,
+              "pdfPage1Based": 217,
+              "sourceEntryKey": "KOTOR-DROID-022",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": null
       },
@@ -1928,11 +2634,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-022",
           "Knights of the Old Republic Campaign Guide:printed-p216:TXT-line-22222",
-          "KOTOR-DROID-022:printed-p216:PDF-p217:visual-selected"
+          "KOTOR-DROID-022:printed-p216:PDF-p217:visual-selected",
+          "KOTOR:printed-p216:PDF-p217:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -1988,7 +2695,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-023-CONSTRAINT-01",
+            "statement": "Krath War Droid understands Basic but cannot speak it in the printed presentation; distinguish comprehension from speech.",
+            "scope": "Krath War Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 222,
+              "pdfPage1Based": 223,
+              "sourceEntryKey": "KOTOR-DROID-023",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-023-CONSTRAINT-02",
+            "statement": "Krath-specific weapons, attack options and processor configuration remain independently sourced and not transferred to Rakatan Guardian.",
+            "scope": "Krath War Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 222,
+              "pdfPage1Based": 223,
+              "sourceEntryKey": "KOTOR-DROID-023",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": "prohibited"
       },
@@ -2025,11 +2763,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-023",
           "Knights of the Old Republic Campaign Guide:printed-p222:TXT-line-23055",
-          "KOTOR-DROID-023:printed-p222:PDF-p223:visual-selected"
+          "KOTOR-DROID-023:printed-p222:PDF-p223:visual-selected",
+          "KOTOR:printed-p222:PDF-p223:M1-mechanical-boundary-source-review"
         ]
       }
     },
@@ -2085,7 +2824,38 @@
       "capacity": {},
       "systems": {},
       "equipment": {},
-      "modifications": {},
+      "modifications": {
+        "constraints": [
+          {
+            "ruleId": "KOTOR-DROID-024-CONSTRAINT-01",
+            "statement": "Rakatan Guardian integrated armaments are listed in its Possessions evidence, not certified as freely mounted independent weapon instances.",
+            "scope": "Rakatan Guardian Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 223,
+              "pdfPage1Based": 224,
+              "sourceEntryKey": "KOTOR-DROID-024",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 1"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "KOTOR-DROID-024-CONSTRAINT-02",
+            "statement": "The printed ancient-technology/guardian description is not a universal autonomous action or legal heroic creation route.",
+            "scope": "Rakatan Guardian Droid",
+            "source": {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 223,
+              "pdfPage1Based": 224,
+              "sourceEntryKey": "KOTOR-DROID-024",
+              "verifiedBy": "pdf-visual-and-text-review",
+              "citationLabel": "M1 printed statblock and context, model boundary 2"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
       "pcConstruction": {
         "heroEligibility": null
       },
@@ -2124,11 +2894,12 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-024",
           "Knights of the Old Republic Campaign Guide:printed-p223:TXT-line-23120",
-          "KOTOR-DROID-024:printed-p223:PDF-p224:visual-selected"
+          "KOTOR-DROID-024:printed-p223:PDF-p224:visual-selected",
+          "KOTOR:printed-p223:PDF-p224:M1-mechanical-boundary-source-review"
         ]
       }
     }
