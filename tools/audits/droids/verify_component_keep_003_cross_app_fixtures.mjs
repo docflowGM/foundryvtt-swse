@@ -5,6 +5,7 @@ const x=JSON.parse(readFileSync(new URL('../../../data/audits/droids/component-k
 assert.equal(x.fixtures.length,9);
 assert.equal(new Set(x.fixtures.map(f=>f.id)).size,9);
 assert.equal(x.fixtures.filter(f=>f.sourceExpected.status==='BLOCKED_SOURCE_CONFLICT').length,2);
+assert.equal(x.fixtures.find(f=>f.id==='PAR-LOCO-001').sourceExpected.weightKg,10);
 assert.equal(x.fixtures.find(f=>f.id==='PAR-LOCO-002').sourceExpected.upgradeCredits,100);
 assert.equal(x.fixtures.find(f=>f.id==='PAR-LOCO-003').sourceExpected.mountWeightKg,10);
 for (const f of x.fixtures) {
