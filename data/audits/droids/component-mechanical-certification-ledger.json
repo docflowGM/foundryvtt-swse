@@ -1,5 +1,5 @@
 {
-  "schema": "swse.droids.component.mechanical-certification-ledger/v1",
+  "schema": "swse.droids.component.source-mechanical-census-ledger/v2",
   "updated": "2026-11-02",
   "historicalScope": {
     "frozenCoreSgdIdentities": 122,
@@ -24,15 +24,47 @@
       "productionCertified": 0,
       "appParityCertified": 0,
       "foundryRuntimeCertified": 0
+    },
+    {
+      "id": "MECH-003",
+      "path": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "identitiesEvaluated": 25,
+      "certifiedPrintedMechanics": 17,
+      "heldSourceCompleteness": 8,
+      "productionCertified": 0,
+      "appParityCertified": 0,
+      "foundryRuntimeCertified": 0
+    },
+    {
+      "id": "MECH-004",
+      "path": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "identitiesEvaluated": 25,
+      "certifiedPrintedMechanics": 18,
+      "heldSourceCompleteness": 7,
+      "productionCertified": 0,
+      "appParityCertified": 0,
+      "foundryRuntimeCertified": 0
+    },
+    {
+      "id": "MECH-005",
+      "path": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "identitiesEvaluated": 22,
+      "certifiedPrintedMechanics": 20,
+      "heldSourceCompleteness": 2,
+      "productionCertified": 0,
+      "appParityCertified": 0,
+      "foundryRuntimeCertified": 0
     }
   ],
   "counts": {
-    "totalSourceMechanicalCertified": 44,
-    "remainingSourceMechanicalNotYetCertified": 78,
+    "totalSourceMechanicalCertified": 99,
+    "remainingSourceMechanicalNotYetCertified": 23,
     "productionRegistryCertified": 0,
     "applicationParityCertified": 0,
     "foundryRuntimeCertified": 0,
-    "sourceMechanicsOnHold": 6
+    "sourceMechanicsOnHold": 23,
+    "sourceMechanicallyReviewed": 122,
+    "sourceMechanicsNotYetEvaluated": 0
   },
   "certifiedIdentityIds": [
     "droid-plasteel-shell",
@@ -78,7 +110,62 @@
     "droid-droid-caller",
     "droid-diagnostics-package",
     "droid-secondary-battery",
-    "droid-internal-storage"
+    "droid-internal-storage",
+    "droid-extra-legs",
+    "droid-telescopic-appendage",
+    "droid-stabilized-mount",
+    "droid-spring-loaded-mechanism",
+    "droid-locked-access",
+    "droid-translator-unit",
+    "droid-gyroscopic-stabilizers",
+    "droid-underwater-drive",
+    "droid-magnetic-hands",
+    "droid-quick-release-coupling",
+    "droid-droid-remote-control",
+    "droid-hidden-core",
+    "droid-specialized-subprocessor",
+    "droid-tactician-battle-computer",
+    "droid-laminanium-plating",
+    "droid-communications-countermeasure-system",
+    "droid-communications-jammer",
+    "droid-antitheft-comlink-locator",
+    "droid-audio-enhancers",
+    "droid-audio-radial-stunner",
+    "droid-automap",
+    "droid-blaster-recharge-interface",
+    "droid-collapsible-construction",
+    "droid-courier-compartments",
+    "droid-electric-defense-grid",
+    "droid-hidden-holster",
+    "droid-high-speed-cutting-torch-and-welder",
+    "droid-holographic-game-system",
+    "droid-holographic-image-disguiser",
+    "droid-id-dodge",
+    "droid-improved-coordination-circuitry",
+    "droid-internal-defenses",
+    "droid-internal-grapple-gun",
+    "droid-mesh-tape-dispenser",
+    "droid-micro-shield",
+    "droid-multifunction-apparatus",
+    "droid-multispectrum-searchlight",
+    "droid-radiant-heat-element",
+    "droid-remote-viewer",
+    "droid-rental-restraining-bolt",
+    "droid-repulsorcam",
+    "droid-scomp-link",
+    "droid-silence-bubble-generator",
+    "droid-space-beacon-launcher",
+    "droid-survival-kit",
+    "droid-voice-print-command-lock",
+    "droid-weapon-detector",
+    "droid-sensor-booster",
+    "droid-sensor-countermeasure-package",
+    "droid-yv-sensor-package",
+    "droid-shield-expansion-module",
+    "droid-droid-battle-station",
+    "droid-droid-command-station",
+    "droid-droid-recharge-station",
+    "droid-droid-socket"
   ],
   "certifiedSourceStatusOnly": true,
   "heldIdentityIds": [
@@ -87,6 +174,1054 @@
     "droid-tracked",
     "droid-hovering",
     "droid-flying",
-    "droid-self-destruct-system"
-  ]
+    "droid-self-destruct-system",
+    "droid-climbing-claws",
+    "droid-jump-servos",
+    "droid-magnetic-feet",
+    "droid-burrower-drive",
+    "droid-projectile-hand",
+    "droid-remote-limb-control",
+    "droid-rocket-arm",
+    "droid-personality-downloader",
+    "droid-remote-receiver-jammer",
+    "droid-remote-receiver-signal-booster",
+    "droid-concealed-item",
+    "droid-droid-oil-bath",
+    "droid-earphone-binary-to-basic-translator",
+    "droid-emergency-oxygen-supply",
+    "droid-interference-generator",
+    "droid-taser",
+    "droid-video-screen"
+  ],
+  "scope": "Frozen 122 Core Rulebook + Scavenger's Guide to Droids identities, not other SWSE sourcebooks",
+  "identitySourceDecisions": [
+    {
+      "canonicalId": "droid-plasteel-shell",
+      "canonicalName": "Plasteel Shell",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-quadanium-shell",
+      "canonicalName": "Quadanium Shell",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-durasteel-shell",
+      "canonicalName": "Durasteel Shell",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-quadanium-plating",
+      "canonicalName": "Quadanium Plating",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-durasteel-plating",
+      "canonicalName": "Durasteel Plating",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-quadanium-battle-armor",
+      "canonicalName": "Quadanium Battle Armor",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-duranium-plating",
+      "canonicalName": "Duranium Plating",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-durasteel-battle-armor",
+      "canonicalName": "Durasteel Battle Armor",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-mandalorian-steel-shell",
+      "canonicalName": "Mandalorian Steel Shell",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-duranium-battle-armor",
+      "canonicalName": "Duranium Battle Armor",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-neutronium-plating",
+      "canonicalName": "Neutronium Plating",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-duravlex-shell",
+      "canonicalName": "Duravlex Shell",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-crystadurium-plating",
+      "canonicalName": "Crystadurium Plating",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-probe",
+      "canonicalName": "Probe",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-instrument",
+      "canonicalName": "Instrument",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-tool",
+      "canonicalName": "Tool",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-claw",
+      "canonicalName": "Claw",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-hand",
+      "canonicalName": "Hand",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-improved-sensor-package",
+      "canonicalName": "Improved Sensor Package",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-darkvision",
+      "canonicalName": "Darkvision",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-internal-comlink",
+      "canonicalName": "Internal Comlink",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-vocabulator",
+      "canonicalName": "Vocabulator",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-heuristic-processor",
+      "canonicalName": "Heuristic Processor",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-credit-reader",
+      "canonicalName": "Credit Reader",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-remote-starship-starter",
+      "canonicalName": "Remote Starship Starter",
+      "sourceBatch": "MECH-001",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-walking",
+      "canonicalName": "Walking",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "Core pp188-189 do not specify whether the one-tenth restricted-system discount applies to the extra-system surcharge when both rules apply."
+    },
+    {
+      "canonicalId": "droid-wheeled",
+      "canonicalName": "Wheeled",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "Core pp188-189 do not specify whether the one-tenth restricted-system discount applies to the extra-system surcharge when both rules apply."
+    },
+    {
+      "canonicalId": "droid-tracked",
+      "canonicalName": "Tracked",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "Core pp188-189 do not specify whether the one-tenth restricted-system discount applies to the extra-system surcharge when both rules apply."
+    },
+    {
+      "canonicalId": "droid-hovering",
+      "canonicalName": "Hovering",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "Core pp188-189 do not specify whether the one-tenth restricted-system discount applies to the extra-system surcharge when both rules apply."
+    },
+    {
+      "canonicalId": "droid-flying",
+      "canonicalName": "Flying",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "Core pp188-189 do not specify whether the one-tenth restricted-system discount applies to the extra-system surcharge when both rules apply."
+    },
+    {
+      "canonicalId": "droid-stationary",
+      "canonicalName": "Stationary",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-hardened-systems-x2",
+      "canonicalName": "Hardened Systems x2",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-hardened-systems-x3",
+      "canonicalName": "Hardened Systems x3",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-hardened-systems-x4",
+      "canonicalName": "Hardened Systems x4",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-hardened-systems-x5",
+      "canonicalName": "Hardened Systems x5",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-shield-generator-sr-5",
+      "canonicalName": "Shield Generator, SR 5",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-shield-generator-sr-10",
+      "canonicalName": "Shield Generator, SR 10",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-shield-generator-sr-15",
+      "canonicalName": "Shield Generator, SR 15",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-shield-generator-sr-20",
+      "canonicalName": "Shield Generator, SR 20",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-self-destruct-system",
+      "canonicalName": "Self-Destruct System",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "Tiny and smaller produce no collateral-damage dice; source formula based on maximum damage does not establish a purchasable price/mass for those sizes."
+    },
+    {
+      "canonicalId": "droid-basic-processor",
+      "canonicalName": "Basic Processor",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-remote-processor",
+      "canonicalName": "Remote Processor",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-remote-receiver",
+      "canonicalName": "Remote Receiver",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-backup-processor",
+      "canonicalName": "Backup Processor",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-synchronized-fire-circuits",
+      "canonicalName": "Synchronized Fire Circuits",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-restraining-bolt",
+      "canonicalName": "Restraining Bolt",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-droid-caller",
+      "canonicalName": "Droid Caller",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-diagnostics-package",
+      "canonicalName": "Diagnostics Package",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-secondary-battery",
+      "canonicalName": "Secondary Battery",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-internal-storage",
+      "canonicalName": "Internal Storage",
+      "sourceBatch": "MECH-002",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-climbing-claws",
+      "canonicalName": "Climbing Claws",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "Printed prose and table disagree on price base"
+    },
+    {
+      "canonicalId": "droid-extra-legs",
+      "canonicalName": "Extra Legs",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-jump-servos",
+      "canonicalName": "Jump Servos",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "Printed prose and accessory table disagree on cost base"
+    },
+    {
+      "canonicalId": "droid-magnetic-feet",
+      "canonicalName": "Magnetic Feet",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "Table uses appendage-based pricing without identifying which appendage belongs to the foot hardware"
+    },
+    {
+      "canonicalId": "droid-telescopic-appendage",
+      "canonicalName": "Telescopic Appendage",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-stabilized-mount",
+      "canonicalName": "Stabilized Mount",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-spring-loaded-mechanism",
+      "canonicalName": "Spring-Loaded Mechanism",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-locked-access",
+      "canonicalName": "Locked Access",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-translator-unit",
+      "canonicalName": "Translator Unit",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-burrower-drive",
+      "canonicalName": "Burrower Drive",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "Tiny and smaller have no published self-destruct collateral damage dice, so drill attack damage is unquantified for those sizes"
+    },
+    {
+      "canonicalId": "droid-gyroscopic-stabilizers",
+      "canonicalName": "Gyroscopic Stabilizers",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-underwater-drive",
+      "canonicalName": "Underwater Drive",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-magnetic-hands",
+      "canonicalName": "Magnetic Hands",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-projectile-hand",
+      "canonicalName": "Projectile Hand",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "250cr description and double appendage-cost table contradict for some chosen appendages"
+    },
+    {
+      "canonicalId": "droid-quick-release-coupling",
+      "canonicalName": "Quick-Release Coupling",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-remote-limb-control",
+      "canonicalName": "Remote Limb Control",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "Prose prices differ from table appendage-based price, and table does not specify basic/deluxe distinction"
+    },
+    {
+      "canonicalId": "droid-rocket-arm",
+      "canonicalName": "Rocket Arm",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "Printed 2000cr fixed price conflicts with four-times-appendage table"
+    },
+    {
+      "canonicalId": "droid-droid-remote-control",
+      "canonicalName": "Droid Remote Control",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-hidden-core",
+      "canonicalName": "Hidden Core",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-personality-downloader",
+      "canonicalName": "Personality Downloader",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "Custom item has published minimum price/weight, not exact price or mass for a configured sale"
+    },
+    {
+      "canonicalId": "droid-specialized-subprocessor",
+      "canonicalName": "Specialized Subprocessor",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-tactician-battle-computer",
+      "canonicalName": "Tactician Battle Computer",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-laminanium-plating",
+      "canonicalName": "Laminanium Plating",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-communications-countermeasure-system",
+      "canonicalName": "Communications Countermeasure System",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-communications-jammer",
+      "canonicalName": "Communications Jammer",
+      "sourceBatch": "MECH-003",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-003.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-remote-receiver-jammer",
+      "canonicalName": "Remote Receiver Jammer",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "Narrative says extremely short range but gives no numerical maximum, preventing deterministic range eligibility."
+    },
+    {
+      "canonicalId": "droid-remote-receiver-signal-booster",
+      "canonicalName": "Remote Receiver Signal Booster",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "Printed 50% passive extension and up-to-100% temporary extension lack explicit combination/precedence."
+    },
+    {
+      "canonicalId": "droid-antitheft-comlink-locator",
+      "canonicalName": "Antitheft Comlink Locator",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-audio-enhancers",
+      "canonicalName": "Audio Enhancers",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-audio-radial-stunner",
+      "canonicalName": "Audio-Radial Stunner",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-automap",
+      "canonicalName": "Automap",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-blaster-recharge-interface",
+      "canonicalName": "Blaster Recharge Interface",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-collapsible-construction",
+      "canonicalName": "Collapsible Construction",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-concealed-item",
+      "canonicalName": "Concealed Item",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "The composite cost expression has ambiguous multiplication grouping and may be adjusted by the GM; exact host/item price not certified."
+    },
+    {
+      "canonicalId": "droid-courier-compartments",
+      "canonicalName": "Courier Compartments",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-droid-oil-bath",
+      "canonicalName": "Droid Oil Bath",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "Printed Table 3-2 500-credit price conflicts with 100/1,000/5,000/10,000 size-price tiers in prose. External ownership also must be respected."
+    },
+    {
+      "canonicalId": "droid-earphone-binary-to-basic-translator",
+      "canonicalName": "Earphone Binary-to-Basic Translator",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "Text describes more expensive earbud version but prints no price or differentiated mass for that version."
+    },
+    {
+      "canonicalId": "droid-electric-defense-grid",
+      "canonicalName": "Electric Defense Grid",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-emergency-oxygen-supply",
+      "canonicalName": "Emergency Oxygen Supply",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "Table 3-2 weight cell prints 20 without mass unit, and prose does not clarify. Cannot certify physical mass or burden."
+    },
+    {
+      "canonicalId": "droid-hidden-holster",
+      "canonicalName": "Hidden Holster",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-high-speed-cutting-torch-and-welder",
+      "canonicalName": "High-Speed Cutting Torch and Welder",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-holographic-game-system",
+      "canonicalName": "Holographic Game System",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-holographic-image-disguiser",
+      "canonicalName": "Holographic Image Disguiser",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-id-dodge",
+      "canonicalName": "ID Dodge",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-improved-coordination-circuitry",
+      "canonicalName": "Improved Coordination Circuitry",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-interference-generator",
+      "canonicalName": "Interference Generator",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "Deluxe model expands protection to video/holo but does not have separately printed price/weight; no typed purchasable deluxe variant certified."
+    },
+    {
+      "canonicalId": "droid-internal-defenses",
+      "canonicalName": "Internal Defenses",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-internal-grapple-gun",
+      "canonicalName": "Internal Grapple Gun",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-mesh-tape-dispenser",
+      "canonicalName": "Mesh Tape Dispenser",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-micro-shield",
+      "canonicalName": "Micro Shield",
+      "sourceBatch": "MECH-004",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-004.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-multifunction-apparatus",
+      "canonicalName": "Multifunction Apparatus",
+      "sourceBatch": "MECH-005",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-multispectrum-searchlight",
+      "canonicalName": "Multispectrum Searchlight",
+      "sourceBatch": "MECH-005",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-radiant-heat-element",
+      "canonicalName": "Radiant Heat Element",
+      "sourceBatch": "MECH-005",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-remote-viewer",
+      "canonicalName": "Remote Viewer",
+      "sourceBatch": "MECH-005",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-rental-restraining-bolt",
+      "canonicalName": "Rental Restraining Bolt",
+      "sourceBatch": "MECH-005",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-repulsorcam",
+      "canonicalName": "Repulsorcam",
+      "sourceBatch": "MECH-005",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-scomp-link",
+      "canonicalName": "Scomp Link",
+      "sourceBatch": "MECH-005",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-silence-bubble-generator",
+      "canonicalName": "Silence-Bubble Generator",
+      "sourceBatch": "MECH-005",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-space-beacon-launcher",
+      "canonicalName": "Space-Beacon Launcher",
+      "sourceBatch": "MECH-005",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-survival-kit",
+      "canonicalName": "Survival Kit",
+      "sourceBatch": "MECH-005",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-taser",
+      "canonicalName": "Taser",
+      "sourceBatch": "MECH-005",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "Published SGD p63 description gives weapon behavior but no explicit ranged or melee damage dice; complete executable attack specification requires another printed weapon source/rule cross-reference."
+    },
+    {
+      "canonicalId": "droid-video-screen",
+      "canonicalName": "Video Screen",
+      "sourceBatch": "MECH-005",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "sourceDecision": "HOLD",
+      "holdReason": "The book states screen sizes vary 50–500mm but does not specify whether this measures width, height or diagonal; no individual screen area is defined, so an exact configured price/mass needs dimensions."
+    },
+    {
+      "canonicalId": "droid-voice-print-command-lock",
+      "canonicalName": "Voice-Print Command Lock",
+      "sourceBatch": "MECH-005",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-weapon-detector",
+      "canonicalName": "Weapon Detector",
+      "sourceBatch": "MECH-005",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-sensor-booster",
+      "canonicalName": "Sensor Booster",
+      "sourceBatch": "MECH-005",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-sensor-countermeasure-package",
+      "canonicalName": "Sensor Countermeasure Package",
+      "sourceBatch": "MECH-005",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-yv-sensor-package",
+      "canonicalName": "YV Sensor Package",
+      "sourceBatch": "MECH-005",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-shield-expansion-module",
+      "canonicalName": "Shield Expansion Module",
+      "sourceBatch": "MECH-005",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-droid-battle-station",
+      "canonicalName": "Droid Battle Station",
+      "sourceBatch": "MECH-005",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-droid-command-station",
+      "canonicalName": "Droid Command Station",
+      "sourceBatch": "MECH-005",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-droid-recharge-station",
+      "canonicalName": "Droid Recharge Station",
+      "sourceBatch": "MECH-005",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "sourceDecision": "PASS"
+    },
+    {
+      "canonicalId": "droid-droid-socket",
+      "canonicalName": "Droid Socket",
+      "sourceBatch": "MECH-005",
+      "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+      "sourceDecision": "PASS"
+    }
+  ],
+  "sourceAuditHolds": [
+    {
+      "canonicalId": "droid-walking",
+      "name": "Walking",
+      "reason": "Core pp188-189 do not specify whether the one-tenth restricted-system discount applies to the extra-system surcharge when both rules apply.",
+      "batch": "MECH-002"
+    },
+    {
+      "canonicalId": "droid-wheeled",
+      "name": "Wheeled",
+      "reason": "Core pp188-189 do not specify whether the one-tenth restricted-system discount applies to the extra-system surcharge when both rules apply.",
+      "batch": "MECH-002"
+    },
+    {
+      "canonicalId": "droid-tracked",
+      "name": "Tracked",
+      "reason": "Core pp188-189 do not specify whether the one-tenth restricted-system discount applies to the extra-system surcharge when both rules apply.",
+      "batch": "MECH-002"
+    },
+    {
+      "canonicalId": "droid-hovering",
+      "name": "Hovering",
+      "reason": "Core pp188-189 do not specify whether the one-tenth restricted-system discount applies to the extra-system surcharge when both rules apply.",
+      "batch": "MECH-002"
+    },
+    {
+      "canonicalId": "droid-flying",
+      "name": "Flying",
+      "reason": "Core pp188-189 do not specify whether the one-tenth restricted-system discount applies to the extra-system surcharge when both rules apply.",
+      "batch": "MECH-002"
+    },
+    {
+      "canonicalId": "droid-self-destruct-system",
+      "name": "Self-Destruct System",
+      "reason": "Tiny and smaller produce no collateral-damage dice; source formula based on maximum damage does not establish a purchasable price/mass for those sizes.",
+      "batch": "MECH-002"
+    },
+    {
+      "canonicalId": "droid-climbing-claws",
+      "name": "Climbing Claws",
+      "reason": "Printed prose and table disagree on price base",
+      "batch": "MECH-003"
+    },
+    {
+      "canonicalId": "droid-jump-servos",
+      "name": "Jump Servos",
+      "reason": "Printed prose and accessory table disagree on cost base",
+      "batch": "MECH-003"
+    },
+    {
+      "canonicalId": "droid-magnetic-feet",
+      "name": "Magnetic Feet",
+      "reason": "Table uses appendage-based pricing without identifying which appendage belongs to the foot hardware",
+      "batch": "MECH-003"
+    },
+    {
+      "canonicalId": "droid-burrower-drive",
+      "name": "Burrower Drive",
+      "reason": "Tiny and smaller have no published self-destruct collateral damage dice, so drill attack damage is unquantified for those sizes",
+      "batch": "MECH-003"
+    },
+    {
+      "canonicalId": "droid-projectile-hand",
+      "name": "Projectile Hand",
+      "reason": "250cr description and double appendage-cost table contradict for some chosen appendages",
+      "batch": "MECH-003"
+    },
+    {
+      "canonicalId": "droid-remote-limb-control",
+      "name": "Remote Limb Control",
+      "reason": "Prose prices differ from table appendage-based price, and table does not specify basic/deluxe distinction",
+      "batch": "MECH-003"
+    },
+    {
+      "canonicalId": "droid-rocket-arm",
+      "name": "Rocket Arm",
+      "reason": "Printed 2000cr fixed price conflicts with four-times-appendage table",
+      "batch": "MECH-003"
+    },
+    {
+      "canonicalId": "droid-personality-downloader",
+      "name": "Personality Downloader",
+      "reason": "Custom item has published minimum price/weight, not exact price or mass for a configured sale",
+      "batch": "MECH-003"
+    },
+    {
+      "canonicalId": "droid-remote-receiver-jammer",
+      "name": "Remote Receiver Jammer",
+      "reason": "Narrative says extremely short range but gives no numerical maximum, preventing deterministic range eligibility.",
+      "batch": "MECH-004"
+    },
+    {
+      "canonicalId": "droid-remote-receiver-signal-booster",
+      "name": "Remote Receiver Signal Booster",
+      "reason": "Printed 50% passive extension and up-to-100% temporary extension lack explicit combination/precedence.",
+      "batch": "MECH-004"
+    },
+    {
+      "canonicalId": "droid-concealed-item",
+      "name": "Concealed Item",
+      "reason": "The composite cost expression has ambiguous multiplication grouping and may be adjusted by the GM; exact host/item price not certified.",
+      "batch": "MECH-004"
+    },
+    {
+      "canonicalId": "droid-droid-oil-bath",
+      "name": "Droid Oil Bath",
+      "reason": "Printed Table 3-2 500-credit price conflicts with 100/1,000/5,000/10,000 size-price tiers in prose. External ownership also must be respected.",
+      "batch": "MECH-004"
+    },
+    {
+      "canonicalId": "droid-earphone-binary-to-basic-translator",
+      "name": "Earphone Binary-to-Basic Translator",
+      "reason": "Text describes more expensive earbud version but prints no price or differentiated mass for that version.",
+      "batch": "MECH-004"
+    },
+    {
+      "canonicalId": "droid-emergency-oxygen-supply",
+      "name": "Emergency Oxygen Supply",
+      "reason": "Table 3-2 weight cell prints 20 without mass unit, and prose does not clarify. Cannot certify physical mass or burden.",
+      "batch": "MECH-004"
+    },
+    {
+      "canonicalId": "droid-interference-generator",
+      "name": "Interference Generator",
+      "reason": "Deluxe model expands protection to video/holo but does not have separately printed price/weight; no typed purchasable deluxe variant certified.",
+      "batch": "MECH-004"
+    },
+    {
+      "canonicalId": "droid-taser",
+      "name": "Taser",
+      "reason": "Published SGD p63 description gives weapon behavior but no explicit ranged or melee damage dice; complete executable attack specification requires another printed weapon source/rule cross-reference.",
+      "batch": "MECH-005"
+    },
+    {
+      "canonicalId": "droid-video-screen",
+      "name": "Video Screen",
+      "reason": "The book states screen sizes vary 50–500mm but does not specify whether this measures width, height or diagonal; no individual screen area is defined, so an exact configured price/mass needs dimensions.",
+      "batch": "MECH-005"
+    }
+  ],
+  "productionMigrationNotApprovedByThisLedger": true,
+  "validation": {
+    "printedSourceSpecReview": "All 122 identities evaluated",
+    "productionImplementation": "NOT_CERTIFIED",
+    "garage": "NOT_TESTED",
+    "pcChargen": "NOT_TESTED",
+    "follower": "NOT_TESTED",
+    "store": "NOT_TESTED",
+    "foundryV13": "NOT_TESTED",
+    "crossbookCompleteness": "NOT_CERTIFIED"
+  }
 }
