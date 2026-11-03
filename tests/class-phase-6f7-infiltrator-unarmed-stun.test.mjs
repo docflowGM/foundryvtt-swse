@@ -54,6 +54,8 @@ test('damage mode and class bonus survive canonical damage resolution and compos
  assert.match(resolver,/damageTypes: Object\.freeze\(infiltratorStun \? \['stun'\] : types\)/);
  const dmg=read('scripts/combat/rolls/damage.js');
  assert.match(dmg,/resolveCanonicalDamage\(weapon, \{ \.\.\.rollContext, actor \}\)/);
+ assert.match(dmg,/damageType: canonicalDamage\.damageMode === 'stun' \? 'stun'/);
+ assert.match(dmg,/damageTypes: canonicalDamage\.damageMode === 'stun' \? \['stun'\]/);
  const math=read('scripts/engine/combat/combat-roll-math.js');
  assert.match(math,/const infiltratorDice = infiltratorUnarmedStunDice\(actor,weapon,/);
  assert.match(math,/extraWeaponDice = Number\(optionModifiers\.damageExtraWeaponDice \|\| 0\) \+ infiltratorDice/);
