@@ -1226,7 +1226,7 @@
     "officialErrataOverlay": "COMMITTED_AND_LOCALLY_VALIDATED",
     "publicationAuthorityTier": "BASE_BOOK_PLUS_OFFICIAL_ERRATA",
     "preErrataHistoricalBatchClaimsMustNotOverrideErrata": true,
-    "sgdAccessoryHostScope": "15_REVIEWED_10_ELIGIBLE_3_LOCOMOTION_2_UNRESOLVED",
+    "sgdAccessoryHostScope": "15_REVIEWED_12_WEIGHT_ELIGIBLE_3_LOCOMOTION_2_HOST_VARIANT_OPEN",
     "sgdAccessoryHostFoundryTests": "NOT_EXECUTED",
     "unresolvedSourceMechanicalHolds": 23
   },
@@ -1234,11 +1234,11 @@
     "overlayPath": "data/audits/droids/droid-component-official-errata-authority-001.json",
     "verification": "Wizards of the Coast Saga Edition Core Rulebook errata, October 21, 2008",
     "precedence": "OFFICIAL_ERRATA_SUPERSEDES_CONFLICTING_BASE_BOOK_CLAIMS",
-    "status": "ERRATA_OVERLAY_COMMITTED; SGD_15_HOST_CLASSES_REVIEWED; TWO_SCOPE_VARIANTS_HELD",
+    "status": "OFFICIAL_ERRATA_ACTIVE; 15_SGD_WEIGHT_SCOPES_RESOLVED; 2_PHYSICAL_HOST_OR_VARIANT_QUESTIONS",
     "sourceCertifiedHistoricalPassCount": 99,
     "sourceHoldsUnchanged": 23,
     "confirmedCostWeightCorrectionCoreAccessoryTargets": 21,
-    "sgdWeightHostClassificationPending": 2,
+    "sgdWeightHostClassificationPending": 0,
     "synchronizedFireCircuits": {
       "canonicalId": "droid-synchronized-fire-circuits",
       "originalBaseBookReportedTotalBonus": 4,
@@ -1254,12 +1254,16 @@
       "fixtures": "data/audits/droids/droid-component-sgd-errata-host-002-fixtures.json",
       "validator": "tools/audits/droids/verify_droid_component_sgd_errata_host_002.mjs",
       "reviewed": 15,
-      "eligibleIntegratedAccessories": 10,
-      "locomotionExclusions": 3,
-      "physicalHostVariantScopeUnresolved": 2,
-      "sourceHoldsPromoted": 0
+      "accessoryWeightRuleEligible": 12,
+      "locomotionRuleExcluded": 3,
+      "chassisIntegratedSourceHosts": 10,
+      "physicalPlacementOrHandheldVariantQuestions": 2,
+      "sourceHoldsPromoted": 0,
+      "sourceExpectedArithmeticCases": 137,
+      "categoryAndHostIndependent": true
     },
-    "sgdWeightHostClassificationReviewed": 15
+    "sgdWeightHostClassificationReviewed": 15,
+    "sgdPhysicalHostOrVariantQuestionsRemaining": 2
   },
   "holdTriage": {
     "path": "data/audits/droids/droid-component-mechanical-hold-triage-001.json",
