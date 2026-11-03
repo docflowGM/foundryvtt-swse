@@ -23,6 +23,7 @@ const finite = v => typeof v === 'number' && Number.isFinite(v);
 const DAMAGE = /(?:printed damage|published damage|damage)\s*:?\s*(\d+)d(\d+)(?:\s*([+-])\s*(\d+))?\s*(?:x\s*(\d+))?([^;.]*)/i;
 const OPERATOR = /(?:printed operator|operator|station)\s*:?\s*([^;.(]*?)\s*(?:\(([^)]*)\))?\s*(?:;|\.|\s+(?:printed|source|damage|physical)\b|$)/i;
 const EVIDENCE = /\{[^{}]*\}/;
+const AMMUNITION_LIMITED = /\b(missiles?|torpedo(?:es)?|rockets?|mines?|bombs?|bomblets?|grenades?|launchers?|projectiles?|shells?|canisters?|payload)\b/i;
 
 /** Parse one printed group. Never throws; `reasons` names everything that makes it non-executable. */
 export function parseStockFiringGroup(group) {
@@ -50,8 +51,14 @@ export function parseStockFiringGroup(group) {
   if (!o || !opText) reasons.push('STOCK_OPERATOR_NOT_PRINTED');
   else if (/^battery$/.test(opText) || /\d+\s*gunners/.test(`${opText} ${opDetail}`) || /batter/.test(opText)) reasons.push('STOCK_OPERATOR_IS_A_STATION_BATTERY');
   else if (opText === 'pilot' || opText === 'gunner') out.operator = opText;
+  else if (opText === 'copilot' || opText === 'co-pilot') out.operator = 'copilot';
   else reasons.push('STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER');
   if (group?.groupKind === 'weapon-battery') reasons.push('STOCK_GROUP_IS_A_WEAPON_BATTERY');
+  // Fail-closed denials by wording (a name can only DENY, never authorize): finite-ammunition weapons have no magazine
+  // authority yet, torpedoes/missiles/mines/grenades carry splash and payload rules, and ion damage against vehicles is
+  // unverified. These stay reference-only until those mechanics exist.
+  if (AMMUNITION_LIMITED.test(`${group?.label ?? ''} ${notes}`)) reasons.push('STOCK_AMMUNITION_LIMITED_UNTRACKED');
+  if (/\bion\b/i.test(String(group?.label ?? ''))) reasons.push('STOCK_DAMAGE_ION_UNVERIFIED');
   // point-defense status is never inferred from a label: such groups stay non-executable until it is classified from source
   if (/point[- ]?defen[cs]e/i.test(String(group?.label ?? '') + notes)) reasons.push('STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED');
 

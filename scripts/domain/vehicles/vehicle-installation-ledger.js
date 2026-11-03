@@ -123,8 +123,8 @@ const deny = (...reasons) => ({ ok: false, reasons });
  * @param {number} p.availableCredits owner funds
  * @param {object} [p.rules]
  */
-// The attack-time crew station authority (vehicle-crew-station-evidence.js) resolves pilot and gunner stations.
-export const WEAPON_OPERATOR_ROLES = new Set(['pilot', 'gunner']);
+// The attack-time crew station authority (vehicle-crew-station-evidence.js) resolves pilot, copilot and gunner stations.
+export const WEAPON_OPERATOR_ROLES = new Set(['pilot', 'copilot', 'gunner']);
 
 /**
  * Basis of a weapon mount: 'PUBLISHED' (printed book/page evidence) or 'GM_ADJUDICATED' (V-P2-04 owner ruling: a GM
@@ -171,7 +171,7 @@ export function planVehicleInstallation({ record, flags, catalogEntry, installId
     if (!ok) reasons.push('WEAPON_MOUNT_UNCERTIFIED');
     else {
       if (!VEHICLE_FIRING_ARCS.has(mount.arc)) reasons.push('WEAPON_MOUNT_ARC_INVALID');
-      // Core: a vehicle weapon is operated by the pilot (or copilot) or a gunner; the station authority resolves pilot/gunner.
+      // Core: a vehicle weapon is operated by the pilot, the copilot or a gunner.
       if (!WEAPON_OPERATOR_ROLES.has(mount.operatorRole)) reasons.push('WEAPON_MOUNT_OPERATOR_INVALID');
       const others = readCertifiedInstallations(flags, key).entries;
       if (others.some(e => e.mount?.mountKey === mount.mountKey)) reasons.push('WEAPON_MOUNT_KEY_IN_USE');

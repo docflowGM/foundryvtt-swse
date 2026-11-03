@@ -20,7 +20,7 @@ record). Stock weapons never pass through the ledger, EP or credits and are neve
 
 ## Result (offline; nothing is live-verified)
 
-- 846 published groups; 446 SOURCE_VERIFIED (configuration established); **274 OFFLINE_EXECUTABLE on 207 vehicles** (after V-P6C-01, reading both field-state key styles, and explaining printed attack totals by published rules), each driven
+- 846 published groups; 446 SOURCE_VERIFIED (configuration established); **230 OFFLINE_EXECUTABLE on 207 vehicles** (after V-P6C-01, reading both field-state key styles, and explaining printed attack totals by published rules), each driven
   through arm -> attack -> damage by the CORPUS test; 0 LIVE_VERIFIED. See `stock-weapon-coverage.md`.
 - Includes the X-wing laser cannons (6d10 x 2, pilot, +5), TIE fighter, TIE interceptor, Y-wing, ARC-170, YT-1300, AAT and others.
   The X-wing proton torpedoes stay reference-only (splash, finite payload).
@@ -34,7 +34,7 @@ keep their certified mount and arc. The world setting can switch unstated arcs t
 
 ## What genuinely needs new mechanics (all recorded in the deferred register, P6B-D-033..039)
 
-- Printed attack totals: explained for 274 executable groups (crew BAB + Int; +2 on pilot-crewed groups = Core p. 171); the battery +2 per additional gunner is documented but batteries need their own model; about 50 single-operator groups stay unexplained.
+- Printed attack totals: explained for the 230 executable groups (crew BAB + Int; +2 on pilot-crewed groups = Core p. 171); the battery +2 per additional gunner is documented but batteries need their own model; about 50 single-operator groups stay unexplained.
 - Batteries and multi-gunner stations (291), capital-scale x5 damage (192), splash/ion/ammunition groups (142), point-defense.
 - 12 groups on records with no arc evidence; 5 groups with arcs the system cannot yet interpret.
 
@@ -43,3 +43,10 @@ keep their certified mount and arc. The world setting can switch unstated arcs t
 - The vehicle sheet's weapon panel never listed owned weapon Items on a live actor (`items` is a Foundry Collection, not an Array).
 - Autofire/burst requests are refused for vehicle-managed weapons (their printed vehicle autofire bonuses are not automated).
 - Generic-crew attacks used an unsourced tier table; source-backed and constructed ships now use verified crew Base Attack.
+
+## Correction (2026-11-03)
+
+The first push of the printed-total work (8f88c34) counted 274 executable groups. About 45 of them were finite-ammunition
+weapons (concussion missiles, proton and shieldbuster torpedoes, mines) and one ion cannon, which have no magazine or
+ion-versus-vehicle authority. They are now denied by wording (a name can only deny, never authorize): the executable set is
+**230 groups on 207 vehicles**, all laser, blaster and mass-driver cannons. Copilot-operated groups were added (11).

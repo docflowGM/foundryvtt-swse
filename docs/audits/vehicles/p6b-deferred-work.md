@@ -59,7 +59,7 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | P6B-D-037 | STOCK | published stock groups whose firing arc is stated but not interpreted, or never reviewed | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
 | P6B-D-038 | STOCK | legacy abstract-crew attack tier table (CREW_QUALITY_BONUS) for actors that are not source-backed or constructed | NONCRITICAL_DEFECT | MINOR | no | - |
 | P6B-D-039 | STOCK | point-defense weapon modification (catalog row "point-defense", +4,000 credits) | ENGINEERING_COMPLEXITY | MINOR | no | - |
-| P6B-D-041 | STOCK | published stock groups operated by a copilot or non-standard operator (36 blocked by this alone) | ENGINEERING_COMPLEXITY | MINOR | no | - |
+| P6B-D-041 | STOCK | published stock groups with droid, remote or ambiguous operators | ENGINEERING_COMPLEXITY | MINOR | no | - |
 
 ## Details
 
@@ -393,7 +393,7 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 
 - **Source:** canonical records, armament.firingGroups
 - **Category / severity:** SOURCE_EVIDENCE_MISSING / IMPORTANT
-- **Reason:** Investigated across 836 groups and 12 books. A printed total is the generic crew's complete attack modifier. It equals crew Base Attack + vehicle Int in 272 groups (delta 0), and exceeds it by exactly +2 on pilot-crewed groups in 231 of 313 cases (the Core p. 171 trained-Pilot rule; Core Rulebook statblocks omit it, later books include it, and the same crew quality prints both, so it is a per-statblock convention). Weapon batteries add +2 per gunner beyond the first (2 gunners +2, 3 +4, 4 +6, 5 +8, 6 +10; 85-98% of each size), matching the SotG fighter-group sentence "+2 on attacks per additional vehicle ... as a weapon battery"; the Core p. 170 battery text itself is unreadable in the OCR. Accepted and executable: delta 0, and +2 on pilot-crewed groups (274 groups); the printed total is applied ONCE and its components are shown as included, never added again. Still unexplained: about 50 non-battery groups (mostly burst-fire / autofire modes and isolated cases, e.g. -5 printed on "Burst Fire mode" groups) and the battery groups, which also need the battery damage rules.
+- **Reason:** Investigated across 836 groups and 12 books. A printed total is the generic crew's complete attack modifier. It equals crew Base Attack + vehicle Int in 272 groups (delta 0), and exceeds it by exactly +2 on pilot-crewed groups in 231 of 313 cases (the Core p. 171 trained-Pilot rule; Core Rulebook statblocks omit it, later books include it, and the same crew quality prints both, so it is a per-statblock convention). Weapon batteries add +2 per gunner beyond the first (2 gunners +2, 3 +4, 4 +6, 5 +8, 6 +10; 85-98% of each size), matching the SotG fighter-group sentence "+2 on attacks per additional vehicle ... as a weapon battery"; the Core p. 170 battery text itself is unreadable in the OCR. Accepted and executable: delta 0, and +2 on pilot-crewed groups (230 groups, laser/blaster/mass-driver cannons); the printed total is applied ONCE and its components are shown as included, never added again. Still unexplained: about 50 non-battery groups (mostly burst-fire / autofire modes and isolated cases, e.g. -5 printed on "Burst Fire mode" groups) and the battery groups, which also need the battery damage rules.
 - **Missing:** Core p. 170 weapon battery text (PDF); the source of the residual single-operator deltas.
 - **Owner ruling needed:** no
 - **Impact:** Batteries and about 50 single-operator groups stay refused (STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA).
@@ -423,7 +423,7 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 
 - **Source:** canonical records
 - **Category / severity:** DEPENDENCY_BLOCKED / IMPORTANT
-- **Reason:** Splash/area groups need the area-attack path and a finite-payload magazine. Ion groups: the damage engine only partly models ion (threshold type flag and an ion-shielding cap); the Core vehicle ion rule text is garbled in the OCR (half the ion damage to hit points, plus condition-track effects for droids and vehicles), so ion-versus-vehicle application cannot be verified from the repository.
+- **Reason:** Splash/area groups need the area-attack path and a finite-payload magazine. Ion groups: the damage engine only partly models ion (threshold type flag and an ion-shielding cap); the Core vehicle ion rule text is garbled in the OCR (half the ion damage to hit points, plus condition-track effects for droids and vehicles), so ion-versus-vehicle application cannot be verified from the repository. Finite-ammunition groups (missiles, torpedoes, rockets, mines, bombs, grenades, launchers) and ion-labelled groups are denied by wording (STOCK_AMMUNITION_LIMITED_UNTRACKED, STOCK_DAMAGE_ION_UNVERIFIED) so they cannot fire without a magazine authority.
 - **Missing:** Core p. 168-169 ion damage text (PDF) and an ion-versus-vehicle damage test; area attack integration; magazine authority.
 - **Owner ruling needed:** no (V-P6A-03)
 - **Impact:** X-wing proton torpedoes stay reference-only; its laser cannons fire.
@@ -469,11 +469,11 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 - **Impact:** Mostly ground vehicles (speeders, droids).
 - **Recommended action:** Check the Core scale rules in the PDF and a handful of statblocks, then decide the x1 treatment.
 
-### P6B-D-041 - published stock groups operated by a copilot or non-standard operator (36 blocked by this alone)
+### P6B-D-041 - published stock groups with droid, remote or ambiguous operators
 
 - **Source:** canonical records; vehicle-crew-station-evidence.js
 - **Category / severity:** ENGINEERING_COMPLEXITY / MINOR
-- **Reason:** The attack-time crew authority resolves only pilot and gunner stations. About 12 groups name a copilot; others name a droid brain, "virtual droid gunner", "remote pilot" or an ambiguous "pilot or gunner". Copilot support needs the station authority and domain routing extended; droid and ambiguous operators have no defined crew model.
+- **Reason:** The attack-time crew authority resolves pilot, copilot and gunner stations (copilot added). Droid brains, "virtual droid gunner", "remote pilot", "2 gunners" and ambiguous "pilot or gunner" operators have no defined crew model.
 - **Missing:** Copilot station in the attack crew authority; droid operator semantics.
 - **Owner ruling needed:** no
 - **Impact:** 36 groups refused.

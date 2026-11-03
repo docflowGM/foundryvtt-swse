@@ -865,3 +865,5 @@ The project owner verified Core Rulebook printed p. 171 (PDF p. 172): a vehicle 
 Investigation of the 564 groups whose printed attack total did not match crew Base Attack + vehicle Intelligence (P6B-D-033): a statblock's printed total is the generic crew's complete modifier, and its differences from the Core formula are explained by published rules in 274 executable groups (delta 0, or +2 on pilot-crewed groups = the Core p. 171 trained-Pilot bonus, owner-verified). Weapon batteries add +2 per gunner beyond the first (corroborated by the SotG fighter-group sentence); the Core p. 170 text is unreadable in the OCR. No register entry is affected and no rule was inferred beyond the owner-verified p. 171 bonus.
 
 - **Revision 23 (2026-11-03):** appended this status note. No existing entry changed.
+
+- **Revision 24 (2026-11-03):** correction to the revision 23 note: the executable count is 230 groups (laser, blaster and mass-driver cannons), not 274; finite-ammunition and ion-labelled groups were wrongly counted and are now denied. No existing entry changed.

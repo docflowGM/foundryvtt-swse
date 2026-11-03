@@ -8,7 +8,7 @@ import { resolveVehicleCrewActor } from '../../engine/crew/vehicle-crew-actor-au
 const fail = reason => ({crewStationResolved:false,reason});
 const same = (a,b) => typeof a==='string' && typeof b==='string' &&
   a.trim().toLowerCase()===b.trim().toLowerCase();
-const VALID_STATIONS = new Set(['pilot','gunner']);
+const VALID_STATIONS = new Set(['pilot','copilot','gunner']);
 
 export async function resolveVehicleCrewStationEvidence({
   vehicle, weapon, domainResolution, requestedCrewStation = null, certifiedStation = null

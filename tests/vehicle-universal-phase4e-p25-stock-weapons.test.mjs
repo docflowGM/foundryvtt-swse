@@ -374,7 +374,7 @@ test('CORPUS: each executable stock group arms, attacks at its printed total, an
     }
   }
   assert.deepEqual(failures, []);
-  assert.equal(proven.length, 274, 'the corpus-wide count of offline-executable stock groups');
+  assert.equal(proven.length, 230, 'the corpus-wide count of offline-executable stock groups');
   setPolicy(undefined);
 });
 
@@ -383,9 +383,9 @@ test('COVERAGE REPORT: current, and its executable counts are exactly what the C
   execFileSync(process.execPath, ['tools/audits/vehicles/build-stock-weapon-coverage.mjs', '--check']);
   const { readFileSync } = await import('node:fs');
   const cov = JSON.parse(readFileSync('data/audits/vehicles/stock-weapon-coverage.json', 'utf8'));
-  assert.deepEqual([cov.totals.vehicles, cov.totals.groups, cov.totals.offlineExecutableGroups, cov.totals.vehiclesWithOfflineExecutableGroup, cov.totals.liveVerifiedVehicles], [429, 846, 274, 207, 0]);
+  assert.deepEqual([cov.totals.vehicles, cov.totals.groups, cov.totals.offlineExecutableGroups, cov.totals.vehiclesWithOfflineExecutableGroup, cov.totals.liveVerifiedVehicles], [429, 846, 230, 207, 0]);
   const exec = cov.vehicles.flatMap(v => v.groups.filter(g => g.offlineExecutable));
-  assert.equal(exec.length, 274);
+  assert.equal(exec.length, 230);
   for (const g of cov.vehicles.flatMap(v => v.groups)) {
     assert.equal(g.liveVerified, false);
     if (!g.offlineExecutable) { assert.ok(g.refusals.length > 0, g.groupKey + ' has a named refusal'); assert.equal(g.attackReadiness, 'REFUSED'); }
@@ -393,4 +393,31 @@ test('COVERAGE REPORT: current, and its executable counts are exactly what the C
   // representative common ships are in the executable set
   const names = new Set(cov.vehicles.filter(v => v.offlineExecutableGroups).map(v => v.sourceEntryKey));
   for (const k of [XW, 'core-tie-fighter', 'core-corellian-yt-1300-transport', 'core-koensayr-y-wing-starfighter', 'core-arc-170-starfighter']) assert.ok(names.has(k), k);
+});
+
+test('AMMUNITION-LIMITED and ION groups are never executable (no magazine authority, ion-vs-vehicle unverified)', () => {
+  const all = docs.flatMap(d => assessStockWeaponGroups(d.flags.swse.universalVehicleSource.source).groups.map(g => ({ key: keyOf(d), g })));
+  const ammo = all.filter(x => /\b(missiles?|torpedo(es)?|rockets?|mines?|bombs?|grenades?|launchers?|projectiles?)\b/i.test(x.g.label));
+  assert.ok(ammo.length > 50, 'there are many ammunition-based groups');
+  for (const x of ammo) { assert.equal(x.g.executable, false, `${x.key}: ${x.g.label}`); assert.ok(x.g.reasons.includes('STOCK_AMMUNITION_LIMITED_UNTRACKED')); }
+  for (const x of all.filter(y => /\bion\b/i.test(y.g.label))) { assert.equal(x.g.executable, false, `${x.key}: ${x.g.label}`); assert.ok(x.g.reasons.includes('STOCK_DAMAGE_ION_UNVERIFIED')); }
+  // the executable set contains no wording that denotes finite ammunition
+  assert.equal(all.filter(x => x.g.executable && /missile|torpedo|mine|rocket|bomb|grenade|launcher|ion\b/i.test(x.g.label)).length, 0);
+});
+
+test('COPILOT-operated stock groups: armed, fire from the copilot station, and get no pilot bonus', async () => {
+  const key = 'cw-barloz-class-freighter';
+  const rec = docs.find(d => keyOf(d) === key).flags.swse.universalVehicleSource.source;
+  const g = assessStockWeaponGroups(rec).groups.find(x => x.operator === 'copilot' && x.executable);
+  assert.ok(g, 'a copilot group is executable');
+  const v = await armed(key); const w = stockItems(v).find(i => i.flags.swse.vehicleStockWeapon.groupKey === g.groupKey);
+  assert.equal(w.system.vehicleMount.crewRole, 'copilot');
+  setPolicy(undefined);
+  const r = await fire(v, w);
+  assert.equal(r.blocked, false, r.log.join('|'));
+  assert.ok(r.result);
+  assert.equal(g.attackBasis.kind, 'BAB_PLUS_INT', 'a copilot total gets no trained-Pilot +2');
+  assert.equal(r.result.componentLedger.some(e => e.id === 'pilot-trained-weapon-crew'), false);
+  v.system.crewPositions = { copilot: { id: 'gone', name: 'Ghost' } };          // an assigned copilot that no longer exists
+  assert.equal((await fire(v, w)).result, null);
 });
