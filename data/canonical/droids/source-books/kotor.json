@@ -63,72 +63,72 @@
           {
             "instanceId": "KOTOR-DROID-001-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 81,
               "pdfPage1Based": 82,
               "sourceEntryKey": "KOTOR-DROID-001",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-001-SYS-TOKEN-02",
             "name": "basic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 81,
               "pdfPage1Based": 82,
               "sourceEntryKey": "KOTOR-DROID-001",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-001-SYS-TOKEN-03",
             "name": "2 hand appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 81,
               "pdfPage1Based": 82,
               "sourceEntryKey": "KOTOR-DROID-001",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-001-SYS-TOKEN-04",
             "name": "translator unit (DC 10)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 81,
               "pdfPage1Based": 82,
               "sourceEntryKey": "KOTOR-DROID-001",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-001-SYS-TOKEN-05",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 81,
               "pdfPage1Based": 82,
               "sourceEntryKey": "KOTOR-DROID-001",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -138,46 +138,19 @@
             "entryId": "KOTOR-DROID-001-POS-01",
             "name": "comlink",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 81,
-              "pdfPage1Based": 82,
-              "sourceEntryKey": "KOTOR-DROID-001",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-001-POS-02",
             "name": "datapad",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 81,
-              "pdfPage1Based": 82,
-              "sourceEntryKey": "KOTOR-DROID-001",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-001-POS-03",
             "name": "portable computer",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 81,
-              "pdfPage1Based": 82,
-              "sourceEntryKey": "KOTOR-DROID-001",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -192,7 +165,7 @@
               "page": 81,
               "pdfPage1Based": 82,
               "sourceEntryKey": "KOTOR-DROID-001",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -206,7 +179,7 @@
               "page": 81,
               "pdfPage1Based": 82,
               "sourceEntryKey": "KOTOR-DROID-001",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -301,142 +274,142 @@
           {
             "instanceId": "KOTOR-DROID-002-SYS-TOKEN-01",
             "name": "hovering locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 82,
               "pdfPage1Based": 83,
               "sourceEntryKey": "KOTOR-DROID-002",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-002-SYS-TOKEN-02",
             "name": "heuristic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 82,
               "pdfPage1Based": 83,
               "sourceEntryKey": "KOTOR-DROID-002",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-002-SYS-TOKEN-03",
             "name": "2 tool appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 82,
               "pdfPage1Based": 83,
               "sourceEntryKey": "KOTOR-DROID-002",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-002-SYS-TOKEN-04",
             "name": "electroshock probe",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 82,
               "pdfPage1Based": 83,
               "sourceEntryKey": "KOTOR-DROID-002",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-002-SYS-TOKEN-05",
             "name": "holorecorder",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 82,
               "pdfPage1Based": 83,
               "sourceEntryKey": "KOTOR-DROID-002",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-002-SYS-TOKEN-06",
             "name": "holoprojector",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 82,
               "pdfPage1Based": 83,
               "sourceEntryKey": "KOTOR-DROID-002",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-002-SYS-TOKEN-07",
             "name": "improved sensor package",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 82,
               "pdfPage1Based": 83,
               "sourceEntryKey": "KOTOR-DROID-002",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-002-SYS-TOKEN-08",
             "name": "locked access",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 82,
               "pdfPage1Based": 83,
               "sourceEntryKey": "KOTOR-DROID-002",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-002-SYS-TOKEN-09",
             "name": "integrated comlink",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 82,
               "pdfPage1Based": 83,
               "sourceEntryKey": "KOTOR-DROID-002",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-002-SYS-TOKEN-10",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 82,
               "pdfPage1Based": 83,
               "sourceEntryKey": "KOTOR-DROID-002",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -446,16 +419,7 @@
             "entryId": "KOTOR-DROID-002-POS-01",
             "name": "planetary infrastructure management software",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 82,
-              "pdfPage1Based": 83,
-              "sourceEntryKey": "KOTOR-DROID-002",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -470,7 +434,7 @@
               "page": 82,
               "pdfPage1Based": 83,
               "sourceEntryKey": "KOTOR-DROID-002",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -484,7 +448,7 @@
               "page": 82,
               "pdfPage1Based": 83,
               "sourceEntryKey": "KOTOR-DROID-002",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -578,114 +542,114 @@
           {
             "instanceId": "KOTOR-DROID-003-SYS-TOKEN-01",
             "name": "wheeled locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 82,
               "pdfPage1Based": 83,
               "sourceEntryKey": "KOTOR-DROID-003",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-003-SYS-TOKEN-02",
             "name": "magnetic feet",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 82,
               "pdfPage1Based": 83,
               "sourceEntryKey": "KOTOR-DROID-003",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-003-SYS-TOKEN-03",
             "name": "heuristic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 82,
               "pdfPage1Based": 83,
               "sourceEntryKey": "KOTOR-DROID-003",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-003-SYS-TOKEN-04",
             "name": "5 tool appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 82,
               "pdfPage1Based": 83,
               "sourceEntryKey": "KOTOR-DROID-003",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-003-SYS-TOKEN-05",
             "name": "diagnostics package",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 82,
               "pdfPage1Based": 83,
               "sourceEntryKey": "KOTOR-DROID-003",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-003-SYS-TOKEN-06",
             "name": "internal storage (2 kg)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 82,
               "pdfPage1Based": 83,
               "sourceEntryKey": "KOTOR-DROID-003",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-003-SYS-TOKEN-07",
             "name": "improved sensor package",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 82,
               "pdfPage1Based": 83,
               "sourceEntryKey": "KOTOR-DROID-003",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-003-SYS-TOKEN-08",
             "name": "darkvision",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 82,
               "pdfPage1Based": 83,
               "sourceEntryKey": "KOTOR-DROID-003",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -695,106 +659,43 @@
             "entryId": "KOTOR-DROID-003-POS-01",
             "name": "stun ray (as blaster pistol set to stun)",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 82,
-              "pdfPage1Based": 83,
-              "sourceEntryKey": "KOTOR-DROID-003",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-003-POS-02",
             "name": "astrogation buffer (10 memory units)",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 82,
-              "pdfPage1Based": 83,
-              "sourceEntryKey": "KOTOR-DROID-003",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-003-POS-03",
             "name": "electroshock probe",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 82,
-              "pdfPage1Based": 83,
-              "sourceEntryKey": "KOTOR-DROID-003",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-003-POS-04",
             "name": "fire extinguisher",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 82,
-              "pdfPage1Based": 83,
-              "sourceEntryKey": "KOTOR-DROID-003",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-003-POS-05",
             "name": "electric arc welder",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 82,
-              "pdfPage1Based": 83,
-              "sourceEntryKey": "KOTOR-DROID-003",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-003-POS-06",
             "name": "holorecorder",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 82,
-              "pdfPage1Based": 83,
-              "sourceEntryKey": "KOTOR-DROID-003",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-003-POS-07",
             "name": "holoprojector",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 82,
-              "pdfPage1Based": 83,
-              "sourceEntryKey": "KOTOR-DROID-003",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -809,7 +710,7 @@
               "page": 82,
               "pdfPage1Based": 83,
               "sourceEntryKey": "KOTOR-DROID-003",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -823,7 +724,7 @@
               "page": 82,
               "pdfPage1Based": 83,
               "sourceEntryKey": "KOTOR-DROID-003",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -917,72 +818,72 @@
           {
             "instanceId": "KOTOR-DROID-004-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 83,
               "pdfPage1Based": 84,
               "sourceEntryKey": "KOTOR-DROID-004",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-004-SYS-TOKEN-02",
             "name": "basic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 83,
               "pdfPage1Based": 84,
               "sourceEntryKey": "KOTOR-DROID-004",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-004-SYS-TOKEN-03",
             "name": "translator unit (DC 10)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 83,
               "pdfPage1Based": 84,
               "sourceEntryKey": "KOTOR-DROID-004",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-004-SYS-TOKEN-04",
             "name": "2 hand appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 83,
               "pdfPage1Based": 84,
               "sourceEntryKey": "KOTOR-DROID-004",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-004-SYS-TOKEN-05",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 83,
               "pdfPage1Based": 84,
               "sourceEntryKey": "KOTOR-DROID-004",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -992,31 +893,13 @@
             "entryId": "KOTOR-DROID-004-POS-01",
             "name": "audio recorder",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 83,
-              "pdfPage1Based": 84,
-              "sourceEntryKey": "KOTOR-DROID-004",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-004-POS-02",
             "name": "comlink",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 83,
-              "pdfPage1Based": 84,
-              "sourceEntryKey": "KOTOR-DROID-004",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -1031,7 +914,7 @@
               "page": 83,
               "pdfPage1Based": 84,
               "sourceEntryKey": "KOTOR-DROID-004",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -1045,7 +928,7 @@
               "page": 83,
               "pdfPage1Based": 84,
               "sourceEntryKey": "KOTOR-DROID-004",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -1139,58 +1022,58 @@
           {
             "instanceId": "KOTOR-DROID-005-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 84,
               "pdfPage1Based": 85,
               "sourceEntryKey": "KOTOR-DROID-005",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-005-SYS-TOKEN-02",
             "name": "basic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 84,
               "pdfPage1Based": 85,
               "sourceEntryKey": "KOTOR-DROID-005",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-005-SYS-TOKEN-03",
             "name": "2 hand appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 84,
               "pdfPage1Based": 85,
               "sourceEntryKey": "KOTOR-DROID-005",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-005-SYS-TOKEN-04",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 84,
               "pdfPage1Based": 85,
               "sourceEntryKey": "KOTOR-DROID-005",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -1200,16 +1083,7 @@
             "entryId": "KOTOR-DROID-005-POS-01",
             "name": "comlink",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 84,
-              "pdfPage1Based": 85,
-              "sourceEntryKey": "KOTOR-DROID-005",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -1224,7 +1098,7 @@
               "page": 84,
               "pdfPage1Based": 85,
               "sourceEntryKey": "KOTOR-DROID-005",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -1238,7 +1112,7 @@
               "page": 84,
               "pdfPage1Based": 85,
               "sourceEntryKey": "KOTOR-DROID-005",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -1332,100 +1206,100 @@
           {
             "instanceId": "KOTOR-DROID-006-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 84,
               "pdfPage1Based": 85,
               "sourceEntryKey": "KOTOR-DROID-006",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-006-SYS-TOKEN-02",
             "name": "heuristic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 84,
               "pdfPage1Based": 85,
               "sourceEntryKey": "KOTOR-DROID-006",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-006-SYS-TOKEN-03",
             "name": "2 hand appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 84,
               "pdfPage1Based": 85,
               "sourceEntryKey": "KOTOR-DROID-006",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-006-SYS-TOKEN-04",
             "name": "2 tool appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 84,
               "pdfPage1Based": 85,
               "sourceEntryKey": "KOTOR-DROID-006",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-006-SYS-TOKEN-05",
             "name": "improved sensor package",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 84,
               "pdfPage1Based": 85,
               "sourceEntryKey": "KOTOR-DROID-006",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-006-SYS-TOKEN-06",
             "name": "translator unit (DC 5)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 84,
               "pdfPage1Based": 85,
               "sourceEntryKey": "KOTOR-DROID-006",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-006-SYS-TOKEN-07",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 84,
               "pdfPage1Based": 85,
               "sourceEntryKey": "KOTOR-DROID-006",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -1435,31 +1309,13 @@
             "entryId": "KOTOR-DROID-006-POS-01",
             "name": "blaster rifle",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 84,
-              "pdfPage1Based": 85,
-              "sourceEntryKey": "KOTOR-DROID-006",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-006-POS-02",
             "name": "durasteel battle armor",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 84,
-              "pdfPage1Based": 85,
-              "sourceEntryKey": "KOTOR-DROID-006",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -1474,7 +1330,7 @@
               "page": 84,
               "pdfPage1Based": 85,
               "sourceEntryKey": "KOTOR-DROID-006",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -1488,7 +1344,7 @@
               "page": 84,
               "pdfPage1Based": 85,
               "sourceEntryKey": "KOTOR-DROID-006",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -1583,100 +1439,100 @@
           {
             "instanceId": "KOTOR-DROID-007-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 85,
               "pdfPage1Based": 86,
               "sourceEntryKey": "KOTOR-DROID-007",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-007-SYS-TOKEN-02",
             "name": "heuristic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 85,
               "pdfPage1Based": 86,
               "sourceEntryKey": "KOTOR-DROID-007",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-007-SYS-TOKEN-03",
             "name": "2 hand appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 85,
               "pdfPage1Based": 86,
               "sourceEntryKey": "KOTOR-DROID-007",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-007-SYS-TOKEN-04",
             "name": "2 tool appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 85,
               "pdfPage1Based": 86,
               "sourceEntryKey": "KOTOR-DROID-007",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-007-SYS-TOKEN-05",
             "name": "improved sensor package",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 85,
               "pdfPage1Based": 86,
               "sourceEntryKey": "KOTOR-DROID-007",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-007-SYS-TOKEN-06",
             "name": "translator unit (DC 5)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 85,
               "pdfPage1Based": 86,
               "sourceEntryKey": "KOTOR-DROID-007",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-007-SYS-TOKEN-07",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 85,
               "pdfPage1Based": 86,
               "sourceEntryKey": "KOTOR-DROID-007",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -1686,46 +1542,19 @@
             "entryId": "KOTOR-DROID-007-POS-01",
             "name": "blaster rifle",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 85,
-              "pdfPage1Based": 86,
-              "sourceEntryKey": "KOTOR-DROID-007",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-007-POS-02",
             "name": "durasteel battle armor",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 85,
-              "pdfPage1Based": 86,
-              "sourceEntryKey": "KOTOR-DROID-007",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-007-POS-03",
             "name": "comlink",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 85,
-              "pdfPage1Based": 86,
-              "sourceEntryKey": "KOTOR-DROID-007",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -1740,7 +1569,7 @@
               "page": 85,
               "pdfPage1Based": 86,
               "sourceEntryKey": "KOTOR-DROID-007",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -1754,7 +1583,7 @@
               "page": 85,
               "pdfPage1Based": 86,
               "sourceEntryKey": "KOTOR-DROID-007",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -1861,100 +1690,100 @@
           {
             "instanceId": "KOTOR-DROID-008-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 85,
               "pdfPage1Based": 86,
               "sourceEntryKey": "KOTOR-DROID-008",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-008-SYS-TOKEN-02",
             "name": "heuristic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 85,
               "pdfPage1Based": 86,
               "sourceEntryKey": "KOTOR-DROID-008",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-008-SYS-TOKEN-03",
             "name": "2 hand appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 85,
               "pdfPage1Based": 86,
               "sourceEntryKey": "KOTOR-DROID-008",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-008-SYS-TOKEN-04",
             "name": "2 tool appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 85,
               "pdfPage1Based": 86,
               "sourceEntryKey": "KOTOR-DROID-008",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-008-SYS-TOKEN-05",
             "name": "improved sensor package",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 85,
               "pdfPage1Based": 86,
               "sourceEntryKey": "KOTOR-DROID-008",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-008-SYS-TOKEN-06",
             "name": "translator unit (DC 5)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 85,
               "pdfPage1Based": 86,
               "sourceEntryKey": "KOTOR-DROID-008",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-008-SYS-TOKEN-07",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 85,
               "pdfPage1Based": 86,
               "sourceEntryKey": "KOTOR-DROID-008",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -1964,31 +1793,13 @@
             "entryId": "KOTOR-DROID-008-POS-01",
             "name": "blaster rifle",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 85,
-              "pdfPage1Based": 86,
-              "sourceEntryKey": "KOTOR-DROID-008",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-008-POS-02",
             "name": "durasteel battle armor",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 85,
-              "pdfPage1Based": 86,
-              "sourceEntryKey": "KOTOR-DROID-008",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -2003,7 +1814,7 @@
               "page": 85,
               "pdfPage1Based": 86,
               "sourceEntryKey": "KOTOR-DROID-008",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -2017,7 +1828,7 @@
               "page": 85,
               "pdfPage1Based": 86,
               "sourceEntryKey": "KOTOR-DROID-008",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -2112,72 +1923,72 @@
           {
             "instanceId": "KOTOR-DROID-009-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 86,
               "pdfPage1Based": 87,
               "sourceEntryKey": "KOTOR-DROID-009",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-009-SYS-TOKEN-02",
             "name": "basic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 86,
               "pdfPage1Based": 87,
               "sourceEntryKey": "KOTOR-DROID-009",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-009-SYS-TOKEN-03",
             "name": "2 hand appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 86,
               "pdfPage1Based": 87,
               "sourceEntryKey": "KOTOR-DROID-009",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-009-SYS-TOKEN-04",
             "name": "2 tool mounts",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 86,
               "pdfPage1Based": 87,
               "sourceEntryKey": "KOTOR-DROID-009",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-009-SYS-TOKEN-05",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 86,
               "pdfPage1Based": 87,
               "sourceEntryKey": "KOTOR-DROID-009",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -2187,76 +1998,31 @@
             "entryId": "KOTOR-DROID-009-POS-01",
             "name": "pulse-wave rifle",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 86,
-              "pdfPage1Based": 87,
-              "sourceEntryKey": "KOTOR-DROID-009",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-009-POS-02",
             "name": "shatter beam (heavy blaster pistol equivalent)",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 86,
-              "pdfPage1Based": 87,
-              "sourceEntryKey": "KOTOR-DROID-009",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-009-POS-03",
             "name": "heavy sonic pistol",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 86,
-              "pdfPage1Based": 87,
-              "sourceEntryKey": "KOTOR-DROID-009",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-009-POS-04",
             "name": "durasteel plating",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 86,
-              "pdfPage1Based": 87,
-              "sourceEntryKey": "KOTOR-DROID-009",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-009-POS-05",
             "name": "jet pack (also swim speed)",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 86,
-              "pdfPage1Based": 87,
-              "sourceEntryKey": "KOTOR-DROID-009",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -2271,7 +2037,7 @@
               "page": 86,
               "pdfPage1Based": 87,
               "sourceEntryKey": "KOTOR-DROID-009",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -2285,7 +2051,7 @@
               "page": 86,
               "pdfPage1Based": 87,
               "sourceEntryKey": "KOTOR-DROID-009",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -2394,86 +2160,86 @@
           {
             "instanceId": "KOTOR-DROID-010-SYS-TOKEN-01",
             "name": "hovering locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 86,
               "pdfPage1Based": 87,
               "sourceEntryKey": "KOTOR-DROID-010",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-010-SYS-TOKEN-02",
             "name": "basic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 86,
               "pdfPage1Based": 87,
               "sourceEntryKey": "KOTOR-DROID-010",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-010-SYS-TOKEN-03",
             "name": "3 claw appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 86,
               "pdfPage1Based": 87,
               "sourceEntryKey": "KOTOR-DROID-010",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-010-SYS-TOKEN-04",
             "name": "1 tool appendage",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 86,
               "pdfPage1Based": 87,
               "sourceEntryKey": "KOTOR-DROID-010",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-010-SYS-TOKEN-05",
             "name": "improved sensor package",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 86,
               "pdfPage1Based": 87,
               "sourceEntryKey": "KOTOR-DROID-010",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-010-SYS-TOKEN-06",
             "name": "self-destruct system",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 86,
               "pdfPage1Based": 87,
               "sourceEntryKey": "KOTOR-DROID-010",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -2483,31 +2249,13 @@
             "entryId": "KOTOR-DROID-010-POS-01",
             "name": "blaster pistol",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 86,
-              "pdfPage1Based": 87,
-              "sourceEntryKey": "KOTOR-DROID-010",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-010-POS-02",
             "name": "holorecorder",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 86,
-              "pdfPage1Based": 87,
-              "sourceEntryKey": "KOTOR-DROID-010",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -2522,7 +2270,7 @@
               "page": 86,
               "pdfPage1Based": 87,
               "sourceEntryKey": "KOTOR-DROID-010",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -2536,7 +2284,7 @@
               "page": 86,
               "pdfPage1Based": 87,
               "sourceEntryKey": "KOTOR-DROID-010",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -2645,44 +2393,44 @@
           {
             "instanceId": "KOTOR-DROID-011-SYS-TOKEN-01",
             "name": "hovering locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 87,
               "pdfPage1Based": 88,
               "sourceEntryKey": "KOTOR-DROID-011",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-011-SYS-TOKEN-02",
             "name": "basic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 87,
               "pdfPage1Based": 88,
               "sourceEntryKey": "KOTOR-DROID-011",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-011-SYS-TOKEN-03",
             "name": "2 tool mounts",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 87,
               "pdfPage1Based": 88,
               "sourceEntryKey": "KOTOR-DROID-011",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -2692,16 +2440,7 @@
             "entryId": "KOTOR-DROID-011-POS-01",
             "name": "2 blaster pistols",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 87,
-              "pdfPage1Based": 88,
-              "sourceEntryKey": "KOTOR-DROID-011",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -2716,7 +2455,7 @@
               "page": 87,
               "pdfPage1Based": 88,
               "sourceEntryKey": "KOTOR-DROID-011",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -2730,7 +2469,7 @@
               "page": 87,
               "pdfPage1Based": 88,
               "sourceEntryKey": "KOTOR-DROID-011",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -2824,72 +2563,72 @@
           {
             "instanceId": "KOTOR-DROID-012-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 87,
               "pdfPage1Based": 88,
               "sourceEntryKey": "KOTOR-DROID-012",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-012-SYS-TOKEN-02",
             "name": "basic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 87,
               "pdfPage1Based": 88,
               "sourceEntryKey": "KOTOR-DROID-012",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-012-SYS-TOKEN-03",
             "name": "2 hand appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 87,
               "pdfPage1Based": 88,
               "sourceEntryKey": "KOTOR-DROID-012",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-012-SYS-TOKEN-04",
             "name": "internal comlink",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 87,
               "pdfPage1Based": 88,
               "sourceEntryKey": "KOTOR-DROID-012",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-012-SYS-TOKEN-05",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 87,
               "pdfPage1Based": 88,
               "sourceEntryKey": "KOTOR-DROID-012",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -2899,31 +2638,13 @@
             "entryId": "KOTOR-DROID-012-POS-01",
             "name": "blaster rifle",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 87,
-              "pdfPage1Based": 88,
-              "sourceEntryKey": "KOTOR-DROID-012",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-012-POS-02",
             "name": "durasteel shell",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 87,
-              "pdfPage1Based": 88,
-              "sourceEntryKey": "KOTOR-DROID-012",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -2938,7 +2659,7 @@
               "page": 87,
               "pdfPage1Based": 88,
               "sourceEntryKey": "KOTOR-DROID-012",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -2952,7 +2673,7 @@
               "page": 87,
               "pdfPage1Based": 88,
               "sourceEntryKey": "KOTOR-DROID-012",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -3046,72 +2767,72 @@
           {
             "instanceId": "KOTOR-DROID-013-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 88,
               "pdfPage1Based": 89,
               "sourceEntryKey": "KOTOR-DROID-013",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-013-SYS-TOKEN-02",
             "name": "basic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 88,
               "pdfPage1Based": 89,
               "sourceEntryKey": "KOTOR-DROID-013",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-013-SYS-TOKEN-03",
             "name": "2 hand appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 88,
               "pdfPage1Based": 89,
               "sourceEntryKey": "KOTOR-DROID-013",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-013-SYS-TOKEN-04",
             "name": "internal comlink",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 88,
               "pdfPage1Based": 89,
               "sourceEntryKey": "KOTOR-DROID-013",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-013-SYS-TOKEN-05",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 88,
               "pdfPage1Based": 89,
               "sourceEntryKey": "KOTOR-DROID-013",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -3121,31 +2842,13 @@
             "entryId": "KOTOR-DROID-013-POS-01",
             "name": "blaster rifle",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 88,
-              "pdfPage1Based": 89,
-              "sourceEntryKey": "KOTOR-DROID-013",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-013-POS-02",
             "name": "durasteel shell",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 88,
-              "pdfPage1Based": 89,
-              "sourceEntryKey": "KOTOR-DROID-013",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -3160,7 +2863,7 @@
               "page": 88,
               "pdfPage1Based": 89,
               "sourceEntryKey": "KOTOR-DROID-013",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -3174,7 +2877,7 @@
               "page": 88,
               "pdfPage1Based": 89,
               "sourceEntryKey": "KOTOR-DROID-013",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -3268,72 +2971,72 @@
           {
             "instanceId": "KOTOR-DROID-014-SYS-TOKEN-01",
             "name": "flying locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 88,
               "pdfPage1Based": 89,
               "sourceEntryKey": "KOTOR-DROID-014",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-014-SYS-TOKEN-02",
             "name": "basic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 88,
               "pdfPage1Based": 89,
               "sourceEntryKey": "KOTOR-DROID-014",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-014-SYS-TOKEN-03",
             "name": "2 tool appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 88,
               "pdfPage1Based": 89,
               "sourceEntryKey": "KOTOR-DROID-014",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-014-SYS-TOKEN-04",
             "name": "improved sensor package",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 88,
               "pdfPage1Based": 89,
               "sourceEntryKey": "KOTOR-DROID-014",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-014-SYS-TOKEN-05",
             "name": "internal comlink",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 88,
               "pdfPage1Based": 89,
               "sourceEntryKey": "KOTOR-DROID-014",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -3343,31 +3046,13 @@
             "entryId": "KOTOR-DROID-014-POS-01",
             "name": "security camera",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 88,
-              "pdfPage1Based": 89,
-              "sourceEntryKey": "KOTOR-DROID-014",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-014-POS-02",
             "name": "tool kit",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 88,
-              "pdfPage1Based": 89,
-              "sourceEntryKey": "KOTOR-DROID-014",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -3382,7 +3067,7 @@
               "page": 88,
               "pdfPage1Based": 89,
               "sourceEntryKey": "KOTOR-DROID-014",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -3396,7 +3081,7 @@
               "page": 88,
               "pdfPage1Based": 89,
               "sourceEntryKey": "KOTOR-DROID-014",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -3490,58 +3175,58 @@
           {
             "instanceId": "KOTOR-DROID-015-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 88,
               "pdfPage1Based": 89,
               "sourceEntryKey": "KOTOR-DROID-015",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-015-SYS-TOKEN-02",
             "name": "basic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 88,
               "pdfPage1Based": 89,
               "sourceEntryKey": "KOTOR-DROID-015",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-015-SYS-TOKEN-03",
             "name": "2 hand appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 88,
               "pdfPage1Based": 89,
               "sourceEntryKey": "KOTOR-DROID-015",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-015-SYS-TOKEN-04",
             "name": "internal storage (5 kg)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 88,
               "pdfPage1Based": 89,
               "sourceEntryKey": "KOTOR-DROID-015",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -3551,16 +3236,7 @@
             "entryId": "KOTOR-DROID-015-POS-01",
             "name": "duranium armor plating",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 88,
-              "pdfPage1Based": 89,
-              "sourceEntryKey": "KOTOR-DROID-015",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -3575,7 +3251,7 @@
               "page": 88,
               "pdfPage1Based": 89,
               "sourceEntryKey": "KOTOR-DROID-015",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -3589,7 +3265,7 @@
               "page": 88,
               "pdfPage1Based": 89,
               "sourceEntryKey": "KOTOR-DROID-015",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -3683,44 +3359,44 @@
           {
             "instanceId": "KOTOR-DROID-016-SYS-TOKEN-01",
             "name": "hovering locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 89,
               "pdfPage1Based": 90,
               "sourceEntryKey": "KOTOR-DROID-016",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-016-SYS-TOKEN-02",
             "name": "basic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 89,
               "pdfPage1Based": 90,
               "sourceEntryKey": "KOTOR-DROID-016",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-016-SYS-TOKEN-03",
             "name": "4 tool appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 89,
               "pdfPage1Based": 90,
               "sourceEntryKey": "KOTOR-DROID-016",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -3738,7 +3414,7 @@
               "page": 89,
               "pdfPage1Based": 90,
               "sourceEntryKey": "KOTOR-DROID-016",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -3752,7 +3428,7 @@
               "page": 89,
               "pdfPage1Based": 90,
               "sourceEntryKey": "KOTOR-DROID-016",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -3847,58 +3523,58 @@
           {
             "instanceId": "KOTOR-DROID-017-SYS-TOKEN-01",
             "name": "basic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 165,
               "pdfPage1Based": 166,
               "sourceEntryKey": "KOTOR-DROID-017",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-017-SYS-TOKEN-02",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 165,
               "pdfPage1Based": 166,
               "sourceEntryKey": "KOTOR-DROID-017",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-017-SYS-TOKEN-03",
             "name": "3 tool mounts",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 165,
               "pdfPage1Based": 166,
               "sourceEntryKey": "KOTOR-DROID-017",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-017-SYS-TOKEN-04",
             "name": "2 claw appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 165,
               "pdfPage1Based": 166,
               "sourceEntryKey": "KOTOR-DROID-017",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -3908,61 +3584,25 @@
             "entryId": "KOTOR-DROID-017-POS-01",
             "name": "2 blaster rifles",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 165,
-              "pdfPage1Based": 166,
-              "sourceEntryKey": "KOTOR-DROID-017",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-017-POS-02",
             "name": "flamethrower",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 165,
-              "pdfPage1Based": 166,
-              "sourceEntryKey": "KOTOR-DROID-017",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-017-POS-03",
             "name": "duranium plating",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 165,
-              "pdfPage1Based": 166,
-              "sourceEntryKey": "KOTOR-DROID-017",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-017-POS-04",
             "name": "shield generator (SR 10)",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 165,
-              "pdfPage1Based": 166,
-              "sourceEntryKey": "KOTOR-DROID-017",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -3977,7 +3617,7 @@
               "page": 165,
               "pdfPage1Based": 166,
               "sourceEntryKey": "KOTOR-DROID-017",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -3991,7 +3631,7 @@
               "page": 165,
               "pdfPage1Based": 166,
               "sourceEntryKey": "KOTOR-DROID-017",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -4101,44 +3741,44 @@
           {
             "instanceId": "KOTOR-DROID-018-SYS-TOKEN-01",
             "name": "basic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 165,
               "pdfPage1Based": 166,
               "sourceEntryKey": "KOTOR-DROID-018",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-018-SYS-TOKEN-02",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 165,
               "pdfPage1Based": 166,
               "sourceEntryKey": "KOTOR-DROID-018",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-018-SYS-TOKEN-03",
             "name": "tool mount",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 165,
               "pdfPage1Based": 166,
               "sourceEntryKey": "KOTOR-DROID-018",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -4148,46 +3788,19 @@
             "entryId": "KOTOR-DROID-018-POS-01",
             "name": "double blaster cannon",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 165,
-              "pdfPage1Based": 166,
-              "sourceEntryKey": "KOTOR-DROID-018",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-018-POS-02",
             "name": "duranium plating",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 165,
-              "pdfPage1Based": 166,
-              "sourceEntryKey": "KOTOR-DROID-018",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-018-POS-03",
             "name": "shield generator (SR 10)",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 165,
-              "pdfPage1Based": 166,
-              "sourceEntryKey": "KOTOR-DROID-018",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -4202,7 +3815,7 @@
               "page": 165,
               "pdfPage1Based": 166,
               "sourceEntryKey": "KOTOR-DROID-018",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -4216,7 +3829,7 @@
               "page": 165,
               "pdfPage1Based": 166,
               "sourceEntryKey": "KOTOR-DROID-018",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -4321,7 +3934,7 @@
               "page": 203,
               "pdfPage1Based": 204,
               "sourceEntryKey": "KOTOR-DROID-019",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -4335,7 +3948,7 @@
               "page": 203,
               "pdfPage1Based": 204,
               "sourceEntryKey": "KOTOR-DROID-019",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -4345,11 +3958,7 @@
       "pcConstruction": {
         "heroEligibility": null
       },
-      "vehicleLink": {
-        "auditAuthority": "vehicle-primary-source-only",
-        "sourceReviewCaveat": "Basilisk hp/DR/weapons/actions and pilot/passenger belong to vehicle, not droid actor.",
-        "sourceEquipmentReviewStatus": "vehicle-only (requires independent vehicle inventory)"
-      },
+      "vehicleLink": {},
       "economics": {},
       "text": {
         "sourceWarnings": [
@@ -4385,7 +3994,7 @@
         "identityStatus": "pdf-reviewed",
         "mechanicalStatus": "partial",
         "runtimeStatus": "not-tested",
-        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification.",
+        "reviewNotes": "Rendered printed-page selected fields checked. No full narrative, feat/talent, installation, attack ownership, hero build, or V13 runtime certification. M1 source-mechanical second-pass review of model boundaries against rendered printed page and indexed text. Two source-only model restrictions recorded; not complete canonical feat/equipment/mount/advance certification. Vehicle source audit note auditAuthority: vehicle-primary-source-only. Vehicle source audit note sourceReviewCaveat: Basilisk hp/DR/weapons/actions and pilot/passenger belong to vehicle, not droid actor.. Vehicle source audit note sourceEquipmentReviewStatus: vehicle-only (requires independent vehicle inventory).",
         "reviewerEvidenceRefs": [
           "KOTOR-CENSUS:KOTOR-DROID-019",
           "Knights of the Old Republic Campaign Guide:printed-p203:TXT-line-20759",
@@ -4452,142 +4061,142 @@
           {
             "instanceId": "KOTOR-DROID-020-SYS-TOKEN-01",
             "name": "hovering locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 212,
               "pdfPage1Based": 213,
               "sourceEntryKey": "KOTOR-DROID-020",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-020-SYS-TOKEN-02",
             "name": "heuristic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 212,
               "pdfPage1Based": 213,
               "sourceEntryKey": "KOTOR-DROID-020",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-020-SYS-TOKEN-03",
             "name": "2 tool appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 212,
               "pdfPage1Based": 213,
               "sourceEntryKey": "KOTOR-DROID-020",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-020-SYS-TOKEN-04",
             "name": "electroshock probe",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 212,
               "pdfPage1Based": 213,
               "sourceEntryKey": "KOTOR-DROID-020",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-020-SYS-TOKEN-05",
             "name": "holorecorder",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 212,
               "pdfPage1Based": 213,
               "sourceEntryKey": "KOTOR-DROID-020",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-020-SYS-TOKEN-06",
             "name": "holoprojector",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 212,
               "pdfPage1Based": 213,
               "sourceEntryKey": "KOTOR-DROID-020",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-020-SYS-TOKEN-07",
             "name": "improved sensor package",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 212,
               "pdfPage1Based": 213,
               "sourceEntryKey": "KOTOR-DROID-020",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-020-SYS-TOKEN-08",
             "name": "locked access",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 212,
               "pdfPage1Based": 213,
               "sourceEntryKey": "KOTOR-DROID-020",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-020-SYS-TOKEN-09",
             "name": "integrated comlink",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 212,
               "pdfPage1Based": 213,
               "sourceEntryKey": "KOTOR-DROID-020",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-020-SYS-TOKEN-10",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 212,
               "pdfPage1Based": 213,
               "sourceEntryKey": "KOTOR-DROID-020",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -4597,46 +4206,19 @@
             "entryId": "KOTOR-DROID-020-POS-01",
             "name": "4 credit chips",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 212,
-              "pdfPage1Based": 213,
-              "sourceEntryKey": "KOTOR-DROID-020",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-020-POS-02",
             "name": "datapad",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 212,
-              "pdfPage1Based": 213,
-              "sourceEntryKey": "KOTOR-DROID-020",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-020-POS-03",
             "name": "video recorder",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 212,
-              "pdfPage1Based": 213,
-              "sourceEntryKey": "KOTOR-DROID-020",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -4651,7 +4233,7 @@
               "page": 212,
               "pdfPage1Based": 213,
               "sourceEntryKey": "KOTOR-DROID-020",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -4665,7 +4247,7 @@
               "page": 212,
               "pdfPage1Based": 213,
               "sourceEntryKey": "KOTOR-DROID-020",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -4762,128 +4344,128 @@
           {
             "instanceId": "KOTOR-DROID-021-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 213,
               "pdfPage1Based": 214,
               "sourceEntryKey": "KOTOR-DROID-021",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-021-SYS-TOKEN-02",
             "name": "heuristic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 213,
               "pdfPage1Based": 214,
               "sourceEntryKey": "KOTOR-DROID-021",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-021-SYS-TOKEN-03",
             "name": "2 hand appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 213,
               "pdfPage1Based": 214,
               "sourceEntryKey": "KOTOR-DROID-021",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-021-SYS-TOKEN-04",
             "name": "darkvision",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 213,
               "pdfPage1Based": 214,
               "sourceEntryKey": "KOTOR-DROID-021",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-021-SYS-TOKEN-05",
             "name": "improved sensor package",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 213,
               "pdfPage1Based": 214,
               "sourceEntryKey": "KOTOR-DROID-021",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-021-SYS-TOKEN-06",
             "name": "locked access",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 213,
               "pdfPage1Based": 214,
               "sourceEntryKey": "KOTOR-DROID-021",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-021-SYS-TOKEN-07",
             "name": "secondary battery",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 213,
               "pdfPage1Based": 214,
               "sourceEntryKey": "KOTOR-DROID-021",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-021-SYS-TOKEN-08",
             "name": "translator unit (DC 5)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 213,
               "pdfPage1Based": 214,
               "sourceEntryKey": "KOTOR-DROID-021",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-021-SYS-TOKEN-09",
             "name": "vocabulator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 213,
               "pdfPage1Based": 214,
               "sourceEntryKey": "KOTOR-DROID-021",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -4893,46 +4475,19 @@
             "entryId": "KOTOR-DROID-021-POS-01",
             "name": "durasteel battle armor",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 213,
-              "pdfPage1Based": 214,
-              "sourceEntryKey": "KOTOR-DROID-021",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-021-POS-02",
             "name": "heavy blaster rifle",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 213,
-              "pdfPage1Based": 214,
-              "sourceEntryKey": "KOTOR-DROID-021",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-021-POS-03",
             "name": "flamethrower",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 213,
-              "pdfPage1Based": 214,
-              "sourceEntryKey": "KOTOR-DROID-021",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -4947,7 +4502,7 @@
               "page": 213,
               "pdfPage1Based": 214,
               "sourceEntryKey": "KOTOR-DROID-021",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -4961,7 +4516,7 @@
               "page": 213,
               "pdfPage1Based": 214,
               "sourceEntryKey": "KOTOR-DROID-021",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -5073,114 +4628,114 @@
           {
             "instanceId": "KOTOR-DROID-022-SYS-TOKEN-01",
             "name": "wheeled locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 216,
               "pdfPage1Based": 217,
               "sourceEntryKey": "KOTOR-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-022-SYS-TOKEN-02",
             "name": "magnetic feet",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 216,
               "pdfPage1Based": 217,
               "sourceEntryKey": "KOTOR-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-022-SYS-TOKEN-03",
             "name": "heuristic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 216,
               "pdfPage1Based": 217,
               "sourceEntryKey": "KOTOR-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-022-SYS-TOKEN-04",
             "name": "5 tool appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 216,
               "pdfPage1Based": 217,
               "sourceEntryKey": "KOTOR-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-022-SYS-TOKEN-05",
             "name": "diagnostics package",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 216,
               "pdfPage1Based": 217,
               "sourceEntryKey": "KOTOR-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-022-SYS-TOKEN-06",
             "name": "internal storage (2 kg)",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 216,
               "pdfPage1Based": 217,
               "sourceEntryKey": "KOTOR-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-022-SYS-TOKEN-07",
             "name": "improved sensor package",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 216,
               "pdfPage1Based": 217,
               "sourceEntryKey": "KOTOR-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-022-SYS-TOKEN-08",
             "name": "darkvision",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 216,
               "pdfPage1Based": 217,
               "sourceEntryKey": "KOTOR-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -5190,106 +4745,43 @@
             "entryId": "KOTOR-DROID-022-POS-01",
             "name": "integrated blaster pistol (stun ray when set to stun)",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 216,
-              "pdfPage1Based": 217,
-              "sourceEntryKey": "KOTOR-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-022-POS-02",
             "name": "astrogation buffer (10 memory units)",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 216,
-              "pdfPage1Based": 217,
-              "sourceEntryKey": "KOTOR-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-022-POS-03",
             "name": "electroshock probe",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 216,
-              "pdfPage1Based": 217,
-              "sourceEntryKey": "KOTOR-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-022-POS-04",
             "name": "fire extinguisher",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 216,
-              "pdfPage1Based": 217,
-              "sourceEntryKey": "KOTOR-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-022-POS-05",
             "name": "electric arc welder",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 216,
-              "pdfPage1Based": 217,
-              "sourceEntryKey": "KOTOR-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-022-POS-06",
             "name": "holorecorder",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 216,
-              "pdfPage1Based": 217,
-              "sourceEntryKey": "KOTOR-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-022-POS-07",
             "name": "holoprojector",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 216,
-              "pdfPage1Based": 217,
-              "sourceEntryKey": "KOTOR-DROID-022",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -5304,7 +4796,7 @@
               "page": 216,
               "pdfPage1Based": 217,
               "sourceEntryKey": "KOTOR-DROID-022",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -5318,7 +4810,7 @@
               "page": 216,
               "pdfPage1Based": 217,
               "sourceEntryKey": "KOTOR-DROID-022",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -5429,44 +4921,44 @@
           {
             "instanceId": "KOTOR-DROID-023-SYS-TOKEN-01",
             "name": "basic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 222,
               "pdfPage1Based": 223,
               "sourceEntryKey": "KOTOR-DROID-023",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-023-SYS-TOKEN-02",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 222,
               "pdfPage1Based": 223,
               "sourceEntryKey": "KOTOR-DROID-023",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-023-SYS-TOKEN-03",
             "name": "2 hand appendages",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 222,
               "pdfPage1Based": 223,
               "sourceEntryKey": "KOTOR-DROID-023",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -5476,61 +4968,25 @@
             "entryId": "KOTOR-DROID-023-POS-01",
             "name": "short sword",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 222,
-              "pdfPage1Based": 223,
-              "sourceEntryKey": "KOTOR-DROID-023",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-023-POS-02",
             "name": "pulse-wave pistol",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 222,
-              "pdfPage1Based": 223,
-              "sourceEntryKey": "KOTOR-DROID-023",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-023-POS-03",
             "name": "durasteel battle armor",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 222,
-              "pdfPage1Based": 223,
-              "sourceEntryKey": "KOTOR-DROID-023",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           },
           {
             "entryId": "KOTOR-DROID-023-POS-04",
             "name": "internal comlink",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 222,
-              "pdfPage1Based": 223,
-              "sourceEntryKey": "KOTOR-DROID-023",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -5545,7 +5001,7 @@
               "page": 222,
               "pdfPage1Based": 223,
               "sourceEntryKey": "KOTOR-DROID-023",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -5559,7 +5015,7 @@
               "page": 222,
               "pdfPage1Based": 223,
               "sourceEntryKey": "KOTOR-DROID-023",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
@@ -5668,100 +5124,100 @@
           {
             "instanceId": "KOTOR-DROID-024-SYS-TOKEN-01",
             "name": "walking locomotion",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 223,
               "pdfPage1Based": 224,
               "sourceEntryKey": "KOTOR-DROID-024",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-024-SYS-TOKEN-02",
             "name": "heuristic processor",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 223,
               "pdfPage1Based": 224,
               "sourceEntryKey": "KOTOR-DROID-024",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-024-SYS-TOKEN-03",
             "name": "darkvision",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 223,
               "pdfPage1Based": 224,
               "sourceEntryKey": "KOTOR-DROID-024",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-024-SYS-TOKEN-04",
             "name": "improved sensor package",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 223,
               "pdfPage1Based": 224,
               "sourceEntryKey": "KOTOR-DROID-024",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-024-SYS-TOKEN-05",
             "name": "locked access",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 223,
               "pdfPage1Based": 224,
               "sourceEntryKey": "KOTOR-DROID-024",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-024-SYS-TOKEN-06",
             "name": "Rakatan internal generator",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 223,
               "pdfPage1Based": 224,
               "sourceEntryKey": "KOTOR-DROID-024",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           },
           {
             "instanceId": "KOTOR-DROID-024-SYS-TOKEN-07",
             "name": "duranium plating",
-            "componentCategory": "source-system-token-unmapped",
+            "componentCategory": "other",
             "source": {
               "book": "Knights of the Old Republic Campaign Guide",
               "page": 223,
               "pdfPage1Based": 224,
               "sourceEntryKey": "KOTOR-DROID-024",
-              "verifiedBy": "pdf-render-and-indexed-text",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "Printed Systems source label"
             },
-            "identityStatus": "source-only"
+            "notes": "Source-backed raw printed Systems label. Grouped quantities are NOT expanded into certified physical component instances; catalog ID, location and mount authority unresolved."
           }
         ]
       },
@@ -5771,16 +5227,7 @@
             "entryId": "KOTOR-DROID-024-POS-01",
             "name": "integrated weaponry (blaster rifle, flamethrower, carbonite projector equivalents)",
             "quantity": null,
-            "source": {
-              "book": "Knights of the Old Republic Campaign Guide",
-              "page": 223,
-              "pdfPage1Based": 224,
-              "sourceEntryKey": "KOTOR-DROID-024",
-              "verifiedBy": "pdf-render-and-indexed-text",
-              "citationLabel": "Printed Possessions source label; quantity embedded in label if specified"
-            },
-            "factoryVsPresented": "unknown",
-            "executionStatus": "source-only"
+            "factoryVsPresented": "unknown"
           }
         ]
       },
@@ -5795,7 +5242,7 @@
               "page": 223,
               "pdfPage1Based": 224,
               "sourceEntryKey": "KOTOR-DROID-024",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 1"
             },
             "executionStatus": "source-only"
@@ -5809,7 +5256,7 @@
               "page": 223,
               "pdfPage1Based": 224,
               "sourceEntryKey": "KOTOR-DROID-024",
-              "verifiedBy": "pdf-visual-and-text-review",
+              "verifiedBy": "pdf-visual",
               "citationLabel": "M1 printed statblock and context, model boundary 2"
             },
             "executionStatus": "source-only"
