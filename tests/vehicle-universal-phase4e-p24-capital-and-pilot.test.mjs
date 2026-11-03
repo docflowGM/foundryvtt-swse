@@ -175,3 +175,13 @@ test('trained Pilot +2: withheld when any condition is missing', async () => {
   // abstract crew never gets it
   { const { vehicle, weapon } = ship('fighter'); assert.equal((await resolveAbstractCrewAttackBonus(vehicle, weapon, 'normal', {})).ledger.some(x => x.id === 'pilot-trained-weapon-crew'), false); }
 });
+
+test('generic-crew attacks of an AFTERMARKET weapon on a published ship use the published crew Base Attack, not the legacy tier table', async () => {
+  const { vehicle, weapon } = ship('fighter');                       // X-wing: crew quality skilled, published Base Atk +2
+  const r = await resolveAbstractCrewAttackBonus(vehicle, weapon, 'skilled', { target: targetOf('medium') });
+  const bab = r.ledger.find(e => e.id === 'crew-quality-bab');
+  assert.equal(bab.value, 2, 'the legacy tier table would have said 5');
+  assert.match(bab.label, /published statblock/);
+  assert.equal(r.ledger.find(e => e.id === 'vehicle-int').value, 3);
+  assert.equal(r.total, 5, 'matches the X-wing statblock attack line');
+});

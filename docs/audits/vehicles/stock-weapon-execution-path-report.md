@@ -14,30 +14,29 @@ record). Stock weapons never pass through the ledger, EP or credits and are neve
 | Trust | `vehicle-stock-attack-authority.js` | always `null` (empty registry) | re-derived at each use from the verified record: group present and executable, Item mirrors it |
 | Preflight | `vehicle-attack-preflight.js` | blocked (no trust) | user permission, target, crew station, arc policy (below) |
 | Crew station | `vehicle-crew-station-evidence.js` | read editable Item fields | operator taken from the source group |
-| Attack math | `vehicle-attack-math.js` | generic crew used an unsourced tier table (skilled +5) | source-backed ships use the **published crew Base Attack**; reproduces the printed total |
+| Attack math | `vehicle-attack-math.js` | generic crew used an unsourced tier table (skilled +5) | a stock weapon's **printed total is the baseline, applied once** (its components are shown as included, never added again); aftermarket generic-crew attacks on published ships use the published crew Base Attack; range, capital penalty and effects stack on top |
 | Damage | `combat-roll-math.js` | printed `6d10x2` string would reach the dice engine (Foundry reads `x2` as exploding dice) | Core formula `(6d10) * 2` from the source group, never the Item |
 | Applying damage | `ActorEngine.applyDamage` | unchanged | unchanged (existing authority, exercised by the test) |
 
 ## Result (offline; nothing is live-verified)
 
-- 846 published groups; 446 SOURCE_VERIFIED (configuration established); **62 OFFLINE_EXECUTABLE on 51 vehicles**, each driven
+- 846 published groups; 446 SOURCE_VERIFIED (configuration established); **274 OFFLINE_EXECUTABLE on 207 vehicles** (after V-P6C-01, reading both field-state key styles, and explaining printed attack totals by published rules), each driven
   through arm -> attack -> damage by the CORPUS test; 0 LIVE_VERIFIED. See `stock-weapon-coverage.md`.
 - Includes the X-wing laser cannons (6d10 x 2, pilot, +5), TIE fighter, TIE interceptor, Y-wing, ARC-170, YT-1300, AAT and others.
   The X-wing proton torpedoes stay reference-only (splash, finite payload).
 
-## The one decision that blocks play: V-P6C-01 (firing arcs)
+## Firing arcs: owner ruling V-P6C-01 (2026-11-03)
 
-Published statblocks never state weapon firing arcs. The existing policy only lets an arc-dependent attack proceed on a
-source-silent arc with a per-attack GM adjudication, and the Fire action carries none. Until the owner rules, the stock
-weapons are armed but blocked. The world setting **Published vehicle weapons: unstated firing arcs** selects
-`GM approves each attack` (default, fail-closed) or `No arc restriction`. Targets, crew, permissions, autofire refusal and
-every other check apply either way.
+Hierarchy: a published arc the system understands is enforced (the Ghtroc 720's fixed-forward double laser cannon, SotG p. 88);
+a source-confirmed unstated arc imposes no automated restriction (the default, so X-wing and TIE cannons fire without GM
+intervention); a stated arc the system cannot interpret is refused; unreviewed arc evidence is refused; aftermarket installations
+keep their certified mount and arc. The world setting can switch unstated arcs to "GM approves each attack".
 
 ## What genuinely needs new mechanics (all recorded in the deferred register, P6B-D-033..039)
 
-- 564 groups print an attack total the Core formula does not reproduce (unexplained modifiers): source check needed.
+- Printed attack totals: explained for 274 executable groups (crew BAB + Int; +2 on pilot-crewed groups = Core p. 171); the battery +2 per additional gunner is documented but batteries need their own model; about 50 single-operator groups stay unexplained.
 - Batteries and multi-gunner stations (291), capital-scale x5 damage (192), splash/ion/ammunition groups (142), point-defense.
-- 345 groups on records whose arc was never reviewed.
+- 12 groups on records with no arc evidence; 5 groups with arcs the system cannot yet interpret.
 
 ## Also fixed along the way
 

@@ -899,14 +899,14 @@
       "linkedDecisions": [],
       "options": [],
       "id": "P6B-D-033",
-      "component": "published stock groups whose printed attack total does not reconcile with crew Base Attack + vehicle Int (564 groups)",
+      "component": "published stock groups whose printed attack total is not explained by a published rule (336 groups, mostly batteries)",
       "source": "canonical records, armament.firingGroups",
       "status": "SOURCE_EVIDENCE_MISSING",
-      "reason": "The Core vehicle attack formula (crew BAB + vehicle Int + range) reproduces the printed total for 272 of 838 groups with a total. The other groups print a total that includes something the record does not state (fire-linking, battery size, size or range adjustments). Applying the formula there could contradict the statblock, so they are refused (STOCK_ATTACK_TOTAL_DOES_NOT_RECONCILE_WITH_BAB_PLUS_INT).",
-      "missing": "The source of the difference per group (a PDF check of the statblock attack lines).",
-      "impact": "Largest single reason (564 groups) stock weapons are not yet playable.",
+      "reason": "Investigated across 836 groups and 12 books. A printed total is the generic crew's complete attack modifier. It equals crew Base Attack + vehicle Int in 272 groups (delta 0), and exceeds it by exactly +2 on pilot-crewed groups in 231 of 313 cases (the Core p. 171 trained-Pilot rule; Core Rulebook statblocks omit it, later books include it, and the same crew quality prints both, so it is a per-statblock convention). Weapon batteries add +2 per gunner beyond the first (2 gunners +2, 3 +4, 4 +6, 5 +8, 6 +10; 85-98% of each size), matching the SotG fighter-group sentence \"+2 on attacks per additional vehicle ... as a weapon battery\"; the Core p. 170 battery text itself is unreadable in the OCR. Accepted and executable: delta 0, and +2 on pilot-crewed groups (274 groups); the printed total is applied ONCE and its components are shown as included, never added again. Still unexplained: about 50 non-battery groups (mostly burst-fire / autofire modes and isolated cases, e.g. -5 printed on \"Burst Fire mode\" groups) and the battery groups, which also need the battery damage rules.",
+      "missing": "Core p. 170 weapon battery text (PDF); the source of the residual single-operator deltas.",
+      "impact": "Batteries and about 50 single-operator groups stay refused (STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA).",
       "severity": "IMPORTANT",
-      "recommendedAction": "Classify the differences (fire-linked, double/quad, battery, size) from the PDFs, then reconcile them as published modifiers."
+      "recommendedAction": "Read Core p. 170 from the PDF, then design the battery model (P6B-D-034) with the +2 per additional gunner rule."
     },
     {
       "workstream": "STOCK",
@@ -949,8 +949,8 @@
       "component": "published stock splash, ion and ammunition-limited groups (torpedoes, missiles, ion cannons; 71 splash + 71 ion groups)",
       "source": "canonical records",
       "status": "DEPENDENCY_BLOCKED",
-      "reason": "Area/splash attacks, ion damage against vehicles, and finite payloads (e.g. the X-wing's proton torpedoes) need the area attack path, an ion damage audit and the launcher/magazine authority. They are refused by name.",
-      "missing": "Area attack integration, ion-vs-vehicle audit, magazine authority.",
+      "reason": "Splash/area groups need the area-attack path and a finite-payload magazine. Ion groups: the damage engine only partly models ion (threshold type flag and an ion-shielding cap); the Core vehicle ion rule text is garbled in the OCR (half the ion damage to hit points, plus condition-track effects for droids and vehicles), so ion-versus-vehicle application cannot be verified from the repository.",
+      "missing": "Core p. 168-169 ion damage text (PDF) and an ion-versus-vehicle damage test; area attack integration; magazine authority.",
       "impact": "X-wing proton torpedoes stay reference-only; its laser cannons fire.",
       "severity": "IMPORTANT",
       "recommendedAction": "Build the magazine authority first (one launcher family), then splash."
@@ -961,14 +961,14 @@
       "linkedDecisions": [],
       "options": [],
       "id": "P6B-D-037",
-      "component": "published stock groups whose firing arc was never reviewed (345 groups)",
+      "component": "published stock groups whose firing arc is stated but not interpreted, or never reviewed",
       "source": "canonical records, fieldStates armament.firingArcs",
       "status": "SOURCE_EVIDENCE_MISSING",
-      "reason": "The attack preflight can reason about an arc only when the source confirms it is silent. 345 groups sit on records whose arc field is \"not-yet-reviewed\".",
-      "missing": "Source review confirming the arc is not stated.",
-      "impact": "Those groups are not executable.",
-      "severity": "IMPORTANT",
-      "recommendedAction": "Run the arc review for the remaining records; a confirmed-silent record immediately qualifies its other executable groups."
+      "reason": "After the V-P6C-01 ruling: 12 groups sit on records with no arc evidence at all (e.g. AAT-1) and 5 groups state arcs the system cannot interpret (turret, articulated, axial keel, flank-mounted turrets). A fixed-forward / forward-firing statement is enforced. The earlier count of 345 unreviewed groups was inflated by reading only one of the two field-state key styles in the canonical records.",
+      "missing": "Arc review for the 12 records; interpretation of turret / articulated / flank arcs.",
+      "impact": "17 groups not executable for arc reasons.",
+      "severity": "MINOR",
+      "recommendedAction": "Review the 12 records; decide how turret arcs are modelled."
     },
     {
       "workstream": "STOCK",
@@ -999,6 +999,36 @@
       "impact": "Capital ships cannot field point-defense weapons yet.",
       "severity": "MINOR",
       "recommendedAction": "Add modifier entries targeting an installed weapon to the sealed ledger."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-040",
+      "component": "published stock groups printing a damage dice expression with no multiplier (52 groups; 20 blocked by this alone)",
+      "source": "canonical records",
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "reason": "Core says vehicle weapon damage is dice x the listed multiplier, but groups printing plain dice (e.g. \"5d10\") mix character-scale weapons and autofire/burst values. Treating them as x1 vehicle damage could be wrong, so they are refused (STOCK_DAMAGE_NO_MULTIPLIER).",
+      "missing": "Whether a plain dice expression on a vehicle statblock is character-scale damage and how it applies to vehicle targets.",
+      "impact": "Mostly ground vehicles (speeders, droids).",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Check the Core scale rules in the PDF and a handful of statblocks, then decide the x1 treatment."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-041",
+      "component": "published stock groups operated by a copilot or non-standard operator (36 blocked by this alone)",
+      "source": "canonical records; vehicle-crew-station-evidence.js",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "The attack-time crew authority resolves only pilot and gunner stations. About 12 groups name a copilot; others name a droid brain, \"virtual droid gunner\", \"remote pilot\" or an ambiguous \"pilot or gunner\". Copilot support needs the station authority and domain routing extended; droid and ambiguous operators have no defined crew model.",
+      "missing": "Copilot station in the attack crew authority; droid operator semantics.",
+      "impact": "36 groups refused.",
+      "severity": "MINOR",
+      "recommendedAction": "Add the copilot station to the crew authority first; leave droid and ambiguous operators refused until defined."
     }
   ]
 }

@@ -851,9 +851,17 @@ The project owner verified Core Rulebook printed p. 171 (PDF p. 172): a vehicle 
 | Unresolved question | May a published stock weapon fire when the source states no arc? |
 | Options | (a) Keep per-attack GM adjudication (current default, fail-closed). (b) A source-silent arc imposes no restriction (no published rule restricts it); targets, crew station, permissions and every other check still apply. (c) A GM sets the arc once per vehicle. |
 | Recommended ruling | None |
-| Implementation impact | World setting `vehicleStockSilentArcPolicy` (default `gm-per-attack`) selects (a) or (b); (c) is not implemented. Under the default no stock weapon attack succeeds through the sheet (the Fire action carries no GM adjudication), so the stock weapons exist and are armed but are blocked until this is ruled. |
-| Status | `DEFERRED_RULES_REVIEW` |
+| Implementation impact | World setting `vehicleStockSilentArcPolicy` selects (a) or (b); (c) is not implemented. |
+| Status | `RESOLVED_OWNER_RULING` |
 | Decision authority | Project owner |
-| Resolution | |
+| Resolution | Owner ruling 2026-11-03: approve (b) as the DEFAULT for source-verified stock weapons whose firing arc the source leaves unstated; an unstated arc is not a published 360-degree arc, it is the absence of a rule. Hierarchy: (1) a published arc the system understands is enforced; (2) a source-confirmed unstated arc imposes no automated restriction; (3) a published arc not yet interpreted is refused; (4) arc evidence not reviewed or contradictory stays refused; (5) certified aftermarket installations keep their certified mount and arc. Source evidence is never fabricated and canonical records are never rewritten. Implemented in `vehicle-stock-weapon-groups.js` (`determineStockArc`), `vehicle-stock-arc-policy.js` (default `unrestricted`; a world may choose `gm-per-attack`). The owner also noted that the statement "no sourcebook states firing-arc information" was too broad: Starships of the Galaxy p. 88 describes the Ghtroc 720's double laser cannon as fixed-forward rather than turret-mounted (enforced as a forward arc); five other groups state arcs the system cannot yet interpret (turret, articulated, axial, flank). |
 
 - **Revision 21 (2026-11-02):** appended V-P6C-01. No existing entry changed.
+
+- **Revision 22 (2026-11-03):** recorded the owner's resolution of V-P6C-01 (Status and Resolution fields only; the question is unchanged). Note: the V-P2-04 evidence line "no published firing-arc rule for installed weapons" remains true of installed weapons; stock groups can carry a published arc (see V-P6C-01).
+
+### Engineering status note: stock attack totals (2026-11-03; not a ruling)
+
+Investigation of the 564 groups whose printed attack total did not match crew Base Attack + vehicle Intelligence (P6B-D-033): a statblock's printed total is the generic crew's complete modifier, and its differences from the Core formula are explained by published rules in 274 executable groups (delta 0, or +2 on pilot-crewed groups = the Core p. 171 trained-Pilot bonus, owner-verified). Weapon batteries add +2 per gunner beyond the first (corroborated by the SotG fighter-group sentence); the Core p. 170 text is unreadable in the OCR. No register entry is affected and no rule was inferred beyond the owner-verified p. 171 bonus.
+
+- **Revision 23 (2026-11-03):** appended this status note. No existing entry changed.

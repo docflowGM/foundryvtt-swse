@@ -17,9 +17,9 @@ export function buildStockWeaponItemData(record, group) {
   return {
     name: group.label, type: 'weapon',
     system: {
-      damage: group.damage.raw, meleeOrRanged: 'ranged', weaponCategory: 'ranged', mounted: true, arc: 'unknown',
+      damage: group.damage.raw, meleeOrRanged: 'ranged', weaponCategory: 'ranged', mounted: true, arc: group.arc?.value ?? 'unknown',
       vehicleMount: {
-        stockGroupKey: group.groupKey, mountKey: `stock:${group.groupKey}`, mountLabel: group.label, arc: 'unknown', crewRole: group.operator,
+        stockGroupKey: group.groupKey, mountKey: `stock:${group.groupKey}`, mountLabel: group.label, arc: group.arc?.value ?? 'unknown', crewRole: group.operator,
         attackAbilityAuthority: 'vehicle-int', importSource: 'published-stock-group', parseConfidence: 'structured'
       }
     },

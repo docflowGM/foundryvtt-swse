@@ -107,9 +107,10 @@ export function resolveStockWeapon(weapon) {
   if (vm.stockGroupKey !== group.groupKey || vm.mountKey !== `stock:${group.groupKey}` || vm.crewRole !== group.operator)
     return { ok: false, reason: 'STOCK_WEAPON_ITEM_MOUNT_MISMATCH' };
   if (text(weapon.system?.damage) !== group.damage.raw) return { ok: false, reason: 'STOCK_WEAPON_ITEM_DAMAGE_DIVERGES_FROM_SOURCE' };
-  const arcSilent = group.evidence?.firingArc === 'SOURCE_SILENT_CONFIRMED' || record.fieldStates?.['armament.firingArcs'] === 'not-stated';
-  return { ok: true, origin: 'stock', operator: group.operator, group, record, spec: { damage: group.damage.raw },
-    arcState: arcSilent ? 'SOURCE_SILENT_CONFIRMED' : 'NOT_REVIEWED' };
+  // arc evidence in the shape the attack preflight understands (V-P6C-01 hierarchy: see determineStockArc)
+  const arcEvidence = group.arc.state === 'PUBLISHED' ? { state: 'PRINTED_VALUE', value: group.arc.value }
+    : group.arc.state === 'UNSTATED' ? { state: 'SOURCE_SILENT_CONFIRMED' } : { state: 'NOT_REVIEWED' };
+  return { ok: true, origin: 'stock', operator: group.operator, group, record, spec: { damage: group.damage.raw }, arcEvidence };
 }
 
 /**

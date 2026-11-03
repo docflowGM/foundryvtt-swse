@@ -13,7 +13,8 @@
  *   - the group is not a multi-gunner station battery, and states no size-dependent attack adjustments;
  *   - the printed attack total reconciles with the printed crew Base Attack + the vehicle's Intelligence modifier
  *     (the Core vehicle attack formula), so applying the formula cannot contradict the statblock.
- * The arc is never published: it is reported as `arcEvidence` (source silent) and handled by the arc policy.
+ * The firing arc follows determineStockArc() (owner ruling V-P6C-01): a stated, understood arc is enforced; a confirmed-
+ * unstated arc imposes no automated restriction; a stated-but-uninterpreted or never-reviewed arc is refused.
  * Pure; no Foundry globals.
  */
 const abilityMod = s => Math.floor((s - 10) / 2);
@@ -57,10 +58,55 @@ export function parseStockFiringGroup(group) {
   const e = notes.match(EVIDENCE);
   if (e) { try { out.evidence = JSON.parse(e[0]); } catch { reasons.push('STOCK_EVIDENCE_UNREADABLE'); } }
   for (const k of Object.keys(out.evidence)) if (/smaller|vs|against/i.test(k)) { reasons.push('STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT'); break; }
-  out.arcStated = out.evidence.firingArc ? out.evidence.firingArc !== 'SOURCE_SILENT_CONFIRMED' : false;
-  if (out.arcStated) reasons.push('STOCK_FIRING_ARC_STATED_UNPARSED');
   out.reasons = [...new Set(reasons)];
   return out;
+}
+
+/**
+ * Firing arc of a published group, by the owner's hierarchy (V-P6C-01):
+ *   PUBLISHED        the source states an arc the system understands (group evidence): enforced;
+ *   UNSTATED         the source is confirmed silent (group evidence, or the record's reviewed `firingArcs` field state):
+ *                    no automated arc restriction;
+ *   STATED_UNPARSED  the source states an arc the system cannot interpret (turret, articulated, axial, flank...): refused;
+ *   NOT_REVIEWED     no arc evidence at all: refused until the source is reviewed.
+ * A stated arc in the group evidence always outranks a record-level "not stated". Only an explicit fixed-forward / forward-
+ * firing statement is interpreted; everything else that is stated stays refused rather than guessed.
+ */
+export function determineStockArc(record, parsedGroup) {
+  const stated = parsedGroup?.evidence?.firingArc;
+  if (typeof stated === 'string' && stated !== 'SOURCE_SILENT_CONFIRMED') {
+    const t = stated.trim().toLowerCase();
+    if (/^fixed[- ]forward\b/.test(t) || t === 'forward-firing' || t === 'forward firing') return { state: 'PUBLISHED', value: 'forward', basis: stated };
+    return { state: 'STATED_UNPARSED', value: null, basis: stated };
+  }
+  if (stated === 'SOURCE_SILENT_CONFIRMED') return { state: 'UNSTATED', value: null, basis: 'group evidence' };
+  const f = record?.fieldStates ?? {};
+  const rec = f['armament.firingArcs'] ?? f['/armament/firingArcs'];     // both pointer styles occur in the canonical records
+  if (rec === 'not-stated') return { state: 'UNSTATED', value: null, basis: 'record field state' };
+  return { state: 'NOT_REVIEWED', value: null, basis: null };
+}
+
+/**
+ * What a statblock's printed attack total contains. The printed total of a group is the GENERIC crew's complete attack
+ * modifier (range and conditions are applied at attack time on top of it). It is accepted as the stock baseline only when
+ * its difference from the Core vehicle formula (crew Base Attack + vehicle Intelligence modifier) is fully explained by a
+ * published rule:
+ *   delta 0                        crew Base Attack + Intelligence modifier;
+ *   delta +2, pilot-operated       plus the trained-Pilot bonus (Core p. 171: +2 on attacks with a pilot-crewed weapon);
+ * Any other difference is UNEXPLAINED and the group is refused rather than "corrected" to match. (Weapon batteries add +2 per
+ * additional gunner; they are refused for the battery model, not for the arithmetic.)
+ * @returns {{basis: object|null, reason: string|null}}
+ */
+export function explainPrintedAttackTotal(parsed, bab, intScore) {
+  const printed = parsed.attackBonusPrinted;
+  if (!finite(printed)) return { basis: null, reason: 'STOCK_ATTACK_TOTAL_NOT_PRINTED' };
+  if (!finite(bab) || !finite(intScore)) return { basis: null, reason: 'STOCK_CREW_ATTACK_BASIS_UNKNOWN' };
+  const base = bab + abilityMod(intScore), delta = printed - base;
+  const components = [{ id: 'crew-bab', label: 'Crew Base Attack (published statblock)', value: bab }, { id: 'vehicle-int', label: 'Vehicle Intelligence modifier', value: abilityMod(intScore) }];
+  if (delta === 0) return { basis: { kind: 'BAB_PLUS_INT', printed, delta, components }, reason: null };
+  if (delta === 2 && parsed.operator === 'pilot')
+    return { basis: { kind: 'BAB_PLUS_INT_PLUS_TRAINED_PILOT', printed, delta, components: [...components, { id: 'pilot-trained', label: 'Trained Pilot, pilot-crewed weapon (Core p. 171)', value: 2 }] }, reason: null };
+  return { basis: { kind: 'UNEXPLAINED', printed, delta, components }, reason: 'STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA' };
 }
 
 /**
@@ -74,14 +120,12 @@ export function assessStockWeaponGroups(record) {
     groups: (record?.armament?.firingGroups ?? []).map(g => {
       const p = parseStockFiringGroup(g);
       const reasons = [...p.reasons];
-      // The arc is never published; the attack preflight can only reason about it when the source CONFIRMS that it is
-      // silent (group evidence or the record's field state). An arc that was never reviewed stays non-executable.
-      const arcSilent = p.evidence?.firingArc === 'SOURCE_SILENT_CONFIRMED' || record?.fieldStates?.['armament.firingArcs'] === 'not-stated';
-      if (!arcSilent) reasons.push('STOCK_FIRING_ARC_NOT_REVIEWED');
-      if (!finite(p.attackBonusPrinted)) reasons.push('STOCK_ATTACK_TOTAL_NOT_PRINTED');
-      else if (!finite(bab) || !finite(intScore)) reasons.push('STOCK_CREW_ATTACK_BASIS_UNKNOWN');
-      else if (p.attackBonusPrinted !== bab + abilityMod(intScore)) reasons.push('STOCK_ATTACK_TOTAL_DOES_NOT_RECONCILE_WITH_BAB_PLUS_INT');
-      return { ...p, reasons: [...new Set(reasons)], executable: reasons.length === 0 };
+      const arc = determineStockArc(record, p);
+      if (arc.state === 'NOT_REVIEWED') reasons.push('STOCK_FIRING_ARC_NOT_REVIEWED');
+      if (arc.state === 'STATED_UNPARSED') reasons.push('STOCK_FIRING_ARC_STATED_UNPARSED');
+      const attack = explainPrintedAttackTotal(p, bab, intScore);
+      if (attack.reason) reasons.push(attack.reason);
+      return { ...p, arc, attackBasis: attack.basis, reasons: [...new Set(reasons)], executable: reasons.length === 0 };
     })
   };
 }

@@ -7,7 +7,7 @@ import { assessStockWeaponGroups } from '../scripts/domain/vehicles/vehicle-stoc
 import { resolveVehicleWeaponAuthority, resolveVehicleWeaponDamage } from '../scripts/domain/vehicles/vehicle-weapon-damage.js';
 import { classifyInstalledVehicleWeapon } from '../scripts/domain/vehicles/vehicle-attack-provenance.js';
 import { resolveTrustedStockAttackGroup } from '../scripts/domain/vehicles/vehicle-stock-attack-authority.js';
-import { STOCK_ARC_POLICY } from '../scripts/domain/vehicles/vehicle-stock-arc-policy.js';
+import { STOCK_ARC_POLICY, getStockSilentArcPolicy } from '../scripts/domain/vehicles/vehicle-stock-arc-policy.js';
 
 installSystemsResolver(); installFoundryStubs();
 const { ActorEngine } = await import('../scripts/governance/actor-engine/actor-engine.js');
@@ -89,31 +89,115 @@ test('AUTHORITY: the stock Item resolves to a trusted source group; classificati
   assert.equal(classifyInstalledVehicleWeapon(v, w).kind, 'STOCK_CANDIDATE');
 });
 
-test('ARC POLICY: by default a stock attack is blocked (the source states no arc); the owner policy unlocks it', async () => {
+test('ARC RULING V-P6C-01: with no setting touched, X-wing and TIE fighter stock cannons fire without GM intervention', async () => {
+  setPolicy(undefined);                                   // the shipped default
+  for (const key of [XW, 'core-tie-fighter']) {
+    const v = await armed(key); const w = stockItems(v)[0];
+    const r = await fire(v, w);
+    assert.equal(r.blocked, false, `${key}: ${r.log.join('|')}`);
+    assert.ok(r.result, key);
+    assert.equal(w.system.vehicleMount.arc, 'unknown', 'a source-unstated arc is shown as unknown, not as a published arc');
+  }
+  assert.equal(getStockSilentArcPolicy(), STOCK_ARC_POLICY.UNRESTRICTED, 'default policy');
+});
+
+test('ARC RULING: a world may still require a GM adjudication for source-unstated arcs', async () => {
   const v = await armed(XW); const w = stockItems(v)[0];
   setPolicy('gm-per-attack');
   const blocked = await fire(v, w);
   assert.equal(blocked.result, null);
-  assert.match(blocked.log.join('|'), /TRUSTED_GM_CONTEXT_REQUIRED/, 'without a GM adjudication the source-silent arc blocks the attack');
-  setPolicy('unrestricted');
-  const ok = await fire(v, w);
-  assert.equal(ok.blocked, false, ok.log.join('|'));
-  assert.ok(ok.result);
+  assert.match(blocked.log.join('|'), /TRUSTED_GM_CONTEXT_REQUIRED/);
   setPolicy(undefined);
 });
 
-test('CREW -> TARGET -> ATTACK: generic crew reproduces the printed +5; breakdown shows the published Base Attack', async () => {
-  const v = await armed(XW); const w = stockItems(v)[0];
+test('ARC RULING hierarchy: a PUBLISHED arc is enforced, never overridden by source silence (Ghtroc 720 fixed-forward cannon)', async () => {
+  const gh = 'sotg-ghtroc-industries-class-720-freighter';
+  const rec = docs.find(d => keyOf(d) === gh).flags.swse.universalVehicleSource.source;
+  const g = assessStockWeaponGroups(rec).groups[0];
+  assert.deepEqual([g.executable, g.arc.state, g.arc.value], [true, 'PUBLISHED', 'forward']);
+  assert.match(g.arc.basis, /fixed-forward per p\.88/);
+  // the record-level "not stated" does not outrank the group's stated arc
+  assert.equal(rec.fieldStates['/armament/firingArcs'], 'not-stated');
   setPolicy('unrestricted');
+  const v = await armed(gh); const w = stockItems(v)[0];
+  assert.equal(w.system.vehicleMount.arc, 'forward');
+  const ahead = await fire(v, w, target('medium'));                     // target 300 units ahead of the token (rotation 0)
+  assert.equal(ahead.blocked, false, ahead.log.join('|'));
+  const behind = await fire(v, w, { ...target('medium'), getActiveTokens: () => [token(-300, 0)] });
+  assert.equal(behind.result, null);
+  assert.match(behind.log.join('|'), /TARGET_OUTSIDE_VERIFIED_FIRE_ARC/);
+  setPolicy(undefined);
+});
+
+test('ARC RULING hierarchy: stated-but-uninterpreted and never-reviewed arcs stay refused', () => {
+  const find = (key, label) => {
+    const rec = docs.find(d => keyOf(d) === key).flags.swse.universalVehicleSource.source;
+    return assessStockWeaponGroups(rec).groups.find(x => x.label === label);
+  };
+  const turret = find('sotg-koensayr-manufacturing-btl-58-k-wing', 'quad laser cannon');
+  assert.deepEqual([turret.executable, turret.arc.state], [false, 'STATED_UNPARSED']);
+  assert.ok(turret.reasons.includes('STOCK_FIRING_ARC_STATED_UNPARSED'));
+  const articulated = find('sotg-mandalmotors-starviper-assault-fighter', 'heavy double laser cannons');
+  assert.equal(articulated.arc.state, 'STATED_UNPARSED');
+  const unreviewed = find('core-aat-1', 'light blaster cannons');
+  assert.deepEqual([unreviewed.executable, unreviewed.arc.state], [false, 'NOT_REVIEWED']);
+  assert.ok(unreviewed.reasons.includes('STOCK_FIRING_ARC_NOT_REVIEWED'));
+  // a stated-but-uninterpreted arc is never silently treated as unrestricted, whatever the world policy
+  assert.equal(turret.executable, false);
+});
+
+test('ARC RULING: certified aftermarket installations keep their certified mount and arc regardless of the stock policy', async () => {
+  const { planVehicleInstallation, DEFAULT_VEHICLE_INSTALLATION_RULES } = await import('../scripts/domain/vehicles/vehicle-installation-ledger.js');
+  const { VehicleInstallationService: Svc } = await import('../scripts/engine/vehicles/vehicle-installation-service.js');
+  const { readFileSync } = await import('node:fs');
+  const wsys = JSON.parse(readFileSync('data/vehicle-modifications/weapon-systems.json', 'utf8')).find(w => w.id === 'laser-cannon-light');
+  const cert = { ...JSON.parse(readFileSync('data/vehicle-modifications/certification-p6a.json', 'utf8')).rows, ...JSON.parse(readFileSync('data/vehicle-modifications/certification.json', 'utf8')).rows }['laser-cannon-light'];
+  const v = importVehicle(XW);
+  const rules = { ...DEFAULT_VEHICLE_INSTALLATION_RULES, resolveEpBudget: () => ({ state: 'known', total: 4 }), resolveNonstandard: () => ({ nonstandard: false, basis: 'T' }) };
+  const plan = mount => planVehicleInstallation({ record: v.flags.swse.universalVehicleSource.source, flags: v.flags, catalogEntry: { ...wsys, certification: cert }, installId: 'w1', availableCredits: 1e9, rules, mount, nonstandard: false });
+  assert.ok(plan(null).reasons.includes('WEAPON_MOUNT_UNCERTIFIED'), 'still needs a certified mount');
+  assert.ok(plan(Svc.normalizeMount({ mountKey: 'n', arc: 'sideways', operatorRole: 'pilot', reason: 'r' }, { isGM: true, userId: 'g', now: 1 }).mount).reasons.includes('WEAPON_MOUNT_ARC_INVALID'));
+});
+
+test('CREW -> TARGET -> ATTACK: generic crew uses the printed +5 once; its components are shown, not added again', async () => {
+  const v = await armed(XW); const w = stockItems(v)[0];
+  setPolicy(undefined);
   const r = await fire(v, w);
   assert.equal(r.result.attackDomain, 'vehicle-abstract-crew');
-  assert.equal(r.result.atkBonus, 5, 'published Base Atk +2 plus Intelligence 16 (+3) equals the statblock\'s laser cannons +5');
+  assert.equal(r.result.atkBonus, 5, 'the statblock\'s laser cannons +5, applied once');
   const ledger = r.result.componentLedger;
-  assert.equal(ledger.find(e => e.id === 'crew-quality-bab').value, 2);
-  assert.match(ledger.find(e => e.id === 'crew-quality-bab').label, /published statblock/);
-  assert.equal(ledger.find(e => e.id === 'vehicle-int').value, 3);
+  const base = ledger.find(e => e.id === 'published-statblock-attack');
+  assert.deepEqual([base.value, base.applied], [5, true]);
+  assert.match(base.label, /Published statblock attack \(laser cannons\)/);
+  const included = ledger.filter(e => e.id.startsWith('included-'));
+  assert.deepEqual(included.map(e => [e.id, e.value, e.applied]), [['included-crew-bab', 2, false], ['included-vehicle-int', 3, false]]);
+  assert.equal(ledger.some(e => e.id === 'crew-quality-bab' || e.id === 'vehicle-int'), false, 'the formula is not recomposed on top of the printed total');
   assert.equal(ledger.some(e => e.id === 'capital-ship-attack-penalty'), false, 'a Gargantuan starfighter takes no capital penalty');
+  // attack-time modifiers still stack on top of the baseline: a pilot-crewed group whose printed total includes the +2
+  const sotg = await armed('sotg-ghtroc-industries-class-720-freighter');
+  assert.equal(stockItems(sotg).length, 1);
+});
+
+test('PRINTED TOTAL accounting: a +2 pilot-crewed total is the trained-Pilot rule, shown as included; unexplained totals are refused', async () => {
+  const rec = k => docs.find(d => keyOf(d) === k).flags.swse.universalVehicleSource.source;
+  const arc170 = assessStockWeaponGroups(rec('core-arc-170-starfighter')).groups.find(g => g.label === 'heavy laser cannons');
+  assert.equal(arc170.attackBasis.kind, 'BAB_PLUS_INT');
+  const sotgPilot = assessStockWeaponGroups(rec('sotg-ghtroc-industries-class-720-freighter')).groups[0];
+  assert.ok(['BAB_PLUS_INT', 'BAB_PLUS_INT_PLUS_TRAINED_PILOT'].includes(sotgPilot.attackBasis.kind));
+  // find a pilot-crewed group whose total includes the +2
+  let plus2 = null;
+  for (const d of docs) { const g = assessStockWeaponGroups(d.flags.swse.universalVehicleSource.source).groups.find(x => x.executable && x.attackBasis.kind === 'BAB_PLUS_INT_PLUS_TRAINED_PILOT'); if (g) { plus2 = [keyOf(d), g]; break; } }
+  assert.ok(plus2, 'there are pilot-crewed groups whose printed total includes the Core +2');
+  assert.equal(plus2[1].operator, 'pilot');
+  assert.deepEqual(plus2[1].attackBasis.components.map(c => c.id), ['crew-bab', 'vehicle-int', 'pilot-trained']);
+  const v = await armed(plus2[0]); const w = stockItems(v).find(i => i.flags.swse.vehicleStockWeapon.groupKey === plus2[1].groupKey);
   setPolicy(undefined);
+  const r = await fire(v, w);
+  assert.equal(r.result.atkBonus, plus2[1].attackBonusPrinted - (CAPITAL_SIZES_FOR_TEST.has(v.flags.swse.universalVehicleSource.source.classification.printedSize) ? 20 : 0));
+  assert.equal(r.result.componentLedger.find(e => e.id === 'included-pilot-trained').applied, false);
+  // a total the published rules cannot explain stays refused (not "corrected" to fit)
+  const unexplained = docs.flatMap(d => assessStockWeaponGroups(d.flags.swse.universalVehicleSource.source).groups).filter(g => g.reasons.includes('STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA'));
+  assert.ok(unexplained.length > 0 && unexplained.every(g => !g.executable));
 });
 
 test('DAMAGE: published 6d10 x 2 through the one composition authority; edited Item damage is irrelevant', async () => {
@@ -254,13 +338,14 @@ test('CAPITAL and PILOT rules apply to stock groups through the same attack math
   } finally { globalThis.game.actors.get = realGet; }
   const abs = await resolveAbstractCrewAttackBonus(v, w, 'skilled', { target: target() });
   assert.equal(abs.ledger.some(e => e.id === 'pilot-trained-weapon-crew'), false, 'abstract crew never gets it');
-  assert.equal(abs.ledger.find(e => e.id === 'crew-quality-bab').value, 2, 'published Base Atk, not the legacy tier table (skilled would have been 5)');
+  assert.equal(abs.ledger.find(e => e.id === 'published-statblock-attack').value, 5, 'the printed total, not a recomposition from the legacy tier table');
   setPolicy(undefined);
 });
 
 // ---------------------------------------------------------------------------------------------------------------------
 // CORPUS: every executable stock group of every published vehicle runs the real chain
 // ---------------------------------------------------------------------------------------------------------------------
+const CAPITAL_SIZES_FOR_TEST = new Set(['Colossal (frigate)', 'Colossal (cruiser)', 'Colossal (station)']);
 const CAPITAL_SIZES = new Set(['Colossal (frigate)', 'Colossal (cruiser)', 'Colossal (station)']);
 
 test('CORPUS: each executable stock group arms, attacks at its printed total, and resolves its published damage', async () => {
@@ -289,7 +374,7 @@ test('CORPUS: each executable stock group arms, attacks at its printed total, an
     }
   }
   assert.deepEqual(failures, []);
-  assert.equal(proven.length, 62, 'the corpus-wide count of offline-executable stock groups');
+  assert.equal(proven.length, 274, 'the corpus-wide count of offline-executable stock groups');
   setPolicy(undefined);
 });
 
@@ -298,9 +383,9 @@ test('COVERAGE REPORT: current, and its executable counts are exactly what the C
   execFileSync(process.execPath, ['tools/audits/vehicles/build-stock-weapon-coverage.mjs', '--check']);
   const { readFileSync } = await import('node:fs');
   const cov = JSON.parse(readFileSync('data/audits/vehicles/stock-weapon-coverage.json', 'utf8'));
-  assert.deepEqual([cov.totals.vehicles, cov.totals.groups, cov.totals.offlineExecutableGroups, cov.totals.vehiclesWithOfflineExecutableGroup, cov.totals.liveVerifiedVehicles], [429, 846, 62, 51, 0]);
+  assert.deepEqual([cov.totals.vehicles, cov.totals.groups, cov.totals.offlineExecutableGroups, cov.totals.vehiclesWithOfflineExecutableGroup, cov.totals.liveVerifiedVehicles], [429, 846, 274, 207, 0]);
   const exec = cov.vehicles.flatMap(v => v.groups.filter(g => g.offlineExecutable));
-  assert.equal(exec.length, 62);
+  assert.equal(exec.length, 274);
   for (const g of cov.vehicles.flatMap(v => v.groups)) {
     assert.equal(g.liveVerified, false);
     if (!g.offlineExecutable) { assert.ok(g.refusals.length > 0, g.groupKey + ' has a named refusal'); assert.equal(g.attackReadiness, 'REFUSED'); }

@@ -331,7 +331,30 @@ export async function resolveAbstractCrewAttackBonus(vehicleActor, weapon, crewQ
   const rangeBand = String(context.rangeBand ?? context.range ?? weapon?.system?.rangeBand ?? '').toLowerCase() || 'unspecified';
   const weaponEnhancement = getWeaponFlatAttackBonus(weapon);
 
-  const ledger = [
+  // PUBLISHED STOCK weapon with generic crew: the statblock's printed attack total IS the generic crew's complete attack
+  // modifier. It is the baseline (nothing is recomposed or added to it); its known components are listed as included
+  // (applied: false) so the breakdown shows what the number contains. Range, conditions, the capital-ship penalty and
+  // registered effects are the genuine attack-time modifiers and stack on top.
+  const stockAuthority = resolveVehicleWeaponAuthority(weapon);
+  const stockBasis = stockAuthority?.ok && stockAuthority.origin === 'stock' ? stockAuthority.stock.group : null;
+  const rangeEntry = ledgerEntry({
+    id: 'range', label: 'Range', value: rangeModifier, category: 'range',
+    sourceId: weapon?.id ?? null, sourceName: weapon?.name ?? null,
+    reason: `Source: getRangePenalty helper; range band: ${rangeBand}. Sign preserved; resolved once.`
+  });
+  const ledger = stockBasis ? [
+    ledgerEntry({
+      id: 'published-statblock-attack', label: `Published statblock attack (${stockBasis.label})`, value: stockBasis.attackBasis.printed, category: 'gunner',
+      sourceId: vehicleActor.id ?? null, sourceName: `${vehicleActor.name ?? 'Vehicle'} — published generic crew`,
+      reason: `Printed attack total of the stock group: the generic crew's complete modifier (${stockBasis.attackBasis.kind}). Range and attack-time conditions apply on top; its components are listed below and are not added again.`
+    }),
+    ...stockBasis.attackBasis.components.map(c => ledgerEntry({
+      id: `included-${c.id}`, label: `${c.label} (included in the printed total)`, value: c.value, category: 'included', applied: false,
+      sourceId: vehicleActor.id ?? null, sourceName: vehicleActor.name ?? null,
+      reason: 'Already part of the published statblock attack total; shown for transparency, not added again.'
+    })),
+    rangeEntry
+  ] : [
     ledgerEntry({
       id: 'crew-quality-bab', label: crewBabLabel, value: crewQualityBonus, category: 'gunner',
       sourceId: vehicleActor.id ?? null, sourceName: `${vehicleActor.name ?? 'Vehicle'} — abstract crew`,
@@ -342,11 +365,7 @@ export async function resolveAbstractCrewAttackBonus(vehicleActor, weapon, crewQ
       sourceId: vehicleActor.id ?? null, sourceName: vehicleActor.name ?? null,
       reason: 'SchemaAdapters.getAbilityMod(vehicleActor, "int") — same vehicle Intelligence source as the named-gunner formula; the vehicle\'s own targeting system assists any operator, named or abstract.'
     }),
-    ledgerEntry({
-      id: 'range', label: 'Range', value: rangeModifier, category: 'range',
-      sourceId: weapon?.id ?? null, sourceName: weapon?.name ?? null,
-      reason: `Source: getRangePenalty helper; range band: ${rangeBand}. Sign preserved; resolved once.`
-    })
+    rangeEntry
   ];
 
   if (weaponEnhancement !== 0) {

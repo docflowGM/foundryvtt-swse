@@ -8,8 +8,8 @@
  *     (vehicle-stock-weapon-groups.js: plain x2 damage, a single pilot/gunner operator, printed attack total that
  *     reconciles with the printed crew Base Attack + the vehicle's Intelligence modifier);
  *   - the Item still mirrors that group (name, mount identity, operator, damage).
- * The authority returns the operator and the arc evidence from the SOURCE; the arc itself is never published, so it is
- * reported as source-silent and handled by the arc policy in the attack preflight.
+ * The authority returns the operator and the arc evidence from the SOURCE: a published, understood arc (enforced by the
+ * preflight geometry) or a confirmed-unstated arc (no automated restriction under the owner ruling V-P6C-01).
  */
 import { resolveStockWeapon } from './vehicle-weapon-damage.js';
 
@@ -28,6 +28,6 @@ export function resolveTrustedStockAttackGroup(vehicle, weapon) {
   return {
     bindingVerified: true, sourceComplete: true,
     weaponGroupKey: s.group.groupKey, sourceEntryKey: s.record.identity.sourceEntryKey, operator: s.operator,
-    arcEvidence: { state: s.arcState }, attackBonusEvidence: { state: 'PRINTED_VALUE', value: s.group.attackBonusPrinted }
+    arcEvidence: s.arcEvidence, attackBonusEvidence: { state: 'PRINTED_VALUE', value: s.group.attackBonusPrinted }
   };
 }

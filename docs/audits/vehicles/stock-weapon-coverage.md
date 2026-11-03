@@ -9,17 +9,16 @@ Three claims are kept apart: **SOURCE_VERIFIED** (the published configuration is
 | Published vehicles | 429 |
 | Published attack groups | 846 |
 | Groups SOURCE_VERIFIED | 446 (52.7%) |
-| Groups OFFLINE_EXECUTABLE | 62 (7.3%) |
-| Vehicles with at least one OFFLINE_EXECUTABLE group | 51 (11.9%) |
-| Vehicles with every group executable | 28 |
+| Groups OFFLINE_EXECUTABLE | 274 (32.4%) |
+| Vehicles with at least one OFFLINE_EXECUTABLE group | 207 (48.3%) |
+| Vehicles with every group executable | 115 |
 | Vehicles LIVE_VERIFIED | 0 |
 
 ## Why groups are refused (a group can have several reasons)
 
 | Reason | Groups |
 |---|---|
-| STOCK_ATTACK_TOTAL_DOES_NOT_RECONCILE_WITH_BAB_PLUS_INT | 564 |
-| STOCK_FIRING_ARC_NOT_REVIEWED | 345 |
+| STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA | 336 |
 | STOCK_OPERATOR_IS_A_STATION_BATTERY | 291 |
 | STOCK_GROUP_IS_A_WEAPON_BATTERY | 283 |
 | STOCK_DAMAGE_CAPITAL_OR_OTHER_MULTIPLIER | 192 |
@@ -32,8 +31,9 @@ Three claims are kept apart: **SOURCE_VERIFIED** (the published configuration is
 | STOCK_DAMAGE_NO_MULTIPLIER | 52 |
 | STOCK_OPERATOR_NOT_PRINTED | 17 |
 | STOCK_DAMAGE_QUALIFIED | 14 |
+| STOCK_FIRING_ARC_NOT_REVIEWED | 12 |
 | STOCK_ATTACK_TOTAL_NOT_PRINTED | 8 |
-| STOCK_FIRING_ARC_STATED_UNPARSED | 6 |
+| STOCK_FIRING_ARC_STATED_UNPARSED | 4 |
 | STOCK_CREW_ATTACK_BASIS_UNKNOWN | 2 |
 
 ## By book
@@ -41,52 +41,52 @@ Three claims are kept apart: **SOURCE_VERIFIED** (the published configuration is
 | Book | Vehicles | Groups | Executable groups | Vehicles with an executable group |
 |---|---|---|---|---|
 | Core Rulebook | 17 | 39 | 8 | 7 |
-| Clone Wars Campaign Guide | 67 | 124 | 5 | 4 |
-| Force Unleashed Campaign Guide | 34 | 58 | 11 | 11 |
-| Galaxy at War | 11 | 17 | 3 | 3 |
+| Clone Wars Campaign Guide | 67 | 124 | 42 | 32 |
+| Force Unleashed Campaign Guide | 34 | 58 | 15 | 15 |
+| Galaxy at War | 11 | 17 | 6 | 5 |
 | Galaxy of Intrigue | 8 | 9 | 0 | 0 |
 | Jedi Academy Training Manual | 1 | 1 | 0 | 0 |
-| Knights of the Old Republic Campaign Guide | 39 | 73 | 11 | 9 |
-| Legacy Era Campaign Guide | 49 | 109 | 0 | 0 |
-| Rebellion Era Campaign Guide | 53 | 94 | 0 | 0 |
-| Scum and Villainy | 13 | 24 | 3 | 3 |
+| Knights of the Old Republic Campaign Guide | 39 | 73 | 23 | 16 |
+| Legacy Era Campaign Guide | 49 | 109 | 29 | 25 |
+| Rebellion Era Campaign Guide | 53 | 94 | 47 | 34 |
+| Scum and Villainy | 13 | 24 | 10 | 8 |
 | Scavenger's Guide to Droids | 1 | 2 | 0 | 0 |
-| Starships of the Galaxy | 105 | 258 | 21 | 14 |
+| Starships of the Galaxy | 105 | 258 | 84 | 57 |
 | Threats of the Galaxy | 5 | 5 | 0 | 0 |
-| Unknown Regions | 26 | 33 | 0 | 0 |
+| Unknown Regions | 26 | 33 | 10 | 8 |
 
 ## By category
 
 | Category | Vehicles | With an executable group |
 |---|---|---|
-| starfighter | 132 | 23 |
-| space-transport | 99 | 27 |
-| capital-ship | 84 | 1 |
-| walker | 15 | 0 |
-| airspeeder | 15 | 0 |
-| ground-speeder | 14 | 0 |
+| starfighter | 132 | 119 |
+| space-transport | 99 | 60 |
+| capital-ship | 84 | 3 |
+| walker | 15 | 8 |
+| airspeeder | 15 | 3 |
+| ground-speeder | 14 | 4 |
 | tracked-vehicle | 10 | 0 |
 | speeder-bike | 9 | 0 |
 | space-station | 8 | 0 |
-| repulsorlift-tank | 7 | 0 |
+| repulsorlift-tank | 7 | 3 |
 | landspeeder | 7 | 0 |
 | ground-speeder-bike | 4 | 0 |
 | wheeled-vehicle | 3 | 0 |
 | wheel-bike | 2 | 0 |
-| water-speeder | 2 | 0 |
-| heavy-ground-speeder | 2 | 0 |
+| water-speeder | 2 | 1 |
+| heavy-ground-speeder | 2 | 1 |
 | air-speeder-bike | 2 | 0 |
 | speeder | 1 | 0 |
-| wheeled-tank | 1 | 0 |
+| wheeled-tank | 1 | 1 |
 | ornithopter | 1 | 0 |
 | wheeled-assault-vehicle | 1 | 0 |
-| wheeled-groundcar | 1 | 0 |
-| command-speeder | 1 | 0 |
+| wheeled-groundcar | 1 | 1 |
+| command-speeder | 1 | 1 |
 | drop-pod | 1 | 0 |
 | medical-airspeeder | 1 | 0 |
 | wheeled-utility-vehicle | 1 | 0 |
-| vehicle-droid | 1 | 0 |
-| aerial-artillery | 1 | 0 |
+| vehicle-droid | 1 | 1 |
+| aerial-artillery | 1 | 1 |
 | hybrid-vehicle-droid | 1 | 0 |
 | escape-craft | 1 | 0 |
 | swoop | 1 | 0 |
@@ -102,12 +102,43 @@ Three claims are kept apart: **SOURCE_VERIFIED** (the published configuration is
 | Koensayr Y-wing Starfighter | Core Rulebook p. 178 | 1 / 3 | laser cannons (4d10x2, pilot, +5) |
 | TIE Fighter | Core Rulebook p. 179 | 1 / 1 | laser cannons (4d10x2, pilot, +4) |
 | TIE Interceptor | Core Rulebook p. 179 | 1 / 1 | laser cannons (6d10x2, pilot, +5) |
+| All-Terrain Attack Pod (AT-AP) | Clone Wars Campaign Guide p. 163 | 3 / 3 | mass-driver cannon (6d10x2, gunner, +7); heavy blaster cannon (5d10x2, gunner, +7); medium laser cannon (3d10x2, pilot, +9) |
+| All-Terrain Experimental Transport (AT-XT) | Clone Wars Campaign Guide p. 163 | 1 / 2 | double laser cannon (4d10x2, pilot, +6) |
+| All-Terrain Recon Transport (AT-RT) | Clone Wars Campaign Guide p. 164 | 1 / 1 | repeating blaster cannon (3d10x2, pilot, +5) |
+| Azure Angel | Clone Wars Campaign Guide p. 138 | 2 / 2 | laser cannons (7d10x2, pilot, +14); proton torpedoes (9d10x2, pilot, +14) |
+| Belbullab Heavy Starfighter | Clone Wars Campaign Guide p. 204 | 3 / 3 | Belbullab-22 triple laser cannons (5d10x2, pilot, +6); Belbullab-23/24 triple laser cannons (6d10x2, pilot, +6); Belbullab-24 concussion missile launchers (9d10x2, pilot, +6) |
 | C-9979 Landing Craft | Clone Wars Campaign Guide p. 205 | 2 / 2 | fire-linked laser cannons (5d10x2, gunner, +3); fire-linked blaster cannons (5d10x2, gunner, +3) |
+| CIS-Advanced Starfighter | Clone Wars Campaign Guide p. 206 | 2 / 2 | heavy blaster cannons (6d10x2, pilot, +7); proton torpedo launchers (9d10x2, pilot, +7) |
+| Dagger-class Starfighter | Clone Wars Campaign Guide p. 81 | 1 / 1 | laser cannons (6d10x2, pilot, +2) |
+| Delta-7 Aethersprite Interceptor (High-Maneuver Variant) | Clone Wars Campaign Guide p. 137 | 1 / 1 | laser cannons (6d10x2, pilot, +9) |
+| Delta-7 Aethersprite Interceptor (High-Speed Variant) | Clone Wars Campaign Guide p. 137 | 1 / 1 | laser cannons (6d10x2, pilot, +9) |
+| Dianoga-class Assault Starfighter | Clone Wars Campaign Guide p. 82 | 1 / 2 | fire-linked laser cannons (6d10x2, pilot, +2) |
+| Droch-class Boarding Ship | Clone Wars Campaign Guide p. 207 | 1 / 2 | light laser cannons (3d10x2, pilot, +6) |
+| Eta-2 Actis Interceptor (Heavy-Defenses Variant) | Clone Wars Campaign Guide p. 139 | 1 / 2 | laser cannons (4d10x2, pilot, +14) |
+| Eta-2 Actis Interceptor (High-Maneuver Variant) | Clone Wars Campaign Guide p. 139 | 1 / 2 | laser cannons (4d10x2, pilot, +14) |
 | Freefall-class Starfighter | Clone Wars Campaign Guide p. 82 | 1 / 2 | laser cannons (6d10x2, gunner, +1) |
+| G9 Rigger | Clone Wars Campaign Guide p. 76 | 1 / 2 | double light laser cannons (4d10x2, pilot, +3) |
+| Ground Armored Tank (GAT) | Clone Wars Campaign Guide p. 198 | 1 / 2 | medium laser cannons (4d10x2, pilot, +6) |
 | GS-100 Salvage Ship | Clone Wars Campaign Guide p. 78 | 1 / 1 | medium laser cannons (4d10x2, gunner, +2) |
+| IG-227 Hailfire-class Droid Tank | Clone Wars Campaign Guide p. 199 | 1 / 2 | laser cannon (4d10x2, pilot, +5) |
+| Infantry Support Speeder Platform | Clone Wars Campaign Guide p. 166 | 2 / 2 | twin blaster cannons (4d10x2, pilot, +8); twin blaster cannons (4d10x2, gunner, +6) |
+| KR-TB Doomtreader | Clone Wars Campaign Guide p. 79 | 1 / 1 | dual laser cannons (6d10x2, pilot, +4) |
+| LAAT/c Carrier | Clone Wars Campaign Guide p. 167 | 1 / 1 | light laser cannons (3d10x2, pilot, +9) |
+| Manta Droid Subfighter | Clone Wars Campaign Guide p. 200 | 1 / 2 | laser cannons (4d10x2, pilot, +3) |
+| MorningStar-A Assault Starfighter | Clone Wars Campaign Guide p. 83 | 2 / 2 | light laser cannons (5d10x2, pilot, +3); concussion missile launcher (8d10x2, pilot, +3) |
+| Multi-Troop Transport (MTT) | Clone Wars Campaign Guide p. 200 | 1 / 1 | twin blaster cannons (3d10x2, gunner, +2) |
+| Nu-class Attack Shuttle | Clone Wars Campaign Guide p. 172 | 1 / 2 | medium laser cannons (4d10x2, pilot, +9) |
+| Pursuer-class Enforcement Ship | Clone Wars Campaign Guide p. 80 | 1 / 2 | twin blaster cannons (5d10x2, pilot, +5) |
+| S40K Phoenix Hawk-class Light Pinnace | Clone Wars Campaign Guide p. 84 | 1 / 2 | heavy blaster cannons (6d10x2, pilot, +3) |
 | Sabaoth Starfighter | Clone Wars Campaign Guide p. 221 | 1 / 1 | laser cannons (4d10x2, pilot, +8) |
+| Scurrg H-6 Prototype Bomber | Clone Wars Campaign Guide p. 85 | 1 / 3 | forward-mounted laser cannons (8d10x2, pilot, +7) |
+| Self-Propelled Heavy Artillery (SPHA) | Clone Wars Campaign Guide p. 168 | 2 / 6 | SPHA-V heavy laser cannon (5d10x2, gunner, +7); SPHA-M mass-driver cannon (7d10x2, gunner, +7) |
+| Soulless One (Modified Belbullab-22) | Clone Wars Campaign Guide p. 204 | 1 / 1 | triple laser cannons (5d10x2, pilot, +9) |
 | A-7 Hunter Interceptor | Force Unleashed Campaign Guide p. 204 | 1 / 1 | laser cannons (4d10x2, pilot, +4) |
+| Armored Groundcar | Force Unleashed Campaign Guide p. 110 | 1 / 1 | blaster cannons (3d10x2, gunner, +1) |
+| Command Speeder | Force Unleashed Campaign Guide p. 202 | 1 / 1 | laser cannon (3d10x2, gunner, +3) |
 | H-60 Tempest Bomber | Force Unleashed Campaign Guide p. 114 | 1 / 2 | laser cannons (5d10x2, pilot, +3) |
+| KAAC Freerunner | Force Unleashed Campaign Guide p. 113 | 1 / 2 | laser cannons (5d10x2, gunner, +4) |
 | M3-A Scyk Fighter | Force Unleashed Campaign Guide p. 115 | 1 / 1 | laser cannons (4d10x2, pilot, +1) |
 | Maka-Eekai L4000 Transport | Force Unleashed Campaign Guide p. 120 | 1 / 1 | double laser cannons (4d10x2, gunner, +4) |
 | NovaSword Space Superiority Fighter | Force Unleashed Campaign Guide p. 115 | 1 / 2 | laser cannons (5d10x2, pilot, +5) |
@@ -116,33 +147,158 @@ Three claims are kept apart: **SOURCE_VERIFIED** (the published configuration is
 | Sentinel-class Landing Shuttle | Force Unleashed Campaign Guide p. 207 | 1 / 4 | laser cannons (6d10x2, gunner, +4) |
 | TIE Prototype | Force Unleashed Campaign Guide p. 205 | 1 / 2 | laser cannons (4d10x2, pilot, +4) |
 | Toscan 8-Q | Force Unleashed Campaign Guide p. 116 | 1 / 2 | laser cannons (4d10x2, pilot, +2) |
+| TX-130T Fighter Tank | Force Unleashed Campaign Guide p. 203 | 1 / 2 | laser cannons (5d10x2, gunner, +2) |
 | Zebra Starfighter | Force Unleashed Campaign Guide p. 118 | 1 / 1 | heavy laser cannons (6d10x2, pilot, +1) |
-| Imperial Landing Craft | Galaxy at War p. 64 | 1 / 2 | antipersonnel heavy blaster cannons (5d10x2, gunner, +8) |
+| Ground Armored Tank | Galaxy at War p. 216 | 1 / 2 | medium laser cannons (4d10x2, pilot, +6) |
+| Imperial Landing Craft | Galaxy at War p. 64 | 2 / 2 | double medium laser cannons (5d10x2, pilot, +10); antipersonnel heavy blaster cannons (5d10x2, gunner, +8) |
 | Koensayr ILH-KK Citadel-class Cruiser | Galaxy at War p. 192 | 1 / 4 | laser cannons (5d10x2, gunner, +1) |
+| Penumbra-class Attack Shuttle | Galaxy at War p. 65 | 1 / 2 | medium laser cannons (5d10x2, pilot, +6) |
 | YU-410 Light Freighter | Galaxy at War p. 65 | 1 / 1 | double laser cannons (5d10x2, gunner, +2) |
 | Amalgamated Hyperdyne 578-R Space Transport | Knights of the Old Republic Campaign Guide p. 98 | 1 / 1 | laser cannon (4d10x2, gunner, +1) |
 | Arakyd Industries Lethisk-class Armed Freighter | Knights of the Old Republic Campaign Guide p. 99 | 2 / 2 | double laser cannons (6d10x2, gunner, +5); light concussion missiles (8d10x2, pilot, +5) |
+| Basilisk War Droid | Knights of the Old Republic Campaign Guide p. 203 | 2 / 4 | light laser cannons (3d10x2, pilot, +4); light concussion missiles (7d10x2, pilot, +4) |
 | Corellian Engineering Corporation S-100 Stinger-class Starfighter | Knights of the Old Republic Campaign Guide p. 95 | 2 / 2 | laser cannons (5d10x2, pilot, +4); proton torpedoes (8d10x2, pilot, +4) |
-| Ebon Hawk | Knights of the Old Republic Campaign Guide p. 220 | 1 / 3 | double heavy laser cannon (6d10x2, gunner, +5) |
+| Corellian Engineering Corporation S-250 Chela-class Starfighter | Knights of the Old Republic Campaign Guide p. 181 | 2 / 2 | medium laser cannons (5d10x2, pilot, +6); concussion missiles (10d10x2, pilot, +6) |
+| Davaab-type Starfighter | Knights of the Old Republic Campaign Guide p. 204 | 2 / 2 | light laser cannons (4d10x2, pilot, +6); medium concussion missiles (8d10x2, pilot, +6) |
+| Ebon Hawk | Knights of the Old Republic Campaign Guide p. 220 | 2 / 3 | double laser cannon (4d10x2, pilot, +7); double heavy laser cannon (6d10x2, gunner, +5) |
+| Eleaor Propulsion Baronial-class Yacht | Knights of the Old Republic Campaign Guide p. 143 | 1 / 1 | double light laser cannons (4d10x2, pilot, +7) |
 | Hoersch-Kessel Drive G-Type Light Shuttle | Knights of the Old Republic Campaign Guide p. 98 | 1 / 1 | double laser cannons (5d10x2, pilot, +5) |
 | Koros Spaceworks CX-133 Chaos Fighter | Knights of the Old Republic Campaign Guide p. 220 | 1 / 1 | light laser cannons (5d10x2, pilot, +4) |
 | Pelagia Duplex Command Assault Gunship | Knights of the Old Republic Campaign Guide p. 100 | 1 / 2 | heavy laser cannons (6d10x2, gunner, +8) |
+| Republic Fleet Systems Aurek Tactical Strikefighter | Knights of the Old Republic Campaign Guide p. 181 | 2 / 2 | heavy laser cannon (6d10x2, pilot, +6); proton torpedoes (9d10x2, pilot, +6) |
+| Republic Fleet Systems Conductor-class Short-haul Landing Craft | Knights of the Old Republic Campaign Guide p. 182 | 1 / 1 | light laser cannon (4d10x2, pilot, +5) |
 | Republic Fleet Systems KT-400 Military Droid Carrier | Knights of the Old Republic Campaign Guide p. 183 | 1 / 1 | double medium laser cannon (6d10x2, gunner, +3) |
+| Star Forge Manufacture Sith Interceptor | Knights of the Old Republic Campaign Guide p. 164 | 1 / 1 | laser cannon (3d10x2, pilot, +4) |
 | Teroch-type Fast Attack Gunship | Knights of the Old Republic Campaign Guide p. 205 | 1 / 1 | double laser cannons (6d10x2, gunner, +4) |
-| C-wing Ugly Fighter | Scum and Villainy p. 66 | 1 / 3 | proton torpedo launchers (10d10x2, gunner, +3) |
+| A519 Invader Close Support Starfighter | Legacy Era Campaign Guide p. 218 | 1 / 2 | twin laser cannons (standard) (5d10x2, pilot, +4) |
+| All Terrain Armored Heavy Transport (AT-AHT) | Legacy Era Campaign Guide p. 185 | 1 / 2 | Heavy blaster cannons (5d10x2, gunner, +8) |
+| All Terrain Riot Control Transport (AT-RCT) | Legacy Era Campaign Guide p. 184 | 1 / 2 | Double medium blaster cannons (5d10x2, pilot, +9) |
+| BB-2 Starfire Fighter/Bomber | Legacy Era Campaign Guide p. 142 | 2 / 5 | laser cannons (4d10x2, pilot, +8); light laser cannon (3d10x2, gunner, +6) |
+| Besh-Type Personal Starfighter | Legacy Era Campaign Guide p. 83 | 1 / 1 | light laser cannons (5d10x2, pilot, +8) |
+| CF9 Crossfire Starfighter | Legacy Era Campaign Guide p. 143 | 2 / 3 | laser cannons (6d10x2, pilot, +7); double light laser cannon (3d10x2, gunner, +5) |
+| Crix-class Assault Shuttle | Legacy Era Campaign Guide p. 146 | 1 / 2 | twin laser cannons (5d10x2, pilot, +7) |
+| Crix-class Diplomatic Courier Shuttle | Legacy Era Campaign Guide p. 146 | 1 / 2 | twin laser cannons (3d10x2, pilot, +7) |
+| Fury-class Starfighter | Legacy Era Campaign Guide p. 186 | 1 / 1 | advanced heavy laser cannons (8d10x2, pilot, +16) |
+| Gladius-class Light Freighter | Legacy Era Campaign Guide p. 87 | 1 / 1 | advanced heavy quad laser cannons (9d10x2, pilot, +7) |
+| GPE-7300 Space Transport | Legacy Era Campaign Guide p. 87 | 1 / 1 | heavy laser cannons (6d10x2, pilot, +7) |
+| I4 Ionizer Starfighter | Legacy Era Campaign Guide p. 143 | 1 / 3 | laser cannons (6d10x2, pilot, +7) |
+| J-1 Shuttle | Legacy Era Campaign Guide p. 89 | 1 / 1 | double laser cannons (2d10x2, pilot, +6) |
+| Jumpstar HPF Starfighter | Legacy Era Campaign Guide p. 144 | 1 / 2 | laser cannons (5d10x2, pilot, +8) |
+| MC-24a Light Shuttle | Legacy Era Campaign Guide p. 89 | 1 / 1 | light laser cannons (3d10x2, pilot, +6) |
+| Nemesis-class Patrol Ship | Legacy Era Campaign Guide p. 218 | 1 / 2 | fire-linked laser cannons (6d10x2, pilot, +7) |
+| Neutralizer-class Bomber | Legacy Era Campaign Guide p. 187 | 1 / 2 | double medium laser cannon (5d10x2, pilot, +7) |
+| Nune-class Imperial Shuttle | Legacy Era Campaign Guide p. 188 | 1 / 3 | medium laser cannons (4d10x2, pilot, +7) |
+| Phoebos-class Starfighter | Legacy Era Campaign Guide p. 84 | 1 / 1 | double light laser cannons (4d10x2, pilot, +7) |
+| Predator-class Starfighter | Legacy Era Campaign Guide p. 186 | 1 / 1 | double medium laser cannon (5d10x2, pilot, +6) |
+| R-28 Starfighter | Legacy Era Campaign Guide p. 85 | 2 / 2 | medium laser cannons (5d10x2, pilot, +7); medium ion cannons (6d10x2, pilot, +7) |
+| RC-2 Twilight Scoutship | Legacy Era Campaign Guide p. 145 | 1 / 2 | laser cannons (5d10x2, pilot, +7) |
+| Scarlet Star (Modified YT-2400 Transport) | Legacy Era Campaign Guide p. 147 | 1 / 1 | laser cannons (5d10x2, gunner, +4) |
+| Sigma-class Long-Range Shuttle | Legacy Era Campaign Guide p. 188 | 1 / 1 | double heavy laser cannons (6d10x2, pilot, +7) |
+| X-83 TwinTail Starfighter | Legacy Era Campaign Guide p. 86 | 2 / 2 | enhanced heavy laser cannons (8d10x2, pilot, +7); proton torpedoes (10d10x2, pilot, +7) |
+| AEG-77 "Vigo" Gunship | Rebellion Era Campaign Guide p. 146 | 2 / 2 | laser cannons (4d10x2, pilot, +6); light laser cannon (3d10x2, gunner, +4) |
+| Assassin-class Corvette | Rebellion Era Campaign Guide p. 130 | 1 / 2 | proton torpedo launcher (9d10x2, gunner, +6) |
+| Assault Gunboat | Rebellion Era Campaign Guide p. 131 | 2 / 3 | medium laser cannons (5d10x2, pilot, +7); concussion missile launcher (9d10x2, pilot, +7) |
+| AT-AA Anti-Aircraft Platform | Rebellion Era Campaign Guide p. 131 | 1 / 2 | Light missile launcher (7d10x2, gunner, +2) |
+| AT-PT All-Terrain Personal Transport | Rebellion Era Campaign Guide p. 132 | 1 / 2 | Double heavy blaster cannon (5d10x2, pilot, +5) |
+| Corellian Engineering Corporation YM-2800 Limpet Ship | Rebellion Era Campaign Guide p. 114 | 1 / 2 | medium laser cannons (4d10x2, pilot, +6) |
+| Corellian YV-545 | Rebellion Era Campaign Guide p. 69 | 1 / 1 | double lasers (4d10x2, gunner, +3) |
+| G1-M4-C Dunelizard Fighter | Rebellion Era Campaign Guide p. 63 | 1 / 1 | double medium laser cannons (5d10x2, pilot, +4) |
+| Hoersch-Kessel T-Wing Interceptor | Rebellion Era Campaign Guide p. 114 | 1 / 2 | laser cannon (4d10x2, pilot, +7) |
+| Incom X4 Gunship | Rebellion Era Campaign Guide p. 115 | 1 / 2 | laser cannons (4d10x2, pilot, +6) |
+| IRD-A Starfighter | Rebellion Era Campaign Guide p. 156 | 1 / 2 | twin medium blaster cannons (5d10x2, pilot, +5) |
+| IRD Starfighter | Rebellion Era Campaign Guide p. 156 | 1 / 1 | twin medium blaster cannons (5d10x2, pilot, +7) |
+| Ixiyen-class Fast Attack Craft | Rebellion Era Campaign Guide p. 64 | 2 / 2 | double medium laser cannons (5d10x2, pilot, +6); medium concussion missiles (8d10x2, pilot, +6) |
+| Kihraxz Light Fighter | Rebellion Era Campaign Guide p. 146 | 1 / 2 | light blaster cannons (3d10x2, pilot, +4) |
+| Lancet Aerial Artillery | Rebellion Era Campaign Guide p. 133 | 1 / 2 | Laser cannon (2d10x2, gunner, +4) |
+| M12-L Kimogila Heavy Fighter | Rebellion Era Campaign Guide p. 64 | 2 / 3 | heavy laser cannons (6d10x2, pilot, +5); medium concussion missiles (8d10x2, gunner, +3) |
+| M22-T Krayt Gunship | Rebellion Era Campaign Guide p. 65 | 1 / 3 | heavy laser cannons (5d10x2, pilot, +8) |
+| Mekuun Heavy Tracker | Rebellion Era Campaign Guide p. 112 | 1 / 1 | Heavy laser cannon (5d10x2, gunner, +6) |
+| Missile Boat | Rebellion Era Campaign Guide p. 134 | 2 / 3 | medium laser cannon (5d10x2, pilot, +8); missile launcher (9d10x2, pilot, +8) |
+| Mobquet Medium Transport | Rebellion Era Campaign Guide p. 68 | 2 / 2 | laser cannon (4d10x2, gunner, +4); medium concussion missile (8d10x2, gunner, +4) |
+| Pinook Fighter | Rebellion Era Campaign Guide p. 66 | 1 / 1 | light laser cannons (3d10x2, pilot, +4) |
+| Razor-class Fighter | Rebellion Era Campaign Guide p. 66 | 2 / 3 | medium laser cannons (5d10x2, pilot, +7); medium concussion missiles (9d10x2, pilot, +5) |
+| Rihkxyrk Assault Fighter | Rebellion Era Campaign Guide p. 148 | 1 / 2 | enhanced triple heavy laser cannons (7d10x2, pilot, +5) |
+| Royal Guard Starfighter | Rebellion Era Campaign Guide p. 134 | 1 / 1 | laser cannons (6d10x2, pilot, +15) |
+| Supa Fighter | Rebellion Era Campaign Guide p. 147 | 1 / 3 | double medium laser cannons (5d10x2, pilot, +5) |
+| T2-B Repulsor Tank | Rebellion Era Campaign Guide p. 112 | 1 / 1 | Quad light blaster cannon (4d10x2, gunner, +5) |
+| Talon I Combat Cloud Car | Rebellion Era Campaign Guide p. 61 | 1 / 1 | Double blaster cannon (4d10x2, pilot, +5) |
+| TIE Aggressor | Rebellion Era Campaign Guide p. 135 | 3 / 3 | laser cannon (6d10x2, pilot, +7); laser cannon (6d10x2, gunner, +5); missile launcher (7d10x2, pilot, +7) |
+| TIE Oppressor | Rebellion Era Campaign Guide p. 136 | 2 / 2 | medium laser cannons (6d10x2, pilot, +10); missile launchers (10d10x2, pilot, +10) |
+| TIE Phantom | Rebellion Era Campaign Guide p. 137 | 2 / 2 | laser cannon (5d10x2, pilot, +8); laser cannon (4d10x2, gunner, +6) |
+| TIE Scout | Rebellion Era Campaign Guide p. 138 | 1 / 1 | laser cannon (3d10x2, pilot, +11) |
+| TIE Shuttle | Rebellion Era Campaign Guide p. 138 | 1 / 1 | laser cannon (3d10x2, pilot, +6) |
+| Vaksai | Rebellion Era Campaign Guide p. 147 | 1 / 2 | enhanced medium laser cannons (5d10x2, pilot, +6) |
+| VT-49 Decimator | Rebellion Era Campaign Guide p. 139 | 3 / 3 | laser cannons (4d10x2, pilot, +8); laser cannons (4d10x2, gunner, +6); missile launchers (9d10x2, pilot, +6) |
+| C-wing Ugly Fighter | Scum and Villainy p. 66 | 2 / 3 | assault laser cannon (7d10x2, pilot, +5); proton torpedo launchers (10d10x2, gunner, +3) |
+| Clutch Ugly Fighter | Scum and Villainy p. 67 | 1 / 2 | laser cannons (5d10x2, pilot, +7) |
 | Corellian Engineering Corporation YT-1250 Transport | Scum and Villainy p. 64 | 1 / 1 | double laser cannon (4d10x2, gunner, +2) |
+| CorelliaSpace Gymsnor-3 Light Freighter | Scum and Villainy p. 62 | 1 / 1 | laser cannon (4d10x2, pilot, +6) |
+| Kazellis Corporation Light Freighter | Scum and Villainy p. 62 | 1 / 1 | quad light laser cannon (4d10x2, pilot, +6) |
+| Tenloss Corporation Hornet-class Interceptor | Scum and Villainy p. 125 | 2 / 2 | advanced heavy laser cannons (default) (10d10x2, pilot, +6); medium laser cannons (alternate) (5d10x2, pilot, +6) |
+| X-TIE Ugly Fighter | Scum and Villainy p. 67 | 1 / 1 | laser cannons (5d10x2, pilot, +4) |
 | Y164 Thalassian Slave Transport | Scum and Villainy p. 127 | 1 / 1 | quad light laser cannon (5d10x2, gunner, +3) |
+| Advanced V-19 Torrent Starfighter | Starships of the Galaxy p. 59 | 2 / 2 | laser cannons (6d10x2, pilot, +9); medium concussion missiles (9d10x2, pilot, +9) |
+| Alliance A-wing Starfighter | Starships of the Galaxy p. 63 | 2 / 3 | laser cannons (5d10x2, pilot, +7); medium concussion missiles (7d10x2, pilot, +7) |
 | Baudo-class Star Yacht | Starships of the Galaxy p. 65 | 1 / 1 | light laser cannons (statblock plural) (2d10x2, gunner, +2) |
+| Buuper Torsckil Abbey Devices Porax-38 Starfighter | Starships of the Galaxy p. 121 | 1 / 1 | laser cannons (5d10x2, pilot, +6) |
+| Chiss Nssis-class Clawcraft | Starships of the Galaxy p. 69 | 1 / 1 | laser cannons (6d10x2, pilot, +11) |
+| CloakShape Fighter | Starships of the Galaxy p. 71 | 2 / 2 | laser cannons (4d10x2, pilot, +4); medium concussion missiles (7d10x2, pilot, +4) |
+| Coralskipper | Starships of the Galaxy p. 73 | 1 / 2 | volcano cannons (6d10x2, pilot, +11) |
 | Corellian YT-1300 Transport | Starships of the Galaxy p. 154 | 1 / 1 | laser cannons (4d10x2, gunner, +2) |
 | Corellian YT-2000 | Starships of the Galaxy p. 155 | 1 / 1 | double laser cannons (5d10x2, gunner, +2) |
 | Corellian YT-2400 | Starships of the Galaxy p. 156 | 1 / 1 | laser cannons (5d10x2, gunner, +2) |
+| Delta-7 Aethersprite Light Interceptor | Starships of the Galaxy p. 60 | 1 / 1 | laser cannons (6d10x2, pilot, +9) |
 | Dynamic-class Freighter | Starships of the Galaxy p. 80 | 1 / 1 | double laser cannons (4d10x2, gunner, +3) |
-| Incom/Subpro ARC-170 Starfighter | Starships of the Galaxy p. 61 | 2 / 3 | laser cannons (6d10x2, gunner, +4); medium laser cannons (5d10x2, gunner, +4) |
+| Feethan Ottraw Scalable Industries Mankvim-814 Light Interceptor | Starships of the Galaxy p. 109 | 1 / 1 | light laser cannons (2d10x2, pilot, +4) |
+| FreiTek Inc. E-wing Starfighter, Type B | Starships of the Galaxy p. 83 | 2 / 2 | triple heavy blaster cannons (6d10x2, pilot, +10); proton torpedoes (9d10x2, pilot, +10) |
+| Ghtroc Industries Class 720 Freighter | Starships of the Galaxy p. 88 | 1 / 1 | double laser cannons (4d10x2, gunner, +1) |
+| Gozanti Cruiser | Starships of the Galaxy p. 90 | 1 / 3 | proton torpedoes (9d10x2, pilot, +4) |
+| Huppla Pasa Tisc Shipwrights Collective Ginivex-class Starfighter | Starships of the Galaxy p. 87 | 1 / 1 | double laser cannons (6d10x2, pilot, +11) |
+| Incom/Subpro ARC-170 Starfighter | Starships of the Galaxy p. 61 | 3 / 3 | laser cannons (6d10x2, gunner, +4); medium laser cannons (5d10x2, gunner, +4); proton torpedoes (9d10x2, pilot, +6) |
+| Incom/Subpro Z-95 Headhunter | Starships of the Galaxy p. 160 | 1 / 2 | triple light blaster cannons (3d10x2, pilot, +5) |
+| Incom T-65B X-wing Starfighter | Starships of the Galaxy p. 152 | 2 / 2 | laser cannons (6d10x2, pilot, +7); proton torpedoes (9d10x2, pilot, +7) |
+| Incom T-65BR X-wing Starfighter | Starships of the Galaxy p. 153 | 1 / 1 | laser cannons (6d10x2, pilot, +6) |
+| Incom T-65XJ3 X-wing Starfighter | Starships of the Galaxy p. 152 | 2 / 2 | heavy laser cannons (7d10x2, pilot, +8); proton torpedoes (10d10x2, pilot, +8) |
 | J-Type Star Skiff | Starships of the Galaxy p. 103 | 1 / 1 | laser cannons (7d10x2, gunner, +14) |
-| Koensayr ILH-KK Citadel-Class Cruiser | Starships of the Galaxy p. 70 | 1 / 4 | laser cannons (5d10x2, gunner, +1) |
+| Junker TYE-wing | Starships of the Galaxy p. 104 | 1 / 1 | laser cannons (4d10x2, pilot, +5) |
+| Koensayr BTL-A4 LP "Longprobe" | Starships of the Galaxy p. 159 | 1 / 3 | laser cannons (4d10x2, pilot, +9) |
+| Koensayr BTL-S3 "Courier" | Starships of the Galaxy p. 159 | 1 / 2 | laser cannons (4d10x2, pilot, +7) |
+| Koensayr BTL-S3 Y-wing | Starships of the Galaxy p. 158 | 1 / 3 | laser cannons (4d10x2, pilot, +7) |
+| Koensayr ILH-KK Citadel-Class Cruiser | Starships of the Galaxy p. 70 | 2 / 4 | laser cannons (5d10x2, gunner, +1); medium concussion missiles (8d10x2, pilot, +3) |
 | Koensayr Manufacturing BTL-58 K-wing | Starships of the Galaxy p. 105 | 4 / 5 | laser cannons (4d10x2, gunner, +7); medium concussion missiles (8d10x2, gunner, +7); proton torpedoes (9d10x2, gunner, +7); shieldbuster torpedoes (8d10x2, gunner, +7) |
+| Kuat Systems Engineering Alpha-3 Nimbus V-wing Starfighter | Starships of the Galaxy p. 150 | 1 / 1 | light laser cannons (3d10x2, pilot, +6) |
+| Kuat Systems Engineering Eta-2 Actis Interceptor | Starships of the Galaxy p. 82 | 1 / 2 | laser cannons (4d10x2, pilot, +14) |
+| Kuat Systems Engineering Firespray-31 Patrol Craft | Starships of the Galaxy p. 84 | 1 / 2 | blaster cannons (5d10x2, pilot, +6) |
+| MandalMotors StarViper Assault Fighter | Starships of the Galaxy p. 134 | 1 / 2 | proton torpedo launcher (9d10x2, pilot, +6) |
 | Millennium Falcon | Starships of the Galaxy p. 156 | 1 / 3 | quad laser cannon (6d10x2, gunner, +13) |
+| Olanji/Charubah Miy'til Assault Bomber | Starships of the Galaxy p. 113 | 1 / 2 | laser cannons (5d10x2, pilot, +7) |
+| Olanji/Charubah Miy'til Fighter | Starships of the Galaxy p. 112 | 2 / 2 | laser cannons (5d10x2, pilot, +7); medium concussion missiles (8d10x2, pilot, +7) |
+| Predator-class Starfighter | Starships of the Galaxy p. 122 | 1 / 1 | laser cannons (5d10x2, pilot, +6) |
 | Rothana Heavy Engineering Acclamator-class Transgalactic Military Assault Ship | Starships of the Galaxy p. 56 | 1 / 3 | proton torpedoes (9d10x2, gunner, +5) |
 | Sienar Fleet Systems GAT-12h | Starships of the Galaxy p. 131 | 3 / 4 | laser cannons (5d10x2, gunner, +5); heavy proton torpedoes (10d10x2, gunner, +5); heavy concussion missiles (9d10x2, gunner, +5) |
-| Slayn & Korpil B-wing/E2 Starfighter | Starships of the Galaxy p. 67 | 1 / 3 | proton torpedoes (9d10x2, gunner, +6) |
+| Sienar Fleet Systems Lambda-class Shuttle | Starships of the Galaxy p. 106 | 1 / 3 | twin laser cannons (2d10x2, pilot, +6) |
+| Sienar Fleet Systems Scimitar Assault Bomber | Starships of the Galaxy p. 127 | 1 / 2 | light laser cannons (4d10x2, pilot, +8) |
+| Sienar Fleet Systems TIE Advanced x1 | Starships of the Galaxy p. 144 | 1 / 1 | heavy blaster cannons (6d10x2, pilot, +10) |
+| Sienar Fleet Systems TIE Bomber | Starships of the Galaxy p. 143 | 2 / 2 | laser cannons (3d10x2, pilot, +7); medium concussion missiles (9d10x2, pilot, +7) |
+| Sienar Fleet Systems TIE Defender | Starships of the Galaxy p. 145 | 2 / 3 | laser cannons (6d10x2, pilot, +10); proton torpedoes (9d10x2, pilot, +10) |
+| Sienar Fleet Systems TIE/In Fighter | Starships of the Galaxy p. 142 | 1 / 1 | laser cannons (4d10x2, pilot, +6) |
+| Sienar Fleet Systems TIE Interceptor | Starships of the Galaxy p. 144 | 1 / 1 | laser cannons (6d10x2, pilot, +7) |
+| Sith Interceptor | Starships of the Galaxy p. 130 | 1 / 1 | laser cannon (3d10x2, pilot, +4) |
+| Slave I | Starships of the Galaxy p. 85 | 3 / 6 | blaster cannons (5d10x2, pilot, +18); concussion mines (8d10x2, pilot, +18); medium concussion missiles (8d10x2, pilot, +18) |
+| Slayn & Korpil B-wing/E2 Starfighter | Starships of the Galaxy p. 67 | 2 / 3 | laser cannons (8d10x2, pilot, +8); proton torpedoes (9d10x2, gunner, +6) |
+| Slayn & Korpil B-wing Shuttle | Starships of the Galaxy p. 67 | 1 / 2 | laser cannons (6d10x2, pilot, +6) |
+| Slayn & Korpil B-wing Starfighter | Starships of the Galaxy p. 66 | 3 / 4 | autoblasters (4d10x2, pilot, +8); laser cannons (7d10x2, pilot, +8); proton torpedoes (9d10x2, pilot, +8) |
+| SoroSuub Cutlass-9 Patrol Fighter | Starships of the Galaxy p. 132 | 2 / 2 | laser cannons (4d10x2, pilot, +4); medium concussion missile (8d10x2, pilot, +4) |
+| Territorial Defense Starfighter | Starships of the Galaxy p. 86 | 1 / 1 | laser cannons (3d10x2, pilot, +6) |
+| Theed Palace Space Vessel Engineering Corps N-1 Royal Starfighter | Starships of the Galaxy p. 118 | 2 / 2 | laser cannons (5d10x2, pilot, +6); proton torpedoes (10d10x2, pilot, +6) |
 | Theta-class Shuttle | Starships of the Galaxy p. 141 | 2 / 2 | quad laser cannon (6d10x2, gunner, +4); laser cannons (4d10x2, gunner, +4) |
+| V-19 Torrent Starfighter | Starships of the Galaxy p. 149 | 2 / 2 | laser cannons (5d10x2, pilot, +7); medium concussion missiles (8d10x2, pilot, +7) |
+| X-83 TwinTail Starfighter | Starships of the Galaxy p. 151 | 2 / 2 | laser cannons (8d10x2, pilot, +7); proton torpedoes (10d10x2, pilot, +7) |
+| Eeook Protector VI Patrol Speeder | Unknown Regions p. 214 | 1 / 2 | Light laser cannon (3d10x2, pilot, +6) |
+| Hoersch-Kessel Vaya-class Scout Ship | Unknown Regions p. 59 | 2 / 2 | light laser cannon (3d10x2, gunner, +3); concussion projectiles (5d10x2, gunner, +3) |
+| JumpMaster 5000 Scout Ship | Unknown Regions p. 52 | 1 / 1 | laser cannons (4d10x2, pilot, +6) |
+| Killik Dartship | Unknown Regions p. 133 | 1 / 1 | laser cannon (4d10x2, pilot, +6) |
+| MRX-BR Pacifier Combat/Contact Vessel | Unknown Regions p. 55 | 1 / 2 | laser cannons (4d10x2, gunner, +5) |
+| SoroSuub Drexl-class "Planetary Defender" Starfighter | Unknown Regions p. 52 | 1 / 2 | dual laser cannons (5d10x2, pilot, +6) |
+| SoroSuub Preybird-class Starfighter | Unknown Regions p. 56 | 2 / 2 | laser cannons (5d10x2, gunner, +6); concussion missiles (8d10x2, gunner, +6) |
+| Uulshos Manufacturing Deep-X Explorer | Unknown Regions p. 51 | 1 / 2 | Light blaster cannon (2d10x2, gunner, +3) |
