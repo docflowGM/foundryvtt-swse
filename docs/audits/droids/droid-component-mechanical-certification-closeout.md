@@ -1,3 +1,5 @@
+> **OFFICIAL ERRATA CORRECTION (2026-11-02):** This closeout recorded 99 historical Core+SGD source PASS and 23 HOLD from base-book reviews. Official Wizards of the Coast Core errata supersedes the old +4 Synchronized Fire Circuits claim with **+5 total**, and changes **Small-or-smaller accessory-weight calculations** to an effective factor of **2 / droid cost factor**. Beginning systems have a carrying-capacity exclusion, and unarmed attacks are light simple weapons. The old batch claims must be read through `data/audits/droids/droid-component-official-errata-authority-001.json`. Further SGD accessory-host scope review remains. The 23 unresolved HOLDs are classified in `data/audits/droids/droid-component-mechanical-hold-triage-001.json`. No runtime migration is certified.
+
 # SWSE Droid Component Mechanical Source Audit — Core + SGD Closeout
 
 **Date:** 2026-11-02. **Branch:** `audit/droid-publication-census-2026-10-29`. **Scope:** Frozen 122 publication identities from the Core Rulebook and *Scavenger's Guide to Droids*. This is a **source-mechanical certification** closeout, not implementation certification.
