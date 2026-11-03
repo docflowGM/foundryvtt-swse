@@ -1,3 +1,5 @@
+> **Errata precedence:** Core p186 official errata changes Small-or-smaller accessory weight factor to `2 / size cost factor`. The armor masses and other accessory factor formulas below were initially transcribed from the uncorrected Core book. Read this historical packet together with `data/audits/droids/droid-component-official-errata-authority-001.json`. No production/runtime validation is asserted.
+
 # SWSE Droid Component — Full Source-Mechanical Certification, Batch 001
 
 **Date:** 2026-11-02. **Branch:** `audit/droid-publication-census-2026-10-29`. **Authority:** Core Rulebook and *Scavenger's Guide to Droids*, printed PDF pages individually rendered and inspected. **Scope: 25 distinct frozen canonical identities.**
