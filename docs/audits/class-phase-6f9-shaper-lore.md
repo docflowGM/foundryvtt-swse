@@ -14,8 +14,9 @@ This is not a passive bonus to every Knowledge or Treat Injury check. The type o
 ## Implementation
 
 - `scripts/engine/skills/class-shaper-lore.js`: pure eligibility and bonus authority, derived only from a genuinely owned Shaper class Item, not character level, species, a feat or an item name. Accepts Knowledge (Life Sciences) and Treat Injury aliases.
-- `scripts/rolls/skills.js`: adds the proper bonus to the existing `RollCore.execute()` skill roll when `options.biotechDevice === true`, and includes clear feature-source evidence in the chat flavor, skill flags, and class situational line. Other skills and ordinary non-biotech checks remain unchanged.
+- `scripts/rolls/skills.js`: adds the proper bonus to the existing `RollCore.execute()` skill roll when `options.biotechDevice === true`, and includes clear feature-source evidence in the chat flavor, skill flags, and a separately named **Shaper Lore** class-skill modifier on the shared roll card. Other skills and ordinary non-biotech checks remain unchanged.
 - `scripts/rolls/roll-config.js`: when an eligible Shaper opens the relevant skill dialog, shows a **Biotech device** checkbox with the exact class bonus and a note that this is GM-adjudicated. Defaults to unchecked. The same pure helper updates the live preview, and the committed checkbox value travels to the roll execution.
+- `scripts/engine/rolls/swse-roll-engine.js`: generic `classSkillBonuses` display hook renders the bonus by name, independently of feat and equipment bonus entries, without counting it in the other situational modifier line.
 - `tests/class-phase-6f9-shaper-lore.test.mjs`: executable bonus schedule tests and wiring regressions for the skill roll and dialog.
 
 ## Guardrails
