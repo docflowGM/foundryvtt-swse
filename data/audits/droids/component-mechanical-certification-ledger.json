@@ -1222,6 +1222,29 @@
     "follower": "NOT_TESTED",
     "store": "NOT_TESTED",
     "foundryV13": "NOT_TESTED",
-    "crossbookCompleteness": "NOT_CERTIFIED"
+    "crossbookCompleteness": "NOT_CERTIFIED",
+    "officialErrataOverlay": "COMMITTED_AND_LOCALLY_VALIDATED",
+    "publicationAuthorityTier": "BASE_BOOK_PLUS_OFFICIAL_ERRATA",
+    "preErrataHistoricalBatchClaimsMustNotOverrideErrata": true
+  },
+  "errataAuthority": {
+    "overlayPath": "data/audits/droids/droid-component-official-errata-authority-001.json",
+    "verification": "Wizards of the Coast Saga Edition Core Rulebook errata, October 21, 2008",
+    "precedence": "OFFICIAL_ERRATA_SUPERSEDES_CONFLICTING_BASE_BOOK_CLAIMS",
+    "status": "ERRATA_OVERLAY_COMMITTED; REMAINING_SGD_HOST_SCOPES_REQUIRE_REVIEW",
+    "sourceCertifiedHistoricalPassCount": 99,
+    "sourceHoldsUnchanged": 23,
+    "confirmedCostWeightCorrectionCoreAccessoryTargets": 21,
+    "sgdWeightHostClassificationPending": 15,
+    "synchronizedFireCircuits": {
+      "canonicalId": "droid-synchronized-fire-circuits",
+      "originalBaseBookReportedTotalBonus": 4,
+      "officialErrataTotalBonus": 5,
+      "status": "SOURCE_CORRECTED_IN_ERRATA_OVERLAY",
+      "priorReportPlus5CodeDefectClaim": "RETRACTED"
+    },
+    "startingSystemsDoNotConsumeCapacity": true,
+    "unarmedAttacksAndNaturalWeaponsProficientAs": "light simple weapons",
+    "caveat": "Historical 99 PASS is not an errata-complete certification count until overlay is applied and remaining source host classifications are revalidated. No production code touched."
   }
 }
