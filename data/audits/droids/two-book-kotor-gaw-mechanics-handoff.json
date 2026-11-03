@@ -1,0 +1,71 @@
+{
+  "schema": "swse.droids.two-book-mechanical-boundary-handoff/0.1",
+  "date": "2026-11-02",
+  "branch": "audit/droid-publication-census-2026-10-29",
+  "books": [
+    {
+      "bookId": "KOTOR",
+      "publicationIdentities": 24,
+      "modelBoundaryReviewed": 24,
+      "sourceConstraints": 48,
+      "actorSourceInventoryReviewed": 23,
+      "rawSystemLabels": 133,
+      "rawPossessionLabels": 61,
+      "vehiclePrimary": 1,
+      "squadAggregations": 0,
+      "mechanicalCertificates": 0,
+      "fieldByFieldDeepeningComplete": false
+    },
+    {
+      "bookId": "GAW",
+      "publicationIdentities": 22,
+      "modelBoundaryReviewed": 22,
+      "sourceConstraints": 44,
+      "actorSourceInventoryReviewed": 20,
+      "rawSystemLabels": 147,
+      "rawPossessionLabels": 29,
+      "vehiclePrimary": 1,
+      "squadAggregations": 1,
+      "mechanicalCertificates": 0,
+      "fieldByFieldDeepeningComplete": false
+    }
+  ],
+  "totals": {
+    "publicationIdentities": 46,
+    "modelBoundaryReviewed": 46,
+    "sourceOnlyConstraints": 92,
+    "sourceInventoriedActorRecords": 43,
+    "rawSystemLabels": 280,
+    "rawPossessionLabels": 90,
+    "mechanicalCertificates": 0
+  },
+  "status": "TWO BOOKS MODEL-SPECIFIC MECHANICAL BOUNDARY AND RAW INVENTORY PASS COMPLETE. FULL EXACT STATBLOCK MECHANICS DEEPENING AND STRICT CERTIFICATION NOT COMPLETE.",
+  "previousCompletedFullSourcePass": [
+    "SGD 46/46",
+    "CLONE 40/40",
+    "THREATS 29/29"
+  ],
+  "remainingDeepSourceActions": [
+    "Extract exact printed grouped feats, talents, skills and classes for KOTOR 24 + GAW 22 and verify against PDF columns; do not trust OCR interleaving",
+    "Convert source-only grouped Systems tokens into canonical individually located component instances, with actual physical ownership and mounts",
+    "Capture and verify every attack row, attack alternative, damage type, action cost, ammunition count, mounted vs possessed weapon",
+    "Audit full narrative special qualities, source contradictions, and model-specific restrictions",
+    "Certify Basilisk and GAT under vehicle authority, and GAW B1 three-member squad under squad authority",
+    "Run official Draft202012 schema + repository validators, then independent strict source mechanical certification",
+    "Do not touch production compendium, V2 runtime or component refactor without separate authority"
+  ],
+  "completedChecks": [
+    "46 unique source IDs preserved",
+    "Each of 46 has two cited source-only constraints",
+    "23 KOTOR droid and 20 GAW droid Systems and Possessions source-token inventories recorded",
+    "No full actor inventory generated for Basilisk, GAT or B1 squad",
+    "No runtime/attack/certificate promotion",
+    "Both Github ledgers read back from original audit branch"
+  ],
+  "notRun": [
+    "Full authoritative repository-wide JSON Schema",
+    "Foundry V13 runtime",
+    "Full feat/talent canonical identity graph",
+    "Installed mount/weapon/item catalog authority"
+  ]
+}
