@@ -41,4 +41,11 @@ for(const record of ledger.identitySourceDecisions){
  assert.equal(record.sourceBatch,truth.batch);
 }
 for(const name of ['productionRegistryCertified','applicationParityCertified','foundryRuntimeCertified'])assert.equal(ledger.counts[name],0);
-console.log('PASS MECH census: 122 unique identities evaluated; 99 published-source PASS, 23 source HOLD, zero unreviewed. No production, app or Foundry certificates claimed.');
+const official=read(base+'droid-component-official-errata-authority-001.json');
+const triage=read(base+'droid-component-mechanical-hold-triage-001.json');
+assert.equal(official.corrections.synchronizedFireCircuits.errataReplacementTotalBonus,5);
+assert.equal(official.corrections.accessoryWeight.accessoryWeightFactorBySize.tiny,0.4);
+assert.equal(ledger.errataAuthority.overlayPath,base+'droid-component-official-errata-authority-001.json');
+assert.equal(triage.rows.length,23);
+assert.equal(ledger.holdTriage.path,base+'droid-component-mechanical-hold-triage-001.json');
+console.log('PASS MECH census: historical 122 evaluated / 99 base-book PASS / 23 HOLD, requiring official errata overlay; zero production or runtime certification');
