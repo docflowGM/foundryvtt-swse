@@ -1,3 +1,5 @@
+> **Errata precedence:** Wizards of the Coast official errata changes Synchronized Fire Circuits to **+5 total** on the qualifying successful Aid Another check, superseding this historical packet's +4 base-book rule and its incorrect claim that existing +5 was a defect. Small-or-smaller accessory weight factors are also corrected by Core p186. The machine packet preserves its original source-review history; `data/audits/droids/droid-component-official-errata-authority-001.json` is authoritative for corrected values.
+
 # Droid Component Mechanical Certification — Batch 002
 
 **2026-11-02** · **25 unique Core Rulebook identities evaluated** · **19 PASS / 6 HOLD**
