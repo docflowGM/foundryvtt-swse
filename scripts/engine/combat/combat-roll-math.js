@@ -759,7 +759,6 @@ export function resolveStockDroidDamageContract(actor, weapon, context = {}) {
   if (typedDamagePool.total !== 0) components['Effect Intent'] = typedDamagePool.total;
   if (combatOptionDamage !== 0) components['Combat Option'] = combatOptionDamage;
   if (scopedFeatDamage !== 0) components['Scoped Feat'] = scopedFeatDamage;
-  if (trustySidearm !== 0) components['Trusty Sidearm'] = trustySidearm;
 
   return { formula, total: situationalTotal, components, flags: { stockDroidFlat: true, stockDamageFormula: formula }, typedModifierLedger: typedDamagePool.ledger };
 }
@@ -811,6 +810,7 @@ export function resolveDamageBonus(actor, weapon, context = {}) {
   if (typedDamagePool.total !== 0) components['Effect Intent'] = typedDamagePool.total;
   if (combatOptionDamage !== 0) components['Combat Option'] = combatOptionDamage;
   if (scopedFeatDamage !== 0) components['Scoped Feat'] = scopedFeatDamage;
+  if (trustySidearm !== 0) components['Trusty Sidearm'] = trustySidearm;
 
   return { total, components, flags: { damageBaseOnly: false }, typedModifierLedger: typedDamagePool.ledger };
 }
