@@ -25,7 +25,7 @@ const CAPITAL = new Set(['Colossal (frigate)', 'Colossal (cruiser)', 'Colossal (
 
 const vehicles = records.map(r => {
   const groups = assessStockWeaponGroups(r).groups.map(g => ({
-    groupKey: g.groupKey, label: g.label, printedAttackTotal: g.attackBonusPrinted, printedDamage: g.damage?.raw ?? null, operator: g.operator,
+    groupKey: g.groupKey, label: g.label, printedAttackTotal: g.attackBonusPrinted, printedDamage: g.damage?.raw ?? null, damageType: g.damage?.type ?? null, operator: g.operator,
     sourceVerified: !!(g.damage && g.operator && g.attackBonusPrinted !== null && (!g.battery || g.battery.established)),
     offlineExecutable: g.executable, liveVerified: false,
     itemReadiness: g.executable ? 'ARMED_AT_IMPORT' : 'NOT_ARMED', crewReadiness: g.executable ? `${g.operator} station (generic or assigned crew)` : 'NOT_APPLICABLE',
@@ -70,6 +70,11 @@ const doc = {
     established: allGroups.filter(g => g.battery?.established).length,
     offlineExecutable: allGroups.filter(g => g.battery && g.offlineExecutable).length
   },
+  // Core pp. 159-160 ion damage: typed ONLY where the source states it (printed damage line / structured evidence).
+  ion: {
+    typedByTheSource: allGroups.filter(g => g.damageType === 'ion').length,
+    offlineExecutable: allGroups.filter(g => g.damageType === 'ion' && g.offlineExecutable).length
+  },
   refusalReasons: Object.fromEntries(Object.entries(reasons).sort((a, b) => b[1] - a[1])),
   byBook, byCategory, vehicles
 };
@@ -82,6 +87,8 @@ md += `Three claims are kept apart: **SOURCE_VERIFIED** (the published configura
 md += `| Measure | Count |\n|---|---|\n| Published vehicles | ${t.vehicles} |\n| Published attack groups | ${t.groups} |\n| Groups SOURCE_VERIFIED | ${t.sourceVerifiedGroups} (${pct(t.sourceVerifiedGroups, t.groups)}%) |\n| Groups OFFLINE_EXECUTABLE | ${t.offlineExecutableGroups} (${pct(t.offlineExecutableGroups, t.groups)}%) |\n| Vehicles with at least one OFFLINE_EXECUTABLE group | ${t.vehiclesWithOfflineExecutableGroup} (${pct(t.vehiclesWithOfflineExecutableGroup, t.vehicles)}%) |\n| Vehicles with every group executable | ${t.vehiclesAllGroupsExecutable} |\n| Vehicles LIVE_VERIFIED | ${t.liveVerifiedVehicles} |\n\n`;
 const b = doc.batteries;
 md += `## Weapon batteries (Core p. 170)\n\n| Measure | Groups |\n|---|---|\n| Printed weapon batteries ("battery (N gunners)") | ${b.printedBatteryGroups} |\n| ... with the number of identical weapons printed | ${b.weaponCountPrinted} |\n| ... battery facts established (gunners and weapons printed, equal) | ${b.established} |\n| ... OFFLINE_EXECUTABLE (also passing every other gate) | ${b.offlineExecutable} |\n\nThe printed total of a battery already contains the printed gunners' assistance (+2 per assisting gunner): it is applied once. The weapon count caps the margin hits (one extra weapon die per 3 points over Reflex Defense) and is not inferred from the gunner count: the remaining batteries are refused as STOCK_BATTERY_WEAPON_COUNT_NOT_STATED until the owner rules on V-P6C-02. Named gunners on a battery are refused (BATTERY_ASSIGNED_CREW_ROSTER_UNMODELED). The two counts overlap with other refusal reasons.\n\n`;
+const ion = doc.ion;
+md += `## Ion damage (Core pp. 159-160)\n\n| Measure | Groups |\n|---|---|\n| Groups whose source types the damage as ion (printed damage line / evidence) | ${ion.typedByTheSource} |\n| ... OFFLINE_EXECUTABLE (also passing every other gate) | ${ion.offlineExecutable} |\n\nA weapon name alone never types damage as ion: a group named "ion" whose printed damage line does not say ion stays refused (STOCK_DAMAGE_ION_UNVERIFIED). Target-side ordering with shield rating and damage reduction follows the existing damage engine pending owner question V-P6C-04.\n\n`;
 md += `## Why groups are refused (a group can have several reasons)\n\n| Reason | Groups |\n|---|---|\n${Object.entries(doc.refusalReasons).map(([k, v]) => `| ${k} | ${v} |`).join('\n')}\n\n`;
 md += `## By book\n\n| Book | Vehicles | Groups | Executable groups | Vehicles with an executable group |\n|---|---|---|---|---|\n${Object.entries(byBook).map(([k, v]) => `| ${k} | ${v.vehicles} | ${v.groups} | ${v.executableGroups} | ${v.vehiclesWithExecutable} |`).join('\n')}\n\n`;
 md += `## By category\n\n| Category | Vehicles | With an executable group |\n|---|---|---|\n${Object.entries(byCategory).sort((a, b) => b[1].vehicles - a[1].vehicles).map(([k, v]) => `| ${k} | ${v.vehicles} | ${v.vehiclesWithExecutable} |`).join('\n')}\n\n`;

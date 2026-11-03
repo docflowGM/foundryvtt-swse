@@ -1083,6 +1083,40 @@
       "impact": "Not offered at runtime.",
       "severity": "MINOR",
       "recommendedAction": "Owner ruling on V-P6C-03, then add one action that records the aid on the existing effect/modifier authority."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6C-04"
+      ],
+      "options": [],
+      "id": "P6B-D-045",
+      "component": "ion damage: ordering with shield rating / damage reduction, organics, and interplay with optional variants",
+      "source": "Core Rulebook pp. 159-160 (owner-verified); damage-resolution-engine.js; damage-packet-rules.js",
+      "status": "RULES_DECISION_REQUIRED",
+      "reason": "The verified rule gives: half to HP, full (unhalved) to the threshold, 2 steps at the threshold, 5 steps and disabled at 0 HP, organics only the half effect. It does not say whether the full amount is taken before or after shield rating and damage reduction (the existing engine compares the full ROLLED amount for ion and stun, but the amount AFTER shields and DR for ordinary damage), whether an ion hit that both reaches the threshold and reduces HP to 0 can also destroy (implemented as disabled only, per the verified outcome), or what threshold basis an ordinary organic uses (implemented as the half damage actually dealt).",
+      "missing": "Order of shield rating / damage reduction relative to the ion threshold comparison; confirmation of the two implemented readings.",
+      "impact": "Ion results on shielded or damage-reduced targets, ion hits at 0 HP that also reach the threshold, and ion hits on ordinary organics.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Owner ruling on V-P6C-04; the p27 ORDERING test pins the current behavior so a ruling changes it deliberately."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6C-05"
+      ],
+      "options": [],
+      "id": "P6B-D-046",
+      "component": "AAT-1 ion vulnerability (\"takes double damage from ion weapons\", Core p. 176) and R-28 ion naming (Legacy Era p. 85)",
+      "source": "canonical records core-aat-1 (text.mechanicalNotes), le-r-28-starfighter",
+      "status": "RULES_DECISION_REQUIRED",
+      "reason": "The AAT-1's vulnerability is preserved text; what doubles (the rolled ion damage before halving, the HP damage, the threshold comparison) is not stated, and no other published vehicle carries such text. The R-28's weapon is NAMED medium ion cannons but its printed damage line (6d10x2) does not type it as ion.",
+      "missing": "What the AAT-1 vulnerability multiplies; whether the R-28 weapon deals ion damage.",
+      "impact": "AAT-1 ion vulnerability is not automated (no vehicle receives it); the R-28 ion cannons stay refused.",
+      "severity": "MINOR",
+      "recommendedAction": "Owner ruling on V-P6C-05."
     }
   ]
 }

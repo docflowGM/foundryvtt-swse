@@ -374,7 +374,7 @@ test('CORPUS: each executable stock group arms, attacks at its printed total, an
     }
   }
   assert.deepEqual(failures, []);
-  assert.equal(proven.length, 261, 'the corpus-wide count of offline-executable stock groups (260 single-operator + 1 established battery)');
+  assert.equal(proven.length, 293, 'the corpus-wide count of offline-executable stock groups (260 plain + 1 established battery + 32 source-typed ion)');
   setPolicy(undefined);
 });
 
@@ -383,9 +383,9 @@ test('COVERAGE REPORT: current, and its executable counts are exactly what the C
   execFileSync(process.execPath, ['tools/audits/vehicles/build-stock-weapon-coverage.mjs', '--check']);
   const { readFileSync } = await import('node:fs');
   const cov = JSON.parse(readFileSync('data/audits/vehicles/stock-weapon-coverage.json', 'utf8'));
-  assert.deepEqual([cov.totals.vehicles, cov.totals.groups, cov.totals.offlineExecutableGroups, cov.totals.vehiclesWithOfflineExecutableGroup, cov.totals.liveVerifiedVehicles], [429, 846, 261, 233, 0]);
+  assert.deepEqual([cov.totals.vehicles, cov.totals.groups, cov.totals.offlineExecutableGroups, cov.totals.vehiclesWithOfflineExecutableGroup, cov.totals.liveVerifiedVehicles], [429, 846, 293, 238, 0]);
   const exec = cov.vehicles.flatMap(v => v.groups.filter(g => g.offlineExecutable));
-  assert.equal(exec.length, 261);
+  assert.equal(exec.length, 293);
   for (const g of cov.vehicles.flatMap(v => v.groups)) {
     assert.equal(g.liveVerified, false);
     if (!g.offlineExecutable) { assert.ok(g.refusals.length > 0, g.groupKey + ' has a named refusal'); assert.equal(g.attackReadiness, 'REFUSED'); }
@@ -395,14 +395,18 @@ test('COVERAGE REPORT: current, and its executable counts are exactly what the C
   for (const k of [XW, 'core-tie-fighter', 'core-corellian-yt-1300-transport', 'core-koensayr-y-wing-starfighter', 'core-arc-170-starfighter']) assert.ok(names.has(k), k);
 });
 
-test('AMMUNITION-LIMITED and ION groups are never executable (no magazine authority, ion-vs-vehicle unverified)', () => {
+test('AMMUNITION-LIMITED groups are never executable (no magazine authority); an ion-NAMED group runs only when the source types its damage as ion', () => {
   const all = docs.flatMap(d => assessStockWeaponGroups(d.flags.swse.universalVehicleSource.source).groups.map(g => ({ key: keyOf(d), g })));
   const ammo = all.filter(x => /\b(missiles?|torpedo(es)?|rockets?|mines?|bombs?|grenades?|launchers?|projectiles?)\b/i.test(x.g.label));
   assert.ok(ammo.length > 50, 'there are many ammunition-based groups');
   for (const x of ammo) { assert.equal(x.g.executable, false, `${x.key}: ${x.g.label}`); assert.ok(x.g.reasons.includes('STOCK_AMMUNITION_LIMITED_UNTRACKED')); }
-  for (const x of all.filter(y => /\bion\b/i.test(y.g.label))) { assert.equal(x.g.executable, false, `${x.key}: ${x.g.label}`); assert.ok(x.g.reasons.includes('STOCK_DAMAGE_ION_UNVERIFIED')); }
+  // a name alone never types damage: an executable ion-named group has the ion type stated by its source (P6C-2C, see p27)
+  for (const x of all.filter(y => /\bion\b/i.test(y.g.label))) {
+    if (x.g.executable) assert.equal(x.g.damage.type, 'ion', `${x.key}: ${x.g.label}`);
+    else assert.ok(x.g.reasons.length > 0, `${x.key}: ${x.g.label}`);
+  }
   // the executable set contains no wording that denotes finite ammunition
-  assert.equal(all.filter(x => x.g.executable && /missile|torpedo|mine|rocket|bomb|grenade|launcher|ion\b/i.test(x.g.label)).length, 0);
+  assert.equal(all.filter(x => x.g.executable && /missile|torpedo|mine|rocket|bomb|grenade|launcher/i.test(x.g.label)).length, 0);
 });
 
 test('COPILOT-operated stock groups: armed, fire from the copilot station, and get no pilot bonus', async () => {

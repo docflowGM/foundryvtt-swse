@@ -8,7 +8,8 @@
  * family or mechanics from a label.
  *
  * A group is EXECUTABLE as a plain stock weapon only when all of these hold:
- *   - the notes state damage as plain dice, with or without a printed multiplier (no splash/burst, ion or special);
+ *   - the notes state damage as plain dice, with or without a printed multiplier and, optionally, the printed type "ion"
+ *     (no splash/burst or other qualifier);
  *   - exactly one operator is printed and it is the pilot or a single gunner;
  *   - the group is a single-operator weapon or a PRINTED weapon battery whose gunner count and identical-weapon count are
  *     both printed and agree (Core p. 170, vehicle-weapon-battery.js); any size-dependent figure it prints is the Core -20;
@@ -37,6 +38,9 @@ export function parseStockFiringGroup(group) {
   const out = { groupKey: group?.groupKey ?? null, label: group?.label ?? null, attackBonusPrinted: finite(group?.attackBonusPrinted) ? group.attackBonusPrinted : null,
     damage: null, operator: null, evidence: {}, reasons };
 
+  const e = notes.match(EVIDENCE);
+  if (e) { try { out.evidence = JSON.parse(e[0]); } catch { reasons.push('STOCK_EVIDENCE_UNREADABLE'); } }
+
   const d = notes.match(DAMAGE);
   if (!d) reasons.push('STOCK_DAMAGE_NOT_PRINTED_IN_RECORD');
   else {
@@ -45,16 +49,22 @@ export function parseStockFiringGroup(group) {
     out.damage = { dice, die, bonus: d[3] ? Number(`${d[3]}${d[4]}`) : 0, multiplier: mult, formula: `${dice}d${die}`, raw: `${d[1]}d${d[2]}${d[5] ? `x${d[5]}` : ''}`, suffix };
     if (d[3]) reasons.push('STOCK_DAMAGE_HAS_FLAT_TERM');
     if (/splash|burst|radius|area/.test(suffix)) reasons.push('STOCK_DAMAGE_AREA_OR_SPLASH');
-    if (/ion/.test(suffix)) reasons.push('STOCK_DAMAGE_ION_UNVERIFIED');
-    if (suffix && !/splash|burst|radius|area|ion/.test(suffix.replace(/^,\s*/, '')) && suffix.replace(/[\s,]/g, '') !== '') reasons.push('STOCK_DAMAGE_QUALIFIED');
+    // Ion damage (Core pp. 159-160): the damage TYPE is taken only from what the source states -- the printed damage line
+    // ("6d10x2 ion") or the group's structured evidence (damageType: "ion") -- and only as the whole word "ion" ("concussion"
+    // is not ion). A weapon NAME can only deny, never type.
+    const suffixIon = /(^|[\s,])ion\b/.test(suffix);
+    const evidenceType = typeof out.evidence?.damageType === 'string' ? out.evidence.damageType.trim().toLowerCase() : null;
+    if (suffixIon) out.damage.type = 'ion';
+    if (evidenceType === 'ion') out.damage.type = 'ion';
+    if (suffixIon && evidenceType && evidenceType !== 'ion') reasons.push('STOCK_DAMAGE_TYPE_CONFLICT');
+    if (evidenceType && evidenceType !== 'ion' && !suffixIon) reasons.push('STOCK_DAMAGE_TYPE_NOT_ORDINARY');
+    const rest = suffix.replace(/(^|[\s,])ion\b/, ' ').replace(/^[\s,]+|[\s,]+$/g, '');
+    if (rest && !/splash|burst|radius|area/.test(rest)) reasons.push('STOCK_DAMAGE_QUALIFIED');
     // Core: weapon damage x the listed multiplier. A plain expression (no multiplier) is simply the dice (x1; owner ruling
     // 2026-11-03: an omitted multiplier neither invalidates a vehicle weapon nor makes it a personal weapon); x2, x5, x10...
     // are applied exactly as printed. The multiplier is never guessed.
     if (!Number.isInteger(mult) || mult < 1) reasons.push('STOCK_DAMAGE_MULTIPLIER_UNREADABLE');
   }
-
-  const e = notes.match(EVIDENCE);
-  if (e) { try { out.evidence = JSON.parse(e[0]); } catch { reasons.push('STOCK_EVIDENCE_UNREADABLE'); } }
 
   const o = notes.match(OPERATOR);
   const opText = o ? String(o[1] ?? '').trim().toLowerCase() : '';
@@ -80,10 +90,10 @@ export function parseStockFiringGroup(group) {
   else reasons.push('STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER');
   if (group?.groupKind === 'weapon-battery' && !printedBattery) reasons.push('STOCK_GROUP_IS_A_WEAPON_BATTERY');
   // Fail-closed denials by wording (a name can only DENY, never authorize): finite-ammunition weapons have no magazine
-  // authority yet, torpedoes/missiles/mines/grenades carry splash and payload rules, and ion damage against vehicles is
-  // unverified. These stay reference-only until those mechanics exist.
+  // authority yet and torpedoes/missiles/mines/grenades carry splash and payload rules; a name that says "ion" while the
+  // source does not type the damage as ion stays refused.
   if (AMMUNITION_LIMITED.test(`${group?.label ?? ''} ${notes}`)) reasons.push('STOCK_AMMUNITION_LIMITED_UNTRACKED');
-  if (/\bion\b/i.test(String(group?.label ?? ''))) reasons.push('STOCK_DAMAGE_ION_UNVERIFIED');
+  if (/\bion\b/i.test(String(group?.label ?? '')) && out.damage?.type !== 'ion') reasons.push('STOCK_DAMAGE_ION_UNVERIFIED');   // the name says ion but the source does not type the damage
   if (POSSIBLE_AREA.test(String(group?.label ?? ''))) reasons.push('STOCK_POSSIBLE_AREA_WEAPON_UNVERIFIED');
   // point-defense status is never inferred from a label: such groups stay non-executable until it is classified from source
   if (/point[- ]?defen[cs]e/i.test(String(group?.label ?? '') + notes)) reasons.push('STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED');

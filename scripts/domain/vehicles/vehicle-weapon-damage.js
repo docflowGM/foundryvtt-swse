@@ -112,19 +112,19 @@ export function resolveStockWeapon(weapon) {
   const arcEvidence = group.arc.state === 'PUBLISHED' ? { state: 'PRINTED_VALUE', value: group.arc.value }
     : group.arc.state === 'UNSTATED' ? { state: 'SOURCE_SILENT_CONFIRMED' } : { state: 'NOT_REVIEWED' };
   // a PRINTED weapon battery (Core p. 170) carries its established facts; the Item never does
-  return { ok: true, origin: 'stock', operator: group.operator, group, record, spec: { damage: group.damage.raw }, arcEvidence, battery: group.battery?.established ? group.battery : null };
+  return { ok: true, origin: 'stock', operator: group.operator, group, record, spec: { damage: group.damage.raw, ...(group.damage.type ? { type: group.damage.type } : {}) }, arcEvidence, battery: group.battery?.established ? group.battery : null };
 }
 
 /**
  * ONE authority shape for every Item-backed vehicle weapon, whichever provenance path produced it.
- * @returns {null | {ok:true, origin:'installed'|'stock', operator:string, damageRaw:string, battery?:object} | {ok:false, reason:string}}
+ * @returns {null | {ok:true, origin:'installed'|'stock', operator:string, damageRaw:string, damageType?:string, battery?:object} | {ok:false, reason:string}}
  *   null = not a vehicle-managed weapon Item. `battery` is present only for a published weapon battery (stock, Core p. 170).
  */
 export function resolveVehicleWeaponAuthority(weapon) {
   if (isStockVehicleWeaponItem(weapon)) {
     if (isInstalledVehicleWeaponItem(weapon)) return { ok: false, reason: 'WEAPON_CLAIMS_BOTH_STOCK_AND_INSTALLED_PROVENANCE' };
     const s = resolveStockWeapon(weapon);
-    return s.ok ? { ok: true, origin: 'stock', operator: s.operator, damageRaw: s.spec.damage, ...(s.battery ? { battery: s.battery } : {}), stock: s } : s;
+    return s.ok ? { ok: true, origin: 'stock', operator: s.operator, damageRaw: s.spec.damage, ...(s.spec.type ? { damageType: s.spec.type } : {}), ...(s.battery ? { battery: s.battery } : {}), stock: s } : s;
   }
   const i = resolveCertifiedInstalledWeapon(weapon);
   if (!i) return null;
@@ -150,15 +150,18 @@ export function resolveVehicleWeaponDamage(weapon, { batteryExtraHits = 0 } = {}
   if (!p.formula || p.special || p.modifierOnly || p.byWeapon || p.noDamage)
     return { ok: false, reason: 'VEHICLE_WEAPON_DAMAGE_NOT_ORDINARY' };
   const multiplier = Number.isFinite(p.multiplier) && p.multiplier > 1 ? p.multiplier : 1;
+  // The damage TYPE: a type the published group states (ion, Core pp. 159-160) or one the certified specification prints
+  // explicitly; never a guess from the weapon's name.
+  const damageType = a.damageType ?? (p.typeSource === 'explicit' ? p.type : null);
   const extraHits = batteryExtraHits === undefined || batteryExtraHits === null ? 0 : batteryExtraHits;
   if (!a.battery) {
     if (extraHits !== 0) return { ok: false, reason: BATTERY_REASONS.EXTRA_HITS_ON_A_NON_BATTERY };
-    return { ok: true, formula: p.formula, multiplier, damageType: p.typeSource === 'explicit' ? p.type : null, printed: p.raw };
+    return { ok: true, formula: p.formula, multiplier, damageType, printed: p.raw };
   }
   const dice = /^(\d+)d(\d+)$/.exec(p.formula);
   if (!dice) return { ok: false, reason: 'VEHICLE_WEAPON_DAMAGE_NOT_ORDINARY' };
   const x = expandBatteryDamage({ dice: Number(dice[1]), die: Number(dice[2]), multiplier }, extraHits, a.battery.participatingWeapons);
   if (!x.ok) return { ok: false, reason: x.reason };
-  return { ok: true, formula: x.formula, multiplier, damageType: p.typeSource === 'explicit' ? p.type : null, printed: p.raw,
+  return { ok: true, formula: x.formula, multiplier, damageType, printed: p.raw,
     battery: { gunners: a.battery.gunners, participatingWeapons: a.battery.participatingWeapons, extraHits, extraDice: x.extraDice, baseFormula: p.formula } };
 }

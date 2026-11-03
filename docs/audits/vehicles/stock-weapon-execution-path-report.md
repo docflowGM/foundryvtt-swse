@@ -20,7 +20,7 @@ record). Stock weapons never pass through the ledger, EP or credits and are neve
 
 ## Result (offline; nothing is live-verified)
 
-- 846 published groups; 468 SOURCE_VERIFIED (configuration established); **261 OFFLINE_EXECUTABLE on 233 vehicles** (110 vehicles have every group executable) after P6C-2B, each driven
+- 846 published groups; 468 SOURCE_VERIFIED (configuration established); **293 OFFLINE_EXECUTABLE on 238 vehicles** (119 vehicles have every group executable) after P6C-2C, each driven
   through arm -> attack -> damage by the CORPUS test; 0 LIVE_VERIFIED. See `stock-weapon-coverage.md`.
 - Includes the X-wing laser cannons (6d10 x 2, pilot, +5), TIE fighter, TIE interceptor, Y-wing, ARC-170, YT-1300, AAT and others.
   The X-wing proton torpedoes stay reference-only (splash, finite payload).
@@ -34,8 +34,8 @@ keep their certified mount and arc. The world setting can switch unstated arcs t
 
 ## What genuinely needs new mechanics (all recorded in the deferred register, P6B-D-033..039)
 
-- Printed attack totals: explained for the 261 executable groups (crew BAB + Int; +2 on pilot-crewed groups = Core p. 171); the battery +2 per additional gunner is documented but batteries need their own model; about 50 single-operator groups stay unexplained.
-- Weapon batteries: 102 printed batteries do not print their number of weapons (owner ruling V-P6C-02); multi-gunner stations that are not printed batteries; splash/ion/ammunition groups (142); point-defense.
+- Printed attack totals: explained for the 293 executable groups (crew BAB + Int; +2 on pilot-crewed groups = Core p. 171); the battery +2 per additional gunner is documented but batteries need their own model; about 50 single-operator groups stay unexplained.
+- Weapon batteries: 102 printed batteries do not print their number of weapons (owner ruling V-P6C-02); multi-gunner stations that are not printed batteries; splash/ammunition groups; ion groups that are batteries or fail another gate; point-defense.
 - 12 groups on records with no arc evidence; 5 groups with arcs the system cannot yet interpret.
 
 ## Also fixed along the way
@@ -92,3 +92,30 @@ arm -> attack -> card -> damage by the P26 tests); the Rendili battery is refuse
 are refused as `STOCK_BATTERY_WEAPON_COUNT_NOT_STATED` pending owner ruling V-P6C-02; this is NOT a 291-group unlock. Not
 done and recorded: named-gunner rosters (P6B-D-043), battery-aids-battery runtime and independent firing (P6B-D-044, V-P6C-03).
 Reroll note: a reroll supersedes the attack card (its Damage button is refused), so a stale margin outcome cannot be reused.
+
+## P6C-2C: ion damage (2026-11-03)
+
+Core pp. 159-160 (rule text verified by the owner) runs on the EXISTING damage authorities; there is no ion engine.
+
+- Typing: a stock group is ion only when its SOURCE types the damage (the printed damage line "4d10x2 ion" or the structured
+  evidence `damageType: "ion"`), read as the whole word (the old check also matched "concussion"). A name alone never types
+  damage: the R-28's "medium ion cannons", whose damage line does not say ion, stay refused. The type travels from the source
+  group through `resolveVehicleWeaponAuthority` / `resolveVehicleWeaponDamage` into the damage card (`damage.js`), so the Apply
+  Damage packet is ion without trusting any Item field.
+- Packet rules (`damage-packet-rules.js`): droid, vehicle, object and device targets, and creatures flagged cybernetic, take the
+  ion packet (HP x 0.5, full rolled amount to the threshold); an ordinary organic takes the half-damage HP effect only.
+- Threshold (`threshold-engine.js`): an ion hit that reaches the threshold moves the target 2 steps (`ION_THRESHOLD_CT_STEPS`);
+  the Ion Shielding cap of one step now has a baseline to cap; ordinary and stun thresholds are unchanged.
+- 0 HP (`damage-resolution-engine.js`): ion that reduces HP to 0 moves the target 5 steps and disables it (the droid state is
+  `disabled`; a creature is unconscious) as ONE outcome: the 2-step shift is not added and the threshold destruction path does
+  not also fire.
+- Duplicate application: one `ActorEngine.applyDamage` writes HP and condition track once (tested). The EMP grenade's own
+  `zero-hp-ct-disable` rider belongs to that weapon's records and is unchanged.
+- Order as implemented: bonus HP, shield rating, damage reduction, HP damage x 0.5, threshold on the full ROLLED amount (before
+  shields and damage reduction, unlike ordinary damage), then condition track. That ordering, ion at 0 HP that also reaches
+  the threshold, the organic threshold basis and the two-step/optional-variant interplay are owner question V-P6C-04.
+- AAT-1: "takes double damage from ion weapons" is preserved text on the only record that carries it; nothing is automated
+  and nothing generalizes it (V-P6C-05).
+
+Result: 69 groups are typed ion by their source; 32 are OFFLINE_EXECUTABLE (single-operator, plain, no other blocker); the others
+are batteries (the same weapon-count refusal as every battery), unexplained attack totals, point-defense, ammunition or splash.

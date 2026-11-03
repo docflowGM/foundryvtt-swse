@@ -79,7 +79,9 @@ export class DamageSystem {
       const typeLabel = targetPacket.type && targetPacket.type !== 'normal' ? ` ${targetPacket.type}` : '';
       const specialLabel = targetPacket.flags?.ionHpHalved
         ? ' (ion HP halved)'
-        : targetPacket.flags?.stunHpHalved
+        : targetPacket.flags?.ionOrganicHalved
+          ? ' (ion: HP halved, no ion effects)'
+          : targetPacket.flags?.stunHpHalved
           ? ' (stun HP halved)'
           : targetPacket.flags?.forceImmuneTarget
             ? ' (Force immunity)'

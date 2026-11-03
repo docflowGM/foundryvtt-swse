@@ -8,14 +8,14 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 
 | Category | Count |
 |---|---|
-| RULES_DECISION_REQUIRED | 8 |
+| RULES_DECISION_REQUIRED | 10 |
 | SOURCE_EVIDENCE_MISSING | 7 |
 | ENGINEERING_COMPLEXITY | 14 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 4 |
 | DEPENDENCY_BLOCKED | 8 |
 
-Open items: 42. Resolved items: 2 (listed at the end).
+Open items: 44. Resolved items: 2 (listed at the end).
 
 ## Items (by severity)
 
@@ -32,6 +32,7 @@ Open items: 42. Resolved items: 2 (listed at the end).
 | P6B-D-036 | STOCK | published stock splash, ion and ammunition-limited groups (torpedoes, missiles, ion cannons; 71 splash + 71 ion groups) | DEPENDENCY_BLOCKED | IMPORTANT | no | V-P6A-03 |
 | P6B-D-042 | STOCK | published weapon batteries that print gunners but not the number of identical weapons (102 of 104 printed batteries) | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-02 |
 | P6B-D-043 | STOCK | weapon batteries crewed by named gunners (assisting roster) | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
+| P6B-D-045 | STOCK | ion damage: ordering with shield rating / damage reduction, organics, and interplay with optional variants | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-04 |
 | P6B-D-003 | P6B-1 | jamming-suite, jamming-array | ENGINEERING_COMPLEXITY | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-004 | P6B-1 | combat-thrusters | DEPENDENCY_BLOCKED | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-005 | P6B-1 | navicomputer-limited | RULES_DECISION_REQUIRED | MINOR | yes | V-P6B-01 |
@@ -63,6 +64,7 @@ Open items: 42. Resolved items: 2 (listed at the end).
 | P6B-D-039 | STOCK | point-defense weapon modification (catalog row "point-defense", +4,000 credits) | ENGINEERING_COMPLEXITY | MINOR | no | - |
 | P6B-D-041 | STOCK | published stock groups with droid, remote or ambiguous operators | ENGINEERING_COMPLEXITY | MINOR | no | - |
 | P6B-D-044 | STOCK | battery aiding another battery, and a battery's weapons firing independently | RULES_DECISION_REQUIRED | MINOR | yes | V-P6C-03 |
+| P6B-D-046 | STOCK | AAT-1 ion vulnerability ("takes double damage from ion weapons", Core p. 176) and R-28 ion naming (Legacy Era p. 85) | RULES_DECISION_REQUIRED | MINOR | yes | V-P6C-05 |
 
 ## Details
 
@@ -492,6 +494,26 @@ Open items: 42. Resolved items: 2 (listed at the end).
 - **Owner ruling needed:** yes (V-P6C-03)
 - **Impact:** Not offered at runtime.
 - **Recommended action:** Owner ruling on V-P6C-03, then add one action that records the aid on the existing effect/modifier authority.
+
+### P6B-D-045 - ion damage: ordering with shield rating / damage reduction, organics, and interplay with optional variants
+
+- **Source:** Core Rulebook pp. 159-160 (owner-verified); damage-resolution-engine.js; damage-packet-rules.js
+- **Category / severity:** RULES_DECISION_REQUIRED / IMPORTANT
+- **Reason:** The verified rule gives: half to HP, full (unhalved) to the threshold, 2 steps at the threshold, 5 steps and disabled at 0 HP, organics only the half effect. It does not say whether the full amount is taken before or after shield rating and damage reduction (the existing engine compares the full ROLLED amount for ion and stun, but the amount AFTER shields and DR for ordinary damage), whether an ion hit that both reaches the threshold and reduces HP to 0 can also destroy (implemented as disabled only, per the verified outcome), or what threshold basis an ordinary organic uses (implemented as the half damage actually dealt).
+- **Missing:** Order of shield rating / damage reduction relative to the ion threshold comparison; confirmation of the two implemented readings.
+- **Owner ruling needed:** yes (V-P6C-04)
+- **Impact:** Ion results on shielded or damage-reduced targets, ion hits at 0 HP that also reach the threshold, and ion hits on ordinary organics.
+- **Recommended action:** Owner ruling on V-P6C-04; the p27 ORDERING test pins the current behavior so a ruling changes it deliberately.
+
+### P6B-D-046 - AAT-1 ion vulnerability ("takes double damage from ion weapons", Core p. 176) and R-28 ion naming (Legacy Era p. 85)
+
+- **Source:** canonical records core-aat-1 (text.mechanicalNotes), le-r-28-starfighter
+- **Category / severity:** RULES_DECISION_REQUIRED / MINOR
+- **Reason:** The AAT-1's vulnerability is preserved text; what doubles (the rolled ion damage before halving, the HP damage, the threshold comparison) is not stated, and no other published vehicle carries such text. The R-28's weapon is NAMED medium ion cannons but its printed damage line (6d10x2) does not type it as ion.
+- **Missing:** What the AAT-1 vulnerability multiplies; whether the R-28 weapon deals ion damage.
+- **Owner ruling needed:** yes (V-P6C-05)
+- **Impact:** AAT-1 ion vulnerability is not automated (no vehicle receives it); the R-28 ion cannons stay refused.
+- **Recommended action:** Owner ruling on V-P6C-05.
 
 ## Resolved items
 

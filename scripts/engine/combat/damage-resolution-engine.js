@@ -285,9 +285,11 @@ export class DamageResolutionEngine {
       result.thresholdBreakdown = thresholdData.breakdown;
 
       const thresholdOverride = Number(options?.thresholdDamageOverride ?? options?.thresholdMeasuredDamage);
+      // An ion hit on a target the ion rules do not reach is plain half damage: its threshold (the ordinary rule) is judged on the
+      // damage actually dealt to HP, not on the pre-halving amount (owner question V-P6C-04).
       const thresholdDamage = Number.isFinite(thresholdOverride)
         ? Math.max(0, thresholdOverride)
-        : (mitigationResult?.afterDR ?? mitigationResult?.hpDamage ?? damage);
+        : (options?.thresholdMeasuredFromHpDamage === true ? result.damageToHP : (mitigationResult?.afterDR ?? mitigationResult?.hpDamage ?? damage));
       result.thresholdMeasuredDamage = thresholdDamage;
       result.thresholdRuleResult = ThresholdEngine.evaluateThreshold({
         target: actor,
@@ -407,6 +409,22 @@ export class DamageResolutionEngine {
         result.stunKnockout = true;
         result.unconscious = true;
         result.disabled = false;
+        result.dead = false;
+        result.destroyed = false;
+        result.forceRescueEligible = false;
+        return result;
+      }
+
+      // Ion (Core pp. 159-160, owner-verified): ion damage that reduces a susceptible target to 0 hit points moves it 5 steps down
+      // the condition track and DISABLES it (unconscious for a creature). The packet type is 'ion' only for a target the ion rules
+      // reach, so nothing else takes this path. It is one outcome: the 2-step threshold shift is not added on top, and the
+      // threshold/instant-death destruction below does not also apply.
+      if (damageType === 'ion') {
+        const cap = ConditionTrackRules.getConditionStepCap();
+        const steps = Math.min(5, Math.max(0, cap - result.conditionBefore));
+        result.conditionDelta = steps;
+        result.conditionAfter = result.conditionBefore + steps;
+        result.ionDisabled = true;
         result.dead = false;
         result.destroyed = false;
         result.forceRescueEligible = false;

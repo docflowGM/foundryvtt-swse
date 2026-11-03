@@ -921,3 +921,41 @@ printed figure minus the Core p. 171 -20 penalty. Result: 260 executable stock g
 Core p. 170 (owner-verified) is implemented in `vehicle-weapon-battery.js` and wired into the stock gate, the attack roll and the damage authority. One published battery (Krayt's Honor turbolaser battery) is OFFLINE_EXECUTABLE; 102 printed batteries are refused until V-P6C-02 is ruled; named gunners on a battery are refused until a roster binding exists (P6B-D-043); the aid action is deferred (V-P6C-03). No existing entry changed.
 
 - **Revision 27 (2026-11-03):** appended this status note. No existing entry changed.
+
+### V-P6C-04 - Ion damage: ordering with shield rating and damage reduction, hit points 0, and ordinary organics
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-04 |
+| Rules domain | Combat (ion damage) |
+| Feature | Ion damage against droids, vehicles, electronic devices, cybernetic creatures and ordinary organics |
+| Source | Core Rulebook pp. 159-160 (rule text verified by the project owner, 2026-11-03) |
+| Evidence | Roll ion damage; subtract HALF from hit points; compare the FULL (unhalved) ion damage to the damage threshold; at or above the threshold the target moves 2 condition-track steps; if the damage reduces hit points to 0 the target moves 5 steps and is disabled (unconscious for a creature). The extra effects apply to droids, vehicles, electronic devices and cybernetic creatures; ordinary organics take only the half-damage HP effect. The existing engine halves HP damage for ion, compares `thresholdDamageOverride` (the full ROLLED amount, before shield rating and damage reduction) to the threshold for ion and stun, and measures ordinary damage AFTER shield rating and damage reduction. |
+| Confirmed behavior | Implemented on the existing authorities (`damage-packet-rules.js`, `damage-resolution-engine.js`, `threshold-engine.js`): half HP; full amount to the threshold; 2 steps at the threshold (`ION_THRESHOLD_CT_STEPS`); 5 steps and disabled at 0 HP as one outcome (not 5 + 2); ordinary organics half HP without the ion effects; the optional Ion Shielding cap of one step now has a two-step baseline to cap. |
+| Unresolved question | (1) Is the "full" amount compared to the threshold the rolled amount before shield rating and damage reduction (current ion behavior) or the amount after them (the ordinary behavior)? (2) May an ion hit that both reaches the threshold and reduces hit points to 0 also destroy the target, or is it only disabled (implemented as disabled only, per the verified outcome)? (3) What threshold basis does an ordinary organic's half-damage hit use (implemented as the half damage actually dealt, the ordinary rule)? (4) How does the two-step ion baseline combine with the optional double-threshold house rule (implemented as the larger of the two, not additive)? |
+| Options | None supported by the verified text beyond the readings named above. |
+| Recommended ruling | None |
+| Implementation impact | The 32 ion stock groups that pass every other gate are OFFLINE_EXECUTABLE with this ordering as implemented; a ruling on (1) or (2) may change results on shielded, damage-reduced or 0-HP targets (the p27 ORDERING and 0-HP tests pin today's behavior). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6C-05 - AAT-1 "takes double damage from ion weapons" and the R-28 ion naming
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-05 |
+| Rules domain | Vehicles (ion damage) |
+| Feature | AAT-1 Ion Vulnerability (Core Rulebook p. 176); R-28 Starfighter medium ion cannons (Legacy Era Campaign Guide p. 85) |
+| Source | Canonical records `core-aat-1` (`text.mechanicalNotes`) and `le-r-28-starfighter` |
+| Evidence | The AAT-1 record preserves "Ion Vulnerability: takes double damage from ion weapons." It is the only published vehicle record carrying ion vulnerability or immunity text. The R-28's weapon is named "medium ion cannons" while its printed damage line reads 6d10x2 with no ion type. |
+| Confirmed behavior | Neither is automated: no damage authority applies an ion vulnerability, and the R-28 weapon is refused (`STOCK_DAMAGE_ION_UNVERIFIED`). |
+| Unresolved question | What the AAT-1 vulnerability doubles (the rolled ion damage before halving, the damage to hit points, or the amount compared to the threshold) and how it combines with shield rating and damage reduction; whether the R-28's cannons deal ion damage. |
+| Options | None supported by the source text. |
+| Recommended ruling | None |
+| Implementation impact | AAT-1 receives no ion vulnerability; the R-28 ion cannons stay refused. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 28 (2026-11-03):** appended V-P6C-04 and V-P6C-05. No existing entry changed.

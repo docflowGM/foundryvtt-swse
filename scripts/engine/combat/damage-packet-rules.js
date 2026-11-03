@@ -417,6 +417,11 @@ export function applyTargetDamagePacketRules(packet = {}, target = null) {
       next.flags.ionSuppressed = true;
       next.flags.ionHpHalved = false;
       next.flags.ionThresholdUsesOriginalDamage = false;
+      // Core pp. 159-160 (owner-verified): a target the ion rules do not reach (an ordinary organic) takes only the half-damage
+      // HP effect -- no ion threshold or condition-track effect. The packet stays ordinary damage with halved HP damage.
+      next.options.hpDamageMultiplier = asNumber(next.options.hpDamageMultiplier, 0.5);
+      next.options.thresholdMeasuredFromHpDamage = true;
+      next.flags.ionOrganicHalved = true;
     }
   }
 
