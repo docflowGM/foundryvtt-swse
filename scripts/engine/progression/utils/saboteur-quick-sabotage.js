@@ -36,6 +36,28 @@ export function planQuickSabotage(actor,complexity) {
 }
 
 /**
+ * Match only the published Mechanics Extra Skill Use entries. Both the
+ * player-facing catalog and the real roll dispatcher use this one resolver;
+ * neither infers class features from arbitrary display text.
+ *
+ * The production compendium names and JSON-fallback applications agree.
+ * A record explicitly marked as a different skill never qualifies.
+ */
+export function resolveSaboteurSkillUse(skillUse) {
+  if (!skillUse) return null;
+  const skill = skillUse.skillKey ?? skillUse.system?.skill
+    ?? skillUse._source?.system?.skill ?? skillUse.skill ?? null;
+  if (skill && String(skill).toLowerCase() !== 'mechanics') return null;
+  const name = String(skillUse.label ?? skillUse.application ?? skillUse.name
+    ?? skillUse.system?.application ?? skillUse._source?.system?.application ?? '').trim();
+  const device = name.match(/^Disable Device\s*[\u2013\u2014-]\s*(Simple|Tricky|Complex)$/i);
+  if (device) return { application: 'disable-device', complexity: device[1].toLowerCase() };
+  if (/^Handle Explosives\s*\/\s*Set Detonator$/i.test(name))
+    return { application: 'handle-explosives', complexity: null };
+  return null;
+}
+
+/**
  * Reserve swift action(s) before rolling. A rejected cost must not trigger
  * a Mechanics check. If a later leg fails, rollback all committed spends.
  * Out-of-combat is the canonical ActionEconomyConsumption no-op case.
