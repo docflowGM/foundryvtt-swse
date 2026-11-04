@@ -1032,7 +1032,7 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
   // P6C-2B: a published weapon battery's extra hits come from the attack outcome carried on the card (validated against the
   // weapons actually participating inside resolveVehicleWeaponDamage); any other weapon refuses a non-zero value.
   const batteryExtraHits = Number(context.batteryExtraHits ?? context.combatContext?.battery?.extraHits ?? context.workflowContext?.battery?.extraHits ?? 0);
-  const vehicleDamage = (canonicalBase === null && !bonus.flags?.stockDamageFormula) ? resolveVehicleWeaponDamage(weapon, { batteryExtraHits }) : null;
+  const vehicleDamage = (canonicalBase === null && !bonus.flags?.stockDamageFormula) ? resolveVehicleWeaponDamage(weapon, { batteryExtraHits, fireModeExtraDice: Number(context.workflowContext?.vehicleFireMode?.extraDice ?? context.vehicleFireMode?.extraDice ?? 0) }) : null;
   if (vehicleDamage && !vehicleDamage.ok)
     throw new WeaponRuntimeError(ERROR_CODES.NO_ORDINARY_DAMAGE, `${weapon?.name ?? 'vehicle weapon'} has no ordinary damage roll (${vehicleDamage.reason})`, { reason: vehicleDamage.reason });
   if (vehicleDamage) bonus = { total: 0, components: {}, flags: { damageBaseOnly: true, vehicleWeaponFormula: true }, typedModifierLedger: [] };

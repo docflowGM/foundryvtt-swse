@@ -289,13 +289,13 @@ test('INTEGRITY: an Item copied onto another vehicle, or a stock flag on a non-s
   setPolicy(undefined);
 });
 
-test('AUTOFIRE and BURST are refused for stock weapons (their printed vehicle autofire bonuses are not automated)', async () => {
+test('AUTOFIRE and BURST are refused for stock weapons: no autofire capability is established for a stock group (WE-5)', async () => {
   setPolicy('unrestricted');
   const v = await armed(XW); const w = stockItems(v)[0];
   for (const opts of [{ autofire: true }, { attackMode: 'autofire' }, { fireMode: 'burst' }, { combatOptions: { burstFire: true } }]) {
     const r = await fire(v, w, target(), opts);
     assert.equal(r.result, null, JSON.stringify(opts));
-    assert.match(r.log.join('|'), /autofire and burst fire are not automated/);
+    assert.match(r.log.join('|'), /AUTOFIRE_CAPABILITY_NOT_ESTABLISHED/);
   }
   setPolicy(undefined);
 });

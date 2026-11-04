@@ -28,6 +28,7 @@ import { resolveVehicleAttackBonus, resolveAbstractCrewAttackBonus } from "/syst
 import { resolveAttackDomain } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-domain-router.js";
 import { authorizeVehicleAttackBeforeCosts } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-attack-preflight.js";
 import { resolveVehicleWeaponAuthority } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
+import { resolveVehicleFireMode, requestedVehicleFireMode } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-fire-mode.js";
 import { batteryMarginHits } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-battery.js";
 import { VehicleBatteryAidService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-battery-aid-service.js";
 import { VehicleAmmunitionService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-ammunition-service.js";
@@ -724,6 +725,8 @@ export async function rollAttack(actor, weapon, options = {}) {
   let launcherAuth = null;
   let followUp = null;
   let vehicleRange = null;
+  let vehicleFireMode = { ok: true, mode: 'single' };
+  let requestedFireMode = 'single';
   const launchAttackId = globalThis.foundry?.utils?.randomID?.() ?? `launch-${Date.now()}`;
   let vehicleAmmoSpend = null;
   const refundVehicleAmmo = async () => { if (vehicleAmmoSpend?.spent) await VehicleAmmunitionService.refundLaunch(vehicleAmmoSpend); };
@@ -745,13 +748,9 @@ export async function rollAttack(actor, weapon, options = {}) {
             : (resolveTrustedStockAttackGroup(vehicle, weapon)?.operator ?? null)
         })
       : { crewStationResolved: false };
-    // Autofire / burst are character-weapon mechanics; the printed vehicle autofire bonuses are not automated, so a
-    // vehicle-managed weapon (installed or stock) refuses them instead of misapplying the character rules.
-    if ((installedProvenance.kind === 'STOCK_CANDIDATE' || installedProvenance.kind === 'CERTIFIED_INSTALLATION')
-        && (rollOptions.autofire === true || rollOptions.attackMode === 'autofire' || rollOptions.fireMode === 'autofire' || rollOptions.fireMode === 'burst' || optionActive(rollOptions, 'burstFire'))) {
-      ui?.notifications?.warn?.('Vehicle attack blocked: autofire and burst fire are not automated for vehicle weapons.');
-      return null;
-    }
+    // Autofire / Burst Fire of a vehicle-managed weapon: requested here, resolved after the range/scale authority below (WE-5)
+    requestedFireMode = (installedProvenance.kind === 'STOCK_CANDIDATE' || installedProvenance.kind === 'CERTIFIED_INSTALLATION')
+      ? requestedVehicleFireMode(rollOptions, optionActive(rollOptions, 'burstFire')) : 'single';
     const sourceGate = await authorizeVehicleAttackBeforeCosts({
       vehicle, weapon, target, attackId,
       crewStationResolved: stationEvidence.crewStationResolved === true,
@@ -785,6 +784,16 @@ export async function rollAttack(actor, weapon, options = {}) {
     }
   }
 
+  if (requestedFireMode !== 'single') {
+    // WE-5: autofire / Burst Fire need an autofire-capable certified weapon, the named operator's Burst Fire feat and a scale that resolves the area
+    vehicleFireMode = resolveVehicleFireMode({ requested: requestedFireMode, authority: launcherAuth, operatorActor: vehicleDomain.normalizedContext?.gunnerActor ?? null, scale: vehicleRange?.scale ?? null });
+    if (!vehicleFireMode.ok) { ui?.notifications?.warn?.(`Vehicle attack blocked: ${vehicleFireMode.reason}.`); return null; }
+    const { burstFire: _bf, ...restAttackOptions } = rollOptions.attackOptions ?? {};
+    rollOptions = { ...rollOptions, fireMode: vehicleFireMode.mode, ...(rollOptions.attackOptions ? { attackOptions: restAttackOptions } : {}),
+      situationalContributions: [...(Array.isArray(rollOptions.situationalContributions) ? rollOptions.situationalContributions : []), createModifier({
+        source: ModifierSource.ITEM, sourceId: `vehicle-${vehicleFireMode.mode}`, sourceName: `${weapon.name} (${vehicleFireMode.mode === 'burst' ? 'Burst Fire' : 'Autofire'})`,
+        target: 'global.attack', type: ModifierType.UNTYPED, value: vehicleFireMode.attackPenalty })] };
+  }
   if (vehicleRange) {
     // The calculated range REPLACES whatever the caller supplied: no band, distance or explicit penalty can move the attack.
     const { rangeBand: _b, range: _r, distanceSquares: _d, rangePenalty: _p, ...rest } = rollOptions;
@@ -1043,7 +1052,8 @@ export async function rollAttack(actor, weapon, options = {}) {
     // V-P6C-07 (project interpretation): an ordinary splash / area weapon resolved against ONE target at starship scale keeps the area-attack
     // miss rule (Core Special Combat Rules: Area Attacks): a hit deals full damage and a miss deals HALF. The flag is only the miss rule: it is
     // not the character-scale area (no Evasion / cover / critical semantics are added or removed by it).
-    ...(vehicleWeaponAuthority?.ok && vehicleWeaponAuthority.area ? { ruleData: { halfDamageOnMiss: true } } : {}),
+    ...(vehicleWeaponAuthority?.ok && vehicleWeaponAuthority.area || vehicleFireMode.halfDamageOnMiss ? { ruleData: { halfDamageOnMiss: true } } : {}),
+    ...(vehicleFireMode.mode !== 'single' ? { vehicleFireMode: { mode: vehicleFireMode.mode, extraDice: vehicleFireMode.extraDice } } : {}),
     // Phase 5D-E: carry the special-mechanic state (classified mechanics, stored answers, evaluated CT riders) to Damage/Apply
     special: (specialStage.mechanics.length || Object.keys({ ...specialStage.answers, ...(rollOptions.answers ?? {}) }).length) ? {
       mechanics: summarizeMechanics(specialStage.mechanics), answers: { ...specialStage.answers, ...(rollOptions.answers ?? {}) }, unresolved: specialStage.unresolved, drInteraction: specialStage.drIgnore ? 'ignore' : undefined,

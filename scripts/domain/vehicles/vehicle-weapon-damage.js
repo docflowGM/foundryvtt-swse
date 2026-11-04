@@ -168,7 +168,7 @@ export function resolveVehicleWeaponAuthority(weapon) {
  * refused for any weapon that is not an established battery.
  * @returns {null|{ok:true, formula:string, multiplier:number, damageType:string|null, printed:string, battery?:object}|{ok:false, reason:string}}
  */
-export function resolveVehicleWeaponDamage(weapon, { batteryExtraHits = 0 } = {}) {
+export function resolveVehicleWeaponDamage(weapon, { batteryExtraHits = 0, fireModeExtraDice = 0 } = {}) {
   const a = resolveVehicleWeaponAuthority(weapon);
   if (!a) return null;
   if (!a.ok) return a;
@@ -183,8 +183,15 @@ export function resolveVehicleWeaponDamage(weapon, { batteryExtraHits = 0 } = {}
   const extraHits = batteryExtraHits === undefined || batteryExtraHits === null ? 0 : batteryExtraHits;
   if (!a.battery) {
     if (extraHits !== 0) return { ok: false, reason: BATTERY_REASONS.EXTRA_HITS_ON_A_NON_BATTERY };
+    if (fireModeExtraDice) {
+      // Burst Fire: extra weapon dice are added BEFORE the multiplier (V-P6C-10); only an autofire-capable weapon can carry them
+      const d = /^(\d+)d(\d+)$/.exec(p.formula);
+      if (!a.autofireCapable || !d) return { ok: false, reason: 'VEHICLE_FIRE_MODE_DICE_NOT_ALLOWED' };
+      return { ok: true, formula: `${Number(d[1]) + fireModeExtraDice}d${d[2]}`, multiplier, damageType, printed: p.raw, fireModeExtraDice };
+    }
     return { ok: true, formula: p.formula, multiplier, damageType, printed: p.raw };
   }
+  if (fireModeExtraDice) return { ok: false, reason: 'VEHICLE_FIRE_MODE_DICE_NOT_ALLOWED' };
   const dice = /^(\d+)d(\d+)$/.exec(p.formula);
   if (!dice) return { ok: false, reason: 'VEHICLE_WEAPON_DAMAGE_NOT_ORDINARY' };
   const x = expandBatteryDamage({ dice: Number(dice[1]), die: Number(dice[2]), multiplier }, extraHits, a.battery.participatingWeapons);

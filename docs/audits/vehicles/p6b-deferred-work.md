@@ -9,13 +9,13 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | Category | Count |
 |---|---|
 | RULES_DECISION_REQUIRED | 7 |
-| SOURCE_EVIDENCE_MISSING | 8 |
-| ENGINEERING_COMPLEXITY | 20 |
+| SOURCE_EVIDENCE_MISSING | 9 |
+| ENGINEERING_COMPLEXITY | 21 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 4 |
-| DEPENDENCY_BLOCKED | 8 |
+| DEPENDENCY_BLOCKED | 9 |
 
-Open items: 48. Resolved items: 10 (listed at the end).
+Open items: 51. Resolved items: 10 (listed at the end).
 
 ## Items (by severity)
 
@@ -37,6 +37,9 @@ Open items: 48. Resolved items: 10 (listed at the end).
 | P6B-D-054 | WEAPON-ECOSYSTEM | shieldbuster torpedoes, space mines and ion bombs | ENGINEERING_COMPLEXITY | IMPORTANT | no | V-P6C-07 |
 | P6B-D-055 | WEAPON-ECOSYSTEM | vehicle tractor beams | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-056 | WEAPON-ECOSYSTEM | gravity well projectors | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
+| P6B-D-059 | WEAPON-ECOSYSTEM | Autofire capability of stock weapon groups | SOURCE_EVIDENCE_MISSING | IMPORTANT | no | V-P6C-08 |
+| P6B-D-060 | WEAPON-ECOSYSTEM | Swift-action switch to autofire mode | ENGINEERING_COMPLEXITY | IMPORTANT | no | V-P6C-08 |
+| P6B-D-061 | WEAPON-ECOSYSTEM | Burst Fire by an operator other than the named gunner; autofire plus battery | DEPENDENCY_BLOCKED | IMPORTANT | no | V-P6C-08 |
 | P6B-D-003 | P6B-1 | jamming-suite, jamming-array | ENGINEERING_COMPLEXITY | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-004 | P6B-1 | combat-thrusters | DEPENDENCY_BLOCKED | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-005 | P6B-1 | navicomputer-limited | RULES_DECISION_REQUIRED | MINOR | yes | V-P6B-01 |
@@ -557,6 +560,36 @@ Open items: 48. Resolved items: 10 (listed at the end).
 - **Owner ruling needed:** no
 - **Impact:** Stock groups run only where they are plain damage; none is purchasable.
 - **Recommended action:** Reconcile each against its printed source, then implement individually (priority 11).
+
+### P6B-D-059 - Autofire capability of stock weapon groups
+
+- **Source:** Starships of the Galaxy autofire-capable list; stock statblock 'autofire' figures
+- **Category / severity:** SOURCE_EVIDENCE_MISSING / IMPORTANT
+- **Reason:** Autofire/Burst Fire now execute for installed autofire-capable weapons (double, quad, fire-linked, autoblaster options). A stock group carries no sealed capability, and the printed statblock autofire figures are not a verified capability record, so stock autofire and burst are refused (AUTOFIRE_CAPABILITY_NOT_ESTABLISHED).
+- **Missing:** A verified per-group autofire capability (or evidence that the plain laser cannon / light ion cannon / light turbolaser rows are themselves autofire-capable) and the meaning of the printed autofire totals.
+- **Owner ruling needed:** no (V-P6C-08)
+- **Impact:** Stock vehicles cannot autofire or burst; installed ones can.
+- **Recommended action:** Reconcile the capability list against each canonical group, then set it in the group assessment.
+
+### P6B-D-060 - Swift-action switch to autofire mode
+
+- **Source:** Core Rulebook, Special Combat Rules: Autofire
+- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
+- **Reason:** Autofire is requested per attack; the swift action to set the weapon to autofire is not charged and the mode is not persisted, the same as the character attack path.
+- **Missing:** A persisted per-weapon mode and a swift-action spend through the action economy.
+- **Owner ruling needed:** no (V-P6C-08)
+- **Impact:** Autofire costs no swift action.
+- **Recommended action:** Persist the mode on the Item flag and spend 'swift' through ActionEconomyConsumption.
+
+### P6B-D-061 - Burst Fire by an operator other than the named gunner; autofire plus battery
+
+- **Source:** Core Rulebook (Burst Fire feat, weapon batteries)
+- **Category / severity:** DEPENDENCY_BLOCKED / IMPORTANT
+- **Reason:** Burst Fire reads the named gunner actor's feat; a pilot-operated weapon with a named pilot and a battery weapon carrying burst dice are refused.
+- **Missing:** Operator resolution for pilot-fired weapons and a published rule for burst dice on a battery.
+- **Owner ruling needed:** no (V-P6C-08)
+- **Impact:** Those combinations are refused, not guessed.
+- **Recommended action:** Extend after the operator model batch.
 
 ## Resolved items
 

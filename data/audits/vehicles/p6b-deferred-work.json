@@ -1319,6 +1319,57 @@
       "impact": "Stock groups run only where they are plain damage; none is purchasable.",
       "severity": "MINOR",
       "recommendedAction": "Reconcile each against its printed source, then implement individually (priority 11)."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-08"
+      ],
+      "options": [],
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "severity": "IMPORTANT",
+      "id": "P6B-D-059",
+      "component": "Autofire capability of stock weapon groups",
+      "source": "Starships of the Galaxy autofire-capable list; stock statblock 'autofire' figures",
+      "reason": "Autofire/Burst Fire now execute for installed autofire-capable weapons (double, quad, fire-linked, autoblaster options). A stock group carries no sealed capability, and the printed statblock autofire figures are not a verified capability record, so stock autofire and burst are refused (AUTOFIRE_CAPABILITY_NOT_ESTABLISHED).",
+      "missing": "A verified per-group autofire capability (or evidence that the plain laser cannon / light ion cannon / light turbolaser rows are themselves autofire-capable) and the meaning of the printed autofire totals.",
+      "impact": "Stock vehicles cannot autofire or burst; installed ones can.",
+      "recommendedAction": "Reconcile the capability list against each canonical group, then set it in the group assessment."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-08"
+      ],
+      "options": [],
+      "status": "ENGINEERING_COMPLEXITY",
+      "severity": "IMPORTANT",
+      "id": "P6B-D-060",
+      "component": "Swift-action switch to autofire mode",
+      "source": "Core Rulebook, Special Combat Rules: Autofire",
+      "reason": "Autofire is requested per attack; the swift action to set the weapon to autofire is not charged and the mode is not persisted, the same as the character attack path.",
+      "missing": "A persisted per-weapon mode and a swift-action spend through the action economy.",
+      "impact": "Autofire costs no swift action.",
+      "recommendedAction": "Persist the mode on the Item flag and spend 'swift' through ActionEconomyConsumption."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-08"
+      ],
+      "options": [],
+      "status": "DEPENDENCY_BLOCKED",
+      "severity": "IMPORTANT",
+      "id": "P6B-D-061",
+      "component": "Burst Fire by an operator other than the named gunner; autofire plus battery",
+      "source": "Core Rulebook (Burst Fire feat, weapon batteries)",
+      "reason": "Burst Fire reads the named gunner actor's feat; a pilot-operated weapon with a named pilot and a battery weapon carrying burst dice are refused.",
+      "missing": "Operator resolution for pilot-fired weapons and a published rule for burst dice on a battery.",
+      "impact": "Those combinations are refused, not guessed.",
+      "recommendedAction": "Extend after the operator model batch."
     }
   ]
 }
