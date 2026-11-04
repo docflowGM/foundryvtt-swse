@@ -1,5 +1,7 @@
 # Class Phase 6F-10 — Saboteur Quick Sabotage
 
+> **Integration note (2026-11-04):** This was the standalone Quick Sabotage checkpoint for PR #1104. The overlapping Master Saboteur consumer has now been reconciled on successor draft PR #1105 (Phase 6F-11). The historical merge conflict described below is resolved **in that successor branch only**; do not merge #1104 or #1101 separately.
+
 **Source:** *The Force Unleashed Campaign Guide*, Saboteur prestige class, Quick Sabotage.  
 **Branch:** `feat/class-phase-6f10-quick-sabotage`  
 **Base:** merged `main` at `62169f621e15409268ca8f91efd846a3a2c118d9`.  
