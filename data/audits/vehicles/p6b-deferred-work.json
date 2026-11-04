@@ -1070,20 +1070,21 @@
     },
     {
       "workstream": "STOCK",
-      "ownerRulingNeeded": true,
+      "ownerRulingNeeded": false,
       "linkedDecisions": [
         "V-P6C-03"
       ],
       "options": [],
       "id": "P6B-D-044",
-      "component": "battery aiding another battery (independent firing is now implemented)",
+      "component": "battery aiding another battery: ordinary single-aid case IMPLEMENTED; multiple assisting batteries/stacking and a sheet button remain",
       "source": "Core Rulebook p. 170 (owner-verified)",
-      "status": "RULES_DECISION_REQUIRED",
-      "reason": "The aid arithmetic is implemented and tested as pure functions (attack vs Reflex 10; +2 per two weapons of the assisting battery; no margin hits). Running it needs a state that carries the bonus from the aiding attack to the aided battery's attack, and the verified text does not give that bonus's duration, timing or stacking. A battery's weapons firing independently (Core p. 170) IS implemented as the independent-weapon mode (P6B-D-042).",
-      "missing": "Timing/duration/stacking of the aid bonus; odd weapon counts.",
-      "impact": "Battery-aids-battery is not offered at runtime.",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "Core p. 170 (Aid Another, PUBLISHED_RULE): a standard action benefiting the ally's next attack roll. Implemented in vehicle-battery-aid.js and vehicle-battery-aid-service.js: the standard action through ActionEconomyConsumption, the aid attack against Reflex Defense 10 through the attack outcome resolver, +2 per complete pair of the assisting battery's weapons, one pending aid per aided battery, applied by the attack ledger to that battery's next attack roll and consumed once (idempotent), no margin hits from the aid. Not done: stacking of several assisting batteries (SOURCE_UNRESOLVED, refused), and the vehicle-sheet button that calls VehicleBatteryAidService.perform (the service is callable; no UI action is wired yet).",
+      "missing": "Stacking rules for several assisting batteries; a sheet action wired to the service.",
+      "impact": "Needs two full batteries on the same or allied vehicles: the published corpus has exactly one (Krayt's Honor turbolaser battery), so no published ship can use it yet; tests use a synthetic two-battery fixture.",
       "severity": "MINOR",
-      "recommendedAction": "Owner ruling on V-P6C-03, then add one action that records the aid on the existing effect/modifier authority."
+      "recommendedAction": "Wire a sheet action; revisit stacking only if the sources state it.",
+      "resolution": "Owner addendum 2026-11-04: timing is the published Aid Another rule; ordinary case implemented."
     },
     {
       "workstream": "STOCK",

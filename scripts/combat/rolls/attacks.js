@@ -29,6 +29,7 @@ import { resolveAttackDomain } from "/systems/foundryvtt-swse/scripts/engine/com
 import { authorizeVehicleAttackBeforeCosts } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-attack-preflight.js";
 import { resolveVehicleWeaponAuthority } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
 import { batteryMarginHits } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-battery.js";
+import { VehicleBatteryAidService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-battery-aid-service.js";
 import { resolveTrustedStockAttackGroup } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-attack-authority.js";
 import { classifyInstalledVehicleWeapon } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-attack-provenance.js";
 import { resolveVehicleCrewStationEvidence } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-crew-station-evidence.js";
@@ -1116,6 +1117,11 @@ export async function rollAttack(actor, weapon, options = {}) {
   };
   attackResult.ammoSpend = ammoSpend;
   attackResult.actionOptionSpend = actionOptionSpend;
+
+  // Battery Aid Another is consumed ONCE, after the attack it benefited has been posted (the benefit is the ally's next attack roll,
+  // hit or miss). Idempotent; a failure before this point leaves the aid pending.
+  const aidEntry = (attackComponentLedger ?? []).find(e => e?.id === 'battery-aid' && e.applied !== false);
+  if (aidEntry && weapon?.actor?.type === 'vehicle') await VehicleBatteryAidService.consume(weapon.actor, weapon.id, aidEntry.sourceId);
 
   AttackRollDiagnostics.record({
     domain: 'combat.attack',

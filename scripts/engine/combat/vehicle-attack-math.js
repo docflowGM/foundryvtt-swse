@@ -45,6 +45,7 @@ import { resolveVehicleCrewActor } from "/systems/foundryvtt-swse/scripts/engine
 import { getWeaponAttackAbility, getRangePenalty, getWeaponFlatAttackBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
+import { readPendingAid, aidLedgerEntry } from '../../domain/vehicles/vehicle-battery-aid.js';
 
 const VEHICLE_ATTACK_DOMAIN = 'vehicle.attack';
 
@@ -381,6 +382,13 @@ export async function resolveAbstractCrewAttackBonus(vehicleActor, weapon, crewQ
   if (capital.error) { warnings.push(...capital.warnings); return { total: 0, ledger: [], warnings, error: capital.error }; }
   warnings.push(...capital.warnings);
   if (capital.entry) ledger.push(capital.entry);
+
+  // Battery Aid Another (Core p. 170): a pending, unconsumed aid for THIS weapon's next attack roll. Never for the aid roll
+  // itself (context.aid), so an assisting battery cannot benefit from its own aid. Consumed once by the attack, not here.
+  if (context?.aid !== true) {
+    const pendingAid = readPendingAid(vehicleActor, weapon?.id);
+    if (pendingAid && resolveVehicleWeaponAuthority(weapon)?.battery) ledger.push(aidLedgerEntry(pendingAid, { vehicleActor }));
+  }
 
   // No gunner Actor exists for abstract crew, so registered-modifier
   // resolution targets the vehicle actor itself rather than an operator —

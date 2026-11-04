@@ -178,3 +178,19 @@ Implemented as PROJECT_INTERPRETATION (V-P6C-04, V-P6C-05; decision matrix: `ion
   only a digest-verified source record carries the vulnerability;
 - a hit that exercises an interpretation reports it in `result.projectInterpretations`.
 The R-28's "medium ion cannons" stay refused: the damage line is untyped and canonical evidence is not edited (see the matrix).
+
+## Battery Aid Another (2026-11-04) - ordinary single-aid case implemented
+
+PUBLISHED_RULE (Core p. 170, Aid Another): a standard action that benefits an ally's NEXT attack roll; a gunner aids by making an
+attack against Reflex Defense 10. For a battery assisting a battery: +2 per complete pair of the ASSISTING battery's weapons (an
+incomplete pair gives nothing), no margin hits from the aid, consumed once, no end-of-round expiry.
+- `vehicle-battery-aid.js` (pure) plans and describes the aid; `vehicle-battery-aid-service.js` runs it: the standard action through
+  `ActionEconomyConsumption` (rolled back if anything fails), the aid roll through the attack outcome resolver (natural 1 / 20 as for
+  every attack), one pending record written on the aided battery's vehicle through `ActorEngine`.
+- The attack ledger adds a `battery-aid` entry to the aided battery's next attack roll (preview included) and `attacks.js` consumes it
+  once after that attack's card is posted (hit or miss); a refused attack leaves it pending; the aid never reaches the assisting battery,
+  the same group's independent weapon, or the aid roll itself.
+- Refused, by name: a battery aiding itself, an independent weapon as assisting/aided weapon, a second pending aid on the same battery
+  (stacking is SOURCE_UNRESOLVED), an incomplete pair, a named gunner on the assisting station, a user who may not operate the vehicle.
+- Limits: the published corpus has ONE full battery, so no published ship can use it yet (tests use a synthetic two-battery fixture whose
+  record digest verifies; Item sync would reject it by design, so the test builds its Items with the sync's own builder); no sheet button is wired (P6B-D-044).

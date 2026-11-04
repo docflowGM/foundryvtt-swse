@@ -8,14 +8,14 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 
 | Category | Count |
 |---|---|
-| RULES_DECISION_REQUIRED | 8 |
+| RULES_DECISION_REQUIRED | 7 |
 | SOURCE_EVIDENCE_MISSING | 7 |
 | ENGINEERING_COMPLEXITY | 16 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 4 |
 | DEPENDENCY_BLOCKED | 8 |
 
-Open items: 44. Resolved items: 5 (listed at the end).
+Open items: 43. Resolved items: 6 (listed at the end).
 
 ## Items (by severity)
 
@@ -64,7 +64,6 @@ Open items: 44. Resolved items: 5 (listed at the end).
 | P6B-D-038 | STOCK | legacy abstract-crew attack tier table (CREW_QUALITY_BONUS) for actors that are not source-backed or constructed | NONCRITICAL_DEFECT | MINOR | no | - |
 | P6B-D-039 | STOCK | point-defense weapon modification (catalog row "point-defense", +4,000 credits) | ENGINEERING_COMPLEXITY | MINOR | no | - |
 | P6B-D-041 | STOCK | published stock groups with droid, remote or ambiguous operators | ENGINEERING_COMPLEXITY | MINOR | no | - |
-| P6B-D-044 | STOCK | battery aiding another battery (independent firing is now implemented) | RULES_DECISION_REQUIRED | MINOR | yes | V-P6C-03 |
 
 ## Details
 
@@ -474,16 +473,6 @@ Open items: 44. Resolved items: 5 (listed at the end).
 - **Impact:** Named-gunner crews cannot fire published batteries; the generic published crew can.
 - **Recommended action:** Add a roster binding that references existing crew stations, then wire resolveBatteryAttackTotal('assigned') into the named-gunner attack math.
 
-### P6B-D-044 - battery aiding another battery (independent firing is now implemented)
-
-- **Source:** Core Rulebook p. 170 (owner-verified)
-- **Category / severity:** RULES_DECISION_REQUIRED / MINOR
-- **Reason:** The aid arithmetic is implemented and tested as pure functions (attack vs Reflex 10; +2 per two weapons of the assisting battery; no margin hits). Running it needs a state that carries the bonus from the aiding attack to the aided battery's attack, and the verified text does not give that bonus's duration, timing or stacking. A battery's weapons firing independently (Core p. 170) IS implemented as the independent-weapon mode (P6B-D-042).
-- **Missing:** Timing/duration/stacking of the aid bonus; odd weapon counts.
-- **Owner ruling needed:** yes (V-P6C-03)
-- **Impact:** Battery-aids-battery is not offered at runtime.
-- **Recommended action:** Owner ruling on V-P6C-03, then add one action that records the aid on the existing effect/modifier authority.
-
 ### P6B-D-047 - missile and torpedo lock-on (second attack at -5, self-destruct, shoot-down)
 
 - **Source:** Core Rulebook, Vehicles: Missiles and Torpedoes
@@ -530,6 +519,11 @@ Open items: 44. Resolved items: 5 (listed at the end).
 
 - **Resolved:** Owner direction 2026-11-03: do not guess the weapon count; support independent single-weapon firing. Implemented in vehicle-weapon-battery.js, vehicle-stock-weapon-groups.js (modes), vehicle-stock-weapon-items.js (one Item per mode).
 - **Was:** Core p. 170 caps extra hits by the identical weapons actually participating. A battery statblock prints "battery (N gunners)"; only Krayt's Honor and the Rendili Light Corvette also print the number of weapons. Owner direction 2026-11-03 (V-P6C-02): the weapon count and the gunner count are independent and neither is inferred from the other; the equality requirement written in 2B was an invented restriction and is removed. A battery's weapons may fire independently without battery assistance (Core p. 170), which needs only the printed gunner count: that independent-weapon mode is executable for 64 printed batteries (63 of them independent-only). Full-battery mode (assistance + margin hits) still needs a printed weapon count.
+
+### P6B-D-044 - battery aiding another battery: ordinary single-aid case IMPLEMENTED; multiple assisting batteries/stacking and a sheet button remain
+
+- **Resolved:** Owner addendum 2026-11-04: timing is the published Aid Another rule; ordinary case implemented.
+- **Was:** Core p. 170 (Aid Another, PUBLISHED_RULE): a standard action benefiting the ally's next attack roll. Implemented in vehicle-battery-aid.js and vehicle-battery-aid-service.js: the standard action through ActionEconomyConsumption, the aid attack against Reflex Defense 10 through the attack outcome resolver, +2 per complete pair of the assisting battery's weapons, one pending aid per aided battery, applied by the attack ledger to that battery's next attack roll and consumed once (idempotent), no margin hits from the aid. Not done: stacking of several assisting batteries (SOURCE_UNRESOLVED, refused), and the vehicle-sheet button that calls VehicleBatteryAidService.perform (the service is callable; no UI action is wired yet).
 
 ### P6B-D-045 - ion damage: ordering with shield rating / damage reduction and 0 HP + threshold (resolved by approved project interpretation)
 

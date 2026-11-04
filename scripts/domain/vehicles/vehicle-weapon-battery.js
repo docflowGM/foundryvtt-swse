@@ -80,10 +80,11 @@ export function expandBatteryDamage(base, extraHits, participatingWeapons) {
 }
 
 /** A battery assisting another battery: attack vs Reflex 10; success gives the assisted battery +2 per two weapons. */
-export function batteryAidsBattery({ attackTotal, assistingWeapons } = {}) {
+export function batteryAidsBattery({ attackTotal, assistingWeapons, hit } = {}) {
   if (!isInt(assistingWeapons) || assistingWeapons < 1 || assistingWeapons > BATTERY_MAX_WEAPONS) return fail(BATTERY_REASONS.WEAPONS_OUT_OF_RANGE);
   if (!Number.isFinite(attackTotal)) return fail(BATTERY_REASONS.INVALID_INPUT);
-  const succeeded = attackTotal >= BATTERY_AID_DEFENSE;
+  // the caller may pass the resolved attack outcome (a natural 1 always misses, a natural 20 always hits); otherwise total >= 10
+  const succeeded = typeof hit === 'boolean' ? hit : attackTotal >= BATTERY_AID_DEFENSE;
   return { ok: true, succeeded, defense: BATTERY_AID_DEFENSE, bonus: succeeded ? BATTERY_AID_BONUS_PER_TWO_WEAPONS * Math.floor(assistingWeapons / 2) : 0, marginHits: 0 };
 }
 
