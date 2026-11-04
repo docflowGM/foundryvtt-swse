@@ -355,7 +355,7 @@
       "id": "cf.jediMaster.serenity",
       "classId": "jediMaster",
       "name": "Serenity",
-      "summary": "Enter trance as a full-round action; remain helpless but aware; exit as swift action; first attack roll or UtF check next round is a natural 20.",
+      "summary": "Enter an aware trance as a full-round action (lose Dexterity bonus to Reflex Defense while in trance); emerge as a swift action; the first attack roll or Use the Force check made in the following round is treated as a natural 20.",
       "executionModel": "ACTIVE",
       "subType": "STUB",
       "classification": "ACTIVE (full-round + swift), TEMPORAL (next round), roll override",
@@ -364,7 +364,7 @@
           "meditation",
           "full-round",
           "swift",
-          "helpless",
+          "no-dexterity-bonus-to-reflex",
           "roll-override"
         ],
         "actions": [
@@ -379,7 +379,11 @@
         ],
         "effects": [
           {
-            "type": "setHelplessExceptAwareness",
+            "type": "loseDexterityBonusToReflexDefense",
+            "whileActive": true
+          },
+          {
+            "type": "remainAware",
             "whileActive": true
           }
         ],
@@ -392,7 +396,7 @@
           "treatAs": "natural20"
         }
       },
-      "sourceText": "The Jedi Master may enter a brief meditative state as a Full-Round Action... Upon emerging... the Jedi Master's first attack roll or Use the Force skill check made in the following round is considered to be a Natural 20."
+      "sourceText": "As a full-round action, enter a brief meditative trance; remain aware of surroundings but lose the Dexterity bonus to Reflex Defense while in the trance. Emerge as a swift action; first attack roll or Use the Force skill check made in the following round is treated as a natural 20. Core Rulebook printed p. 220."
     },
     {
       "id": "cf.jediMaster.force-secret-choice",
@@ -585,9 +589,24 @@
         },
         "window": {
           "type": "untilYourNextTurn"
+        },
+        "consequences": {
+          "trigger": "targetSpendsForceOrDestinyPoint",
+          "onSuccessOnly": true,
+          "choiceOwner": "target",
+          "until": "startOfSithLordsNextTurn",
+          "forcePoint": {
+            "darkSideScore": 1,
+            "conditionSteps": -1
+          },
+          "destinyPoint": {
+            "darkSideScore": 2,
+            "conditionSteps": -2
+          },
+          "failClosedWhenNoMatchingResourceSpendEvent": true
         }
       },
-      "sourceText": "As a Standard Action, a Sith Lord can make a Persuasion check and compare it to the Will Defense of a single opponent within line of sight..."
+      "sourceText": "As a standard action, make a Persuasion check against the Will Defense of one opponent in line of sight. On success, if that target spends a Force Point before your next turn, it chooses +1 Dark Side Score or -1 condition step; for a Destiny Point it instead chooses +2 Dark Side Score or -2 condition steps. Core Rulebook printed p. 224."
     },
     {
       "id": "cf.sithLord.force-secret-choice",
