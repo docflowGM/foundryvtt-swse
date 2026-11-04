@@ -279,15 +279,17 @@ export class VehicleInstallationService {
 
   /** Begin an installation job: validates like an installation, reserves EP, charges the first attempt. */
   static async startJob(args) { return this.#exclusive(args?.vehicle, () => this.#startJob(args)); }
-  static async #startJob({ ownerActor, vehicle, catalogId, mount: requestedMount = null, nonstandard, catalog = null }) {
+  static async #startJob({ ownerActor, vehicle, catalogId, optionId = null, mount: requestedMount = null, nonstandard, catalog = null }) {
     const p = await this.#prepare({ ownerActor, vehicle, catalog, needCatalog: true });
     if (p.error) return { success: false, reasons: [p.error] };
     const nm = this.normalizeMount(requestedMount);
     if (nm.error) return { success: false, reasons: [nm.error] };
     const mount = nm.mount;
+    const option = optionId ? p.entries.get(optionId) ?? null : null;
+    if (optionId && !option) return { success: false, reasons: ['OPTION_NOT_IN_CATALOG'] };
     const plan = planJobStart({
       record: p.src.record, flags: p.src.flags, catalogEntry: p.entries.get(catalogId), jobId: foundry.utils.randomID(), installId: foundry.utils.randomID(),
-      ownerActorId: ownerActor.id, availableCredits: LedgerService.getCurrentCredits(ownerActor), createdAt: Date.now(), rules: this.rules, mount, nonstandard
+      ownerActorId: ownerActor.id, availableCredits: LedgerService.getCurrentCredits(ownerActor), createdAt: Date.now(), rules: this.rules, mount, nonstandard, option
     });
     if (!plan.ok) return { success: false, reasons: plan.reasons };
     const tx = await this.#commit({ ownerActor, vehicle, cost: plan.charge, nextJobs: plan.nextJobs, reason: `Begin installing ${plan.job.name}`,
@@ -362,16 +364,18 @@ export class VehicleInstallationService {
 
   /** GM override: instant installation. Full cost, EP, ownership and certification rules still apply. */
   static async gmInstantInstall(args) { return this.#exclusive(args?.vehicle, () => this.#gmInstantInstall(args)); }
-  static async #gmInstantInstall({ ownerActor, vehicle, catalogId, mount: requestedMount = null, nonstandard, reason, catalog = null }) {
+  static async #gmInstantInstall({ ownerActor, vehicle, catalogId, optionId = null, mount: requestedMount = null, nonstandard, reason, catalog = null }) {
     if (!this.#isGM()) return { success: false, reasons: ['GM_REQUIRED'] };
     const p = await this.#prepare({ ownerActor, vehicle, catalog, needCatalog: true });
     if (p.error) return { success: false, reasons: [p.error] };
     const nm = this.normalizeMount(requestedMount);
     if (nm.error) return { success: false, reasons: [nm.error] };
     const mount = nm.mount;
+    const option = optionId ? p.entries.get(optionId) ?? null : null;
+    if (optionId && !option) return { success: false, reasons: ['OPTION_NOT_IN_CATALOG'] };
     const plan = planGmInstantInstall({
       record: p.src.record, flags: p.src.flags, catalogEntry: p.entries.get(catalogId), jobId: foundry.utils.randomID(), installId: foundry.utils.randomID(),
-      ownerActorId: ownerActor.id, availableCredits: LedgerService.getCurrentCredits(ownerActor), createdAt: Date.now(), rules: this.rules, mount, nonstandard,
+      ownerActorId: ownerActor.id, availableCredits: LedgerService.getCurrentCredits(ownerActor), createdAt: Date.now(), rules: this.rules, mount, nonstandard, option,
       userId: globalThis.game.user.id, reason
     });
     if (!plan.ok) return { success: false, reasons: plan.reasons };

@@ -83,7 +83,7 @@ const replaceJob = (raw, job) => raw.map(j => (j?.jobId === job.jobId ? job : j)
  * Begin a job: validates exactly like a direct installation (certification, EP, cost, mount), but reserves
  * the EP and charges only the first attempt. Nothing is added to the installation ledger.
  */
-export function planJobStart({ record, flags, catalogEntry, jobId, installId, ownerActorId, availableCredits, createdAt, rules, mount = null, nonstandard, starshipDesigner = false, workers = null }) {
+export function planJobStart({ record, flags, catalogEntry, jobId, installId, ownerActorId, availableCredits, createdAt, rules, mount = null, nonstandard, starshipDesigner = false, workers = null, option = null }) {
   const key = record?.identity?.sourceEntryKey;
   if (!nonEmpty(jobId)) return deny('JOB_ID_MISSING');
   if (!nonEmpty(ownerActorId)) return deny('JOB_OWNER_MISSING');
@@ -92,7 +92,7 @@ export function planJobStart({ record, flags, catalogEntry, jobId, installId, ow
   const { jobs, raw } = readJobs(flags, key);
   if (raw.some(j => j.jobId === jobId)) return deny('DUPLICATE_JOB_ID');
   if (jobs.some(j => isActive(j) && j.catalogId === catalogEntry?.id && catalogEntry?.unique === true)) return deny('ALREADY_PENDING');
-  const plan = planVehicleInstallation({ record, flags, catalogEntry, installId, availableCredits, installedAt: null, rules, mount, nonstandard, starshipDesigner, workers, reservedEp: reservedEpFromJobs(jobs) });
+  const plan = planVehicleInstallation({ record, flags, catalogEntry, installId, availableCredits, installedAt: null, rules, mount, nonstandard, starshipDesigner, workers, reservedEp: reservedEpFromJobs(jobs), option });
   if (!plan.ok) return plan;
   const q = plan.entry.quote;
   const start = startInstallationJob({ jobId, quote: { ok: true, mechanicsDC: q.mechanicsDC, credits: plan.entry.priceCredits, days: q.days } });
@@ -101,7 +101,7 @@ export function planJobStart({ record, flags, catalogEntry, jobId, installId, ow
   const job = sealJob({
     schema: JOB_SCHEMA, ...start.job,
     attempts: start.job.attempts.map(a => ({ ...a, daysLogged: 0 })),
-    sourceEntryKey: key, catalogId: catalogEntry.id, name: catalogEntry.name, category: catalogEntry.category,
+    sourceEntryKey: key, catalogId: catalogEntry.id, name: plan.entry.name, category: catalogEntry.category,
     ownerActorId, unique: catalogEntry.unique === true, epCost: plan.entry.epCost, plannedEntry: plannedBody, createdAt: createdAt ?? null, completion: null, wasted: null
   });
   return { ok: true, reasons: [], job, charge: job.creditsSpent, nextJobs: [...raw, job], nextLedger: null };

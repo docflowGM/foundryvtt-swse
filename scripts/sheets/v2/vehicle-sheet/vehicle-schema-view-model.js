@@ -12,7 +12,7 @@
  */
 import { classifyVehicleActorRuntime, getVehicleRuntimeProjection } from '../../../domain/vehicles/vehicle-runtime-contract.js';
 import { CREW_QUALITY, makeUnusedEmplacementResolver } from '../../../domain/vehicles/vehicle-modification-rules.js';
-import { summarizeInstallations } from '../../../domain/vehicles/vehicle-installation-ledger.js';
+import { summarizeInstallations, evaluateSizeRestriction } from '../../../domain/vehicles/vehicle-installation-ledger.js';
 import { verifyConstructionRecord, DEFAULT_CONSTRUCTION_RULES } from '../../../domain/vehicles/custom-vehicle-construction.js';
 import { EFFECTS, computeEffectiveStatistics, effectInstallability } from '../../../domain/vehicles/vehicle-modification-effects.js';
 import { resolveConstructionEffectiveSource } from '../../../domain/vehicles/custom-vehicle-effective.js';
@@ -334,8 +334,14 @@ function shipyardView({ record, flags, key, catalog, entries, supported, canAct 
     return { installId: e.installId, name: e.name, capacity: a.capacity, unitPrice: a.price, loaded, reserve, expended: l?.expended ?? 0, bought: l?.payload ?? 0,
       canReload: isGM === true && reserve > 0 && loaded < a.capacity };
   });
+  // WE-PD: certified weapon OPTIONS (point defense) are chosen when a weapon is bought; each lists the weapons it may be bought with
+  const weaponOptions = supported && catalog
+    ? [...catalog.values()].filter(c => c.certification?.status === 'MECHANIC_SPECIFIED' && EFFECTS[c.id]?.kind === 'weapon-option'
+      && evaluateSizeRestriction(c.sizeRestriction, record?.classification?.printedSize) === 'ok')
+      .map(c => ({ id: c.id, name: c.name, extraCredits: EFFECTS[c.id].extraCredits, eligibleBases: EFFECTS[c.id].eligibleBases })).sort((a, b) => a.name.localeCompare(b.name))
+    : [];
   return { supported, canAct, isGM, jobs: views, activeJobs: views.filter(j => j.active), reservedEp: reservedEpFromJobs(jobs), rejected, options, hasOptions: options.length > 0,
-    launchers, hasLaunchers: launchers.length > 0 };
+    launchers, hasLaunchers: launchers.length > 0, weaponOptions, hasWeaponOptions: weaponOptions.length > 0 };
 }
 
 /** Compact Asset Bay line set derived from the same model. */

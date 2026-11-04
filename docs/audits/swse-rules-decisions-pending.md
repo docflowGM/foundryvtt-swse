@@ -1089,3 +1089,23 @@ Implemented as PUBLISHED_RULE (lock-on, Reflex 30 / 10 HP / -5, no second charge
 | Resolution | |
 
 - **Revision 33 (2026-11-04):** appended V-P6C-07 .. V-P6C-10 (Complete Weapon Ecosystem addendum). No existing entry changed.
+
+### V-P6C-11 - What the "x2 / x3 / x4 / x5" cost entries of Table 3-5 multiply
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-11 |
+| Rules domain | Vehicle weapons (configurations and the autoblaster) |
+| Feature | Cost of the autoblaster (x2), double cannon (x3), quad cannon (x5), fire-linked weapon 2 (x2) and 4 (x4), cannon enhancements (x2) and advanced cannon enhancements (x5) |
+| Source | Starships of the Galaxy, Table 3-5 (p. 47) and Weapon Systems: Cannon, Double/Quad; Fire-Linked Weapons |
+| Evidence | The cost column prints a credit amount for most rows, "+4,000" / "+1,000" for the point-defense, docking-gun and optional fire-link rows (an explicit addition per weapon), and "x2", "x3", "x4", "x5" for the rows above. The Fire-Linked text says fire-linked weapons use up more space than a double or quad weapon "but costing less" (fire-linked 2 is x2 against x3 for double; fire-linked 4 is x4 against x5 for quad). The text does not define the multiplier. The repository has always refused these rows as COST_TYPE_NOT_RESOLVED_BY_PUBLISHED_RULES. |
+| Confirmed behavior | Damage, emplacement points, availability and the weapons each applies to are printed (see V-P6C-10). |
+| Unresolved question | Whether "xN" multiplies the cost of the base weapon to give the configured weapon's TOTAL cost (so retrofitting an installed weapon would cost the difference), or is a multiple charged IN ADDITION to the base weapon; and whether the multiplier applies before or after the nonstandard x5 modification. |
+| Options | Both readings are consistent with the cost ordering in the Fire-Linked text. |
+| Recommended ruling | None |
+| Implementation impact | The configuration rows (double, triple, quad, fire-linked, enhancements) and the autoblaster cannot be priced and stay not installable. Point defense (an explicit "+4,000 per weapon") is unaffected and implemented. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 34 (2026-11-04):** appended V-P6C-11. No existing entry changed.

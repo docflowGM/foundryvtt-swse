@@ -88,7 +88,7 @@ test('weapons: only certified weapon specifications are MECHANIC_SPECIFIED; laun
   const { EFFECTS } = await import('../scripts/domain/vehicles/vehicle-modification-effects.js');
   const weapons = catalog.filter(c => c.category === 'Weapon' || c.category === 'Ammunition' || /launcher|missile|torpedo|mine|bomb/.test(c.id));
   assert.ok(weapons.length > 40);
-  for (const w of weapons) assert.equal(cert[w.id]?.status === 'MECHANIC_SPECIFIED', EFFECTS[w.id]?.kind === 'weapon', w.id);
+  for (const w of weapons) assert.equal(cert[w.id]?.status === 'MECHANIC_SPECIFIED', ['weapon', 'weapon-option'].includes(EFFECTS[w.id]?.kind), w.id);
   // launchers stay closed unless a certified specification exists (WE-L1: the proton torpedo and three concussion launchers); ammunition never is
   for (const w of weapons.filter(x => /launcher|missile|torpedo|mine|bomb/.test(x.id) && !EFFECTS[x.id])) assert.notEqual(cert[w.id]?.status, 'MECHANIC_SPECIFIED', w.id);
   for (const w of weapons.filter(x => x.category === 'Ammunition')) assert.notEqual(cert[w.id]?.status, 'MECHANIC_SPECIFIED', w.id);

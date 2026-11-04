@@ -284,3 +284,13 @@ launcher is empty until a GM loads it. The sheet shows each launcher's loaded / 
 every other launcher. Tests: `tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs` (purchase, install, empty refusal, ammunition purchase, GM reload, fire,
 damage formula, character-scale refusal, empty again, removal; unaffordable and malformed purchases; guard and tamper cases; Item re-creation; lock-on; roll failure refund;
 hull restriction; sheet view model, template and actions).
+
+### WE-PD: the point-defense modification (the first weapon OPTION)
+
+Point defense is implemented as an OPTION chosen when an eligible weapon is bought, not as a weapon or an engine: `+4,000 credits per weapon, no emplacement-point requirement beyond the weapon's own,
+Restricted, Colossal (frigate) or larger hulls only`, and only blaster cannons, laser cannons and light ion cannons ("Normally, only..."; GM exceptions are not implemented). The price is printed as an
+ADDITION per weapon, so it needed no ruling (unlike the x2 / x3 / x5 rows: V-P6C-11). The option is resolved in `resolveWeaponOption` (a derived catalog entry carries the added price and EP; every refusal is named),
+sealed into the weapon's ledger entry (any edit breaks the entry digest and revokes the weapon), carried through the job and the instant-install paths, and read at attack time from the CERTIFIED specification: the
+Core -20 capital-ship penalty is skipped through `capitalShipAttackPenalty({ pointDefense })`, whose exemption input is now set by the sealed option and by nothing else (not a name, not an Item field, not a label).
+The Shipyard sheet offers a weapon-option chooser only on hulls that may carry it. The 60 stock groups labelled point-defense stay refused (a label is not evidence). Tests: `tests/vehicle-universal-phase4e-p34-point-defense.test.mjs`
+(all seven eligible bases through purchase, penalty exemption with a same-hull control, removal; ineligible weapons and starfighter hulls refused before any charge; price/EP/certification tampering; seal and Item-name forgery; sheet).

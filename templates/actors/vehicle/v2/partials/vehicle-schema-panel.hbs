@@ -129,6 +129,12 @@
         <select data-shipyard-select="catalog">
           {{#each view.shipyard.options}}<option value="{{id}}">{{name}} — {{category}} — EP {{ep}}{{#if requiresGmMount}} — GM certifies mount{{/if}}</option>{{/each}}
         </select>
+        {{#if view.shipyard.hasWeaponOptions}}
+        <select data-shipyard-select="option" title="A weapon option is chosen when the weapon is bought">
+          <option value="">No weapon option</option>
+          {{#each view.shipyard.weaponOptions}}<option value="{{id}}">{{name}} (+{{extraCredits}} cr per weapon)</option>{{/each}}
+        </select>
+        {{/if}}
         <button type="button" data-shipyard-action="start-job">Begin installation</button>
         {{#if view.shipyard.isGM}}<button type="button" data-shipyard-action="gm-instant">GM: install instantly</button>{{/if}}
         <button type="button" data-shipyard-action="resync-weapons" title="Repairs the weapon items from the installation records; costs nothing">Resync weapons</button>

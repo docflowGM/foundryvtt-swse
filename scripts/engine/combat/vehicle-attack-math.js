@@ -116,7 +116,7 @@ function actorSize(actor) {
  */
 function capitalShipPenaltyEntry(vehicleActor, weapon, context) {
   const authority = resolveVehicleWeaponAuthority(weapon);
-  const pointDefense = authority?.ok === true && authority.installed?.spec?.pointDefense === true;
+  const pointDefense = authority?.ok === true && authority.installed?.pointDefense === true;   // WE-PD: from the certified option sealed into the installation
   const target = getTargetActorFromOptions(context);
   const r = capitalShipAttackPenalty({ attackerSize: actorSize(vehicleActor), targetSize: actorSize(target), pointDefense });
   const base = { id: 'capital-ship-attack-penalty', label: 'Capital ship vs. target smaller than Colossal', category: 'vehicle',

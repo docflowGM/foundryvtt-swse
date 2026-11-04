@@ -1174,16 +1174,17 @@
     },
     {
       "workstream": "WEAPON-ECOSYSTEM",
-      "ownerRulingNeeded": false,
+      "ownerRulingNeeded": true,
       "linkedDecisions": [
-        "V-P6C-10"
+        "V-P6C-10",
+        "V-P6C-11"
       ],
       "options": [],
       "id": "P6B-D-050",
       "component": "weapon configurations: double, triple, quad, fire-linked, optional fire link, cannon enhancements",
       "source": "Starships of the Galaxy, Weapon Systems and Table 3-5 (p. 47)",
-      "status": "ENGINEERING_COMPLEXITY",
-      "reason": "The rows are SOURCE_VERIFIED only. Stock statblocks that print a double/quad/fire-linked result run only because the printed dice are used as written. A configuration must MODIFY an installed base weapon (damage dice, EP, cost multiplier, availability = the stricter of the two, fire-linked missiles spending one unit per linked launcher, the optional link toggled by a swift action); it must not become a separate combat engine. Combining configurations is unruled (V-P6C-10) and will be refused.",
+      "status": "RULES_DECISION_REQUIRED",
+      "reason": "The rows are SOURCE_VERIFIED only. Stock statblocks that print a double/quad/fire-linked result run only because the printed dice are used as written. A configuration must MODIFY an installed base weapon (damage dice, EP, cost multiplier, availability = the stricter of the two, fire-linked missiles spending one unit per linked launcher, the optional link toggled by a swift action); it must not become a separate combat engine. Combining configurations is unruled (V-P6C-10) and will be refused. The cost arithmetic of the multiplier rows is itself unruled (V-P6C-11); the repository has always refused them as COST_TYPE_NOT_RESOLVED_BY_PUBLISHED_RULES. The weapon-option mechanism built for point defense (an option sealed into the entry, priced and EP-adjusted through a derived catalog entry) is the intended carrier once the arithmetic is ruled.",
       "missing": "A ledger attachment to an installed weapon, the multiplier-cost arithmetic, derived Item damage, and tests per configuration through purchase, install, fire and removal.",
       "impact": "Aftermarket double/triple/quad/fire-linked/enhanced weapons cannot be bought.",
       "severity": "IMPORTANT",
@@ -1214,14 +1215,14 @@
       "linkedDecisions": [],
       "options": [],
       "id": "P6B-D-052",
-      "component": "point-defense weapon modification",
+      "component": "point-defense weapon modification: aftermarket option IMPLEMENTED; stock classification and point-defense ranges remain",
       "source": "Starships of the Galaxy, Weapon Systems: Point-Defense Weapon; Table 3-5; Core Rulebook p. 170",
       "status": "ENGINEERING_COMPLEXITY",
-      "reason": "+4,000 credits per weapon, 0 extra EP, Restricted, Colossal or larger only; only blaster cannons, laser cannons and light ion cannons are eligible; no penalty against targets smaller than Colossal. The capital-ship penalty authority already has a point-defense exemption input; nothing sets it, and 60 stock groups are refused because their point-defense classification is unverified.",
-      "missing": "A modification attached to an installed eligible weapon, point-defense ranges (Table 10-2) and the exemption input.",
-      "impact": "Point-defense weapons are not purchasable and not recognized.",
+      "reason": "WE-PD (2026-11-04): the printed modification (+4,000 credits per weapon, 0 extra EP, Restricted, Colossal or larger only; blaster cannons, laser cannons and light ion cannons only) is an OPTION chosen when an eligible weapon is bought, sealed into the weapon's ledger entry; it removes the Core -20 capital-ship penalty against targets smaller than Colossal through the certified specification (never a name or an Item field). The price is printed as an addition per weapon, so it needed no ruling. 60 stock groups labelled point-defense stay refused: a statblock label is not evidence of the modification (STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED). The Table 10-2 point-defense range row is recorded on the option but unused until range-band resolution exists (P6B-D-053). GM exceptions to \"normally\" are not implemented.",
+      "missing": "Stock point-defense classification from structured evidence; point-defense range bands (P6B-D-053); the Hapan triple ion cannon, which acts like a point-defense weapon.",
+      "impact": "Aftermarket point defense works; stock point-defense groups are not executable.",
       "severity": "IMPORTANT",
-      "recommendedAction": "Implement after configurations (priority 7)."
+      "recommendedAction": "Resolve with range-band resolution; keep the stock gate name-blind."
     },
     {
       "workstream": "WEAPON-ECOSYSTEM",

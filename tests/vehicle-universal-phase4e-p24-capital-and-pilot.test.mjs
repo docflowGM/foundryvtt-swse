@@ -27,12 +27,12 @@ const HULLS = { fighter: 'core-incom-t-65b-x-wing-starfighter', transport: 'core
   frigate: 'cw-c-9979-landing-craft', cruiser: 'cw-invisible-hand' };
 class Items extends Map { [Symbol.iterator]() { return this.values(); } }
 
-function ship(hullKey, { id = 'laser-cannon-light', role = 'pilot', crew = null } = {}) {
+function ship(hullKey, { id = 'laser-cannon-light', role = 'pilot', crew = null, option = null } = {}) {
   const d = structuredClone(docs.find(x => x.flags.swse.canonicalPublication.sourceEntryKey === HULLS[hullKey]));
   const a = Object.assign(d, { id: 'veh1', isOwner: true, items: new Items(), getActiveTokens: () => [token(0, 0)], getRollData: () => ({}),
     toObject() { const { toObject, items, getActiveTokens, getRollData, ...r } = this; return structuredClone(r); } });
   if (crew) a.system.crewPositions = crew;
-  const p = L.planVehicleInstallation({ record: a.flags.swse.universalVehicleSource.source, flags: a.flags, catalogEntry: row(id), installId: 'w1', availableCredits: 1e9, rules, mount: MOUNT(role), nonstandard: false });
+  const p = L.planVehicleInstallation({ record: a.flags.swse.universalVehicleSource.source, flags: a.flags, catalogEntry: row(id), option: option ? row(option) : null, installId: 'w1', availableCredits: 1e9, rules, mount: MOUNT(role), nonstandard: false });
   assert.equal(p.ok, true, hullKey + ': ' + (p.reasons ?? []).join());
   a.flags.swse.vehicleInstallations = p.nextLedger;
   const item = { id: 'item1', ...buildInstalledWeaponItemData(p.entry), actor: a };
@@ -109,10 +109,13 @@ test('point-defense exemption comes only from the certified specification, never
   assert.equal(await claim(), 1, 'editable fields do not exempt');
   vehicle.name = 'Point-Defense Frigate';
   assert.equal(await claim(), 1, 'names do not exempt');
-  const spec = E.EFFECTS['laser-cannon-light'];
-  spec.pointDefense = true;                                                      // only a certified spec can
-  try { assert.equal(await claim(), 0, 'certified point-defense is exempt'); } finally { delete spec.pointDefense; }
-  assert.equal(await claim(), 1);
+  // WE-PD: only a CERTIFIED OPTION sealed into the installation can (the point-defense modification, bought with an eligible weapon)
+  const pd = ship('frigate', { option: 'point-defense' });
+  const pdPenalty = async () => (await fire(pd.vehicle, pd.weapon, targetOf('medium'))).entries.length;
+  assert.equal(await pdPenalty(), 0, 'certified point-defense is exempt');
+  pd.weapon.system.pointDefense = false; pd.vehicle.name = 'Plain Frigate';
+  assert.equal(await pdPenalty(), 0, 'the exemption does not depend on names or editable fields either way');
+  assert.equal(await claim(), 1, 'the plain weapon on the same hull still takes the penalty');
 });
 
 test('abstract-crew path uses the same authority and the penalty shows in the breakdown', async () => {

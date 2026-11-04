@@ -204,7 +204,8 @@ test('templates: schema panel is read-only (no inputs, no ledger/construction fi
   const t = readFileSync('templates/actors/vehicle/v2/partials/vehicle-schema-panel.hbs', 'utf8');
   assert.doesNotMatch(t, /<input|<textarea|name="/);
   // the only control is the Shipyard catalog chooser; it carries no ledger/construction data
-  assert.deepEqual(t.match(/<select[^>]*>/g), ['<select data-shipyard-select="catalog">']);
+  // (+ the weapon-option chooser: certified options such as point defense are chosen when a weapon is bought)
+  assert.deepEqual(t.match(/<select[^>]*>/g), ['<select data-shipyard-select="option" title="A weapon option is chosen when the weapon is bought">', '<select data-shipyard-select="catalog">'].sort((a, b) => t.indexOf(a) - t.indexOf(b)));
   assert.doesNotMatch(t, /installedSystems|system\.weapons|system\.hull/);
   const content = readFileSync('templates/actors/vehicle/v2/partials/vehicle-sheet-content.hbs', 'utf8');
   assert.match(content, /vehicle-schema-panel\.hbs/);

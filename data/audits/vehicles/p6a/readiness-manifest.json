@@ -3,6 +3,7 @@
  "counts": {
   "exposeAsReference": 181,
   "installable": 70,
+  "installableAsOption": 1,
   "mechanicallyApplied": 67,
   "combatUsable": 16
  },
@@ -12,6 +13,7 @@
    "name": "Atmospheric Thrusters",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -23,6 +25,7 @@
    "name": "Atmospheric Thrusters, Advanced",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -34,6 +37,7 @@
    "name": "Combat Thrusters",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -46,6 +50,7 @@
    "name": "Hyperdrive, Class 0.75",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -57,6 +62,7 @@
    "name": "Hyperdrive, Class 1",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -68,6 +74,7 @@
    "name": "Hyperdrive, Class 1.5",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -79,6 +86,7 @@
    "name": "Hyperdrive, Class 2",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -90,6 +98,7 @@
    "name": "Hyperdrive, Class 3",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -101,6 +110,7 @@
    "name": "Hyperdrive, Class 4",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -112,6 +122,7 @@
    "name": "Hyperdrive, Class 5",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -123,6 +134,7 @@
    "name": "Hyperdrive, Class 6",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -134,6 +146,7 @@
    "name": "Hyperdrive, Class 8",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -145,6 +158,7 @@
    "name": "Hyperdrive, Class 10",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -156,6 +170,7 @@
    "name": "Hyperdrive, Class 15",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -167,6 +182,7 @@
    "name": "Maneuvering Jets +2",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -178,6 +194,7 @@
    "name": "Maneuvering Jets +4",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -189,6 +206,7 @@
    "name": "Maneuvering Jets +6",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -200,6 +218,7 @@
    "name": "Navicomputer, Limited",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -212,6 +231,7 @@
    "name": "Navicomputer",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -223,6 +243,7 @@
    "name": "Navicomputer, Advanced",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -234,6 +255,7 @@
    "name": "SubLight Accelerator Motor (SLAM)",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -245,6 +267,7 @@
    "name": "Sublight Drive (Speed 1 Square)",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -257,6 +280,7 @@
    "name": "Sublight Drive (Speed 2 Squares)",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -269,6 +293,7 @@
    "name": "Sublight Drive (Speed 3 Squares)",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -281,6 +306,7 @@
    "name": "Sublight Drive (Speed 4 Squares)",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -293,6 +319,7 @@
    "name": "Sublight Drive (Speed 5 Squares)",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -305,6 +332,7 @@
    "name": "Sublight Drive (Speed 6 Squares)",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -317,6 +345,7 @@
    "name": "Starship Armor, +1",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -328,6 +357,7 @@
    "name": "Starship Armor, +2",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -339,6 +369,7 @@
    "name": "Starship Armor, +3",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -350,6 +381,7 @@
    "name": "Starship Armor, +4",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -361,6 +393,7 @@
    "name": "Jamming Suite",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -373,6 +406,7 @@
    "name": "Jamming Array",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -385,6 +419,7 @@
    "name": "Regenerating Shields",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -396,6 +431,7 @@
    "name": "Reinforced Bulkheads, +10%",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -408,6 +444,7 @@
    "name": "Reinforced Bulkheads, +20%",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -420,6 +457,7 @@
    "name": "Reinforced Bulkheads, +30%",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -432,6 +470,7 @@
    "name": "Starship Shields, SR 10",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -443,6 +482,7 @@
    "name": "Starship Shields, SR 15",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -454,6 +494,7 @@
    "name": "Starship Shields, SR 20",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -465,6 +506,7 @@
    "name": "Starship Shields, SR 25",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -476,6 +518,7 @@
    "name": "Starship Shields, SR 30",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -487,6 +530,7 @@
    "name": "Starship Shields, SR 35",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -498,6 +542,7 @@
    "name": "Starship Shields, SR 40",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -509,6 +554,7 @@
    "name": "Starship Shields, SR 45",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -520,6 +566,7 @@
    "name": "Starship Shields, SR 50",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -531,6 +578,7 @@
    "name": "Starship Shields, SR 55",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -542,6 +590,7 @@
    "name": "Starship Shields, SR 60",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -553,6 +602,7 @@
    "name": "Starship Shields, SR 70",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -564,6 +614,7 @@
    "name": "Starship Shields, SR 80",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -575,6 +626,7 @@
    "name": "Starship Shields, SR 90",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -586,6 +638,7 @@
    "name": "Starship Shields, SR 100",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -597,6 +650,7 @@
    "name": "Starship Shields, SR 125",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -608,6 +662,7 @@
    "name": "Starship Shields, SR 150",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -619,6 +674,7 @@
    "name": "Starship Shields, SR 175",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -630,6 +686,7 @@
    "name": "Starship Shields, SR 200",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -641,6 +698,7 @@
    "name": "Anti-Boarding Systems",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -653,6 +711,7 @@
    "name": "Com Jammers",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -665,6 +724,7 @@
    "name": "Reinforced Keel",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -677,6 +737,7 @@
    "name": "Reinforced Keel, Boarding",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -689,6 +750,7 @@
    "name": "Security Bracing",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -701,6 +763,7 @@
    "name": "Autoblaster",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -713,6 +776,7 @@
    "name": "Blaster Cannon, Light",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": true,
    "reasons": [
@@ -724,6 +788,7 @@
    "name": "Blaster Cannon, Medium",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": true,
    "reasons": [
@@ -735,6 +800,7 @@
    "name": "Blaster Cannon, Heavy",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": true,
    "reasons": [
@@ -746,6 +812,7 @@
    "name": "Cannon, Double",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -758,6 +825,7 @@
    "name": "Cannon, Quad",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -770,6 +838,7 @@
    "name": "Cannon Enhancements",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -782,6 +851,7 @@
    "name": "Cannon Enhancements, Advanced",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -794,6 +864,7 @@
    "name": "Concussion Missile Launcher, Light",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": true,
    "reasons": [
@@ -805,6 +876,7 @@
    "name": "Concussion Missile, Light",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -817,6 +889,7 @@
    "name": "Concussion Missile Launcher, Medium",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": true,
    "reasons": [
@@ -828,6 +901,7 @@
    "name": "Concussion Missile, Medium",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -840,6 +914,7 @@
    "name": "Concussion Missile Launcher, Heavy",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": true,
    "reasons": [
@@ -851,6 +926,7 @@
    "name": "Concussion Missile, Heavy",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -863,6 +939,7 @@
    "name": "Ion Cannon, Light",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": true,
    "reasons": [
@@ -874,6 +951,7 @@
    "name": "Ion Cannon, Medium",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": true,
    "reasons": [
@@ -885,6 +963,7 @@
    "name": "Ion Cannon, Heavy",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": true,
    "reasons": [
@@ -896,6 +975,7 @@
    "name": "Laser Cannon, Light",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": true,
    "reasons": [
@@ -907,6 +987,7 @@
    "name": "Laser Cannon, Medium",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": true,
    "reasons": [
@@ -918,6 +999,7 @@
    "name": "Laser Cannon, Heavy",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": true,
    "reasons": [
@@ -929,6 +1011,7 @@
    "name": "Proton Torpedo Launcher",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": true,
    "reasons": [
@@ -940,6 +1023,7 @@
    "name": "Proton Torpedo",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -952,6 +1036,7 @@
    "name": "Turbolaser, Light",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": true,
    "reasons": [
@@ -963,6 +1048,7 @@
    "name": "Turbolaser, Medium",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": true,
    "reasons": [
@@ -974,6 +1060,7 @@
    "name": "Turbolaser, Heavy",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": true,
    "reasons": [
@@ -985,6 +1072,7 @@
    "name": "Tractor Beam",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -997,10 +1085,12 @@
    "name": "Point-Defense System",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": true,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
+    "CONDITIONAL_EFFECT_NOT_APPLIED",
+    "BOUGHT_ONLY_WITH_AN_ELIGIBLE_BASE_WEAPON",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1009,6 +1099,7 @@
    "name": "Fire-Linked Weapon, 2",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1021,6 +1112,7 @@
    "name": "Fire-Linked Weapon, 4",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1033,6 +1125,7 @@
    "name": "Space Mine Launcher",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1045,6 +1138,7 @@
    "name": "Space Mine, Standard",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1057,6 +1151,7 @@
    "name": "Ion Bomb Rack",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1069,6 +1164,7 @@
    "name": "Ion Bomb",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1081,6 +1177,7 @@
    "name": "Shieldbuster Torpedo Launcher",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1093,6 +1190,7 @@
    "name": "Shieldbuster Torpedo",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1105,6 +1203,7 @@
    "name": "Discord Missile Launcher",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1117,6 +1216,7 @@
    "name": "Discord Missile",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1129,6 +1229,7 @@
    "name": "Gravity Mine Launcher",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1141,6 +1242,7 @@
    "name": "Gravity Mine, Standard",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1153,6 +1255,7 @@
    "name": "Harpoon Gun",
    "exposeAsReference": false,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1166,6 +1269,7 @@
    "name": "Droid Jammer",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1178,6 +1282,7 @@
    "name": "Gravity Well Projector",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1190,6 +1295,7 @@
    "name": "Docking Gun",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1202,6 +1308,7 @@
    "name": "Fire-Linked Weapon, Optional",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1214,6 +1321,7 @@
    "name": "Ion Cannon, Hapan Triple",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1226,6 +1334,7 @@
    "name": "Space Mine Launcher, Heavy",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1238,6 +1347,7 @@
    "name": "Space Mine, Advanced",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1250,6 +1360,7 @@
    "name": "Space Mine, Heavy",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1262,6 +1373,7 @@
    "name": "Gravity Mine, Magnetic",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1274,6 +1386,7 @@
    "name": "Composite Beam Cannon",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1286,6 +1399,7 @@
    "name": "Energy Bomblet Generator",
    "exposeAsReference": false,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1299,6 +1413,7 @@
    "name": "Heavy Ordnance Launcher",
    "exposeAsReference": false,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1312,6 +1427,7 @@
    "name": "Ion Pulse Cannon",
    "exposeAsReference": false,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1325,6 +1441,7 @@
    "name": "Mass-Driver Cannon, Standard",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1337,6 +1454,7 @@
    "name": "Mass-Driver Cannon, Heavy",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1349,6 +1467,7 @@
    "name": "Microtractor-Pressor",
    "exposeAsReference": false,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1362,6 +1481,7 @@
    "name": "Proton Grenade Launcher",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1374,6 +1494,7 @@
    "name": "Proton Grenade",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1386,6 +1507,7 @@
    "name": "Rail Cannon",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1398,6 +1520,7 @@
    "name": "Anti-Aircraft Flak Pod",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1410,6 +1533,7 @@
    "name": "Chaff Gun",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1422,6 +1546,7 @@
    "name": "Defoliator Launcher",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1434,6 +1559,7 @@
    "name": "Defoliator Shell",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1446,6 +1572,7 @@
    "name": "Cargo Jettison System",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1458,6 +1585,7 @@
    "name": "Cargo Pod, Light",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -1469,6 +1597,7 @@
    "name": "Cargo Pod, Medium",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -1480,6 +1609,7 @@
    "name": "Cargo Pod, Heavy",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -1491,6 +1621,7 @@
    "name": "Cloaking Device, Hibridium",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1503,6 +1634,7 @@
    "name": "Cloaking Device, Stygium",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1515,6 +1647,7 @@
    "name": "Cryogenic Chambers",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -1526,6 +1659,7 @@
    "name": "Docking Clamps",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1538,6 +1672,7 @@
    "name": "Droid Repair Team",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1550,6 +1685,7 @@
    "name": "Escape Pod, Small Lifeboat",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1562,6 +1698,7 @@
    "name": "Escape Pod, Large Lifeboat",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1574,6 +1711,7 @@
    "name": "Extended Range",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -1585,6 +1723,7 @@
    "name": "Hangar Bay",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -1596,6 +1735,7 @@
    "name": "Hangar Bay, Concealed",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -1607,6 +1747,7 @@
    "name": "Transceiver, HoloNet",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1619,6 +1760,7 @@
    "name": "Transceiver, Hyper",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1631,6 +1773,7 @@
    "name": "Luxury Upgrade, Basic",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1643,6 +1786,7 @@
    "name": "Luxury Upgrade, Advanced",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1655,6 +1799,7 @@
    "name": "Luxury Upgrade, Extreme",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1667,6 +1812,7 @@
    "name": "Medical Suite",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1679,6 +1825,7 @@
    "name": "Passenger Conversion, Seating",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1691,6 +1838,7 @@
    "name": "Passenger Conversion, Quarters",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1703,6 +1851,7 @@
    "name": "Sensor Array Computer +2",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1715,6 +1864,7 @@
    "name": "Sensor Array Computer +4",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1727,6 +1877,7 @@
    "name": "Sensor Array Computer +6",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1739,6 +1890,7 @@
    "name": "Sensor Enhancement Package",
    "exposeAsReference": true,
    "installable": true,
+   "installableAsOption": false,
    "mechanicallyApplied": true,
    "combatUsable": false,
    "reasons": [
@@ -1750,6 +1902,7 @@
    "name": "Slave Circuits, Basic",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1762,6 +1915,7 @@
    "name": "Slave Circuits, Advanced",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1774,6 +1928,7 @@
    "name": "Slave Circuits, Recall",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1786,6 +1941,7 @@
    "name": "Smuggler's Compartments",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1798,6 +1954,7 @@
    "name": "Transponder, IFF",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1810,6 +1967,7 @@
    "name": "Transponder, Masked",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1822,6 +1980,7 @@
    "name": "Transponder, Disguised (Basic)",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1834,6 +1993,7 @@
    "name": "Transponder, Disguised (Improved)",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1846,6 +2006,7 @@
    "name": "Transponder, Disguised (Superior)",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1858,6 +2019,7 @@
    "name": "Amphibious Seals",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1870,6 +2032,7 @@
    "name": "Auxiliary Generators +2",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1882,6 +2045,7 @@
    "name": "Auxiliary Generators +4",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1894,6 +2058,7 @@
    "name": "Auxiliary Generators +6",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1906,6 +2071,7 @@
    "name": "Backup Battery",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1918,6 +2084,7 @@
    "name": "Baffled Drive",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1930,6 +2097,7 @@
    "name": "Cockpit Ejection System",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1942,6 +2110,7 @@
    "name": "Cofferdam",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1954,6 +2123,7 @@
    "name": "Environmental Filters",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1966,6 +2136,7 @@
    "name": "Fuel Converters",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1978,6 +2149,7 @@
    "name": "Grappler Mag",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -1990,6 +2162,7 @@
    "name": "Hardpoint",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -2002,6 +2175,7 @@
    "name": "Hidden Cargo Hold (25% of Cargo)",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -2014,6 +2188,7 @@
    "name": "Hidden Cargo Hold (50% of Cargo)",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -2026,6 +2201,7 @@
    "name": "Hidden Cargo Hold (75% of Cargo)",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -2038,6 +2214,7 @@
    "name": "Holding Cells (25% of Passengers)",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -2050,6 +2227,7 @@
    "name": "Holding Cells (50% of Passengers)",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -2062,6 +2240,7 @@
    "name": "Holding Cells (75% of Passengers)",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -2074,6 +2253,7 @@
    "name": "Interrogation Chamber",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -2086,6 +2266,7 @@
    "name": "Personalized Controls",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -2098,6 +2279,7 @@
    "name": "Sensor Baffling",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -2110,6 +2292,7 @@
    "name": "Sensor Decoy",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -2122,6 +2305,7 @@
    "name": "Sensor Mask",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -2134,6 +2318,7 @@
    "name": "Workshop",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -2146,6 +2331,7 @@
    "name": "Launch Bay",
    "exposeAsReference": false,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -2159,6 +2345,7 @@
    "name": "Plasma Punch",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -2171,6 +2358,7 @@
    "name": "Plasma Torch",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
@@ -2183,6 +2371,7 @@
    "name": "Tractor Clamp",
    "exposeAsReference": true,
    "installable": false,
+   "installableAsOption": false,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [

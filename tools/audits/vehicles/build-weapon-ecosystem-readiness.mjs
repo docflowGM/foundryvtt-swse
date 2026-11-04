@@ -55,7 +55,8 @@ const rows = inventory.rows.map(row => {
   const cats = row.catalogIds.map(id => {
     const c = catalogById.get(id); if (!c) throw new Error(`inventory names an unknown catalog id ${id}`);
     const status = cert[id]?.status ?? null;
-    const installable = EFFECTS[id]?.kind === 'weapon' && status === 'MECHANIC_SPECIFIED';
+    // a weapon OPTION (point defense) is purchased WITH an eligible weapon; it counts as installed-as-an-option, tested by its own file
+    const installable = (EFFECTS[id]?.kind === 'weapon' || EFFECTS[id]?.kind === 'weapon-option') && status === 'MECHANIC_SPECIFIED';
     const testFile = installable ? (EFFECTS[id].testFile ?? defaultWeaponTest) : null;
     return { id, category: c.category, certification: status, reconciliation: recon[id]?.disposition ?? null, installable, testFile };
   });
@@ -78,7 +79,7 @@ const rows = inventory.rows.map(row => {
   const overlay = OVERLAY_KINDS.has(row.kind);
   // A configuration is "STOCK_PRINTED_VALUES_ONLY" when published statblocks print its combined result (e.g. "double laser cannons 4d10x2")
   // and the gate runs those printed numbers as written: the configuration itself (buying it, switching it, its rules) is not implemented.
-  const attack = aftermarket === 'OFFLINE_TESTED_INSTALL_FIRE_REMOVE' && plain ? 'OFFLINE_TESTED'
+  const attack = aftermarket === 'OFFLINE_TESTED_INSTALL_FIRE_REMOVE' && (plain || overlay) ? 'OFFLINE_TESTED'
     : overlay ? (row.evidence?.stock ? 'OFFLINE_TESTED_STOCK_ONLY' : stock.offlineExecutable > 0 ? 'STOCK_PRINTED_VALUES_ONLY' : 'NOT_IMPLEMENTED')
     : stock.offlineExecutable > 0 && plain ? 'OFFLINE_TESTED_STOCK_ONLY' : 'NOT_IMPLEMENTED';
   const damageOrEffect = attack === 'NOT_IMPLEMENTED' ? 'NOT_IMPLEMENTED' : `${attack}:${overlay ? 'CONFIGURATION' : DAMAGE_LABEL[row.mechanic] ?? 'SPECIAL'}`;

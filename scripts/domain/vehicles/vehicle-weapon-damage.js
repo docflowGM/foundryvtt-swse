@@ -85,7 +85,15 @@ export function resolveCertifiedInstalledWeapon(weapon) {
     return { ok: false, reason: 'INSTALLED_WEAPON_ITEM_MOUNT_MISMATCH' };
   if (!sameLabel(entry.name, weapon.name)) return { ok: false, reason: 'INSTALLED_WEAPON_ITEM_NAME_MISMATCH' };
   if (text(weapon.system.damage) !== spec.damage) return { ok: false, reason: 'INSTALLED_WEAPON_ITEM_DAMAGE_DIVERGES_FROM_CERTIFIED_SPECIFICATION' };
-  return { ok: true, entry, spec, mount: m };
+  // An OPTION sealed into the entry (WE-PD) must still be a certified option of THIS base weapon; what it does is read from the
+  // certified specification, not from the entry's own words.
+  let pointDefense = false;
+  if (entry.option) {
+    const ofx = EFFECTS[entry.option.catalogId];
+    if (ofx?.kind !== 'weapon-option' || !ofx.eligibleBases.includes(entry.catalogId) || spec.ammunition) return { ok: false, reason: 'INSTALLED_WEAPON_OPTION_NOT_CERTIFIED' };
+    pointDefense = ofx.pointDefense === true;
+  }
+  return { ok: true, entry, spec, mount: m, option: entry.option ?? null, pointDefense, rangeSlug: pointDefense ? EFFECTS[entry.option.catalogId].rangeSlug : spec.rangeSlug ?? null };
 }
 
 /**

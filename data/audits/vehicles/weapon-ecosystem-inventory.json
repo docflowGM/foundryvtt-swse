@@ -56,7 +56,11 @@
   },
   "POINT_DEFENSE_NOT_IMPLEMENTED": {
    "class": "ENGINEERING",
-   "text": "The point-defense modification (+4,000 credits per weapon, 0 EP, eligible weapons only, Table 10-2 point-defense ranges) is not an installable modification. The capital-ship penalty already has a point-defense exemption input; nothing sets it."
+   "text": "The point-defense modification is not implemented for this weapon."
+  },
+  "POINT_DEFENSE_STOCK_CLASSIFICATION_UNVERIFIED": {
+   "class": "SOURCE",
+   "text": "60 stock groups whose label says point-defense are refused: a statblock label is not evidence of the modification's rules (the gate never infers a mechanic from a name). The aftermarket option is implemented."
   },
   "SPECIAL_WEAPON_NOT_INDIVIDUALLY_VERIFIED": {
    "class": "ENGINEERING",
@@ -1437,7 +1441,7 @@
   },
   {
    "id": "point-defense",
-   "name": "Point-defense weapon modification",
+   "name": "Point-defense weapon modification (a purchase option of an eligible weapon)",
    "kind": "configuration",
    "catalogIds": [
     "point-defense"
@@ -1465,14 +1469,19 @@
    ],
    "established": [
     "Table 3-5: 0 EP (other than the weapon's own); Restricted; +4,000 credits per weapon; Colossal or larger only.",
-    "Normally only blaster cannons, laser cannons and light ion cannons can be point-defense weapons. A point-defense weapon takes no penalty for attacking targets smaller than Colossal."
+    "Normally only blaster cannons, laser cannons and light ion cannons can be point-defense weapons. A point-defense weapon takes no penalty for attacking targets smaller than Colossal.",
+    "Implemented as an option chosen when an eligible weapon is bought (price +4,000, EP +0, sealed into the weapon's entry); the Table 10-2 point-defense range row is recorded for the range-band slice."
    ],
    "applicableConfigurations": [],
    "resources": "NOT_APPLICABLE",
    "blockers": [
-    "POINT_DEFENSE_NOT_IMPLEMENTED"
+    "POINT_DEFENSE_STOCK_CLASSIFICATION_UNVERIFIED",
+    "RANGE_BAND_NOT_AUTOMATED"
    ],
-   "nextSlice": "priority 7"
+   "nextSlice": "WE-PD done (aftermarket); stock groups wait for verified classification and range automation",
+   "evidence": {
+    "aftermarket": "tests/vehicle-universal-phase4e-p34-point-defense.test.mjs"
+   }
   },
   {
    "id": "autofire",

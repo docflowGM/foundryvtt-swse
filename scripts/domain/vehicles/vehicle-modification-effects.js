@@ -89,6 +89,16 @@ const LAUNCHERS = Object.freeze({
   'concussion-missile-launcher-medium': { family: 'missile', ammunition: { id: 'concussion-missile-medium', damage: '9d10x2', price: 750 } },
   'concussion-missile-launcher-heavy': { family: 'missile', ammunition: { id: 'concussion-missile-heavy', damage: '9d10x5', price: 2000 } }
 });
+// WE-PD (Complete Weapon Ecosystem): the POINT-DEFENSE weapon modification. It is an OPTION of a weapon installation, never a weapon and
+// never a separate engine: "Normally, only blaster cannons, laser cannons, and light ion cannons can be point-defense weapons. Modifying a
+// weapon to be a point-defense weapon costs 4,000 credits per weapon but has no emplacement point requirement (other than what is
+// required to mount the weapon itself). A point-defense weapon takes no penalty for attacking targets of smaller than Colossal size"
+// (Starships of the Galaxy, Weapon Systems: Point-Defense Weapon; Table 3-5: Restricted, +4,000, Colossal or larger starships only; Core
+// Rulebook p. 170). The price is PRINTED as an addition per weapon, so unlike the x2 / x3 / x5 multiplier rows it needs no ruling. The
+// Table 10-2 point-defense range row is recorded for the range-band slice (P6B-D-053). GM exceptions to "normally" are not implemented.
+const WE_PD_TEST = 'tests/vehicle-universal-phase4e-p34-point-defense.test.mjs';
+export const POINT_DEFENSE_BASE_WEAPONS = Object.freeze(['blaster-cannon-light', 'blaster-cannon-medium', 'blaster-cannon-heavy',
+  'laser-cannon-light', 'laser-cannon-medium', 'laser-cannon-heavy', 'ion-cannon-light']);
 // Capital ships (Colossal (frigate) or larger) take the Core -20 against targets smaller than Colossal in the vehicle attack
 // math (vehicle-capital-penalty.js); weapons may be installed on those hulls.
 
@@ -115,6 +125,9 @@ export const EFFECTS = Object.freeze({
   ...Object.fromEntries(Object.entries(PLAIN_WEAPONS).map(([id, w]) => [id, { kind: 'weapon', family: w.family, rangeSlug: w.rangeSlug, damage: w.damage, ...(w.testFile ? { testFile: w.testFile } : {}), stackable: true, group: `weapon:${id}`, citation: CITE_WEAPON }])),
   ...Object.fromEntries(Object.entries(LAUNCHERS).map(([id, l]) => [id, { kind: 'weapon', family: l.family, rangeSlug: 'missiles-torpedoes', damage: l.ammunition.damage,
     ammunition: { ...l.ammunition, capacity: launcherStandardCapacity(id).standard }, guided: true, area: { kind: 'splash', squares: 4 }, testFile: WE_L1_TEST, stackable: true, group: `weapon:${id}`, citation: CITE_LAUNCHER }])),
+  'point-defense': { kind: 'weapon-option', option: 'point-defense', label: 'Point-Defense', pointDefense: true, eligibleBases: POINT_DEFENSE_BASE_WEAPONS, extraCredits: 4000, extraEmplacementPoints: 0,
+    rangeSlug: 'point-defense', testFile: WE_PD_TEST, stackable: true, group: 'weapon-option:point-defense',
+    citation: 'Starships of the Galaxy, Weapon Systems: Point-Defense Weapon and Table 3-5 (p. 47, PDF-verified row); Core Rulebook p. 170' },
   'atmospheric-thrusters': { kind: 'atmospheric', percent: 10, group: 'atmospheric', citation: CITE.atmospheric },
   'atmospheric-thrusters-advanced': { kind: 'atmospheric', percent: 25, group: 'atmospheric', citation: CITE.atmospheric }
 });
@@ -154,6 +167,7 @@ export function effectInstallability({ catalogEntry, record, entries = [] }) {
       if (effect.ammunition) { if (catalogEntry.ammunition !== effect.ammunition.id) reasons.push('LAUNCHER_AMMUNITION_DIFFERS_FROM_CERTIFIED_ROW'); }
       else if (catalogEntry.damage !== effect.damage) reasons.push('WEAPON_DAMAGE_DIFFERS_FROM_CERTIFIED_ROW');
       break;
+    case 'weapon-option': reasons.push('WEAPON_OPTION_REQUIRES_A_BASE_WEAPON'); break;
     case 'intelligence': if (!finite(record?.abilities?.int)) reasons.push('INTELLIGENCE_UNKNOWN'); break;
     case 'cargo-pod': {
       if (!finite(record?.abilities?.dex) || !finite(record?.defenses?.reflex) || !finite(record?.abilities?.initiativePrinted)) { reasons.push('DEXTERITY_BASIS_UNKNOWN'); break; }

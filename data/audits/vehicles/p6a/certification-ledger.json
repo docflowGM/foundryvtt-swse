@@ -4,7 +4,7 @@
  "counts": {
   "sourceListed": 181,
   "sourceVerified": 174,
-  "mechanicSpecified": 70,
+  "mechanicSpecified": 71,
   "operationallyIntegrated": 67
  },
  "rows": [
@@ -1765,8 +1765,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon-option",
+    "test": "tests/vehicle-universal-phase4e-p34-point-defense.test.mjs"
+   },
+   "operationallyIntegrated": "EXPOSED_NOT_APPLIED",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {

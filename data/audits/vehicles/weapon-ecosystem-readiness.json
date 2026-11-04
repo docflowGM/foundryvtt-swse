@@ -5,7 +5,7 @@
   "inventoryRows": 41,
   "catalogWeaponRows": 63,
   "catalogRowsCoveredByInventory": 63,
-  "aftermarketInstallableRows": 16,
+  "aftermarketInstallableRows": 17,
   "stockGroups": 846,
   "stockGroupsOwnedByAFamily": 801,
   "stockGroupsUnclassified": 45,
@@ -194,7 +194,11 @@
   },
   "POINT_DEFENSE_NOT_IMPLEMENTED": {
    "class": "ENGINEERING",
-   "text": "The point-defense modification (+4,000 credits per weapon, 0 EP, eligible weapons only, Table 10-2 point-defense ranges) is not an installable modification. The capital-ship penalty already has a point-defense exemption input; nothing sets it."
+   "text": "The point-defense modification is not implemented for this weapon."
+  },
+  "POINT_DEFENSE_STOCK_CLASSIFICATION_UNVERIFIED": {
+   "class": "SOURCE",
+   "text": "60 stock groups whose label says point-defense are refused: a statblock label is not evidence of the modification's rules (the gate never infers a mechanic from a name). The aftermarket option is implemented."
   },
   "SPECIAL_WEAPON_NOT_INDIVIDUALLY_VERIFIED": {
    "class": "ENGINEERING",
@@ -747,7 +751,7 @@
     {
      "code": "POINT_DEFENSE_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
-     "text": "The point-defense modification (+4,000 credits per weapon, 0 EP, eligible weapons only, Table 10-2 point-defense ranges) is not an installable modification. The capital-ship penalty already has a point-defense exemption input; nothing sets it."
+     "text": "The point-defense modification is not implemented for this weapon."
     },
     {
      "code": "AUTOFIRE_NOT_IMPLEMENTED",
@@ -3007,7 +3011,7 @@
   },
   {
    "id": "point-defense",
-   "name": "Point-defense weapon modification",
+   "name": "Point-defense weapon modification (a purchase option of an eligible weapon)",
    "kind": "configuration",
    "mechanic": "modifier",
    "sources": [
@@ -3028,17 +3032,18 @@
    ],
    "established": [
     "Table 3-5: 0 EP (other than the weapon's own); Restricted; +4,000 credits per weapon; Colossal or larger only.",
-    "Normally only blaster cannons, laser cannons and light ion cannons can be point-defense weapons. A point-defense weapon takes no penalty for attacking targets smaller than Colossal."
+    "Normally only blaster cannons, laser cannons and light ion cannons can be point-defense weapons. A point-defense weapon takes no penalty for attacking targets smaller than Colossal.",
+    "Implemented as an option chosen when an eligible weapon is bought (price +4,000, EP +0, sealed into the weapon's entry); the Table 10-2 point-defense range row is recorded for the range-band slice."
    ],
-   "sourceCertification": "SOURCE_VERIFIED",
+   "sourceCertification": "MECHANIC_SPECIFIED",
    "catalogRows": [
     {
      "id": "point-defense",
      "category": "Weapon",
-     "certification": "SOURCE_VERIFIED",
+     "certification": "MECHANIC_SPECIFIED",
      "reconciliation": "CORRECTION_REQUIRED",
-     "installable": false,
-     "testFile": null
+     "installable": true,
+     "testFile": "tests/vehicle-universal-phase4e-p34-point-defense.test.mjs"
     }
    ],
    "stock": {
@@ -3049,30 +3054,37 @@
     "basis": "OVERLAY: also counted in its base-weapon row"
    },
    "aftermarket": {
-    "status": "NOT_INSTALLABLE",
+    "status": "OFFLINE_TESTED_INSTALL_FIRE_REMOVE",
     "weaponRows": 1,
-    "installable": 0,
+    "installable": 1,
     "consumableRows": 0
    },
-   "attackExecution": "NOT_IMPLEMENTED",
-   "damageOrEffectExecution": "NOT_IMPLEMENTED",
+   "attackExecution": "OFFLINE_TESTED",
+   "damageOrEffectExecution": "OFFLINE_TESTED:CONFIGURATION",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
     "slug": "point-defense",
     "status": "TABLE_10_2_ROW_PRESENT"
    },
    "configurations": [],
-   "evidence": {},
+   "evidence": {
+    "aftermarket": "tests/vehicle-universal-phase4e-p34-point-defense.test.mjs"
+   },
    "liveFoundryVerification": "NOT_VERIFIED",
    "overall": "NOT_FULLY_OPERATIONAL",
    "openBlockers": [
     {
-     "code": "POINT_DEFENSE_NOT_IMPLEMENTED",
+     "code": "POINT_DEFENSE_STOCK_CLASSIFICATION_UNVERIFIED",
+     "class": "SOURCE",
+     "text": "60 stock groups whose label says point-defense are refused: a statblock label is not evidence of the modification's rules (the gate never infers a mechanic from a name). The aftermarket option is implemented."
+    },
+    {
+     "code": "RANGE_BAND_NOT_AUTOMATED",
      "class": "ENGINEERING",
-     "text": "The point-defense modification (+4,000 credits per weapon, 0 EP, eligible weapons only, Table 10-2 point-defense ranges) is not an installable modification. The capital-ship penalty already has a point-defense exemption input; nothing sets it."
+     "text": "No code resolves the attacker-target distance to a Table 10-2 range band for vehicle weapons: the attack reads a caller-supplied rangeBand (none supplied = no range modifier). data/vehicle-weapon-ranges.json holds the table; RangeEngine.getVehicleBand has no caller."
     }
    ],
-   "nextSlice": "priority 7"
+   "nextSlice": "WE-PD done (aftermarket); stock groups wait for verified classification and range automation"
   },
   {
    "id": "autofire",

@@ -407,7 +407,9 @@
    "pageResolution": "pdf-table-page"
   },
   "point-defense": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p34-point-defense.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 47,

@@ -41,7 +41,11 @@ const REASON_TEXT = {
   AMMO_NOTHING_TO_RELOAD: 'There is no ammunition in reserve (or the launcher is full).',
   AMMO_GM_OPERATION_ONLY: 'Only a GM can load a launcher from its reserve.',
   AMMO_LEDGER_INVALID: 'The launcher\'s ammunition record failed verification.',
-  WEAPON_ITEM_MISSING: 'The launcher\'s weapon item is missing. Use "Resync weapons".'
+  WEAPON_ITEM_MISSING: 'The launcher\'s weapon item is missing. Use "Resync weapons".',
+  OPTION_BASE_WEAPON_INELIGIBLE: 'That option cannot be bought with this weapon (point defense: blaster cannons, laser cannons and light ion cannons only).',
+  OPTION_SIZE_INELIGIBLE: 'That option needs a larger hull (point defense: Colossal (frigate) or larger).',
+  OPTION_NOT_IN_CATALOG: 'That weapon option is not in the catalog.',
+  WEAPON_OPTION_REQUIRES_A_BASE_WEAPON: 'A weapon option is bought together with a weapon, not on its own.'
 };
 export const describeReasons = reasons => (reasons ?? []).map(r => REASON_TEXT[r] ?? r).join(' ');
 
@@ -60,7 +64,7 @@ const OUTCOME = {
  * @param {{action:string, jobId?:string, catalogId?:string, vehicle:object}} p
  * @param {{service:object, game:object, notify:{info:Function,warn:Function}, askReason:Function, askDays:Function}} deps
  */
-export async function runShipyardAction({ action, jobId, catalogId, installId, vehicle }, deps) {
+export async function runShipyardAction({ action, jobId, catalogId, optionId = null, installId, vehicle }, deps) {
   const { service, game, notify } = deps;
   if (action === 'resync-weapons') {   // repairs Items from the sealed ledger; no owner character, no credits
     const r = await service.reconcileWeaponItems({ vehicle });
@@ -85,7 +89,7 @@ export async function runShipyardAction({ action, jobId, catalogId, installId, v
         mount = await deps.askMount?.();
         if (!mount) return { success: false, reasons: ['CANCELLED'] };
       }
-      r = await service.startJob({ ownerActor, vehicle, catalogId, mount }); break;
+      r = await service.startJob({ ownerActor, vehicle, catalogId, mount, ...(isWeaponRow(catalogId) && optionId ? { optionId } : {}) }); break;
     }
     case 'buy-ammunition': {
       if (!installId) return { success: false, reasons: ['NOTHING_SELECTED'] };
@@ -111,7 +115,7 @@ export async function runShipyardAction({ action, jobId, catalogId, installId, v
       if (reason === null || reason === undefined) return { success: false, reasons: ['CANCELLED'] };
       let mount = null;
       if (isWeaponRow(catalogId)) { mount = await deps.askMount?.(); if (!mount) return { success: false, reasons: ['CANCELLED'] }; }
-      r = await service.gmInstantInstall({ ownerActor, vehicle, catalogId, reason, mount }); break;
+      r = await service.gmInstantInstall({ ownerActor, vehicle, catalogId, reason, mount, ...(isWeaponRow(catalogId) && optionId ? { optionId } : {}) }); break;
     }
     default: return { success: false, reasons: ['UNKNOWN_ACTION'] };
   }
@@ -129,7 +133,8 @@ export function bindShipyardActions(root, vehicle, deps) {
       const select = root.querySelector('[data-shipyard-select="catalog"]');
       btn.disabled = true;
       try {
-        await runShipyardAction({ action: btn.dataset.shipyardAction, jobId: btn.dataset.jobId, installId: btn.dataset.installId, catalogId: select?.value, vehicle }, deps);
+        await runShipyardAction({ action: btn.dataset.shipyardAction, jobId: btn.dataset.jobId, installId: btn.dataset.installId, catalogId: select?.value,
+          optionId: root.querySelector('[data-shipyard-select="option"]')?.value || null, vehicle }, deps);
       } finally { btn.disabled = false; }
     });
   }

@@ -60,7 +60,7 @@ test('certification ledger and readiness manifest never overstate operation', ()
     if (l.mechanicSpecified) { assert.ok(l.sourceVerified?.book && l.sourceVerified?.printedPage, l.catalogId); assert.equal(cert[l.catalogId].status, 'MECHANIC_SPECIFIED'); }
     if (l.operationallyIntegrated) assert.ok(l.mechanicSpecified, l.catalogId);
   }
-  assert.equal(ledger.counts.mechanicSpecified, 70, '54 effects + 12 plain cannon/turbolaser rows (laser P6B weapon slice; blaster, ion and turbolaser WE-1) + 4 launchers (WE-L1)');
+  assert.equal(ledger.counts.mechanicSpecified, 71, '54 effects + 12 plain cannon/turbolaser rows (laser P6B weapon slice; blaster, ion and turbolaser WE-1) + 4 launchers (WE-L1) + the point-defense option (WE-PD)');
   // sensor arrays: specified and installable, but no runtime consumer reads vehicle Intelligence yet -> not applied
   for (const id of ['sensor-array-2', 'sensor-array-4', 'sensor-array-6']) {
     assert.equal(ready.rows.find(r => r.catalogId === id).installable, true, id);
@@ -124,7 +124,7 @@ test('certification overlay: PDF-verified rows are SOURCE_VERIFIED unless a test
   assert.ok(Object.keys(overlay).length > 100);
   for (const [id, row] of Object.entries(overlay)) {
     assert.equal(row.status, EFFECTS[id] ? 'MECHANIC_SPECIFIED' : 'SOURCE_VERIFIED', id);
-    if (EFFECTS[id]) assert.equal(row.effectTest, EFFECTS[id].kind === 'weapon' ? (EFFECTS[id].testFile ?? 'tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs') : 'tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs', id);
+    if (EFFECTS[id]) assert.equal(row.effectTest, EFFECTS[id].testFile ? EFFECTS[id].testFile : EFFECTS[id].kind === 'weapon' ? 'tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs' : 'tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs', id);
     assert.ok(row.book && Number.isInteger(row.printedPage), id);
     assert.equal(base[id], undefined, 'no overlap with certification.json');
   }
@@ -134,6 +134,7 @@ test('certification overlay: PDF-verified rows are SOURCE_VERIFIED unless a test
   assert.match(svc, /\.\.\.\(p6aRes\.ok[^;]*\.\.\.\(\(await certRes\.json\(\)\)\.rows/);
   const ready = load(`${DIR}/readiness-manifest.json`);
   assert.equal(ready.counts.installable, 70);
+  assert.equal(ready.counts.installableAsOption, 1, 'point defense is specified but bought only with an eligible weapon');
   assert.equal(ready.counts.combatUsable, 16);
 });
 

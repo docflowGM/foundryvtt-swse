@@ -140,8 +140,42 @@ export function weaponMountBasis(mount) {
   return null;
 }
 
-export function planVehicleInstallation({ record, flags, catalogEntry, installId, availableCredits, installedAt, rules = DEFAULT_VEHICLE_INSTALLATION_RULES, mount = null, nonstandard = undefined, starshipDesigner = false, workers = null, reservedEp = 0 }) {
+/**
+ * A weapon OPTION chosen when a weapon is bought (WE-PD: point defense). The option changes the weapon's price, emplacement points and
+ * attack rules through its CERTIFIED specification; it is a field of the weapon's ledger entry, never an entry or an engine of its own.
+ * Every refusal is named; nothing is guessed (a changed catalog row, an ineligible base weapon or hull is refused).
+ * @returns {{ok:true, derived:object, option:object|null}|{ok:false, reasons:string[]}}
+ */
+export function resolveWeaponOption({ baseEntry, optionEntry, hullSize }) {
+  if (!optionEntry) return { ok: true, derived: baseEntry, option: null };
+  const fx = EFFECTS[optionEntry.id], baseFx = EFFECTS[baseEntry?.id];
   const reasons = [];
+  if (fx?.kind !== 'weapon-option') reasons.push('NOT_A_WEAPON_OPTION');
+  else {
+    if (optionEntry.certification?.status !== 'MECHANIC_SPECIFIED') reasons.push('OPTION_UNCERTIFIED');
+    if (baseFx?.kind !== 'weapon' || baseFx.ammunition || !fx.eligibleBases.includes(baseEntry.id)) reasons.push('OPTION_BASE_WEAPON_INELIGIBLE');
+    if (optionEntry.costType !== 'modifier' || optionEntry.cost !== fx.extraCredits) reasons.push('OPTION_PRICE_DIFFERS_FROM_CERTIFIED_ROW');
+    if (optionEntry.emplacementPoints !== fx.extraEmplacementPoints) reasons.push('OPTION_EP_DIFFERS_FROM_CERTIFIED_ROW');
+    const size = evaluateSizeRestriction(optionEntry.sizeRestriction, hullSize);
+    if (size !== 'ok') reasons.push('OPTION_SIZE_' + size.toUpperCase());
+    if (!finite(baseEntry?.cost) || baseEntry.costType !== 'flat') reasons.push('OPTION_BASE_PRICE_NOT_FLAT');
+  }
+  if (reasons.length) return { ok: false, reasons };
+  return {
+    ok: true,
+    derived: { ...baseEntry, name: `${baseEntry.name} (${fx.label})`, cost: baseEntry.cost + fx.extraCredits, emplacementPoints: baseEntry.emplacementPoints + fx.extraEmplacementPoints },
+    option: { catalogId: optionEntry.id, label: fx.label, extraCredits: fx.extraCredits, extraEmplacementPoints: fx.extraEmplacementPoints, pointDefense: fx.pointDefense === true, rangeSlug: fx.rangeSlug ?? null }
+  };
+}
+
+export function planVehicleInstallation({ record, flags, catalogEntry, installId, availableCredits, installedAt, rules = DEFAULT_VEHICLE_INSTALLATION_RULES, mount = null, nonstandard = undefined, starshipDesigner = false, workers = null, reservedEp = 0, option = null }) {
+  const reasons = [];
+  let chosenOption = null;
+  if (option) {
+    const o = resolveWeaponOption({ baseEntry: catalogEntry, optionEntry: option, hullSize: record?.classification?.printedSize });
+    if (!o.ok) return deny(...o.reasons);
+    catalogEntry = o.derived; chosenOption = o.option;
+  }
   const key = record?.identity?.sourceEntryKey;
   if (!nonEmpty(key)) return deny('VEHICLE_NOT_SOURCE_BACKED');
   if (!catalogEntry || !nonEmpty(catalogEntry.id)) return deny('CATALOG_ENTRY_MISSING');
@@ -222,6 +256,7 @@ export function planVehicleInstallation({ record, flags, catalogEntry, installId
     // V-P2-04 (owner ruling 2026-11-02): a weapon is executable only when its row has a certified weapon specification
     // AND its physical mount is certified (printed evidence, or GM-adjudicated). Every attack-time check still applies.
     executable: EFFECTS[catalogEntry.id]?.kind === 'weapon' && cert?.status === 'MECHANIC_SPECIFIED' && mountBasis !== null,
+    ...(chosenOption ? { option: chosenOption } : {}),
     installedAt: installedAt ?? null
   });
   return { ok: true, reasons: [], entry, cost: entry.priceCredits,
