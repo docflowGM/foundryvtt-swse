@@ -1040,6 +1040,10 @@ export async function rollAttack(actor, weapon, options = {}) {
       ...(specialStage.ownedExtras ?? {}),
     } : undefined,
     ...(specialStage.areaShape?.isArea ? { isArea: true, ruleData: { areaAttack: true, ...(specialStage.areaShape.halfDamageOnMiss ? { halfDamageOnMiss: true } : {}) } } : {}),
+    // V-P6C-07 (project interpretation): an ordinary splash / area weapon resolved against ONE target at starship scale keeps the area-attack
+    // miss rule (Core Special Combat Rules: Area Attacks): a hit deals full damage and a miss deals HALF. The flag is only the miss rule: it is
+    // not the character-scale area (no Evasion / cover / critical semantics are added or removed by it).
+    ...(vehicleWeaponAuthority?.ok && vehicleWeaponAuthority.area ? { ruleData: { halfDamageOnMiss: true } } : {}),
     // Phase 5D-E: carry the special-mechanic state (classified mechanics, stored answers, evaluated CT riders) to Damage/Apply
     special: (specialStage.mechanics.length || Object.keys({ ...specialStage.answers, ...(rollOptions.answers ?? {}) }).length) ? {
       mechanics: summarizeMechanics(specialStage.mechanics), answers: { ...specialStage.answers, ...(rollOptions.answers ?? {}) }, unresolved: specialStage.unresolved, drInteraction: specialStage.drIgnore ? 'ignore' : undefined,

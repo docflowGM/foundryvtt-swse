@@ -306,3 +306,11 @@ with a named reason and nothing is spent (a torpedo launcher's ledger and the wa
 follow-up reuses the recorded launch bonus and is not measured again. Distance is counted nearest square to nearest square with each token's footprint (V-P6C-12, an implemented convention the owner may override).
 Five stock groups whose designation names no Table 10-2 row were executable only because range was never asked; they are now refused (stock executable groups 351 -> 346). Custom designs' legacy weapons keep the
 caller-supplied band. Tests: `tests/vehicle-universal-phase4e-p35-vehicle-range.test.mjs`.
+
+### WE-3: area miss damage (V-P6C-07, owner ruling)
+
+An ordinary splash / area weapon resolved against ONE target at starship scale keeps the Core area-attack miss rule: a hit deals full damage, a miss deals HALF (Shield Rating and Damage Reduction apply
+afterwards through the existing damage authorities; a natural 1 keeps the engine's existing no-damage rule). `rollAttack` now carries `ruleData.halfDamageOnMiss` in the workflow context of every
+vehicle weapon whose authority has a published ordinary area (aftermarket launchers: the 4-square splash; the executable stock splash groups), and the existing disposition and packet code does the rest:
+a missed splash of N is exactly a hit of N/2. Single-target weapons are unchanged. Critical-hit doubling is unchanged. Not implemented: the Vehicular Evasion talent and the character-scale multi-target
+area (P6B-D-048). Test: `tests/vehicle-universal-phase4e-p36-area-miss-damage.test.mjs`. The three starship-scale-only stock splash groups and the launcher families are now correct for both outcomes.

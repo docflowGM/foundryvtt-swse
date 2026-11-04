@@ -8,9 +8,9 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 
 | Category | Count |
 |---|---|
-| RULES_DECISION_REQUIRED | 9 |
+| RULES_DECISION_REQUIRED | 7 |
 | SOURCE_EVIDENCE_MISSING | 8 |
-| ENGINEERING_COMPLEXITY | 18 |
+| ENGINEERING_COMPLEXITY | 20 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 4 |
 | DEPENDENCY_BLOCKED | 8 |
@@ -31,8 +31,8 @@ Open items: 48. Resolved items: 10 (listed at the end).
 | P6B-D-034 | STOCK | published stock weapon batteries and multi-gunner stations (291 groups) | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-036 | STOCK | published stock splash, ion and ammunition-limited groups (torpedoes, missiles, ion cannons; 71 splash + 71 ion groups) | DEPENDENCY_BLOCKED | IMPORTANT | no | V-P6A-03 |
 | P6B-D-043 | STOCK | weapon batteries crewed by named gunners (assisting roster) | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
-| P6B-D-050 | WEAPON-ECOSYSTEM | weapon configurations: double, triple, quad, fire-linked, optional fire link, cannon enhancements | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-10, V-P6C-11 |
-| P6B-D-051 | WEAPON-ECOSYSTEM | autofire (starship-scale single-target mode), autoblaster and Burst Fire | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-07, V-P6C-08, V-P6C-09 |
+| P6B-D-050 | WEAPON-ECOSYSTEM | weapon configurations: double, triple, quad, fire-linked, optional fire link, cannon enhancements | ENGINEERING_COMPLEXITY | IMPORTANT | no | V-P6C-10, V-P6C-11 |
+| P6B-D-051 | WEAPON-ECOSYSTEM | autofire (starship-scale single-target mode), autoblaster and Burst Fire | ENGINEERING_COMPLEXITY | IMPORTANT | no | V-P6C-07, V-P6C-08, V-P6C-09 |
 | P6B-D-052 | WEAPON-ECOSYSTEM | point-defense weapon modification: aftermarket option IMPLEMENTED; stock classification and point-defense ranges remain | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-054 | WEAPON-ECOSYSTEM | shieldbuster torpedoes, space mines and ion bombs | ENGINEERING_COMPLEXITY | IMPORTANT | no | V-P6C-07 |
 | P6B-D-055 | WEAPON-ECOSYSTEM | vehicle tractor beams | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
@@ -481,20 +481,20 @@ Open items: 48. Resolved items: 10 (listed at the end).
 ### P6B-D-050 - weapon configurations: double, triple, quad, fire-linked, optional fire link, cannon enhancements
 
 - **Source:** Starships of the Galaxy, Weapon Systems and Table 3-5 (p. 47)
-- **Category / severity:** RULES_DECISION_REQUIRED / IMPORTANT
-- **Reason:** The rows are SOURCE_VERIFIED only. Stock statblocks that print a double/quad/fire-linked result run only because the printed dice are used as written. A configuration must MODIFY an installed base weapon (damage dice, EP, cost multiplier, availability = the stricter of the two, fire-linked missiles spending one unit per linked launcher, the optional link toggled by a swift action); it must not become a separate combat engine. Combining configurations is unruled (V-P6C-10) and will be refused. The cost arithmetic of the multiplier rows is itself unruled (V-P6C-11); the repository has always refused them as COST_TYPE_NOT_RESOLVED_BY_PUBLISHED_RULES. The weapon-option mechanism built for point defense (an option sealed into the entry, priced and EP-adjusted through a derived catalog entry) is the intended carrier once the arithmetic is ruled.
-- **Missing:** A ledger attachment to an installed weapon, the multiplier-cost arithmetic, derived Item damage, and tests per configuration through purchase, install, fire and removal.
-- **Owner ruling needed:** yes (V-P6C-10, V-P6C-11)
+- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
+- **Reason:** V-P6C-10/V-P6C-11 are resolved (owner rulings 2026-11-04): configured price = base price x the printed multiplier (a total, not a surcharge), extra dice before the vehicle multiplier, alternatives within a group, nothing stacks automatically, enhancements never on turbolasers. The weapon-option mechanism built for point defense (an option sealed into the entry, priced and EP-adjusted through a derived catalog entry) is the carrier.
+- **Missing:** A multiplier price kind in the derived entry, extra dice in the certified damage, eligibility per configuration, and tests per configuration through purchase, install, fire and removal.
+- **Owner ruling needed:** no (V-P6C-10, V-P6C-11)
 - **Impact:** Aftermarket double/triple/quad/fire-linked/enhanced weapons cannot be bought.
-- **Recommended action:** Implement one configuration at a time on the certified base weapons (priority 6); refuse combinations.
+- **Recommended action:** Implement double, triple, quad, fire-linked 2 and 4 (energy weapons) and the enhancements one at a time (WE-4).
 
 ### P6B-D-051 - autofire (starship-scale single-target mode), autoblaster and Burst Fire
 
 - **Source:** Core Rulebook, Special Combat Rules: Autofire and Vehicle Combat: Scale; Starships of the Galaxy, Cannon Double/Quad and Fire-Linked Weapons (Autofire)
-- **Category / severity:** RULES_DECISION_REQUIRED / IMPORTANT
-- **Reason:** Established: eligible double, quad and fire-linked blaster/laser/light ion/light turbolaser weapons switch to autofire with a swift action; autofire is an area attack at -5; at starship scale it resolves as an attack on a single target. Not established: the miss outcome of such a single-target resolution (V-P6C-07), whether the Burst Fire feat applies to vehicle weapons (V-P6C-08) and whether an autoblaster has an autofire setting (V-P6C-09).
-- **Missing:** The swift-action mode, the -5 attack component and the starship-scale refusal at character scale can be built from the established text once configurations exist; the deferred questions stay deferred.
-- **Owner ruling needed:** yes (V-P6C-07, V-P6C-08, V-P6C-09)
+- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
+- **Reason:** V-P6C-07 (miss damage), V-P6C-08 (Burst Fire applies to autofire-capable vehicle weapons, extra dice before the multiplier) and V-P6C-09 (the autoblaster grants autofire to a single-mounted blaster cannon) are resolved. Remaining: the swift-action autofire mode, the -5 attack, Burst Fire with verified feat evidence, the autoblaster configuration.
+- **Missing:** Autofire mode switch and the Burst Fire combat option for vehicle weapons (WE-5), the autoblaster (WE-6).
+- **Owner ruling needed:** no (V-P6C-07, V-P6C-08, V-P6C-09)
 - **Impact:** No autofire for any vehicle weapon.
 - **Recommended action:** Build the established part after P6B-D-050; keep the three questions in the register.
 
@@ -598,7 +598,7 @@ Open items: 48. Resolved items: 10 (listed at the end).
 ### P6B-D-048 - area and splash damage: ordinary splash at STARSHIP scale IMPLEMENTED (single target); character-scale multi-target area and explicit starship-scale areas remain
 
 - **Resolved:** Owner addendum 2026-11-04 (PUBLISHED_RULE).
-- **Was:** PUBLISHED_RULE (Core, Vehicle Combat): area attacks, including splash and burst-radius weapons, resolve as an attack on a single target in starship scale unless the weapon is specifically listed with a starship-scale area attack. Implemented: vehicle-encounter-scale.js (vehicles-only = starship scale), the gate reads an ordinary N-square splash/burst as an area attached to the group, and the attack preflight resolves it before any cost. Still refused: character-scale encounters (the multi-target engine does not exist) and explicit starship-scale areas (the Subjugator's ion pulse cannons, with hit/miss/recharge riders).
+- **Was:** PUBLISHED_RULE (Core, Vehicle Combat): area attacks, including splash and burst-radius weapons, resolve as an attack on a single target in starship scale unless the weapon is specifically listed with a starship-scale area attack. Implemented: vehicle-encounter-scale.js (vehicles-only = starship scale), the gate reads an ordinary N-square splash/burst as an area attached to the group, and the attack preflight resolves it before any cost. Still refused: character-scale encounters (the multi-target engine does not exist) and explicit starship-scale areas (the Subjugator's ion pulse cannons, with hit/miss/recharge riders). WE-3 (2026-11-04, V-P6C-07 resolved): the area-attack miss rule now applies to these single-target resolutions: a miss deals half damage, a hit full.
 
 ### P6B-D-049 - finite ammunition ledger: IMPLEMENTED; 18 groups wait for a GM-certified allocation; reload action cost not inferred
 

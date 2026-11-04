@@ -1147,7 +1147,7 @@
       "component": "area and splash damage: ordinary splash at STARSHIP scale IMPLEMENTED (single target); character-scale multi-target area and explicit starship-scale areas remain",
       "source": "Core Rulebook (Splash; Area Attacks); canonical group evidence (splash, area*)",
       "status": "ENGINEERING_COMPLEXITY",
-      "reason": "PUBLISHED_RULE (Core, Vehicle Combat): area attacks, including splash and burst-radius weapons, resolve as an attack on a single target in starship scale unless the weapon is specifically listed with a starship-scale area attack. Implemented: vehicle-encounter-scale.js (vehicles-only = starship scale), the gate reads an ordinary N-square splash/burst as an area attached to the group, and the attack preflight resolves it before any cost. Still refused: character-scale encounters (the multi-target engine does not exist) and explicit starship-scale areas (the Subjugator's ion pulse cannons, with hit/miss/recharge riders).",
+      "reason": "PUBLISHED_RULE (Core, Vehicle Combat): area attacks, including splash and burst-radius weapons, resolve as an attack on a single target in starship scale unless the weapon is specifically listed with a starship-scale area attack. Implemented: vehicle-encounter-scale.js (vehicles-only = starship scale), the gate reads an ordinary N-square splash/burst as an area attached to the group, and the attack preflight resolves it before any cost. Still refused: character-scale encounters (the multi-target engine does not exist) and explicit starship-scale areas (the Subjugator's ion pulse cannons, with hit/miss/recharge riders). WE-3 (2026-11-04, V-P6C-07 resolved): the area-attack miss rule now applies to these single-target resolutions: a miss deals half damage, a hit full.",
       "missing": "Target enumeration by radius, per-target attack rolls, Evasion, cover and line of effect at character scale; the explicit starship-scale area mechanics.",
       "impact": "3 non-ammunition groups run at starship scale only; ordinary splash on finite-ammunition launchers is ready when their ammunition is.",
       "severity": "IMPORTANT",
@@ -1174,7 +1174,7 @@
     },
     {
       "workstream": "WEAPON-ECOSYSTEM",
-      "ownerRulingNeeded": true,
+      "ownerRulingNeeded": false,
       "linkedDecisions": [
         "V-P6C-10",
         "V-P6C-11"
@@ -1183,16 +1183,16 @@
       "id": "P6B-D-050",
       "component": "weapon configurations: double, triple, quad, fire-linked, optional fire link, cannon enhancements",
       "source": "Starships of the Galaxy, Weapon Systems and Table 3-5 (p. 47)",
-      "status": "RULES_DECISION_REQUIRED",
-      "reason": "The rows are SOURCE_VERIFIED only. Stock statblocks that print a double/quad/fire-linked result run only because the printed dice are used as written. A configuration must MODIFY an installed base weapon (damage dice, EP, cost multiplier, availability = the stricter of the two, fire-linked missiles spending one unit per linked launcher, the optional link toggled by a swift action); it must not become a separate combat engine. Combining configurations is unruled (V-P6C-10) and will be refused. The cost arithmetic of the multiplier rows is itself unruled (V-P6C-11); the repository has always refused them as COST_TYPE_NOT_RESOLVED_BY_PUBLISHED_RULES. The weapon-option mechanism built for point defense (an option sealed into the entry, priced and EP-adjusted through a derived catalog entry) is the intended carrier once the arithmetic is ruled.",
-      "missing": "A ledger attachment to an installed weapon, the multiplier-cost arithmetic, derived Item damage, and tests per configuration through purchase, install, fire and removal.",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "V-P6C-10/V-P6C-11 are resolved (owner rulings 2026-11-04): configured price = base price x the printed multiplier (a total, not a surcharge), extra dice before the vehicle multiplier, alternatives within a group, nothing stacks automatically, enhancements never on turbolasers. The weapon-option mechanism built for point defense (an option sealed into the entry, priced and EP-adjusted through a derived catalog entry) is the carrier.",
+      "missing": "A multiplier price kind in the derived entry, extra dice in the certified damage, eligibility per configuration, and tests per configuration through purchase, install, fire and removal.",
       "impact": "Aftermarket double/triple/quad/fire-linked/enhanced weapons cannot be bought.",
       "severity": "IMPORTANT",
-      "recommendedAction": "Implement one configuration at a time on the certified base weapons (priority 6); refuse combinations."
+      "recommendedAction": "Implement double, triple, quad, fire-linked 2 and 4 (energy weapons) and the enhancements one at a time (WE-4)."
     },
     {
       "workstream": "WEAPON-ECOSYSTEM",
-      "ownerRulingNeeded": true,
+      "ownerRulingNeeded": false,
       "linkedDecisions": [
         "V-P6C-07",
         "V-P6C-08",
@@ -1202,9 +1202,9 @@
       "id": "P6B-D-051",
       "component": "autofire (starship-scale single-target mode), autoblaster and Burst Fire",
       "source": "Core Rulebook, Special Combat Rules: Autofire and Vehicle Combat: Scale; Starships of the Galaxy, Cannon Double/Quad and Fire-Linked Weapons (Autofire)",
-      "status": "RULES_DECISION_REQUIRED",
-      "reason": "Established: eligible double, quad and fire-linked blaster/laser/light ion/light turbolaser weapons switch to autofire with a swift action; autofire is an area attack at -5; at starship scale it resolves as an attack on a single target. Not established: the miss outcome of such a single-target resolution (V-P6C-07), whether the Burst Fire feat applies to vehicle weapons (V-P6C-08) and whether an autoblaster has an autofire setting (V-P6C-09).",
-      "missing": "The swift-action mode, the -5 attack component and the starship-scale refusal at character scale can be built from the established text once configurations exist; the deferred questions stay deferred.",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "V-P6C-07 (miss damage), V-P6C-08 (Burst Fire applies to autofire-capable vehicle weapons, extra dice before the multiplier) and V-P6C-09 (the autoblaster grants autofire to a single-mounted blaster cannon) are resolved. Remaining: the swift-action autofire mode, the -5 attack, Burst Fire with verified feat evidence, the autoblaster configuration.",
+      "missing": "Autofire mode switch and the Burst Fire combat option for vehicle weapons (WE-5), the autoblaster (WE-6).",
       "impact": "No autofire for any vehicle weapon.",
       "severity": "IMPORTANT",
       "recommendedAction": "Build the established part after P6B-D-050; keep the three questions in the register."

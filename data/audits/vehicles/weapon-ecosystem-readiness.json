@@ -156,10 +156,6 @@
    "class": "DATA",
    "text": "No published firing group carries a verified single launcher, so no stock launcher group is armed; 18 groups wait for a GM-certified launcher allocation."
   },
-  "MISS_DAMAGE_OF_STARSHIP_SCALE_AREA_UNRULED": {
-   "class": "RULES_DEFERRED",
-   "text": "Core Area Attacks say creatures you miss take half damage, and the Scale rule says area attacks resolve as attacks on a single target at starship scale; whether the single target still takes half damage on a miss is not stated. Register V-P6C-07. Implemented behaviour: a miss deals no damage."
-  },
   "SOURCE_ROW_NOT_RECONCILED": {
    "class": "SOURCE",
    "text": "The catalog row has no printed table row: its numbers came from vehicle statblocks. It cannot be priced or installed until a printed source is reconciled."
@@ -199,18 +195,6 @@
   "SPECIAL_WEAPON_NOT_INDIVIDUALLY_VERIFIED": {
    "class": "ENGINEERING",
    "text": "Source-specific mechanics need individual verification and implementation."
-  },
-  "BURST_FIRE_VEHICLE_APPLICABILITY_UNRULED": {
-   "class": "RULES_DEFERRED",
-   "text": "Burst Fire is a feat (Core: Strength 13, Weapon Proficiency (heavy weapons); -5 attack, +2 dice, five shots). Whether a gunner's feat applies to a vehicle weapon is not stated. Register V-P6C-08."
-  },
-  "AUTOBLASTER_AUTOFIRE_UNSTATED": {
-   "class": "RULES_DEFERRED",
-   "text": "The autoblaster is printed with cost x2 and availability Restricted and described only as a higher cyclic rate; whether it has an autofire setting (and what else changes) is not stated. Register V-P6C-09."
-  },
-  "ENHANCEMENT_STACKING_UNRULED": {
-   "class": "RULES_DEFERRED",
-   "text": "Stacking of double/quad/fire-linked/enhancement damage dice on one weapon is not stated; no combination rule is implemented. Register V-P6C-10."
   },
   "CAPACITY_EXPANSION_DEFERRED": {
    "class": "RULES_DEFERRED",
@@ -440,8 +424,9 @@
     }
    ],
    "established": [
-    "Table 3-5: no damage printed; +0 EP; Restricted; cost x2.",
-    "Blaster cannons can be designed with a higher cyclic firing rate if they have sufficient cooling; only single-mounted blasters are generally made into autoblasters."
+    "Table 3-5: no damage printed; +0 EP; Restricted; cost x2 (a TOTAL-cost multiplier, V-P6C-11).",
+    "Blaster cannons can be designed with a higher cyclic firing rate if they have sufficient cooling; only single-mounted blasters are generally made into autoblasters.",
+    "Owner interpretation V-P6C-09: the autoblaster grants autofire capability to an eligible single-mounted blaster cannon; the base dice are unchanged; normal fire and autofire both remain; no compatibility with double or quad is inferred."
    ],
    "sourceCertification": "SOURCE_VERIFIED",
    "catalogRows": [
@@ -485,17 +470,12 @@
      "text": "The configuration/modification row is SOURCE_VERIFIED only: no certified effect, no Shipyard installation, no attack-time behaviour."
     },
     {
-     "code": "AUTOBLASTER_AUTOFIRE_UNSTATED",
-     "class": "RULES_DEFERRED",
-     "text": "The autoblaster is printed with cost x2 and availability Restricted and described only as a higher cyclic rate; whether it has an autofire setting (and what else changes) is not stated. Register V-P6C-09."
-    },
-    {
      "code": "AUTOFIRE_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
      "text": "Vehicle autofire (swift-action mode switch, -5 attack, area attack that resolves as a single target at starship scale) has no implementation; stock groups printing autofire are refused as unmodeled."
     }
    ],
-   "nextSlice": "after autofire (priority 5); needs ruling V-P6C-09"
+   "nextSlice": "WE-6 (V-P6C-09 resolved: project interpretation; after WE-4 and WE-5)"
   },
   {
    "id": "turbolasers",
@@ -919,11 +899,6 @@
      "text": "No published firing group carries a verified single launcher, so no stock launcher group is armed; 18 groups wait for a GM-certified launcher allocation."
     },
     {
-     "code": "MISS_DAMAGE_OF_STARSHIP_SCALE_AREA_UNRULED",
-     "class": "RULES_DEFERRED",
-     "text": "Core Area Attacks say creatures you miss take half damage, and the Scale rule says area attacks resolve as attacks on a single target at starship scale; whether the single target still takes half damage on a miss is not stated. Register V-P6C-07. Implemented behaviour: a miss deals no damage."
-    },
-    {
      "code": "CAPACITY_EXPANSION_DEFERRED",
      "class": "RULES_DEFERRED",
      "text": "Extra launcher capacity (+20% / +25% cost per additional unit up to the printed maximum) is recorded but not usable: whether added capacity costs emplacement points and which cost the percentage applies to is unresolved. Register V-P6A-03."
@@ -1053,11 +1028,6 @@
      "code": "NO_COMPLETE_STOCK_LAUNCHER_FAMILY",
      "class": "DATA",
      "text": "No published firing group carries a verified single launcher, so no stock launcher group is armed; 18 groups wait for a GM-certified launcher allocation."
-    },
-    {
-     "code": "MISS_DAMAGE_OF_STARSHIP_SCALE_AREA_UNRULED",
-     "class": "RULES_DEFERRED",
-     "text": "Core Area Attacks say creatures you miss take half damage, and the Scale rule says area attacks resolve as attacks on a single target at starship scale; whether the single target still takes half damage on a miss is not stated. Register V-P6C-07. Implemented behaviour: a miss deals no damage."
     },
     {
      "code": "CAPACITY_EXPANSION_DEFERRED",
@@ -1212,11 +1182,6 @@
      "code": "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE",
      "class": "ENGINEERING",
      "text": "Launchers and their ammunition have no certified effect: the Shipyard cannot sell or install them. The finite-ammunition ledger and lock-on projectile engine exist (P6C-3C/3D) and are tested on synthetic fixtures only."
-    },
-    {
-     "code": "MISS_DAMAGE_OF_STARSHIP_SCALE_AREA_UNRULED",
-     "class": "RULES_DEFERRED",
-     "text": "Core Area Attacks say creatures you miss take half damage, and the Scale rule says area attacks resolve as attacks on a single target at starship scale; whether the single target still takes half damage on a miss is not stated. Register V-P6C-07. Implemented behaviour: a miss deals no damage."
     },
     {
      "code": "APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED",
@@ -1404,11 +1369,6 @@
      "code": "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE",
      "class": "ENGINEERING",
      "text": "Launchers and their ammunition have no certified effect: the Shipyard cannot sell or install them. The finite-ammunition ledger and lock-on projectile engine exist (P6C-3C/3D) and are tested on synthetic fixtures only."
-    },
-    {
-     "code": "MISS_DAMAGE_OF_STARSHIP_SCALE_AREA_UNRULED",
-     "class": "RULES_DEFERRED",
-     "text": "Core Area Attacks say creatures you miss take half damage, and the Scale rule says area attacks resolve as attacks on a single target at starship scale; whether the single target still takes half damage on a miss is not stated. Register V-P6C-07. Implemented behaviour: a miss deals no damage."
     }
    ],
    "nextSlice": "priority 8"
@@ -2589,11 +2549,6 @@
      "code": "CONFIGURATION_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
      "text": "The configuration/modification row is SOURCE_VERIFIED only: no certified effect, no Shipyard installation, no attack-time behaviour."
-    },
-    {
-     "code": "ENHANCEMENT_STACKING_UNRULED",
-     "class": "RULES_DEFERRED",
-     "text": "Stacking of double/quad/fire-linked/enhancement damage dice on one weapon is not stated; no combination rule is implemented. Register V-P6C-10."
     }
    ],
    "nextSlice": "priority 6"
@@ -2708,11 +2663,6 @@
      "code": "CONFIGURATION_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
      "text": "The configuration/modification row is SOURCE_VERIFIED only: no certified effect, no Shipyard installation, no attack-time behaviour."
-    },
-    {
-     "code": "ENHANCEMENT_STACKING_UNRULED",
-     "class": "RULES_DEFERRED",
-     "text": "Stacking of double/quad/fire-linked/enhancement damage dice on one weapon is not stated; no combination rule is implemented. Register V-P6C-10."
     }
    ],
    "nextSlice": "priority 6"
@@ -2786,11 +2736,6 @@
      "code": "CONFIGURATION_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
      "text": "The configuration/modification row is SOURCE_VERIFIED only: no certified effect, no Shipyard installation, no attack-time behaviour."
-    },
-    {
-     "code": "ENHANCEMENT_STACKING_UNRULED",
-     "class": "RULES_DEFERRED",
-     "text": "Stacking of double/quad/fire-linked/enhancement damage dice on one weapon is not stated; no combination rule is implemented. Register V-P6C-10."
     }
    ],
    "nextSlice": "priority 6"
@@ -2933,11 +2878,6 @@
      "code": "CONFIGURATION_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
      "text": "The configuration/modification row is SOURCE_VERIFIED only: no certified effect, no Shipyard installation, no attack-time behaviour."
-    },
-    {
-     "code": "ENHANCEMENT_STACKING_UNRULED",
-     "class": "RULES_DEFERRED",
-     "text": "Stacking of double/quad/fire-linked/enhancement damage dice on one weapon is not stated; no combination rule is implemented. Register V-P6C-10."
     }
    ],
    "nextSlice": "priority 6"
@@ -3118,11 +3058,6 @@
      "code": "AUTOFIRE_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
      "text": "Vehicle autofire (swift-action mode switch, -5 attack, area attack that resolves as a single target at starship scale) has no implementation; stock groups printing autofire are refused as unmodeled."
-    },
-    {
-     "code": "MISS_DAMAGE_OF_STARSHIP_SCALE_AREA_UNRULED",
-     "class": "RULES_DEFERRED",
-     "text": "Core Area Attacks say creatures you miss take half damage, and the Scale rule says area attacks resolve as attacks on a single target at starship scale; whether the single target still takes half damage on a miss is not stated. Register V-P6C-07. Implemented behaviour: a miss deals no damage."
     }
    ],
    "nextSlice": "priority 5"
@@ -3139,7 +3074,8 @@
     }
    ],
    "established": [
-    "Burst Fire is a feat: autofire against a specific creature instead of an area at -5 attack for +2 dice of damage, using five shots; not an area attack."
+    "Burst Fire is a feat: autofire against a specific creature instead of an area at -5 attack for +2 dice of damage, using five shots; not an area attack.",
+    "Starships of the Galaxy, Starship Feats, authorizes Burst Fire with autofire-capable vehicle weapons; the extra dice are added before the vehicle damage multiplier (V-P6C-08, RESOLVED_PUBLISHED_RULE). Needs verified feat evidence of the actual operating character; no magazine is invented for energy weapons."
    ],
    "sourceCertification": "NO_CATALOG_ROW",
    "catalogRows": [],
@@ -3169,12 +3105,12 @@
    "overall": "NOT_FULLY_OPERATIONAL",
    "openBlockers": [
     {
-     "code": "BURST_FIRE_VEHICLE_APPLICABILITY_UNRULED",
-     "class": "RULES_DEFERRED",
-     "text": "Burst Fire is a feat (Core: Strength 13, Weapon Proficiency (heavy weapons); -5 attack, +2 dice, five shots). Whether a gunner's feat applies to a vehicle weapon is not stated. Register V-P6C-08."
+     "code": "AUTOFIRE_NOT_IMPLEMENTED",
+     "class": "ENGINEERING",
+     "text": "Vehicle autofire (swift-action mode switch, -5 attack, area attack that resolves as a single target at starship scale) has no implementation; stock groups printing autofire are refused as unmodeled."
     }
    ],
-   "nextSlice": "deferred to a ruling"
+   "nextSlice": "WE-5 (V-P6C-08 resolved: published rule)"
   },
   {
    "id": "launcher-capacity",
