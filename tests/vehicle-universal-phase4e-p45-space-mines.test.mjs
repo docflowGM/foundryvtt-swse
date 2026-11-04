@@ -18,7 +18,7 @@ const ship = (id, hp = 400, size = 'medium', reflex = 15) => ({ id, type: 'vehic
 const tok = (actor, col, row, w = 1, h = 1) => ({ id: `t-${actor.id}`, actor, x: col * 100, y: row * 100, width: w, height: h });
 function sceneWith(tokens = []) {
   const scene = { id: 's1', grid: { size: 100 }, flags: { swse: {} }, tokens, fail: false,
-    async update(d) { if (scene.fail) throw new Error('scene write failed'); for (const [k, v] of Object.entries(d)) { const parts = k.split('.'); let o = scene; for (const q of parts.slice(0, -1)) o = (o[q] ??= {}); o[parts.at(-1).replace(/^==/, '')] = structuredClone(v); } } };
+    async update(d) { if (scene.fail) throw new Error('scene write failed'); for (const [k, v] of Object.entries(d)) { const parts = k.split('.'); let o = scene; for (const q of parts.slice(0, -1)) o = (o[q] ??= {}); const last = parts.at(-1); if (last.startsWith('-=')) delete o[last.slice(2)]; else o[last.replace(/^==/, '')] = structuredClone(v); } } };
   globalThis.canvas.scene = scene; return scene;
 }
 async function minelauncher(id = 'space-mine-launcher', mount = 'turret-1') {

@@ -12,16 +12,15 @@
  */
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js";
-import { readSceneMap, writeSceneMap, sceneGridSize } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-scene-state.js";
-import { INTERDICTION_FLAG, FIELD_REASONS, buildField, validateArea, areaBox, fieldCoversToken, isValidField } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-interdiction-field.js";
+import { readSceneMap, putSceneRecord, deleteSceneRecord, withSceneLock, tokenOnScene, sceneGridSize } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-scene-state.js";
+import { INTERDICTION_FLAG, FIELD_REASONS, INTERDICTED_FLAG, isHyperdriveInterdicted, buildField, validateArea, areaBox, fieldCoversToken, isValidField } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-interdiction-field.js";
 
-export const INTERDICTED_FLAG = 'hyperdriveInterdicted';
+export { INTERDICTED_FLAG, isHyperdriveInterdicted };
 const refuse = (reason, extra = {}) => ({ ok: false, reason, ...extra });
 const gridSizeOf = sceneGridSize;
 const isGM = user => user?.isGM === true;
 
 export const readFields = scene => readSceneMap(scene, INTERDICTION_FLAG, isValidField);
-const writeFields = (scene, fields) => writeSceneMap(scene, INTERDICTION_FLAG, fields);
 
 /** A target the vehicle attack pipeline can measure and roll against: the chosen 4x4 area, Reflex Defense 10 (printed). */
 export function interdictionAreaTarget(area, scene) {
@@ -37,35 +36,34 @@ export async function createFromHit({ vehicle, weapon, authority, area, scene = 
   if (!scene?.id) return refuse(FIELD_REASONS.NO_SCENE);
   if (!validateArea(area).ok) return refuse(FIELD_REASONS.AREA_INVALID);
   if (!isGM(user)) return refuse(FIELD_REASONS.GM_ONLY);
-  const fields = readFields(scene);
-  if (fields.some(f => f.active && f.vehicleId === vehicle?.id && f.area.col === area.col && f.area.row === area.row)) return refuse(FIELD_REASONS.DUPLICATE);
-  const field = buildField({ id: globalThis.foundry?.utils?.randomID?.() ?? `gw-${Date.now()}`, sceneId: scene.id, vehicleId: vehicle?.id ?? null, weaponId: weapon?.id ?? null, area, by: user?.id ?? null, attackTotal });
-  await writeFields(scene, [...fields, field]);
-  return { ok: true, field };
+  return withSceneLock(scene, INTERDICTION_FLAG, async () => {
+    if (readFields(scene).some(f => f.active && f.vehicleId === vehicle?.id && f.area.col === area.col && f.area.row === area.row)) return refuse(FIELD_REASONS.DUPLICATE);
+    const field = buildField({ id: globalThis.foundry?.utils?.randomID?.() ?? `gw-${Date.now()}`, sceneId: scene.id, vehicleId: vehicle?.id ?? null, weaponId: weapon?.id ?? null, area, by: user?.id ?? null, attackTotal });
+    await putSceneRecord(scene, INTERDICTION_FLAG, field);
+    return { ok: true, field };
+  });
 }
 
 export async function setActive({ scene, fieldId, active, user = globalThis.game?.user ?? null } = {}) {
   if (!isGM(user)) return refuse(FIELD_REASONS.GM_ONLY);
-  const fields = readFields(scene), f = fields.find(x => x.id === fieldId);
-  if (!f) return refuse(FIELD_REASONS.NOT_FOUND);
-  await writeFields(scene, fields.map(x => (x.id === fieldId ? { ...x, active: active === true } : x)));
-  return { ok: true };
+  return withSceneLock(scene, INTERDICTION_FLAG, async () => {
+    const f = readFields(scene).find(x => x.id === fieldId);
+    if (!f) return refuse(FIELD_REASONS.NOT_FOUND);
+    await putSceneRecord(scene, INTERDICTION_FLAG, { ...f, active: active === true });
+    return { ok: true };
+  });
 }
 
 export async function removeField({ scene, fieldId, user = globalThis.game?.user ?? null } = {}) {
   if (!isGM(user)) return refuse(FIELD_REASONS.GM_ONLY);
-  const fields = readFields(scene);
-  if (!fields.some(x => x.id === fieldId)) return refuse(FIELD_REASONS.NOT_FOUND);
-  await writeFields(scene, fields.filter(x => x.id !== fieldId));
-  return { ok: true };
+  return withSceneLock(scene, INTERDICTION_FLAG, async () => {
+    if (!readFields(scene).some(x => x.id === fieldId)) return refuse(FIELD_REASONS.NOT_FOUND);
+    await deleteSceneRecord(scene, INTERDICTION_FLAG, fieldId);
+    return { ok: true };
+  });
 }
 
-export const isHyperdriveInterdicted = actor => Array.from(actor?.effects ?? []).some(e => e?.flags?.swse?.[INTERDICTED_FLAG] && e.disabled !== true);
 
-const tokenOf = (actor, scene) => {
-  const tokens = Array.from(actor?.getActiveTokens?.() ?? []);
-  return tokens.find(t => (t?.document?.parent?.id ?? t?.scene?.id) === scene?.id) ?? tokens[0] ?? null;
-};
 
 /**
  * The start of `actor`'s turn: if a starship stands in an ACTIVE field of this scene it is interdicted for that turn. Idempotent per
@@ -74,7 +72,7 @@ const tokenOf = (actor, scene) => {
 export async function applyAtTurnStart({ actor, scene = globalThis.canvas?.scene ?? null, combat = globalThis.game?.combat ?? null } = {}) {
   const out = { applied: [], skipped: [] };
   if (!actor || actor.type !== 'vehicle' || !scene?.id) return out;
-  const token = tokenOf(actor, scene);
+  const token = tokenOnScene(actor, scene);
   if (!token) return out;
   const round = Number(combat?.round ?? 0), turn = Number(combat?.turn ?? -1);
   for (const f of readFields(scene)) {

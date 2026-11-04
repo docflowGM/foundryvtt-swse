@@ -10,12 +10,12 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 |---|---|
 | RULES_DECISION_REQUIRED | 8 |
 | SOURCE_EVIDENCE_MISSING | 8 |
-| ENGINEERING_COMPLEXITY | 23 |
+| ENGINEERING_COMPLEXITY | 25 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 4 |
 | DEPENDENCY_BLOCKED | 9 |
 
-Open items: 53. Resolved items: 18 (listed at the end).
+Open items: 55. Resolved items: 18 (listed at the end).
 
 ## Items (by severity)
 
@@ -41,6 +41,7 @@ Open items: 53. Resolved items: 18 (listed at the end).
 | P6B-D-067 | WEAPON-ECOSYSTEM | Tractor beams: targets larger than the beam vehicle, docking clamps | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-068 | WEAPON-ECOSYSTEM | Ion bombs | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-16 |
 | P6B-D-071 | BATTERIES | Named-gunner rosters for multi-gunner batteries | ENGINEERING_COMPLEXITY | IMPORTANT | no | V-P6C-02 |
+| P6B-D-072 | WEAPON-ECOSYSTEM | Hyperdrive activation consumer for gravity-well interdiction | ENGINEERING_COMPLEXITY | IMPORTANT | no | V-P6C-14 |
 | P6B-D-003 | P6B-1 | jamming-suite, jamming-array | ENGINEERING_COMPLEXITY | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-004 | P6B-1 | combat-thrusters | DEPENDENCY_BLOCKED | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-005 | P6B-1 | navicomputer-limited | RULES_DECISION_REQUIRED | MINOR | yes | V-P6B-01 |
@@ -74,6 +75,7 @@ Open items: 53. Resolved items: 18 (listed at the end).
 | P6B-D-057 | WEAPON-ECOSYSTEM | launcher capacity expansion and the remaining launcher kinds | RULES_DECISION_REQUIRED | MINOR | yes | V-P6A-03, V-P6C-06 |
 | P6B-D-058 | WEAPON-ECOSYSTEM | source-specific special weapons without a printed table row | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
 | P6B-D-070 | WEAPON-ECOSYSTEM | GM-configured stock launchers: groups with other blockers, battery launchers, configuration edit | ENGINEERING_COMPLEXITY | MINOR | no | V-P6C-06 |
+| P6B-D-073 | WEAPON-ECOSYSTEM | Space mine path crossings | ENGINEERING_COMPLEXITY | MINOR | no | V-P6C-15 |
 
 ## Details
 
@@ -612,6 +614,26 @@ Open items: 53. Resolved items: 18 (listed at the end).
 - **Owner ruling needed:** no (V-P6C-02)
 - **Impact:** Named gunners cannot crew a capital-ship battery; abstract crews and the independent-weapon mode are unaffected.
 - **Recommended action:** Extend the crew assignment authority with a gunner roster before touching battery attack math.
+
+### P6B-D-072 - Hyperdrive activation consumer for gravity-well interdiction
+
+- **Source:** Starships of the Galaxy, Gravity Well Projectors
+- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
+- **Reason:** The interdiction field, its turn-start effect and the sheet display are implemented, but the system has no hyperdrive activation action, so nothing refuses a jump. Inventing an activation action is not an interdiction correction.
+- **Missing:** A hyperdrive activation (jump) action that consults isHyperdriveInterdicted before it spends anything.
+- **Owner ruling needed:** no (V-P6C-14)
+- **Impact:** The sheet shows the interdiction; a GM must honor it at the table until an activation action exists.
+- **Recommended action:** When a hyperdrive/astrogation activation flow is built, call isHyperdriveInterdicted (domain/vehicles/vehicle-interdiction-field.js) before any cost.
+
+### P6B-D-073 - Space mine path crossings
+
+- **Source:** Starships of the Galaxy, Space Mines
+- **Category / severity:** ENGINEERING_COMPLEXITY / MINOR
+- **Reason:** A proximity mine detonates for the destination footprint of a moved token; squares crossed during a multi-square move are not tested (a token update carries only its destination).
+- **Missing:** A path (ruler/waypoints) for each move so every square entered can be tested in order.
+- **Owner ruling needed:** no (V-P6C-15)
+- **Impact:** A ship that moves THROUGH a mined square without ending its move there does not trigger it; the GM can detonate or remove mines manually.
+- **Recommended action:** Use the movement path once the movement tracking authority exposes per-move waypoints.
 
 ## Resolved items
 

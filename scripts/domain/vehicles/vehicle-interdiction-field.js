@@ -52,3 +52,7 @@ export function buildField({ id, sceneId, vehicleId, weaponId, area, by = null, 
 }
 
 export const isValidField = f => !!f && f.schema === FIELD_SCHEMA && typeof f.id === 'string' && typeof f.sceneId === 'string' && f.squares === FIELD_SQUARES && validateArea(f.area).ok && typeof f.active === 'boolean';
+
+/** The effect flag the turn-start enforcement stamps, and the ONE query a hyperdrive activation (or its display) consults. */
+export const INTERDICTED_FLAG = 'hyperdriveInterdicted';
+export const isHyperdriveInterdicted = actor => Array.from(actor?.effects ?? []).some(e => e?.flags?.swse?.[INTERDICTED_FLAG] && e.disabled !== true);

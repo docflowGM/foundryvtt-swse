@@ -17,7 +17,7 @@
     <div><span>Passengers</span><strong>{{view.crew.passengersLabel}}</strong></div>
     <div><span>Cargo</span><strong>{{view.cargo.display}}</strong></div>
     <div><span>Consumables</span><strong>{{view.consumables.display}}</strong></div>
-    <div><span>Hyperdrive</span><strong>{{view.hyperdrive.label}}</strong></div>
+    <div><span>Hyperdrive</span><strong>{{view.hyperdrive.label}}</strong>{{#if view.hyperdrive.interdicted}} <em class="swse-interdicted">Interdicted: may not activate its hyperdrive this turn</em>{{/if}}</div>
     <div><span>Published Price</span><strong>{{view.price.label}}</strong></div>
     {{#if view.availability}}<div><span>Availability</span><strong>{{view.availability}}</strong></div>{{/if}}
   </div>

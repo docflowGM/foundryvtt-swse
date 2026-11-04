@@ -83,7 +83,7 @@ export async function runWeaponAction({ action, itemId, vehicle }, deps) {
   }
   if (action === 'mine-detonate' || action === 'mine-remove') {
     const scene = globalThis.canvas?.scene;
-    const r = action === 'mine-remove' ? await mineService.removeMine({ scene, mineId: itemId }) : await mineService.detonate({ scene, mineId: itemId, command: true });
+    const r = action === 'mine-remove' ? await mineService.removeMine({ scene, mineId: itemId }) : await mineService.detonate({ scene, mineId: itemId, command: true, vehicle });
     if (r.ok) notify.info(action === 'mine-remove' ? 'Mine removed.' : `Mine detonated: ${r.results.length} ship(s) in the square.`); else notify.warn(r.reason);
     return r;
   }

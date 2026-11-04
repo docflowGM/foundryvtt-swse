@@ -82,7 +82,11 @@ const rows = inventory.rows.map(row => {
   const attack = aftermarket === 'OFFLINE_TESTED_INSTALL_FIRE_REMOVE' && (plain || overlay) ? 'OFFLINE_TESTED'
     : overlay ? (row.evidence?.stock ? 'OFFLINE_TESTED_STOCK_ONLY' : stock.offlineExecutable > 0 ? 'STOCK_PRINTED_VALUES_ONLY' : 'NOT_IMPLEMENTED')
     : stock.offlineExecutable > 0 && plain ? 'OFFLINE_TESTED_STOCK_ONLY' : 'NOT_IMPLEMENTED';
-  const damageOrEffect = attack === 'NOT_IMPLEMENTED' ? 'NOT_IMPLEMENTED' : `${attack}:${overlay ? 'CONFIGURATION' : DAMAGE_LABEL[row.mechanic] ?? 'SPECIAL'}`;
+  // A special mechanic (mines, tractor beams, shieldbusters ...) declares its modules and tests in the authored inventory; both files must exist.
+  const impl = row.implemented ?? null;
+  if (impl) for (const f of [...impl.modules, ...impl.tests]) if (!fs.existsSync(f)) throw new Error(`${row.id}: implemented ${f} does not exist`);
+  const attackFinal = impl ? (aftermarket === 'OFFLINE_TESTED_INSTALL_FIRE_REMOVE' ? 'OFFLINE_TESTED' : installed.length || stock.offlineExecutable > 0 ? 'OFFLINE_TESTED_PARTIAL' : 'NOT_IMPLEMENTED') : attack;
+  const damageOrEffect = attackFinal === 'NOT_IMPLEMENTED' ? 'NOT_IMPLEMENTED' : `${attackFinal}:${impl ? impl.effect : overlay ? 'CONFIGURATION' : DAMAGE_LABEL[row.mechanic] ?? 'SPECIAL'}`;
   const evidence = row.evidence ?? {};
   for (const [k, f] of Object.entries(evidence)) if (!fs.existsSync(f)) throw new Error(`${row.id}: evidence ${k} -> ${f} does not exist`);
   for (const code of row.blockers) if (!inventory.blockerCatalog[code]) throw new Error(`${row.id}: unknown blocker ${code}`);
@@ -92,7 +96,7 @@ const rows = inventory.rows.map(row => {
     id: row.id, name: row.name, kind: row.kind, mechanic: row.mechanic, sources: row.sources, established: row.established,
     sourceCertification, catalogRows: cats,
     stock, aftermarket: { status: aftermarket, weaponRows: weaponRows.length, installable: installed.length, consumableRows: cats.length - weaponRows.length },
-    attackExecution: attack, damageOrEffectExecution: damageOrEffect,
+    attackExecution: attackFinal, implemented: impl, damageOrEffectExecution: damageOrEffect,
     resourceTracking: row.resources, rangeTable: { slug: row.rangeSlug ?? null, status: rangeStatus },
     configurations: row.applicableConfigurations, evidence,
     liveFoundryVerification: 'NOT_VERIFIED',

@@ -157,3 +157,18 @@ test('STATE: a launcher has exactly one ammunition balance: an Item cannot claim
   assert.equal(family.origin, 'aftermarket');
   assert.equal(w.flags.swse.vehicleAmmo, undefined, 'an aftermarket launcher keeps no Item-level ledger (the vehicle flag is its only balance)');
 });
+
+test('SCENE STATE: only vehicle-scene-state.js writes a Scene (key-level, under the scene lock); the proximity and turn hooks act only on the active GM client', () => {
+  for (const f of vehicleModules.filter(f => !f.endsWith('vehicle-scene-state.js'))) {
+    const src = strip(read(f));
+    assert.doesNotMatch(src, /\bscene\??\.(update|setFlag|unsetFlag)\s*\(/, `${f}: a Scene is written only by vehicle-scene-state.js`);
+    assert.doesNotMatch(src, /writeSceneMap/, `${f}: whole-map scene writes were replaced by key-level records`);
+  }
+  const scene = strip(read('scripts/engine/vehicles/vehicle-scene-state.js'));
+  assert.match(scene, /flags\.swse\.\$\{flag\}\.\$\{record\.id\}/);
+  assert.match(scene, /flags\.swse\.\$\{flag\}\.-=\$\{id\}/);
+  const mines = strip(read('scripts/engine/vehicles/vehicle-mine-service.js'));
+  assert.match(mines, /claimMine\(scene, mineId/, 'a mine is claimed under the lock before it resolves');
+  assert.match(mines, /isResponsibleGM\(user\)/);
+  assert.match(strip(read('scripts/infrastructure/hooks/combat-hooks.js')), /incoming\?\.actor\?\.type === 'vehicle' && isResponsibleGM\(\)/);
+});

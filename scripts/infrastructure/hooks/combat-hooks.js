@@ -19,6 +19,7 @@ import { SpeciesRerollHandler } from "/systems/foundryvtt-swse/scripts/species/s
 import { NativeProjectileService } from "/systems/foundryvtt-swse/scripts/visual/native-projectile-service.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { EncounterUseTracker } from "/systems/foundryvtt-swse/scripts/engine/feats/encounter-use-tracker.js";
+import { isResponsibleGM } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-scene-state.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js";
 
@@ -280,7 +281,7 @@ async function handleWeaponControlTurn(combat, updateData, updateOptions) {
         await handleControlTurnChange(combat, updateData, updateOptions);
         // a starship that starts its turn in an active gravity-well interdiction field (same turn hook; GM client only)
         const incoming = (updateData?.turn != null ? combat?.turns?.[updateData.turn] : null) ?? combat?.combatant ?? null;
-        if (incoming?.actor?.type === 'vehicle') {
+        if (incoming?.actor?.type === 'vehicle' && isResponsibleGM()) {
             const { applyAtTurnStart } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-interdiction-service.js');
             await applyAtTurnStart({ actor: incoming.actor, scene: combat?.scene ?? null, combat });
         }

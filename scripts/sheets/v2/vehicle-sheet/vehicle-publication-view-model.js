@@ -7,6 +7,7 @@
  * rendered as different states; nothing here fabricates a default.
  * No Foundry globals: Node-testable.
  */
+import { isHyperdriveInterdicted } from '../../../domain/vehicles/vehicle-interdiction-field.js';
 import { getVehicleRuntimeProjection } from '../../../domain/vehicles/vehicle-runtime-contract.js';
 
 const finite = value => typeof value === 'number' && Number.isFinite(value);
@@ -128,7 +129,7 @@ export function buildVehiclePublicationViewModel(actor, projection = getVehicleR
     crew: crewView(published.crew, published.capacity?.passengerCount),
     cargo: quantity(published.capacity?.cargo),
     consumables: quantity(published.capacity?.consumables),
-    hyperdrive: hyperdriveView(published.hyperspace),
+    hyperdrive: { ...hyperdriveView(published.hyperspace), interdicted: isHyperdriveInterdicted(actor) },
     price: priceView(published.price),
     availability: text(record.economics?.availability),
     attackReference: {

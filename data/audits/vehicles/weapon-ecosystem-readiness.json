@@ -10,7 +10,7 @@
   "stockGroupsOwnedByAFamily": 801,
   "stockGroupsUnclassified": 45,
   "stockOfflineExecutableGroups": 528,
-  "familiesFullyOperationalOffline": 4,
+  "familiesFullyOperationalOffline": 6,
   "liveVerifiedFamilies": 0
  },
  "unclassifiedStockLabels": [
@@ -144,13 +144,9 @@
    "class": "ENGINEERING",
    "text": "The configuration/modification row is SOURCE_VERIFIED only: no certified effect, no Shipyard installation, no attack-time behaviour."
   },
-  "AUTOFIRE_NOT_IMPLEMENTED": {
-   "class": "ENGINEERING",
-   "text": "Vehicle autofire (swift-action mode switch, -5 attack, area attack that resolves as a single target at starship scale) has no implementation; stock groups printing autofire are refused as unmodeled."
-  },
   "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE": {
    "class": "ENGINEERING",
-   "text": "Launchers and their ammunition have no certified effect: the Shipyard cannot sell or install them. The finite-ammunition ledger and lock-on projectile engine exist (P6C-3C/3D) and are tested on synthetic fixtures only."
+   "text": "This launcher or its ammunition has no certified effect: the Shipyard cannot sell or install it. (Installable launchers use the shared finite-ammunition ledger and lock-on projectile engine, P6C-3C/3D.)"
   },
   "NO_COMPLETE_STOCK_LAUNCHER_FAMILY": {
    "class": "DATA",
@@ -164,25 +160,9 @@
    "class": "SOURCE",
    "text": "Appears only inside vehicle statblocks (no weapon-systems entry in a sourcebook): not a purchasable component."
   },
-  "TRACTOR_BEAM_NOT_IMPLEMENTED": {
-   "class": "ENGINEERING",
-   "text": "STOCK tractor beams run through the existing weapon-control / grapple engines (attack vs Reflex, opposed grapple, grabbed state, per-turn maintenance, range break). Not implemented: the AFTERMARKET tractor beam (no certified weapon specification without damage), a target larger than the beam's vehicle, docking clamps."
-  },
-  "GRAVITY_WELL_NOT_IMPLEMENTED": {
-   "class": "ENGINEERING",
-   "text": "Area placement (4x4 starship squares, attack vs Reflex 10), persistent hyperspace interdiction field and its effect on hyperdrive activation have no implementation."
-  },
-  "MINES_NOT_IMPLEMENTED": {
-   "class": "ENGINEERING",
-   "text": "Swift-action deployment, persistent mine placement, Stealth/Perception/Use Computer detection, IFF and command detonation, and the entering-ship area attack have no implementation."
-  },
   "ION_BOMB_NOT_IMPLEMENTED": {
-   "class": "ENGINEERING",
-   "text": "Atmosphere-only restriction, -5 attack, square beneath the ship, 10-square area ion field and the four-bomb rack are not implemented (ion bomb groups refused)."
-  },
-  "SHIELDBUSTER_NOT_IMPLEMENTED": {
-   "class": "ENGINEERING",
-   "text": "Half damage against anything but shields, and a 10-point (not 5) shield-rating loss when the attack exceeds SR, are not implemented."
+   "class": "RULES_DEFERRED",
+   "text": "Register V-P6C-16 is awaiting an owner ruling (range and target of a dropped bomb). The shared launcher ledger, ion damage and area machinery are ready; ion bomb groups stay refused."
   },
   "POINT_DEFENSE_NOT_IMPLEMENTED": {
    "class": "ENGINEERING",
@@ -206,7 +186,7 @@
   },
   "STOCK_BATTERY_FACTS_INCOMPLETE": {
    "class": "DATA",
-   "text": "Most printed weapon batteries stay refused: they lack a printed gunner or weapon count or a verified station; named-gunner rosters (P6B-D-043) and the stacking of several assisting batteries are not implemented."
+   "text": "Most printed weapon batteries lack a printed weapon count. A GM can certify the count of a printed battery (guarded world-Actor configuration; never inferred from gunners); named-gunner rosters (P6B-D-071) and the stacking of several assisting batteries are not implemented."
   },
   "OPTIONAL_LINK_NOT_IMPLEMENTED": {
    "class": "ENGINEERING",
@@ -215,6 +195,34 @@
   "FIRE_LINKED_LAUNCHERS_BUCKETED": {
    "class": "RULES_DEFERRED",
    "text": "Fire-linked LAUNCHERS (one shot per linked launcher, launcher count and magazine of a linked pair) and the optional fire link (a swift-action toggle on a fire-linked weapon) are not implemented: the published text gives no launcher count or capacity for a linked launcher. Register V-P6C-06; bucketed as P6B-D-050 remainder; fire-linked energy weapons are implemented."
+  },
+  "TRACTOR_BEAM_RESIDUALS_OPEN": {
+   "class": "ENGINEERING",
+   "text": "Stock and aftermarket tractor beams run through the shared weapon-control / grapple engines. Not implemented: a target larger than the beam's vehicle, docking clamps."
+  },
+  "HYPERDRIVE_ACTIVATION_HAS_NO_CONSUMER": {
+   "class": "ENGINEERING",
+   "text": "The 4x4 field, the attack against Reflex 10, the persistent scene record and the per-turn interdiction effect are implemented, and the sheet shows the interdiction; the system has NO hyperdrive activation action, so nothing yet REFUSES a jump (isHyperdriveInterdicted is the query that action must consult). Fields last until a GM ends them (V-P6C-14)."
+  },
+  "MINE_NOTICE_RULING_PENDING": {
+   "class": "RULES_DEFERRED",
+   "text": "Register V-P6C-15 is awaiting an owner ruling: how the Stealth +5 forms the DC for the pilot / system-operator reaction to notice a mine."
+  },
+  "ADVANCED_MINE_NOT_OFFERED": {
+   "class": "DATA",
+   "text": "The advanced mine (+10, 9d10x2) has no launcher row in the catalog and is not offered."
+  },
+  "MINE_PATH_CROSSING_NOT_MODELED": {
+   "class": "ENGINEERING",
+   "text": "Only the destination footprint of a moving token is tested against a mine square; squares crossed during a move are not."
+  },
+  "GRAVITY_MINE_NOT_IMPLEMENTED": {
+   "class": "ENGINEERING",
+   "text": "The Legacy Era Campaign Guide gravity mines (standard area, magnetic hull-attached) are a different source and mechanic from the SotG mines and gravity wells; not implemented."
+  },
+  "NO_CERTIFIED_EFFECT": {
+   "class": "SOURCE",
+   "text": "The catalog row is SOURCE_VERIFIED only: no certified weapon specification, so it cannot be installed."
   }
  },
  "rows": [
@@ -285,6 +293,7 @@
     "consumableRows": 0
    },
    "attackExecution": "OFFLINE_TESTED",
+   "implemented": null,
    "damageOrEffectExecution": "OFFLINE_TESTED:ORDINARY_DAMAGE",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -309,7 +318,7 @@
     {
      "code": "APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
-     "text": "Configurations or modes the source allows for this family that have no tested implementation: triple, autofire."
+     "text": "Configurations or modes the source allows for this family that have no tested implementation: triple."
     }
    ],
    "nextSlice": "done (P6B weapon slice)"
@@ -380,6 +389,7 @@
     "consumableRows": 0
    },
    "attackExecution": "OFFLINE_TESTED",
+   "implemented": null,
    "damageOrEffectExecution": "OFFLINE_TESTED:ORDINARY_DAMAGE",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -405,7 +415,7 @@
     {
      "code": "APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
-     "text": "Configurations or modes the source allows for this family that have no tested implementation: triple, autofire, autoblaster."
+     "text": "Configurations or modes the source allows for this family that have no tested implementation: triple."
     }
    ],
    "nextSlice": "WE-1 done"
@@ -456,8 +466,19 @@
     "installable": 1,
     "consumableRows": 0
    },
-   "attackExecution": "NOT_IMPLEMENTED",
-   "damageOrEffectExecution": "NOT_IMPLEMENTED",
+   "attackExecution": "OFFLINE_TESTED",
+   "implemented": {
+    "effect": "AUTOFIRE_CAPABILITY_GRANT",
+    "modules": [
+     "scripts/domain/vehicles/vehicle-modification-effects.js",
+     "scripts/domain/vehicles/vehicle-fire-mode.js"
+    ],
+    "tests": [
+     "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
+     "tests/vehicle-universal-phase4e-p38-autofire-burst.test.mjs"
+    ]
+   },
+   "damageOrEffectExecution": "OFFLINE_TESTED:AUTOFIRE_CAPABILITY_GRANT",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
     "slug": "blaster-cannons",
@@ -539,6 +560,7 @@
     "consumableRows": 0
    },
    "attackExecution": "OFFLINE_TESTED",
+   "implemented": null,
    "damageOrEffectExecution": "OFFLINE_TESTED:ORDINARY_DAMAGE",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -561,7 +583,7 @@
     {
      "code": "APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
-     "text": "Configurations or modes the source allows for this family that have no tested implementation: triple, autofire."
+     "text": "Configurations or modes the source allows for this family that have no tested implementation: triple."
     }
    ],
    "nextSlice": "WE-1 done"
@@ -637,6 +659,7 @@
     "consumableRows": 0
    },
    "attackExecution": "OFFLINE_TESTED",
+   "implemented": null,
    "damageOrEffectExecution": "OFFLINE_TESTED:ION_LIFECYCLE",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -712,6 +735,7 @@
     "consumableRows": 0
    },
    "attackExecution": "NOT_IMPLEMENTED",
+   "implemented": null,
    "damageOrEffectExecution": "NOT_IMPLEMENTED",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -729,9 +753,9 @@
      "text": "The point-defense modification is not implemented for this weapon."
     },
     {
-     "code": "AUTOFIRE_NOT_IMPLEMENTED",
-     "class": "ENGINEERING",
-     "text": "Vehicle autofire (swift-action mode switch, -5 attack, area attack that resolves as a single target at starship scale) has no implementation; stock groups printing autofire are refused as unmodeled."
+     "code": "NO_CERTIFIED_EFFECT",
+     "class": "SOURCE",
+     "text": "The catalog row is SOURCE_VERIFIED only: no certified weapon specification, so it cannot be installed."
     }
    ],
    "nextSlice": "after point defense and autofire"
@@ -792,6 +816,7 @@
     "consumableRows": 0
    },
    "attackExecution": "NOT_IMPLEMENTED",
+   "implemented": null,
    "damageOrEffectExecution": "NOT_IMPLEMENTED",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -870,6 +895,7 @@
     "consumableRows": 1
    },
    "attackExecution": "OFFLINE_TESTED",
+   "implemented": null,
    "damageOrEffectExecution": "OFFLINE_TESTED:AMMUNITION_LIMITED_DAMAGE",
    "resourceTracking": "AFTERMARKET_LEDGER_OFFLINE_TESTED_STOCK_LEDGER_SYNTHETIC_ONLY",
    "rangeTable": {
@@ -1001,6 +1027,7 @@
     "consumableRows": 3
    },
    "attackExecution": "OFFLINE_TESTED",
+   "implemented": null,
    "damageOrEffectExecution": "OFFLINE_TESTED:AMMUNITION_LIMITED_DAMAGE",
    "resourceTracking": "AFTERMARKET_LEDGER_OFFLINE_TESTED_STOCK_LEDGER_SYNTHETIC_ONLY",
    "rangeTable": {
@@ -1074,6 +1101,7 @@
     "consumableRows": 0
    },
    "attackExecution": "NOT_IMPLEMENTED",
+   "implemented": null,
    "damageOrEffectExecution": "NOT_IMPLEMENTED",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -1088,7 +1116,7 @@
     {
      "code": "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE",
      "class": "ENGINEERING",
-     "text": "Launchers and their ammunition have no certified effect: the Shipyard cannot sell or install them. The finite-ammunition ledger and lock-on projectile engine exist (P6C-3C/3D) and are tested on synthetic fixtures only."
+     "text": "This launcher or its ammunition has no certified effect: the Shipyard cannot sell or install it. (Installable launchers use the shared finite-ammunition ledger and lock-on projectile engine, P6C-3C/3D.)"
     },
     {
      "code": "SOURCE_ROW_NOT_RECONCILED",
@@ -1152,9 +1180,20 @@
     "installable": 1,
     "consumableRows": 1
    },
-   "attackExecution": "NOT_IMPLEMENTED",
-   "damageOrEffectExecution": "NOT_IMPLEMENTED",
-   "resourceTracking": "NOT_IMPLEMENTED",
+   "attackExecution": "OFFLINE_TESTED",
+   "implemented": {
+    "effect": "SHIELDBUSTER",
+    "modules": [
+     "scripts/engine/combat/resolvers/shield-mitigation-resolver.js",
+     "scripts/engine/combat/damage-mitigation-manager.js",
+     "scripts/domain/vehicles/vehicle-modification-effects.js"
+    ],
+    "tests": [
+     "tests/vehicle-universal-phase4e-p41-shieldbuster.test.mjs"
+    ]
+   },
+   "damageOrEffectExecution": "OFFLINE_TESTED:SHIELDBUSTER",
+   "resourceTracking": "AFTERMARKET_LEDGER_OFFLINE_TESTED",
    "rangeTable": {
     "slug": "shieldbuster-torpedoes",
     "status": "TABLE_10_2_ROW_PRESENT"
@@ -1169,22 +1208,12 @@
    "overall": "NOT_FULLY_OPERATIONAL",
    "openBlockers": [
     {
-     "code": "SHIELDBUSTER_NOT_IMPLEMENTED",
-     "class": "ENGINEERING",
-     "text": "Half damage against anything but shields, and a 10-point (not 5) shield-rating loss when the attack exceeds SR, are not implemented."
-    },
-    {
-     "code": "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE",
-     "class": "ENGINEERING",
-     "text": "Launchers and their ammunition have no certified effect: the Shipyard cannot sell or install them. The finite-ammunition ledger and lock-on projectile engine exist (P6C-3C/3D) and are tested on synthetic fixtures only."
-    },
-    {
      "code": "APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
      "text": "Configurations or modes the source allows for this family that have no tested implementation: optional-fire-link, launcher-capacity."
     }
    ],
-   "nextSlice": "priority 8"
+   "nextSlice": "done (V-P6C-13 owner ruling); shared launcher ledger"
   },
   {
    "id": "space-mines",
@@ -1265,9 +1294,21 @@
     "installable": 2,
     "consumableRows": 3
    },
-   "attackExecution": "NOT_IMPLEMENTED",
-   "damageOrEffectExecution": "NOT_IMPLEMENTED",
-   "resourceTracking": "NOT_IMPLEMENTED",
+   "attackExecution": "OFFLINE_TESTED",
+   "implemented": {
+    "effect": "PERSISTENT_AREA_MINES",
+    "modules": [
+     "scripts/engine/vehicles/vehicle-mine-service.js",
+     "scripts/domain/vehicles/vehicle-space-mine.js",
+     "scripts/engine/vehicles/vehicle-scene-state.js"
+    ],
+    "tests": [
+     "tests/vehicle-universal-phase4e-p45-space-mines.test.mjs",
+     "tests/vehicle-universal-phase4e-p47-scene-state-corrections.test.mjs"
+    ]
+   },
+   "damageOrEffectExecution": "OFFLINE_TESTED:PERSISTENT_AREA_MINES",
+   "resourceTracking": "AFTERMARKET_LEDGER_OFFLINE_TESTED",
    "rangeTable": {
     "slug": null,
     "status": "NO_PUBLISHED_RANGE_ROW"
@@ -1278,17 +1319,22 @@
    "overall": "NOT_FULLY_OPERATIONAL",
    "openBlockers": [
     {
-     "code": "MINES_NOT_IMPLEMENTED",
-     "class": "ENGINEERING",
-     "text": "Swift-action deployment, persistent mine placement, Stealth/Perception/Use Computer detection, IFF and command detonation, and the entering-ship area attack have no implementation."
+     "code": "MINE_NOTICE_RULING_PENDING",
+     "class": "RULES_DEFERRED",
+     "text": "Register V-P6C-15 is awaiting an owner ruling: how the Stealth +5 forms the DC for the pilot / system-operator reaction to notice a mine."
     },
     {
-     "code": "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE",
+     "code": "ADVANCED_MINE_NOT_OFFERED",
+     "class": "DATA",
+     "text": "The advanced mine (+10, 9d10x2) has no launcher row in the catalog and is not offered."
+    },
+    {
+     "code": "MINE_PATH_CROSSING_NOT_MODELED",
      "class": "ENGINEERING",
-     "text": "Launchers and their ammunition have no certified effect: the Shipyard cannot sell or install them. The finite-ammunition ledger and lock-on projectile engine exist (P6C-3C/3D) and are tested on synthetic fixtures only."
+     "text": "Only the destination footprint of a moving token is tested against a mine square; squares crossed during a move are not."
     }
    ],
-   "nextSlice": "priority 8"
+   "nextSlice": "deployment, proximity and command detonation done; notice reaction awaits V-P6C-15"
   },
   {
    "id": "ion-bombs",
@@ -1344,6 +1390,7 @@
     "consumableRows": 1
    },
    "attackExecution": "NOT_IMPLEMENTED",
+   "implemented": null,
    "damageOrEffectExecution": "NOT_IMPLEMENTED",
    "resourceTracking": "NOT_IMPLEMENTED",
    "rangeTable": {
@@ -1357,13 +1404,13 @@
    "openBlockers": [
     {
      "code": "ION_BOMB_NOT_IMPLEMENTED",
-     "class": "ENGINEERING",
-     "text": "Atmosphere-only restriction, -5 attack, square beneath the ship, 10-square area ion field and the four-bomb rack are not implemented (ion bomb groups refused)."
+     "class": "RULES_DEFERRED",
+     "text": "Register V-P6C-16 is awaiting an owner ruling (range and target of a dropped bomb). The shared launcher ledger, ion damage and area machinery are ready; ion bomb groups stay refused."
     },
     {
      "code": "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE",
      "class": "ENGINEERING",
-     "text": "Launchers and their ammunition have no certified effect: the Shipyard cannot sell or install them. The finite-ammunition ledger and lock-on projectile engine exist (P6C-3C/3D) and are tested on synthetic fixtures only."
+     "text": "This launcher or its ammunition has no certified effect: the Shipyard cannot sell or install it. (Installable launchers use the shared finite-ammunition ledger and lock-on projectile engine, P6C-3C/3D.)"
     }
    ],
    "nextSlice": "priority 8"
@@ -1418,8 +1465,18 @@
     "installable": 1,
     "consumableRows": 0
    },
-   "attackExecution": "NOT_IMPLEMENTED",
-   "damageOrEffectExecution": "NOT_IMPLEMENTED",
+   "attackExecution": "OFFLINE_TESTED",
+   "implemented": {
+    "effect": "OPPOSED_CONTROL",
+    "modules": [
+     "scripts/engine/vehicles/vehicle-tractor-beam.js",
+     "scripts/engine/combat/weapon-control-effects.js"
+    ],
+    "tests": [
+     "tests/vehicle-universal-phase4e-p40-tractor-beam.test.mjs"
+    ]
+   },
+   "damageOrEffectExecution": "OFFLINE_TESTED:OPPOSED_CONTROL",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
     "slug": "tractor-beams",
@@ -1431,12 +1488,12 @@
    "overall": "NOT_FULLY_OPERATIONAL",
    "openBlockers": [
     {
-     "code": "TRACTOR_BEAM_NOT_IMPLEMENTED",
+     "code": "TRACTOR_BEAM_RESIDUALS_OPEN",
      "class": "ENGINEERING",
-     "text": "STOCK tractor beams run through the existing weapon-control / grapple engines (attack vs Reflex, opposed grapple, grabbed state, per-turn maintenance, range break). Not implemented: the AFTERMARKET tractor beam (no certified weapon specification without damage), a target larger than the beam's vehicle, docking clamps."
+     "text": "Stock and aftermarket tractor beams run through the shared weapon-control / grapple engines. Not implemented: a target larger than the beam's vehicle, docking clamps."
     }
    ],
-   "nextSlice": "priority 9"
+   "nextSlice": "stock and aftermarket done; residuals listed"
   },
   {
    "id": "gravity-well-projectors",
@@ -1483,8 +1540,20 @@
     "installable": 1,
     "consumableRows": 0
    },
-   "attackExecution": "NOT_IMPLEMENTED",
-   "damageOrEffectExecution": "NOT_IMPLEMENTED",
+   "attackExecution": "OFFLINE_TESTED",
+   "implemented": {
+    "effect": "INTERDICTION_FIELD",
+    "modules": [
+     "scripts/engine/vehicles/vehicle-interdiction-service.js",
+     "scripts/domain/vehicles/vehicle-interdiction-field.js",
+     "scripts/engine/vehicles/vehicle-scene-state.js"
+    ],
+    "tests": [
+     "tests/vehicle-universal-phase4e-p44-gravity-well.test.mjs",
+     "tests/vehicle-universal-phase4e-p47-scene-state-corrections.test.mjs"
+    ]
+   },
+   "damageOrEffectExecution": "OFFLINE_TESTED:INTERDICTION_FIELD",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
     "slug": "gravity-well-projectors",
@@ -1496,12 +1565,12 @@
    "overall": "NOT_FULLY_OPERATIONAL",
    "openBlockers": [
     {
-     "code": "GRAVITY_WELL_NOT_IMPLEMENTED",
+     "code": "HYPERDRIVE_ACTIVATION_HAS_NO_CONSUMER",
      "class": "ENGINEERING",
-     "text": "Area placement (4x4 starship squares, attack vs Reflex 10), persistent hyperspace interdiction field and its effect on hyperdrive activation have no implementation."
+     "text": "The 4x4 field, the attack against Reflex 10, the persistent scene record and the per-turn interdiction effect are implemented, and the sheet shows the interdiction; the system has NO hyperdrive activation action, so nothing yet REFUSES a jump (isHyperdriveInterdicted is the query that action must consult). Fields last until a GM ends them (V-P6C-14)."
     }
    ],
-   "nextSlice": "priority 10"
+   "nextSlice": "field, turn-start effect and sheet display done; V-P6C-14 duration convention"
   },
   {
    "id": "docking-guns",
@@ -1549,6 +1618,7 @@
     "consumableRows": 0
    },
    "attackExecution": "NOT_IMPLEMENTED",
+   "implemented": null,
    "damageOrEffectExecution": "NOT_IMPLEMENTED",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -1598,6 +1668,7 @@
     "consumableRows": 0
    },
    "attackExecution": "NOT_IMPLEMENTED",
+   "implemented": null,
    "damageOrEffectExecution": "NOT_IMPLEMENTED",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -1656,6 +1727,7 @@
     "consumableRows": 0
    },
    "attackExecution": "NOT_IMPLEMENTED",
+   "implemented": null,
    "damageOrEffectExecution": "NOT_IMPLEMENTED",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -1725,6 +1797,7 @@
     "consumableRows": 0
    },
    "attackExecution": "NOT_IMPLEMENTED",
+   "implemented": null,
    "damageOrEffectExecution": "NOT_IMPLEMENTED",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -1783,6 +1856,7 @@
     "consumableRows": 0
    },
    "attackExecution": "NOT_IMPLEMENTED",
+   "implemented": null,
    "damageOrEffectExecution": "NOT_IMPLEMENTED",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -1854,6 +1928,7 @@
     "consumableRows": 1
    },
    "attackExecution": "NOT_IMPLEMENTED",
+   "implemented": null,
    "damageOrEffectExecution": "NOT_IMPLEMENTED",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -1873,7 +1948,7 @@
     {
      "code": "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE",
      "class": "ENGINEERING",
-     "text": "Launchers and their ammunition have no certified effect: the Shipyard cannot sell or install them. The finite-ammunition ledger and lock-on projectile engine exist (P6C-3C/3D) and are tested on synthetic fixtures only."
+     "text": "This launcher or its ammunition has no certified effect: the Shipyard cannot sell or install it. (Installable launchers use the shared finite-ammunition ledger and lock-on projectile engine, P6C-3C/3D.)"
     }
    ],
    "nextSlice": "priority 11"
@@ -1934,6 +2009,7 @@
     "consumableRows": 2
    },
    "attackExecution": "NOT_IMPLEMENTED",
+   "implemented": null,
    "damageOrEffectExecution": "NOT_IMPLEMENTED",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -1946,14 +2022,9 @@
    "overall": "NOT_FULLY_OPERATIONAL",
    "openBlockers": [
     {
-     "code": "MINES_NOT_IMPLEMENTED",
+     "code": "GRAVITY_MINE_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
-     "text": "Swift-action deployment, persistent mine placement, Stealth/Perception/Use Computer detection, IFF and command detonation, and the entering-ship area attack have no implementation."
-    },
-    {
-     "code": "GRAVITY_WELL_NOT_IMPLEMENTED",
-     "class": "ENGINEERING",
-     "text": "Area placement (4x4 starship squares, attack vs Reflex 10), persistent hyperspace interdiction field and its effect on hyperdrive activation have no implementation."
+     "text": "The Legacy Era Campaign Guide gravity mines (standard area, magnetic hull-attached) are a different source and mechanic from the SotG mines and gravity wells; not implemented."
     },
     {
      "code": "SPECIAL_WEAPON_NOT_INDIVIDUALLY_VERIFIED",
@@ -2002,6 +2073,7 @@
     "consumableRows": 0
    },
    "attackExecution": "NOT_IMPLEMENTED",
+   "implemented": null,
    "damageOrEffectExecution": "NOT_IMPLEMENTED",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -2068,6 +2140,7 @@
     "consumableRows": 1
    },
    "attackExecution": "NOT_IMPLEMENTED",
+   "implemented": null,
    "damageOrEffectExecution": "NOT_IMPLEMENTED",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -2087,7 +2160,7 @@
     {
      "code": "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE",
      "class": "ENGINEERING",
-     "text": "Launchers and their ammunition have no certified effect: the Shipyard cannot sell or install them. The finite-ammunition ledger and lock-on projectile engine exist (P6C-3C/3D) and are tested on synthetic fixtures only."
+     "text": "This launcher or its ammunition has no certified effect: the Shipyard cannot sell or install it. (Installable launchers use the shared finite-ammunition ledger and lock-on projectile engine, P6C-3C/3D.)"
     }
    ],
    "nextSlice": "priority 11"
@@ -2131,6 +2204,7 @@
     "consumableRows": 0
    },
    "attackExecution": "NOT_IMPLEMENTED",
+   "implemented": null,
    "damageOrEffectExecution": "NOT_IMPLEMENTED",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -2194,6 +2268,7 @@
     "consumableRows": 0
    },
    "attackExecution": "NOT_IMPLEMENTED",
+   "implemented": null,
    "damageOrEffectExecution": "NOT_IMPLEMENTED",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -2257,6 +2332,7 @@
     "consumableRows": 0
    },
    "attackExecution": "NOT_IMPLEMENTED",
+   "implemented": null,
    "damageOrEffectExecution": "NOT_IMPLEMENTED",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -2320,6 +2396,7 @@
     "consumableRows": 0
    },
    "attackExecution": "NOT_IMPLEMENTED",
+   "implemented": null,
    "damageOrEffectExecution": "NOT_IMPLEMENTED",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -2383,6 +2460,7 @@
     "consumableRows": 0
    },
    "attackExecution": "NOT_IMPLEMENTED",
+   "implemented": null,
    "damageOrEffectExecution": "NOT_IMPLEMENTED",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -2454,6 +2532,7 @@
     "consumableRows": 1
    },
    "attackExecution": "NOT_IMPLEMENTED",
+   "implemented": null,
    "damageOrEffectExecution": "NOT_IMPLEMENTED",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -2478,7 +2557,7 @@
     {
      "code": "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE",
      "class": "ENGINEERING",
-     "text": "Launchers and their ammunition have no certified effect: the Shipyard cannot sell or install them. The finite-ammunition ledger and lock-on projectile engine exist (P6C-3C/3D) and are tested on synthetic fixtures only."
+     "text": "This launcher or its ammunition has no certified effect: the Shipyard cannot sell or install it. (Installable launchers use the shared finite-ammunition ledger and lock-on projectile engine, P6C-3C/3D.)"
     }
    ],
    "nextSlice": "priority 11"
@@ -2529,6 +2608,7 @@
     "consumableRows": 0
    },
    "attackExecution": "OFFLINE_TESTED",
+   "implemented": null,
    "damageOrEffectExecution": "OFFLINE_TESTED:CONFIGURATION",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -2575,6 +2655,7 @@
     "consumableRows": 0
    },
    "attackExecution": "STOCK_PRINTED_VALUES_ONLY",
+   "implemented": null,
    "damageOrEffectExecution": "STOCK_PRINTED_VALUES_ONLY:CONFIGURATION",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -2639,6 +2720,7 @@
     "consumableRows": 0
    },
    "attackExecution": "OFFLINE_TESTED",
+   "implemented": null,
    "damageOrEffectExecution": "OFFLINE_TESTED:CONFIGURATION",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -2708,6 +2790,7 @@
     "consumableRows": 0
    },
    "attackExecution": "OFFLINE_TESTED",
+   "implemented": null,
    "damageOrEffectExecution": "OFFLINE_TESTED:CONFIGURATION",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -2774,6 +2857,7 @@
     "consumableRows": 0
    },
    "attackExecution": "NOT_IMPLEMENTED",
+   "implemented": null,
    "damageOrEffectExecution": "NOT_IMPLEMENTED",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -2847,6 +2931,7 @@
     "consumableRows": 0
    },
    "attackExecution": "OFFLINE_TESTED",
+   "implemented": null,
    "damageOrEffectExecution": "OFFLINE_TESTED:CONFIGURATION",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -2892,6 +2977,7 @@
     "consumableRows": 0
    },
    "attackExecution": "OFFLINE_TESTED_STOCK_ONLY",
+   "implemented": null,
    "damageOrEffectExecution": "OFFLINE_TESTED_STOCK_ONLY:CONFIGURATION",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -2909,7 +2995,7 @@
     {
      "code": "STOCK_BATTERY_FACTS_INCOMPLETE",
      "class": "DATA",
-     "text": "Most printed weapon batteries stay refused: they lack a printed gunner or weapon count or a verified station; named-gunner rosters (P6B-D-043) and the stacking of several assisting batteries are not implemented."
+     "text": "Most printed weapon batteries lack a printed weapon count. A GM can certify the count of a printed battery (guarded world-Actor configuration; never inferred from gunners); named-gunner rosters (P6B-D-071) and the stacking of several assisting batteries are not implemented."
     }
    ],
    "nextSlice": "stock done (P6C-2B/3); aftermarket batteries are not a purchasable component"
@@ -2965,6 +3051,7 @@
     "consumableRows": 0
    },
    "attackExecution": "OFFLINE_TESTED",
+   "implemented": null,
    "damageOrEffectExecution": "OFFLINE_TESTED:CONFIGURATION",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -3022,25 +3109,22 @@
     "installable": 0,
     "consumableRows": 0
    },
-   "attackExecution": "NOT_IMPLEMENTED",
-   "damageOrEffectExecution": "NOT_IMPLEMENTED",
+   "attackExecution": "OFFLINE_TESTED_STOCK_ONLY",
+   "implemented": null,
+   "damageOrEffectExecution": "OFFLINE_TESTED_STOCK_ONLY:CONFIGURATION",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
     "slug": null,
     "status": "NO_PUBLISHED_RANGE_ROW"
    },
    "configurations": [],
-   "evidence": {},
+   "evidence": {
+    "stock": "tests/vehicle-universal-phase4e-p38-autofire-burst.test.mjs"
+   },
    "liveFoundryVerification": "NOT_VERIFIED",
-   "overall": "NOT_FULLY_OPERATIONAL",
-   "openBlockers": [
-    {
-     "code": "AUTOFIRE_NOT_IMPLEMENTED",
-     "class": "ENGINEERING",
-     "text": "Vehicle autofire (swift-action mode switch, -5 attack, area attack that resolves as a single target at starship scale) has no implementation; stock groups printing autofire are refused as unmodeled."
-    }
-   ],
-   "nextSlice": "priority 5"
+   "overall": "OFFLINE_OPERATIONAL_LIVE_PENDING",
+   "openBlockers": [],
+   "nextSlice": "done (V-P6C-08); swift action to set autofire, resolved by CombatOptionResolver"
   },
   {
    "id": "burst-fire",
@@ -3072,25 +3156,22 @@
     "installable": 0,
     "consumableRows": 0
    },
-   "attackExecution": "NOT_IMPLEMENTED",
-   "damageOrEffectExecution": "NOT_IMPLEMENTED",
+   "attackExecution": "OFFLINE_TESTED_STOCK_ONLY",
+   "implemented": null,
+   "damageOrEffectExecution": "OFFLINE_TESTED_STOCK_ONLY:CONFIGURATION",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
     "slug": null,
     "status": "NO_PUBLISHED_RANGE_ROW"
    },
    "configurations": [],
-   "evidence": {},
+   "evidence": {
+    "stock": "tests/vehicle-universal-phase4e-p38-autofire-burst.test.mjs"
+   },
    "liveFoundryVerification": "NOT_VERIFIED",
-   "overall": "NOT_FULLY_OPERATIONAL",
-   "openBlockers": [
-    {
-     "code": "AUTOFIRE_NOT_IMPLEMENTED",
-     "class": "ENGINEERING",
-     "text": "Vehicle autofire (swift-action mode switch, -5 attack, area attack that resolves as a single target at starship scale) has no implementation; stock groups printing autofire are refused as unmodeled."
-    }
-   ],
-   "nextSlice": "WE-5 (V-P6C-08 resolved: published rule)"
+   "overall": "OFFLINE_OPERATIONAL_LIVE_PENDING",
+   "openBlockers": [],
+   "nextSlice": "done (V-P6C-08); swift action to set autofire, resolved by CombatOptionResolver"
   },
   {
    "id": "launcher-capacity",
@@ -3123,6 +3204,7 @@
     "consumableRows": 0
    },
    "attackExecution": "NOT_IMPLEMENTED",
+   "implemented": null,
    "damageOrEffectExecution": "NOT_IMPLEMENTED",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
@@ -3137,7 +3219,7 @@
     {
      "code": "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE",
      "class": "ENGINEERING",
-     "text": "Launchers and their ammunition have no certified effect: the Shipyard cannot sell or install them. The finite-ammunition ledger and lock-on projectile engine exist (P6C-3C/3D) and are tested on synthetic fixtures only."
+     "text": "This launcher or its ammunition has no certified effect: the Shipyard cannot sell or install it. (Installable launchers use the shared finite-ammunition ledger and lock-on projectile engine, P6C-3C/3D.)"
     }
    ],
    "nextSlice": "with launcher installation"

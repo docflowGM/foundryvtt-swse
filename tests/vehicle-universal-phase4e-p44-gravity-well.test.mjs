@@ -14,7 +14,7 @@ const { resolveDamageDisposition } = await import('../scripts/engine/combat/dama
 
 const GM = { isGM: true, id: 'gm1' }, PLAYER = { isGM: false, id: 'p1' };
 function sceneStub() {
-  const scene = { id: 's1', grid: { size: 100 }, flags: { swse: {} }, async update(d) { for (const [k, v] of Object.entries(d)) { const parts = k.split('.'); let o = scene; for (const q of parts.slice(0, -1)) o = (o[q] ??= {}); o[parts.at(-1).replace(/^==/, '')] = structuredClone(v); } } };
+  const scene = { id: 's1', grid: { size: 100 }, flags: { swse: {} }, async update(d) { for (const [k, v] of Object.entries(d)) { const parts = k.split('.'); let o = scene; for (const q of parts.slice(0, -1)) o = (o[q] ??= {}); const last = parts.at(-1); if (last.startsWith('-=')) delete o[last.slice(2)]; else o[last.replace(/^==/, '')] = structuredClone(v); } } };
   globalThis.canvas.scene = scene; return scene;
 }
 const ship = (id, x, y, w = 1, h = 1) => ({ id, type: 'vehicle', name: id, effects: [], getActiveTokens: () => [{ document: { x, y, width: w, height: h, parent: { id: 's1' } } }] });
