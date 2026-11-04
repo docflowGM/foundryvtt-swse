@@ -1411,7 +1411,7 @@
     },
     {
       "workstream": "WEAPON-ECOSYSTEM",
-      "ownerRulingNeeded": true,
+      "ownerRulingNeeded": false,
       "linkedDecisions": [
         "V-P6C-13"
       ],
@@ -1424,7 +1424,8 @@
       "reason": "Half-damage ordering against a shielded target is ambiguous in the printed sentence.",
       "missing": "Ruling V-P6C-13.",
       "impact": "Shieldbuster launcher and stock groups.",
-      "recommendedAction": "Implement after the ruling (SR loss -10 is a one-line change in the shield resolver context)."
+      "recommendedAction": "Implement after the ruling (SR loss -10 is a one-line change in the shield resolver context).",
+      "resolution": "OWNER INTERPRETATION V-P6C-13 implemented through the shared shield resolver (SR -10) and mitigation manager (hull halving before DR); the certified aftermarket launcher exists. Stock shieldbuster groups still need payload/launcher allocation (GM configuration path)."
     },
     {
       "workstream": "WEAPON-ECOSYSTEM",

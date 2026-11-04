@@ -4,8 +4,8 @@
  "counts": {
   "sourceListed": 181,
   "sourceVerified": 174,
-  "mechanicSpecified": 78,
-  "operationallyIntegrated": 67
+  "mechanicSpecified": 79,
+  "operationallyIntegrated": 68
  },
  "rows": [
   {
@@ -1915,8 +1915,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon",
+    "test": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {

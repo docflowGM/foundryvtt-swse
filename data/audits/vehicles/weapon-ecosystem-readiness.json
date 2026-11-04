@@ -5,7 +5,7 @@
   "inventoryRows": 41,
   "catalogWeaponRows": 63,
   "catalogRowsCoveredByInventory": 63,
-  "aftermarketInstallableRows": 24,
+  "aftermarketInstallableRows": 25,
   "stockGroups": 846,
   "stockGroupsOwnedByAFamily": 801,
   "stockGroupsUnclassified": 45,
@@ -1120,15 +1120,15 @@
     "Against anything but shields, shieldbusters deal half damage. If an attack exceeds the target's SR, the target loses 10 points of SR (not the normal 5); shields recharge normally.",
     "A standard launcher holds four torpedoes, up to eight at +25% per additional torpedo."
    ],
-   "sourceCertification": "SOURCE_VERIFIED",
+   "sourceCertification": "MECHANIC_SPECIFIED",
    "catalogRows": [
     {
      "id": "shieldbuster-torpedo-launcher",
      "category": "Weapon",
-     "certification": "SOURCE_VERIFIED",
+     "certification": "MECHANIC_SPECIFIED",
      "reconciliation": "MATCHED_CANONICAL",
-     "installable": false,
-     "testFile": null
+     "installable": true,
+     "testFile": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs"
     },
     {
      "id": "shieldbuster-torpedo",
@@ -1147,9 +1147,9 @@
     "basis": "PARTITION: owned by this family"
    },
    "aftermarket": {
-    "status": "NOT_INSTALLABLE",
+    "status": "OFFLINE_TESTED_INSTALL_FIRE_REMOVE",
     "weaponRows": 1,
-    "installable": 0,
+    "installable": 1,
     "consumableRows": 1
    },
    "attackExecution": "NOT_IMPLEMENTED",

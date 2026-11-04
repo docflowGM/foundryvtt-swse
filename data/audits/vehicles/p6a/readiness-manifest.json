@@ -2,10 +2,10 @@
  "schema": "swse.vehicle.p6a.readiness.v1",
  "counts": {
   "exposeAsReference": 181,
-  "installable": 70,
+  "installable": 71,
   "installableAsOption": 8,
-  "mechanicallyApplied": 67,
-  "combatUsable": 16
+  "mechanicallyApplied": 68,
+  "combatUsable": 17
  },
  "rows": [
   {
@@ -1183,13 +1183,12 @@
    "catalogId": "shieldbuster-torpedo-launcher",
    "name": "Shieldbuster Torpedo Launcher",
    "exposeAsReference": true,
-   "installable": false,
+   "installable": true,
    "installableAsOption": false,
-   "mechanicallyApplied": false,
-   "combatUsable": false,
+   "mechanicallyApplied": true,
+   "combatUsable": true,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
-    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+    "REQUIRES_CERTIFIED_MOUNT_OWNED_ITEM_AND_ATTACK_PREFLIGHT"
    ]
   },
   {

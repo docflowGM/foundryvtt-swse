@@ -146,7 +146,7 @@ export function resolveVehicleWeaponAuthority(weapon) {
   if (isStockVehicleWeaponItem(weapon)) {
     if (isInstalledVehicleWeaponItem(weapon)) return { ok: false, reason: 'WEAPON_CLAIMS_BOTH_STOCK_AND_INSTALLED_PROVENANCE' };
     const s = resolveStockWeapon(weapon);
-    return s.ok ? { ok: true, origin: 'stock', operator: s.operator, rangeSlug: s.group.rangeSlug ?? null, pointDefense: s.group.pointDefense === true, ...(s.group.tractorBeam === true ? { tractorBeam: true, ...(Number.isFinite(s.group.tractorGrapple) ? { tractorGrapple: s.group.tractorGrapple } : {}) } : {}), ...(s.group.autofireCapable === true ? { autofireCapable: true } : {}), ...(s.group.area ? { area: s.group.area } : {}), damageRaw: s.spec.damage, ...(s.spec.type ? { damageType: s.spec.type } : {}), ...(s.battery ? { battery: s.battery } : {}), ...(s.ammunition ? { ammunition: s.ammunition } : {}), stock: s } : s;
+    return s.ok ? { ok: true, origin: 'stock', operator: s.operator, rangeSlug: s.group.rangeSlug ?? null, pointDefense: s.group.pointDefense === true, ...(s.ammunition?.ammunition === 'shieldbuster torpedo' ? { shieldbuster: true } : {}), ...(s.group.tractorBeam === true ? { tractorBeam: true, ...(Number.isFinite(s.group.tractorGrapple) ? { tractorGrapple: s.group.tractorGrapple } : {}) } : {}), ...(s.group.autofireCapable === true ? { autofireCapable: true } : {}), ...(s.group.area ? { area: s.group.area } : {}), damageRaw: s.spec.damage, ...(s.spec.type ? { damageType: s.spec.type } : {}), ...(s.battery ? { battery: s.battery } : {}), ...(s.ammunition ? { ammunition: s.ammunition } : {}), stock: s } : s;
   }
   const i = resolveCertifiedInstalledWeapon(weapon);
   if (!i) return null;
@@ -155,7 +155,7 @@ export function resolveVehicleWeaponAuthority(weapon) {
   // derived from the certified specification and the sealed entry (never from the Item).
   const family = aftermarketFamily(i.spec, i.entry);
   return { ok: true, origin: 'installed', operator: i.mount.operatorRole, rangeSlug: i.rangeSlug ?? null, damageRaw: i.damage, ...(i.autofire ? { autofireCapable: true } : {}), installed: i,
-    ...(family ? { ammunition: family } : {}), ...(i.spec.area ? { area: i.spec.area } : {}) };
+    ...(family ? { ammunition: family } : {}), ...(i.spec.area ? { area: i.spec.area } : {}), ...(i.spec.shieldbuster === true ? { shieldbuster: true } : {}) };
 }
 
 /**

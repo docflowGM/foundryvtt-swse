@@ -8,14 +8,14 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 
 | Category | Count |
 |---|---|
-| RULES_DECISION_REQUIRED | 9 |
+| RULES_DECISION_REQUIRED | 8 |
 | SOURCE_EVIDENCE_MISSING | 8 |
 | ENGINEERING_COMPLEXITY | 23 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 4 |
 | DEPENDENCY_BLOCKED | 9 |
 
-Open items: 54. Resolved items: 14 (listed at the end).
+Open items: 53. Resolved items: 15 (listed at the end).
 
 ## Items (by severity)
 
@@ -38,7 +38,6 @@ Open items: 54. Resolved items: 14 (listed at the end).
 | P6B-D-055 | WEAPON-ECOSYSTEM | vehicle tractor beams | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-056 | WEAPON-ECOSYSTEM | gravity well projectors | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-061 | WEAPON-ECOSYSTEM | Burst Fire by an operator other than the named gunner; autofire plus battery | DEPENDENCY_BLOCKED | IMPORTANT | no | V-P6C-08 |
-| P6B-D-064 | WEAPON-ECOSYSTEM | Shieldbuster torpedoes | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-13 |
 | P6B-D-065 | WEAPON-ECOSYSTEM | Gravity well projectors | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-14 |
 | P6B-D-066 | WEAPON-ECOSYSTEM | Space mines | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-067 | WEAPON-ECOSYSTEM | Tractor beams: aftermarket row, targets larger than the beam vehicle, docking clamps | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
@@ -574,16 +573,6 @@ Open items: 54. Resolved items: 14 (listed at the end).
 - **Impact:** Those combinations are refused, not guessed.
 - **Recommended action:** Extend after the operator model batch.
 
-### P6B-D-064 - Shieldbuster torpedoes
-
-- **Source:** Starships of the Galaxy, Shieldbuster Torpedoes
-- **Category / severity:** RULES_DECISION_REQUIRED / IMPORTANT
-- **Reason:** Half-damage ordering against a shielded target is ambiguous in the printed sentence.
-- **Missing:** Ruling V-P6C-13.
-- **Owner ruling needed:** yes (V-P6C-13)
-- **Impact:** Shieldbuster launcher and stock groups.
-- **Recommended action:** Implement after the ruling (SR loss -10 is a one-line change in the shield resolver context).
-
 ### P6B-D-065 - Gravity well projectors
 
 - **Source:** Starships of the Galaxy, Gravity Well Projectors
@@ -695,3 +684,8 @@ Open items: 54. Resolved items: 14 (listed at the end).
 
 - **Resolved:** OWNER APPROVED 2026-11-04. A printed 'N gunners' operator on a group the record independently establishes as a published weapon battery is accepted; the gunner count only removes the assistance bonus of an independently fired weapon; the number of identical weapons is never inferred; full-battery execution requires a source-backed weapon count; an ordinary multi-gunner station is never a battery without independent evidence; unreconciled attack totals stay rejected.
 - **Was:** 170 printed weapon-battery groups were refused only because the operator line read "6 gunners" instead of "battery (6 gunners)". The record's own classification marks them printed batteries and the gunner count is printed. They now run in the existing independent-weapon mode (no weapon count is inferred). Operators printed as alternatives ("pilot or gunner") or as droid / automated systems are parsed once and enforced at the station evidence.
+
+### P6B-D-064 - Shieldbuster torpedoes
+
+- **Resolved:** OWNER INTERPRETATION V-P6C-13 implemented through the shared shield resolver (SR -10) and mitigation manager (hull halving before DR); the certified aftermarket launcher exists. Stock shieldbuster groups still need payload/launcher allocation (GM configuration path).
+- **Was:** Half-damage ordering against a shielded target is ambiguous in the printed sentence.

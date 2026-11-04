@@ -1068,10 +1068,12 @@ export async function rollAttack(actor, weapon, options = {}) {
     // V-P6C-07 (project interpretation): an ordinary splash / area weapon resolved against ONE target at starship scale keeps the area-attack
     // miss rule (Core Special Combat Rules: Area Attacks): a hit deals full damage and a miss deals HALF. The flag is only the miss rule: it is
     // not the character-scale area (no Evasion / cover / critical semantics are added or removed by it).
-    ...((vehicleWeaponAuthority?.ok && vehicleWeaponAuthority.area) || vehicleFireMode.halfDamageOnMiss || vehicleWeaponAuthority?.tractorBeam ? { ruleData: {
+    ...((vehicleWeaponAuthority?.ok && vehicleWeaponAuthority.area) || vehicleFireMode.halfDamageOnMiss || vehicleWeaponAuthority?.tractorBeam || vehicleWeaponAuthority?.shieldbuster ? { ruleData: {
       ...(((vehicleWeaponAuthority?.ok && vehicleWeaponAuthority.area) || vehicleFireMode.halfDamageOnMiss) ? { halfDamageOnMiss: true } : {}),
       // a tractor beam deals no damage (Core, Tractor Beams): the shared disposition offers no damage roll
-      ...(vehicleWeaponAuthority?.tractorBeam ? { noDamage: true } : {}) } } : {}),
+      ...(vehicleWeaponAuthority?.tractorBeam ? { noDamage: true } : {}),
+      // shieldbuster torpedoes (Starships of the Galaxy; V-P6C-13): read by the shared shield / mitigation stages
+      ...(vehicleWeaponAuthority?.shieldbuster ? { shieldbuster: true } : {}) } } : {}),
     // the shared damage engine recognises autofire / burst fire by these attack tags (cover, packet rules)
     ...(vehicleFireMode.mode !== 'single' ? { isAutofire: true, isBurstFire: vehicleFireMode.mode === 'burst', vehicleFireMode: { mode: vehicleFireMode.mode, extraDice: vehicleFireMode.extraDice } } : {}),
     // Phase 5D-E: carry the special-mechanic state (classified mechanics, stored answers, evaluated CT riders) to Damage/Apply

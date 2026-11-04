@@ -1177,3 +1177,6 @@ Implemented as PUBLISHED_RULE (lock-on, Reflex 30 / 10 HP / -5, no second charge
 | Resolution | |
 
 - **Revision 37 (2026-11-04):** appended V-P6C-13 and V-P6C-14. No existing entry changed.
+
+- **V-P6C-13 - `RESOLVED_PROJECT_INTERPRETATION` (owner, 2026-11-04).** A shieldbuster meets Shield Rating at full strength; if it exceeds SR the target loses 10 SR instead of 5; what reaches the hull is halved; Damage Reduction follows. Against a target with no shield it deals half damage. Printed rule: Starships of the Galaxy, Shieldbuster Torpedoes. Sequencing is the project interpretation. Implemented in `shield-mitigation-resolver.js` (isShieldbuster, SR -10) and `damage-mitigation-manager.js` (hull halving before DR), flagged by the weapon authority via `ruleData.shieldbuster`.
+- **Revision 38 (2026-11-04):** recorded the V-P6C-13 interpretation. The original question stays as written above.
