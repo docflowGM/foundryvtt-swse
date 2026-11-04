@@ -19,6 +19,7 @@ import { makeUnusedEmplacementResolver } from "/systems/foundryvtt-swse/scripts/
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 import { readCertifiedInstallations } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-installation-ledger.js";
 import { planInstalledWeaponItemSync } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-installed-weapon-items.js";
+import { readStockBatteryConfigs } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-battery-config.js";
 import { readStockAmmoConfigs } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-ammo-config.js";
 import { planStockWeaponItemSync } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-weapon-items.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
@@ -158,7 +159,7 @@ export class VehicleInstallationService {
     const { entries } = readCertifiedInstallations(src.flags, src.record.identity.sourceEntryKey);
     const plan = () => {
       const items = Array.from(vehicle.items ?? []);
-      const a = planInstalledWeaponItemSync({ items, entries }), b = stock ? planStockWeaponItemSync({ items, record: src.record, gmAmmo: readStockAmmoConfigs(vehicle) }) : { create: [], deleteIds: [] };
+      const a = planInstalledWeaponItemSync({ items, entries }), b = stock ? planStockWeaponItemSync({ items, record: src.record, gmAmmo: readStockAmmoConfigs(vehicle), gmBattery: readStockBatteryConfigs(vehicle) }) : { create: [], deleteIds: [] };
       return { create: [...a.create, ...b.create], deleteIds: [...a.deleteIds, ...b.deleteIds] };
     };
     const first = plan();

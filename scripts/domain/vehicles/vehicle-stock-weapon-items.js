@@ -54,11 +54,11 @@ export function executableModesOf(group) {
  * or removed; Items that are not stock-managed (no stock flag) are never touched.
  * @returns {{create: object[], deleteIds: string[]}}
  */
-export function planStockWeaponItemSync({ items = [], record, gmAmmo = null }) {
+export function planStockWeaponItemSync({ items = [], record, gmAmmo = null, gmBattery = null }) {
   const wanted = new Map();
-  for (const g of assessStockWeaponGroups(record, { gmAmmo }).groups) for (const mode of executableModesOf(g)) wanted.set(itemKey(g.groupKey, mode), buildStockWeaponItemData(record, g, mode));
+  for (const g of assessStockWeaponGroups(record, { gmAmmo, gmBattery }).groups) for (const mode of executableModesOf(g)) wanted.set(itemKey(g.groupKey, mode), buildStockWeaponItemData(record, g, mode));
   const deleteIds = [], kept = new Set(), carried = new Map();
-  const groups = new Map(assessStockWeaponGroups(record, { gmAmmo }).groups.map(g => [g.groupKey, g]));
+  const groups = new Map(assessStockWeaponGroups(record, { gmAmmo, gmBattery }).groups.map(g => [g.groupKey, g]));
   for (const item of items) {
     const groupKey = groupKeyOf(item);
     if (!groupKey) continue;

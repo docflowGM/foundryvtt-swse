@@ -4,7 +4,7 @@
  * action through ActionEconomyConsumption, persisted through ActorEngine). Nothing here decides a rule.
  */
 import { resolveVehicleWeaponAuthority } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
-import { stockAmmoReadinessRows } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-ammo-readiness.js";
+import { stockAmmoReadinessRows, stockBatteryReadinessRows } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-ammo-readiness.js";
 import * as mineService from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-mine-service.js";
 import { readMines } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-mine-service.js";
 import { readFields, interdictionAreaTarget, setActive, removeField } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-interdiction-service.js";
@@ -38,13 +38,15 @@ export function buildWeaponOpsView(actor, { isGM = false } = {}) {
   // Space mines: launcher rows and the mines deployed on this scene (GM controls; deployment writes the Scene)
   const mineLaunchers = items.filter(i => i?.type === 'weapon' && resolveVehicleWeaponAuthority(i)?.mine).map(i => ({ itemId: i.id, name: i.name, canDeploy: canAct && isGM }));
   const mines = isGM ? readMines(scene).map(m => ({ ...m, squareLabel: `column ${m.square.col}, row ${m.square.row}`, typeLabel: m.type === 'heavy' ? 'Heavy mine' : 'Mine', isCommand: m.detonation === 'command', own: m.vehicleId === actor?.id })) : [];
-  return { canAct, fireModes, hasFireModes: fireModes.length > 0, mineLaunchers, hasMineLaunchers: mineLaunchers.length > 0, mines, hasMines: mines.length > 0, isGM, ammoRows, hasAmmoRows: ammoRows.length > 0, gravityWeapons, hasGravityWeapons: gravityWeapons.length > 0, fields, hasFields: fields.length > 0 };
+  // printed batteries: certify the participating-weapon count to enable full-battery mode (GM)
+  const batteryRows = isGM ? stockBatteryReadinessRows(actor).map(r => ({ ...r, stateLabel: r.configured ? `Full battery: ${r.weaponCount} weapons (GM-certified, not canonical)` : 'Independent weapon only: the source prints no weapon count' })) : [];
+  return { canAct, fireModes, hasFireModes: fireModes.length > 0, batteryRows, hasBatteryRows: batteryRows.length > 0, mineLaunchers, hasMineLaunchers: mineLaunchers.length > 0, mines, hasMines: mines.length > 0, isGM, ammoRows, hasAmmoRows: ammoRows.length > 0, gravityWeapons, hasGravityWeapons: gravityWeapons.length > 0, fields, hasFields: fields.length > 0 };
 }
 
 export async function runWeaponAction({ action, itemId, vehicle }, deps) {
   const { service, notify } = deps;
   const weapon = vehicle?.items?.get?.(itemId) ?? [...(vehicle?.items ?? [])].find(i => i.id === itemId);
-  if (!weapon && !/^(ammo-config|interdiction-|mine-(detonate|remove))/.test(String(action))) { notify.warn('That weapon is no longer on the vehicle.'); return { ok: false, reason: 'WEAPON_NOT_FOUND' }; }
+  if (!weapon && !/^(ammo-config|battery-config|interdiction-|mine-(detonate|remove))/.test(String(action))) { notify.warn('That weapon is no longer on the vehicle.'); return { ok: false, reason: 'WEAPON_NOT_FOUND' }; }
   if (action === 'fire-mode-autofire' || action === 'fire-mode-single') {
     const mode = action === 'fire-mode-autofire' ? 'autofire' : 'single';
     const r = await (service.fireMode ?? service).setMode({ vehicle, weapon, mode });
@@ -60,6 +62,19 @@ export async function runWeaponAction({ action, itemId, vehicle }, deps) {
     const target = interdictionAreaTarget(area, scene);
     const r = await SWSERoll.rollAttack(vehicle, weapon, { target, interdictionArea: area });
     return { ok: !!r, result: r };
+  }
+  if (action === 'battery-config' || action === 'battery-config-clear') {
+    const groupKey = itemId;
+    if (action === 'battery-config-clear') {
+      const r = await service.ammoConfig.clearBattery({ vehicle, groupKey });
+      if (r.success) notify.info('Battery weapon-count certification removed.'); else notify.warn(r.reasons?.join(', ') ?? 'refused');
+      return r;
+    }
+    const input = await deps.askBatteryCount?.(stockBatteryReadinessRows(vehicle).find(x => x.groupKey === groupKey));
+    if (!input) return { success: false, reasons: ['CANCELLED'] };
+    const r = await service.ammoConfig.configureBattery({ vehicle, groupKey, weaponCount: input.weaponCount, reason: input.reason });
+    if (r.success) notify.info('Battery certified for full-battery mode (GM-certified, not canonical).'); else notify.warn(r.reasons?.join(', ') ?? 'refused');
+    return r;
   }
   if (action === 'mine-deploy') {
     const r = await mineService.deploy({ vehicle, weapon });

@@ -9,6 +9,7 @@
   "vehiclesWithOfflineExecutableGroup": 331,
   "vehiclesAllGroupsExecutable": 169,
   "gmConfigurableGroups": 97,
+  "gmBatteryConfigurableGroups": 201,
   "liveVerifiedVehicles": 0
  },
  "batteries": {
@@ -985,7 +986,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": false,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "core-imperial-i-class-star-destroyer-printed-attack-2",
@@ -1019,7 +1021,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": false,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "core-imperial-i-class-star-destroyer-printed-attack-3",
@@ -1052,7 +1055,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": false,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "core-imperial-i-class-star-destroyer-printed-attack-4",
@@ -2626,7 +2630,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -3234,7 +3239,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -3519,7 +3525,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "cw-invisible-hand-source-attack-2",
@@ -3552,7 +3559,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "cw-invisible-hand-source-attack-3",
@@ -3614,7 +3622,8 @@
      "refusals": [
       "STOCK_EVIDENCE_UNMODELED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "cw-invisible-hand-source-attack-5",
@@ -3652,7 +3661,8 @@
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -4030,7 +4040,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "cw-medstar-class-frigate-source-attack-2",
@@ -4063,7 +4074,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "cw-medstar-class-frigate-source-attack-3",
@@ -4417,7 +4429,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "cw-pelta-class-medical-frigate-source-attack-2",
@@ -4450,7 +4463,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "cw-pelta-class-medical-frigate-source-attack-3",
@@ -4483,7 +4497,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -4631,7 +4646,8 @@
      "refusals": [
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "cw-providence-class-destroyer-source-attack-2",
@@ -4665,7 +4681,8 @@
      "refusals": [
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "cw-providence-class-destroyer-source-attack-3",
@@ -4728,7 +4745,8 @@
       "STOCK_EVIDENCE_UNMODELED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "cw-providence-class-destroyer-source-attack-5",
@@ -4767,7 +4785,8 @@
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -5106,7 +5125,8 @@
      "refusals": [
       "STOCK_EVIDENCE_UNMODELED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "cw-sabaoth-destroyer-source-attack-2",
@@ -5139,7 +5159,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -5591,7 +5612,8 @@
      "refusals": [
       "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "cw-subjugator-class-heavy-cruiser-source-attack-2",
@@ -5625,7 +5647,8 @@
      "refusals": [
       "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "cw-subjugator-class-heavy-cruiser-source-attack-3",
@@ -5659,7 +5682,8 @@
      "refusals": [
       "STOCK_EVIDENCE_UNMODELED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "cw-subjugator-class-heavy-cruiser-source-attack-4",
@@ -5693,7 +5717,8 @@
      "refusals": [
       "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "cw-subjugator-class-heavy-cruiser-source-attack-5",
@@ -5972,7 +5997,8 @@
      "refusals": [
       "STOCK_EVIDENCE_UNMODELED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -6623,7 +6649,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "fucg-escort-carrier-attack-2",
@@ -6719,7 +6746,8 @@
      "refusals": [
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "fucg-gladiator-class-star-destroyer-attack-2",
@@ -6752,7 +6780,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "fucg-gladiator-class-star-destroyer-attack-3",
@@ -6794,7 +6823,8 @@
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "fucg-gladiator-class-star-destroyer-attack-4",
@@ -6829,7 +6859,8 @@
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -6877,7 +6908,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": false,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -7268,7 +7300,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "fucg-neutron-star-bulk-cruiser-attack-2",
@@ -7679,7 +7712,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -7960,7 +7994,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "fucg-venator-class-star-destroyer-attack-2",
@@ -8018,7 +8053,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "fucg-venator-class-star-destroyer-attack-4",
@@ -8051,7 +8087,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "fucg-venator-class-star-destroyer-attack-5",
@@ -8085,7 +8122,8 @@
      "refusals": [
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "fucg-venator-class-star-destroyer-attack-6",
@@ -8167,7 +8205,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "fucg-victory-i-class-star-destroyer-attack-2",
@@ -8200,7 +8239,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "fucg-victory-i-class-star-destroyer-attack-3",
@@ -8241,7 +8281,8 @@
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "fucg-victory-i-class-star-destroyer-attack-4",
@@ -8276,7 +8317,8 @@
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -8378,7 +8420,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "gaw-corona-class-armed-transport-source-attack-2",
@@ -8412,7 +8455,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "gaw-corona-class-armed-transport-source-attack-3",
@@ -8445,7 +8489,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "gaw-corona-class-armed-transport-source-attack-4",
@@ -8479,7 +8524,8 @@
      "refusals": [
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -10027,7 +10073,8 @@
      "refusals": [
       "STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-eleaor-propulsion-starscape-class-yacht-printed-attack-2",
@@ -10061,7 +10108,8 @@
      "refusals": [
       "STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -10149,7 +10197,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-jehavey-ir-type-assault-ship-printed-attack-2",
@@ -10183,7 +10232,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-jehavey-ir-type-assault-ship-printed-attack-3",
@@ -10220,7 +10270,8 @@
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -10268,7 +10319,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-kandosii-type-dreadnaught-printed-attack-2",
@@ -10301,7 +10353,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-kandosii-type-dreadnaught-printed-attack-3",
@@ -10338,7 +10391,8 @@
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-kandosii-type-dreadnaught-printed-attack-4",
@@ -10371,7 +10425,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -10459,7 +10514,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-koros-spaceworks-supremacy-class-attack-ship-printed-attack-2",
@@ -10493,7 +10549,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-koros-spaceworks-supremacy-class-attack-ship-printed-attack-3",
@@ -10526,7 +10583,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-koros-spaceworks-supremacy-class-attack-ship-printed-attack-4",
@@ -10559,7 +10617,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -10608,7 +10667,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-kyramud-type-battleship-printed-attack-2",
@@ -10641,7 +10701,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-kyramud-type-battleship-printed-attack-3",
@@ -10678,7 +10739,8 @@
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-kyramud-type-battleship-printed-attack-4",
@@ -10711,7 +10773,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -10852,7 +10915,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-rendili-hyperworks-hammerhead-class-cruiser-printed-attack-2",
@@ -10885,7 +10949,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-rendili-hyperworks-hammerhead-class-cruiser-printed-attack-3",
@@ -10918,7 +10983,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-rendili-hyperworks-hammerhead-class-cruiser-printed-attack-4",
@@ -10951,7 +11017,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -10999,7 +11066,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-rendili-hyperworks-inexpugnable-class-tactical-command-vessel-printed-attack-2",
@@ -11032,7 +11100,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-rendili-hyperworks-inexpugnable-class-tactical-command-vessel-printed-attack-3",
@@ -11065,7 +11134,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-rendili-hyperworks-inexpugnable-class-tactical-command-vessel-printed-attack-4",
@@ -11098,7 +11168,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -11147,7 +11218,8 @@
      "refusals": [
       "STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-rendili-hyperworks-praetorian-class-frigate-printed-attack-2",
@@ -11180,7 +11252,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-rendili-hyperworks-praetorian-class-frigate-printed-attack-3",
@@ -11214,7 +11287,8 @@
      "refusals": [
       "STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -11372,7 +11446,8 @@
      "refusals": [
       "STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -11500,7 +11575,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-shaadlar-type-troopship-printed-attack-2",
@@ -11534,7 +11610,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-shaadlar-type-troopship-printed-attack-3",
@@ -11573,7 +11650,8 @@
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -11650,7 +11728,8 @@
      "refusals": [
       "STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-star-forge-manufacture-centurion-class-battlecruiser-printed-attack-2",
@@ -11685,7 +11764,8 @@
      "refusals": [
       "STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-star-forge-manufacture-centurion-class-battlecruiser-printed-attack-3",
@@ -11718,7 +11798,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-star-forge-manufacture-centurion-class-battlecruiser-printed-attack-4",
@@ -11752,7 +11833,8 @@
      "refusals": [
       "STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -11801,7 +11883,8 @@
      "refusals": [
       "STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-star-forge-manufacture-derriphan-class-battleship-printed-attack-2",
@@ -11839,7 +11922,8 @@
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -11954,7 +12038,8 @@
      "refusals": [
       "STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-star-forge-manufacture-interdictor-class-warship-printed-attack-2",
@@ -11987,7 +12072,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-star-forge-manufacture-interdictor-class-warship-printed-attack-3",
@@ -12021,7 +12107,8 @@
      "refusals": [
       "STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "kotor-star-forge-manufacture-interdictor-class-warship-printed-attack-4",
@@ -12431,7 +12518,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-ardent-class-fast-frigate-published-attack-2",
@@ -12464,7 +12552,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-ardent-class-fast-frigate-published-attack-3",
@@ -12497,7 +12586,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-ardent-class-fast-frigate-published-attack-4",
@@ -12530,7 +12620,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -12885,7 +12976,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-crimson-axe-published-attack-2",
@@ -12918,7 +13010,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-crimson-axe-published-attack-3",
@@ -13016,7 +13109,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": false,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -13089,7 +13183,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": false,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -13217,7 +13312,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-golan-viii-space-defense-platform-published-attack-2",
@@ -13250,7 +13346,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-golan-viii-space-defense-platform-published-attack-3",
@@ -13287,7 +13384,8 @@
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-golan-viii-space-defense-platform-published-attack-4",
@@ -13557,7 +13655,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-imperious-class-star-destroyer-published-attack-2",
@@ -13590,7 +13689,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-imperious-class-star-destroyer-published-attack-3",
@@ -13624,7 +13724,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-imperious-class-star-destroyer-published-attack-4",
@@ -13657,7 +13758,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-imperious-class-star-destroyer-published-attack-5",
@@ -13694,7 +13796,8 @@
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-imperious-class-star-destroyer-published-attack-6",
@@ -13775,7 +13878,8 @@
      "refusals": [
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-indomitable-scythe-class-battle-cruiser-published-attack-2",
@@ -13809,7 +13913,8 @@
      "refusals": [
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-indomitable-scythe-class-battle-cruiser-published-attack-3",
@@ -13844,7 +13949,8 @@
      "refusals": [
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-indomitable-scythe-class-battle-cruiser-published-attack-4",
@@ -13878,7 +13984,8 @@
      "refusals": [
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-indomitable-scythe-class-battle-cruiser-published-attack-5",
@@ -13920,7 +14027,8 @@
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -14172,7 +14280,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": false,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-mt-dropship-published-attack-2",
@@ -14419,7 +14528,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": false,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-nune-class-imperial-shuttle-published-attack-3",
@@ -14492,7 +14602,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-pellaeon-class-star-destroyer-published-attack-2",
@@ -14525,7 +14636,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-pellaeon-class-star-destroyer-published-attack-3",
@@ -14559,7 +14671,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-pellaeon-class-star-destroyer-published-attack-4",
@@ -14592,7 +14705,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-pellaeon-class-star-destroyer-published-attack-5",
@@ -14629,7 +14743,8 @@
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -14935,7 +15050,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-rendili-star-drive-mobile-spacedock-220-published-attack-2",
@@ -14968,7 +15084,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-rendili-star-drive-mobile-spacedock-220-published-attack-3",
@@ -15043,7 +15160,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-sabertooth-class-assault-rescue-vessel-published-attack-2",
@@ -15076,7 +15194,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-sabertooth-class-assault-rescue-vessel-published-attack-3",
@@ -15109,7 +15228,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -15198,7 +15318,8 @@
      "refusals": [
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-scythe-class-battle-cruiser-published-attack-2",
@@ -15232,7 +15353,8 @@
      "refusals": [
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-scythe-class-battle-cruiser-published-attack-3",
@@ -15267,7 +15389,8 @@
      "refusals": [
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-scythe-class-battle-cruiser-published-attack-4",
@@ -15301,7 +15424,8 @@
      "refusals": [
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-scythe-class-battle-cruiser-published-attack-5",
@@ -15343,7 +15467,8 @@
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -15391,7 +15516,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-shashore-class-frigate-published-attack-2",
@@ -15424,7 +15550,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-shashore-class-frigate-published-attack-3",
@@ -15465,7 +15592,8 @@
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-shashore-class-frigate-published-attack-4",
@@ -15498,7 +15626,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -15586,7 +15715,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -15764,7 +15894,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-the-wheel-published-attack-2",
@@ -15797,7 +15928,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-the-wheel-published-attack-3",
@@ -15831,7 +15963,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-the-wheel-published-attack-4",
@@ -15906,7 +16039,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-tri-scythe-class-frigate-published-attack-2",
@@ -15939,7 +16073,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-tri-scythe-class-frigate-published-attack-3",
@@ -15972,7 +16107,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-tri-scythe-class-frigate-published-attack-4",
@@ -16013,7 +16149,8 @@
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -16184,7 +16321,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "le-yz-2500-heavy-transport-published-attack-2",
@@ -17023,7 +17161,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "re-imperial-cargo-ship-published-attack-2",
@@ -17056,7 +17195,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -17104,7 +17244,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "re-imperial-ii-class-frigate-published-attack-2",
@@ -17138,7 +17279,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "re-imperial-ii-class-frigate-published-attack-3",
@@ -17171,7 +17313,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "re-imperial-ii-class-frigate-published-attack-4",
@@ -17204,7 +17347,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -17499,7 +17643,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "re-keldabe-class-battleship-published-attack-2",
@@ -17533,7 +17678,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "re-keldabe-class-battleship-published-attack-3",
@@ -17601,7 +17747,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -19950,7 +20097,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sav-errant-venture-attack-2",
@@ -19983,7 +20131,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sav-errant-venture-attack-3",
@@ -20016,7 +20165,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sav-errant-venture-attack-4",
@@ -20050,7 +20200,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sav-errant-venture-attack-5",
@@ -20123,7 +20274,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sav-kaloth-style-battlecruiser-attack-2",
@@ -20156,7 +20308,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sav-kaloth-style-battlecruiser-attack-3",
@@ -20270,7 +20423,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -20780,7 +20934,8 @@
      "refusals": [
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-archaic-heavy-cruiser-group-2",
@@ -20814,7 +20969,8 @@
      "refusals": [
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-archaic-heavy-cruiser-group-3",
@@ -21013,7 +21169,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-banking-clan-munificent-class-frigate-group-4",
@@ -21046,7 +21203,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-banking-clan-munificent-class-frigate-group-5",
@@ -21079,7 +21237,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -21430,7 +21589,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -21503,7 +21663,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-corellian-gunship-group-3",
@@ -21704,7 +21865,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-damorian-manufacturing-s-carrack-class-light-cruiser-group-2",
@@ -21737,7 +21899,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-damorian-manufacturing-s-carrack-class-light-cruiser-group-3",
@@ -21772,7 +21935,8 @@
       "STOCK_EVIDENCE_UNMODELED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -21928,7 +22092,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-eclipse-group-3",
@@ -21961,7 +22126,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-eclipse-group-4",
@@ -21994,7 +22160,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-eclipse-group-5",
@@ -22028,7 +22195,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-eclipse-group-6",
@@ -22062,7 +22230,8 @@
      "refusals": [
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -22164,7 +22333,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-fondor-shipyards-super-star-destroyer-group-2",
@@ -22197,7 +22367,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-fondor-shipyards-super-star-destroyer-group-3",
@@ -22231,7 +22402,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-fondor-shipyards-super-star-destroyer-group-4",
@@ -22265,7 +22437,8 @@
      "refusals": [
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-fondor-shipyards-super-star-destroyer-group-5",
@@ -22307,7 +22480,8 @@
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -22542,7 +22716,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": false,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-gozanti-cruiser-group-3",
@@ -22575,7 +22750,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": false,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -22663,7 +22839,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-hapan-battle-dragon-group-2",
@@ -22697,7 +22874,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-hapan-battle-dragon-group-3",
@@ -22737,7 +22915,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-hapan-battle-dragon-group-4",
@@ -22869,7 +23048,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-hapes-nova-cruiser-group-2",
@@ -22902,7 +23082,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-hapes-nova-cruiser-group-3",
@@ -22936,7 +23117,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -22984,7 +23166,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-hoersch-kessel-drive-inc-lucrehulk-class-battleship-group-2",
@@ -23017,7 +23200,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-hoersch-kessel-drive-inc-lucrehulk-class-battleship-group-3",
@@ -23050,7 +23234,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -23098,7 +23283,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-hoersch-kessel-drive-inc-lucrehulk-class-core-ship-group-2",
@@ -23131,7 +23317,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-hoersch-kessel-drive-inc-lucrehulk-class-core-ship-group-3",
@@ -23164,7 +23351,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -23212,7 +23400,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -23260,7 +23449,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-home-one-group-2",
@@ -23294,7 +23484,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-home-one-group-3",
@@ -23327,7 +23518,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -23415,7 +23607,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-immobilizer-418-interdictor-class-heavy-cruiser-group-2",
@@ -24626,7 +24819,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": false,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-krayt-s-honor-group-4",
@@ -24659,7 +24853,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": false,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -24707,7 +24902,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-kuat-drive-yards-imperial-ii-class-star-destroyer-group-2",
@@ -24740,7 +24936,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-kuat-drive-yards-imperial-ii-class-star-destroyer-group-3",
@@ -24774,7 +24971,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-kuat-drive-yards-imperial-ii-class-star-destroyer-group-4",
@@ -24807,7 +25005,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -24855,7 +25054,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -24903,7 +25103,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-kuat-drive-yards-nebulon-b-frigate-group-2",
@@ -24936,7 +25137,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-kuat-drive-yards-nebulon-b-frigate-group-3",
@@ -25009,7 +25211,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-kuat-drive-yards-pellaeon-class-star-destroyer-group-2",
@@ -25042,7 +25245,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-kuat-drive-yards-pellaeon-class-star-destroyer-group-3",
@@ -25076,7 +25280,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-kuat-drive-yards-pellaeon-class-star-destroyer-group-4",
@@ -25109,7 +25314,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-kuat-drive-yards-pellaeon-class-star-destroyer-group-5",
@@ -25149,7 +25355,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -25197,7 +25404,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-kuat-drive-yards-star-galleon-group-2",
@@ -25450,7 +25658,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-loronar-corporation-strike-class-medium-cruiser-group-2",
@@ -25483,7 +25692,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-loronar-corporation-strike-class-medium-cruiser-group-3",
@@ -25517,7 +25727,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-loronar-corporation-strike-class-medium-cruiser-group-4",
@@ -25551,7 +25762,8 @@
      "refusals": [
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -25599,7 +25811,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-lusankya-group-2",
@@ -25632,7 +25845,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-lusankya-group-3",
@@ -25665,7 +25879,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-lusankya-group-4",
@@ -25699,7 +25914,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-lusankya-group-5",
@@ -25733,7 +25949,8 @@
      "refusals": [
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-lusankya-group-6",
@@ -25775,7 +25992,8 @@
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -26035,7 +26253,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-mon-calamari-mc80-star-cruiser-group-2",
@@ -26069,7 +26288,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-mon-calamari-mc80-star-cruiser-group-3",
@@ -26102,7 +26322,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -26150,7 +26371,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-mon-calamari-star-defender-group-2",
@@ -26183,7 +26405,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-mon-calamari-star-defender-group-3",
@@ -26216,7 +26439,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-mon-calamari-star-defender-group-4",
@@ -26250,7 +26474,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-mon-calamari-star-defender-group-5",
@@ -26283,7 +26508,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-mon-calamari-star-defender-group-6",
@@ -26325,7 +26551,8 @@
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -26374,7 +26601,8 @@
      "refusals": [
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-nebula-class-star-destroyer-group-2",
@@ -26408,7 +26636,8 @@
      "refusals": [
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-nebula-class-star-destroyer-group-3",
@@ -26443,7 +26672,8 @@
      "refusals": [
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-nebula-class-star-destroyer-group-4",
@@ -26478,7 +26708,8 @@
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-nebula-class-star-destroyer-group-5",
@@ -26519,7 +26750,8 @@
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -26713,7 +26945,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-outbound-flight-group-2",
@@ -26746,7 +26979,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-outbound-flight-group-3",
@@ -26779,7 +27013,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -26966,7 +27201,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-rebel-assault-frigate-mk-i-group-2",
@@ -26999,7 +27235,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-rebel-assault-frigate-mk-i-group-3",
@@ -27032,7 +27269,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -27080,7 +27318,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-rebel-assault-frigate-mk-ii-group-2",
@@ -27113,7 +27352,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-rebel-assault-frigate-mk-ii-group-3",
@@ -27146,7 +27386,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -27194,7 +27435,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-rebel-assault-frigate-prototype-group-2",
@@ -27227,7 +27469,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-rebel-assault-frigate-prototype-group-3",
@@ -27260,7 +27503,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -27333,7 +27577,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-recusant-class-light-destroyer-group-3",
@@ -27366,7 +27611,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-recusant-class-light-destroyer-group-4",
@@ -27400,7 +27646,8 @@
      "refusals": [
       "STOCK_EVIDENCE_UNMODELED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-recusant-class-light-destroyer-group-5",
@@ -27434,7 +27681,8 @@
      "refusals": [
       "STOCK_EVIDENCE_UNMODELED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -27530,7 +27778,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-rendili-stardrive-dreadnaught-class-heavy-cruiser-group-2",
@@ -27563,7 +27812,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-rendili-stardrive-dreadnaught-class-heavy-cruiser-group-3",
@@ -27636,7 +27886,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-rendili-stardrive-victory-ii-class-star-destroyer-group-2",
@@ -27669,7 +27920,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-rendili-stardrive-victory-ii-class-star-destroyer-group-3",
@@ -27703,7 +27955,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-rendili-stardrive-victory-ii-class-star-destroyer-group-4",
@@ -27736,7 +27989,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -27784,7 +28038,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-rothana-heavy-engineering-acclamator-class-transgalactic-military-assault-ship-group-2",
@@ -27817,7 +28072,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-rothana-heavy-engineering-acclamator-class-transgalactic-military-assault-ship-group-3",
@@ -27898,7 +28154,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-rothana-heavy-engineering-acclamator-ii-class-transgalactic-military-assault-ship-group-2",
@@ -28112,7 +28369,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": false,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-sienar-fleet-systems-lambda-class-shuttle-group-2",
@@ -28572,7 +28830,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-sienar-technologies-marauder-corvette-group-2",
@@ -28605,7 +28864,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -29599,7 +29859,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-venator-class-star-destroyer-group-2",
@@ -29657,7 +29918,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-venator-class-star-destroyer-group-4",
@@ -29690,7 +29952,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-venator-class-star-destroyer-group-5",
@@ -29767,7 +30030,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-vindicator-class-heavy-cruiser-group-2",
@@ -29800,7 +30064,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-vindicator-class-heavy-cruiser-group-3",
@@ -29833,7 +30098,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-vindicator-class-heavy-cruiser-group-4",
@@ -29867,7 +30133,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "sotg-vindicator-class-heavy-cruiser-group-5",
@@ -29900,7 +30167,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -30651,7 +30919,8 @@
      "refusals": [
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "ur-kuat-drive-yards-star-seeder-class-colony-ship-published-attack-2",
@@ -30685,7 +30954,8 @@
      "refusals": [
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
-     ]
+     ],
+     "gmBatteryConfigurable": true
     }
    ]
   },
@@ -30947,7 +31217,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "ur-royal-fortune-light-clipper-published-attack-2",
@@ -30980,7 +31251,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "ur-royal-fortune-light-clipper-published-attack-3",
@@ -31278,7 +31550,8 @@
       "independent-weapon"
      ],
      "capitalShipPenaltyApplies": true,
-     "refusals": []
+     "refusals": [],
+     "gmBatteryConfigurable": true
     },
     {
      "groupKey": "ur-surfeik-cruiser-published-attack-2",

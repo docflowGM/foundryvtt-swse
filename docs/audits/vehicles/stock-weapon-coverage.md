@@ -13,6 +13,7 @@ Three claims are kept apart: **SOURCE_VERIFIED** (the published configuration is
 | Vehicles with at least one OFFLINE_EXECUTABLE group | 331 (77.2%) |
 | Vehicles with every group executable | 169 |
 | Groups GM-configurable (missing ammunition facts only; not counted above) | 97 |
+| Printed batteries a GM can certify for full-battery mode (already executable independently; not counted above) | 201 |
 | Vehicles LIVE_VERIFIED | 0 |
 
 ## Weapon batteries (Core p. 170)

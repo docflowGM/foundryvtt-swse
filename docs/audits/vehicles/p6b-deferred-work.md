@@ -10,12 +10,12 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 |---|---|
 | RULES_DECISION_REQUIRED | 8 |
 | SOURCE_EVIDENCE_MISSING | 8 |
-| ENGINEERING_COMPLEXITY | 22 |
+| ENGINEERING_COMPLEXITY | 23 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 4 |
 | DEPENDENCY_BLOCKED | 9 |
 
-Open items: 52. Resolved items: 18 (listed at the end).
+Open items: 53. Resolved items: 18 (listed at the end).
 
 ## Items (by severity)
 
@@ -40,6 +40,7 @@ Open items: 52. Resolved items: 18 (listed at the end).
 | P6B-D-061 | WEAPON-ECOSYSTEM | Burst Fire by an operator other than the named gunner; autofire plus battery | DEPENDENCY_BLOCKED | IMPORTANT | no | V-P6C-08 |
 | P6B-D-067 | WEAPON-ECOSYSTEM | Tractor beams: targets larger than the beam vehicle, docking clamps | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-068 | WEAPON-ECOSYSTEM | Ion bombs | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-16 |
+| P6B-D-071 | BATTERIES | Named-gunner rosters for multi-gunner batteries | ENGINEERING_COMPLEXITY | IMPORTANT | no | V-P6C-02 |
 | P6B-D-003 | P6B-1 | jamming-suite, jamming-array | ENGINEERING_COMPLEXITY | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-004 | P6B-1 | combat-thrusters | DEPENDENCY_BLOCKED | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-005 | P6B-1 | navicomputer-limited | RULES_DECISION_REQUIRED | MINOR | yes | V-P6B-01 |
@@ -601,6 +602,16 @@ Open items: 52. Resolved items: 18 (listed at the end).
 - **Owner ruling needed:** no (V-P6C-06)
 - **Impact:** Edge cases only.
 - **Recommended action:** Add reconfiguration with conservation checks if table use demands it.
+
+### P6B-D-071 - Named-gunner rosters for multi-gunner batteries
+
+- **Source:** Core Rulebook p.170; canonical battery groups
+- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
+- **Reason:** Full-battery mode now runs for 201 printed batteries once a GM certifies the participating-weapon count (GM_CONFIGURED_EXECUTABLE, apart from canonical coverage; the count is never inferred from the gunners). A battery is still operated by its GENERIC crew: the crew model keeps one actor per station (crewPositions.gunner), so N named gunners of one battery cannot be represented, and an attack with a named actor on a battery station is refused rather than approximated.
+- **Missing:** A per-station roster (N gunners) in the crew assignment authority and the Aid Another rule for named assisting gunners.
+- **Owner ruling needed:** no (V-P6C-02)
+- **Impact:** Named gunners cannot crew a capital-ship battery; abstract crews and the independent-weapon mode are unaffected.
+- **Recommended action:** Extend the crew assignment authority with a gunner roster before touching battery attack math.
 
 ## Resolved items
 

@@ -22,6 +22,7 @@
  * attack math, damage) reads that shape, never the Item.
  */
 import { readStockAmmoConfigs } from './vehicle-stock-ammo-config.js';
+import { readStockBatteryConfigs } from './vehicle-stock-battery-config.js';
 import { parseVehicleWeaponDamageSpec } from '../../engine/combat/vehicle-weapon-damage-parser.js';
 import { getVerifiedPublishedRecord } from './vehicle-source-identity.js';
 import { readCertifiedInstallations } from './vehicle-installation-ledger.js';
@@ -110,7 +111,7 @@ export function resolveStockWeapon(weapon) {
   const key = record.identity?.sourceEntryKey;
   const flag = flagOf(weapon, STOCK_WEAPON_FLAG);
   if (flag.sourceEntryKey !== key) return { ok: false, reason: 'STOCK_WEAPON_ITEM_SOURCE_MISMATCH' };
-  const group = assessStockWeaponGroups(record, { gmAmmo: readStockAmmoConfigs(vehicle) }).groups.find(g => g.groupKey === flag.groupKey);
+  const group = assessStockWeaponGroups(record, { gmAmmo: readStockAmmoConfigs(vehicle), gmBattery: readStockBatteryConfigs(vehicle) }).groups.find(g => g.groupKey === flag.groupKey);
   if (!group) return { ok: false, reason: 'STOCK_WEAPON_GROUP_NOT_IN_SOURCE' };
   if (!group.executable) return { ok: false, reason: `STOCK_WEAPON_GROUP_NOT_EXECUTABLE:${group.reasons[0]}` };
   // A printed battery runs in a declared MODE (Core p. 170): the Item flag names it and the SOURCE must still support it.

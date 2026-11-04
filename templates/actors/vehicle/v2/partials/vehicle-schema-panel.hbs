@@ -160,6 +160,16 @@
   {{/each}}
 </section>
 {{/if}}
+{{#if view.weaponOps.hasBatteryRows}}
+<section class="swse-vehicle-panel swse-vehicle-battery-config-panel">
+  <header><h3>Weapon batteries (GM)</h3></header>
+  {{#each view.weaponOps.batteryRows}}
+    <div class="swse-vehicle-battery-config-row" data-group-key="{{groupKey}}"><strong>{{label}}</strong> ({{gunners}} gunners) — {{stateLabel}}
+      {{#if configured}}<button type="button" data-weapon-action="battery-config-clear" data-item-id="{{groupKey}}">Remove</button>
+      {{else}}<button type="button" data-weapon-action="battery-config" data-item-id="{{groupKey}}">Certify weapon count</button>{{/if}}</div>
+  {{/each}}
+</section>
+{{/if}}
 {{#if view.weaponOps.hasMineLaunchers}}
 <section class="swse-vehicle-panel swse-vehicle-mine-panel">
   <header><h3>Space mines</h3></header>

@@ -9,21 +9,50 @@ import { authorizeFlagWrite, clearLedgerWrite } from "/systems/foundryvtt-swse/s
 import { getVerifiedPublishedRecord } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-source-identity.js";
 import { assessStockWeaponGroups } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-weapon-groups.js";
 import { STOCK_AMMO_CONFIG_FLAG, CONFIG_REASONS, READINESS, planStockAmmoConfig, readStockAmmoConfigs } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-ammo-config.js";
-import { stockAmmoReadinessRows } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-ammo-readiness.js";
+import { STOCK_BATTERY_CONFIG_FLAG, BATTERY_CONFIG_REASONS, planStockBatteryConfig, readStockBatteryConfigs } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-battery-config.js";
+import { stockAmmoReadinessRows, stockBatteryReadinessRows } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-ammo-readiness.js";
 import { VehicleInstallationService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-installation-service.js";
 
 const refuse = (reason, extra = {}) => ({ success: false, reasons: [reason], ...extra });
 const isGM = user => user?.isGM === true;
 
-async function writeConfigs(vehicle, next) {
-  authorizeFlagWrite(vehicle.id, STOCK_AMMO_CONFIG_FLAG, next);
-  try { await ActorEngine.updateActor(vehicle, { [`flags.swse.==${STOCK_AMMO_CONFIG_FLAG}`]: next }); }
+async function writeFlag(vehicle, flag, next) {
+  authorizeFlagWrite(vehicle.id, flag, next);
+  try { await ActorEngine.updateActor(vehicle, { [`flags.swse.==${flag}`]: next }); }
   finally { clearLedgerWrite(vehicle.id); }
 }
+const writeConfigs = (vehicle, next) => writeFlag(vehicle, STOCK_AMMO_CONFIG_FLAG, next);
 
 export class VehicleStockAmmoConfigService {
   /** Readiness rows (shared read with the sheet). */
   static rows(vehicle) { return stockAmmoReadinessRows(vehicle); }
+
+  /** GM: certify the participating-weapon count of a printed battery (enables full-battery mode; the source and the gunner count are untouched). */
+  static async configureBattery({ vehicle, groupKey, weaponCount, reason, user = globalThis.game?.user ?? null } = {}) {
+    if (!isGM(user)) return refuse(BATTERY_CONFIG_REASONS.GM_ONLY);
+    const record = getVerifiedPublishedRecord(vehicle);
+    if (!record) return refuse('STOCK_AMMO_VEHICLE_UNVERIFIED');
+    const configs = readStockBatteryConfigs(vehicle);
+    if (configs[groupKey]) return refuse(BATTERY_CONFIG_REASONS.EXISTS);
+    const group = assessStockWeaponGroups(record, { gmAmmo: readStockAmmoConfigs(vehicle), gmBattery: {} }).groups.find(g => g.groupKey === groupKey);
+    const plan = planStockBatteryConfig({ group, sourceEntryKey: record.identity?.sourceEntryKey, weaponCount, reason, by: user?.id ?? null });
+    if (!plan.ok) return refuse(plan.reason);
+    await writeFlag(vehicle, STOCK_BATTERY_CONFIG_FLAG, { ...configs, [groupKey]: plan.config });
+    const sync = await VehicleInstallationService.syncWeaponItems(vehicle);
+    return { success: true, state: 'GM_CONFIGURED_EXECUTABLE', config: plan.config, synced: sync.synced === true };
+  }
+
+  static async clearBattery({ vehicle, groupKey, user = globalThis.game?.user ?? null } = {}) {
+    if (!isGM(user)) return refuse(BATTERY_CONFIG_REASONS.GM_ONLY);
+    const configs = readStockBatteryConfigs(vehicle);
+    if (!configs[groupKey]) return refuse(BATTERY_CONFIG_REASONS.INVALID);
+    const { [groupKey]: _gone, ...rest } = configs;
+    await writeFlag(vehicle, STOCK_BATTERY_CONFIG_FLAG, rest);
+    const sync = await VehicleInstallationService.syncWeaponItems(vehicle);
+    return { success: true, synced: sync.synced === true };
+  }
+
+  static batteryRows(vehicle) { return stockBatteryReadinessRows(vehicle); }
 
   static async configure({ vehicle, groupKey, input = {}, reason, user = globalThis.game?.user ?? null } = {}) {
     if (!isGM(user)) return refuse(CONFIG_REASONS.GM_ONLY);
@@ -31,7 +60,7 @@ export class VehicleStockAmmoConfigService {
     if (!record) return refuse('STOCK_AMMO_VEHICLE_UNVERIFIED');
     const configs = readStockAmmoConfigs(vehicle);
     if (configs[groupKey]) return refuse(CONFIG_REASONS.EXISTS);
-    const group = assessStockWeaponGroups(record, { gmAmmo: {} }).groups.find(g => g.groupKey === groupKey);
+    const group = assessStockWeaponGroups(record, { gmAmmo: {}, gmBattery: readStockBatteryConfigs(vehicle) }).groups.find(g => g.groupKey === groupKey);
     if (!group) return refuse(CONFIG_REASONS.NOT_CONFIGURABLE);
     const plan = planStockAmmoConfig({ group, sourceEntryKey: record.identity?.sourceEntryKey, input, reason, by: user?.id ?? null });
     if (!plan.ok) return refuse(plan.reason);

@@ -29,3 +29,14 @@ export async function askInterdictionArea(_weapon) {
     });
   } catch { return null; }
 }
+
+/** GM: certify how many identical weapons a printed battery contains (Core p. 170: up to six). Resolves null when dismissed. */
+export async function askBatteryCount(row) {
+  try {
+    return await foundry.applications.api.DialogV2.prompt({
+      window: { title: `Certify battery: ${row?.label ?? ''}` },
+      content: `<p>The source prints ${row?.gunners ?? '?'} gunners but not the number of weapons. Enter the number of identical weapons (not inferred from the gunners).</p><label>Weapons <input type="number" name="count" min="2" max="6" step="1" required></label><label>Reason <input type="text" name="reason" required></label>`,
+      ok: { label: 'Certify', callback: (_ev, button) => { const f = button.form.elements; return { weaponCount: Number(f.count.value), reason: f.reason.value.trim() }; } }
+    });
+  } catch { return null; }
+}

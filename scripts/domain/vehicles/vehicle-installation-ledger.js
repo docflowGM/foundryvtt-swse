@@ -15,6 +15,7 @@ import { VEHICLE_FIRING_ARCS } from './vehicle-firing-arc-geometry.js';
 import { hasEffect, effectInstallability, EFFECTS } from './vehicle-modification-effects.js';
 import { AFTERMARKET_AMMO_FLAG } from './vehicle-ammunition-ledger.js';
 import { STOCK_AMMO_CONFIG_FLAG } from './vehicle-stock-ammo-config.js';
+import { STOCK_BATTERY_CONFIG_FLAG } from './vehicle-stock-battery-config.js';
 import { costModifierForSize, nonstandardAssessment, quoteInstallation, systemCost } from './vehicle-modification-rules.js';
 
 export const VEHICLE_INSTALLATION_FLAG = 'vehicleInstallations';
@@ -293,7 +294,7 @@ export function planVehicleUninstall({ record, flags, installId, rules = DEFAULT
 export const VEHICLE_INSTALLATION_JOBS_FLAG = 'vehicleInstallationJobs';
 export const VEHICLE_DESIGN_PROJECTS_FLAG = 'vehicleDesignProposals';
 // Guarded on every Actor: the vehicle stores (installations, jobs, aftermarket ammunition), and the construction projects kept on a designer character.
-const GUARDED_FLAGS = [VEHICLE_INSTALLATION_FLAG, VEHICLE_INSTALLATION_JOBS_FLAG, VEHICLE_DESIGN_PROJECTS_FLAG, AFTERMARKET_AMMO_FLAG, STOCK_AMMO_CONFIG_FLAG];
+const GUARDED_FLAGS = [VEHICLE_INSTALLATION_FLAG, VEHICLE_INSTALLATION_JOBS_FLAG, VEHICLE_DESIGN_PROJECTS_FLAG, AFTERMARKET_AMMO_FLAG, STOCK_AMMO_CONFIG_FLAG, STOCK_BATTERY_CONFIG_FLAG];
 const pendingWrites = new Map(); // `${actorId}:${flag}` -> JSON of the exact value authorized
 export function authorizeFlagWrite(actorId, flag, value) { pendingWrites.set(`${actorId}:${flag}`, JSON.stringify(value)); }
 export function authorizeLedgerWrite(actorId, ledger) { authorizeFlagWrite(actorId, VEHICLE_INSTALLATION_FLAG, ledger); }

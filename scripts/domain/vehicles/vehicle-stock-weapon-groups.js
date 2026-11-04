@@ -19,6 +19,7 @@
  * unstated arc imposes no automated restriction; a stated-but-uninterpreted or never-reviewed arc is refused.
  * Pure; no Foundry globals.
  */
+import { isBatteryConfigurable, validateStockBatteryConfig } from './vehicle-stock-battery-config.js';
 import { isGmConfigurable, validateStockAmmoConfig, familyFromConfig } from './vehicle-stock-ammo-config.js';
 import { establishPublishedBattery, establishIndependentBatteryWeapon, batteryAssistanceBonus } from './vehicle-weapon-battery.js';
 import { resolveLauncherFamily } from './vehicle-ammunition-ledger.js';
@@ -116,7 +117,7 @@ export function parseOperatorText(text) {
 }
 
 /** Parse one printed group. Never throws; `reasons` names everything that makes it non-executable. */
-export function parseStockFiringGroup(group) {
+export function parseStockFiringGroup(group, { gmWeaponCount = null } = {}) {
   const notes = String(group?.specialNotes ?? '');
   const reasons = [];
   const out = { groupKey: group?.groupKey ?? null, label: group?.label ?? null, attackBonusPrinted: finite(group?.attackBonusPrinted) ? group.attackBonusPrinted : null,
@@ -178,12 +179,14 @@ export function parseStockFiringGroup(group) {
   if (!o || !opText) reasons.push('STOCK_OPERATOR_NOT_PRINTED');
   else if (printedBattery) {
     const gunners = Number(gunnerMatch[1]);
-    const weaponCount = Number.isInteger(out.evidence?.hardwareCount) ? out.evidence.hardwareCount : null;
+    const printedCount = Number.isInteger(out.evidence?.hardwareCount) ? out.evidence.hardwareCount : null;
+    // the number of weapons is printed, or (only) certified by a GM on the world Actor -- never inferred from the gunners
+    const weaponCount = printedCount ?? (Number.isInteger(gmWeaponCount) ? gmWeaponCount : null);
     const full = establishPublishedBattery({ gunners, weaponCount });
     const independent = establishIndependentBatteryWeapon({ gunners });
     out.operator = 'gunner';
     out.battery = {
-      gunners, weaponCount, weaponCountBasis: typeof out.evidence?.hardwareCountBasis === 'string' ? out.evidence.hardwareCountBasis : null,
+      gunners, weaponCount, ...(printedCount === null && weaponCount !== null ? { weaponCountGm: true } : {}), weaponCountBasis: typeof out.evidence?.hardwareCountBasis === 'string' ? out.evidence.hardwareCountBasis : null,
       fullBattery: full.ok, independentWeapon: independent.ok,
       participatingWeapons: full.ok ? full.participatingWeapons : null, maxExtraHits: full.ok ? full.maxExtraHits : null,
       modeReasons: { 'full-battery': full.ok ? [] : [`STOCK_${full.reason}`], 'independent-weapon': independent.ok ? [] : [`STOCK_${independent.reason}`] }
@@ -319,12 +322,16 @@ export function checkSizeDependentAdjustments(parsed, record) {
  * Assess every printed group of a verified record.
  * @returns {{groups: object[]}} each group: parse fields + `executable` + final `reasons`
  */
-export function assessStockWeaponGroups(record, { gmAmmo = null } = {}) {
+export function assessStockWeaponGroups(record, { gmAmmo = null, gmBattery = null } = {}) {
   const bab = record?.combat?.baseAttackBonusPrinted;
   const intScore = record?.abilities?.int;
   return {
     groups: (record?.armament?.firingGroups ?? []).map(g => {
-      const p = parseStockFiringGroup(g);
+      let p = parseStockFiringGroup(g);
+      // GM-certified participating-weapon count of a printed battery (full-battery mode); the source and the gunner count are untouched
+      const bcfg = isBatteryConfigurable(p) ? gmBattery?.[p.groupKey] : null;
+      if (bcfg && validateStockBatteryConfig(bcfg, p, record?.identity?.sourceEntryKey).ok) p = { ...parseStockFiringGroup(g, { gmWeaponCount: bcfg.weaponCount }), gmBatteryConfigured: true };
+      else if (isBatteryConfigurable(p)) p = { ...p, gmBatteryConfigurable: true };
       const common = [...p.reasons];
       const arc = determineStockArc(record, p);
       if (arc.state === 'NOT_REVIEWED') common.push('STOCK_FIRING_ARC_NOT_REVIEWED');
