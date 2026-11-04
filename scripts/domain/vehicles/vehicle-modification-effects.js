@@ -98,6 +98,10 @@ const LAUNCHERS = Object.freeze({
   'concussion-missile-launcher-heavy': { family: 'missile', ammunition: { id: 'concussion-missile-heavy', damage: '9d10x5', price: 2000 } },
   // Starships of the Galaxy, Shieldbuster Torpedoes: 10d10x2 (Table 3-5), 1,000 credits each. The text prints NO splash radius, so none is applied.
   // V-P6C-13 (owner interpretation): shields take the full damage, SR drops by 10 instead of 5, and what reaches the hull is halved.
+  // Space mines (Starships of the Galaxy, Space Mines): a mine launcher DEPLOYS (swift action) rather than fires; "All mine launchers hold six
+  // mines". Standard and heavy mines only (the advanced mine has no launcher row). Deployment and detonation: vehicle-space-mine.js / VehicleMineService.
+  'space-mine-launcher': { family: 'mine', mine: 'standard', guided: false, area: null, ammunition: { id: 'space-mine-standard', damage: '7d10x2', price: 1000 } },
+  'space-mine-launcher-heavy': { family: 'mine', mine: 'heavy', guided: false, area: null, ammunition: { id: 'space-mine-heavy', damage: '6d10x5', price: 5000 } },
   'shieldbuster-torpedo-launcher': { family: 'torpedo', shieldbuster: true, area: null, ammunition: { id: 'shieldbuster-torpedo', damage: '10d10x2', price: 1000 } }
 });
 // WE-PD (Complete Weapon Ecosystem): the POINT-DEFENSE weapon modification. It is an OPTION of a weapon installation, never a weapon and
@@ -171,7 +175,7 @@ export const EFFECTS = Object.freeze({
   ...Object.fromEntries(Object.entries(PLAIN_WEAPONS).map(([id, w]) => [id, { kind: 'weapon', family: w.family, rangeSlug: w.rangeSlug, damage: w.damage, ...(w.testFile ? { testFile: w.testFile } : {}), stackable: true, group: `weapon:${id}`, citation: CITE_WEAPON }])),
   ...Object.fromEntries(Object.entries(CONTROL_WEAPONS).map(([id, w]) => [id, { kind: 'weapon', family: 'control', control: w.control, rangeSlug: w.rangeSlug, damage: '', noDamage: true, testFile: CONTROL_TEST, stackable: true, group: `weapon:${id}`, citation: CITE_WEAPON }])),
   ...Object.fromEntries(Object.entries(LAUNCHERS).map(([id, l]) => [id, { kind: 'weapon', family: l.family, rangeSlug: 'missiles-torpedoes', damage: l.ammunition.damage,
-    ammunition: { ...l.ammunition, capacity: launcherStandardCapacity(id).standard }, guided: true, ...(l.area === null ? {} : { area: { kind: 'splash', squares: 4 } }), ...(l.shieldbuster ? { shieldbuster: true } : {}), testFile: WE_L1_TEST, stackable: true, group: `weapon:${id}`, citation: CITE_LAUNCHER }])),
+    ammunition: { ...l.ammunition, capacity: launcherStandardCapacity(id).standard }, guided: l.guided !== false, ...(l.mine ? { mine: l.mine, rangeSlug: null } : {}), ...(l.area === null ? {} : { area: { kind: 'splash', squares: 4 } }), ...(l.shieldbuster ? { shieldbuster: true } : {}), testFile: l.mine ? 'tests/vehicle-universal-phase4e-p45-space-mines.test.mjs' : WE_L1_TEST, stackable: true, group: `weapon:${id}`, citation: CITE_LAUNCHER }])),
   'point-defense': { kind: 'weapon-option', option: 'point-defense', label: 'Point-Defense', pointDefense: true, eligibleBases: POINT_DEFENSE_BASE_WEAPONS, extraCredits: 4000, extraEmplacementPoints: 0,
     rangeSlug: 'point-defense', testFile: WE_PD_TEST, stackable: true, group: 'weapon-option:point-defense',
     citation: 'Starships of the Galaxy, Weapon Systems: Point-Defense Weapon and Table 3-5 (p. 47, PDF-verified row); Core Rulebook p. 170' },

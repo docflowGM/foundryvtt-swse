@@ -1180,3 +1180,43 @@ Implemented as PUBLISHED_RULE (lock-on, Reflex 30 / 10 HP / -5, no second charge
 
 - **V-P6C-13 - `RESOLVED_PROJECT_INTERPRETATION` (owner, 2026-11-04).** A shieldbuster meets Shield Rating at full strength; if it exceeds SR the target loses 10 SR instead of 5; what reaches the hull is halved; Damage Reduction follows. Against a target with no shield it deals half damage. Printed rule: Starships of the Galaxy, Shieldbuster Torpedoes. Sequencing is the project interpretation. Implemented in `shield-mitigation-resolver.js` (isShieldbuster, SR -10) and `damage-mitigation-manager.js` (hull halving before DR), flagged by the weapon authority via `ruleData.shieldbuster`.
 - **Revision 38 (2026-11-04):** recorded the V-P6C-13 interpretation. The original question stays as written above.
+
+### V-P6C-15 - Noticing a space mine: how the Stealth +5 forms the Perception DC
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-15 |
+| Rules domain | Vehicle weapons (space mines) |
+| Feature | Space mine detection reaction |
+| Source | Starships of the Galaxy, Space Mines |
+| Evidence | "A space mine has a Stealth bonus of +5 (including size modifiers), which sets the DC to notice the space mine. Whenever a starship is about to enter the same square as a space mine, the pilot can make a Perception check as a reaction to notice the mine and choose a different square to move into instead. If the ship has a system operator, the system operator may make a Use Computer check as a reaction as well, using the ship's sensors to detect the mine." |
+| Confirmed behavior | Deployment (swift action), detonation on entry, area attack on all ships in the square, full on a hit and half on a miss, IFF exemption and command detonation, the +5 / 7d10x2 and heavy +5 / 6d10x5 (-20 against targets smaller than Colossal) statistics, six mines per launcher. |
+| Unresolved question | How a Stealth bonus of +5 becomes a DC (a fixed DC of 15, a Stealth check rolled by the mine's owner, or another formula), and whether a ship that has noticed a mine may be moved by the pilot mid-path by the system. |
+| Options | None supported by the text. |
+| Recommended ruling | None |
+| Implementation impact | Mines detonate on entry; the noticing reaction is not automated (a GM may remove or detonate a mine). The advanced mine (+10, 9d10x2) has no launcher row and is not offered. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 39 (2026-11-04):** appended V-P6C-15.
+
+### V-P6C-16 - Ion bombs: range and target of a dropped bomb
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-16 |
+| Rules domain | Vehicle weapons (ion bombs) |
+| Feature | Ion bomb / ion bomb rack |
+| Source | Starships of the Galaxy, Weapon Systems: Ion Bombs |
+| Evidence | "Because of their primitive fin-stabilized guidance system, the bombs are usable only in an atmosphere, and attacks with them take a -5 penalty. Ion bombs may target a square directly beneath the ship that deploys them. On impact, they create a strong ion field that deals 5d10 points of ion damage within a 10-square radius. Ion bomb racks can hold up to four ion bombs." |
+| Confirmed behavior | Atmosphere only (the repository already has the GM-set vehicle environment, which would be the gate), -5 attack, 5d10 ion damage, 10-square radius, rack capacity four. |
+| Unresolved question | Whether "may target a square directly beneath the ship" limits the bomb to that square or only permits it among other targets (Table 10-2 has no bomb row, so no range band exists), what Reflex Defense or area rule applies to creatures in a 10-square radius at character scale, and whether the rack's cost/expansion beyond four is defined. |
+| Options | None supported by the text. |
+| Recommended ruling | None |
+| Implementation impact | The ion bomb rack and stock "ion bomb" groups stay unimplemented; the shared launcher, ammunition, ion-damage and area machinery is ready once a range/target rule is ruled. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 40 (2026-11-04):** appended V-P6C-16.

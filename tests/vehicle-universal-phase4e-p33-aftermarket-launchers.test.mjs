@@ -133,7 +133,7 @@ test('SOURCE: launcher and ammunition rows equal their PDF-verified Table 3-5 ce
     assert.notEqual(cert[ammoId]?.status, 'MECHANIC_SPECIFIED', 'ammunition is a consumable, never an installation');
   }
   // launchers whose special rules are not implemented, and capacity expansion, are NOT promoted
-  for (const id of ['space-mine-launcher', 'space-mine-launcher-heavy', 'ion-bomb-rack', 'discord-missile-launcher', 'gravity-mine-launcher', 'proton-grenade-launcher'])
+  for (const id of ['ion-bomb-rack', 'discord-missile-launcher', 'gravity-mine-launcher', 'proton-grenade-launcher'])
     assert.notEqual(cert[id]?.status, 'MECHANIC_SPECIFIED', id);
 });
 

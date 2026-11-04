@@ -8,14 +8,14 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 
 | Category | Count |
 |---|---|
-| RULES_DECISION_REQUIRED | 7 |
+| RULES_DECISION_REQUIRED | 8 |
 | SOURCE_EVIDENCE_MISSING | 8 |
-| ENGINEERING_COMPLEXITY | 24 |
+| ENGINEERING_COMPLEXITY | 22 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 4 |
 | DEPENDENCY_BLOCKED | 9 |
 
-Open items: 53. Resolved items: 17 (listed at the end).
+Open items: 52. Resolved items: 18 (listed at the end).
 
 ## Items (by severity)
 
@@ -38,9 +38,8 @@ Open items: 53. Resolved items: 17 (listed at the end).
 | P6B-D-055 | WEAPON-ECOSYSTEM | vehicle tractor beams | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-056 | WEAPON-ECOSYSTEM | gravity well projectors | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-061 | WEAPON-ECOSYSTEM | Burst Fire by an operator other than the named gunner; autofire plus battery | DEPENDENCY_BLOCKED | IMPORTANT | no | V-P6C-08 |
-| P6B-D-066 | WEAPON-ECOSYSTEM | Space mines | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-067 | WEAPON-ECOSYSTEM | Tractor beams: targets larger than the beam vehicle, docking clamps | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
-| P6B-D-068 | WEAPON-ECOSYSTEM | Ion bombs | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
+| P6B-D-068 | WEAPON-ECOSYSTEM | Ion bombs | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-16 |
 | P6B-D-003 | P6B-1 | jamming-suite, jamming-array | ENGINEERING_COMPLEXITY | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-004 | P6B-1 | combat-thrusters | DEPENDENCY_BLOCKED | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-005 | P6B-1 | navicomputer-limited | RULES_DECISION_REQUIRED | MINOR | yes | V-P6B-01 |
@@ -573,16 +572,6 @@ Open items: 53. Resolved items: 17 (listed at the end).
 - **Impact:** Those combinations are refused, not guessed.
 - **Recommended action:** Extend after the operator model batch.
 
-### P6B-D-066 - Space mines
-
-- **Source:** Starships of the Galaxy, Space Mines
-- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
-- **Reason:** Published rules are complete (swift-action deployment, area attack on entry, full on hit and half on miss, IFF and command detonation, Perception/Use Computer reaction to notice) but require a persistent deployed object, a movement-entry hook and reactions.
-- **Missing:** A battlefield-object store and a token-movement hook; live Foundry runtime.
-- **Owner ruling needed:** no
-- **Impact:** Mine launcher and mine rows.
-- **Recommended action:** Build the object store after the persistence design is settled.
-
 ### P6B-D-067 - Tractor beams: targets larger than the beam vehicle, docking clamps
 
 - **Source:** Core Rulebook p.174, Tractor Beams (readable in the owner-inspected scan)
@@ -596,10 +585,10 @@ Open items: 53. Resolved items: 17 (listed at the end).
 ### P6B-D-068 - Ion bombs
 
 - **Source:** Starships of the Galaxy, Ion Bombs
-- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
-- **Reason:** Published: usable only in an atmosphere, -5 attack, may target the square beneath the ship, 5d10 ion damage in a 10-square radius, four per rack. Needs an atmosphere flag on the scene and finite bomb ammunition for stock groups (payload not printed).
+- **Category / severity:** RULES_DECISION_REQUIRED / IMPORTANT
+- **Reason:** Range/target of a dropped bomb is not defined (Table 10-2 has no bomb row; 'may target a square directly beneath the ship'). See V-P6C-16.
 - **Missing:** A scene atmosphere setting and printed payload counts.
-- **Owner ruling needed:** no
+- **Owner ruling needed:** yes (V-P6C-16)
 - **Impact:** Ion bomb rows.
 - **Recommended action:** Add the scene setting, then reuse the launcher ammunition family.
 
@@ -694,6 +683,11 @@ Open items: 53. Resolved items: 17 (listed at the end).
 
 - **Resolved:** Implemented (V-P6C-14, project convention): certified damage-less aftermarket projector; area attack vs Reflex 10 through the vehicle attack pipeline and the shared range authority; on a hit a GM-managed scene field (active until a GM deactivates/removes it); a starship starting its turn in an active field receives a turn-long ActiveEffect via ActorEngine, using the existing combat turn hook. No hyperdrive activation action exists in the system yet: isHyperdriveInterdicted() is the query it must consult. Stock gravity-well groups (3) still carry other blockers.
 - **Was:** The interdiction field has no printed duration.
+
+### P6B-D-066 - Space mines
+
+- **Resolved:** Implemented: certified standard and heavy mine launchers (six mines each); GM-client deployment as a swift action paid by the station's operator, one unit of the launcher ledger, recorded on the Scene through the single vehicle Scene writer; proximity detonation through the registered updateToken hook; area attack against Reflex of every starship in the square through the shared damage pipeline (full on a hit, half on a miss); IFF exemption; command detonation; heavy -20 against targets smaller than Colossal. Not automated: the notice reaction (V-P6C-15); the advanced mine (no launcher row); movement path crossings (only the destination footprint is tested).
+- **Was:** Published rules are complete (swift-action deployment, area attack on entry, full on hit and half on miss, IFF and command detonation, Perception/Use Computer reaction to notice) but require a persistent deployed object, a movement-entry hook and reactions.
 
 ### P6B-D-069 - Legacy SWSEVehicleWeapons module (missile lock-on, homing, battery fire, arcs)
 

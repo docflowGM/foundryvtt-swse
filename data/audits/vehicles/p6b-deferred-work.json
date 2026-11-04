@@ -1458,7 +1458,8 @@
       "reason": "Published rules are complete (swift-action deployment, area attack on entry, full on hit and half on miss, IFF and command detonation, Perception/Use Computer reaction to notice) but require a persistent deployed object, a movement-entry hook and reactions.",
       "missing": "A battlefield-object store and a token-movement hook; live Foundry runtime.",
       "impact": "Mine launcher and mine rows.",
-      "recommendedAction": "Build the object store after the persistence design is settled."
+      "recommendedAction": "Build the object store after the persistence design is settled.",
+      "resolution": "Implemented: certified standard and heavy mine launchers (six mines each); GM-client deployment as a swift action paid by the station's operator, one unit of the launcher ledger, recorded on the Scene through the single vehicle Scene writer; proximity detonation through the registered updateToken hook; area attack against Reflex of every starship in the square through the shared damage pipeline (full on a hit, half on a miss); IFF exemption; command detonation; heavy -20 against targets smaller than Colossal. Not automated: the notice reaction (V-P6C-15); the advanced mine (no launcher row); movement path crossings (only the destination footprint is tested)."
     },
     {
       "workstream": "WEAPON-ECOSYSTEM",
@@ -1477,15 +1478,17 @@
     },
     {
       "workstream": "WEAPON-ECOSYSTEM",
-      "ownerRulingNeeded": false,
-      "linkedDecisions": [],
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6C-16"
+      ],
       "options": [],
       "id": "P6B-D-068",
       "component": "Ion bombs",
       "source": "Starships of the Galaxy, Ion Bombs",
-      "status": "ENGINEERING_COMPLEXITY",
+      "status": "RULES_DECISION_REQUIRED",
       "severity": "IMPORTANT",
-      "reason": "Published: usable only in an atmosphere, -5 attack, may target the square beneath the ship, 5d10 ion damage in a 10-square radius, four per rack. Needs an atmosphere flag on the scene and finite bomb ammunition for stock groups (payload not printed).",
+      "reason": "Range/target of a dropped bomb is not defined (Table 10-2 has no bomb row; 'may target a square directly beneath the ship'). See V-P6C-16.",
       "missing": "A scene atmosphere setting and printed payload counts.",
       "impact": "Ion bomb rows.",
       "recommendedAction": "Add the scene setting, then reuse the launcher ammunition family."

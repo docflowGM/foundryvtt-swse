@@ -5,6 +5,8 @@
  */
 import { resolveVehicleWeaponAuthority } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
 import { stockAmmoReadinessRows } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-ammo-readiness.js";
+import * as mineService from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-mine-service.js";
+import { readMines } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-mine-service.js";
 import { readFields, interdictionAreaTarget, setActive, removeField } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-interdiction-service.js";
 import { readPersistedFireMode } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-fire-mode.js";
 
@@ -33,13 +35,16 @@ export function buildWeaponOpsView(actor, { isGM = false } = {}) {
   const gravityWeapons = items.filter(i => i?.type === 'weapon' && resolveVehicleWeaponAuthority(i)?.gravityWell === true).map(i => ({ itemId: i.id, name: i.name, canProject: canAct && isGM }));
   const scene = globalThis.canvas?.scene ?? null;
   const fields = isGM ? readFields(scene).map(f => ({ ...f, areaLabel: `columns ${f.area.col}-${f.area.col + 3}, rows ${f.area.row}-${f.area.row + 3}`, stateLabel: f.active ? 'Active' : 'Inactive', toggleLabel: f.active ? 'Deactivate' : 'Activate', own: f.vehicleId === actor?.id })) : [];
-  return { canAct, fireModes, hasFireModes: fireModes.length > 0, isGM, ammoRows, hasAmmoRows: ammoRows.length > 0, gravityWeapons, hasGravityWeapons: gravityWeapons.length > 0, fields, hasFields: fields.length > 0 };
+  // Space mines: launcher rows and the mines deployed on this scene (GM controls; deployment writes the Scene)
+  const mineLaunchers = items.filter(i => i?.type === 'weapon' && resolveVehicleWeaponAuthority(i)?.mine).map(i => ({ itemId: i.id, name: i.name, canDeploy: canAct && isGM }));
+  const mines = isGM ? readMines(scene).map(m => ({ ...m, squareLabel: `column ${m.square.col}, row ${m.square.row}`, typeLabel: m.type === 'heavy' ? 'Heavy mine' : 'Mine', isCommand: m.detonation === 'command', own: m.vehicleId === actor?.id })) : [];
+  return { canAct, fireModes, hasFireModes: fireModes.length > 0, mineLaunchers, hasMineLaunchers: mineLaunchers.length > 0, mines, hasMines: mines.length > 0, isGM, ammoRows, hasAmmoRows: ammoRows.length > 0, gravityWeapons, hasGravityWeapons: gravityWeapons.length > 0, fields, hasFields: fields.length > 0 };
 }
 
 export async function runWeaponAction({ action, itemId, vehicle }, deps) {
   const { service, notify } = deps;
   const weapon = vehicle?.items?.get?.(itemId) ?? [...(vehicle?.items ?? [])].find(i => i.id === itemId);
-  if (!weapon && !/^(ammo-config|interdiction-)/.test(String(action))) { notify.warn('That weapon is no longer on the vehicle.'); return { ok: false, reason: 'WEAPON_NOT_FOUND' }; }
+  if (!weapon && !/^(ammo-config|interdiction-|mine-(detonate|remove))/.test(String(action))) { notify.warn('That weapon is no longer on the vehicle.'); return { ok: false, reason: 'WEAPON_NOT_FOUND' }; }
   if (action === 'fire-mode-autofire' || action === 'fire-mode-single') {
     const mode = action === 'fire-mode-autofire' ? 'autofire' : 'single';
     const r = await (service.fireMode ?? service).setMode({ vehicle, weapon, mode });
@@ -55,6 +60,17 @@ export async function runWeaponAction({ action, itemId, vehicle }, deps) {
     const target = interdictionAreaTarget(area, scene);
     const r = await SWSERoll.rollAttack(vehicle, weapon, { target, interdictionArea: area });
     return { ok: !!r, result: r };
+  }
+  if (action === 'mine-deploy') {
+    const r = await mineService.deploy({ vehicle, weapon });
+    if (r.ok) notify.info(`Mine deployed at column ${r.mine.square.col}, row ${r.mine.square.row} (swift action).`); else notify.warn(r.reason);
+    return r;
+  }
+  if (action === 'mine-detonate' || action === 'mine-remove') {
+    const scene = globalThis.canvas?.scene;
+    const r = action === 'mine-remove' ? await mineService.removeMine({ scene, mineId: itemId }) : await mineService.detonate({ scene, mineId: itemId, command: true });
+    if (r.ok) notify.info(action === 'mine-remove' ? 'Mine removed.' : `Mine detonated: ${r.results.length} ship(s) in the square.`); else notify.warn(r.reason);
+    return r;
   }
   if (action === 'interdiction-toggle' || action === 'interdiction-remove') {
     const scene = globalThis.canvas?.scene, f = readFields(scene).find(x => x.id === itemId);

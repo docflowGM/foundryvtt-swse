@@ -25,6 +25,17 @@ export function burstFireOptionOf(operatorActor, weapon) {
   return { available: true, attackModifier: Number(m.attackBonus) || 0, damageExtraWeaponDice: Number(m.damageExtraWeaponDice) || 0 };
 }
 
+/**
+ * WHOSE action a weapon-station action costs: the crew member who operates the weapon's station (the crew assignment authority the attack
+ * uses). A named operator pays from their own action economy; an unassigned station (the generic crew) and a printed automated operator pay as
+ * the vehicle. @returns {Promise<{payer:object, crew:object}|{reason:string}>}
+ */
+export async function resolveOperatorPayer(vehicle, authority) {
+  const crew = authority?.automatedOperator === true ? { source: 'unassigned', actor: null } : await resolveVehicleCrewActor(vehicle, authority?.operator);
+  if (crew.source === 'invalid') return { reason: MODE_REASONS.CREW_INVALID };
+  return { payer: crew.source === 'actor' ? crew.actor : vehicle, crew };
+}
+
 const refuse = reason => ({ ok: false, reason });
 export class VehicleFireModeService {
   static async setMode({ vehicle, weapon, mode, user = globalThis.game?.user ?? null } = {}) {
@@ -34,9 +45,9 @@ export class VehicleFireModeService {
     // WHOSE action: the crew member who operates the weapon's station (the same crew assignment authority the attack uses). A named
     // operator pays from their own action economy; an unassigned station is the generic crew, which acts as the vehicle; a printed
     // automated operator has no seat and also acts as the vehicle. An assignment that no longer resolves refuses.
-    const crew = a.automatedOperator === true ? { source: 'unassigned', actor: null } : await resolveVehicleCrewActor(vehicle, a.operator);
-    if (crew.source === 'invalid') return refuse(MODE_REASONS.CREW_INVALID);
-    const payer = crew.source === 'actor' ? crew.actor : vehicle;
+    const who = await resolveOperatorPayer(vehicle, a);
+    if (who.reason) return refuse(who.reason);
+    const payer = who.payer;
     if (!(user && (user.isGM === true || vehicle.isOwner === true || payer?.isOwner === true))) return refuse(MODE_REASONS.NOT_AUTHORIZED);
     if (readPersistedFireMode(vehicle, weapon.id) === mode) return { ok: true, mode, unchanged: true };
     const spend = mode === 'autofire' ? await ActionEconomyConsumption.spend(payer, 'swift', { actionName: 'Set to autofire', source: weapon.name }) : null;

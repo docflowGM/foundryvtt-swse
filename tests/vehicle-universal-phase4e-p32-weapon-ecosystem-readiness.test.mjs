@@ -42,16 +42,16 @@ test('inventory: every one of the catalog weapon rows belongs to exactly one inv
 test('aftermarket column is computed from the certified effects registry, not from prose', () => {
   const installable = matrix.rows.flatMap(r => r.catalogRows).filter(c => c.installable).map(c => c.id).sort();
   assert.deepEqual(installable, Object.entries(EFFECTS).filter(([, e]) => e.kind === 'weapon' || e.kind === 'weapon-option').map(([id]) => id).sort());
-  assert.equal(matrix.totals.aftermarketInstallableRows, 27, '19 weapon rows + the 8 weapon options');
+  assert.equal(matrix.totals.aftermarketInstallableRows, 29, '21 weapon rows + the 8 weapon options');
   for (const id of ['laser-cannons', 'blaster-cannons', 'turbolasers', 'ion-cannons', 'proton-torpedoes', 'concussion-missiles']) {
     assert.equal(row(id).aftermarket.status, 'OFFLINE_TESTED_INSTALL_FIRE_REMOVE', id);
     assert.equal(row(id).sourceCertification, 'MECHANIC_SPECIFIED', id);
     assert.equal(row(id).attackExecution, 'OFFLINE_TESTED', id);
   }
   // the shieldbuster launcher, mines, bombs, tractor beams, gravity wells and every configuration are not installable
-  for (const id of ['space-mines', 'ion-bombs', 'docking-guns', 'hapan-triple-ion-cannon'])
+  for (const id of ['ion-bombs', 'docking-guns', 'hapan-triple-ion-cannon'])
     assert.equal(row(id).aftermarket.status, 'NOT_INSTALLABLE', id);
-  for (const id of ['tractor-beams', 'gravity-well-projectors', 'point-defense', 'autoblasters', 'double-cannons', 'quad-cannons', 'fire-linked-weapons', 'cannon-enhancements']) assert.equal(row(id).aftermarket.status, 'OFFLINE_TESTED_INSTALL_FIRE_REMOVE', id + ': bought as an option of an eligible weapon');
+  for (const id of ['space-mines', 'tractor-beams', 'gravity-well-projectors', 'point-defense', 'autoblasters', 'double-cannons', 'quad-cannons', 'fire-linked-weapons', 'cannon-enhancements']) assert.equal(row(id).aftermarket.status, 'OFFLINE_TESTED_INSTALL_FIRE_REMOVE', id + ': bought as an option of an eligible weapon');
   // ammunition rows are consumables, counted separately from installable weapon rows
   assert.ok(row('proton-torpedoes').aftermarket.consumableRows >= 1);
   // a certified-looking status without an effect is impossible

@@ -4,8 +4,8 @@
  "counts": {
   "sourceListed": 181,
   "sourceVerified": 174,
-  "mechanicSpecified": 81,
-  "operationallyIntegrated": 70
+  "mechanicSpecified": 83,
+  "operationallyIntegrated": 72
  },
  "rows": [
   {
@@ -1846,8 +1846,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon",
+    "test": "tests/vehicle-universal-phase4e-p45-space-mines.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -2132,8 +2135,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon",
+    "test": "tests/vehicle-universal-phase4e-p45-space-mines.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {

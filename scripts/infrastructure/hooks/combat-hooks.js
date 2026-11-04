@@ -94,6 +94,15 @@ export function registerCombatHooks() {
 
     // Phase 5D-I-C-B: control-bound recurring effects (Lightwhip / Garrote / Electronet) and tractor maintenance at the turn boundaries, through the one
     // existing combat turn hook (idempotent per control + effect + turn slot; no timers, no custom hooks)
+    // Space mines: a starship entering a mine's square sets it off (GM client; the registry's own updateToken dispatch, no custom hook)
+    HooksRegistry.register('updateToken', handleMineProximity, {
+        id: 'token-space-mine-proximity',
+        priority: 5,
+        description: 'Detonate proximity space mines when a starship enters their square',
+        category: 'combat',
+        enabled: true
+    });
+
     HooksRegistry.register('combatTurn', handleWeaponControlTurn, {
         id: 'combat-turn-weapon-control',
         priority: 2,
@@ -252,6 +261,16 @@ function handleCombatTurn(combat, updateData, updateOptions) {
         SWSELogger.log(`Turn: ${combatant.actor.name}`);
     }
     void postCombatBanner(combat);
+}
+
+async function handleMineProximity(tokenDoc, change) {
+    if (game?.user?.isGM !== true || !(('x' in (change ?? {})) || ('y' in (change ?? {})))) return;
+    try {
+        const { onTokenMoved } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-mine-service.js');
+        await onTokenMoved({ scene: tokenDoc?.parent ?? globalThis.canvas?.scene ?? null, tokenDoc });
+    } catch (err) {
+        SWSELogger.warn('[CombatHooks] Space mine proximity processing failed', err);
+    }
 }
 
 async function handleWeaponControlTurn(combat, updateData, updateOptions) {

@@ -5,7 +5,7 @@
   "inventoryRows": 41,
   "catalogWeaponRows": 63,
   "catalogRowsCoveredByInventory": 63,
-  "aftermarketInstallableRows": 27,
+  "aftermarketInstallableRows": 29,
   "stockGroups": 846,
   "stockGroupsOwnedByAFamily": 801,
   "stockGroupsUnclassified": 45,
@@ -1209,23 +1209,23 @@
     "Stealth +5 (DC to notice); the pilot may make a Perception check as a reaction, and a system operator a Use Computer check.",
     "Attack bonuses +5 / +10 / +5; launchers hold six mines, up to twelve at +25% per additional mine."
    ],
-   "sourceCertification": "SOURCE_VERIFIED",
+   "sourceCertification": "MECHANIC_SPECIFIED",
    "catalogRows": [
     {
      "id": "space-mine-launcher",
      "category": "Weapon",
-     "certification": "SOURCE_VERIFIED",
+     "certification": "MECHANIC_SPECIFIED",
      "reconciliation": "MATCHED_CANONICAL",
-     "installable": false,
-     "testFile": null
+     "installable": true,
+     "testFile": "tests/vehicle-universal-phase4e-p45-space-mines.test.mjs"
     },
     {
      "id": "space-mine-launcher-heavy",
      "category": "Weapon",
-     "certification": "SOURCE_VERIFIED",
+     "certification": "MECHANIC_SPECIFIED",
      "reconciliation": "CORRECTION_REQUIRED",
-     "installable": false,
-     "testFile": null
+     "installable": true,
+     "testFile": "tests/vehicle-universal-phase4e-p45-space-mines.test.mjs"
     },
     {
      "id": "space-mine-standard",
@@ -1260,9 +1260,9 @@
     "basis": "PARTITION: owned by this family"
    },
    "aftermarket": {
-    "status": "NOT_INSTALLABLE",
+    "status": "OFFLINE_TESTED_INSTALL_FIRE_REMOVE",
     "weaponRows": 2,
-    "installable": 0,
+    "installable": 2,
     "consumableRows": 3
    },
    "attackExecution": "NOT_IMPLEMENTED",

@@ -160,6 +160,21 @@
   {{/each}}
 </section>
 {{/if}}
+{{#if view.weaponOps.hasMineLaunchers}}
+<section class="swse-vehicle-panel swse-vehicle-mine-panel">
+  <header><h3>Space mines</h3></header>
+  {{#each view.weaponOps.mineLaunchers}}
+    <div class="swse-vehicle-mine-launcher"><strong>{{name}}</strong>
+      {{#if canDeploy}}<button type="button" data-weapon-action="mine-deploy" data-item-id="{{itemId}}">Deploy a mine here (swift action)</button>{{else}}<small>The GM deploys mines (a Scene write).</small>{{/if}}</div>
+  {{/each}}
+  {{#each view.weaponOps.mines}}
+    <div class="swse-vehicle-mine" data-mine-id="{{id}}">{{typeLabel}} at {{squareLabel}}{{#if isCommand}} — command-detonated{{/if}}
+      {{#if isCommand}}<button type="button" data-weapon-action="mine-detonate" data-item-id="{{id}}">Detonate</button>{{/if}}
+      <button type="button" data-weapon-action="mine-remove" data-item-id="{{id}}">Remove</button></div>
+  {{/each}}
+  <p><small>A ship entering a mine's square sets it off. The reaction to notice a mine is not automated (decision V-P6C-15).</small></p>
+</section>
+{{/if}}
 {{#if view.weaponOps.hasGravityWeapons}}
 <section class="swse-vehicle-panel swse-vehicle-interdiction-panel">
   <header><h3>Gravity well projectors</h3></header>

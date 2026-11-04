@@ -12,16 +12,16 @@
  */
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js";
+import { readSceneMap, writeSceneMap, sceneGridSize } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-scene-state.js";
 import { INTERDICTION_FLAG, FIELD_REASONS, buildField, validateArea, areaBox, fieldCoversToken, isValidField } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-interdiction-field.js";
 
 export const INTERDICTED_FLAG = 'hyperdriveInterdicted';
 const refuse = (reason, extra = {}) => ({ ok: false, reason, ...extra });
-const gridSizeOf = scene => Number(scene?.grid?.size ?? globalThis.canvas?.grid?.size);
+const gridSizeOf = sceneGridSize;
 const isGM = user => user?.isGM === true;
 
-export const readFields = scene => Object.values(scene?.flags?.swse?.[INTERDICTION_FLAG] ?? scene?.getFlag?.('swse', INTERDICTION_FLAG) ?? {}).filter(isValidField);
-async function writeFields(scene, map) { await scene.update({ [`flags.swse.==${INTERDICTION_FLAG}`]: map }); }
-const asMap = fields => Object.fromEntries(fields.map(f => [f.id, f]));
+export const readFields = scene => readSceneMap(scene, INTERDICTION_FLAG, isValidField);
+const writeFields = (scene, fields) => writeSceneMap(scene, INTERDICTION_FLAG, fields);
 
 /** A target the vehicle attack pipeline can measure and roll against: the chosen 4x4 area, Reflex Defense 10 (printed). */
 export function interdictionAreaTarget(area, scene) {
@@ -40,7 +40,7 @@ export async function createFromHit({ vehicle, weapon, authority, area, scene = 
   const fields = readFields(scene);
   if (fields.some(f => f.active && f.vehicleId === vehicle?.id && f.area.col === area.col && f.area.row === area.row)) return refuse(FIELD_REASONS.DUPLICATE);
   const field = buildField({ id: globalThis.foundry?.utils?.randomID?.() ?? `gw-${Date.now()}`, sceneId: scene.id, vehicleId: vehicle?.id ?? null, weaponId: weapon?.id ?? null, area, by: user?.id ?? null, attackTotal });
-  await writeFields(scene, asMap([...fields, field]));
+  await writeFields(scene, [...fields, field]);
   return { ok: true, field };
 }
 
@@ -48,7 +48,7 @@ export async function setActive({ scene, fieldId, active, user = globalThis.game
   if (!isGM(user)) return refuse(FIELD_REASONS.GM_ONLY);
   const fields = readFields(scene), f = fields.find(x => x.id === fieldId);
   if (!f) return refuse(FIELD_REASONS.NOT_FOUND);
-  await writeFields(scene, asMap(fields.map(x => (x.id === fieldId ? { ...x, active: active === true } : x))));
+  await writeFields(scene, fields.map(x => (x.id === fieldId ? { ...x, active: active === true } : x)));
   return { ok: true };
 }
 
@@ -56,7 +56,7 @@ export async function removeField({ scene, fieldId, user = globalThis.game?.user
   if (!isGM(user)) return refuse(FIELD_REASONS.GM_ONLY);
   const fields = readFields(scene);
   if (!fields.some(x => x.id === fieldId)) return refuse(FIELD_REASONS.NOT_FOUND);
-  await writeFields(scene, asMap(fields.filter(x => x.id !== fieldId)));
+  await writeFields(scene, fields.filter(x => x.id !== fieldId));
   return { ok: true };
 }
 
