@@ -1085,8 +1085,10 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    * Helper: Calculate locomotion speed.
    */
   _calculateLocomotionSpeed(system) {
-    const size = this._droidState.droidSize || 'medium';
-    return system.speeds?.[size] || system.speeds?.medium || 6;
+    const size = this._droidState?.droidSize;
+    const printed = system?.speeds?.[size] ?? system?.baseSpeed?.[size];
+    // Stationary (0) is valid. Missing size speeds must not fabricate 6.
+    return Number.isFinite(printed) && printed >= 0 ? printed : null;
   }
 
   /**
@@ -1095,41 +1097,15 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    */
   _recalculateTotals() {
     const sys = this._droidState.droidSystems;
-    let totalCost = 0;
-    let totalWeight = 0;
-
-    if (sys.locomotion) {
-      totalCost += sys.locomotion.cost;
-      totalWeight += sys.locomotion.weight;
-    }
-
-    if (sys.processor) {
-      totalCost += sys.processor.cost;
-      totalWeight += sys.processor.weight;
-    }
-
-    for (const app of (sys.appendages || [])) {
-      totalCost += app.cost;
-      totalWeight += app.weight;
-    }
-
-    for (const acc of (sys.accessories || [])) {
-      totalCost += acc.cost;
-      totalWeight += acc.weight;
-    }
-
-    for (const enh of (sys.locomotionEnhancements || [])) {
-      totalCost += enh.cost;
-      totalWeight += enh.weight || 0;
-    }
-
-    for (const enh of (sys.appendageEnhancements || [])) {
-      totalCost += enh.cost;
-      totalWeight += enh.weight || 0;
-    }
-
-    sys.totalCost = totalCost;
-    sys.totalWeight = totalWeight;
+    const entries = [sys.locomotion, sys.processor, ...(sys.appendages || []),
+      ...(sys.accessories || []), ...(sys.locomotionEnhancements || []),
+      ...(sys.appendageEnhancements || [])].filter(Boolean);
+    // Never display an apparently complete mass or price after an unresolved
+    // source quote. The readiness gate additionally blocks progression.
+    sys.totalCost = entries.every(entry => Number.isFinite(entry.cost))
+      ? entries.reduce((sum, entry) => sum + entry.cost, 0) : null;
+    sys.totalWeight = entries.every(entry => Number.isFinite(entry.weight))
+      ? entries.reduce((sum, entry) => sum + entry.weight, 0) : null;
   }
 
   /**
