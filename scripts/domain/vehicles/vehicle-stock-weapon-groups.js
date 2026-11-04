@@ -105,6 +105,7 @@ export function evidenceReasons(evidence = {}) {
 export function parseOperatorText(text) {
   const t = String(text ?? '').trim().toLowerCase().replace(/\s+/g, ' ').replace(/[.;]+$/, '');
   if (!t) return null;
+  if (/^(?:1 gunner|independent gunner)$/.test(t)) return { stations: ['gunner'], automated: false };
   if (/^(?:automated(?:\/droid(?: brain)?)?|droid(?: vessel| brain| piloting system| pilot| gunner)?|virtual droid gunner|droid piloting system)$/.test(t)) return { stations: ['gunner'], automated: true };
   const seat = w => (w === 'co-pilot' ? 'copilot' : w);
   const parts = t.split(/\s*(?:\/|,|\bor\b|\band\b)\s*/).map(w => w.trim()).filter(Boolean);

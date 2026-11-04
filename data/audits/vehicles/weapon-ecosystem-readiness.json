@@ -9,7 +9,7 @@
   "stockGroups": 846,
   "stockGroupsOwnedByAFamily": 801,
   "stockGroupsUnclassified": 45,
-  "stockOfflineExecutableGroups": 499,
+  "stockOfflineExecutableGroups": 500,
   "familiesFullyOperationalOffline": 4,
   "liveVerifiedFamilies": 0
  },
@@ -527,9 +527,9 @@
    ],
    "stock": {
     "groups": 127,
-    "offlineExecutable": 102,
+    "offlineExecutable": 103,
     "vehicles": 89,
-    "vehiclesWithExecutableGroup": 70,
+    "vehiclesWithExecutableGroup": 71,
     "basis": "PARTITION: owned by this family"
    },
    "aftermarket": {
@@ -2517,9 +2517,9 @@
    ],
    "stock": {
     "groups": 80,
-    "offlineExecutable": 66,
+    "offlineExecutable": 67,
     "vehicles": 74,
-    "vehiclesWithExecutableGroup": 64,
+    "vehiclesWithExecutableGroup": 65,
     "basis": "OVERLAY: also counted in its base-weapon row"
    },
    "aftermarket": {

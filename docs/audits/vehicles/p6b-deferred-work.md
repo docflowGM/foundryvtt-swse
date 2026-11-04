@@ -8,14 +8,14 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 
 | Category | Count |
 |---|---|
-| RULES_DECISION_REQUIRED | 7 |
+| RULES_DECISION_REQUIRED | 9 |
 | SOURCE_EVIDENCE_MISSING | 8 |
-| ENGINEERING_COMPLEXITY | 20 |
-| LIVE_RUNTIME_PENDING | 2 |
+| ENGINEERING_COMPLEXITY | 22 |
+| LIVE_RUNTIME_PENDING | 3 |
 | NONCRITICAL_DEFECT | 4 |
 | DEPENDENCY_BLOCKED | 9 |
 
-Open items: 50. Resolved items: 13 (listed at the end).
+Open items: 55. Resolved items: 13 (listed at the end).
 
 ## Items (by severity)
 
@@ -38,6 +38,11 @@ Open items: 50. Resolved items: 13 (listed at the end).
 | P6B-D-055 | WEAPON-ECOSYSTEM | vehicle tractor beams | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-056 | WEAPON-ECOSYSTEM | gravity well projectors | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-061 | WEAPON-ECOSYSTEM | Burst Fire by an operator other than the named gunner; autofire plus battery | DEPENDENCY_BLOCKED | IMPORTANT | no | V-P6C-08 |
+| P6B-D-064 | WEAPON-ECOSYSTEM | Shieldbuster torpedoes | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-13 |
+| P6B-D-065 | WEAPON-ECOSYSTEM | Gravity well projectors | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-14 |
+| P6B-D-066 | WEAPON-ECOSYSTEM | Space mines | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
+| P6B-D-067 | WEAPON-ECOSYSTEM | Tractor beams | LIVE_RUNTIME_PENDING | IMPORTANT | no | - |
+| P6B-D-068 | WEAPON-ECOSYSTEM | Ion bombs | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-003 | P6B-1 | jamming-suite, jamming-array | ENGINEERING_COMPLEXITY | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-004 | P6B-1 | combat-thrusters | DEPENDENCY_BLOCKED | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-005 | P6B-1 | navicomputer-limited | RULES_DECISION_REQUIRED | MINOR | yes | V-P6B-01 |
@@ -579,6 +584,56 @@ Open items: 50. Resolved items: 13 (listed at the end).
 - **Owner ruling needed:** no (V-P6C-08)
 - **Impact:** Players cannot switch the mode from the sheet until wired.
 - **Recommended action:** Add one weapon-row toggle next to the existing weapon actions.
+
+### P6B-D-064 - Shieldbuster torpedoes
+
+- **Source:** Starships of the Galaxy, Shieldbuster Torpedoes
+- **Category / severity:** RULES_DECISION_REQUIRED / IMPORTANT
+- **Reason:** Half-damage ordering against a shielded target is ambiguous in the printed sentence.
+- **Missing:** Ruling V-P6C-13.
+- **Owner ruling needed:** yes (V-P6C-13)
+- **Impact:** Shieldbuster launcher and stock groups.
+- **Recommended action:** Implement after the ruling (SR loss -10 is a one-line change in the shield resolver context).
+
+### P6B-D-065 - Gravity well projectors
+
+- **Source:** Starships of the Galaxy, Gravity Well Projectors
+- **Category / severity:** RULES_DECISION_REQUIRED / IMPORTANT
+- **Reason:** The interdiction field has no printed duration.
+- **Missing:** Ruling V-P6C-14 plus a persistent field object.
+- **Owner ruling needed:** yes (V-P6C-14)
+- **Impact:** Gravity well stock groups and catalog row.
+- **Recommended action:** Implement the attack and the field once a duration is ruled.
+
+### P6B-D-066 - Space mines
+
+- **Source:** Starships of the Galaxy, Space Mines
+- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
+- **Reason:** Published rules are complete (swift-action deployment, area attack on entry, full on hit and half on miss, IFF and command detonation, Perception/Use Computer reaction to notice) but require a persistent deployed object, a movement-entry hook and reactions.
+- **Missing:** A battlefield-object store and a token-movement hook; live Foundry runtime.
+- **Owner ruling needed:** no
+- **Impact:** Mine launcher and mine rows.
+- **Recommended action:** Build the object store after the persistence design is settled.
+
+### P6B-D-067 - Tractor beams
+
+- **Source:** Core Rulebook, Tractor Beams (the reference text is partly illegible in the scanned copy)
+- **Category / severity:** LIVE_RUNTIME_PENDING / IMPORTANT
+- **Reason:** Needs a persistent grabbed state, an opposed grapple check against the vehicle's grapple modifier each round, pull/hold movement and range-break, and docking clamps. The scan loses lines of the rule.
+- **Missing:** Verified full rule text; a grab-state store and a movement hook; live runtime.
+- **Owner ruling needed:** no
+- **Impact:** 58 stock tractor-beam groups and the catalog row.
+- **Recommended action:** Verify the text against the PDF, then build on the grapple engine.
+
+### P6B-D-068 - Ion bombs
+
+- **Source:** Starships of the Galaxy, Ion Bombs
+- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
+- **Reason:** Published: usable only in an atmosphere, -5 attack, may target the square beneath the ship, 5d10 ion damage in a 10-square radius, four per rack. Needs an atmosphere flag on the scene and finite bomb ammunition for stock groups (payload not printed).
+- **Missing:** A scene atmosphere setting and printed payload counts.
+- **Owner ruling needed:** no
+- **Impact:** Ion bomb rows.
+- **Recommended action:** Add the scene setting, then reuse the launcher ammunition family.
 
 ## Resolved items
 

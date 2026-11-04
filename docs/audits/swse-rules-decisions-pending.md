@@ -1139,3 +1139,41 @@ Implemented as PUBLISHED_RULE (lock-on, Reflex 30 / 10 HP / -5, no second charge
 - **V-P6C-10 - `RESOLVED_OWNER_RULING` (individual configurations).** Double (+1 die), triple (= double), quad (+2), fire-linked 2 (+1), fire-linked 4 (+2), cannon enhancement (+1) and advanced enhancement (+2) dice are added before the vehicle multiplier; double/triple/quad are alternatives, fire-linked 2/4 are alternatives, enhancements are alternatives, enhancements never apply to turbolasers, nothing stacks automatically; compatible combinations come later through a verified composition system.
 
 - **Revision 36 (2026-11-04):** recorded the owner rulings above. No earlier text changed; the original questions stay as written.
+
+### V-P6C-13 - Shieldbuster torpedoes: what "half damage against anything but shields" halves
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-13 |
+| Rules domain | Vehicle weapons (shieldbuster torpedoes) |
+| Feature | Shieldbuster torpedo (T-33 type) |
+| Source | Starships of the Galaxy, Weapon Systems: Shieldbuster Torpedoes |
+| Evidence | "Against anything but shields, shieldbusters deal half damage. If an attack from a shieldbuster torpedo exceeds a target's SR, the target loses 10 points from its SR (rather than the normal 5)." |
+| Confirmed behavior | The SR loss is 10 instead of 5 when the attack exceeds SR. A target with no shields takes half damage. |
+| Unresolved question | Against a shielded target, whether the full damage is first compared with and reduced by SR and only the damage that reaches Hull is halved, or the damage is halved before SR is applied (which also changes whether the attack "exceeds SR" for the -10 rule). |
+| Options | (a) SR is applied to the full damage, the remainder is halved. (b) The damage is halved, then SR is applied. Both readings are supported by the sentence. |
+| Recommended ruling | None |
+| Implementation impact | Shieldbuster torpedoes (aftermarket launcher row and stock launcher groups) stay unimplemented as a weapon family; the SR-loss amount is a one-line change once the ordering is ruled. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6C-14 - Gravity well projector: duration and removal of the interdiction field
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-14 |
+| Rules domain | Vehicle weapons (gravity well projectors) |
+| Feature | Gravity well projector |
+| Source | Starships of the Galaxy, Weapon Systems: Gravity Well Projectors |
+| Evidence | Treated as an area attack: the operator chooses a 4x4-square (starship scale) area within range and attacks Reflex Defense 10. On success a hyperspace interdiction field is created in those squares; a starship that starts its turn in a covered square may not activate its hyperdrive that turn. |
+| Confirmed behavior | Area size, the Reflex 10 attack, and the effect on a ship that starts its turn in the field. |
+| Unresolved question | How long the field lasts, whether it can be moved, dropped or stacked, and whether the projector must keep operating it. The text states none of these. |
+| Options | None supported by the text. |
+| Recommended ruling | None |
+| Implementation impact | Only the attack and the one-turn effect can be modelled; a persistent field object needs a duration. Not implemented. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 37 (2026-11-04):** appended V-P6C-13 and V-P6C-14. No existing entry changed.

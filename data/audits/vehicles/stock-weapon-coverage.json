@@ -4,8 +4,8 @@
  "totals": {
   "vehicles": 429,
   "groups": 846,
-  "sourceVerifiedGroups": 729,
-  "offlineExecutableGroups": 499,
+  "sourceVerifiedGroups": 730,
+  "offlineExecutableGroups": 500,
   "vehiclesWithOfflineExecutableGroup": 330,
   "vehiclesAllGroupsExecutable": 153,
   "liveVerifiedVehicles": 0
@@ -72,7 +72,7 @@
   "STOCK_OPERATOR_NOT_PRINTED": 17,
   "STOCK_OPERATOR_IS_A_STATION_BATTERY": 17,
   "STOCK_DAMAGE_QUALIFIED": 17,
-  "STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER": 17,
+  "STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER": 15,
   "STOCK_FIRING_ARC_NOT_REVIEWED": 12,
   "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT": 10,
   "STOCK_GROUP_IS_A_WEAPON_BATTERY": 9,
@@ -153,7 +153,7 @@
   "Starships of the Galaxy": {
    "vehicles": 105,
    "groups": 258,
-   "executableGroups": 167,
+   "executableGroups": 168,
    "vehiclesWithExecutable": 96
   },
   "Threats of the Galaxy": {
@@ -20021,7 +20021,7 @@
      "ammunitionStatus": null,
      "scaleRestriction": null,
      "area": null,
-     "operator": null,
+     "operator": "gunner",
      "sourceVerified": false,
      "offlineExecutable": false,
      "liveVerified": false,
@@ -20033,8 +20033,7 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_EVIDENCE_UNMODELED",
-      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-      "STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER"
+      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD"
      ]
     }
    ]
@@ -21400,8 +21399,8 @@
    "category": "capital-ship",
    "size": "Colossal (frigate)",
    "groupCount": 3,
-   "sourceVerifiedGroups": 2,
-   "offlineExecutableGroups": 1,
+   "sourceVerifiedGroups": 3,
+   "offlineExecutableGroups": 2,
    "status": "OFFLINE_EXECUTABLE_PARTIAL",
    "liveVerified": false,
    "groups": [
@@ -21416,19 +21415,19 @@
      "ammunitionStatus": null,
      "scaleRestriction": null,
      "area": null,
-     "operator": null,
-     "sourceVerified": false,
-     "offlineExecutable": false,
+     "operator": "gunner",
+     "sourceVerified": true,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
-     "executableModes": [],
-     "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER"
-     ]
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "gunner station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
+     "executableModes": [
+      "single"
+     ],
+     "capitalShipPenaltyApplies": true,
+     "refusals": []
     },
     {
      "groupKey": "sotg-corellian-gunship-group-2",

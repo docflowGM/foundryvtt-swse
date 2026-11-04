@@ -1407,6 +1407,85 @@
       "impact": "+120 executable stock groups (379 to 499) depend on it.",
       "recommendedAction": "Confirm or revert.",
       "resolution": "Implemented as a project interpretation under V-P6C-02; flagged here for review. Full-battery mode still requires a printed weapon count."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6C-13"
+      ],
+      "options": [],
+      "id": "P6B-D-064",
+      "component": "Shieldbuster torpedoes",
+      "source": "Starships of the Galaxy, Shieldbuster Torpedoes",
+      "status": "RULES_DECISION_REQUIRED",
+      "severity": "IMPORTANT",
+      "reason": "Half-damage ordering against a shielded target is ambiguous in the printed sentence.",
+      "missing": "Ruling V-P6C-13.",
+      "impact": "Shieldbuster launcher and stock groups.",
+      "recommendedAction": "Implement after the ruling (SR loss -10 is a one-line change in the shield resolver context)."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6C-14"
+      ],
+      "options": [],
+      "id": "P6B-D-065",
+      "component": "Gravity well projectors",
+      "source": "Starships of the Galaxy, Gravity Well Projectors",
+      "status": "RULES_DECISION_REQUIRED",
+      "severity": "IMPORTANT",
+      "reason": "The interdiction field has no printed duration.",
+      "missing": "Ruling V-P6C-14 plus a persistent field object.",
+      "impact": "Gravity well stock groups and catalog row.",
+      "recommendedAction": "Implement the attack and the field once a duration is ruled."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-066",
+      "component": "Space mines",
+      "source": "Starships of the Galaxy, Space Mines",
+      "status": "ENGINEERING_COMPLEXITY",
+      "severity": "IMPORTANT",
+      "reason": "Published rules are complete (swift-action deployment, area attack on entry, full on hit and half on miss, IFF and command detonation, Perception/Use Computer reaction to notice) but require a persistent deployed object, a movement-entry hook and reactions.",
+      "missing": "A battlefield-object store and a token-movement hook; live Foundry runtime.",
+      "impact": "Mine launcher and mine rows.",
+      "recommendedAction": "Build the object store after the persistence design is settled."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-067",
+      "component": "Tractor beams",
+      "source": "Core Rulebook, Tractor Beams (the reference text is partly illegible in the scanned copy)",
+      "status": "LIVE_RUNTIME_PENDING",
+      "severity": "IMPORTANT",
+      "reason": "Needs a persistent grabbed state, an opposed grapple check against the vehicle's grapple modifier each round, pull/hold movement and range-break, and docking clamps. The scan loses lines of the rule.",
+      "missing": "Verified full rule text; a grab-state store and a movement hook; live runtime.",
+      "impact": "58 stock tractor-beam groups and the catalog row.",
+      "recommendedAction": "Verify the text against the PDF, then build on the grapple engine."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-068",
+      "component": "Ion bombs",
+      "source": "Starships of the Galaxy, Ion Bombs",
+      "status": "ENGINEERING_COMPLEXITY",
+      "severity": "IMPORTANT",
+      "reason": "Published: usable only in an atmosphere, -5 attack, may target the square beneath the ship, 5d10 ion damage in a 10-square radius, four per rack. Needs an atmosphere flag on the scene and finite bomb ammunition for stock groups (payload not printed).",
+      "missing": "A scene atmosphere setting and printed payload counts.",
+      "impact": "Ion bomb rows.",
+      "recommendedAction": "Add the scene setting, then reuse the launcher ammunition family."
     }
   ]
 }

@@ -8,8 +8,8 @@ Three claims are kept apart: **SOURCE_VERIFIED** (the published configuration is
 |---|---|
 | Published vehicles | 429 |
 | Published attack groups | 846 |
-| Groups SOURCE_VERIFIED | 729 (86.2%) |
-| Groups OFFLINE_EXECUTABLE | 499 (59%) |
+| Groups SOURCE_VERIFIED | 730 (86.3%) |
+| Groups OFFLINE_EXECUTABLE | 500 (59.1%) |
 | Vehicles with at least one OFFLINE_EXECUTABLE group | 330 (76.9%) |
 | Vehicles with every group executable | 153 |
 | Vehicles LIVE_VERIFIED | 0 |
@@ -89,7 +89,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | STOCK_OPERATOR_NOT_PRINTED | 17 |
 | STOCK_OPERATOR_IS_A_STATION_BATTERY | 17 |
 | STOCK_DAMAGE_QUALIFIED | 17 |
-| STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER | 17 |
+| STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER | 15 |
 | STOCK_FIRING_ARC_NOT_REVIEWED | 12 |
 | STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT | 10 |
 | STOCK_GROUP_IS_A_WEAPON_BATTERY | 9 |
@@ -115,7 +115,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Rebellion Era Campaign Guide | 53 | 94 | 48 | 35 |
 | Scum and Villainy | 13 | 24 | 21 | 13 |
 | Scavenger's Guide to Droids | 1 | 2 | 0 | 0 |
-| Starships of the Galaxy | 105 | 258 | 167 | 96 |
+| Starships of the Galaxy | 105 | 258 | 168 | 96 |
 | Threats of the Galaxy | 5 | 5 | 2 | 2 |
 | Unknown Regions | 26 | 33 | 21 | 18 |
 
@@ -383,7 +383,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Chiss Nssis-class Clawcraft | Starships of the Galaxy p. 69 | 1 / 1 | laser cannons (6d10x2, pilot, +11) |
 | CloakShape Fighter | Starships of the Galaxy p. 71 | 1 / 2 | laser cannons (4d10x2, pilot, +4) |
 | Corellian Engineering Corporation CR90 Corvette | Starships of the Galaxy p. 74 | 1 / 1 | turbolaser battery (5d10x5, gunner, +10) |
-| Corellian Gunship | Starships of the Galaxy p. 92 | 1 / 3 | point-defense quad laser cannon battery (6d10x2, gunner, +15) |
+| Corellian Gunship | Starships of the Galaxy p. 92 | 2 / 3 | double turbolasers (5d10x5, gunner, +5); point-defense quad laser cannon battery (6d10x2, gunner, +15) |
 | Corellian YT-1300 Transport | Starships of the Galaxy p. 154 | 1 / 1 | laser cannons (4d10x2, gunner, +2) |
 | Corellian YT-2000 | Starships of the Galaxy p. 155 | 1 / 1 | double laser cannons (5d10x2, gunner, +2) |
 | Corellian YT-2400 | Starships of the Galaxy p. 156 | 1 / 1 | laser cannons (5d10x2, gunner, +2) |
