@@ -104,3 +104,29 @@ test('source unknown component definition fails closed', () => {
   assert.equal(resolveDroidComponentQuote({ size: 'medium' }).status, 'BLOCKED');
   assert.equal(resolveDroidComponentQuote({ ...sourcePart(50, 1), size: 'not-a-size' }).status, 'BLOCKED');
 });
+
+test('incomplete multi-variant source fields cannot silently sell the cheapest tier', () => {
+  const hiddenCore = resolveDroidComponentQuote({
+    definition: { id: 'hidden-core', cost: 200, costWithHigherDefense: 400, weight: 1 },
+    size: 'medium', category: 'processor', sourcePath: 'processorEnhancements'
+  });
+  assert.equal(hiddenCore.status, 'BLOCKED');
+  const personalityDownloader = resolveDroidComponentQuote({
+    definition: { id: 'personality-downloader', cost: 5000, costIncrement: 1000,
+      weight: 2, weightIncrement: 1 },
+    size: 'medium', category: 'processor', sourcePath: 'processorEnhancements'
+  });
+  assert.equal(personalityDownloader.status, 'BLOCKED');
+});
+
+test('minimum printed chassis size is enforced during quotation', () => {
+  const shield = {
+    definition: { id: 'sr10-shield-generator', sizeMinimum: 'small',
+      cost: factor => 5000 * factor, weight: factor => 20 * factor },
+    category: 'shield', sourcePath: 'accessories.shields'
+  };
+  assert.equal(resolveDroidComponentQuote({ ...shield, size: 'tiny' }).status, 'BLOCKED');
+  assert.deepEqual(resolveDroidComponentQuote({ ...shield, size: 'small' }), {
+    status: 'OK', credits: 10000, kg: 20, blockingReason: null
+  });
+});
