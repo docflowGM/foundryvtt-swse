@@ -968,8 +968,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       else return false;
 
       credits.spent += cost - recovered;
-      this._normalizeDroidCredits();
-      this._recalculateTotals();
+      this._refreshSizeDependentSystems(); // dependent enhancements reprice on any source change
       return true;
     } catch (error) {
       swseLogger.error('[DroidBuilderStep.purchaseSystem]', error);
@@ -1025,63 +1024,46 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    */
   removeSystem(category, id, subcategory = null) {
     if (!this._droidState) return false;
-
     const sys = this._droidState.droidSystems;
-    const credits = this._normalizeDroidCredits();
-
     try {
-      if (!this._systemAllowedBySpeciesConstraints(category, id, subcategory)) {
-        swseLogger.warn('[DroidBuilderStep] System blocked by species droid-builder constraints', {
-          category, id, subcategory, sourceSpecies: this._droidState?.sourceSpecies,
-        });
-        return false;
+      if (!this._systemAllowedBySpeciesConstraints(category, id, subcategory)) return false;
+      const group = category === 'enhancement'
+        ? (subcategory === 'appendageEnhancement' ? 'appendageEnhancement' : 'locomotionEnhancement')
+        : category;
+
+      if (group === 'locomotion') {
+        if (!sys.locomotion || sys.locomotion.id !== id) return false;
+        sys.locomotion = null;
+      } else if (group === 'processor') {
+        if (!sys.processor || sys.processor.id !== id || id === 'heuristic') return false;
+        const heuristic = DROID_SYSTEMS.processors?.find(entry => entry.id === 'heuristic');
+        const quote = this._quoteDroidSystem(heuristic, 'processor');
+        if (quote.status !== 'OK') return false;
+        sys.processor = {
+          id: 'heuristic', name: heuristic.name, cost: 0, weight: quote.kg,
+          isGranted: true, quoteStatus: 'OK', quoteBlockingReason: null
+        };
+      } else {
+        const lists = {
+          appendage: sys.appendages,
+          accessory: sys.accessories,
+          locomotionEnhancement: sys.locomotionEnhancements,
+          appendageEnhancement: sys.appendageEnhancements,
+        };
+        const list = lists[group];
+        if (!Array.isArray(list)) return false;
+        const index = list.findIndex(entry => entry.id === id
+          && (group !== 'accessory' || !subcategory
+            || (entry.category ?? entry.subcategory) === subcategory));
+        if (index < 0) return false;
+        if (list[index]?.isDefault || list[index]?.isLocked) return false;
+        list.splice(index, 1);
       }
 
-      if (category === 'locomotion') {
-        if (sys.locomotion) {
-          credits.spent -= sys.locomotion.cost;
-          sys.locomotion = null;
-        }
-      } else if (category === 'processor') {
-        if (sys.processor && sys.processor.id !== 'heuristic') {
-          credits.spent -= sys.processor.cost;
-          // Reset to free heuristic
-          sys.processor = {
-            id: 'heuristic',
-            name: 'Heuristic Processor',
-            cost: 0,
-            weight: 5
-          };
-        }
-      } else if (category === 'appendage') {
-        const idx = sys.appendages.findIndex(a => a.id === id);
-        if (idx >= 0) {
-          const app = sys.appendages[idx];
-          credits.spent -= app.cost;
-          sys.appendages.splice(idx, 1);
-        }
-      } else if (category === 'accessory') {
-        const idx = sys.accessories.findIndex(a => a.id === id);
-        if (idx >= 0) {
-          const acc = sys.accessories[idx];
-          credits.spent -= acc.cost;
-          sys.accessories.splice(idx, 1);
-        }
-      } else if (category === 'enhancement') {
-        const idx = sys.locomotionEnhancements?.findIndex(e => e.id === id) ?? -1;
-        if (idx >= 0) {
-          const enh = sys.locomotionEnhancements[idx];
-          credits.spent -= enh.cost;
-          sys.locomotionEnhancements.splice(idx, 1);
-        }
-      }
-
-      this._normalizeDroidCredits();
-      this._recalculateTotals();
-
+      this._refreshSizeDependentSystems();
       return true;
-    } catch (e) {
-      swseLogger.error('[DroidBuilderStep.removeSystem]', e);
+    } catch (error) {
+      swseLogger.error('[DroidBuilderStep.removeSystem]', error);
       return false;
     }
   }
