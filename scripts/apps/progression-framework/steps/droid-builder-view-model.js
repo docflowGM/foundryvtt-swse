@@ -635,6 +635,10 @@ export class DroidBuilderViewModelAdapter {
 
   static #normalizeAvailableItem(item, context) {
     const speed = this.#calculateSpeed(item, context);
+    const installedShields = (context.droidState?.droidSystems?.accessories || [])
+      .map(accessory => DROID_SYSTEMS.accessories?.shields?.find(def => def.id === accessory.id)?.sr ?? null)
+      .filter(sr => Number.isInteger(sr));
+    const installedShieldSr = installedShields.length === 1 ? installedShields[0] : null;
     const quote = resolveDroidBuilderQuote({
       definition: item,
       category: context.actionCategory === 'enhancement' ? context.groupId : context.actionCategory,
@@ -642,6 +646,7 @@ export class DroidBuilderViewModelAdapter {
       size: context.size,
       speed,
       baseLocomotionCost: context.droidState?.droidSystems?.locomotion?.cost ?? null,
+      selectedInstalledShieldRating: installedShieldSr,
     });
     const quoteAllowed = quote.status === 'OK';
     // This grant belongs to the draft chassis, not the published list price.
@@ -688,6 +693,7 @@ export class DroidBuilderViewModelAdapter {
       weight,
       quoteStatus: quote.status,
       quoteBlockingReason: quote.blockingReason,
+      quoteCostLabel: quoteAllowed ? this.#formatCredits(cost) : 'Unavailable',
       speed,
       sizeMultiplier: context.costFactor,
       budgetImpact,
