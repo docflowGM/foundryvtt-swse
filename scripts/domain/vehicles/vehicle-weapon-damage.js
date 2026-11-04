@@ -146,7 +146,7 @@ export function resolveVehicleWeaponAuthority(weapon) {
   if (isStockVehicleWeaponItem(weapon)) {
     if (isInstalledVehicleWeaponItem(weapon)) return { ok: false, reason: 'WEAPON_CLAIMS_BOTH_STOCK_AND_INSTALLED_PROVENANCE' };
     const s = resolveStockWeapon(weapon);
-    return s.ok ? { ok: true, origin: 'stock', operator: s.operator, rangeSlug: s.group.rangeSlug ?? null, pointDefense: s.group.pointDefense === true, ...(s.group.area ? { area: s.group.area } : {}), damageRaw: s.spec.damage, ...(s.spec.type ? { damageType: s.spec.type } : {}), ...(s.battery ? { battery: s.battery } : {}), ...(s.ammunition ? { ammunition: s.ammunition } : {}), stock: s } : s;
+    return s.ok ? { ok: true, origin: 'stock', operator: s.operator, rangeSlug: s.group.rangeSlug ?? null, pointDefense: s.group.pointDefense === true, ...(s.group.autofireCapable === true ? { autofireCapable: true } : {}), ...(s.group.area ? { area: s.group.area } : {}), damageRaw: s.spec.damage, ...(s.spec.type ? { damageType: s.spec.type } : {}), ...(s.battery ? { battery: s.battery } : {}), ...(s.ammunition ? { ammunition: s.ammunition } : {}), stock: s } : s;
   }
   const i = resolveCertifiedInstalledWeapon(weapon);
   if (!i) return null;

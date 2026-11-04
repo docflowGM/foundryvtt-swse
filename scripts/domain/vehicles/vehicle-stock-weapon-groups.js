@@ -52,7 +52,7 @@ const INFORMATIONAL_EVIDENCE_KEYS = new Set([
   'gunnerCountPrinted', 'sourceEvidenceStatus', 'printedWeaponDesignation', 'fireLink',
   // the vehicle's printed complement of ammunition: read by the launcher-family check, never by itself a mechanic
   'payloadCount',
-  // autofire figures: autofire/burst are refused for every vehicle-managed weapon at attack time
+  // autofire figures: read only as capability evidence (autofireCapable), never as a mechanic by themselves
   'autofire', 'autofireBonus', 'autofireAttackBonus', 'auto'
 ]);
 const SIZE_FIGURE_KEY = /smaller|small|vs|against/i;          // the size-dependent attack figures checkSizeDependentAdjustments() verifies
@@ -190,6 +190,12 @@ export function parseStockFiringGroup(group) {
   // counts -- never the notes, never another word. A designation that is point-defense AND names another weapon type stays unidentified.
   out.pointDefense = /^\s*(?:\d+\s+)?(?:(?:light|medium|heavy|double|twin|quad|triple|dual)\s+)*point[- ]?defen[cs]e\b/i.test(String(group?.label ?? ''));
   if (!out.pointDefense && /point[- ]?defen[cs]e/i.test(String(group?.label ?? '') + notes)) reasons.push('STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED');
+
+  // WE-5: a statblock that PRINTS an autofire attack figure for this weapon states that it can autofire (structured evidence, never the
+  // name). The printed figure must equal the printed attack total less the autofire penalty (-5), so the one calculated penalty reproduces
+  // the source; a different figure is not reconciled here and the weapon is simply not autofire-capable (single fire is unaffected).
+  const printedAutofire = out.evidence?.autofireAttackBonus ?? out.evidence?.autofireBonus;
+  out.autofireCapable = typeof printedAutofire === 'number' && out.attackBonusPrinted !== null && out.attackBonusPrinted - printedAutofire === 5 && !out.ammunition;
 
   // WE-2 (V-P6C-12): the Table 10-2 range row is the weapon's TYPE read from its printed designation (exact words of the table's own
   // weapon types). A designation that names none or several is refused: without a range table the attack cannot be resolved. This is a

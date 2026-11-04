@@ -5,10 +5,11 @@
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { world, install, shootD20, targetAt, log } from './helpers/vehicle-weapon-world.mjs';
+import { world, install, state, shootD20, targetAt, log } from './helpers/vehicle-weapon-world.mjs';
 import { resolveVehicleFireMode, requestedVehicleFireMode, FIRE_MODE_REASONS } from '../scripts/domain/vehicles/vehicle-fire-mode.js';
 import { resolveVehicleWeaponDamage } from '../scripts/domain/vehicles/vehicle-weapon-damage.js';
 
+const { VehicleFireModeService } = await import('../scripts/engine/vehicles/vehicle-fire-mode-service.js');
 const { resolveDamageDisposition } = await import('../scripts/engine/combat/damage-packet-builder.js');
 const total = r => r.roll?.total ?? r.attackRoll?.total ?? r.total;
 const feat = name => ({ type: 'feat', name });
@@ -49,6 +50,11 @@ test('ATTACK: autofire on a double cannon is -5 with half damage on a miss; a pl
   world();
   const dbl = await install('blaster-cannon-light', 'cannon-double');
   const single = await shootD20(15, dbl, targetAt(1), {});
+  assert.deepEqual([resolveDamageDisposition((await shootD20(2, dbl, targetAt(1), {})).workflowContext).damageAllowed], [false], 'single fire: a miss deals nothing');
+  assert.equal(await shootD20(15, dbl, targetAt(1), { autofire: true }), null, 'not set to autofire: refused, not switched for free');
+  assert.match(log.join('|'), /AUTOFIRE_MODE_NOT_SET/);
+  const set = await VehicleFireModeService.setMode({ vehicle: state().vehicle, weapon: dbl, mode: 'autofire' });
+  assert.equal(set.ok, true, JSON.stringify(set));
   const auto = await shootD20(15, dbl, targetAt(1), { autofire: true });
   assert.ok(single && auto, log.join('|'));
   assert.equal(total(single) - total(auto), 5, 'autofire is exactly -5 against the same single attack');
@@ -56,14 +62,27 @@ test('ATTACK: autofire on a double cannon is -5 with half damage on a miss; a pl
   const d = resolveDamageDisposition(miss.workflowContext);
   assert.deepEqual([d.damageAllowed, d.multiplier], [true, 0.5]);
   assert.equal(miss.workflowContext.ruleData.halfDamageOnMiss, true);
-  // a single attack of the same weapon keeps "miss deals nothing"
-  const smiss = await shootD20(2, dbl, targetAt(1), {});
-  assert.deepEqual([resolveDamageDisposition(smiss.workflowContext).damageAllowed], [false]);
   // burst: abstract crew has no feats
   assert.equal(await shootD20(15, dbl, targetAt(1), { fireMode: 'burst' }), null);
   assert.match(log.join('|'), /BURST_FIRE_REQUIRES_A_NAMED_OPERATOR/);
   // a weapon without autofire capability
   const plain = await install('laser-cannon-light', null, 'turret-2');
   assert.equal(await shootD20(15, plain, targetAt(1), { autofire: true }), null);
-  assert.match(log.join('|'), /AUTOFIRE_CAPABILITY_NOT_ESTABLISHED/);
+  assert.deepEqual(await VehicleFireModeService.setMode({ vehicle: state().vehicle, weapon: plain, mode: 'autofire' }), { ok: false, reason: 'AUTOFIRE_CAPABILITY_NOT_ESTABLISHED' });
+  // back to single fire (swift): a miss deals nothing again
+  assert.equal((await VehicleFireModeService.setMode({ vehicle: state().vehicle, weapon: dbl, mode: 'single' })).ok, true);
+  assert.equal(resolveDamageDisposition((await shootD20(2, dbl, targetAt(1), {})).workflowContext).damageAllowed, false);
+});
+
+test('STOCK: a group is autofire-capable exactly when its record prints an autofire attack figure equal to its attack total less 5', async () => {
+  const { actors } = await import('./helpers/vehicle-weapon-world.mjs');
+  const { assessStockWeaponGroups } = await import('../scripts/domain/vehicles/vehicle-stock-weapon-groups.js');
+  let capable = 0, executableCapable = 0;
+  for (const d of actors) for (const g of assessStockWeaponGroups(d.flags.swse.universalVehicleSource.source).groups) {
+    const v = g.evidence?.autofireAttackBonus ?? g.evidence?.autofireBonus;
+    const expected = typeof v === 'number' && g.attackBonusPrinted !== null && g.attackBonusPrinted - v === 5 && !g.ammunition;
+    assert.equal(g.autofireCapable === true, expected, g.groupKey);
+    if (g.autofireCapable) { capable++; if (g.executable) executableCapable++; }
+  }
+  assert.ok(capable >= 100 && executableCapable >= 50, `${capable} capable, ${executableCapable} executable`);
 });

@@ -28,7 +28,7 @@ import { resolveVehicleAttackBonus, resolveAbstractCrewAttackBonus } from "/syst
 import { resolveAttackDomain } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-domain-router.js";
 import { authorizeVehicleAttackBeforeCosts } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-attack-preflight.js";
 import { resolveVehicleWeaponAuthority } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
-import { resolveVehicleFireMode, requestedVehicleFireMode } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-fire-mode.js";
+import { resolveVehicleFireMode, requestedVehicleFireMode, readPersistedFireMode, MODE_REASONS } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-fire-mode.js";
 import { batteryMarginHits } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-battery.js";
 import { VehicleBatteryAidService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-battery-aid-service.js";
 import { VehicleAmmunitionService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-ammunition-service.js";
@@ -749,8 +749,14 @@ export async function rollAttack(actor, weapon, options = {}) {
         })
       : { crewStationResolved: false };
     // Autofire / Burst Fire of a vehicle-managed weapon: requested here, resolved after the range/scale authority below (WE-5)
-    requestedFireMode = (installedProvenance.kind === 'STOCK_CANDIDATE' || installedProvenance.kind === 'CERTIFIED_INSTALLATION')
-      ? requestedVehicleFireMode(rollOptions, optionActive(rollOptions, 'burstFire')) : 'single';
+    // The mode is the weapon's persisted setting (a swift action, VehicleFireModeService); a request for autofire/burst on a weapon that is
+    // not set to autofire is refused, never silently switched for free.
+    if (installedProvenance.kind === 'STOCK_CANDIDATE' || installedProvenance.kind === 'CERTIFIED_INSTALLATION') {
+      const asked = requestedVehicleFireMode(rollOptions, optionActive(rollOptions, 'burstFire'));
+      const persisted = readPersistedFireMode(vehicle, weapon.id);
+      if (asked !== 'single' && persisted !== 'autofire') { ui?.notifications?.warn?.(`Vehicle attack blocked: ${MODE_REASONS.MODE_NOT_SET}.`); return null; }
+      requestedFireMode = persisted === 'autofire' ? (asked === 'burst' ? 'burst' : 'autofire') : 'single';
+    }
     const sourceGate = await authorizeVehicleAttackBeforeCosts({
       vehicle, weapon, target, attackId,
       crewStationResolved: stationEvidence.crewStationResolved === true,

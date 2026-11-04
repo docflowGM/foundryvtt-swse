@@ -42,3 +42,8 @@ export function resolveVehicleFireMode({ requested, authority, operatorActor, sc
   if (scale === 'character') return { ok: false, reason: FIRE_MODE_REASONS.AREA_AT_CHARACTER_SCALE };
   return { ok: true, mode: 'autofire', attackPenalty: AUTOFIRE_PENALTY, extraDice: 0, halfDamageOnMiss: true };
 }
+
+/** The persisted firing mode of one weapon (a vehicle flag keyed by the weapon Item id). Only 'autofire' is ever stored. */
+export const FIRE_MODE_FLAG = 'vehicleFireMode';
+export const MODE_REASONS = Object.freeze({ MODE_NOT_SET: 'AUTOFIRE_MODE_NOT_SET', NOT_AUTHORIZED: 'FIRE_MODE_NOT_AUTHORIZED', ACTION_UNAVAILABLE: 'FIRE_MODE_SWIFT_ACTION_UNAVAILABLE' });
+export const readPersistedFireMode = (vehicle, itemId) => (vehicle?.flags?.swse?.[FIRE_MODE_FLAG]?.[itemId] === 'autofire' ? 'autofire' : 'single');

@@ -9,13 +9,13 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | Category | Count |
 |---|---|
 | RULES_DECISION_REQUIRED | 7 |
-| SOURCE_EVIDENCE_MISSING | 9 |
-| ENGINEERING_COMPLEXITY | 21 |
-| LIVE_RUNTIME_PENDING | 1 |
+| SOURCE_EVIDENCE_MISSING | 8 |
+| ENGINEERING_COMPLEXITY | 20 |
+| LIVE_RUNTIME_PENDING | 2 |
 | NONCRITICAL_DEFECT | 4 |
 | DEPENDENCY_BLOCKED | 9 |
 
-Open items: 51. Resolved items: 10 (listed at the end).
+Open items: 50. Resolved items: 12 (listed at the end).
 
 ## Items (by severity)
 
@@ -37,8 +37,6 @@ Open items: 51. Resolved items: 10 (listed at the end).
 | P6B-D-054 | WEAPON-ECOSYSTEM | shieldbuster torpedoes, space mines and ion bombs | ENGINEERING_COMPLEXITY | IMPORTANT | no | V-P6C-07 |
 | P6B-D-055 | WEAPON-ECOSYSTEM | vehicle tractor beams | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-056 | WEAPON-ECOSYSTEM | gravity well projectors | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
-| P6B-D-059 | WEAPON-ECOSYSTEM | Autofire capability of stock weapon groups | SOURCE_EVIDENCE_MISSING | IMPORTANT | no | V-P6C-08 |
-| P6B-D-060 | WEAPON-ECOSYSTEM | Swift-action switch to autofire mode | ENGINEERING_COMPLEXITY | IMPORTANT | no | V-P6C-08 |
 | P6B-D-061 | WEAPON-ECOSYSTEM | Burst Fire by an operator other than the named gunner; autofire plus battery | DEPENDENCY_BLOCKED | IMPORTANT | no | V-P6C-08 |
 | P6B-D-003 | P6B-1 | jamming-suite, jamming-array | ENGINEERING_COMPLEXITY | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-004 | P6B-1 | combat-thrusters | DEPENDENCY_BLOCKED | MINOR | no | V-P6-05, V-P2-04 |
@@ -72,6 +70,7 @@ Open items: 51. Resolved items: 10 (listed at the end).
 | P6B-D-041 | STOCK | published stock groups with droid, remote or ambiguous operators | ENGINEERING_COMPLEXITY | MINOR | no | - |
 | P6B-D-057 | WEAPON-ECOSYSTEM | launcher capacity expansion and the remaining launcher kinds | RULES_DECISION_REQUIRED | MINOR | yes | V-P6A-03, V-P6C-06 |
 | P6B-D-058 | WEAPON-ECOSYSTEM | source-specific special weapons without a printed table row | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
+| P6B-D-062 | WEAPON-ECOSYSTEM | Sheet control for the autofire mode switch | LIVE_RUNTIME_PENDING | MINOR | no | V-P6C-08 |
 
 ## Details
 
@@ -561,26 +560,6 @@ Open items: 51. Resolved items: 10 (listed at the end).
 - **Impact:** Stock groups run only where they are plain damage; none is purchasable.
 - **Recommended action:** Reconcile each against its printed source, then implement individually (priority 11).
 
-### P6B-D-059 - Autofire capability of stock weapon groups
-
-- **Source:** Starships of the Galaxy autofire-capable list; stock statblock 'autofire' figures
-- **Category / severity:** SOURCE_EVIDENCE_MISSING / IMPORTANT
-- **Reason:** Autofire/Burst Fire now execute for installed autofire-capable weapons (double, quad, fire-linked, autoblaster options). A stock group carries no sealed capability, and the printed statblock autofire figures are not a verified capability record, so stock autofire and burst are refused (AUTOFIRE_CAPABILITY_NOT_ESTABLISHED).
-- **Missing:** A verified per-group autofire capability (or evidence that the plain laser cannon / light ion cannon / light turbolaser rows are themselves autofire-capable) and the meaning of the printed autofire totals.
-- **Owner ruling needed:** no (V-P6C-08)
-- **Impact:** Stock vehicles cannot autofire or burst; installed ones can.
-- **Recommended action:** Reconcile the capability list against each canonical group, then set it in the group assessment.
-
-### P6B-D-060 - Swift-action switch to autofire mode
-
-- **Source:** Core Rulebook, Special Combat Rules: Autofire
-- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
-- **Reason:** Autofire is requested per attack; the swift action to set the weapon to autofire is not charged and the mode is not persisted, the same as the character attack path.
-- **Missing:** A persisted per-weapon mode and a swift-action spend through the action economy.
-- **Owner ruling needed:** no (V-P6C-08)
-- **Impact:** Autofire costs no swift action.
-- **Recommended action:** Persist the mode on the Item flag and spend 'swift' through ActionEconomyConsumption.
-
 ### P6B-D-061 - Burst Fire by an operator other than the named gunner; autofire plus battery
 
 - **Source:** Core Rulebook (Burst Fire feat, weapon batteries)
@@ -590,6 +569,16 @@ Open items: 51. Resolved items: 10 (listed at the end).
 - **Owner ruling needed:** no (V-P6C-08)
 - **Impact:** Those combinations are refused, not guessed.
 - **Recommended action:** Extend after the operator model batch.
+
+### P6B-D-062 - Sheet control for the autofire mode switch
+
+- **Source:** Core Rulebook, Autofire
+- **Category / severity:** LIVE_RUNTIME_PENDING / MINOR
+- **Reason:** The mode switch is available as a service (VehicleFireModeService); no vehicle-sheet button calls it yet, and the sheet has no battery-aid button either.
+- **Missing:** A sheet action on autofire-capable weapon rows and live Foundry verification.
+- **Owner ruling needed:** no (V-P6C-08)
+- **Impact:** Players cannot switch the mode from the sheet until wired.
+- **Recommended action:** Add one weapon-row toggle next to the existing weapon actions.
 
 ## Resolved items
 
@@ -642,3 +631,13 @@ Open items: 51. Resolved items: 10 (listed at the end).
 
 - **Resolved:** Implemented in vehicle-weapon-range.js, vehicle-attack-range.js and rollAttack; tested in tests/vehicle-universal-phase4e-p35-vehicle-range.test.mjs (exact boundaries of every Table 10-2 row, both scales, footprints, grid sizes/units, refusals, no override). Five stock groups whose designation names no Table 10-2 row (two mass-driver cannons, 'double lasers', the Proton beam cannon, volcano cannons) are no longer executable; stock executable groups 351 -> 346.
 - **Was:** The attack math applies the Core range modifier (0 / -2 / -5 / -10) from a caller-supplied rangeBand; no code resolves the attacker-target distance to a Table 10-2 band for a vehicle weapon, so attacks made from the sheet carry no range modifier. Every promoted weapon names its Table 10-2 row (rangeSlug). WE-2 (2026-11-04): rollAttack resolves the band from the distance between the attacking vehicle's token and the target's token (footprints counted, square or gridless scenes), at the encounter's scale, in the weapon's Table 10-2 row (RangeEngine + data/vehicle-weapon-ranges.json), before any cost; the Core penalties 0/-2/-5/-10 come from the single getRangePenalty authority; a caller-supplied band, distance or explicit penalty is overwritten; an unresolved distance, grid, scale or table and a target beyond long range are refused. Custom designs' legacy weapons (not vehicle-managed) keep the caller-supplied band.
+
+### P6B-D-059 - Autofire capability of stock weapon groups
+
+- **Resolved:** Stock autofire capability is established by the record's own structured evidence: a printed autofire attack figure equal to the printed attack total less 5 (111+ executable groups). Groups with a different or no figure stay single-fire only. Implemented in vehicle-stock-weapon-groups.js (autofireCapable).
+- **Was:** Autofire/Burst Fire now execute for installed autofire-capable weapons (double, quad, fire-linked, autoblaster options). A stock group carries no sealed capability, and the printed statblock autofire figures are not a verified capability record, so stock autofire and burst are refused (AUTOFIRE_CAPABILITY_NOT_ESTABLISHED).
+
+### P6B-D-060 - Swift-action switch to autofire mode
+
+- **Resolved:** Implemented: VehicleFireModeService.setMode spends a swift action through ActionEconomyConsumption and persists the mode on the vehicle; attacks require the weapon to be set to autofire. The switch back to single fire is charged the same swift action (project interpretation). A sheet control for the switch remains (P6B-D-062).
+- **Was:** Autofire is requested per attack; the swift action to set the weapon to autofire is not charged and the mode is not persisted, the same as the character attack path.

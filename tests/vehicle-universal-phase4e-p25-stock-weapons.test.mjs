@@ -289,14 +289,32 @@ test('INTEGRITY: an Item copied onto another vehicle, or a stock flag on a non-s
   setPolicy(undefined);
 });
 
-test('AUTOFIRE and BURST are refused for stock weapons: no autofire capability is established for a stock group (WE-5)', async () => {
+test('AUTOFIRE and BURST need the weapon to be SET to autofire (a swift action); the X-wing laser cannons print an autofire figure (WE-5)', async () => {
   setPolicy('unrestricted');
   const v = await armed(XW); const w = stockItems(v)[0];
   for (const opts of [{ autofire: true }, { attackMode: 'autofire' }, { fireMode: 'burst' }, { combatOptions: { burstFire: true } }]) {
     const r = await fire(v, w, target(), opts);
     assert.equal(r.result, null, JSON.stringify(opts));
-    assert.match(r.log.join('|'), /AUTOFIRE_CAPABILITY_NOT_ESTABLISHED/);
+    assert.match(r.log.join('|'), /AUTOFIRE_MODE_NOT_SET/);
   }
+  // the X-wing record prints no autofire figure: not capable, and the mode cannot be set
+  const { VehicleFireModeService } = await import('../scripts/engine/vehicles/vehicle-fire-mode-service.js');
+  assert.equal((await VehicleFireModeService.setMode({ vehicle: v, weapon: w, mode: 'autofire', user: { isGM: true } })).reason, 'AUTOFIRE_CAPABILITY_NOT_ESTABLISHED');
+  // a stock group whose record PRINTS an autofire figure (attack total less 5) can be set to autofire and fires at exactly -5
+  const capable = docs.map(d => ({ key: keyOf(d), g: assessStockWeaponGroups(d.flags.swse.universalVehicleSource.source).groups.find(g => g.executable && g.autofireCapable && !g.area && !g.ammunition && !g.battery) })).find(x => x.g);
+  assert.ok(capable, 'an executable autofire-capable stock group exists');
+  const cv = await armed(capable.key); const cw = stockItems(cv).find(i => i.flags.swse.vehicleStockWeapon.groupKey === capable.g.groupKey);
+  const single = await fire(cv, cw, target('medium', 'vehicle'));
+  const { ActorEngine: AE } = await import('../scripts/governance/actor-engine/actor-engine.js');
+  const realUpdate = AE.updateActor;
+  AE.updateActor = async (actor, data) => { for (const [k, val] of Object.entries(data)) { const parts = k.split('.'); let o = actor; for (const q of parts.slice(0, -1)) o = (o[q] ??= {}); o[parts.at(-1)] = val; } };
+  const set = await VehicleFireModeService.setMode({ vehicle: cv, weapon: cw, mode: 'autofire', user: { isGM: true } });
+  assert.equal(set.ok, true, JSON.stringify(set));
+  const auto = await fire(cv, cw, target('medium', 'vehicle'), { autofire: true });
+  assert.ok(single.result && auto.result, single.log.join('|') + auto.log.join('|'));
+  const sum = r => r.result.componentLedger.reduce((n, e) => n + (e.applied === false ? 0 : Number(e.value) || 0), 0);
+  AE.updateActor = realUpdate;
+  assert.equal(sum(single) - sum(auto), 5, 'autofire is the one calculated -5, which the record prints as the autofire figure');
   setPolicy(undefined);
 });
 

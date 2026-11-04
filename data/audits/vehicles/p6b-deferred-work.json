@@ -1335,7 +1335,8 @@
       "reason": "Autofire/Burst Fire now execute for installed autofire-capable weapons (double, quad, fire-linked, autoblaster options). A stock group carries no sealed capability, and the printed statblock autofire figures are not a verified capability record, so stock autofire and burst are refused (AUTOFIRE_CAPABILITY_NOT_ESTABLISHED).",
       "missing": "A verified per-group autofire capability (or evidence that the plain laser cannon / light ion cannon / light turbolaser rows are themselves autofire-capable) and the meaning of the printed autofire totals.",
       "impact": "Stock vehicles cannot autofire or burst; installed ones can.",
-      "recommendedAction": "Reconcile the capability list against each canonical group, then set it in the group assessment."
+      "recommendedAction": "Reconcile the capability list against each canonical group, then set it in the group assessment.",
+      "resolution": "Stock autofire capability is established by the record's own structured evidence: a printed autofire attack figure equal to the printed attack total less 5 (111+ executable groups). Groups with a different or no figure stay single-fire only. Implemented in vehicle-stock-weapon-groups.js (autofireCapable)."
     },
     {
       "workstream": "WEAPON-ECOSYSTEM",
@@ -1352,7 +1353,8 @@
       "reason": "Autofire is requested per attack; the swift action to set the weapon to autofire is not charged and the mode is not persisted, the same as the character attack path.",
       "missing": "A persisted per-weapon mode and a swift-action spend through the action economy.",
       "impact": "Autofire costs no swift action.",
-      "recommendedAction": "Persist the mode on the Item flag and spend 'swift' through ActionEconomyConsumption."
+      "recommendedAction": "Persist the mode on the Item flag and spend 'swift' through ActionEconomyConsumption.",
+      "resolution": "Implemented: VehicleFireModeService.setMode spends a swift action through ActionEconomyConsumption and persists the mode on the vehicle; attacks require the weapon to be set to autofire. The switch back to single fire is charged the same swift action (project interpretation). A sheet control for the switch remains (P6B-D-062)."
     },
     {
       "workstream": "WEAPON-ECOSYSTEM",
@@ -1370,6 +1372,23 @@
       "missing": "Operator resolution for pilot-fired weapons and a published rule for burst dice on a battery.",
       "impact": "Those combinations are refused, not guessed.",
       "recommendedAction": "Extend after the operator model batch."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-08"
+      ],
+      "options": [],
+      "id": "P6B-D-062",
+      "component": "Sheet control for the autofire mode switch",
+      "source": "Core Rulebook, Autofire",
+      "status": "LIVE_RUNTIME_PENDING",
+      "severity": "MINOR",
+      "reason": "The mode switch is available as a service (VehicleFireModeService); no vehicle-sheet button calls it yet, and the sheet has no battery-aid button either.",
+      "missing": "A sheet action on autofire-capable weapon rows and live Foundry verification.",
+      "impact": "Players cannot switch the mode from the sheet until wired.",
+      "recommendedAction": "Add one weapon-row toggle next to the existing weapon actions."
     }
   ]
 }
