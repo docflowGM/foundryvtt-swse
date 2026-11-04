@@ -8,6 +8,7 @@
   "offlineExecutableGroups": 528,
   "vehiclesWithOfflineExecutableGroup": 331,
   "vehiclesAllGroupsExecutable": 169,
+  "gmConfigurableGroups": 97,
   "liveVerifiedVehicles": 0
  },
  "batteries": {
@@ -533,7 +534,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     },
     {
      "groupKey": "core-arc-170-starfighter-printed-attack-3",
@@ -867,7 +869,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -1146,7 +1149,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -1245,7 +1249,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -1639,7 +1644,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -1973,7 +1979,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -2301,7 +2308,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -3137,7 +3145,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -3293,7 +3302,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     },
     {
      "groupKey": "cw-hyena-class-bomber-source-attack-3",
@@ -3321,7 +3331,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -3369,7 +3380,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     },
     {
      "groupKey": "cw-ig-227-hailfire-class-droid-tank-source-attack-2",
@@ -3801,7 +3813,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -3954,7 +3967,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -4143,7 +4157,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -4974,7 +4989,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -5381,7 +5397,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     },
     {
      "groupKey": "cw-self-propelled-heavy-artillery-source-attack-5",
@@ -5880,7 +5897,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     },
     {
      "groupKey": "cw-tx-130t-saber-class-fighter-tank-source-attack-4",
@@ -6637,7 +6655,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -6930,7 +6949,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -7345,7 +7365,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -7444,7 +7465,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -7729,7 +7751,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -7801,7 +7824,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -7873,7 +7897,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -8093,7 +8118,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -8580,7 +8606,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -8744,7 +8771,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     },
     {
      "groupKey": "gaw-koensayr-ilh-kk-citadel-class-cruiser-source-attack-4",
@@ -8837,7 +8865,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -9206,7 +9235,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -9249,7 +9279,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -9453,7 +9484,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -9535,7 +9567,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     },
     {
      "groupKey": "kotor-basilisk-war-droid-printed-attack-3",
@@ -9674,7 +9707,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -12594,7 +12628,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     },
     {
      "groupKey": "le-bb-2-starfire-fighter-bomber-published-attack-4",
@@ -12627,7 +12662,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     },
     {
      "groupKey": "le-bb-2-starfire-fighter-bomber-published-attack-5",
@@ -12800,7 +12836,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -13471,7 +13508,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -14307,7 +14345,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -14847,7 +14886,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -16055,7 +16095,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -16330,7 +16371,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -16426,7 +16468,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -16496,7 +16539,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -16657,7 +16701,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -16929,7 +16974,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -17295,7 +17341,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -17403,7 +17450,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -17625,7 +17673,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -17758,7 +17807,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     },
     {
      "groupKey": "re-m12-l-kimogila-heavy-fighter-published-attack-3",
@@ -17786,7 +17836,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -17881,7 +17932,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -17990,7 +18042,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     },
     {
      "groupKey": "re-missile-boat-published-attack-3",
@@ -18019,7 +18072,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -18088,7 +18142,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -18136,7 +18191,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -18271,7 +18327,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -18343,7 +18400,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -18522,7 +18580,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -18775,7 +18834,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -19035,7 +19095,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -19352,7 +19413,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -19446,7 +19508,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -19651,7 +19714,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -20564,7 +20628,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -20847,7 +20912,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -21206,7 +21272,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -21468,7 +21535,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -22312,7 +22380,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -22439,7 +22508,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED"
-     ]
+     ],
+     "gmConfigurable": true
     },
     {
      "groupKey": "sotg-gozanti-cruiser-group-2",
@@ -23471,7 +23541,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -23543,7 +23614,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -23611,7 +23683,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -23719,7 +23792,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -23973,7 +24047,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -24045,7 +24120,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -24144,7 +24220,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -24243,7 +24320,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED"
-     ]
+     ],
+     "gmConfigurable": true
     },
     {
      "groupKey": "sotg-koensayr-ilh-kk-citadel-class-cruiser-group-4",
@@ -24480,7 +24558,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED"
-     ]
+     ],
+     "gmConfigurable": true
     },
     {
      "groupKey": "sotg-krayt-s-honor-group-2",
@@ -25842,7 +25921,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     },
     {
      "groupKey": "sotg-millennium-falcon-group-3",
@@ -26797,7 +26877,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -27768,7 +27849,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -27948,7 +28030,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     },
     {
      "groupKey": "sotg-sienar-fleet-systems-gat-12h-group-4",
@@ -27980,7 +28063,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -28125,7 +28209,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED"
-     ]
+     ],
+     "gmConfigurable": true
     },
     {
      "groupKey": "sotg-sienar-fleet-systems-scimitar-assault-bomber-group-2",
@@ -28358,7 +28443,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -28661,7 +28747,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     },
     {
      "groupKey": "sotg-slave-i-group-4",
@@ -28843,7 +28930,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -29035,7 +29123,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -29327,7 +29416,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -29460,7 +29550,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -29627,7 +29718,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -29876,7 +29968,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -29999,7 +30092,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     },
     {
      "groupKey": "tog-hounds-tooth-source-attack-3",
@@ -30666,7 +30760,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -30803,7 +30898,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -31023,7 +31119,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },
@@ -31092,7 +31189,8 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
-     ]
+     ],
+     "gmConfigurable": true
     }
    ]
   },

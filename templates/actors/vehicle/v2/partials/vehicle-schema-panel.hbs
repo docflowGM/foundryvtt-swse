@@ -147,6 +147,19 @@
 </section>
 {{/if}}
 
+{{#if view.weaponOps.hasAmmoRows}}
+<section class="swse-vehicle-panel swse-vehicle-ammo-config-panel">
+  <header><h3>Launcher ammunition (GM)</h3></header>
+  <p><small>These stock launchers lack printed ammunition facts. A GM can supply them here; the result is labelled GM-configured and is not canonical source data.</small></p>
+  {{#each view.weaponOps.ammoRows}}
+    <div class="swse-vehicle-ammo-config-row" data-group-key="{{groupKey}}">
+      <strong>{{label}}</strong> — {{stateLabel}}{{#if summary}} · {{summary}}{{/if}}
+      {{#if isConfigured}}<button type="button" data-weapon-action="ammo-config-clear" data-item-id="{{groupKey}}">Remove configuration</button>
+      {{else}}<button type="button" data-weapon-action="ammo-config" data-item-id="{{groupKey}}">Configure</button>{{/if}}
+    </div>
+  {{/each}}
+</section>
+{{/if}}
 {{#if view.weaponOps.hasFireModes}}
 <section class="swse-vehicle-panel swse-vehicle-weapon-ops-panel">
   <header><h3>Firing modes</h3></header>

@@ -10,12 +10,12 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 |---|---|
 | RULES_DECISION_REQUIRED | 8 |
 | SOURCE_EVIDENCE_MISSING | 8 |
-| ENGINEERING_COMPLEXITY | 23 |
+| ENGINEERING_COMPLEXITY | 24 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 4 |
 | DEPENDENCY_BLOCKED | 9 |
 
-Open items: 53. Resolved items: 16 (listed at the end).
+Open items: 54. Resolved items: 16 (listed at the end).
 
 ## Items (by severity)
 
@@ -74,6 +74,7 @@ Open items: 53. Resolved items: 16 (listed at the end).
 | P6B-D-041 | STOCK | published stock groups with droid, remote or ambiguous operators | ENGINEERING_COMPLEXITY | MINOR | no | - |
 | P6B-D-057 | WEAPON-ECOSYSTEM | launcher capacity expansion and the remaining launcher kinds | RULES_DECISION_REQUIRED | MINOR | yes | V-P6A-03, V-P6C-06 |
 | P6B-D-058 | WEAPON-ECOSYSTEM | source-specific special weapons without a printed table row | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
+| P6B-D-070 | WEAPON-ECOSYSTEM | GM-configured stock launchers: groups with other blockers, battery launchers, configuration edit | ENGINEERING_COMPLEXITY | MINOR | no | V-P6C-06 |
 
 ## Details
 
@@ -612,6 +613,16 @@ Open items: 53. Resolved items: 16 (listed at the end).
 - **Owner ruling needed:** no
 - **Impact:** Ion bomb rows.
 - **Recommended action:** Add the scene setting, then reuse the launcher ammunition family.
+
+### P6B-D-070 - GM-configured stock launchers: groups with other blockers, battery launchers, configuration edit
+
+- **Source:** Owner direction 2026-11-04 (GM-configured ammunition path)
+- **Category / severity:** ENGINEERING_COMPLEXITY / MINOR
+- **Reason:** 97 stock groups are blocked ONLY by missing ammunition facts and can now be completed by a GM configuration (GM_CONFIGURED_EXECUTABLE, reported apart from the 528 canonical groups). The other ammunition-limited groups also carry non-ammunition blockers (unrecognised range table, arc, damage, battery) and stay unresolved. Launcher batteries are not configurable. A configuration cannot be edited in place (remove and re-create), because removing it also removes the launcher Item and its ledger.
+- **Missing:** Fire-linked launcher ammunition (one unit per linked launcher) and in-place reconfiguration with ledger reconciliation.
+- **Owner ruling needed:** no (V-P6C-06)
+- **Impact:** Edge cases only.
+- **Recommended action:** Add reconfiguration with conservation checks if table use demands it.
 
 ## Resolved items
 

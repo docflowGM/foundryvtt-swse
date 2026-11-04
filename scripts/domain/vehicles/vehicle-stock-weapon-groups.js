@@ -19,6 +19,7 @@
  * unstated arc imposes no automated restriction; a stated-but-uninterpreted or never-reviewed arc is refused.
  * Pure; no Foundry globals.
  */
+import { isGmConfigurable, validateStockAmmoConfig, familyFromConfig } from './vehicle-stock-ammo-config.js';
 import { establishPublishedBattery, establishIndependentBatteryWeapon, batteryAssistanceBonus } from './vehicle-weapon-battery.js';
 import { resolveLauncherFamily } from './vehicle-ammunition-ledger.js';
 import { rangeSlugFromPrintedDesignation } from './vehicle-weapon-range.js';
@@ -318,7 +319,7 @@ export function checkSizeDependentAdjustments(parsed, record) {
  * Assess every printed group of a verified record.
  * @returns {{groups: object[]}} each group: parse fields + `executable` + final `reasons`
  */
-export function assessStockWeaponGroups(record) {
+export function assessStockWeaponGroups(record, { gmAmmo = null } = {}) {
   const bab = record?.combat?.baseAttackBonusPrinted;
   const intScore = record?.abilities?.int;
   return {
@@ -335,7 +336,13 @@ export function assessStockWeaponGroups(record) {
       if (!p.battery) {
         if (attack.reason) common.push(attack.reason);
         const reasons = [...new Set(common)];
-        return { ...p, arc, attackBasis: attack.basis, reasons, executable: reasons.length === 0 };
+        // GM-configured launchers: a group blocked ONLY by the four ammunition facts can be completed by a valid, source-consistent GM
+        // configuration on the world Actor. Nothing else is lifted, the record is untouched, and the group is flagged apart from canonical readiness.
+        const configurable = isGmConfigurable(reasons, { battery: p.battery });
+        const cfg = configurable ? gmAmmo?.[p.groupKey] : null;
+        if (cfg && validateStockAmmoConfig(cfg, p, record?.identity?.sourceEntryKey).ok)
+          return { ...p, arc, attackBasis: attack.basis, reasons: [], executable: true, ammunition: familyFromConfig(cfg), gmConfigured: true, gmConfigurable: true };
+        return { ...p, arc, attackBasis: attack.basis, reasons, executable: reasons.length === 0, ...(configurable ? { gmConfigurable: true } : {}) };
       }
 
       // A printed battery: two execution modes sharing one group (counted ONCE). The printed total contains the printed

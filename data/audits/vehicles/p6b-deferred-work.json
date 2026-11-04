@@ -1504,6 +1504,23 @@
       "impact": "None at runtime; it is a misleading duplicate.",
       "recommendedAction": "Delete the module and update the four pins in a dedicated prune PR.",
       "resolution": "Retired: SWSEVehicleWeapons (and the equally unreachable SWSEVehicleCore) were verified unreachable from index.js by static and dynamic import analysis, had no macro/pack/template references, and were deleted. The four pinned audits now assert their absence."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-06"
+      ],
+      "options": [],
+      "id": "P6B-D-070",
+      "component": "GM-configured stock launchers: groups with other blockers, battery launchers, configuration edit",
+      "source": "Owner direction 2026-11-04 (GM-configured ammunition path)",
+      "status": "ENGINEERING_COMPLEXITY",
+      "severity": "MINOR",
+      "reason": "97 stock groups are blocked ONLY by missing ammunition facts and can now be completed by a GM configuration (GM_CONFIGURED_EXECUTABLE, reported apart from the 528 canonical groups). The other ammunition-limited groups also carry non-ammunition blockers (unrecognised range table, arc, damage, battery) and stay unresolved. Launcher batteries are not configurable. A configuration cannot be edited in place (remove and re-create), because removing it also removes the launcher Item and its ledger.",
+      "missing": "Fire-linked launcher ammunition (one unit per linked launcher) and in-place reconfiguration with ledger reconciliation.",
+      "impact": "Edge cases only.",
+      "recommendedAction": "Add reconfiguration with conservation checks if table use demands it."
     }
   ]
 }

@@ -21,6 +21,7 @@
  * resolveVehicleWeaponAuthority() returns the same shape for both; everything downstream (provenance, preflight,
  * attack math, damage) reads that shape, never the Item.
  */
+import { readStockAmmoConfigs } from './vehicle-stock-ammo-config.js';
 import { parseVehicleWeaponDamageSpec } from '../../engine/combat/vehicle-weapon-damage-parser.js';
 import { getVerifiedPublishedRecord } from './vehicle-source-identity.js';
 import { readCertifiedInstallations } from './vehicle-installation-ledger.js';
@@ -109,7 +110,7 @@ export function resolveStockWeapon(weapon) {
   const key = record.identity?.sourceEntryKey;
   const flag = flagOf(weapon, STOCK_WEAPON_FLAG);
   if (flag.sourceEntryKey !== key) return { ok: false, reason: 'STOCK_WEAPON_ITEM_SOURCE_MISMATCH' };
-  const group = assessStockWeaponGroups(record).groups.find(g => g.groupKey === flag.groupKey);
+  const group = assessStockWeaponGroups(record, { gmAmmo: readStockAmmoConfigs(vehicle) }).groups.find(g => g.groupKey === flag.groupKey);
   if (!group) return { ok: false, reason: 'STOCK_WEAPON_GROUP_NOT_IN_SOURCE' };
   if (!group.executable) return { ok: false, reason: `STOCK_WEAPON_GROUP_NOT_EXECUTABLE:${group.reasons[0]}` };
   // A printed battery runs in a declared MODE (Core p. 170): the Item flag names it and the SOURCE must still support it.
@@ -146,7 +147,7 @@ export function resolveVehicleWeaponAuthority(weapon) {
   if (isStockVehicleWeaponItem(weapon)) {
     if (isInstalledVehicleWeaponItem(weapon)) return { ok: false, reason: 'WEAPON_CLAIMS_BOTH_STOCK_AND_INSTALLED_PROVENANCE' };
     const s = resolveStockWeapon(weapon);
-    return s.ok ? { ok: true, origin: 'stock', operator: s.operator, rangeSlug: s.group.rangeSlug ?? null, pointDefense: s.group.pointDefense === true, ...(s.ammunition?.ammunition === 'shieldbuster torpedo' ? { shieldbuster: true } : {}), ...(s.group.tractorBeam === true ? { tractorBeam: true, ...(Number.isFinite(s.group.tractorGrapple) ? { tractorGrapple: s.group.tractorGrapple } : {}) } : {}), ...(s.group.autofireCapable === true ? { autofireCapable: true } : {}), ...(s.group.automatedOperator === true ? { automatedOperator: true } : {}), ...(s.group.area ? { area: s.group.area } : {}), damageRaw: s.spec.damage, ...(s.spec.type ? { damageType: s.spec.type } : {}), ...(s.battery ? { battery: s.battery } : {}), ...(s.ammunition ? { ammunition: s.ammunition } : {}), stock: s } : s;
+    return s.ok ? { ok: true, origin: 'stock', operator: s.operator, rangeSlug: s.group.rangeSlug ?? null, pointDefense: s.group.pointDefense === true, ...(s.ammunition?.ammunition === 'shieldbuster torpedo' ? { shieldbuster: true } : {}), ...(s.group.tractorBeam === true ? { tractorBeam: true, ...(Number.isFinite(s.group.tractorGrapple) ? { tractorGrapple: s.group.tractorGrapple } : {}) } : {}), ...(s.group.autofireCapable === true ? { autofireCapable: true } : {}), ...(s.group.automatedOperator === true ? { automatedOperator: true } : {}), ...(s.group.gmConfigured === true ? { ammoReadiness: 'GM_CONFIGURED_EXECUTABLE' } : {}), ...(s.group.area ? { area: s.group.area } : {}), damageRaw: s.spec.damage, ...(s.spec.type ? { damageType: s.spec.type } : {}), ...(s.battery ? { battery: s.battery } : {}), ...(s.ammunition ? { ammunition: s.ammunition } : {}), stock: s } : s;
   }
   const i = resolveCertifiedInstalledWeapon(weapon);
   if (!i) return null;

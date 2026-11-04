@@ -29,7 +29,7 @@ export function buildStockWeaponItemData(record, group, mode = 'single') {
     },
     flags: { swse: { [STOCK_WEAPON_FLAG]: { sourceEntryKey: key, groupKey: group.groupKey, ...(mode !== 'single' ? { fireMode: mode } : {}) },
       // a complete launcher family starts with its ledger (loaded = min(payload, capacity), the rest in reserve): ammunition is finite from the first shot
-      ...(group.ammunition ? { [LEDGER_FLAG]: initialLedger(group.ammunition) } : {}) } }
+      ...(group.ammunition ? { [LEDGER_FLAG]: group.ammunition.gmConfigured ? initialLedger(group.ammunition, { launchers: group.ammunition.launchers, loaded: group.ammunition.initialLoaded, allocation: 'gm-configured' }) : initialLedger(group.ammunition) } : {}) } }
   };
 }
 
@@ -54,11 +54,11 @@ export function executableModesOf(group) {
  * or removed; Items that are not stock-managed (no stock flag) are never touched.
  * @returns {{create: object[], deleteIds: string[]}}
  */
-export function planStockWeaponItemSync({ items = [], record }) {
+export function planStockWeaponItemSync({ items = [], record, gmAmmo = null }) {
   const wanted = new Map();
-  for (const g of assessStockWeaponGroups(record).groups) for (const mode of executableModesOf(g)) wanted.set(itemKey(g.groupKey, mode), buildStockWeaponItemData(record, g, mode));
+  for (const g of assessStockWeaponGroups(record, { gmAmmo }).groups) for (const mode of executableModesOf(g)) wanted.set(itemKey(g.groupKey, mode), buildStockWeaponItemData(record, g, mode));
   const deleteIds = [], kept = new Set(), carried = new Map();
-  const groups = new Map(assessStockWeaponGroups(record).groups.map(g => [g.groupKey, g]));
+  const groups = new Map(assessStockWeaponGroups(record, { gmAmmo }).groups.map(g => [g.groupKey, g]));
   for (const item of items) {
     const groupKey = groupKeyOf(item);
     if (!groupKey) continue;
