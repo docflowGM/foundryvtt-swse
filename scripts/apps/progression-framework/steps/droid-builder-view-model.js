@@ -10,6 +10,7 @@
  */
 
 import { DROID_SYSTEMS } from '../../../data/droid-systems.js';
+import { resolveDroidBuilderQuote } from '../../../domain/droids/droid-component-quote-authority.js';
 import {
   DROID_DEGREE_PACKAGES,
   DROID_SIZE_PACKAGES,
@@ -163,6 +164,7 @@ export class DroidBuilderViewModelAdapter {
       suggestedIds,
       confidenceMap,
       selectedComponentKey,
+      contextMode: normalizedContextMode,
     });
     const availableSystemsFlat = availableGroups.flatMap(group => group.items || []);
     const selectedDetail = this.#buildSelectedDetail(availableSystemsFlat, installedGroups, selectedComponentKey);
@@ -499,7 +501,7 @@ export class DroidBuilderViewModelAdapter {
     }));
   }
 
-  static #buildAvailableGroups({ droidState, degree, size, costFactor, credits, installedLookup, suggestedIds, confidenceMap, selectedComponentKey = null }) {
+  static #buildAvailableGroups({ droidState, degree, size, costFactor, credits, installedLookup, suggestedIds, confidenceMap, contextMode, selectedComponentKey = null }) {
     const groups = [
       this.#buildAvailableGroup('locomotion', 'Locomotion', DROID_SYSTEMS.locomotion || [], {
         droidState,
@@ -510,6 +512,7 @@ export class DroidBuilderViewModelAdapter {
         installedLookup,
         suggestedIds,
         confidenceMap,
+        contextMode,
       }),
       this.#buildAvailableGroup('processor', 'Processor', DROID_SYSTEMS.processors || [], {
         droidState,
@@ -520,6 +523,7 @@ export class DroidBuilderViewModelAdapter {
         installedLookup,
         suggestedIds,
         confidenceMap,
+        contextMode,
       }),
       this.#buildAvailableGroup('appendage', 'Appendages', DROID_SYSTEMS.appendages || [], {
         droidState,
@@ -530,8 +534,9 @@ export class DroidBuilderViewModelAdapter {
         installedLookup,
         suggestedIds,
         confidenceMap,
+        contextMode,
       }),
-      this.#buildAccessoryAvailableGroup({ droidState, degree, size, costFactor, credits, installedLookup, suggestedIds, confidenceMap }),
+      this.#buildAccessoryAvailableGroup({ droidState, degree, size, costFactor, credits, installedLookup, suggestedIds, confidenceMap, contextMode }),
       this.#buildAvailableGroup('locomotionEnhancement', 'Locomotion Enhancements', DROID_SYSTEMS.locomotionEnhancements || [], {
         droidState,
         degree,
@@ -541,6 +546,7 @@ export class DroidBuilderViewModelAdapter {
         installedLookup,
         suggestedIds,
         confidenceMap,
+        contextMode,
       }),
       this.#buildAvailableGroup('appendageEnhancement', 'Appendage Enhancements', DROID_SYSTEMS.appendageEnhancements || [], {
         droidState,
@@ -551,6 +557,7 @@ export class DroidBuilderViewModelAdapter {
         installedLookup,
         suggestedIds,
         confidenceMap,
+        contextMode,
       }),
     ];
 
@@ -627,9 +634,23 @@ export class DroidBuilderViewModelAdapter {
   }
 
   static #normalizeAvailableItem(item, context) {
-    const cost = this.#calculateAdjustedCost(item, context);
-    const weight = this.#calculateWeight(item, context);
     const speed = this.#calculateSpeed(item, context);
+    const quote = resolveDroidBuilderQuote({
+      definition: item,
+      category: context.actionCategory === 'enhancement' ? context.groupId : context.actionCategory,
+      subcategory: context.subcategory,
+      size: context.size,
+      speed,
+      baseLocomotionCost: context.droidState?.droidSystems?.locomotion?.cost ?? null,
+    });
+    const quoteAllowed = quote.status === 'OK';
+    // This grant belongs to the draft chassis, not the published list price.
+    const isStartingHeuristic = ['chargenDraft', 'followerDraft'].includes(context.contextMode)
+      && context.actionCategory === 'processor' && item.id === 'heuristic';
+    const isSpeciesGrant = context.actionCategory === 'accessory'
+      && this.#hasAvailableSpeciesBonus(item, context);
+    const cost = quoteAllowed ? (isStartingHeuristic || isSpeciesGrant ? 0 : quote.credits) : null;
+    const weight = quoteAllowed ? quote.kg : null;
     const lookupKey = this.#lookupKey(context.actionCategory, item.id, context.subcategory);
     const installedItem = context.installedLookup.get(lookupKey) || null;
     const isInstalled = !!installedItem || this.#isSingletonSelected(item, context);
@@ -639,6 +660,7 @@ export class DroidBuilderViewModelAdapter {
       installedItem,
       cost,
       budgetImpact,
+      quote,
     });
     const canInstall = reasons.length === 0 || (isInstalled && reasons.every(reason => reason.code === 'duplicate'));
     const suggested = this.#isSuggested(item.id, context.suggestedIds);
@@ -664,10 +686,12 @@ export class DroidBuilderViewModelAdapter {
       adjustedCost: cost,
       cost,
       weight,
+      quoteStatus: quote.status,
+      quoteBlockingReason: quote.blockingReason,
       speed,
       sizeMultiplier: context.costFactor,
       budgetImpact,
-      budgetImpactLabel: this.#formatCredits(budgetImpact),
+      budgetImpactLabel: quoteAllowed ? this.#formatCredits(budgetImpact) : 'Unavailable',
       isInstalled,
       isSelected,
       isSuggested: suggested,
@@ -698,8 +722,11 @@ export class DroidBuilderViewModelAdapter {
     };
   }
 
-  static #compatibilityReasons(item, context, { isInstalled, installedItem, budgetImpact }) {
+  static #compatibilityReasons(item, context, { isInstalled, installedItem, budgetImpact, quote }) {
     const reasons = [];
+    if (quote.status !== 'OK') {
+      reasons.push({ code: 'source-quote-blocked', message: quote.blockingReason || 'Source quote is unavailable.' });
+    }
 
     if (!this.#allowedBySpeciesConstraints(item, context)) {
       reasons.push({ code: 'species-constraint', message: 'Not allowed by this chassis profile.' });
@@ -849,6 +876,7 @@ export class DroidBuilderViewModelAdapter {
   }
 
   static #calculateBudgetImpact(cost, context, installedItem) {
+    if (cost === null || !Number.isFinite(cost)) return null;
     if (installedItem) return 0;
     if (context.actionCategory === 'locomotion') {
       return Math.max(0, Number(cost || 0) - Number(context.droidState?.droidSystems?.locomotion?.cost || 0));
@@ -859,50 +887,18 @@ export class DroidBuilderViewModelAdapter {
     return Number(cost || 0);
   }
 
-  static #calculateAdjustedCost(item, context) {
-    const costFactor = context.costFactor || 1;
-    const size = context.size || 'medium';
-    const speed = this.#calculateSpeed(item, context);
-
-    if (context.actionCategory === 'processor' && item.id === 'heuristic') {
-      return 0;
-    }
-
-    if (context.actionCategory === 'locomotion' && typeof item.costFormula === 'function') {
-      return this.#safeNumber(item.costFormula(speed, costFactor));
-    }
-
-    if (context.actionCategory === 'locomotionEnhancement' && Number(item.costMultiplier || 0) > 0) {
-      const baseLocomotionCost = Number(context.droidState?.droidSystems?.locomotion?.cost || 0);
-      if (baseLocomotionCost > 0) return this.#safeNumber(baseLocomotionCost * Number(item.costMultiplier));
-    }
-
-    if (typeof item.costFormula === 'function') {
-      return this.#safeNumber(item.costFormula(speed, costFactor));
-    }
-
-    if (typeof item.cost === 'function') {
-      return this.#safeNumber(item.cost(costFactor));
-    }
-
-    if (typeof item.cost === 'number') {
-      return this.#safeNumber(item.cost);
-    }
-
-    if (item.rangeOptions?.length) {
-      return this.#safeNumber(item.rangeOptions[0]?.cost || 0);
-    }
-
-    return 0;
-  }
-
-  static #calculateWeight(item, context) {
-    const costFactor = context.costFactor || 1;
-    if (typeof item.weightFormula === 'function') return this.#safeNumber(item.weightFormula(costFactor));
-    if (typeof item.weight === 'function') return this.#safeNumber(item.weight(costFactor));
-    if (typeof item.weight === 'number') return this.#safeNumber(item.weight);
-    if (item.rangeOptions?.length) return this.#safeNumber(item.rangeOptions[0]?.weight || 0);
-    return 0;
+  // Existing bonus-equipment limits are entitlements, not source prices.
+  static #hasAvailableSpeciesBonus(item, context) {
+    const constraints = context.droidState?.speciesDroidBuilder;
+    const limit = Number(constraints?.bonusEquipmentChoices ?? 0);
+    if (!Number.isInteger(limit) || limit < 1) return false;
+    if (!this.#allowedBySpeciesConstraints(item, context)) return false;
+    const owned = (context.droidState?.droidSystems?.accessories ?? [])
+      .filter(entry => this.#allowedBySpeciesConstraints(entry, {
+        ...context, actionCategory: 'accessory',
+        subcategory: entry.category ?? entry.subcategory ?? null
+      })).length;
+    return owned < limit;
   }
 
   static #calculateSpeed(item, context) {
@@ -915,8 +911,8 @@ export class DroidBuilderViewModelAdapter {
   static #baseCostLabel(item) {
     if (typeof item.cost === 'number') return this.#formatCredits(item.cost);
     if (typeof item.cost === 'function' || typeof item.costFormula === 'function') return 'Formula';
-    if (item.rangeOptions?.length) return `${this.#formatCredits(item.rangeOptions[0]?.cost || 0)}+`;
-    return '0 cr';
+    if (item.rangeOptions?.length) return 'Select published range';
+    return 'Source price unavailable';
   }
 
   static #buildSelectedDetail(availableSystemsFlat, installedGroups, selectedComponentKey = null) {
