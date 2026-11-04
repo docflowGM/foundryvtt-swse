@@ -10,12 +10,12 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 |---|---|
 | RULES_DECISION_REQUIRED | 9 |
 | SOURCE_EVIDENCE_MISSING | 8 |
-| ENGINEERING_COMPLEXITY | 19 |
+| ENGINEERING_COMPLEXITY | 18 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 4 |
 | DEPENDENCY_BLOCKED | 8 |
 
-Open items: 49. Resolved items: 9 (listed at the end).
+Open items: 48. Resolved items: 10 (listed at the end).
 
 ## Items (by severity)
 
@@ -34,7 +34,6 @@ Open items: 49. Resolved items: 9 (listed at the end).
 | P6B-D-050 | WEAPON-ECOSYSTEM | weapon configurations: double, triple, quad, fire-linked, optional fire link, cannon enhancements | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-10, V-P6C-11 |
 | P6B-D-051 | WEAPON-ECOSYSTEM | autofire (starship-scale single-target mode), autoblaster and Burst Fire | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-07, V-P6C-08, V-P6C-09 |
 | P6B-D-052 | WEAPON-ECOSYSTEM | point-defense weapon modification: aftermarket option IMPLEMENTED; stock classification and point-defense ranges remain | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
-| P6B-D-053 | WEAPON-ECOSYSTEM | vehicle weapon range-band resolution | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-054 | WEAPON-ECOSYSTEM | shieldbuster torpedoes, space mines and ion bombs | ENGINEERING_COMPLEXITY | IMPORTANT | no | V-P6C-07 |
 | P6B-D-055 | WEAPON-ECOSYSTEM | vehicle tractor beams | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-056 | WEAPON-ECOSYSTEM | gravity well projectors | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
@@ -509,16 +508,6 @@ Open items: 49. Resolved items: 9 (listed at the end).
 - **Impact:** Aftermarket point defense works; stock point-defense groups are not executable.
 - **Recommended action:** Resolve with range-band resolution; keep the stock gate name-blind.
 
-### P6B-D-053 - vehicle weapon range-band resolution
-
-- **Source:** Core Rulebook, Vehicles, Table 10-2: Vehicle Weapon Ranges; data/vehicle-weapon-ranges.json
-- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
-- **Reason:** The attack math applies the Core range modifier (0 / -2 / -5 / -10) from a caller-supplied rangeBand; no code resolves the attacker-target distance to a Table 10-2 band for a vehicle weapon, so attacks made from the sheet carry no range modifier. Every promoted weapon names its Table 10-2 row (rangeSlug).
-- **Missing:** Distance in squares at the encounter's scale, the band lookup per weapon family, and the decision how distance between large fighting spaces is measured.
-- **Owner ruling needed:** no
-- **Impact:** Range penalties never apply unless a macro supplies the band.
-- **Recommended action:** Resolve the band from token distance at the encounter scale; document the measurement convention.
-
 ### P6B-D-054 - shieldbuster torpedoes, space mines and ion bombs
 
 - **Source:** Starships of the Galaxy, Weapon Systems and Table 3-5
@@ -615,3 +604,8 @@ Open items: 49. Resolved items: 9 (listed at the end).
 
 - **Resolved:** Owner addendum 2026-11-04 (PROJECT_INTERPRETATION for initial loading and the GM reload).
 - **Was:** vehicle-ammunition-ledger.js / vehicle-ammunition-service.js: payload, capacity, loaded, reserve and expended are separate, conservation payload = loaded + reserve + expended is validated at every use (a hand-edited ledger is refused), spending is atomic and idempotent per attack id and refunded when the attack fails, a refused attack spends nothing, the guided follow-up spends nothing, and the ledger does not depend on the optional blaster-charge setting. Initial loading (PROJECT_INTERPRETATION): loaded = min(payload, capacity), reserve = payload - loaded, for a verified single launcher only. Reload is a GM operation that moves reserve to loaded without creating ammunition and invents no action cost. 24 groups print a payload; none has a verified single launcher, so 0 are complete. 18 have payload + an exactly-designated launcher but an unverified launcher count (STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED): they are NOT armed and NOT counted, because arming an Item that cannot fire until a GM certifies it needs a sheet action that does not exist. WE-L1 (2026-11-04): AFTERMARKET launchers (proton torpedo; light, medium, heavy concussion) are a complete, tested family: the ledger lives on the vehicle under a guarded flag keyed by installation id, ammunition is bought per unit in one TransactionEngine transaction with the ledger, arrives in reserve, and the sheet offers Buy ammunition and the GM reload.
+
+### P6B-D-053 - vehicle weapon range-band resolution: IMPLEMENTED (WE-2) for every vehicle-managed weapon
+
+- **Resolved:** Implemented in vehicle-weapon-range.js, vehicle-attack-range.js and rollAttack; tested in tests/vehicle-universal-phase4e-p35-vehicle-range.test.mjs (exact boundaries of every Table 10-2 row, both scales, footprints, grid sizes/units, refusals, no override). Five stock groups whose designation names no Table 10-2 row (two mass-driver cannons, 'double lasers', the Proton beam cannon, volcano cannons) are no longer executable; stock executable groups 351 -> 346.
+- **Was:** The attack math applies the Core range modifier (0 / -2 / -5 / -10) from a caller-supplied rangeBand; no code resolves the attacker-target distance to a Table 10-2 band for a vehicle weapon, so attacks made from the sheet carry no range modifier. Every promoted weapon names its Table 10-2 row (rangeSlug). WE-2 (2026-11-04): rollAttack resolves the band from the distance between the attacking vehicle's token and the target's token (footprints counted, square or gridless scenes), at the encounter's scale, in the weapon's Table 10-2 row (RangeEngine + data/vehicle-weapon-ranges.json), before any cost; the Core penalties 0/-2/-5/-10 come from the single getRangePenalty authority; a caller-supplied band, distance or explicit penalty is overwritten; an unresolved distance, grid, scale or table and a target beyond long range are refused. Custom designs' legacy weapons (not vehicle-managed) keep the caller-supplied band.

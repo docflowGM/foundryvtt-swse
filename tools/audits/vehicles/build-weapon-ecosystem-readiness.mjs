@@ -101,6 +101,19 @@ const rows = inventory.rows.map(row => {
   };
 });
 
+// A base weapon is not "fully operational" while a configuration or mode its source allows for it is not implemented: the family's own
+// attack, damage and range can be tested and the family still be incomplete.
+const CONFIG_ROW = { double: 'double-cannons', triple: 'triple-cannons', quad: 'quad-cannons', 'fire-linked': 'fire-linked-weapons', 'optional-fire-link': 'optional-fire-link',
+  'cannon-enhancements': 'cannon-enhancements', 'point-defense': 'point-defense', autofire: 'autofire', autoblaster: 'autoblasters', 'launcher-capacity': 'launcher-capacity' };
+const rowById = new Map(rows.map(r => [r.id, r]));
+for (const r of rows) {
+  if (OVERLAY_KINDS.has(r.kind) || !r.configurations.length) continue;
+  const missing = r.configurations.filter(c => !['OFFLINE_TESTED', 'OFFLINE_TESTED_STOCK_ONLY'].includes(rowById.get(CONFIG_ROW[c])?.attackExecution));
+  if (!missing.length) continue;
+  r.openBlockers.push({ code: 'APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED', class: 'ENGINEERING', text: `Configurations or modes the source allows for this family that have no tested implementation: ${missing.join(', ')}.` });
+  r.overall = 'NOT_FULLY_OPERATIONAL';
+}
+
 const partitioned = PARTITION_ORDER.concat(inventory.rows.filter(r => !OVERLAY_KINDS.has(r.kind) && !PARTITION_ORDER.includes(r.id) && (r.stockLabelPatterns ?? []).length).map(r => r.id));
 const stockPartitionTotals = tally([...owned.values()].flat());
 const output = {

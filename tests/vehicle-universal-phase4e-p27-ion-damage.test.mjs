@@ -320,7 +320,7 @@ test('ATTACK -> CARD -> DAMAGE: the typed ion Item attacks and rolls through the
   const real = RollEngine.safeRoll;
   RollEngine.safeRoll = async formula => { const b = Number(/1d20\s*\+\s*(-?\d+)/.exec(String(formula))?.[1] ?? 0); return { total: 12 + b, formula, dice: [{ results: [{ result: 12 }] }], toJSON() { return { total: 12 + b }; } }; };
   try {
-    const out = await rollAttack(v, w, { abstractCrewQuality: 'normal', target: { ...target(), getActiveTokens: () => [token(300, 0)] } });
+    const out = await rollAttack(v, w, { abstractCrewQuality: 'normal', target: { ...target(), getActiveTokens: () => [token(100, 0)] } });   // one square: point blank
     assert.ok(out, 'the ion attack resolves');
     assert.equal(out.atkBonus, assessStockWeaponGroups(recordOf(YWING)).groups.find(g => g.label === 'ion cannons').attackBonusPrinted);
   } finally { RollEngine.safeRoll = real; }

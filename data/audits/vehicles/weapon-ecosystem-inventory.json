@@ -2,10 +2,6 @@
  "schema": "swse.vehicle.weapon-ecosystem-inventory.v1",
  "note": "Authored inventory of the SWSE vehicle weapon ecosystem (Complete Weapon Ecosystem Addendum). Source statements are paraphrased from the committed sourcebook text; every non-trivial status in the generated readiness matrix is COMPUTED from code and data, and a claim of tested behaviour must name a test file that exists. A row is never counted fully operational while a blocker remains or while LIVE_VERIFIED is false.",
  "blockerCatalog": {
-  "RANGE_BAND_NOT_AUTOMATED": {
-   "class": "ENGINEERING",
-   "text": "No code resolves the attacker-target distance to a Table 10-2 range band for vehicle weapons: the attack reads a caller-supplied rangeBand (none supplied = no range modifier). data/vehicle-weapon-ranges.json holds the table; RangeEngine.getVehicleBand has no caller."
-  },
   "CONFIGURATION_NOT_IMPLEMENTED": {
    "class": "ENGINEERING",
    "text": "The configuration/modification row is SOURCE_VERIFIED only: no certified effect, no Shipyard installation, no attack-time behaviour."
@@ -86,6 +82,10 @@
    "class": "RULES_DEFERRED",
    "text": "Bought ammunition arrives in the launcher's reserve; moving it into the launcher is a GM operation (no reload action or cost is invented from personal launchers). Register V-P6C-06."
   },
+  "STOCK_BATTERY_FACTS_INCOMPLETE": {
+   "class": "DATA",
+   "text": "Most printed weapon batteries stay refused: they lack a printed gunner or weapon count or a verified station; named-gunner rosters (P6B-D-043) and the stacking of several assisting batteries are not implemented."
+  },
   "OPTIONAL_LINK_NOT_IMPLEMENTED": {
    "class": "ENGINEERING",
    "text": "Swift-action link toggle (extra damage and ammunition use apply only while linked) is not implemented."
@@ -138,9 +138,7 @@
     "autofire"
    ],
    "resources": "NOT_APPLICABLE",
-   "blockers": [
-    "RANGE_BAND_NOT_AUTOMATED"
-   ],
+   "blockers": [],
    "nextSlice": "done (P6B weapon slice)",
    "evidence": {
     "aftermarket": "tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs"
@@ -191,9 +189,7 @@
     "autoblaster"
    ],
    "resources": "NOT_APPLICABLE",
-   "blockers": [
-    "RANGE_BAND_NOT_AUTOMATED"
-   ],
+   "blockers": [],
    "nextSlice": "WE-1 done",
    "evidence": {
     "aftermarket": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs"
@@ -279,9 +275,7 @@
     "autofire"
    ],
    "resources": "NOT_APPLICABLE",
-   "blockers": [
-    "RANGE_BAND_NOT_AUTOMATED"
-   ],
+   "blockers": [],
    "nextSlice": "WE-1 done",
    "evidence": {
     "aftermarket": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs"
@@ -335,9 +329,7 @@
     "point-defense"
    ],
    "resources": "NOT_APPLICABLE",
-   "blockers": [
-    "RANGE_BAND_NOT_AUTOMATED"
-   ],
+   "blockers": [],
    "nextSlice": "WE-1 done",
    "evidence": {
     "aftermarket": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
@@ -376,8 +368,7 @@
    "resources": "NOT_APPLICABLE",
    "blockers": [
     "POINT_DEFENSE_NOT_IMPLEMENTED",
-    "AUTOFIRE_NOT_IMPLEMENTED",
-    "RANGE_BAND_NOT_AUTOMATED"
+    "AUTOFIRE_NOT_IMPLEMENTED"
    ],
    "nextSlice": "after point defense and autofire"
   },
@@ -409,8 +400,7 @@
    "applicableConfigurations": [],
    "resources": "NOT_APPLICABLE",
    "blockers": [
-    "SOURCE_ROW_NOT_RECONCILED",
-    "RANGE_BAND_NOT_AUTOMATED"
+    "SOURCE_ROW_NOT_RECONCILED"
    ],
    "nextSlice": "WE-source reconciliation, then the plain-damage path"
   },
@@ -459,8 +449,7 @@
     "NO_COMPLETE_STOCK_LAUNCHER_FAMILY",
     "MISS_DAMAGE_OF_STARSHIP_SCALE_AREA_UNRULED",
     "CAPACITY_EXPANSION_DEFERRED",
-    "RELOAD_ACTION_UNRULED",
-    "RANGE_BAND_NOT_AUTOMATED"
+    "RELOAD_ACTION_UNRULED"
    ],
    "nextSlice": "WE-L1 done (aftermarket launcher, ammunition purchase, reload, fire, lock-on, removal); stock launcher groups wait for verified launcher counts",
    "evidence": {
@@ -515,8 +504,7 @@
     "NO_COMPLETE_STOCK_LAUNCHER_FAMILY",
     "MISS_DAMAGE_OF_STARSHIP_SCALE_AREA_UNRULED",
     "CAPACITY_EXPANSION_DEFERRED",
-    "RELOAD_ACTION_UNRULED",
-    "RANGE_BAND_NOT_AUTOMATED"
+    "RELOAD_ACTION_UNRULED"
    ],
    "nextSlice": "WE-L1 done (aftermarket launcher, ammunition purchase, reload, fire, lock-on, removal); stock launcher groups wait for verified launcher counts",
    "evidence": {
@@ -592,8 +580,7 @@
    "blockers": [
     "SHIELDBUSTER_NOT_IMPLEMENTED",
     "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE",
-    "MISS_DAMAGE_OF_STARSHIP_SCALE_AREA_UNRULED",
-    "RANGE_BAND_NOT_AUTOMATED"
+    "MISS_DAMAGE_OF_STARSHIP_SCALE_AREA_UNRULED"
    ],
    "nextSlice": "priority 8"
   },
@@ -714,8 +701,7 @@
    "applicableConfigurations": [],
    "resources": "NOT_APPLICABLE",
    "blockers": [
-    "TRACTOR_BEAM_NOT_IMPLEMENTED",
-    "RANGE_BAND_NOT_AUTOMATED"
+    "TRACTOR_BEAM_NOT_IMPLEMENTED"
    ],
    "nextSlice": "priority 9"
   },
@@ -1431,7 +1417,7 @@
    "applicableConfigurations": [],
    "resources": "NOT_APPLICABLE",
    "blockers": [
-    "RANGE_BAND_NOT_AUTOMATED"
+    "STOCK_BATTERY_FACTS_INCOMPLETE"
    ],
    "nextSlice": "stock done (P6C-2B/3); aftermarket batteries are not a purchasable component",
    "evidence": {
@@ -1475,8 +1461,7 @@
    "applicableConfigurations": [],
    "resources": "NOT_APPLICABLE",
    "blockers": [
-    "POINT_DEFENSE_STOCK_CLASSIFICATION_UNVERIFIED",
-    "RANGE_BAND_NOT_AUTOMATED"
+    "POINT_DEFENSE_STOCK_CLASSIFICATION_UNVERIFIED"
    ],
    "nextSlice": "WE-PD done (aftermarket); stock groups wait for verified classification and range automation",
    "evidence": {

@@ -5,9 +5,9 @@
   "vehicles": 429,
   "groups": 846,
   "sourceVerifiedGroups": 557,
-  "offlineExecutableGroups": 351,
-  "vehiclesWithOfflineExecutableGroup": 258,
-  "vehiclesAllGroupsExecutable": 125,
+  "offlineExecutableGroups": 346,
+  "vehiclesWithOfflineExecutableGroup": 256,
+  "vehiclesAllGroupsExecutable": 122,
   "liveVerifiedVehicles": 0
  },
  "batteries": {
@@ -64,6 +64,7 @@
   "STOCK_GROUP_IS_A_WEAPON_BATTERY": 179,
   "STOCK_AMMUNITION_LIMITED_UNTRACKED": 169,
   "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED": 145,
+  "STOCK_RANGE_TABLE_NOT_IDENTIFIED": 100,
   "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED": 89,
   "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD": 85,
   "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED": 60,
@@ -94,7 +95,7 @@
   "Clone Wars Campaign Guide": {
    "vehicles": 67,
    "groups": 124,
-   "executableGroups": 55,
+   "executableGroups": 53,
    "vehiclesWithExecutable": 40
   },
   "Force Unleashed Campaign Guide": {
@@ -136,8 +137,8 @@
   "Rebellion Era Campaign Guide": {
    "vehicles": 53,
    "groups": 94,
-   "executableGroups": 41,
-   "vehiclesWithExecutable": 33
+   "executableGroups": 39,
+   "vehiclesWithExecutable": 32
   },
   "Scum and Villainy": {
    "vehicles": 13,
@@ -154,8 +155,8 @@
   "Starships of the Galaxy": {
    "vehicles": 105,
    "groups": 258,
-   "executableGroups": 138,
-   "vehiclesWithExecutable": 86
+   "executableGroups": 137,
+   "vehiclesWithExecutable": 85
   },
   "Threats of the Galaxy": {
    "vehicles": 5,
@@ -181,7 +182,7 @@
   },
   "starfighter": {
    "vehicles": 132,
-   "vehiclesWithExecutable": 116
+   "vehiclesWithExecutable": 115
   },
   "walker": {
    "vehicles": 15,
@@ -189,7 +190,7 @@
   },
   "space-transport": {
    "vehicles": 99,
-   "vehiclesWithExecutable": 68
+   "vehiclesWithExecutable": 67
   },
   "capital-ship": {
    "vehicles": 84,
@@ -728,6 +729,7 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_NOT_PRINTED"
      ]
     }
@@ -1313,6 +1315,7 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_FIRING_ARC_NOT_REVIEWED"
      ]
     },
@@ -1363,6 +1366,7 @@
      "executableModes": [],
      "capitalShipPenaltyApplies": false,
      "refusals": [
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_FIRING_ARC_NOT_REVIEWED"
      ]
     }
@@ -1454,6 +1458,7 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_FIRING_ARC_NOT_REVIEWED"
      ]
     }
@@ -1636,8 +1641,8 @@
    "size": "Gargantuan",
    "groupCount": 3,
    "sourceVerifiedGroups": 3,
-   "offlineExecutableGroups": 3,
-   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
+   "offlineExecutableGroups": 2,
+   "status": "OFFLINE_EXECUTABLE_PARTIAL",
    "liveVerified": false,
    "groups": [
     {
@@ -1653,17 +1658,17 @@
      "area": null,
      "operator": "gunner",
      "sourceVerified": true,
-     "offlineExecutable": true,
+     "offlineExecutable": false,
      "liveVerified": false,
-     "itemReadiness": "ARMED_AT_IMPORT",
-     "crewReadiness": "gunner station (generic or assigned crew)",
-     "attackReadiness": "OFFLINE_EXECUTABLE",
-     "damageReadiness": "OFFLINE_EXECUTABLE",
-     "executableModes": [
-      "single"
-     ],
+     "itemReadiness": "NOT_ARMED",
+     "crewReadiness": "NOT_APPLICABLE",
+     "attackReadiness": "REFUSED",
+     "damageReadiness": "REFUSED",
+     "executableModes": [],
      "capitalShipPenaltyApplies": false,
-     "refusals": []
+     "refusals": [
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
+     ]
     },
     {
      "groupKey": "cw-all-terrain-attack-pod-at-ap-source-attack-2",
@@ -1781,7 +1786,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
-      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
+      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     }
    ]
@@ -1861,7 +1867,8 @@
      "executableModes": [],
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_QUALIFIED"
+      "STOCK_DAMAGE_QUALIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     },
     {
@@ -2349,7 +2356,8 @@
      "executableModes": [],
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED"
+      "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     }
    ]
@@ -2729,7 +2737,8 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_EVIDENCE_UNMODELED",
-      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD"
+      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     }
    ]
@@ -2933,7 +2942,8 @@
       "STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
-      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
+      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     }
    ]
@@ -3556,6 +3566,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -3989,6 +4000,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -4295,6 +4307,7 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_QUALIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -4365,6 +4378,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -4461,6 +4475,7 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_DAMAGE_QUALIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -4619,6 +4634,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -4694,6 +4710,7 @@
      "refusals": [
       "STOCK_EVIDENCE_UNMODELED",
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -4985,6 +5002,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -5117,6 +5135,7 @@
      "executableModes": [],
      "capitalShipPenaltyApplies": false,
      "refusals": [
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -5148,6 +5167,7 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT"
      ]
     }
@@ -5162,7 +5182,7 @@
    "size": "Colossal",
    "groupCount": 6,
    "sourceVerifiedGroups": 5,
-   "offlineExecutableGroups": 4,
+   "offlineExecutableGroups": 3,
    "status": "OFFLINE_EXECUTABLE_PARTIAL",
    "liveVerified": false,
    "groups": [
@@ -5285,17 +5305,17 @@
      "area": null,
      "operator": "gunner",
      "sourceVerified": true,
-     "offlineExecutable": true,
+     "offlineExecutable": false,
      "liveVerified": false,
-     "itemReadiness": "ARMED_AT_IMPORT",
-     "crewReadiness": "gunner station (generic or assigned crew)",
-     "attackReadiness": "OFFLINE_EXECUTABLE",
-     "damageReadiness": "OFFLINE_EXECUTABLE",
-     "executableModes": [
-      "single"
-     ],
+     "itemReadiness": "NOT_ARMED",
+     "crewReadiness": "NOT_APPLICABLE",
+     "attackReadiness": "REFUSED",
+     "damageReadiness": "REFUSED",
+     "executableModes": [],
      "capitalShipPenaltyApplies": false,
-     "refusals": []
+     "refusals": [
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
+     ]
     },
     {
      "groupKey": "cw-self-propelled-heavy-artillery-source-attack-6",
@@ -5514,6 +5534,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -5571,7 +5592,8 @@
      "executableModes": [],
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_AREA_OR_SPLASH"
+      "STOCK_DAMAGE_AREA_OR_SPLASH",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     }
    ]
@@ -5633,7 +5655,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
-      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
+      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     }
    ]
@@ -5772,6 +5795,7 @@
      "executableModes": [],
      "capitalShipPenaltyApplies": false,
      "refusals": [
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -5925,6 +5949,7 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -5955,7 +5980,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
-      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
+      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     }
    ]
@@ -6108,6 +6134,7 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -6261,7 +6288,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
-      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
+      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     }
    ]
@@ -6341,7 +6369,8 @@
      "executableModes": [],
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_QUALIFIED"
+      "STOCK_DAMAGE_QUALIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     },
     {
@@ -6374,7 +6403,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
-      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
+      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     }
    ]
@@ -6457,6 +6487,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -6573,6 +6604,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -7469,6 +7501,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -8169,6 +8202,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -9317,7 +9351,8 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_EVIDENCE_UNMODELED",
-      "STOCK_POSSIBLE_AREA_WEAPON_UNVERIFIED"
+      "STOCK_POSSIBLE_AREA_WEAPON_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     },
     {
@@ -9347,6 +9382,7 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -9983,6 +10019,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -10182,6 +10219,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -10255,6 +10293,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -10532,6 +10571,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -10756,6 +10796,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -11089,6 +11130,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -11123,6 +11165,7 @@
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -11252,6 +11295,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -11325,6 +11369,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -11424,7 +11469,8 @@
      "executableModes": [],
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED"
+      "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     }
    ]
@@ -11495,6 +11541,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -11887,7 +11934,8 @@
      "executableModes": [],
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_QUALIFIED"
+      "STOCK_DAMAGE_QUALIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     }
    ]
@@ -11984,6 +12032,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -12179,6 +12228,7 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -12386,6 +12436,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -12696,6 +12747,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -13139,6 +13191,7 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_NOT_PRINTED"
      ]
     }
@@ -14298,6 +14351,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -14396,6 +14450,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -14694,6 +14749,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -15043,6 +15099,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -15170,6 +15227,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -15723,7 +15781,8 @@
      "executableModes": [],
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_POSSIBLE_AREA_WEAPON_UNVERIFIED"
+      "STOCK_POSSIBLE_AREA_WEAPON_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     },
     {
@@ -15825,7 +15884,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
-      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
+      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     }
    ]
@@ -15978,7 +16038,8 @@
      "executableModes": [],
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD"
+      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     }
    ]
@@ -15992,8 +16053,8 @@
    "size": "Colossal",
    "groupCount": 1,
    "sourceVerifiedGroups": 1,
-   "offlineExecutableGroups": 1,
-   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
+   "offlineExecutableGroups": 0,
+   "status": "NO_EXECUTABLE_STOCK_GROUP",
    "liveVerified": false,
    "groups": [
     {
@@ -16009,17 +16070,17 @@
      "area": null,
      "operator": "gunner",
      "sourceVerified": true,
-     "offlineExecutable": true,
+     "offlineExecutable": false,
      "liveVerified": false,
-     "itemReadiness": "ARMED_AT_IMPORT",
-     "crewReadiness": "gunner station (generic or assigned crew)",
-     "attackReadiness": "OFFLINE_EXECUTABLE",
-     "damageReadiness": "OFFLINE_EXECUTABLE",
-     "executableModes": [
-      "single"
-     ],
+     "itemReadiness": "NOT_ARMED",
+     "crewReadiness": "NOT_APPLICABLE",
+     "attackReadiness": "REFUSED",
+     "damageReadiness": "REFUSED",
+     "executableModes": [],
      "capitalShipPenaltyApplies": false,
-     "refusals": []
+     "refusals": [
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
+     ]
     }
    ]
   },
@@ -16254,6 +16315,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -16847,8 +16909,8 @@
    "size": "Gargantuan",
    "groupCount": 2,
    "sourceVerifiedGroups": 2,
-   "offlineExecutableGroups": 2,
-   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_PARTIAL",
    "liveVerified": false,
    "groups": [
     {
@@ -16864,17 +16926,17 @@
      "area": null,
      "operator": "pilot",
      "sourceVerified": true,
-     "offlineExecutable": true,
+     "offlineExecutable": false,
      "liveVerified": false,
-     "itemReadiness": "ARMED_AT_IMPORT",
-     "crewReadiness": "pilot station (generic or assigned crew)",
-     "attackReadiness": "OFFLINE_EXECUTABLE",
-     "damageReadiness": "OFFLINE_EXECUTABLE",
-     "executableModes": [
-      "single"
-     ],
+     "itemReadiness": "NOT_ARMED",
+     "crewReadiness": "NOT_APPLICABLE",
+     "attackReadiness": "REFUSED",
+     "damageReadiness": "REFUSED",
+     "executableModes": [],
      "capitalShipPenaltyApplies": false,
-     "refusals": []
+     "refusals": [
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
+     ]
     },
     {
      "groupKey": "re-lancet-aerial-artillery-published-attack-2",
@@ -18469,6 +18531,7 @@
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -19276,6 +19339,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -19670,7 +19734,8 @@
       "STOCK_OPERATOR_NOT_PRINTED",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
-      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
+      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     }
    ]
@@ -19844,6 +19909,7 @@
      "refusals": [
       "STOCK_EVIDENCE_UNMODELED",
       "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_NOT_PRINTED"
      ]
     }
@@ -20193,6 +20259,7 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
      ]
     }
@@ -20400,8 +20467,8 @@
    "size": "Gargantuan",
    "groupCount": 2,
    "sourceVerifiedGroups": 2,
-   "offlineExecutableGroups": 1,
-   "status": "OFFLINE_EXECUTABLE_PARTIAL",
+   "offlineExecutableGroups": 0,
+   "status": "NO_EXECUTABLE_STOCK_GROUP",
    "liveVerified": false,
    "groups": [
     {
@@ -20417,17 +20484,17 @@
      "area": null,
      "operator": "pilot",
      "sourceVerified": true,
-     "offlineExecutable": true,
+     "offlineExecutable": false,
      "liveVerified": false,
-     "itemReadiness": "ARMED_AT_IMPORT",
-     "crewReadiness": "pilot station (generic or assigned crew)",
-     "attackReadiness": "OFFLINE_EXECUTABLE",
-     "damageReadiness": "OFFLINE_EXECUTABLE",
-     "executableModes": [
-      "single"
-     ],
+     "itemReadiness": "NOT_ARMED",
+     "crewReadiness": "NOT_APPLICABLE",
+     "attackReadiness": "REFUSED",
+     "damageReadiness": "REFUSED",
+     "executableModes": [],
      "capitalShipPenaltyApplies": false,
-     "refusals": []
+     "refusals": [
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
+     ]
     },
     {
      "groupKey": "sotg-coralskipper-group-2",
@@ -20452,7 +20519,8 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_EVIDENCE_UNMODELED",
-      "STOCK_DAMAGE_QUALIFIED"
+      "STOCK_DAMAGE_QUALIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     }
    ]
@@ -20616,6 +20684,7 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
      ]
     },
@@ -20850,6 +20919,7 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
      ]
     },
@@ -21007,6 +21077,7 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_EVIDENCE_UNMODELED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_FIRING_ARC_STATED_UNPARSED",
       "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
@@ -21109,6 +21180,7 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
      ]
     },
@@ -21535,7 +21607,8 @@
      "executableModes": [],
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED"
+      "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     }
    ]
@@ -21933,6 +22006,7 @@
       "STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_NOT_PRINTED"
      ]
     }
@@ -22015,6 +22089,7 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
      ]
     },
@@ -22146,6 +22221,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -22243,6 +22319,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     }
@@ -22904,7 +22981,8 @@
      "executableModes": [],
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED"
+      "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     },
     {
@@ -23926,6 +24004,7 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
      ]
     }
@@ -24008,6 +24087,7 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
      ]
     },
@@ -24739,6 +24819,7 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
      ]
     },
@@ -25291,6 +25372,7 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
      ]
     },
@@ -26444,6 +26526,7 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
      ]
     },
@@ -26479,6 +26562,7 @@
      "refusals": [
       "STOCK_EVIDENCE_UNMODELED",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
      ]
     },
@@ -26514,6 +26598,7 @@
      "refusals": [
       "STOCK_EVIDENCE_UNMODELED",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
      ]
     }
@@ -26899,6 +26984,7 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
      ]
     },
@@ -27781,7 +27867,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
-      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
+      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     },
     {
@@ -28708,6 +28795,7 @@
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY",
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ]
     },
@@ -28879,6 +28967,7 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
      ]
     },
@@ -28914,6 +29003,7 @@
      "capitalShipPenaltyApplies": false,
      "refusals": [
       "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
      ]
     },
@@ -29350,7 +29440,8 @@
       "STOCK_DAMAGE_QUALIFIED",
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
-      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
+      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     }
    ]
@@ -29447,7 +29538,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
-      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
+      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     }
    ]
@@ -29857,7 +29949,8 @@
      "executableModes": [],
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED"
+      "STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     }
    ]
@@ -30023,7 +30116,8 @@
      "executableModes": [],
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_QUALIFIED"
+      "STOCK_DAMAGE_QUALIFIED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     }
    ]
@@ -30320,7 +30414,8 @@
      "refusals": [
       "STOCK_AMMUNITION_LIMITED_UNTRACKED",
       "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED",
-      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED"
+      "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     },
     {
@@ -30345,7 +30440,8 @@
      "executableModes": [],
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD"
+      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
+      "STOCK_RANGE_TABLE_NOT_IDENTIFIED"
      ]
     }
    ]

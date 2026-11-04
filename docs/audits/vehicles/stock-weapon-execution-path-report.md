@@ -294,3 +294,15 @@ sealed into the weapon's ledger entry (any edit breaks the entry digest and revo
 Core -20 capital-ship penalty is skipped through `capitalShipAttackPenalty({ pointDefense })`, whose exemption input is now set by the sealed option and by nothing else (not a name, not an Item field, not a label).
 The Shipyard sheet offers a weapon-option chooser only on hulls that may carry it. The 60 stock groups labelled point-defense stay refused (a label is not evidence). Tests: `tests/vehicle-universal-phase4e-p34-point-defense.test.mjs`
 (all seven eligible bases through purchase, penalty exemption with a same-hull control, removal; ineligible weapons and starfighter hulls refused before any charge; price/EP/certification tampering; seal and Item-name forgery; sheet).
+
+### WE-2: automatic range authority (P6B-D-053)
+
+Before this change a laser cannon could be bought, installed and fired correctly while the attack carried no range modifier: nothing turned the distance into a Table 10-2 band. Now
+`rollAttack` resolves, for every vehicle-managed weapon (installed or stock), BEFORE any cost: the attacker's and the target's tokens on the active scene (the scene grid in squares, hex
+grids unsupported), the ENCOUNTER's scale (character scale when the encounter includes anything that is not a vehicle, starship scale for vehicles only), the weapon's Table 10-2 row
+(`rangeSlug`: the certified specification for an installation, the point-defense row for a point-defense weapon, the printed designation of a stock group) and the band. The Core penalties (0 / -2 / -5 / -10) are
+applied by the one existing authority (`getRangePenalty`); the attack breakdown shows the row, band, distance and scale. A target beyond long range, an unresolved distance, grid, scale or table is refused
+with a named reason and nothing is spent (a torpedo launcher's ledger and the wallet are untouched). A caller-supplied band, distance or explicit penalty cannot replace the calculation. The guided
+follow-up reuses the recorded launch bonus and is not measured again. Distance is counted nearest square to nearest square with each token's footprint (V-P6C-12, an implemented convention the owner may override).
+Five stock groups whose designation names no Table 10-2 row were executable only because range was never asked; they are now refused (stock executable groups 351 -> 346). Custom designs' legacy weapons keep the
+caller-supplied band. Tests: `tests/vehicle-universal-phase4e-p35-vehicle-range.test.mjs`.

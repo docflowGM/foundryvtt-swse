@@ -1109,3 +1109,23 @@ Implemented as PUBLISHED_RULE (lock-on, Reflex 30 / 10 HP / -5, no second charge
 | Resolution | |
 
 - **Revision 34 (2026-11-04):** appended V-P6C-11. No existing entry changed.
+
+### V-P6C-12 - Range measurement convention and the Table 10-2 row of a stock group (implemented project convention, 2026-11-04)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-12 |
+| Rules domain | Vehicle weapons (range) |
+| Feature | How the distance between an attacking vehicle and its target is counted, and which Table 10-2 row a published stock group uses |
+| Source | Core Rulebook, Vehicles, Vehicle Combat: Range Modifier and Table 10-2: Vehicle Weapon Ranges |
+| Evidence | The Core gives the band penalties (point blank 0, short -2, medium -5, long -10) and the band limits per weapon type and scale, in squares. It does not define how squares are counted between tokens of different sizes, or how a statblock's weapon is matched to a table row. |
+| Confirmed behavior | Band limits and penalties are printed and implemented exactly (data/vehicle-weapon-ranges.json, getRangePenalty). |
+| Unresolved question | Not blocking: the implementation counts squares from the attacker's nearest square to the target's nearest square, diagonals as one square (Chebyshev), adjacent = 1, same square = 0, using each token's footprint; and it reads a stock group's row from the exact weapon words of its printed designation (laser cannon, blaster cannon, autoblaster, ion cannon, turbolaser, torpedo or missile, point-defense, tractor beam, gravity well), refusing a designation that names none or several. |
+| Options | Center-to-center counting; hex grids (refused as unsupported). |
+| Recommended ruling | None |
+| Implementation impact | Five stock groups with no Table 10-2 designation became non-executable. The convention can be overridden by a ruling without changing the data. |
+| Status | `IMPLEMENTED_PROJECT_CONVENTION` (owner may override) |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 35 (2026-11-04):** appended V-P6C-12. No existing entry changed.

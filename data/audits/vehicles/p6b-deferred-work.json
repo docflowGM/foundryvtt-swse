@@ -1230,14 +1230,15 @@
       "linkedDecisions": [],
       "options": [],
       "id": "P6B-D-053",
-      "component": "vehicle weapon range-band resolution",
+      "component": "vehicle weapon range-band resolution: IMPLEMENTED (WE-2) for every vehicle-managed weapon",
       "source": "Core Rulebook, Vehicles, Table 10-2: Vehicle Weapon Ranges; data/vehicle-weapon-ranges.json",
       "status": "ENGINEERING_COMPLEXITY",
-      "reason": "The attack math applies the Core range modifier (0 / -2 / -5 / -10) from a caller-supplied rangeBand; no code resolves the attacker-target distance to a Table 10-2 band for a vehicle weapon, so attacks made from the sheet carry no range modifier. Every promoted weapon names its Table 10-2 row (rangeSlug).",
+      "reason": "The attack math applies the Core range modifier (0 / -2 / -5 / -10) from a caller-supplied rangeBand; no code resolves the attacker-target distance to a Table 10-2 band for a vehicle weapon, so attacks made from the sheet carry no range modifier. Every promoted weapon names its Table 10-2 row (rangeSlug). WE-2 (2026-11-04): rollAttack resolves the band from the distance between the attacking vehicle's token and the target's token (footprints counted, square or gridless scenes), at the encounter's scale, in the weapon's Table 10-2 row (RangeEngine + data/vehicle-weapon-ranges.json), before any cost; the Core penalties 0/-2/-5/-10 come from the single getRangePenalty authority; a caller-supplied band, distance or explicit penalty is overwritten; an unresolved distance, grid, scale or table and a target beyond long range are refused. Custom designs' legacy weapons (not vehicle-managed) keep the caller-supplied band.",
       "missing": "Distance in squares at the encounter's scale, the band lookup per weapon family, and the decision how distance between large fighting spaces is measured.",
       "impact": "Range penalties never apply unless a macro supplies the band.",
       "severity": "IMPORTANT",
-      "recommendedAction": "Resolve the band from token distance at the encounter scale; document the measurement convention."
+      "recommendedAction": "Resolve the band from token distance at the encounter scale; document the measurement convention.",
+      "resolution": "Implemented in vehicle-weapon-range.js, vehicle-attack-range.js and rollAttack; tested in tests/vehicle-universal-phase4e-p35-vehicle-range.test.mjs (exact boundaries of every Table 10-2 row, both scales, footprints, grid sizes/units, refusals, no override). Five stock groups whose designation names no Table 10-2 row (two mass-driver cannons, 'double lasers', the Proton beam cannon, volcano cannons) are no longer executable; stock executable groups 351 -> 346."
     },
     {
       "workstream": "WEAPON-ECOSYSTEM",

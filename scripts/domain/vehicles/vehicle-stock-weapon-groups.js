@@ -5,7 +5,7 @@
  * The canonical records carry each printed attack group as a label, a printed attack total, and free-text notes whose
  * wording varies by source. This module reads ONLY the facts it can take unambiguously from those notes (damage dice and
  * multiplier, one pilot/gunner operator) and refuses everything else with a named reason. It never infers a weapon
- * family or mechanics from a label.
+ * family or mechanics from a label (the one lookup by printed designation is the Table 10-2 RANGE row, V-P6C-12).
  *
  * A group is EXECUTABLE as a plain stock weapon only when all of these hold:
  *   - the notes state damage as plain dice, with or without a printed multiplier and, optionally, the printed type "ion"
@@ -21,6 +21,7 @@
  */
 import { establishPublishedBattery, establishIndependentBatteryWeapon, batteryAssistanceBonus } from './vehicle-weapon-battery.js';
 import { resolveLauncherFamily } from './vehicle-ammunition-ledger.js';
+import { rangeSlugFromPrintedDesignation } from './vehicle-weapon-range.js';
 
 /** Names the sheet shows: the battery keeps the printed label; its independent single weapon is plainly labelled so it is never mistaken for the battery. */
 export const stockItemName = (group, mode = 'single') => (mode === 'independent-weapon' ? `${group.label} (single weapon)` : group.label);
@@ -185,6 +186,12 @@ export function parseStockFiringGroup(group) {
   if (POSSIBLE_AREA.test(String(group?.label ?? ''))) reasons.push('STOCK_POSSIBLE_AREA_WEAPON_UNVERIFIED');
   // point-defense status is never inferred from a label: such groups stay non-executable until it is classified from source
   if (/point[- ]?defen[cs]e/i.test(String(group?.label ?? '') + notes)) reasons.push('STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED');
+
+  // WE-2 (V-P6C-12): the Table 10-2 range row is the weapon's TYPE read from its printed designation (exact words of the table's own
+  // weapon types). A designation that names none or several is refused: without a range table the attack cannot be resolved. This is a
+  // lookup of the type for range only; it never supplies damage, type or any other mechanic.
+  out.rangeSlug = rangeSlugFromPrintedDesignation(group?.label);
+  if (!out.rangeSlug) reasons.push('STOCK_RANGE_TABLE_NOT_IDENTIFIED');
 
   out.reasons = [...new Set(reasons)];
   return out;

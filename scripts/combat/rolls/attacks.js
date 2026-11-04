@@ -31,6 +31,7 @@ import { resolveVehicleWeaponAuthority } from "/systems/foundryvtt-swse/scripts/
 import { batteryMarginHits } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-battery.js";
 import { VehicleBatteryAidService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-battery-aid-service.js";
 import { VehicleAmmunitionService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-ammunition-service.js";
+import { resolveVehicleAttackRange, describeRangeRefusal } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle-attack-range.js";
 import { VehicleProjectileService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-projectile-service.js";
 import { shouldCreateProjectile } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-guided-projectile.js";
 import { resolveTrustedStockAttackGroup } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-attack-authority.js";
@@ -722,6 +723,7 @@ export async function rollAttack(actor, weapon, options = {}) {
   // projectile that was already launched spends nothing, takes no action and keeps its target (Core, Missiles and Torpedoes).
   let launcherAuth = null;
   let followUp = null;
+  let vehicleRange = null;
   const launchAttackId = globalThis.foundry?.utils?.randomID?.() ?? `launch-${Date.now()}`;
   let vehicleAmmoSpend = null;
   const refundVehicleAmmo = async () => { if (vehicleAmmoSpend?.spent) await VehicleAmmunitionService.refundLaunch(vehicleAmmoSpend); };
@@ -762,6 +764,14 @@ export async function rollAttack(actor, weapon, options = {}) {
       return null;
     }
     launcherAuth = resolveVehicleWeaponAuthority(weapon);
+    // WE-2 range authority (Core Table 10-2): the band comes from the distance between the actual tokens at the encounter's scale. An
+    // unresolved distance, table or scale and a target beyond long range are refused here, BEFORE any cost. The guided follow-up is not
+    // resolved again: it reuses the recorded launch bonus (which already carries the launch's range modifier).
+    if (launcherAuth?.ok && !rollOptions.guidedFollowUp) {
+      const range = await resolveVehicleAttackRange({ vehicle, weapon, target });
+      if (!range.ok) { ui?.notifications?.warn?.(`Vehicle attack blocked: ${describeRangeRefusal(range)}.`); return null; }
+      vehicleRange = range;
+    }
     if (rollOptions.guidedFollowUp) {
       // the SAME projectile's one return attack: only a guided launcher, the recorded target, the recorded launcher, its due turn
       if (!launcherAuth?.ok || !launcherAuth.ammunition?.guided) { ui?.notifications?.warn?.('Vehicle attack blocked: this weapon launches no guided projectile.'); return null; }
@@ -775,6 +785,12 @@ export async function rollAttack(actor, weapon, options = {}) {
     }
   }
 
+  if (vehicleRange) {
+    // The calculated range REPLACES whatever the caller supplied: no band, distance or explicit penalty can move the attack.
+    const { rangeBand: _b, range: _r, distanceSquares: _d, rangePenalty: _p, ...rest } = rollOptions;
+    const { rangePenalty: _mp, ...modifiers } = rollOptions.modifiers ?? {};
+    rollOptions = { ...rest, ...(rollOptions.modifiers ? { modifiers } : {}), rangeBand: vehicleRange.band, distanceSquares: vehicleRange.squares, vehicleRange };
+  }
   // Phase 5D-A: canonical weapon/profile resolution is pure -- do it BEFORE any action-option or ammunition cost so an
   // unresolvable canonical identity/selection never spends anything (and needs no rollback).
   // Phase 5D-I-B: owned state selection (configuration / persistent setting / machine state), then the attack-of-opportunity choice

@@ -325,7 +325,9 @@ test('CAPITAL and PILOT rules apply to stock groups through the same attack math
   assert.equal(small.result.componentLedger.filter(e => e.id === 'capital-ship-attack-penalty').length, 1);
   const big = await fire(f, fw, target('colossal', 'vehicle'));
   assert.equal(big.result.componentLedger.filter(e => e.id === 'capital-ship-attack-penalty').length, 0);
-  assert.equal(small.result.atkBonus, big.result.atkBonus - 20);
+  // (the vehicle target is a starship-scale encounter, the character target a character-scale one: compare without the range component)
+  const rangeOf = x => x.result.componentLedger.find(e => e.id === 'range').value;
+  assert.equal(small.result.atkBonus - rangeOf(small), big.result.atkBonus - rangeOf(big) - 20);
   // trained Pilot +2: only for a pilot-crewed stock group fired by the assigned, Pilot-trained pilot
   const v = await armed(XW); const w = stockItems(v)[0];
   v.system.crewPositions = { pilot: { id: 'p1', name: 'Luke' } };
@@ -367,7 +369,9 @@ test('CORPUS: each executable stock group arms, attacks at its printed total, an
         const w = items.find(i => i.flags.swse.vehicleStockWeapon.groupKey === g.groupKey && (i.flags.swse.vehicleStockWeapon.fireMode ?? 'single') === mode);
         if (!w) { failures.push(`${g.groupKey}|${mode}: not armed`); continue; }
         const capital = CAPITAL_SIZES.has(rec.classification.printedSize);
-        const r = await fire(v, w, g.area ? target('medium', 'vehicle') : target('medium'));      // an ordinary splash resolves at starship scale only (vehicles-only encounter)
+        // an ordinary splash resolves at starship scale only (vehicles-only encounter); the targets are ONE square away: point blank for every Table 10-2 row, so the
+        // attack equals the printed total exactly (the range arithmetic itself is covered by p35)
+        const r = await fire(v, w, g.area ? { ...target('medium', 'vehicle'), getActiveTokens: () => [token(100, 0)] } : { ...target('medium'), getActiveTokens: () => [token(100, 0)] });
         const expectBonus = printed + (capital ? -20 : 0);
         let ok = r.result && r.result.atkBonus === expectBonus && !r.blocked;
         let formula = null;
@@ -379,8 +383,8 @@ test('CORPUS: each executable stock group arms, attacks at its printed total, an
     }
   }
   assert.deepEqual(failures, []);
-  assert.equal(provenGroups.size, 351, 'the corpus-wide count of offline-executable stock GROUPS (each counted once)');
-  assert.equal(provenModes, 352, 'one group (Krayt\'s Honor turbolaser battery) supports two modes');
+  assert.equal(provenGroups.size, 346, 'the corpus-wide count of offline-executable stock GROUPS (each counted once)');
+  assert.equal(provenModes, 347, 'one group (Krayt\'s Honor turbolaser battery) supports two modes');
   setPolicy(undefined);
 });
 
@@ -389,9 +393,9 @@ test('COVERAGE REPORT: current, and its executable counts are exactly what the C
   execFileSync(process.execPath, ['tools/audits/vehicles/build-stock-weapon-coverage.mjs', '--check']);
   const { readFileSync } = await import('node:fs');
   const cov = JSON.parse(readFileSync('data/audits/vehicles/stock-weapon-coverage.json', 'utf8'));
-  assert.deepEqual([cov.totals.vehicles, cov.totals.groups, cov.totals.offlineExecutableGroups, cov.totals.vehiclesWithOfflineExecutableGroup, cov.totals.liveVerifiedVehicles], [429, 846, 351, 258, 0]);
+  assert.deepEqual([cov.totals.vehicles, cov.totals.groups, cov.totals.offlineExecutableGroups, cov.totals.vehiclesWithOfflineExecutableGroup, cov.totals.liveVerifiedVehicles], [429, 846, 346, 256, 0]);
   const exec = cov.vehicles.flatMap(v => v.groups.filter(g => g.offlineExecutable));
-  assert.equal(exec.length, 351);
+  assert.equal(exec.length, 346);
   for (const g of cov.vehicles.flatMap(v => v.groups)) {
     assert.equal(g.liveVerified, false);
     if (!g.offlineExecutable) { assert.ok(g.refusals.length > 0, g.groupKey + ' has a named refusal'); assert.equal(g.attackReadiness, 'REFUSED'); }
@@ -453,7 +457,7 @@ test('P6C-2A plain damage: a printed expression with no multiplier is the dice (
 
 test('P6C-2A capital multipliers: x5 is multiplication, never exploding dice; critical and ordering are correct', async () => {
   setPolicy(undefined);
-  for (const [key, label, dice, mult] of [['cw-self-propelled-heavy-artillery', 'SPHA-T heavy turbolaser', '7d10', 5], ['sotg-banking-clan-munificent-class-frigate', 'heavy turbolasers', '11d10', 5], ['sotg-venator-class-star-destroyer', 'medium double turbolasers', '6d10', 5], ['re-lancet-aerial-artillery', 'Proton beam cannon', '6d10', 5]]) {
+  for (const [key, label, dice, mult] of [['cw-self-propelled-heavy-artillery', 'SPHA-T heavy turbolaser', '7d10', 5], ['sotg-banking-clan-munificent-class-frigate', 'heavy turbolasers', '11d10', 5], ['sotg-venator-class-star-destroyer', 'medium double turbolasers', '6d10', 5], ['sotg-recusant-class-light-destroyer', 'heavy turbolasers', '10d10', 5]]) {
     const { v, w } = await stockOf(key, label);
     assert.equal(w.system.damage, `${dice}x${mult}`);
     assert.deepEqual(resolveVehicleWeaponDamage(w), { ok: true, formula: dice, multiplier: mult, damageType: null, printed: `${dice}x${mult}` });

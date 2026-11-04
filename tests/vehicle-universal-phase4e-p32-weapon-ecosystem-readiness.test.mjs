@@ -85,8 +85,10 @@ test('honesty: nothing is live-verified; no family is operational while a blocke
     if (r.openBlockers.length) assert.equal(r.overall, 'NOT_FULLY_OPERATIONAL', r.id);
     else assert.equal(r.overall, 'OFFLINE_OPERATIONAL_LIVE_PENDING', r.id);
   }
-  // range automation is the one blocker every damaging weapon still carries
-  for (const id of ['laser-cannons', 'blaster-cannons', 'turbolasers', 'ion-cannons']) assert.ok(row(id).openBlockers.some(b => b.code === 'RANGE_BAND_NOT_AUTOMATED'), id);
+  // WE-2: range is connected to the attack of every vehicle-managed weapon family that has a Table 10-2 row (p35 proves the arithmetic)
+  for (const r of matrix.rows) assert.ok(!r.openBlockers.some(b => b.code === 'RANGE_BAND_NOT_AUTOMATED'), r.id);
+  for (const id of ['laser-cannons', 'blaster-cannons', 'turbolasers', 'ion-cannons', 'proton-torpedoes', 'concussion-missiles', 'point-defense']) assert.equal(row(id).rangeTable.status, 'TABLE_10_2_ROW_PRESENT', id);
+  assert.ok(fs.existsSync('tests/vehicle-universal-phase4e-p35-vehicle-range.test.mjs'));
   assert.equal(matrix.totals.familiesFullyOperationalOffline, matrix.rows.filter(r => r.openBlockers.length === 0).length);
   // rules gaps are classified RULES_DEFERRED and carry no recommended ruling
   for (const [code, b] of Object.entries(inventory.blockerCatalog)) if (b.class === 'RULES_DEFERRED') { assert.doesNotMatch(b.text, /recommend|should be|we propose/i, code); assert.match(b.text, /Register V-P6[AC]-\d\d/); }

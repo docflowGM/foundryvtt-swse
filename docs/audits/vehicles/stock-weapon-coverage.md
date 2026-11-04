@@ -9,9 +9,9 @@ Three claims are kept apart: **SOURCE_VERIFIED** (the published configuration is
 | Published vehicles | 429 |
 | Published attack groups | 846 |
 | Groups SOURCE_VERIFIED | 557 (65.8%) |
-| Groups OFFLINE_EXECUTABLE | 351 (41.5%) |
-| Vehicles with at least one OFFLINE_EXECUTABLE group | 258 (60.1%) |
-| Vehicles with every group executable | 125 |
+| Groups OFFLINE_EXECUTABLE | 346 (40.9%) |
+| Vehicles with at least one OFFLINE_EXECUTABLE group | 256 (59.7%) |
+| Vehicles with every group executable | 122 |
 | Vehicles LIVE_VERIFIED | 0 |
 
 ## Weapon batteries (Core p. 170)
@@ -81,6 +81,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | STOCK_GROUP_IS_A_WEAPON_BATTERY | 179 |
 | STOCK_AMMUNITION_LIMITED_UNTRACKED | 169 |
 | STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED | 145 |
+| STOCK_RANGE_TABLE_NOT_IDENTIFIED | 100 |
 | STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED | 89 |
 | STOCK_DAMAGE_NOT_PRINTED_IN_RECORD | 85 |
 | STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED | 60 |
@@ -106,17 +107,17 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Book | Vehicles | Groups | Executable groups | Vehicles with an executable group |
 |---|---|---|---|---|
 | Core Rulebook | 17 | 39 | 10 | 7 |
-| Clone Wars Campaign Guide | 67 | 124 | 55 | 40 |
+| Clone Wars Campaign Guide | 67 | 124 | 53 | 40 |
 | Force Unleashed Campaign Guide | 34 | 58 | 22 | 19 |
 | Galaxy at War | 11 | 17 | 8 | 6 |
 | Galaxy of Intrigue | 8 | 9 | 0 | 0 |
 | Jedi Academy Training Manual | 1 | 1 | 0 | 0 |
 | Knights of the Old Republic Campaign Guide | 39 | 73 | 15 | 14 |
 | Legacy Era Campaign Guide | 49 | 109 | 32 | 27 |
-| Rebellion Era Campaign Guide | 53 | 94 | 41 | 33 |
+| Rebellion Era Campaign Guide | 53 | 94 | 39 | 32 |
 | Scum and Villainy | 13 | 24 | 13 | 10 |
 | Scavenger's Guide to Droids | 1 | 2 | 0 | 0 |
-| Starships of the Galaxy | 105 | 258 | 138 | 86 |
+| Starships of the Galaxy | 105 | 258 | 137 | 85 |
 | Threats of the Galaxy | 5 | 5 | 0 | 0 |
 | Unknown Regions | 26 | 33 | 17 | 16 |
 
@@ -124,8 +125,8 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 
 | Category | Vehicles | With an executable group |
 |---|---|---|
-| starfighter | 132 | 116 |
-| space-transport | 99 | 68 |
+| starfighter | 132 | 115 |
+| space-transport | 99 | 67 |
 | capital-ship | 84 | 27 |
 | walker | 15 | 8 |
 | airspeeder | 15 | 6 |
@@ -167,7 +168,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Koensayr Y-wing Starfighter | Core Rulebook p. 178 | 2 / 3 | laser cannons (4d10x2, pilot, +5); ion cannons (4d10x2, gunner, +5) |
 | TIE Fighter | Core Rulebook p. 179 | 1 / 1 | laser cannons (4d10x2, pilot, +4) |
 | TIE Interceptor | Core Rulebook p. 179 | 1 / 1 | laser cannons (6d10x2, pilot, +5) |
-| All-Terrain Attack Pod (AT-AP) | Clone Wars Campaign Guide p. 163 | 3 / 3 | mass-driver cannon (6d10x2, gunner, +7); heavy blaster cannon (5d10x2, gunner, +7); medium laser cannon (3d10x2, pilot, +9) |
+| All-Terrain Attack Pod (AT-AP) | Clone Wars Campaign Guide p. 163 | 2 / 3 | heavy blaster cannon (5d10x2, gunner, +7); medium laser cannon (3d10x2, pilot, +9) |
 | All-Terrain Experimental Transport (AT-XT) | Clone Wars Campaign Guide p. 163 | 1 / 2 | double laser cannon (4d10x2, pilot, +6) |
 | All-Terrain Recon Transport (AT-RT) | Clone Wars Campaign Guide p. 164 | 1 / 1 | repeating blaster cannon (3d10x2, pilot, +5) |
 | Azure Angel | Clone Wars Campaign Guide p. 138 | 1 / 2 | laser cannons (7d10x2, pilot, +14) |
@@ -203,7 +204,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Republic Troop Transport | Clone Wars Campaign Guide p. 168 | 1 / 2 | laser cannons (4d10, pilot, +10) |
 | S40K Phoenix Hawk-class Light Pinnace | Clone Wars Campaign Guide p. 84 | 2 / 2 | heavy blaster cannons (6d10x2, pilot, +3); light ion cannons (3d10x2, pilot, +3) |
 | Sabaoth Starfighter | Clone Wars Campaign Guide p. 221 | 1 / 1 | laser cannons (4d10x2, pilot, +8) |
-| Self-Propelled Heavy Artillery (SPHA) | Clone Wars Campaign Guide p. 168 | 4 / 6 | SPHA-T heavy turbolaser (7d10x5, gunner, +7); SPHA-I heavy ion cannon (3d10x5, gunner, +7); SPHA-V heavy laser cannon (5d10x2, gunner, +7); SPHA-M mass-driver cannon (7d10x2, gunner, +7) |
+| Self-Propelled Heavy Artillery (SPHA) | Clone Wars Campaign Guide p. 168 | 3 / 6 | SPHA-T heavy turbolaser (7d10x5, gunner, +7); SPHA-I heavy ion cannon (3d10x5, gunner, +7); SPHA-V heavy laser cannon (5d10x2, gunner, +7) |
 | Single Trooper Aerial Platform (STAP) | Clone Wars Campaign Guide p. 202 | 1 / 1 | twin blaster cannons (4d10, pilot, +4) |
 | Soulless One (Modified Belbullab-22) | Clone Wars Campaign Guide p. 204 | 1 / 1 | triple laser cannons (5d10x2, pilot, +9) |
 | Unstable Terrain Artillery Transport (UT-AT) | Clone Wars Campaign Guide p. 170 | 1 / 4 | heavy laser cannon (6d10x2, pilot, +8) |
@@ -277,7 +278,6 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Assault Gunboat | Rebellion Era Campaign Guide p. 131 | 2 / 3 | medium laser cannons (5d10x2, pilot, +7); medium ion cannons (6d10x2, pilot, +7) |
 | AT-PT All-Terrain Personal Transport | Rebellion Era Campaign Guide p. 132 | 1 / 2 | Double heavy blaster cannon (5d10x2, pilot, +5) |
 | Corellian Engineering Corporation YM-2800 Limpet Ship | Rebellion Era Campaign Guide p. 114 | 1 / 2 | medium laser cannons (4d10x2, pilot, +6) |
-| Corellian YV-545 | Rebellion Era Campaign Guide p. 69 | 1 / 1 | double lasers (4d10x2, gunner, +3) |
 | G1-M4-C Dunelizard Fighter | Rebellion Era Campaign Guide p. 63 | 1 / 1 | double medium laser cannons (5d10x2, pilot, +4) |
 | Hoersch-Kessel T-Wing Interceptor | Rebellion Era Campaign Guide p. 114 | 1 / 2 | laser cannon (4d10x2, pilot, +7) |
 | Incom X4 Gunship | Rebellion Era Campaign Guide p. 115 | 1 / 2 | laser cannons (4d10x2, pilot, +6) |
@@ -285,7 +285,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | IRD Starfighter | Rebellion Era Campaign Guide p. 156 | 1 / 1 | twin medium blaster cannons (5d10x2, pilot, +7) |
 | Ixiyen-class Fast Attack Craft | Rebellion Era Campaign Guide p. 64 | 1 / 2 | double medium laser cannons (5d10x2, pilot, +6) |
 | Kihraxz Light Fighter | Rebellion Era Campaign Guide p. 146 | 1 / 2 | light blaster cannons (3d10x2, pilot, +4) |
-| Lancet Aerial Artillery | Rebellion Era Campaign Guide p. 133 | 2 / 2 | Proton beam cannon (6d10x5, pilot, +6); Laser cannon (2d10x2, gunner, +4) |
+| Lancet Aerial Artillery | Rebellion Era Campaign Guide p. 133 | 1 / 2 | Laser cannon (2d10x2, gunner, +4) |
 | M12-L Kimogila Heavy Fighter | Rebellion Era Campaign Guide p. 64 | 1 / 3 | heavy laser cannons (6d10x2, pilot, +5) |
 | M22-T Krayt Gunship | Rebellion Era Campaign Guide p. 65 | 1 / 3 | heavy laser cannons (5d10x2, pilot, +8) |
 | Mekuun Heavy Tracker | Rebellion Era Campaign Guide p. 112 | 1 / 1 | Heavy laser cannon (5d10x2, gunner, +6) |
@@ -323,7 +323,6 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Buuper Torsckil Abbey Devices Porax-38 Starfighter | Starships of the Galaxy p. 121 | 1 / 1 | laser cannons (5d10x2, pilot, +6) |
 | Chiss Nssis-class Clawcraft | Starships of the Galaxy p. 69 | 1 / 1 | laser cannons (6d10x2, pilot, +11) |
 | CloakShape Fighter | Starships of the Galaxy p. 71 | 1 / 2 | laser cannons (4d10x2, pilot, +4) |
-| Coralskipper | Starships of the Galaxy p. 73 | 1 / 2 | volcano cannons (6d10x2, pilot, +11) |
 | Corellian Engineering Corporation CR90 Corvette | Starships of the Galaxy p. 74 | 1 / 1 | turbolaser battery (5d10x5, gunner, +10) |
 | Corellian YT-1300 Transport | Starships of the Galaxy p. 154 | 1 / 1 | laser cannons (4d10x2, gunner, +2) |
 | Corellian YT-2000 | Starships of the Galaxy p. 155 | 1 / 1 | double laser cannons (5d10x2, gunner, +2) |

@@ -77,7 +77,9 @@ test('attacks: starfighter and transport never take the penalty; frigate and cru
       const r = await attackBonus(hull, targetOf(size));
       assert.equal(r.entries.length, 1, `${hull} vs ${size}: exactly one penalty entry`);
       assert.deepEqual([r.entries[0].value, r.entries[0].applied], [-20, true]);
-      assert.equal(r.result.atkBonus, noPen.atkBonus - 20, `${hull} vs ${size}: total includes the penalty once`);
+      // (the two targets sit at different Table 10-2 bands: a vehicle target is a starship-scale encounter, a character target a character-scale one; compare WITHOUT the range)
+      const rangeOf = x => x.componentLedger.find(e => e.id === 'range').value;
+      assert.equal(r.result.atkBonus - rangeOf(r.result), noPen.atkBonus - rangeOf(noPen) - 20, `${hull} vs ${size}: total includes the penalty once`);
     }
   }
   assert.ok(base.fighter > -20);

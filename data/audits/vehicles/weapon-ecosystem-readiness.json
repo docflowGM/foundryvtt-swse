@@ -9,7 +9,7 @@
   "stockGroups": 846,
   "stockGroupsOwnedByAFamily": 801,
   "stockGroupsUnclassified": 45,
-  "stockOfflineExecutableGroups": 351,
+  "stockOfflineExecutableGroups": 346,
   "familiesFullyOperationalOffline": 0,
   "liveVerifiedFamilies": 0
  },
@@ -140,10 +140,6 @@
   }
  ],
  "blockerCatalog": {
-  "RANGE_BAND_NOT_AUTOMATED": {
-   "class": "ENGINEERING",
-   "text": "No code resolves the attacker-target distance to a Table 10-2 range band for vehicle weapons: the attack reads a caller-supplied rangeBand (none supplied = no range modifier). data/vehicle-weapon-ranges.json holds the table; RangeEngine.getVehicleBand has no caller."
-  },
   "CONFIGURATION_NOT_IMPLEMENTED": {
    "class": "ENGINEERING",
    "text": "The configuration/modification row is SOURCE_VERIFIED only: no certified effect, no Shipyard installation, no attack-time behaviour."
@@ -224,6 +220,10 @@
    "class": "RULES_DEFERRED",
    "text": "Bought ammunition arrives in the launcher's reserve; moving it into the launcher is a GM operation (no reload action or cost is invented from personal launchers). Register V-P6C-06."
   },
+  "STOCK_BATTERY_FACTS_INCOMPLETE": {
+   "class": "DATA",
+   "text": "Most printed weapon batteries stay refused: they lack a printed gunner or weapon count or a verified station; named-gunner rosters (P6B-D-043) and the stacking of several assisting batteries are not implemented."
+  },
   "OPTIONAL_LINK_NOT_IMPLEMENTED": {
    "class": "ENGINEERING",
    "text": "Swift-action link toggle (extra damage and ammunition use apply only while linked) is not implemented."
@@ -285,9 +285,9 @@
    ],
    "stock": {
     "groups": 336,
-    "offlineExecutable": 212,
+    "offlineExecutable": 211,
     "vehicles": 299,
-    "vehiclesWithExecutableGroup": 195,
+    "vehiclesWithExecutableGroup": 194,
     "basis": "PARTITION: owned by this family"
    },
    "aftermarket": {
@@ -319,9 +319,9 @@
    "overall": "NOT_FULLY_OPERATIONAL",
    "openBlockers": [
     {
-     "code": "RANGE_BAND_NOT_AUTOMATED",
+     "code": "APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
-     "text": "No code resolves the attacker-target distance to a Table 10-2 range band for vehicle weapons: the attack reads a caller-supplied rangeBand (none supplied = no range modifier). data/vehicle-weapon-ranges.json holds the table; RangeEngine.getVehicleBand has no caller."
+     "text": "Configurations or modes the source allows for this family that have no tested implementation: double, triple, quad, fire-linked, cannon-enhancements, autofire."
     }
    ],
    "nextSlice": "done (P6B weapon slice)"
@@ -415,9 +415,9 @@
    "overall": "NOT_FULLY_OPERATIONAL",
    "openBlockers": [
     {
-     "code": "RANGE_BAND_NOT_AUTOMATED",
+     "code": "APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
-     "text": "No code resolves the attacker-target distance to a Table 10-2 range band for vehicle weapons: the attack reads a caller-supplied rangeBand (none supplied = no range modifier). data/vehicle-weapon-ranges.json holds the table; RangeEngine.getVehicleBand has no caller."
+     "text": "Configurations or modes the source allows for this family that have no tested implementation: double, triple, quad, fire-linked, cannon-enhancements, autofire, autoblaster."
     }
    ],
    "nextSlice": "WE-1 done"
@@ -584,9 +584,9 @@
    "overall": "NOT_FULLY_OPERATIONAL",
    "openBlockers": [
     {
-     "code": "RANGE_BAND_NOT_AUTOMATED",
+     "code": "APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
-     "text": "No code resolves the attacker-target distance to a Table 10-2 range band for vehicle weapons: the attack reads a caller-supplied rangeBand (none supplied = no range modifier). data/vehicle-weapon-ranges.json holds the table; RangeEngine.getVehicleBand has no caller."
+     "text": "Configurations or modes the source allows for this family that have no tested implementation: double, triple, quad, fire-linked, autofire."
     }
    ],
    "nextSlice": "WE-1 done"
@@ -684,9 +684,9 @@
    "overall": "NOT_FULLY_OPERATIONAL",
    "openBlockers": [
     {
-     "code": "RANGE_BAND_NOT_AUTOMATED",
+     "code": "APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
-     "text": "No code resolves the attacker-target distance to a Table 10-2 range band for vehicle weapons: the attack reads a caller-supplied rangeBand (none supplied = no range modifier). data/vehicle-weapon-ranges.json holds the table; RangeEngine.getVehicleBand has no caller."
+     "text": "Configurations or modes the source allows for this family that have no tested implementation: double, triple, quad, fire-linked, cannon-enhancements."
     }
    ],
    "nextSlice": "WE-1 done"
@@ -757,11 +757,6 @@
      "code": "AUTOFIRE_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
      "text": "Vehicle autofire (swift-action mode switch, -5 attack, area attack that resolves as a single target at starship scale) has no implementation; stock groups printing autofire are refused as unmodeled."
-    },
-    {
-     "code": "RANGE_BAND_NOT_AUTOMATED",
-     "class": "ENGINEERING",
-     "text": "No code resolves the attacker-target distance to a Table 10-2 range band for vehicle weapons: the attack reads a caller-supplied rangeBand (none supplied = no range modifier). data/vehicle-weapon-ranges.json holds the table; RangeEngine.getVehicleBand has no caller."
     }
    ],
    "nextSlice": "after point defense and autofire"
@@ -810,9 +805,9 @@
    ],
    "stock": {
     "groups": 5,
-    "offlineExecutable": 2,
+    "offlineExecutable": 0,
     "vehicles": 5,
-    "vehiclesWithExecutableGroup": 2,
+    "vehiclesWithExecutableGroup": 0,
     "basis": "PARTITION: owned by this family"
    },
    "aftermarket": {
@@ -821,8 +816,8 @@
     "installable": 0,
     "consumableRows": 0
    },
-   "attackExecution": "OFFLINE_TESTED_STOCK_ONLY",
-   "damageOrEffectExecution": "OFFLINE_TESTED_STOCK_ONLY:ORDINARY_DAMAGE",
+   "attackExecution": "NOT_IMPLEMENTED",
+   "damageOrEffectExecution": "NOT_IMPLEMENTED",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
     "slug": null,
@@ -837,11 +832,6 @@
      "code": "SOURCE_ROW_NOT_RECONCILED",
      "class": "SOURCE",
      "text": "The catalog row has no printed table row: its numbers came from vehicle statblocks. It cannot be priced or installed until a printed source is reconciled."
-    },
-    {
-     "code": "RANGE_BAND_NOT_AUTOMATED",
-     "class": "ENGINEERING",
-     "text": "No code resolves the attacker-target distance to a Table 10-2 range band for vehicle weapons: the attack reads a caller-supplied rangeBand (none supplied = no range modifier). data/vehicle-weapon-ranges.json holds the table; RangeEngine.getVehicleBand has no caller."
     }
    ],
    "nextSlice": "WE-source reconciliation, then the plain-damage path"
@@ -944,9 +934,9 @@
      "text": "Bought ammunition arrives in the launcher's reserve; moving it into the launcher is a GM operation (no reload action or cost is invented from personal launchers). Register V-P6C-06."
     },
     {
-     "code": "RANGE_BAND_NOT_AUTOMATED",
+     "code": "APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
-     "text": "No code resolves the attacker-target distance to a Table 10-2 range band for vehicle weapons: the attack reads a caller-supplied rangeBand (none supplied = no range modifier). data/vehicle-weapon-ranges.json holds the table; RangeEngine.getVehicleBand has no caller."
+     "text": "Configurations or modes the source allows for this family that have no tested implementation: fire-linked, optional-fire-link, launcher-capacity."
     }
    ],
    "nextSlice": "WE-L1 done (aftermarket launcher, ammunition purchase, reload, fire, lock-on, removal); stock launcher groups wait for verified launcher counts"
@@ -1080,9 +1070,9 @@
      "text": "Bought ammunition arrives in the launcher's reserve; moving it into the launcher is a GM operation (no reload action or cost is invented from personal launchers). Register V-P6C-06."
     },
     {
-     "code": "RANGE_BAND_NOT_AUTOMATED",
+     "code": "APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
-     "text": "No code resolves the attacker-target distance to a Table 10-2 range band for vehicle weapons: the attack reads a caller-supplied rangeBand (none supplied = no range modifier). data/vehicle-weapon-ranges.json holds the table; RangeEngine.getVehicleBand has no caller."
+     "text": "Configurations or modes the source allows for this family that have no tested implementation: fire-linked, optional-fire-link, launcher-capacity."
     }
    ],
    "nextSlice": "WE-L1 done (aftermarket launcher, ammunition purchase, reload, fire, lock-on, removal); stock launcher groups wait for verified launcher counts"
@@ -1229,9 +1219,9 @@
      "text": "Core Area Attacks say creatures you miss take half damage, and the Scale rule says area attacks resolve as attacks on a single target at starship scale; whether the single target still takes half damage on a miss is not stated. Register V-P6C-07. Implemented behaviour: a miss deals no damage."
     },
     {
-     "code": "RANGE_BAND_NOT_AUTOMATED",
+     "code": "APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
-     "text": "No code resolves the attacker-target distance to a Table 10-2 range band for vehicle weapons: the attack reads a caller-supplied rangeBand (none supplied = no range modifier). data/vehicle-weapon-ranges.json holds the table; RangeEngine.getVehicleBand has no caller."
+     "text": "Configurations or modes the source allows for this family that have no tested implementation: fire-linked, optional-fire-link, launcher-capacity."
     }
    ],
    "nextSlice": "priority 8"
@@ -1489,11 +1479,6 @@
      "code": "TRACTOR_BEAM_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
      "text": "Attack vs Reflex, opposed grapple checks, grabbed/held/pulled state, escape and range-break (Core, Tractor Beams) have no vehicle implementation; stock tractor-beam groups are refused."
-    },
-    {
-     "code": "RANGE_BAND_NOT_AUTOMATED",
-     "class": "ENGINEERING",
-     "text": "No code resolves the attacker-target distance to a Table 10-2 range band for vehicle weapons: the attack reads a caller-supplied rangeBand (none supplied = no range modifier). data/vehicle-weapon-ranges.json holds the table; RangeEngine.getVehicleBand has no caller."
     }
    ],
    "nextSlice": "priority 9"
@@ -2577,9 +2562,9 @@
    ],
    "stock": {
     "groups": 80,
-    "offlineExecutable": 49,
+    "offlineExecutable": 48,
     "vehicles": 74,
-    "vehiclesWithExecutableGroup": 47,
+    "vehiclesWithExecutableGroup": 46,
     "basis": "OVERLAY: also counted in its base-weapon row"
    },
    "aftermarket": {
@@ -3002,9 +2987,9 @@
    "overall": "NOT_FULLY_OPERATIONAL",
    "openBlockers": [
     {
-     "code": "RANGE_BAND_NOT_AUTOMATED",
-     "class": "ENGINEERING",
-     "text": "No code resolves the attacker-target distance to a Table 10-2 range band for vehicle weapons: the attack reads a caller-supplied rangeBand (none supplied = no range modifier). data/vehicle-weapon-ranges.json holds the table; RangeEngine.getVehicleBand has no caller."
+     "code": "STOCK_BATTERY_FACTS_INCOMPLETE",
+     "class": "DATA",
+     "text": "Most printed weapon batteries stay refused: they lack a printed gunner or weapon count or a verified station; named-gunner rosters (P6B-D-043) and the stacking of several assisting batteries are not implemented."
     }
    ],
    "nextSlice": "stock done (P6C-2B/3); aftermarket batteries are not a purchasable component"
@@ -3077,11 +3062,6 @@
      "code": "POINT_DEFENSE_STOCK_CLASSIFICATION_UNVERIFIED",
      "class": "SOURCE",
      "text": "60 stock groups whose label says point-defense are refused: a statblock label is not evidence of the modification's rules (the gate never infers a mechanic from a name). The aftermarket option is implemented."
-    },
-    {
-     "code": "RANGE_BAND_NOT_AUTOMATED",
-     "class": "ENGINEERING",
-     "text": "No code resolves the attacker-target distance to a Table 10-2 range band for vehicle weapons: the attack reads a caller-supplied rangeBand (none supplied = no range modifier). data/vehicle-weapon-ranges.json holds the table; RangeEngine.getVehicleBand has no caller."
     }
    ],
    "nextSlice": "WE-PD done (aftermarket); stock groups wait for verified classification and range automation"

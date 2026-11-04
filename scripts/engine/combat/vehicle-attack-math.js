@@ -109,6 +109,26 @@ function actorSize(actor) {
 }
 
 /**
+ * Range of a vehicle attack. For a vehicle-managed weapon rollAttack attaches `vehicleRange` (the Table 10-2 band resolved from the
+ * tokens' distance, vehicle-attack-range.js): it is the ONLY source, so the context handed to the one band-penalty authority
+ * (getRangePenalty, called exactly once per resolver below) carries that band and NO caller-supplied explicit penalty. Attacks without a
+ * `vehicleRange` (custom designs and legacy weapons) keep the caller-supplied band behavior.
+ */
+function withCalculatedRange(context) {
+  const vr = context?.vehicleRange;
+  if (!vr?.band) return context;
+  const { rangePenalty: _p, range: _r, ...rest } = context;
+  const { rangePenalty: _mp, ...modifiers } = context.modifiers ?? {};
+  return { ...rest, ...(context.modifiers ? { modifiers } : {}), rangeBand: vr.band };
+}
+/** The band as the breakdown shows it, and where it came from. */
+function describeRange(weapon, context) {
+  const vr = context?.vehicleRange;
+  if (vr?.band) return { rangeBand: `${vr.bandLabel} (${vr.squares} square${vr.squares === 1 ? '' : 's'}, ${vr.scale} scale)`, rangeSource: `Core Rulebook Table 10-2 (${vr.slug}), measured between the tokens` };
+  return { rangeBand: String(context.rangeBand ?? context.range ?? weapon?.system?.rangeBand ?? '').toLowerCase() || 'unspecified', rangeSource: 'getRangePenalty helper' };
+}
+
+/**
  * Core Vehicle Combat, Capital Ships: a vehicle of Colossal (frigate) size or larger takes -20 on attack rolls against
  * targets smaller than Colossal; point-defense weapons are exempt. Point-defense status comes ONLY from the certified
  * weapon specification of a sealed installation (never from an Item name or editable field).
@@ -196,8 +216,9 @@ export async function resolveVehicleAttackBonus(gunnerActor, vehicleActor, weapo
   const gunnerAbilityLabel = `Ability (${abilityKey.toUpperCase()})`;
   const gunnerBab = Number(baseline.components?.['BAB'] ?? 0);
   const vehicleIntModifier = SchemaAdapters.getAbilityMod(vehicleActor, 'int');
+  context = withCalculatedRange(context);                // (a calculated vehicleRange replaces any caller-supplied band / explicit penalty)
   const rangeModifier = getRangePenalty(weapon, context);
-  const rangeBand = String(context.rangeBand ?? context.range ?? weapon?.system?.rangeBand ?? '').toLowerCase() || 'unspecified';
+  const { rangeBand, rangeSource } = describeRange(weapon, context);
 
   const ledger = [
     ledgerEntry({
@@ -213,7 +234,7 @@ export async function resolveVehicleAttackBonus(gunnerActor, vehicleActor, weapo
     ledgerEntry({
       id: 'range', label: 'Range', value: rangeModifier, category: 'range',
       sourceId: weapon?.id ?? null, sourceName: weapon?.name ?? null,
-      reason: `Source: getRangePenalty helper; range band: ${rangeBand}. Sign preserved (negative = penalty); resolved once here, never reapplied by ModifierEngine or recalculated in chat rendering.`
+      reason: `Source: ${rangeSource}; range band: ${rangeBand}. Sign preserved (negative = penalty); resolved once here, never reapplied by ModifierEngine or recalculated in chat rendering.`
     })
   ];
 
@@ -328,8 +349,9 @@ export async function resolveAbstractCrewAttackBonus(vehicleActor, weapon, crewQ
   const crewQualityBonus = crewBab;
 
   const vehicleIntModifier = SchemaAdapters.getAbilityMod(vehicleActor, 'int');
+  context = withCalculatedRange(context);                // (a calculated vehicleRange replaces any caller-supplied band / explicit penalty)
   const rangeModifier = getRangePenalty(weapon, context);
-  const rangeBand = String(context.rangeBand ?? context.range ?? weapon?.system?.rangeBand ?? '').toLowerCase() || 'unspecified';
+  const { rangeBand, rangeSource } = describeRange(weapon, context);
   const weaponEnhancement = getWeaponFlatAttackBonus(weapon);
 
   // PUBLISHED STOCK weapon with generic crew: the statblock's printed attack total IS the generic crew's complete attack
@@ -342,7 +364,7 @@ export async function resolveAbstractCrewAttackBonus(vehicleActor, weapon, crewQ
   const rangeEntry = ledgerEntry({
     id: 'range', label: 'Range', value: rangeModifier, category: 'range',
     sourceId: weapon?.id ?? null, sourceName: weapon?.name ?? null,
-    reason: `Source: getRangePenalty helper; range band: ${rangeBand}. Sign preserved; resolved once.`
+    reason: `Source: ${rangeSource}; range band: ${rangeBand}. Sign preserved; resolved once.`
   });
   const ledger = stockBasis ? [
     ledgerEntry({

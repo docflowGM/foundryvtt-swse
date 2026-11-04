@@ -145,7 +145,7 @@ export function resolveVehicleWeaponAuthority(weapon) {
   if (isStockVehicleWeaponItem(weapon)) {
     if (isInstalledVehicleWeaponItem(weapon)) return { ok: false, reason: 'WEAPON_CLAIMS_BOTH_STOCK_AND_INSTALLED_PROVENANCE' };
     const s = resolveStockWeapon(weapon);
-    return s.ok ? { ok: true, origin: 'stock', operator: s.operator, damageRaw: s.spec.damage, ...(s.spec.type ? { damageType: s.spec.type } : {}), ...(s.battery ? { battery: s.battery } : {}), ...(s.ammunition ? { ammunition: s.ammunition } : {}), stock: s } : s;
+    return s.ok ? { ok: true, origin: 'stock', operator: s.operator, rangeSlug: s.group.rangeSlug ?? null, damageRaw: s.spec.damage, ...(s.spec.type ? { damageType: s.spec.type } : {}), ...(s.battery ? { battery: s.battery } : {}), ...(s.ammunition ? { ammunition: s.ammunition } : {}), stock: s } : s;
   }
   const i = resolveCertifiedInstalledWeapon(weapon);
   if (!i) return null;
@@ -153,7 +153,7 @@ export function resolveVehicleWeaponAuthority(weapon) {
   // An aftermarket LAUNCHER (WE-L1) is a finite-ammunition guided weapon: it carries its ammunition family and the printed splash,
   // derived from the certified specification and the sealed entry (never from the Item).
   const family = aftermarketFamily(i.spec, i.entry);
-  return { ok: true, origin: 'installed', operator: i.mount.operatorRole, damageRaw: i.spec.damage, installed: i,
+  return { ok: true, origin: 'installed', operator: i.mount.operatorRole, rangeSlug: i.rangeSlug ?? null, damageRaw: i.spec.damage, installed: i,
     ...(family ? { ammunition: family } : {}), ...(i.spec.area ? { area: i.spec.area } : {}) };
 }
 
