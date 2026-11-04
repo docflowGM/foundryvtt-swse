@@ -83,6 +83,14 @@ const PLAIN_WEAPONS = Object.freeze({
 // shieldbuster launcher (its shield rule is not implemented), mine launchers and every other launcher are NOT promoted here.
 const CITE_LAUNCHER = 'Starships of the Galaxy, Table 3-5 (p. 47, PDF-verified launcher and ammunition rows) and Weapon Systems: Concussion Missiles / Proton Torpedoes (launcher capacity pp. 45-46, 4-square splash); Core Rulebook, Missiles and Torpedoes (guided projectiles)';
 const WE_L1_TEST = 'tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs';
+// Control weapons deal no damage (Core, Tractor Beams; Starships of the Galaxy, Gravity Well Projectors): the catalog prints damage "Special". They
+// are certified as weapons whose damage is empty and whose `control` names the shared mechanic that runs after a hit (the weapon-control
+// engines for a tractor beam; the interdiction field for a gravity well projector).
+const CONTROL_TEST = 'tests/vehicle-universal-phase4e-p44-gravity-well.test.mjs';
+const CONTROL_WEAPONS = Object.freeze({
+  'tractor-beam': { control: 'tractor-beam', rangeSlug: 'tractor-beams' },
+  'gravity-well-projector': { control: 'gravity-well', rangeSlug: 'gravity-well-projectors' }
+});
 const LAUNCHERS = Object.freeze({
   'proton-torpedo-launcher': { family: 'torpedo', ammunition: { id: 'proton-torpedo', damage: '9d10x2', price: 800 } },
   'concussion-missile-launcher-light': { family: 'missile', ammunition: { id: 'concussion-missile-light', damage: '7d10x2', price: 500 } },
@@ -161,6 +169,7 @@ export const EFFECTS = Object.freeze({
   'hangar-bay': { kind: 'capacity', capacity: 'hangar', divisor: 50, unit: 'hangar units', stackable: true, group: 'hangar', citation: CITE3.hangar },
   'hangar-bay-concealed': { kind: 'capacity', capacity: 'hangar', divisor: 50, unit: 'hangar units (concealed)', stackable: true, group: 'hangar', citation: CITE3.hangar },
   ...Object.fromEntries(Object.entries(PLAIN_WEAPONS).map(([id, w]) => [id, { kind: 'weapon', family: w.family, rangeSlug: w.rangeSlug, damage: w.damage, ...(w.testFile ? { testFile: w.testFile } : {}), stackable: true, group: `weapon:${id}`, citation: CITE_WEAPON }])),
+  ...Object.fromEntries(Object.entries(CONTROL_WEAPONS).map(([id, w]) => [id, { kind: 'weapon', family: 'control', control: w.control, rangeSlug: w.rangeSlug, damage: '', noDamage: true, testFile: CONTROL_TEST, stackable: true, group: `weapon:${id}`, citation: CITE_WEAPON }])),
   ...Object.fromEntries(Object.entries(LAUNCHERS).map(([id, l]) => [id, { kind: 'weapon', family: l.family, rangeSlug: 'missiles-torpedoes', damage: l.ammunition.damage,
     ammunition: { ...l.ammunition, capacity: launcherStandardCapacity(id).standard }, guided: true, ...(l.area === null ? {} : { area: { kind: 'splash', squares: 4 } }), ...(l.shieldbuster ? { shieldbuster: true } : {}), testFile: WE_L1_TEST, stackable: true, group: `weapon:${id}`, citation: CITE_LAUNCHER }])),
   'point-defense': { kind: 'weapon-option', option: 'point-defense', label: 'Point-Defense', pointDefense: true, eligibleBases: POINT_DEFENSE_BASE_WEAPONS, extraCredits: 4000, extraEmplacementPoints: 0,
@@ -205,6 +214,7 @@ export function effectInstallability({ catalogEntry, record, entries = [] }) {
       // the printed damage must be what the effect certifies (a changed catalog row is not silently trusted); a launcher prints no
       // damage ("See Ammunition"), so its catalog link to the certified ammunition row is what must agree
       if (effect.ammunition) { if (catalogEntry.ammunition !== effect.ammunition.id) reasons.push('LAUNCHER_AMMUNITION_DIFFERS_FROM_CERTIFIED_ROW'); }
+      else if (effect.control) { if (catalogEntry.damage !== 'Special') reasons.push('WEAPON_DAMAGE_DIFFERS_FROM_CERTIFIED_ROW'); }
       else if (catalogEntry.damage !== effect.damage) reasons.push('WEAPON_DAMAGE_DIFFERS_FROM_CERTIFIED_ROW');
       break;
     case 'weapon-option': reasons.push('WEAPON_OPTION_REQUIRES_A_BASE_WEAPON'); break;

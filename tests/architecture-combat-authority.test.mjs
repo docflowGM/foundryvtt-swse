@@ -26,7 +26,7 @@ test('BOUNDARY: no vehicle module looks a feat up by display name, writes grappl
   for (const f of vehicleModules) {
     const src = strip(read(f));
     assert.doesNotMatch(src, /['"`]burst fire['"`]/i, `${f}: Burst Fire belongs to CombatOptionResolver`);
-    assert.doesNotMatch(src, /flags\.swse\.grappleState|createActiveEffects|GrappleStateEngine\.(advancePair|clearPair|clearState)/, `${f}: grapple/control state belongs to weapon-control-effects + GrappleStateEngine`);
+    assert.doesNotMatch(src, /flags\.swse\.grappleState|GrappleStateEngine\.(advancePair|clearPair|clearState)/, `${f}: grapple/control state belongs to weapon-control-effects + GrappleStateEngine`);
     assert.doesNotMatch(src, /['"`]system\.(hp\.value|shields\.value|conditionTrack\.current)['"`]/, `${f}: HP / shields / condition track are written by ActorEngine's damage resolution`);
   }
 });

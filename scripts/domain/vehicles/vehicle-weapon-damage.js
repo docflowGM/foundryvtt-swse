@@ -156,7 +156,8 @@ export function resolveVehicleWeaponAuthority(weapon) {
   // derived from the certified specification and the sealed entry (never from the Item).
   const family = aftermarketFamily(i.spec, i.entry);
   return { ok: true, origin: 'installed', operator: i.mount.operatorRole, rangeSlug: i.rangeSlug ?? null, damageRaw: i.damage, ...(i.autofire ? { autofireCapable: true } : {}), installed: i,
-    ...(family ? { ammunition: family } : {}), ...(i.spec.area ? { area: i.spec.area } : {}), ...(i.spec.shieldbuster === true ? { shieldbuster: true } : {}) };
+    ...(family ? { ammunition: family } : {}), ...(i.spec.area ? { area: i.spec.area } : {}), ...(i.spec.shieldbuster === true ? { shieldbuster: true } : {}),
+    ...(i.spec.control === 'tractor-beam' ? { tractorBeam: true } : {}), ...(i.spec.control === 'gravity-well' ? { gravityWell: true } : {}) };
 }
 
 /**

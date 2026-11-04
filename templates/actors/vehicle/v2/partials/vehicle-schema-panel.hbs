@@ -160,6 +160,23 @@
   {{/each}}
 </section>
 {{/if}}
+{{#if view.weaponOps.hasGravityWeapons}}
+<section class="swse-vehicle-panel swse-vehicle-interdiction-panel">
+  <header><h3>Gravity well projectors</h3></header>
+  {{#each view.weaponOps.gravityWeapons}}
+    <div class="swse-vehicle-gravity-row"><strong>{{name}}</strong>
+      {{#if canProject}}<button type="button" data-weapon-action="gravity-project" data-item-id="{{itemId}}">Project (attack vs Reflex 10)</button>{{else}}<small>The GM places the field.</small>{{/if}}</div>
+  {{/each}}
+  {{#if view.weaponOps.hasFields}}
+    <p><small>Interdiction fields on this scene stay active until a GM deactivates or removes them (project convention V-P6C-14; the source prints no duration).</small></p>
+    {{#each view.weaponOps.fields}}
+      <div class="swse-vehicle-interdiction-field" data-field-id="{{id}}">{{areaLabel}} — {{stateLabel}}
+        <button type="button" data-weapon-action="interdiction-toggle" data-item-id="{{id}}">{{toggleLabel}}</button>
+        <button type="button" data-weapon-action="interdiction-remove" data-item-id="{{id}}">Remove</button></div>
+    {{/each}}
+  {{/if}}
+</section>
+{{/if}}
 {{#if view.weaponOps.hasFireModes}}
 <section class="swse-vehicle-panel swse-vehicle-weapon-ops-panel">
   <header><h3>Firing modes</h3></header>

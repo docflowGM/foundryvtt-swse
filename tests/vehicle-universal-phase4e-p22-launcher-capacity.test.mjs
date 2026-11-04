@@ -35,7 +35,7 @@ test('launchers and ammunition remain uninstallable and nothing expends ammuniti
   const { EFFECTS } = await import('../scripts/domain/vehicles/vehicle-modification-effects.js');
   // WE-L1 certified five launchers (proton torpedo; light, medium, heavy concussion; shieldbuster) with their consumable ammunition kept OUT of the
   // registry; every other launcher, rack, mine, bomb, shell and grenade stays closed
-  const certifiedLaunchers = new Set(['proton-torpedo-launcher', 'shieldbuster-torpedo-launcher', 'concussion-missile-launcher-light', 'concussion-missile-launcher-medium', 'concussion-missile-launcher-heavy']);
+  const certifiedLaunchers = new Set(['proton-torpedo-launcher', 'shieldbuster-torpedo-launcher', 'tractor-beam', 'gravity-well-projector', 'concussion-missile-launcher-light', 'concussion-missile-launcher-medium', 'concussion-missile-launcher-heavy']);
   for (const w of weapons.filter(x => /launcher|rack|missile|torpedo|mine|bomb|shell|grenade/.test(x.id))) assert.equal(EFFECTS[w.id] === undefined, !certifiedLaunchers.has(w.id), w.id);
   for (const w of weapons.filter(x => x.category === 'Ammunition')) assert.equal(EFFECTS[w.id], undefined, w.id + ' is a consumable, never an installation');
   const src = readFileSync('scripts/domain/vehicles/vehicle-launcher-capacity.js', 'utf8');

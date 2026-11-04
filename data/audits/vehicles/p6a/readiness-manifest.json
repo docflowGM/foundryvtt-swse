@@ -2,10 +2,10 @@
  "schema": "swse.vehicle.p6a.readiness.v1",
  "counts": {
   "exposeAsReference": 181,
-  "installable": 71,
+  "installable": 73,
   "installableAsOption": 8,
-  "mechanicallyApplied": 68,
-  "combatUsable": 17
+  "mechanicallyApplied": 70,
+  "combatUsable": 19
  },
  "rows": [
   {
@@ -1076,13 +1076,12 @@
    "catalogId": "tractor-beam",
    "name": "Tractor Beam",
    "exposeAsReference": true,
-   "installable": false,
+   "installable": true,
    "installableAsOption": false,
-   "mechanicallyApplied": false,
-   "combatUsable": false,
+   "mechanicallyApplied": true,
+   "combatUsable": true,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
-    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+    "REQUIRES_CERTIFIED_MOUNT_OWNED_ITEM_AND_ATTACK_PREFLIGHT"
    ]
   },
   {
@@ -1287,13 +1286,12 @@
    "catalogId": "gravity-well-projector",
    "name": "Gravity Well Projector",
    "exposeAsReference": true,
-   "installable": false,
+   "installable": true,
    "installableAsOption": false,
-   "mechanicallyApplied": false,
-   "combatUsable": false,
+   "mechanicallyApplied": true,
+   "combatUsable": true,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
-    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+    "REQUIRES_CERTIFIED_MOUNT_OWNED_ITEM_AND_ATTACK_PREFLIGHT"
    ]
   },
   {

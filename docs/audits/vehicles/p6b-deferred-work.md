@@ -8,14 +8,14 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 
 | Category | Count |
 |---|---|
-| RULES_DECISION_REQUIRED | 8 |
+| RULES_DECISION_REQUIRED | 7 |
 | SOURCE_EVIDENCE_MISSING | 8 |
 | ENGINEERING_COMPLEXITY | 24 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 4 |
 | DEPENDENCY_BLOCKED | 9 |
 
-Open items: 54. Resolved items: 16 (listed at the end).
+Open items: 53. Resolved items: 17 (listed at the end).
 
 ## Items (by severity)
 
@@ -38,9 +38,8 @@ Open items: 54. Resolved items: 16 (listed at the end).
 | P6B-D-055 | WEAPON-ECOSYSTEM | vehicle tractor beams | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-056 | WEAPON-ECOSYSTEM | gravity well projectors | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-061 | WEAPON-ECOSYSTEM | Burst Fire by an operator other than the named gunner; autofire plus battery | DEPENDENCY_BLOCKED | IMPORTANT | no | V-P6C-08 |
-| P6B-D-065 | WEAPON-ECOSYSTEM | Gravity well projectors | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-14 |
 | P6B-D-066 | WEAPON-ECOSYSTEM | Space mines | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
-| P6B-D-067 | WEAPON-ECOSYSTEM | Tractor beams: aftermarket row, targets larger than the beam vehicle, docking clamps | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
+| P6B-D-067 | WEAPON-ECOSYSTEM | Tractor beams: targets larger than the beam vehicle, docking clamps | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-068 | WEAPON-ECOSYSTEM | Ion bombs | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-003 | P6B-1 | jamming-suite, jamming-array | ENGINEERING_COMPLEXITY | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-004 | P6B-1 | combat-thrusters | DEPENDENCY_BLOCKED | MINOR | no | V-P6-05, V-P2-04 |
@@ -574,16 +573,6 @@ Open items: 54. Resolved items: 16 (listed at the end).
 - **Impact:** Those combinations are refused, not guessed.
 - **Recommended action:** Extend after the operator model batch.
 
-### P6B-D-065 - Gravity well projectors
-
-- **Source:** Starships of the Galaxy, Gravity Well Projectors
-- **Category / severity:** RULES_DECISION_REQUIRED / IMPORTANT
-- **Reason:** The interdiction field has no printed duration.
-- **Missing:** Ruling V-P6C-14 plus a persistent field object.
-- **Owner ruling needed:** yes (V-P6C-14)
-- **Impact:** Gravity well stock groups and catalog row.
-- **Recommended action:** Implement the attack and the field once a duration is ruled.
-
 ### P6B-D-066 - Space mines
 
 - **Source:** Starships of the Galaxy, Space Mines
@@ -594,11 +583,11 @@ Open items: 54. Resolved items: 16 (listed at the end).
 - **Impact:** Mine launcher and mine rows.
 - **Recommended action:** Build the object store after the persistence design is settled.
 
-### P6B-D-067 - Tractor beams: aftermarket row, targets larger than the beam vehicle, docking clamps
+### P6B-D-067 - Tractor beams: targets larger than the beam vehicle, docking clamps
 
 - **Source:** Core Rulebook p.174, Tractor Beams (readable in the owner-inspected scan)
 - **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
-- **Reason:** Stock tractor beams (28 groups) now run through weapon-control-effects / GrappleStateEngine: attack vs Reflex, opposed grapple with the beam's printed grapple bonus, grabbed state, per-turn opposed maintenance, move intent (10 squares / 1 starship square), range break through the vehicle range authority. Remaining: the aftermarket tractor beam (no damage-less certified weapon spec), a target LARGER than the beam's vehicle (keeps its Dexterity bonus, moves freely, and the tractoring ship may pull itself toward it), and docking clamps.
+- **Reason:** Stock tractor beams (28 groups) now run through weapon-control-effects / GrappleStateEngine: attack vs Reflex, opposed grapple with the beam's printed grapple bonus, grabbed state, per-turn opposed maintenance, move intent (10 squares / 1 starship square), range break through the vehicle range authority. Remaining: the aftermarket tractor beam (no damage-less certified weapon spec), a target LARGER than the beam's vehicle (keeps its Dexterity bonus, moves freely, and the tractoring ship may pull itself toward it), and docking clamps. UPDATE: the aftermarket tractor beam is now a certified damage-less weapon (same control adapter).
 - **Missing:** A damage-less certified weapon specification; the pull-self-toward-larger-target movement; docking clamps.
 - **Owner ruling needed:** no
 - **Impact:** Aftermarket catalog row; large-target and boarding cases.
@@ -700,6 +689,11 @@ Open items: 54. Resolved items: 16 (listed at the end).
 
 - **Resolved:** OWNER INTERPRETATION V-P6C-13 implemented through the shared shield resolver (SR -10) and mitigation manager (hull halving before DR); the certified aftermarket launcher exists. Stock shieldbuster groups still need payload/launcher allocation (GM configuration path).
 - **Was:** Half-damage ordering against a shielded target is ambiguous in the printed sentence.
+
+### P6B-D-065 - Gravity well projectors
+
+- **Resolved:** Implemented (V-P6C-14, project convention): certified damage-less aftermarket projector; area attack vs Reflex 10 through the vehicle attack pipeline and the shared range authority; on a hit a GM-managed scene field (active until a GM deactivates/removes it); a starship starting its turn in an active field receives a turn-long ActiveEffect via ActorEngine, using the existing combat turn hook. No hyperdrive activation action exists in the system yet: isHyperdriveInterdicted() is the query it must consult. Stock gravity-well groups (3) still carry other blockers.
+- **Was:** The interdiction field has no printed duration.
 
 ### P6B-D-069 - Legacy SWSEVehicleWeapons module (missile lock-on, homing, battery fire, arcs)
 

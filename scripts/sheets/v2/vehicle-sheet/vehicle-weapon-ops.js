@@ -5,6 +5,7 @@
  */
 import { resolveVehicleWeaponAuthority } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
 import { stockAmmoReadinessRows } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-ammo-readiness.js";
+import { readFields, interdictionAreaTarget, setActive, removeField } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-interdiction-service.js";
 import { readPersistedFireMode } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-fire-mode.js";
 
 export function buildWeaponOpsView(actor, { isGM = false } = {}) {
@@ -28,18 +29,37 @@ export function buildWeaponOpsView(actor, { isGM = false } = {}) {
     ...r, isConfigured: r.state === 'GM_CONFIGURED_EXECUTABLE', stateLabel: r.state === 'GM_CONFIGURED_EXECUTABLE' ? 'GM-configured (not canonical)' : 'Unresolved: ammunition facts missing',
     summary: r.config ? `${r.config.launchers} launcher(s) x ${r.config.capacity}, payload ${r.config.payload}, loaded at setup ${r.config.loaded}` : ''
   })) : [];
-  return { canAct, fireModes, hasFireModes: fireModes.length > 0, isGM, ammoRows, hasAmmoRows: ammoRows.length > 0 };
+  // Gravity well projectors: the projector rows (anyone who can act) and this scene's interdiction fields (GM controls)
+  const gravityWeapons = items.filter(i => i?.type === 'weapon' && resolveVehicleWeaponAuthority(i)?.gravityWell === true).map(i => ({ itemId: i.id, name: i.name, canProject: canAct && isGM }));
+  const scene = globalThis.canvas?.scene ?? null;
+  const fields = isGM ? readFields(scene).map(f => ({ ...f, areaLabel: `columns ${f.area.col}-${f.area.col + 3}, rows ${f.area.row}-${f.area.row + 3}`, stateLabel: f.active ? 'Active' : 'Inactive', toggleLabel: f.active ? 'Deactivate' : 'Activate', own: f.vehicleId === actor?.id })) : [];
+  return { canAct, fireModes, hasFireModes: fireModes.length > 0, isGM, ammoRows, hasAmmoRows: ammoRows.length > 0, gravityWeapons, hasGravityWeapons: gravityWeapons.length > 0, fields, hasFields: fields.length > 0 };
 }
 
 export async function runWeaponAction({ action, itemId, vehicle }, deps) {
   const { service, notify } = deps;
   const weapon = vehicle?.items?.get?.(itemId) ?? [...(vehicle?.items ?? [])].find(i => i.id === itemId);
-  if (!weapon && !String(action).startsWith('ammo-config')) { notify.warn('That weapon is no longer on the vehicle.'); return { ok: false, reason: 'WEAPON_NOT_FOUND' }; }
+  if (!weapon && !/^(ammo-config|interdiction-)/.test(String(action))) { notify.warn('That weapon is no longer on the vehicle.'); return { ok: false, reason: 'WEAPON_NOT_FOUND' }; }
   if (action === 'fire-mode-autofire' || action === 'fire-mode-single') {
     const mode = action === 'fire-mode-autofire' ? 'autofire' : 'single';
     const r = await (service.fireMode ?? service).setMode({ vehicle, weapon, mode });
     if (r.ok) notify.info(r.unchanged ? `${weapon.name} is already set to ${mode === 'autofire' ? 'autofire' : 'single fire'}.` : mode === 'autofire' ? `${weapon.name} set to autofire (swift action).` : `${weapon.name} set back to single fire (no action cost).`);
     else notify.warn(`${weapon.name}: ${r.reason}`);
+    return r;
+  }
+  if (action === 'gravity-project') {
+    const scene = globalThis.canvas?.scene;
+    const area = await deps.askInterdictionArea?.(weapon);
+    if (!area) return { ok: false, reason: 'CANCELLED' };
+    const { SWSERoll } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js');
+    const target = interdictionAreaTarget(area, scene);
+    const r = await SWSERoll.rollAttack(vehicle, weapon, { target, interdictionArea: area });
+    return { ok: !!r, result: r };
+  }
+  if (action === 'interdiction-toggle' || action === 'interdiction-remove') {
+    const scene = globalThis.canvas?.scene, f = readFields(scene).find(x => x.id === itemId);
+    const r = action === 'interdiction-remove' ? await removeField({ scene, fieldId: itemId }) : await setActive({ scene, fieldId: itemId, active: !(f?.active) });
+    if (!r.ok) notify.warn(r.reason); else notify.info(action === 'interdiction-remove' ? 'Interdiction field removed.' : 'Interdiction field updated.');
     return r;
   }
   if (action === 'ammo-config' || action === 'ammo-config-clear') {

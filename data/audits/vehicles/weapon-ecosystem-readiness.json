@@ -5,7 +5,7 @@
   "inventoryRows": 41,
   "catalogWeaponRows": 63,
   "catalogRowsCoveredByInventory": 63,
-  "aftermarketInstallableRows": 25,
+  "aftermarketInstallableRows": 27,
   "stockGroups": 846,
   "stockGroupsOwnedByAFamily": 801,
   "stockGroupsUnclassified": 45,
@@ -1394,15 +1394,15 @@
     "Core: instead of damaging hit points, a tractor beam prevents a vehicle from escaping. The attack hits on equal or exceeding Reflex; on a hit, make an opposed grapple check; a win grabs the target.",
     "A grabbed target of the beam vehicle's size or smaller cannot move and loses its Dexterity bonus to Reflex; each round another opposed grapple check; a win pulls the target up to 10 squares (1 at starship scale) or holds it; a loss frees it; leaving range breaks the hold."
    ],
-   "sourceCertification": "SOURCE_VERIFIED",
+   "sourceCertification": "MECHANIC_SPECIFIED",
    "catalogRows": [
     {
      "id": "tractor-beam",
      "category": "Weapon",
-     "certification": "SOURCE_VERIFIED",
+     "certification": "MECHANIC_SPECIFIED",
      "reconciliation": "UNRESOLVED_SOURCE",
-     "installable": false,
-     "testFile": null
+     "installable": true,
+     "testFile": "tests/vehicle-universal-phase4e-p44-gravity-well.test.mjs"
     }
    ],
    "stock": {
@@ -1413,9 +1413,9 @@
     "basis": "PARTITION: owned by this family"
    },
    "aftermarket": {
-    "status": "NOT_INSTALLABLE",
+    "status": "OFFLINE_TESTED_INSTALL_FIRE_REMOVE",
     "weaponRows": 1,
-    "installable": 0,
+    "installable": 1,
     "consumableRows": 0
    },
    "attackExecution": "NOT_IMPLEMENTED",
@@ -1459,15 +1459,15 @@
     "Table 3-5: Special; 5 EP; Military; 50,000 credits; Colossal or larger only; starship range 0-10 squares.",
     "Not a damage weapon: the operator chooses a 4x4-square (starship scale) area in range and attacks Reflex Defense 10; on a success the area becomes a hyperspace interdiction field; a starship that starts its turn in a covered square may not activate its hyperdrive that turn."
    ],
-   "sourceCertification": "SOURCE_VERIFIED",
+   "sourceCertification": "MECHANIC_SPECIFIED",
    "catalogRows": [
     {
      "id": "gravity-well-projector",
      "category": "Weapon",
-     "certification": "SOURCE_VERIFIED",
+     "certification": "MECHANIC_SPECIFIED",
      "reconciliation": "CORRECTION_REQUIRED",
-     "installable": false,
-     "testFile": null
+     "installable": true,
+     "testFile": "tests/vehicle-universal-phase4e-p44-gravity-well.test.mjs"
     }
    ],
    "stock": {
@@ -1478,9 +1478,9 @@
     "basis": "PARTITION: owned by this family"
    },
    "aftermarket": {
-    "status": "NOT_INSTALLABLE",
+    "status": "OFFLINE_TESTED_INSTALL_FIRE_REMOVE",
     "weaponRows": 1,
-    "installable": 0,
+    "installable": 1,
     "consumableRows": 0
    },
    "attackExecution": "NOT_IMPLEMENTED",

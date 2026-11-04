@@ -1068,10 +1068,10 @@ export async function rollAttack(actor, weapon, options = {}) {
     // V-P6C-07 (project interpretation): an ordinary splash / area weapon resolved against ONE target at starship scale keeps the area-attack
     // miss rule (Core Special Combat Rules: Area Attacks): a hit deals full damage and a miss deals HALF. The flag is only the miss rule: it is
     // not the character-scale area (no Evasion / cover / critical semantics are added or removed by it).
-    ...((vehicleWeaponAuthority?.ok && vehicleWeaponAuthority.area) || vehicleFireMode.halfDamageOnMiss || vehicleWeaponAuthority?.tractorBeam || vehicleWeaponAuthority?.shieldbuster ? { ruleData: {
+    ...((vehicleWeaponAuthority?.ok && vehicleWeaponAuthority.area) || vehicleFireMode.halfDamageOnMiss || vehicleWeaponAuthority?.tractorBeam || vehicleWeaponAuthority?.gravityWell || vehicleWeaponAuthority?.shieldbuster ? { ruleData: {
       ...(((vehicleWeaponAuthority?.ok && vehicleWeaponAuthority.area) || vehicleFireMode.halfDamageOnMiss) ? { halfDamageOnMiss: true } : {}),
       // a tractor beam deals no damage (Core, Tractor Beams): the shared disposition offers no damage roll
-      ...(vehicleWeaponAuthority?.tractorBeam ? { noDamage: true } : {}),
+      ...((vehicleWeaponAuthority?.tractorBeam || vehicleWeaponAuthority?.gravityWell) ? { noDamage: true } : {}),
       // shieldbuster torpedoes (Starships of the Galaxy; V-P6C-13): read by the shared shield / mitigation stages
       ...(vehicleWeaponAuthority?.shieldbuster ? { shieldbuster: true } : {}) } } : {}),
     // the shared damage engine recognises autofire / burst fire by these attack tags (cover, packet rules)
@@ -1218,6 +1218,14 @@ export async function rollAttack(actor, weapon, options = {}) {
     const { applyVehicleTractorBeam } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-tractor-beam.js');
     attackResult.tractorControl = await applyVehicleTractorBeam({ vehicle: weapon.actor, weapon, authority: vehicleWeaponAuthority, target, scale: vehicleRange?.scale ?? null, message: attackMessage, attackTotal: roll.total });
     if (attackResult.tractorControl?.applied !== true) ui?.notifications?.info?.(`Tractor beam: ${attackResult.tractorControl?.reason ?? 'no hold established'}.`);
+  }
+  // Gravity well projector: on a hit the interdiction field is recorded on the scene (GM-managed persistence, V-P6C-14).
+  if (isHit && vehicleWeaponAuthority?.ok && vehicleWeaponAuthority.gravityWell && weapon?.actor?.type === 'vehicle') {
+    const { createFromHit } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-interdiction-service.js');
+    attackResult.interdiction = rollOptions.interdictionArea
+      ? await createFromHit({ vehicle: weapon.actor, weapon, authority: vehicleWeaponAuthority, area: rollOptions.interdictionArea, scale: vehicleRange?.scale ?? null, attackTotal: roll.total })
+      : { ok: false, reason: 'INTERDICTION_AREA_INVALID' };
+    if (attackResult.interdiction.ok !== true) ui?.notifications?.info?.(`Gravity well: ${attackResult.interdiction.reason}.`);
   }
   attackResult.ammoSpend = ammoSpend;
   attackResult.actionOptionSpend = actionOptionSpend;

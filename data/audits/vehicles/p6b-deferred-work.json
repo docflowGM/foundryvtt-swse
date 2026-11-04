@@ -1442,7 +1442,8 @@
       "reason": "The interdiction field has no printed duration.",
       "missing": "Ruling V-P6C-14 plus a persistent field object.",
       "impact": "Gravity well stock groups and catalog row.",
-      "recommendedAction": "Implement the attack and the field once a duration is ruled."
+      "recommendedAction": "Implement the attack and the field once a duration is ruled.",
+      "resolution": "Implemented (V-P6C-14, project convention): certified damage-less aftermarket projector; area attack vs Reflex 10 through the vehicle attack pipeline and the shared range authority; on a hit a GM-managed scene field (active until a GM deactivates/removes it); a starship starting its turn in an active field receives a turn-long ActiveEffect via ActorEngine, using the existing combat turn hook. No hyperdrive activation action exists in the system yet: isHyperdriveInterdicted() is the query it must consult. Stock gravity-well groups (3) still carry other blockers."
     },
     {
       "workstream": "WEAPON-ECOSYSTEM",
@@ -1465,11 +1466,11 @@
       "linkedDecisions": [],
       "options": [],
       "id": "P6B-D-067",
-      "component": "Tractor beams: aftermarket row, targets larger than the beam vehicle, docking clamps",
+      "component": "Tractor beams: targets larger than the beam vehicle, docking clamps",
       "source": "Core Rulebook p.174, Tractor Beams (readable in the owner-inspected scan)",
       "status": "ENGINEERING_COMPLEXITY",
       "severity": "IMPORTANT",
-      "reason": "Stock tractor beams (28 groups) now run through weapon-control-effects / GrappleStateEngine: attack vs Reflex, opposed grapple with the beam's printed grapple bonus, grabbed state, per-turn opposed maintenance, move intent (10 squares / 1 starship square), range break through the vehicle range authority. Remaining: the aftermarket tractor beam (no damage-less certified weapon spec), a target LARGER than the beam's vehicle (keeps its Dexterity bonus, moves freely, and the tractoring ship may pull itself toward it), and docking clamps.",
+      "reason": "Stock tractor beams (28 groups) now run through weapon-control-effects / GrappleStateEngine: attack vs Reflex, opposed grapple with the beam's printed grapple bonus, grabbed state, per-turn opposed maintenance, move intent (10 squares / 1 starship square), range break through the vehicle range authority. Remaining: the aftermarket tractor beam (no damage-less certified weapon spec), a target LARGER than the beam's vehicle (keeps its Dexterity bonus, moves freely, and the tractoring ship may pull itself toward it), and docking clamps. UPDATE: the aftermarket tractor beam is now a certified damage-less weapon (same control adapter).",
       "missing": "A damage-less certified weapon specification; the pull-self-toward-larger-target movement; docking clamps.",
       "impact": "Aftermarket catalog row; large-target and boarding cases.",
       "recommendedAction": "Extend the declaration with a larger-target mode; add the damage-less spec."

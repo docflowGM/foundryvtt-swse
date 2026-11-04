@@ -259,6 +259,12 @@ async function handleWeaponControlTurn(combat, updateData, updateOptions) {
     try {
         const { handleControlTurnChange } = await import('/systems/foundryvtt-swse/scripts/engine/combat/weapon-control-effects.js');
         await handleControlTurnChange(combat, updateData, updateOptions);
+        // a starship that starts its turn in an active gravity-well interdiction field (same turn hook; GM client only)
+        const incoming = (updateData?.turn != null ? combat?.turns?.[updateData.turn] : null) ?? combat?.combatant ?? null;
+        if (incoming?.actor?.type === 'vehicle') {
+            const { applyAtTurnStart } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-interdiction-service.js');
+            await applyAtTurnStart({ actor: incoming.actor, scene: combat?.scene ?? null, combat });
+        }
     } catch (err) {
         SWSELogger.warn('[CombatHooks] Weapon control turn processing failed', err);
     }

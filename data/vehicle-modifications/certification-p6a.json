@@ -405,7 +405,9 @@
    "pageResolution": "pdf-table-page"
   },
   "tractor-beam": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p44-gravity-well.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 47,
@@ -593,7 +595,9 @@
    "pageResolution": "pdf-table-page"
   },
   "gravity-well-projector": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p44-gravity-well.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 47,
