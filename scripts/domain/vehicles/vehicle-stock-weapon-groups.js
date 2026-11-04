@@ -95,6 +95,24 @@ export function evidenceReasons(evidence = {}) {
   return out;
 }
 
+/**
+ * The operator a statblock PRINTS, normalised once (WE operator model). One or more seats joined by "or", "/" or "and"
+ * ("pilot or gunner", "pilot/copilot") means any of those seats operates the weapon; the first printed seat is the weapon's
+ * default seat. An operator the statblock PRINTS as a droid or automated system ("droid vessel", "automated/droid brain", "droid
+ * piloting system", "virtual droid gunner") has no crew seat to assign: it is flagged automated and its default seat is the
+ * gunner seat only so the Item is well-formed. Never inferred from a vehicle or weapon name; anything else is not understood (null).
+ */
+export function parseOperatorText(text) {
+  const t = String(text ?? '').trim().toLowerCase().replace(/\s+/g, ' ').replace(/[.;]+$/, '');
+  if (!t) return null;
+  if (/^(?:automated(?:\/droid(?: brain)?)?|droid(?: vessel| brain| piloting system| pilot| gunner)?|virtual droid gunner|droid piloting system)$/.test(t)) return { stations: ['gunner'], automated: true };
+  const seat = w => (w === 'co-pilot' ? 'copilot' : w);
+  const parts = t.split(/\s*(?:\/|,|\bor\b|\band\b)\s*/).map(w => w.trim()).filter(Boolean);
+  if (!parts.length || !parts.every(w => /^(pilot|copilot|co-pilot|gunner)$/.test(w))) return null;
+  const stations = [...new Set(parts.map(seat))];
+  return { stations, automated: false };
+}
+
 /** Parse one printed group. Never throws; `reasons` names everything that makes it non-executable. */
 export function parseStockFiringGroup(group) {
   const notes = String(group?.specialNotes ?? '');
@@ -146,7 +164,9 @@ export function parseStockFiringGroup(group) {
   // assistance, no margin hits) needs only the printed gunner count, to remove the assistance inside the printed total.
   const gunnerMatch = /(\d+)\s*gunners?/.exec(`${opText} ${opDetail}`);
   const fireLinked = /fire[- ]?linked/i.test(`${group?.label ?? ''} ${notes}`);
-  const printedBattery = group?.groupKind === 'weapon-battery' && group?.batteryMembershipStatus === 'printed' && /^battery$/.test(opText) && !!gunnerMatch && !fireLinked;
+  // The record's own classification (groupKind weapon-battery + membership 'printed') makes the group a battery; its operator line prints the
+  // gunner count either as "battery (N gunners)" or as "N gunners" (the group's label names the battery). Nothing about the weapon count is inferred.
+  const printedBattery = group?.groupKind === 'weapon-battery' && group?.batteryMembershipStatus === 'printed' && (/^battery$/.test(opText) || /^\d+\s*gunners?$/.test(opText)) && !!gunnerMatch && !fireLinked;
   if (!o || !opText) reasons.push('STOCK_OPERATOR_NOT_PRINTED');
   else if (printedBattery) {
     const gunners = Number(gunnerMatch[1]);
@@ -163,9 +183,11 @@ export function parseStockFiringGroup(group) {
     if (!independent.ok) reasons.push(`STOCK_${independent.reason}`);          // without the gunner count neither mode can remove/credit the assistance
   }
   else if (/^battery$/.test(opText) || /\d+\s*gunners/.test(`${opText} ${opDetail}`) || /batter/.test(opText)) reasons.push('STOCK_OPERATOR_IS_A_STATION_BATTERY');
-  else if (opText === 'pilot' || opText === 'gunner') out.operator = opText;
-  else if (opText === 'copilot' || opText === 'co-pilot') out.operator = 'copilot';
-  else reasons.push('STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER');
+  else {
+    const op = parseOperatorText(`${opText}${opDetail ? ` ${opDetail}` : ''}`);
+    if (!op) reasons.push('STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER');
+    else { out.operator = op.stations[0]; if (op.stations.length > 1) out.operatorStations = op.stations; if (op.automated) out.automatedOperator = true; }
+  }
   if (fireLinked && group?.groupKind === 'weapon-battery') reasons.push('STOCK_FIRE_LINKED_IS_NOT_A_WEAPON_BATTERY');
   if (group?.groupKind === 'weapon-battery' && !printedBattery) reasons.push('STOCK_GROUP_IS_A_WEAPON_BATTERY');
   // Fail-closed denials by wording (a name can only DENY, never authorize): finite-ammunition weapons have no magazine

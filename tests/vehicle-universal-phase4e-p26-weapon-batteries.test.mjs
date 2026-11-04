@@ -381,14 +381,14 @@ test('RUNTIME crew: generic (published) crew may fire the full battery; a named 
 test('COVERAGE: batteries are counted once per group; full-battery and independent-weapon are reported apart', () => {
   const all = docs.flatMap(d => assessStockWeaponGroups(d.flags.swse.universalVehicleSource.source).groups.map(g => ({ key: keyOf(d), g })));
   const batteries = all.filter(x => x.g.battery);
-  assert.equal(batteries.length, 104);
+  assert.equal(batteries.length, 274);
   const exec = batteries.filter(x => x.g.executable);
-  assert.equal(exec.length, 77, 'groups executable in at least one mode, each counted once');
+  assert.equal(exec.length, 179, 'groups executable in at least one mode, each counted once');
   assert.deepEqual(batteries.filter(x => x.g.modes['full-battery'].executable).map(x => `${x.key}:${x.g.label}`), [`${KRAYT}:turbolaser battery`], 'full-battery needs the printed weapon count');
-  assert.equal(batteries.filter(x => x.g.modes['independent-weapon'].executable).length, 77);
+  assert.equal(batteries.filter(x => x.g.modes['independent-weapon'].executable).length, 179);
   assert.equal(exec.filter(x => executableModesOf(x.g).length === 2).length, 1);
   assert.equal(batteries.filter(x => x.g.battery.weaponCount !== null).length, 2, 'only Krayt\'s Honor and the Rendili corvette print a weapon count');
-  assert.equal(all.filter(x => x.g.executable).length, 379, 'the corpus total counts each group once, whatever its modes');
+  assert.equal(all.filter(x => x.g.executable).length, 499, 'the corpus total counts each group once, whatever its modes');
   // every refused battery group carries named reasons; the fire-linked guard matched nothing in the published corpus
   assert.ok(batteries.filter(x => !x.g.executable).every(x => x.g.reasons.length > 0));
   assert.equal(all.filter(x => x.g.reasons.includes('STOCK_FIRE_LINKED_IS_NOT_A_WEAPON_BATTERY')).length, 0);

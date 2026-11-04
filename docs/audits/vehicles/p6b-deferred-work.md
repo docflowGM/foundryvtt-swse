@@ -15,7 +15,7 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | NONCRITICAL_DEFECT | 4 |
 | DEPENDENCY_BLOCKED | 9 |
 
-Open items: 50. Resolved items: 12 (listed at the end).
+Open items: 50. Resolved items: 13 (listed at the end).
 
 ## Items (by severity)
 
@@ -641,3 +641,8 @@ Open items: 50. Resolved items: 12 (listed at the end).
 
 - **Resolved:** Implemented: VehicleFireModeService.setMode spends a swift action through ActionEconomyConsumption and persists the mode on the vehicle; attacks require the weapon to be set to autofire. The switch back to single fire is charged the same swift action (project interpretation). A sheet control for the switch remains (P6B-D-062).
 - **Was:** Autofire is requested per attack; the swift action to set the weapon to autofire is not charged and the mode is not persisted, the same as the character attack path.
+
+### P6B-D-063 - Weapon-battery groups whose operator prints "N gunners" (no word "battery") and printed alternative / automated operators
+
+- **Resolved:** Implemented as a project interpretation under V-P6C-02; flagged here for review. Full-battery mode still requires a printed weapon count.
+- **Was:** 170 printed weapon-battery groups were refused only because the operator line read "6 gunners" instead of "battery (6 gunners)". The record's own classification marks them printed batteries and the gunner count is printed. They now run in the existing independent-weapon mode (no weapon count is inferred). Operators printed as alternatives ("pilot or gunner") or as droid / automated systems are parsed once and enforced at the station evidence.

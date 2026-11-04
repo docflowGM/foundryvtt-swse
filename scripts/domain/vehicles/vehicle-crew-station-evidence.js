@@ -11,7 +11,7 @@ const same = (a,b) => typeof a==='string' && typeof b==='string' &&
 const VALID_STATIONS = new Set(['pilot','copilot','gunner']);
 
 export async function resolveVehicleCrewStationEvidence({
-  vehicle, weapon, domainResolution, requestedCrewStation = null, certifiedStation = null
+  vehicle, weapon, domainResolution, requestedCrewStation = null, certifiedStation = null, automatedOperator = false
 } = {}) {
   if(!vehicle || vehicle.type!=='vehicle' || !weapon || !domainResolution?.ok)
     return fail('VEHICLE_CREW_CONTEXT_MISSING');
@@ -32,6 +32,11 @@ export async function resolveVehicleCrewStationEvidence({
   if(!VALID_STATIONS.has(station))return fail('WEAPON_OPERATOR_STATION_UNRESOLVED');
   if(requestedCrewStation && !same(requestedCrewStation,station))
     return fail('REQUESTED_CREW_STATION_CONTRADICTS_INSTALLED_MOUNT');
+  // A printed droid / automated operator is run by no crew seat: valid only for an abstract-crew attack, and a named gunner cannot claim it.
+  if(automatedOperator===true){
+    if(domainResolution.domain==='vehicle-abstract-crew')return {crewStationResolved:true,stationKey:station,operatorActorId:null,assignmentKind:'automated-operator'};
+    return fail('AUTOMATED_OPERATOR_HAS_NO_CREW_SEAT');
+  }
   const assignment=await resolveVehicleCrewActor(vehicle,station);
   if(assignment.source==='invalid')return fail('ASSIGNED_CREW_ACTOR_INVALID');
   if(assignment.source==='actor'){

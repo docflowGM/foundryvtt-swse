@@ -9,7 +9,7 @@
   "stockGroups": 846,
   "stockGroupsOwnedByAFamily": 801,
   "stockGroupsUnclassified": 45,
-  "stockOfflineExecutableGroups": 379,
+  "stockOfflineExecutableGroups": 499,
   "familiesFullyOperationalOffline": 4,
   "liveVerifiedFamilies": 0
  },
@@ -273,9 +273,9 @@
    ],
    "stock": {
     "groups": 336,
-    "offlineExecutable": 236,
+    "offlineExecutable": 294,
     "vehicles": 299,
-    "vehiclesWithExecutableGroup": 217,
+    "vehiclesWithExecutableGroup": 268,
     "basis": "PARTITION: owned by this family"
    },
    "aftermarket": {
@@ -368,9 +368,9 @@
    ],
    "stock": {
     "groups": 61,
-    "offlineExecutable": 37,
+    "offlineExecutable": 43,
     "vehicles": 54,
-    "vehiclesWithExecutableGroup": 35,
+    "vehiclesWithExecutableGroup": 40,
     "basis": "PARTITION: owned by this family"
    },
    "aftermarket": {
@@ -527,9 +527,9 @@
    ],
    "stock": {
     "groups": 127,
-    "offlineExecutable": 58,
+    "offlineExecutable": 102,
     "vehicles": 89,
-    "vehiclesWithExecutableGroup": 37,
+    "vehiclesWithExecutableGroup": 70,
     "basis": "PARTITION: owned by this family"
    },
    "aftermarket": {
@@ -625,9 +625,9 @@
    ],
    "stock": {
     "groups": 68,
-    "offlineExecutable": 47,
+    "offlineExecutable": 59,
     "vehicles": 65,
-    "vehiclesWithExecutableGroup": 46,
+    "vehiclesWithExecutableGroup": 58,
     "basis": "PARTITION: owned by this family"
    },
    "aftermarket": {
@@ -2517,9 +2517,9 @@
    ],
    "stock": {
     "groups": 80,
-    "offlineExecutable": 54,
+    "offlineExecutable": 66,
     "vehicles": 74,
-    "vehiclesWithExecutableGroup": 52,
+    "vehiclesWithExecutableGroup": 64,
     "basis": "OVERLAY: also counted in its base-weapon row"
    },
    "aftermarket": {
@@ -2563,9 +2563,9 @@
    "catalogRows": [],
    "stock": {
     "groups": 10,
-    "offlineExecutable": 5,
+    "offlineExecutable": 6,
     "vehicles": 9,
-    "vehiclesWithExecutableGroup": 5,
+    "vehiclesWithExecutableGroup": 6,
     "basis": "OVERLAY: also counted in its base-weapon row"
    },
    "aftermarket": {
@@ -2627,9 +2627,9 @@
    ],
    "stock": {
     "groups": 33,
-    "offlineExecutable": 20,
+    "offlineExecutable": 29,
     "vehicles": 33,
-    "vehiclesWithExecutableGroup": 20,
+    "vehiclesWithExecutableGroup": 29,
     "basis": "OVERLAY: also counted in its base-weapon row"
    },
    "aftermarket": {
@@ -2880,9 +2880,9 @@
    "catalogRows": [],
    "stock": {
     "groups": 283,
-    "offlineExecutable": 77,
+    "offlineExecutable": 179,
     "vehicles": 102,
-    "vehiclesWithExecutableGroup": 32,
+    "vehiclesWithExecutableGroup": 86,
     "basis": "OVERLAY: also counted in its base-weapon row"
    },
    "aftermarket": {
@@ -2953,9 +2953,9 @@
    ],
    "stock": {
     "groups": 60,
-    "offlineExecutable": 18,
+    "offlineExecutable": 51,
     "vehicles": 55,
-    "vehiclesWithExecutableGroup": 17,
+    "vehiclesWithExecutableGroup": 49,
     "basis": "OVERLAY: also counted in its base-weapon row"
    },
    "aftermarket": {

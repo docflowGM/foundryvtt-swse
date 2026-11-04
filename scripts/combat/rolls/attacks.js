@@ -28,6 +28,12 @@ import { resolveVehicleAttackBonus, resolveAbstractCrewAttackBonus } from "/syst
 import { resolveAttackDomain } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-domain-router.js";
 import { authorizeVehicleAttackBeforeCosts } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-attack-preflight.js";
 import { resolveVehicleWeaponAuthority } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
+/** The seat a stock group is operated from: the requested seat when the statblock prints it among the operators, else its default seat. */
+const stockOperatorStation = (g, requested) => {
+  if (!g) return null;
+  const want = String(requested ?? '').trim().toLowerCase();
+  return want && (g.operatorStations ?? []).includes(want) ? want : g.operator ?? null;
+};
 import { resolveVehicleFireMode, requestedVehicleFireMode, readPersistedFireMode, MODE_REASONS } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-fire-mode.js";
 import { batteryMarginHits } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-battery.js";
 import { VehicleBatteryAidService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-battery-aid-service.js";
@@ -745,7 +751,9 @@ export async function rollAttack(actor, weapon, options = {}) {
           requestedCrewStation: rollOptions.crewStation ?? null,
           // the station comes from the sealed mount (installed) or the verified source group (stock), never Item fields
           certifiedStation: installedProvenance.kind === 'CERTIFIED_INSTALLATION' ? installedProvenance.mount?.operatorRole
-            : (resolveTrustedStockAttackGroup(vehicle, weapon)?.operator ?? null)
+            : stockOperatorStation(resolveTrustedStockAttackGroup(vehicle, weapon), rollOptions.crewStation),
+          // a statblock-printed droid / automated operator has no crew seat to assign
+          automatedOperator: installedProvenance.kind === 'STOCK_CANDIDATE' && resolveTrustedStockAttackGroup(vehicle, weapon)?.automatedOperator === true
         })
       : { crewStationResolved: false };
     // Autofire / Burst Fire of a vehicle-managed weapon: requested here, resolved after the range/scale authority below (WE-5)

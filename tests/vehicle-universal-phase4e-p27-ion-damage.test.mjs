@@ -94,8 +94,8 @@ test('SOURCE: ion is a typed damage only where the source types it (printed dama
   assert.ok(bomb.reasons.includes('STOCK_AMMUNITION_LIMITED_UNTRACKED'));
   assert.equal(bomb.area.squares, 10, 'a 10-square splash is an ordinary area: it is the bomb\'s finite ammunition that keeps it refused');
   const isd = assessStockWeaponGroups(recordOf('core-imperial-i-class-star-destroyer')).groups.find(g => g.label === 'ion cannon battery');
-  assert.equal(isd.executable, false);
-  assert.equal(isd.damage.type, 'ion', 'typed as ion, refused for its battery facts');
+  assert.equal(isd.executable, true, 'a printed battery of 6 gunners runs as one independent ion weapon');
+  assert.equal(isd.damage.type, 'ion');
   // a contradicting type in the group evidence is refused, not resolved
   const alt = structuredClone(recordOf(YWING));
   const g = alt.armament.firingGroups.find(x => x.label === 'ion cannons');
@@ -109,7 +109,7 @@ test('COVERAGE: exactly the typed, plain ion groups that pass every other gate a
   const all = docs.flatMap(d => assessStockWeaponGroups(d.flags.swse.universalVehicleSource.source).groups.map(g => ({ key: keyOf(d), g })));
   const ion = all.filter(x => x.g.damage?.type === 'ion');
   assert.equal(ion.length, 69);
-  assert.equal(ion.filter(x => x.g.executable).length, 47, '35 single-operator groups + 12 ion batteries as one independent weapon each (the Subjugator\'s area ion pulse cannons are refused)');
+  assert.equal(ion.filter(x => x.g.executable).length, 59, '35 single-operator groups + 24 ion batteries as one independent weapon each (the Subjugator\'s area ion pulse cannons are refused)');
   assert.ok(ion.filter(x => !x.g.executable).every(x => x.g.reasons.length > 0));
   assert.equal(all.filter(x => x.g.executable && /\bion\b/i.test(x.g.label) && x.g.damage?.type !== 'ion').length, 0, 'no executable ion-named group lacks a source-stated ion type');
 });
