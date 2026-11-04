@@ -109,7 +109,7 @@ test('COVERAGE: exactly the typed, plain ion groups that pass every other gate a
   const all = docs.flatMap(d => assessStockWeaponGroups(d.flags.swse.universalVehicleSource.source).groups.map(g => ({ key: keyOf(d), g })));
   const ion = all.filter(x => x.g.damage?.type === 'ion');
   assert.equal(ion.length, 69);
-  assert.equal(ion.filter(x => x.g.executable).length, 43, '31 single-operator groups + 12 ion batteries as one independent weapon each (the Subjugator\'s area ion pulse cannons are refused)');
+  assert.equal(ion.filter(x => x.g.executable).length, 47, '35 single-operator groups + 12 ion batteries as one independent weapon each (the Subjugator\'s area ion pulse cannons are refused)');
   assert.ok(ion.filter(x => !x.g.executable).every(x => x.g.reasons.length > 0));
   assert.equal(all.filter(x => x.g.executable && /\bion\b/i.test(x.g.label) && x.g.damage?.type !== 'ion').length, 0, 'no executable ion-named group lacks a source-stated ion type');
 });

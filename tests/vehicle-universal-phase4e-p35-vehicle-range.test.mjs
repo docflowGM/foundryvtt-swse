@@ -120,7 +120,7 @@ test('STOCK GATE: every executable stock group names its Table 10-2 row; a group
     if (!g.rangeSlug) assert.ok(g.reasons.includes('STOCK_RANGE_TABLE_NOT_IDENTIFIED'), g.groupKey);
   }
   const unidentified = all.filter(g => g.reasons.includes('STOCK_RANGE_TABLE_NOT_IDENTIFIED') && !g.reasons.some(r => r !== 'STOCK_RANGE_TABLE_NOT_IDENTIFIED'));
-  assert.deepEqual(unidentified.map(g => g.label).sort(), ['Proton beam cannon', 'SPHA-M mass-driver cannon', 'double lasers', 'mass-driver cannon', 'volcano cannons'],
+  assert.deepEqual(unidentified.map(g => g.label).sort(), ['Proton beam cannon', 'SPHA-M mass-driver cannon', 'composite beam cannon', 'double lasers', 'laser turret', 'mass-driver cannon', 'volcano cannons'],
     'the five groups that were executable only because range was never asked');
 });
 

@@ -9,9 +9,9 @@ Three claims are kept apart: **SOURCE_VERIFIED** (the published configuration is
 | Published vehicles | 429 |
 | Published attack groups | 846 |
 | Groups SOURCE_VERIFIED | 557 (65.8%) |
-| Groups OFFLINE_EXECUTABLE | 346 (40.9%) |
-| Vehicles with at least one OFFLINE_EXECUTABLE group | 256 (59.7%) |
-| Vehicles with every group executable | 122 |
+| Groups OFFLINE_EXECUTABLE | 379 (44.8%) |
+| Vehicles with at least one OFFLINE_EXECUTABLE group | 272 (63.4%) |
+| Vehicles with every group executable | 131 |
 | Vehicles LIVE_VERIFIED | 0 |
 
 ## Weapon batteries (Core p. 170)
@@ -20,10 +20,10 @@ Three claims are kept apart: **SOURCE_VERIFIED** (the published configuration is
 |---|---|
 | Printed weapon batteries ("battery (N gunners)") | 104 |
 | ... printing the number of identical weapons | 2 |
-| ... OFFLINE_EXECUTABLE in at least one mode (each group counted once) | 64 |
+| ... OFFLINE_EXECUTABLE in at least one mode (each group counted once) | 77 |
 | ... full-battery mode executable (assistance, margin hits; needs the printed weapon count) | 1 |
-| ... independent-weapon mode executable (one weapon; no assistance, no margin hits) | 64 |
-| ... independent-weapon ONLY | 63 |
+| ... independent-weapon mode executable (one weapon; no assistance, no margin hits) | 77 |
+| ... independent-weapon ONLY | 76 |
 | ... both modes | 1 |
 
 The printed total of a battery already contains the printed gunners' assistance (+2 per assisting gunner). Full-battery mode applies it once and adds margin hits capped by the printed weapon count; independent-weapon mode removes exactly that assistance. The two counts are independent quantities and neither is inferred from the other. Fire-linked weapons that a statblock calls "batteries" are not weapon batteries (Starships of the Galaxy, Fire-Linked Weapons). Named gunners on a full battery are refused (BATTERY_ASSIGNED_CREW_ROSTER_UNMODELED). Refusal reasons overlap.
@@ -32,11 +32,11 @@ The printed total of a battery already contains the printed gunners' assistance 
 
 | Kind | Groups | OFFLINE_EXECUTABLE |
 |---|---|---|
-| weapon-battery | 104 | 64 |
+| weapon-battery | 104 | 77 |
 | fire-linked | 18 | 7 |
 | ammunition-limited | 169 | 0 |
 | area-or-splash | 110 | 3 |
-| ion | 69 | 43 |
+| ion | 69 | 47 |
 
 Fire-linked weapons are not weapon batteries (Starships of the Galaxy, Fire-Linked Weapons) and get no battery rules. Ordinary energy weapons are every executable group that is none of these kinds.
 
@@ -68,7 +68,7 @@ PUBLISHED_RULE (Core, Vehicle Combat): area attacks, including splash and burst-
 | Measure | Groups |
 |---|---|
 | Groups whose source types the damage as ion (printed damage line / evidence) | 69 |
-| ... OFFLINE_EXECUTABLE (also passing every other gate) | 43 |
+| ... OFFLINE_EXECUTABLE (also passing every other gate) | 47 |
 
 A weapon name alone never types damage as ion: a group named "ion" whose printed damage line does not say ion stays refused (STOCK_DAMAGE_ION_UNVERIFIED). Target-side ordering with shield rating and damage reduction follows the existing damage engine pending owner question V-P6C-04.
 
@@ -76,18 +76,16 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 
 | Reason | Groups |
 |---|---|
-| STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA | 241 |
 | STOCK_OPERATOR_IS_A_STATION_BATTERY | 187 |
 | STOCK_GROUP_IS_A_WEAPON_BATTERY | 179 |
 | STOCK_AMMUNITION_LIMITED_UNTRACKED | 169 |
 | STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED | 145 |
-| STOCK_RANGE_TABLE_NOT_IDENTIFIED | 100 |
 | STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED | 89 |
 | STOCK_DAMAGE_NOT_PRINTED_IN_RECORD | 85 |
-| STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED | 60 |
+| STOCK_RANGE_TABLE_NOT_IDENTIFIED | 47 |
 | STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER | 47 |
-| STOCK_BATTERY_WEAPON_COUNT_NOT_STATED | 39 |
 | STOCK_EVIDENCE_UNMODELED | 36 |
+| STOCK_BATTERY_WEAPON_COUNT_NOT_STATED | 26 |
 | STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED | 22 |
 | STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED | 18 |
 | STOCK_OPERATOR_NOT_PRINTED | 17 |
@@ -95,10 +93,10 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | STOCK_FIRING_ARC_NOT_REVIEWED | 12 |
 | STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT | 10 |
 | STOCK_ATTACK_TOTAL_NOT_PRINTED | 8 |
+| STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA | 8 |
 | STOCK_DAMAGE_AREA_OR_SPLASH | 5 |
 | STOCK_FIRING_ARC_STATED_UNPARSED | 5 |
 | STOCK_VARIANT_SPECIFIC_GROUP_UNMODELED | 3 |
-| STOCK_CREW_ATTACK_BASIS_UNKNOWN | 2 |
 | STOCK_POSSIBLE_AREA_WEAPON_UNVERIFIED | 2 |
 | STOCK_DAMAGE_ION_UNVERIFIED | 2 |
 
@@ -107,34 +105,34 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Book | Vehicles | Groups | Executable groups | Vehicles with an executable group |
 |---|---|---|---|---|
 | Core Rulebook | 17 | 39 | 10 | 7 |
-| Clone Wars Campaign Guide | 67 | 124 | 53 | 40 |
-| Force Unleashed Campaign Guide | 34 | 58 | 22 | 19 |
+| Clone Wars Campaign Guide | 67 | 124 | 59 | 44 |
+| Force Unleashed Campaign Guide | 34 | 58 | 25 | 21 |
 | Galaxy at War | 11 | 17 | 8 | 6 |
 | Galaxy of Intrigue | 8 | 9 | 0 | 0 |
 | Jedi Academy Training Manual | 1 | 1 | 0 | 0 |
-| Knights of the Old Republic Campaign Guide | 39 | 73 | 15 | 14 |
-| Legacy Era Campaign Guide | 49 | 109 | 32 | 27 |
-| Rebellion Era Campaign Guide | 53 | 94 | 39 | 32 |
+| Knights of the Old Republic Campaign Guide | 39 | 73 | 17 | 16 |
+| Legacy Era Campaign Guide | 49 | 109 | 34 | 29 |
+| Rebellion Era Campaign Guide | 53 | 94 | 42 | 33 |
 | Scum and Villainy | 13 | 24 | 13 | 10 |
 | Scavenger's Guide to Droids | 1 | 2 | 0 | 0 |
-| Starships of the Galaxy | 105 | 258 | 137 | 85 |
+| Starships of the Galaxy | 105 | 258 | 153 | 90 |
 | Threats of the Galaxy | 5 | 5 | 0 | 0 |
-| Unknown Regions | 26 | 33 | 17 | 16 |
+| Unknown Regions | 26 | 33 | 18 | 16 |
 
 ## By category
 
 | Category | Vehicles | With an executable group |
 |---|---|---|
-| starfighter | 132 | 115 |
-| space-transport | 99 | 67 |
-| capital-ship | 84 | 27 |
+| starfighter | 132 | 117 |
+| space-transport | 99 | 70 |
+| capital-ship | 84 | 35 |
 | walker | 15 | 8 |
 | airspeeder | 15 | 6 |
-| ground-speeder | 14 | 6 |
+| ground-speeder | 14 | 7 |
 | tracked-vehicle | 10 | 5 |
 | speeder-bike | 9 | 4 |
 | space-station | 8 | 4 |
-| repulsorlift-tank | 7 | 4 |
+| repulsorlift-tank | 7 | 5 |
 | landspeeder | 7 | 2 |
 | ground-speeder-bike | 4 | 1 |
 | wheeled-vehicle | 3 | 0 |
@@ -145,7 +143,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | speeder | 1 | 0 |
 | wheeled-tank | 1 | 1 |
 | ornithopter | 1 | 0 |
-| wheeled-assault-vehicle | 1 | 0 |
+| wheeled-assault-vehicle | 1 | 1 |
 | wheeled-groundcar | 1 | 1 |
 | command-speeder | 1 | 1 |
 | drop-pod | 1 | 0 |
@@ -176,6 +174,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Barloz-class Freighter | Clone Wars Campaign Guide p. 76 | 1 / 1 | laser cannon (4d10x2, copilot, +1) |
 | C-9979 Landing Craft | Clone Wars Campaign Guide p. 205 | 2 / 2 | fire-linked laser cannons (5d10x2, gunner, +3); fire-linked blaster cannons (5d10x2, gunner, +3) |
 | CIS-Advanced Starfighter | Clone Wars Campaign Guide p. 206 | 1 / 2 | heavy blaster cannons (6d10x2, pilot, +7) |
+| Consular-class Cruiser (Charger c70 Retrofit) | Clone Wars Campaign Guide p. 170 | 1 / 2 | point-defense medium laser cannon (4d10x2, gunner, +4) |
 | CR-20 Troop Carrier | Clone Wars Campaign Guide p. 166 | 2 / 2 | fire-linked medium turbolasers (6d10x5, pilot, +10); fire-linked medium turbolasers (6d10x5, copilot, +8) |
 | Dagger-class Starfighter | Clone Wars Campaign Guide p. 81 | 1 / 1 | laser cannons (6d10x2, pilot, +2) |
 | Delta-7 Aethersprite Interceptor (High-Maneuver Variant) | Clone Wars Campaign Guide p. 137 | 1 / 1 | laser cannons (6d10x2, pilot, +9) |
@@ -192,6 +191,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Infantry Support Speeder Platform | Clone Wars Campaign Guide p. 166 | 2 / 2 | twin blaster cannons (4d10x2, pilot, +8); twin blaster cannons (4d10x2, gunner, +6) |
 | Invisible Hand | Clone Wars Campaign Guide p. 210 | 1 / 5 | heavy ion cannons (3d10x5, gunner, +11) |
 | Kappa-class Shuttle | Clone Wars Campaign Guide p. 171 | 1 / 2 | double blaster cannons (5d10x2, copilot, +7) |
+| Koensayr BTL-S1 Y-wing | Clone Wars Campaign Guide p. 173 | 2 / 3 | medium laser cannons (4d10x2, pilot, +7); double light ion cannons (4d10x2, gunner, +5) |
 | KR-TB Doomtreader | Clone Wars Campaign Guide p. 79 | 1 / 1 | dual laser cannons (6d10x2, pilot, +4) |
 | LAAT/c Carrier | Clone Wars Campaign Guide p. 167 | 1 / 1 | light laser cannons (3d10x2, pilot, +9) |
 | Manta Droid Subfighter | Clone Wars Campaign Guide p. 200 | 1 / 2 | laser cannons (4d10x2, pilot, +3) |
@@ -200,6 +200,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Nu-class Attack Shuttle | Clone Wars Campaign Guide p. 172 | 2 / 2 | medium laser cannons (4d10x2, pilot, +9); double light laser cannons (4d10x2, copilot, +7) |
 | OG-9 Homing Spider Droid | Clone Wars Campaign Guide p. 201 | 1 / 2 | laser cannon (5d10, pilot, +6) |
 | Persuader-class Droid Enforcer | Clone Wars Campaign Guide p. 201 | 1 / 3 | ion cannons (4d10x2, pilot, +5) |
+| Providence-class Destroyer | Clone Wars Campaign Guide p. 210 | 1 / 5 | heavy ion cannons (3d10x5, gunner, +8) |
 | Pursuer-class Enforcement Ship | Clone Wars Campaign Guide p. 80 | 2 / 2 | twin blaster cannons (5d10x2, pilot, +5); ion cannons (4d10x2, pilot, +5) |
 | Republic Troop Transport | Clone Wars Campaign Guide p. 168 | 1 / 2 | laser cannons (4d10, pilot, +10) |
 | S40K Phoenix Hawk-class Light Pinnace | Clone Wars Campaign Guide p. 84 | 2 / 2 | heavy blaster cannons (6d10x2, pilot, +3); light ion cannons (3d10x2, pilot, +3) |
@@ -207,8 +208,10 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Self-Propelled Heavy Artillery (SPHA) | Clone Wars Campaign Guide p. 168 | 3 / 6 | SPHA-T heavy turbolaser (7d10x5, gunner, +7); SPHA-I heavy ion cannon (3d10x5, gunner, +7); SPHA-V heavy laser cannon (5d10x2, gunner, +7) |
 | Single Trooper Aerial Platform (STAP) | Clone Wars Campaign Guide p. 202 | 1 / 1 | twin blaster cannons (4d10, pilot, +4) |
 | Soulless One (Modified Belbullab-22) | Clone Wars Campaign Guide p. 204 | 1 / 1 | triple laser cannons (5d10x2, pilot, +9) |
+| TX-130T Saber-class Fighter Tank | Clone Wars Campaign Guide p. 169 | 2 / 4 | laser cannons (5d10x2, pilot, +3); twin medium laser cannons (5d10, copilot, +1) |
 | Unstable Terrain Artillery Transport (UT-AT) | Clone Wars Campaign Guide p. 170 | 1 / 4 | heavy laser cannon (6d10x2, pilot, +8) |
 | A-7 Hunter Interceptor | Force Unleashed Campaign Guide p. 204 | 1 / 1 | laser cannons (4d10x2, pilot, +4) |
+| A5 Juggernaut | Force Unleashed Campaign Guide p. 200 | 2 / 3 | heavy laser cannons (5d10x2, gunner, +4); blaster cannon (4d10x2, gunner, +4) |
 | Aratech 74-Z Speeder Bike | Force Unleashed Campaign Guide p. 142 | 1 / 1 | laser cannon (4d10, pilot, +7) |
 | Armored Groundcar | Force Unleashed Campaign Guide p. 110 | 1 / 1 | blaster cannons (3d10x2, gunner, +1) |
 | Arrow-23 Landspeeder (Paramilitary) | Force Unleashed Campaign Guide p. 110 | 1 / 2 | laser cannon (4d10, pilot, +1) |
@@ -226,6 +229,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | TIE Prototype | Force Unleashed Campaign Guide p. 205 | 1 / 2 | laser cannons (4d10x2, pilot, +4) |
 | Toscan 8-Q | Force Unleashed Campaign Guide p. 116 | 1 / 2 | laser cannons (4d10x2, pilot, +2) |
 | TX-130T Fighter Tank | Force Unleashed Campaign Guide p. 203 | 1 / 2 | laser cannons (5d10x2, gunner, +2) |
+| Venator-class Star Destroyer | Force Unleashed Campaign Guide p. 210 | 1 / 6 | medium double turbolaser (6d10x5, gunner, +7) |
 | Zebra Starfighter | Force Unleashed Campaign Guide p. 118 | 1 / 1 | heavy laser cannons (6d10x2, pilot, +1) |
 | Freeco Speeder | Galaxy at War p. 62 | 1 / 1 | dual laser cannons (5d10, pilot, +7) |
 | Ground Armored Tank | Galaxy at War p. 216 | 1 / 2 | medium laser cannons (4d10x2, pilot, +6) |
@@ -245,6 +249,8 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Koros Spaceworks CX-133 Chaos Fighter | Knights of the Old Republic Campaign Guide p. 220 | 1 / 1 | light laser cannons (5d10x2, pilot, +4) |
 | Pelagia Duplex Command Assault Gunship | Knights of the Old Republic Campaign Guide p. 100 | 1 / 2 | heavy laser cannons (6d10x2, gunner, +8) |
 | Republic Fleet Systems KT-400 Military Droid Carrier | Knights of the Old Republic Campaign Guide p. 183 | 1 / 1 | double medium laser cannon (6d10x2, gunner, +3) |
+| Republic Fleet Systems Star Saber XC-01 Starfighter | Knights of the Old Republic Campaign Guide p. 96 | 1 / 1 | heavy laser cannons (7d10x2, pilot, +4) |
+| Star Forge Manufacture Herald-class Shuttle | Knights of the Old Republic Campaign Guide p. 164 | 1 / 2 | point-defense double laser cannons (4d10x2, copilot, +5) |
 | Star Forge Manufacture Sith Interceptor | Knights of the Old Republic Campaign Guide p. 164 | 1 / 1 | laser cannon (3d10x2, pilot, +4) |
 | Teroch-type Fast Attack Gunship | Knights of the Old Republic Campaign Guide p. 205 | 1 / 1 | double laser cannons (6d10x2, gunner, +4) |
 | A519 Invader Close Support Starfighter | Legacy Era Campaign Guide p. 218 | 1 / 2 | twin laser cannons (standard) (5d10x2, pilot, +4) |
@@ -258,6 +264,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Fury-class Starfighter | Legacy Era Campaign Guide p. 186 | 1 / 1 | advanced heavy laser cannons (8d10x2, pilot, +16) |
 | Gladius-class Light Freighter | Legacy Era Campaign Guide p. 87 | 1 / 1 | advanced heavy quad laser cannons (9d10x2, pilot, +7) |
 | GPE-7300 Space Transport | Legacy Era Campaign Guide p. 87 | 1 / 1 | heavy laser cannons (6d10x2, pilot, +7) |
+| Helot-class Medium Transport | Legacy Era Campaign Guide p. 88 | 1 / 1 | medium laser cannons (5d10x2, copilot, +6) |
 | I4 Ionizer Starfighter | Legacy Era Campaign Guide p. 143 | 2 / 3 | laser cannons (6d10x2, pilot, +7); quad medium ion cannons (7d10x2, pilot, +7) |
 | J-1 Shuttle | Legacy Era Campaign Guide p. 89 | 1 / 1 | double laser cannons (2d10x2, pilot, +6) |
 | Jumpstar HPF Starfighter | Legacy Era Campaign Guide p. 144 | 1 / 2 | laser cannons (5d10x2, pilot, +8) |
@@ -274,20 +281,22 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Scarlet Star (Modified YT-2400 Transport) | Legacy Era Campaign Guide p. 147 | 1 / 1 | laser cannons (5d10x2, gunner, +4) |
 | Sigma-class Long-Range Shuttle | Legacy Era Campaign Guide p. 188 | 1 / 1 | double heavy laser cannons (6d10x2, pilot, +7) |
 | X-83 TwinTail Starfighter | Legacy Era Campaign Guide p. 86 | 1 / 2 | enhanced heavy laser cannons (8d10x2, pilot, +7) |
+| YX-1980 Space Transport | Legacy Era Campaign Guide p. 91 | 1 / 1 | medium laser cannons (4d10x2, copilot, +3) |
 | AEG-77 "Vigo" Gunship | Rebellion Era Campaign Guide p. 146 | 2 / 2 | laser cannons (4d10x2, pilot, +6); light laser cannon (3d10x2, gunner, +4) |
 | Assault Gunboat | Rebellion Era Campaign Guide p. 131 | 2 / 3 | medium laser cannons (5d10x2, pilot, +7); medium ion cannons (6d10x2, pilot, +7) |
 | AT-PT All-Terrain Personal Transport | Rebellion Era Campaign Guide p. 132 | 1 / 2 | Double heavy blaster cannon (5d10x2, pilot, +5) |
+| Canderous-class Assault Tank | Rebellion Era Campaign Guide p. 153 | 1 / 2 | Heavy laser cannons (6d10x2, gunner, +4) |
 | Corellian Engineering Corporation YM-2800 Limpet Ship | Rebellion Era Campaign Guide p. 114 | 1 / 2 | medium laser cannons (4d10x2, pilot, +6) |
 | G1-M4-C Dunelizard Fighter | Rebellion Era Campaign Guide p. 63 | 1 / 1 | double medium laser cannons (5d10x2, pilot, +4) |
 | Hoersch-Kessel T-Wing Interceptor | Rebellion Era Campaign Guide p. 114 | 1 / 2 | laser cannon (4d10x2, pilot, +7) |
-| Incom X4 Gunship | Rebellion Era Campaign Guide p. 115 | 1 / 2 | laser cannons (4d10x2, pilot, +6) |
+| Incom X4 Gunship | Rebellion Era Campaign Guide p. 115 | 2 / 2 | laser cannons (4d10x2, pilot, +6); light laser cannons (3d10x2, gunner, +4) |
 | IRD-A Starfighter | Rebellion Era Campaign Guide p. 156 | 1 / 2 | twin medium blaster cannons (5d10x2, pilot, +5) |
 | IRD Starfighter | Rebellion Era Campaign Guide p. 156 | 1 / 1 | twin medium blaster cannons (5d10x2, pilot, +7) |
 | Ixiyen-class Fast Attack Craft | Rebellion Era Campaign Guide p. 64 | 1 / 2 | double medium laser cannons (5d10x2, pilot, +6) |
 | Kihraxz Light Fighter | Rebellion Era Campaign Guide p. 146 | 1 / 2 | light blaster cannons (3d10x2, pilot, +4) |
 | Lancet Aerial Artillery | Rebellion Era Campaign Guide p. 133 | 1 / 2 | Laser cannon (2d10x2, gunner, +4) |
 | M12-L Kimogila Heavy Fighter | Rebellion Era Campaign Guide p. 64 | 1 / 3 | heavy laser cannons (6d10x2, pilot, +5) |
-| M22-T Krayt Gunship | Rebellion Era Campaign Guide p. 65 | 1 / 3 | heavy laser cannons (5d10x2, pilot, +8) |
+| M22-T Krayt Gunship | Rebellion Era Campaign Guide p. 65 | 2 / 3 | heavy laser cannons (5d10x2, pilot, +8); ion cannons (4d10x2, gunner, +7) |
 | Mekuun Heavy Tracker | Rebellion Era Campaign Guide p. 112 | 1 / 1 | Heavy laser cannon (5d10x2, gunner, +6) |
 | Missile Boat | Rebellion Era Campaign Guide p. 134 | 1 / 3 | medium laser cannon (5d10x2, pilot, +8) |
 | Mobquet Medium Transport | Rebellion Era Campaign Guide p. 68 | 1 / 2 | laser cannon (4d10x2, gunner, +4) |
@@ -318,26 +327,29 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Y164 Thalassian Slave Transport | Scum and Villainy p. 127 | 1 / 1 | quad light laser cannon (5d10x2, gunner, +3) |
 | Advanced V-19 Torrent Starfighter | Starships of the Galaxy p. 59 | 1 / 2 | laser cannons (6d10x2, pilot, +9) |
 | Alliance A-wing Starfighter | Starships of the Galaxy p. 63 | 1 / 3 | laser cannons (5d10x2, pilot, +7) |
-| Banking Clan Munificent-class Frigate | Starships of the Galaxy p. 64 | 4 / 5 | heavy turbolasers (11d10x5, gunner, +7); medium ion cannons (9d10x2, gunner, +7); twin turbolaser battery (4d10x5, gunner, +15); light turbolaser battery (3d10x5, gunner, +15) |
+| Archaic Heavy Cruiser | Starships of the Galaxy p. 62 | 1 / 3 | light turbolasers (2d10x5, gunner, +3) |
+| Banking Clan Munificent-class Frigate | Starships of the Galaxy p. 64 | 5 / 5 | heavy turbolasers (11d10x5, gunner, +7); medium ion cannons (9d10x2, gunner, +7); twin turbolaser battery (4d10x5, gunner, +15); light turbolaser battery (3d10x5, gunner, +15); point-defense laser cannon battery (3d10x2, gunner, +17) |
 | Baudo-class Star Yacht | Starships of the Galaxy p. 65 | 1 / 1 | light laser cannons (statblock plural) (2d10x2, gunner, +2) |
 | Buuper Torsckil Abbey Devices Porax-38 Starfighter | Starships of the Galaxy p. 121 | 1 / 1 | laser cannons (5d10x2, pilot, +6) |
 | Chiss Nssis-class Clawcraft | Starships of the Galaxy p. 69 | 1 / 1 | laser cannons (6d10x2, pilot, +11) |
 | CloakShape Fighter | Starships of the Galaxy p. 71 | 1 / 2 | laser cannons (4d10x2, pilot, +4) |
 | Corellian Engineering Corporation CR90 Corvette | Starships of the Galaxy p. 74 | 1 / 1 | turbolaser battery (5d10x5, gunner, +10) |
+| Corellian Gunship | Starships of the Galaxy p. 92 | 1 / 3 | point-defense quad laser cannon battery (6d10x2, gunner, +15) |
 | Corellian YT-1300 Transport | Starships of the Galaxy p. 154 | 1 / 1 | laser cannons (4d10x2, gunner, +2) |
 | Corellian YT-2000 | Starships of the Galaxy p. 155 | 1 / 1 | double laser cannons (5d10x2, gunner, +2) |
 | Corellian YT-2400 | Starships of the Galaxy p. 156 | 1 / 1 | laser cannons (5d10x2, gunner, +2) |
-| Damorian Manufacturing's Carrack-class Light Cruiser | Starships of the Galaxy p. 68 | 1 / 3 | heavy turbolaser battery (7d10x5, gunner, +13) |
+| Damorian Manufacturing's Carrack-class Light Cruiser | Starships of the Galaxy p. 68 | 2 / 3 | heavy turbolaser battery (7d10x5, gunner, +13); point-defense light laser cannon battery (2d10x2, gunner, +13) |
 | Delta-7 Aethersprite Light Interceptor | Starships of the Galaxy p. 60 | 1 / 1 | laser cannons (6d10x2, pilot, +9) |
 | Dynamic-class Freighter | Starships of the Galaxy p. 80 | 1 / 1 | double laser cannons (4d10x2, gunner, +3) |
-| Eclipse | Starships of the Galaxy p. 139 | 3 / 6 | heavy turbolaser battery (10d10x5, gunner, +15); turbolaser battery (7d10x5, gunner, +15); heavy ion cannon battery (3d10x5, gunner, +15) |
+| Eclipse | Starships of the Galaxy p. 139 | 4 / 6 | heavy turbolaser battery (10d10x5, gunner, +15); turbolaser battery (7d10x5, gunner, +15); point-defense laser cannon battery (6d10x2, gunner, +15); heavy ion cannon battery (3d10x5, gunner, +15) |
 | Feethan Ottraw Scalable Industries Mankvim-814 Light Interceptor | Starships of the Galaxy p. 109 | 1 / 1 | light laser cannons (2d10x2, pilot, +4) |
 | Fondor Shipyards Super Star Destroyer | Starships of the Galaxy p. 136 | 3 / 5 | heavy turbolaser battery (11d10x5, gunner, +15); turbolaser battery (8d10x5, gunner, +15); heavy ion cannon battery (5d10x5, gunner, +15) |
 | FreiTek Inc. E-wing Starfighter, Type B | Starships of the Galaxy p. 83 | 1 / 2 | triple heavy blaster cannons (6d10x2, pilot, +10) |
+| Gallofree GR-75 Medium Transport | Starships of the Galaxy p. 111 | 1 / 1 | point-defense double laser cannons (4d10x2, gunner, +1) |
 | Ghtroc Industries Class 720 Freighter | Starships of the Galaxy p. 88 | 1 / 1 | double laser cannons (4d10x2, gunner, +1) |
 | Gozanti Cruiser | Starships of the Galaxy p. 90 | 2 / 3 | laser cannon battery (4d10x2, gunner, +8); quad laser cannon battery (5d10x2, gunner, +4) |
 | Hapan Battle Dragon | Starships of the Galaxy p. 93 | 3 / 6 | turbolaser battery (7d10x5, gunner, +12); ion cannon battery (7d10x5, gunner, +12); triple ion cannons (5d10x5, gunner, +4) |
-| Hapes Nova Cruiser | Starships of the Galaxy p. 94 | 2 / 3 | turbolaser battery (7d10x5, gunner, +13); ion cannon battery (5d10x5, gunner, +13) |
+| Hapes Nova Cruiser | Starships of the Galaxy p. 94 | 3 / 3 | turbolaser battery (7d10x5, gunner, +13); point-defense laser cannon battery (5d10x2, gunner, +13); ion cannon battery (5d10x5, gunner, +13) |
 | Home One | Starships of the Galaxy p. 115 | 2 / 3 | turbolaser battery (5d10x5, gunner, +15); heavy ion cannon battery (3d10x5, gunner, +15) |
 | Huppla Pasa Tisc Shipwrights Collective Ginivex-class Starfighter | Starships of the Galaxy p. 87 | 1 / 1 | double laser cannons (6d10x2, pilot, +11) |
 | Immobilizer 418 Interdictor-class Heavy Cruiser | Starships of the Galaxy p. 100 | 1 / 2 | light quad turbolaser battery (4d10x5, gunner, +12) |
@@ -346,6 +358,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Incom T-65B X-wing Starfighter | Starships of the Galaxy p. 152 | 1 / 2 | laser cannons (6d10x2, pilot, +7) |
 | Incom T-65BR X-wing Starfighter | Starships of the Galaxy p. 153 | 1 / 1 | laser cannons (6d10x2, pilot, +6) |
 | Incom T-65XJ3 X-wing Starfighter | Starships of the Galaxy p. 152 | 1 / 2 | heavy laser cannons (7d10x2, pilot, +8) |
+| IPV-1 System Patrol Craft | Starships of the Galaxy p. 140 | 1 / 2 | point-defense light turbolasers (5d10x5, gunner, +2) |
 | J-Type Star Skiff | Starships of the Galaxy p. 103 | 1 / 1 | laser cannons (7d10x2, gunner, +14) |
 | Junker TYE-wing | Starships of the Galaxy p. 104 | 1 / 1 | laser cannons (4d10x2, pilot, +5) |
 | Koensayr BTL-A4 LP "Longprobe" | Starships of the Galaxy p. 159 | 2 / 3 | laser cannons (4d10x2, pilot, +9); ion cannons (4d10x2, pilot, +9) |
@@ -355,18 +368,19 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Koensayr Manufacturing BTL-58 K-wing | Starships of the Galaxy p. 105 | 1 / 5 | laser cannons (4d10x2, gunner, +7) |
 | Krayt's Honor | Starships of the Galaxy p. 91 | 3 / 4 | turbolaser battery (5d10x5, gunner, +13); laser cannon battery (4d10x2, gunner, +15); quad laser cannon battery (5d10x2, gunner, +11) |
 | Kuat Drive Yards Imperial II-class Star Destroyer | Starships of the Galaxy p. 96 | 3 / 4 | heavy turbolaser battery (11d10x5, gunner, +15); turbolaser battery (8d10x5, gunner, +15); heavy ion cannon battery (3d10x5, gunner, +15) |
-| Kuat Drive Yards Nebulon-B Frigate | Starships of the Galaxy p. 120 | 1 / 3 | turbolaser battery (4d10x5, gunner, +14) |
+| Kuat Drive Yards Lancer-class Frigate | Starships of the Galaxy p. 108 | 1 / 1 | point-defense quad laser cannon battery (4d10x2, gunner, +12) |
+| Kuat Drive Yards Nebulon-B Frigate | Starships of the Galaxy p. 120 | 2 / 3 | turbolaser battery (4d10x5, gunner, +14); point-defense laser cannon battery (2d10x2, gunner, +14) |
 | Kuat Drive Yards Pellaeon-class Star Destroyer | Starships of the Galaxy p. 99 | 3 / 5 | heavy turbolaser battery (12d10x5, gunner, +16); turbolaser battery (8d10x5, gunner, +16); heavy ion cannon battery (6d10x5, gunner, +16) |
 | Kuat Drive Yards Star Galleon | Starships of the Galaxy p. 133 | 1 / 2 | turbolaser battery (4d10x5, gunner, +12) |
 | Kuat Systems Engineering Alpha-3 Nimbus V-wing Starfighter | Starships of the Galaxy p. 150 | 1 / 1 | light laser cannons (3d10x2, pilot, +6) |
 | Kuat Systems Engineering Eta-2 Actis Interceptor | Starships of the Galaxy p. 82 | 2 / 2 | laser cannons (4d10x2, pilot, +14); ion cannons (4d10x2, pilot, +14) |
 | Kuat Systems Engineering Firespray-31 Patrol Craft | Starships of the Galaxy p. 84 | 1 / 2 | blaster cannons (5d10x2, pilot, +6) |
 | Loronar Corporation Strike-class Medium Cruiser | Starships of the Galaxy p. 135 | 3 / 4 | turbolaser battery (7d10x5, gunner, +13); light turbolaser battery (2d10x5, gunner, +13); ion cannon battery (3d10x5, gunner, +13) |
-| Lusankya | Starships of the Galaxy p. 138 | 3 / 6 | heavy turbolaser battery (11d10x5, gunner, +15); turbolaser battery (8d10x5, gunner, +15); heavy ion cannon battery (4d10x5, gunner, +15) |
+| Lusankya | Starships of the Galaxy p. 138 | 4 / 6 | heavy turbolaser battery (11d10x5, gunner, +15); turbolaser battery (8d10x5, gunner, +15); point-defense laser cannon battery (3d10x2, gunner, +15); heavy ion cannon battery (4d10x5, gunner, +15) |
 | Millennium Falcon | Starships of the Galaxy p. 156 | 1 / 3 | quad laser cannon (6d10x2, gunner, +13) |
 | Modified Republic Sienar Systems Armored Star Courier | Starships of the Galaxy p. 128 | 1 / 1 | laser cannons (3d10x5, pilot, +15) |
 | Mon Calamari MC80 Star Cruiser | Starships of the Galaxy p. 114 | 2 / 3 | turbolaser battery (5d10x5, gunner, +15); heavy ion cannon battery (3d10x5, gunner, +11) |
-| Mon Calamari Star Defender | Starships of the Galaxy p. 116 | 3 / 6 | heavy turbolaser battery (11d10x5, gunner, +17); turbolaser battery (8d10x5, gunner, +17); heavy ion cannon battery (4d10x5, gunner, +19) |
+| Mon Calamari Star Defender | Starships of the Galaxy p. 116 | 4 / 6 | heavy turbolaser battery (11d10x5, gunner, +17); turbolaser battery (8d10x5, gunner, +17); point-defense laser cannon battery (4d10x2, gunner, +17); heavy ion cannon battery (4d10x5, gunner, +19) |
 | Olanji/Charubah Miy'til Assault Bomber | Starships of the Galaxy p. 113 | 1 / 2 | laser cannons (5d10x2, pilot, +7) |
 | Olanji/Charubah Miy'til Fighter | Starships of the Galaxy p. 112 | 1 / 2 | laser cannons (5d10x2, pilot, +7) |
 | Outbound Flight | Starships of the Galaxy p. 77 | 3 / 3 | turbolaser battery (9d10x5, gunner, +15); laser cannon battery (6d10x5, gunner, +13); quad laser cannon battery (7d10x2, gunner, +15) |
@@ -374,10 +388,10 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Rebel Assault Frigate Mk I | Starships of the Galaxy p. 124 | 3 / 3 | light turbolaser battery (2d10x5, gunner, +11); quad turbolaser battery (4d10x5, gunner, +11); turbolaser battery (7d10x5, gunner, +11) |
 | Rebel Assault Frigate Mk II | Starships of the Galaxy p. 125 | 3 / 3 | light turbolaser battery (3d10x5, gunner, +11); quad turbolaser battery (4d10x5, gunner, +11); turbolaser battery (7d10x5, gunner, +11) |
 | Rebel Assault Frigate Prototype | Starships of the Galaxy p. 123 | 3 / 3 | heavy turbolaser battery (7d10x5, gunner, +14); light quad turbolaser battery (4d10x5, gunner, +14); turbolaser battery (2d10x5, gunner, +14) |
-| Recusant-class Light Destroyer | Starships of the Galaxy p. 72 | 2 / 5 | heavy turbolasers (10d10x5, gunner, +6); heavy turbolaser battery (7d10x5, gunner, +14) |
+| Recusant-class Light Destroyer | Starships of the Galaxy p. 72 | 3 / 5 | heavy turbolasers (10d10x5, gunner, +6); heavy turbolaser battery (7d10x5, gunner, +14); point-defense double laser cannon battery (5d10x2, gunner, +14) |
 | Rendili StarDrive Dreadnaught-class Heavy Cruiser | Starships of the Galaxy p. 76 | 3 / 3 | turbolaser battery (7d10x5, gunner, +13); light quad turbolaser battery (5d10x5, gunner, +13); light turbolaser (2d10x5, gunner, +5) |
 | Rendili StarDrive Victory II-class Star Destroyer | Starships of the Galaxy p. 98 | 3 / 4 | heavy turbolaser battery (7d10x5, gunner, +14); double turbolaser battery (4d10x5, gunner, +14); heavy ion cannon battery (4d10x5, gunner, +14) |
-| Rothana Heavy Engineering Acclamator-class Transgalactic Military Assault Ship | Starships of the Galaxy p. 56 | 1 / 3 | quad turbolaser battery (6d10x5, gunner, +15) |
+| Rothana Heavy Engineering Acclamator-class Transgalactic Military Assault Ship | Starships of the Galaxy p. 56 | 2 / 3 | quad turbolaser battery (6d10x5, gunner, +15); point-defense light laser cannon battery (2d10x2, gunner, +15) |
 | Rothana Heavy Engineering Acclamator II-class Transgalactic Military Assault Ship | Starships of the Galaxy p. 57 | 1 / 2 | turbolaser battery (6d10x5, gunner, +11) |
 | Sienar Fleet Systems GAT-12h | Starships of the Galaxy p. 131 | 1 / 4 | laser cannons (5d10x2, gunner, +5) |
 | Sienar Fleet Systems Lambda-class Shuttle | Starships of the Galaxy p. 106 | 2 / 3 | blaster cannon (5d10x2, copilot, +4); twin laser cannons (2d10x2, pilot, +6) |
@@ -399,7 +413,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Theta-class Shuttle | Starships of the Galaxy p. 141 | 2 / 2 | quad laser cannon (6d10x2, gunner, +4); laser cannons (4d10x2, gunner, +4) |
 | V-19 Torrent Starfighter | Starships of the Galaxy p. 149 | 1 / 2 | laser cannons (5d10x2, pilot, +7) |
 | Venator-class Star Destroyer | Starships of the Galaxy p. 148 | 1 / 5 | medium double turbolasers (6d10x5, gunner, +5) |
-| Vindicator-class Heavy Cruiser | Starships of the Galaxy p. 101 | 2 / 5 | light quad turbolaser battery (4d10x5, gunner, +12); light turbolaser battery (4d10x5, gunner, +14) |
+| Vindicator-class Heavy Cruiser | Starships of the Galaxy p. 101 | 4 / 5 | light quad turbolaser battery (4d10x5, gunner, +12); light turbolaser battery (4d10x5, gunner, +14); point-defense laser cannon battery (4d10x2, gunner, +14); point-defense ion cannon battery (4d10x2, gunner, +14) |
 | X-83 TwinTail Starfighter | Starships of the Galaxy p. 151 | 1 / 2 | laser cannons (8d10x2, pilot, +7) |
 | Compact Assault Vehicle/Wheeled PX-10 | Unknown Regions p. 49 | 1 / 1 | Medium blaster cannon (5d10, pilot, +9) |
 | Eeook Protector VI Patrol Speeder | Unknown Regions p. 214 | 1 / 2 | Light laser cannon (3d10x2, pilot, +6) |
@@ -408,7 +422,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Jaffryes Universal Automotive ARK-II Series Landmaster | Unknown Regions p. 50 | 1 / 1 | Medium blaster cannons (5d10, gunner, +2) |
 | JumpMaster 5000 Scout Ship | Unknown Regions p. 52 | 1 / 1 | laser cannons (4d10x2, pilot, +6) |
 | Killik Dartship | Unknown Regions p. 133 | 1 / 1 | laser cannon (4d10x2, pilot, +6) |
-| Mesens Corporation SCT Scout Craft | Unknown Regions p. 56 | 1 / 2 | dual turbolaser turret (6d10x5, gunner, +4) |
+| Mesens Corporation SCT Scout Craft | Unknown Regions p. 56 | 2 / 2 | dual turbolaser turret (6d10x5, gunner, +4); point-defense dual laser cannon (5d10x2, gunner, +4) |
 | MRX-BR Pacifier Combat/Contact Vessel | Unknown Regions p. 55 | 1 / 2 | laser cannons (4d10x2, gunner, +5) |
 | Sienar Fleet Systems Mu-2 Model 2 Shuttle | Unknown Regions p. 55 | 1 / 1 | laser cannons (5d10x2, copilot, +4) |
 | SoroSuub Drexl-class "Planetary Defender" Starfighter | Unknown Regions p. 52 | 1 / 2 | dual laser cannons (5d10x2, pilot, +6) |

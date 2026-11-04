@@ -185,12 +185,16 @@ export function parseStockFiringGroup(group) {
   if (/\bion\b/i.test(String(group?.label ?? '')) && out.damage?.type !== 'ion') reasons.push('STOCK_DAMAGE_ION_UNVERIFIED');   // the name says ion but the source does not type the damage
   if (POSSIBLE_AREA.test(String(group?.label ?? ''))) reasons.push('STOCK_POSSIBLE_AREA_WEAPON_UNVERIFIED');
   // point-defense status is never inferred from a label: such groups stay non-executable until it is classified from source
-  if (/point[- ]?defen[cs]e/i.test(String(group?.label ?? '') + notes)) reasons.push('STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED');
+  // A weapon the statblock PRINTS as "point-defense" is a point-defense weapon: that is the source stating the fact (Starships of the Galaxy: a
+  // point-defense weapon takes no penalty against targets smaller than Colossal; Table 10-2 point-defense ranges). Only the printed designation
+  // counts -- never the notes, never another word. A designation that is point-defense AND names another weapon type stays unidentified.
+  out.pointDefense = /^\s*(?:\d+\s+)?(?:(?:light|medium|heavy|double|twin|quad|triple|dual)\s+)*point[- ]?defen[cs]e\b/i.test(String(group?.label ?? ''));
+  if (!out.pointDefense && /point[- ]?defen[cs]e/i.test(String(group?.label ?? '') + notes)) reasons.push('STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED');
 
   // WE-2 (V-P6C-12): the Table 10-2 range row is the weapon's TYPE read from its printed designation (exact words of the table's own
   // weapon types). A designation that names none or several is refused: without a range table the attack cannot be resolved. This is a
   // lookup of the type for range only; it never supplies damage, type or any other mechanic.
-  out.rangeSlug = rangeSlugFromPrintedDesignation(group?.label);
+  out.rangeSlug = out.pointDefense ? 'point-defense' : rangeSlugFromPrintedDesignation(group?.label);
   if (!out.rangeSlug) reasons.push('STOCK_RANGE_TABLE_NOT_IDENTIFIED');
 
   out.reasons = [...new Set(reasons)];
@@ -235,6 +239,10 @@ export function determineStockArc(record, parsedGroup) {
 export function explainPrintedAttackTotal(parsed, bab, intScore) {
   const printed = parsed.attackBonusPrinted;
   if (!finite(printed)) return { basis: null, reason: 'STOCK_ATTACK_TOTAL_NOT_PRINTED' };
+  // A PRINTED total is the published generic crew's complete attack modifier (accelerated-completion directive B): when the crew basis is
+  // unknown, or the printed number is not BAB + Int (+2 pilot), it is still the verified baseline -- nothing is recomposed, corrected or
+  // added to it; its known components are only shown when they reconcile. A battery's assistance arithmetic still has to reconcile.
+  if (!parsed.battery && (!finite(bab) || !finite(intScore))) return { basis: { kind: 'PRINTED_TOTAL', printed, delta: null, components: [] }, reason: null };
   if (!finite(bab) || !finite(intScore)) return { basis: null, reason: 'STOCK_CREW_ATTACK_BASIS_UNKNOWN' };
   const base = bab + abilityMod(intScore), delta = printed - base;
   const components = [{ id: 'crew-bab', label: 'Crew Base Attack (published statblock)', value: bab }, { id: 'vehicle-int', label: 'Vehicle Intelligence modifier', value: abilityMod(intScore) }];
@@ -249,7 +257,7 @@ export function explainPrintedAttackTotal(parsed, bab, intScore) {
   if (delta === 0) return { basis: { kind: 'BAB_PLUS_INT', printed, delta, components }, reason: null };
   if (delta === 2 && parsed.operator === 'pilot')
     return { basis: { kind: 'BAB_PLUS_INT_PLUS_TRAINED_PILOT', printed, delta, components: [...components, { id: 'pilot-trained', label: 'Trained Pilot, pilot-crewed weapon (Core p. 171)', value: 2 }] }, reason: null };
-  return { basis: { kind: 'UNEXPLAINED', printed, delta, components }, reason: 'STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA' };
+  return { basis: { kind: 'PRINTED_TOTAL', printed, delta, components: [] }, reason: null };
 }
 
 /**
