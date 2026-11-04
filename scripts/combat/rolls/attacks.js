@@ -898,8 +898,8 @@ export async function rollAttack(actor, weapon, options = {}) {
   if (!composition.ok) {
     if (composition.attackBonusResolution?.error) {
       if (ammoSpend?.spent) await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
-      await refundVehicleAmmo();
       await actionOptionSpend?.rollback?.();
+      await refundVehicleAmmo();
       ui?.notifications?.error?.(composition.reason === 'invalid-vehicle-actor'
         ? 'Vehicle attack could not be resolved: the vehicle actor is missing or invalid, so its Intelligence modifier cannot be sourced.'
         : String(composition.reason).startsWith('capital-ship-')
@@ -921,12 +921,17 @@ export async function rollAttack(actor, weapon, options = {}) {
   }
   // The follow-up attack of a guided projectile uses the SAME attack bonus as the launch with a -5 penalty (Core, Missiles and Torpedoes):
   // the recorded bonus, not a fresh composition, so a changed crew or modifier cannot rewrite it.
-  const effective = followUp ? { ...composition, atkBonus: followUp.attackBonus,
-    attackComponentLedger: [
-      { id: 'guided-launch-attack-bonus', label: 'Same attack bonus as the launch', value: followUp.baseBonus, category: 'guided', applied: true, sourceId: followUp.id, sourceName: 'Guided projectile (Core p. 173)' },
-      { id: 'guided-follow-up-penalty', label: 'Follow-up attack of a locked-on missile or torpedo', value: followUp.penalty, category: 'guided', applied: true, sourceId: followUp.id, sourceName: 'Guided projectile (Core p. 173)' }
-    ] } : composition;
-  const { atkBonus, attackDomain, isVehicleAttack, attackBonusResolution, attackComponentLedger, sequencePenalty, domainResolution } = effective;
+  // (`composition` is the fresh per-attack result of computeFinalAttackComposition, so overriding it in place cannot leak to another attack.)
+  if (followUp) {
+    Object.assign(composition, {
+      atkBonus: followUp.attackBonus,
+      attackComponentLedger: [
+        { id: 'guided-launch-attack-bonus', label: 'Same attack bonus as the launch', value: followUp.baseBonus, category: 'guided', applied: true, sourceId: followUp.id, sourceName: 'Guided projectile (Core p. 173)' },
+        { id: 'guided-follow-up-penalty', label: 'Follow-up attack of a locked-on missile or torpedo', value: followUp.penalty, category: 'guided', applied: true, sourceId: followUp.id, sourceName: 'Guided projectile (Core p. 173)' }
+      ]
+    });
+  }
+  const { atkBonus, attackDomain, isVehicleAttack, attackBonusResolution, attackComponentLedger, sequencePenalty, domainResolution } = composition;
 
   const rollFormula = `1d20 + ${atkBonus}`;
   const roll = await RollEngine.safeRoll(rollFormula, actor?.getRollData?.() ?? {}, { actor, domain: 'combat.attack', context: { weaponId: weapon?.id ?? null } });
