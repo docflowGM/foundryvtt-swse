@@ -2,7 +2,8 @@
  * Switching a vehicle weapon between single fire and autofire (Core, Autofire: a swift action). The switch is validated against the SAME
  * weapon authority the attack uses (an autofire-capable certified weapon), spends the swift action through ActionEconomyConsumption, and
  * persists the mode on the vehicle through ActorEngine; a failed write rolls the action back. The attack reads the persisted mode.
- * PROJECT_INTERPRETATION (deferred P6B-D-060): the switch back to single fire costs the same swift action.
+ * Same convention as FireStateStore's persistent stun setting: only the switch TO the published costly form (autofire) is priced; the source
+ * states no cost for switching back, so none is invented.
  */
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { ActionEconomyConsumption } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js";
@@ -31,7 +32,7 @@ export class VehicleFireModeService {
     const a = resolveVehicleWeaponAuthority(weapon);
     if (!a?.ok || a.autofireCapable !== true) return refuse(FIRE_MODE_REASONS.NOT_CAPABLE);
     if (readPersistedFireMode(vehicle, weapon.id) === mode) return { ok: true, mode, unchanged: true };
-    const spend = await ActionEconomyConsumption.spend(vehicle, 'swift', { actionName: mode === 'autofire' ? 'Set to autofire' : 'Set to single fire', source: weapon.name });
+    const spend = mode === 'autofire' ? await ActionEconomyConsumption.spend(vehicle, 'swift', { actionName: 'Set to autofire', source: weapon.name }) : null;
     if (spend?.allowed === false) return refuse(MODE_REASONS.ACTION_UNAVAILABLE);
     try {
       await ActorEngine.updateActor(vehicle, { [`flags.swse.${FIRE_MODE_FLAG}.${weapon.id}`]: mode === 'autofire' ? 'autofire' : null });

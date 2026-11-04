@@ -1,9 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 
 const importer = readFileSync(new URL('../scripts/engine/import/vehicle-weapon-import-normalizer.js', import.meta.url),'utf8');
-const legacyArc = readFileSync(new URL('../scripts/combat/systems/vehicle/vehicle-weapons.js', import.meta.url),'utf8');
 
 test('vehicle importer preserves printed attack totals as evidence, never as weapon enhancement',()=>{
   assert.match(importer,/entry\.printedAttackTotal \?\? entry\.attackBonus \?\? entry\.bonus \?\? entry\.attack/);
@@ -13,8 +12,8 @@ test('vehicle importer preserves printed attack totals as evidence, never as wea
   assert.doesNotMatch(importer,/bonus: parsed\.attackSummary \|\| '\+0'/);
   assert.doesNotMatch(importer,/attackBonus:\s*numericVehicleAttackBonus\(parsed\.attackSummary\)/);
 });
-test('legacy firing arc helper cannot infer forward or permit unknown arc',()=>{
-  assert.match(legacyArc, /static inFireArc\(attacker, target, arc = null/);
-  assert.match(legacyArc, /return isTargetWithinVehicleArc\(attacker, target, arc, tolerance\)/);
-  assert.doesNotMatch(legacyArc, /static inFireArc\([^\n]*arc = 'forward'/);
+test('firing arcs have ONE geometry authority; the legacy arc helper (which could default to forward) is retired',()=>{
+  assert.equal(existsSync(new URL('../scripts/combat/systems/vehicle/vehicle-weapons.js', import.meta.url)), false);
+  const preflight = readFileSync(new URL('../scripts/domain/vehicles/vehicle-attack-preflight.js', import.meta.url),'utf8');
+  assert.match(preflight, /isTargetWithinVehicleArc/);
 });

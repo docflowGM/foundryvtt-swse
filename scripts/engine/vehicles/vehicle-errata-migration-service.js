@@ -176,7 +176,10 @@ export async function openVehicleErrataMigrationDialog() {
 }
 
 /** On ready: expose the GM entry point and tell GMs when affected Actors exist (no automatic changes). */
+let errataRegistered = false;
 export function registerVehicleErrataMigration() {
+  if (errataRegistered) return;
+  errataRegistered = true;
   Hooks.once('ready', () => {
     game.swse = game.swse || {};
     game.swse.migrations = { ...(game.swse.migrations ?? {}), vehicleErrata: openVehicleErrataMigrationDialog, VehicleErrataMigrationService };

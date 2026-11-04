@@ -1354,7 +1354,7 @@
       "missing": "A persisted per-weapon mode and a swift-action spend through the action economy.",
       "impact": "Autofire costs no swift action.",
       "recommendedAction": "Persist the mode on the Item flag and spend 'swift' through ActionEconomyConsumption.",
-      "resolution": "Implemented: VehicleFireModeService.setMode spends a swift action through ActionEconomyConsumption and persists the mode on the vehicle; attacks require the weapon to be set to autofire. The switch back to single fire is charged the same swift action (project interpretation). A sheet control for the switch remains (P6B-D-062)."
+      "resolution": "Implemented: VehicleFireModeService.setMode spends a swift action through ActionEconomyConsumption for the switch TO autofire and persists the mode through ActorEngine. Following FireStateStore's established convention (only the switch to the published costly form is priced), switching back is free; no cost is invented."
     },
     {
       "workstream": "WEAPON-ECOSYSTEM",
@@ -1502,7 +1502,8 @@
       "reason": "A pre-refactor module that duplicates mechanics now owned by shared authorities (guided projectile follow-up, battery attack, firing arcs, range). It has no importers (its window global never registers) and its own header says it is unused. It is classified C (deprecated, unreferenced) but four pinned audits/tools (phase2-vehicle-attack-alignment, attack-outcome-wiring, phase2-legacy-facade-delegation, check-attack-outcome-ssot) read its source as a legacy facade, so it is not deleted inside this PR.",
       "missing": "A pruning change that removes the module together with those four pins.",
       "impact": "None at runtime; it is a misleading duplicate.",
-      "recommendedAction": "Delete the module and update the four pins in a dedicated prune PR."
+      "recommendedAction": "Delete the module and update the four pins in a dedicated prune PR.",
+      "resolution": "Retired: SWSEVehicleWeapons (and the equally unreachable SWSEVehicleCore) were verified unreachable from index.js by static and dynamic import analysis, had no macro/pack/template references, and were deleted. The four pinned audits now assert their absence."
     }
   ]
 }

@@ -25,10 +25,10 @@ import { resolveAttackOutcome } from '../scripts/engine/combat/attack-outcome-re
 // 2. The confirmed-dead vehicle-specific modules must be documented as such
 //    (deprecated/unreferenced) rather than silently left implying they are
 //    the live vehicle attack path.
-const vehicleCore = await readFile(new URL('../scripts/actors/vehicle/swse-vehicle-core.js', import.meta.url), 'utf8');
-const vehicleWeapons = await readFile(new URL('../scripts/combat/systems/vehicle/vehicle-weapons.js', import.meta.url), 'utf8');
-
-assert.match(vehicleCore, /Phase 2 rolling-system alignment audit[\s\S]{0,400}no callers anywhere in the active codebase/);
-assert.match(vehicleWeapons, /Phase 2 rolling-system alignment audit[\s\S]{0,400}no callers anywhere in the active codebase/);
+// The two confirmed-dead modules are RETIRED (convergence): they were unreachable from the module entry point and each duplicated mechanics
+// owned by shared authorities. This guard now proves they cannot come back as an alternate vehicle attack path.
+import { existsSync } from 'node:fs';
+assert.equal(existsSync(new URL('../scripts/combat/systems/vehicle/vehicle-weapons.js', import.meta.url)), false, 'legacy SWSEVehicleWeapons stays retired');
+assert.equal(existsSync(new URL('../scripts/actors/vehicle/swse-vehicle-core.js', import.meta.url)), false, 'legacy SWSEVehicleCore (rollWeapon / crew / weapon migration) stays retired');
 
 console.log('Phase 2 vehicle attack alignment guards passed.');

@@ -19,6 +19,8 @@ import { SWSEItemBase } from "./scripts/items/base/swse-item-base.js";
 import { SWSECombatDocument } from "./scripts/combat/swse-combat.js";
 import { SWSECombatant } from "./scripts/combat/swse-combatant.js";
 import { registerSystemSettings } from "./scripts/core/settings.js";
+import { registerVehiclePreCreateHooks } from "./scripts/actors/vehicle/vehicle-precreate-hooks.js";
+import { registerVehicleErrataMigration } from "./scripts/engine/vehicles/vehicle-errata-migration-service.js";
 import { registerCP23C4ObservationSetting } from "./scripts/domain/vehicles/vehicle-cp23c4-gm-observation-ledger.js";
 import { auditUniversalVehicleRuntime, openUniversalVehicleSampleSheet } from "./scripts/domain/vehicles/vehicle-phase4d-runtime-audit.js";
 import { runUniversalVehicleScratchImport } from "./scripts/domain/vehicles/vehicle-phase4d-scratch-import.js";
@@ -185,6 +187,10 @@ Hooks.once("init", async () => {
   registerCP23C4ObservationSetting(); // Unverified audit observations only; no trust or receipt issuer
 
   registerInitHooks();
+  // Vehicle provenance / ledger / shipyard-Item guards and stock-weapon arming were registered ONLY in scripts/core/init.js, which nothing imports,
+  // so they never ran in production. index.js is the single owner (registerVehiclePreCreateHooks is idempotent).
+  registerVehiclePreCreateHooks();
+  registerVehicleErrataMigration(); // GM-controlled; never migrates on its own
   // NOTE: store-sheet header hook is registered by registerInitHooks() via ui-hooks.js (single owner).
   // A direct call here previously double-registered the 'swse-store-sheet' hook ("already registered. Overwriting").
   SystemInitHooks.registerHooks();

@@ -101,7 +101,7 @@ test('SHEET: the firing-mode view lists only autofire-capable weapons and the ac
   vehicle.items.contents ??= [...vehicle.items.values()];
   const view = buildWeaponOpsView(vehicle, { isGM: true });
   assert.deepEqual(view.fireModes.map(r => r.itemId), [dbl.id], 'a plain cannon has no mode switch');
-  assert.deepEqual([view.fireModes[0].mode, view.fireModes[0].canSwitchToAutofire, view.fireModes[0].canSwitchToSingle, view.fireModes[0].cost], ['single', true, false, 'Swift action']);
+  assert.deepEqual([view.fireModes[0].mode, view.fireModes[0].canSwitchToAutofire, view.fireModes[0].canSwitchToSingle, view.fireModes[0].cost], ['single', true, false, 'Swift action to set autofire (switching back is free)']);
   const said = [];
   const r = await runWeaponAction({ action: 'fire-mode-autofire', itemId: dbl.id, vehicle }, { service: VehicleFireModeService, notify: { info: m => said.push(m), warn: m => said.push('W ' + m) } });
   assert.equal(r.ok, true, said.join('|'));

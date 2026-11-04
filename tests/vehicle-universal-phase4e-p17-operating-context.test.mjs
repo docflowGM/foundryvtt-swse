@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { runInNewContext } from 'node:vm';
 import { buildUniversalVehiclePackSources } from '../tools/build-universal-vehicle-pack-sources.mjs';
@@ -103,9 +103,7 @@ test('roll wiring reuses the canonical skill roll; actions route through the ser
   const svc = readFileSync('scripts/engine/vehicles/vehicle-operating-context-service.js', 'utf8');
   assert.match(svc, /rollSkill\(pilotActor, 'pilot', \{ \.\.\.options, customModifier:/);
   assert.doesNotMatch(svc, /new Roll\(/, 'no second dice engine');
-  const core = readFileSync('scripts/actors/vehicle/swse-vehicle-core.js', 'utf8');
-  assert.match(core, /skillKey === 'pilot'[\s\S]*VehicleOperatingContextService\.rollPilotCheck/);
-  assert.doesNotMatch(core, /SWSERoll\.rollSkillCheck/, 'the broken legacy call is gone');
+  assert.equal(existsSync('scripts/actors/vehicle/swse-vehicle-core.js'), false, 'the legacy vehicle core (broken pilot-check call, duplicate crew/weapon logic) is retired; the service is the only owner');
   const calls = [];
   const service = { setEnvironment: async (v, s) => (calls.push(['env', s]), { success: true }), rollPilotCheck: async (v, o) => (calls.push(['pilot', o.pilotActor?.id ?? null]), { success: true }) };
   const deps = { service, notify: { warn() {} } };

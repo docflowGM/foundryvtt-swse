@@ -19,7 +19,7 @@ export function buildWeaponOpsView(actor, { isGM = false } = {}) {
       itemId: item.id, name: item.name, mode, modeLabel: mode === 'autofire' ? 'Autofire' : 'Single fire',
       canSwitchToAutofire: canAct && mode !== 'autofire', canSwitchToSingle: canAct && mode === 'autofire',
       disabledReason: canAct ? '' : 'Only the vehicle\'s owner or the GM can change the firing mode.',
-      cost: 'Swift action', burstNote: 'Burst Fire: -5 attack, +2 dice; needs a named gunner who has the Burst Fire feat (set to autofire first).'
+      cost: 'Swift action to set autofire (switching back is free)', burstNote: 'Burst Fire: -5 attack, +2 dice; needs a named gunner who has the Burst Fire feat (set to autofire first).'
     });
   }
   return { canAct, fireModes, hasFireModes: fireModes.length > 0 };

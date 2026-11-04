@@ -30,6 +30,16 @@ One owner per mechanic. Guarded by `tests/architecture-combat-authority.test.mjs
 | Installed equipment, EP, jobs | `VehicleInstallationService` (guarded flags) |
 | Credits | `TransactionEngine` |
 
-Known remaining items (bucketed): `FireStateStore` and the vehicle mode flag could share a reset policy if vehicle weapons are ever made canonical; guided-projectile follow-up records are written by `VehicleAmmunitionService` only.
+## Verified in executable code (convergence gate)
 
-Remaining duplicate (bucketed, P6B-D-069): the unreferenced legacy `scripts/combat/systems/vehicle/vehicle-weapons.js` (class C: pinned by four audits; delete in a prune PR).
+Production entry points (all reach `rollAttack` in `scripts/combat/rolls/attacks.js`, the one attack pipeline): V2 vehicle sheet weapon controls, `combat-action-bar.js`, `enhanced-combat-system.js`, `grappling-system.js`, macros/`SWSERoll.rollAttack` (delegates to `attacks.js`). Reachability from `index.js` is asserted by `tests/architecture-combat-authority.test.mjs`.
+
+Found and fixed in this pass:
+- **Vehicle guards never registered in production.** `registerVehiclePreCreateHooks()` and `registerVehicleErrataMigration()` were called only from `scripts/core/init.js`, which nothing imports (`system.json` loads `index.js` only). The provenance / ledger / environment / Shipyard-Item guards and stock-weapon arming therefore did not run. `index.js` now registers them (idempotent).
+- **Two retired duplicate vehicle paths.** `scripts/combat/systems/vehicle/vehicle-weapons.js` (`SWSEVehicleWeapons`: its own missile lock-on, homing, battery fire, arcs) and `scripts/actors/vehicle/swse-vehicle-core.js` (`SWSEVehicleCore`: `rollWeapon`, crew assignment, weapon migration) were unreachable from `index.js` and duplicated shared mechanics; both deleted, the four pins that read their source now assert their absence.
+- **Autofire mode pricing** now follows the `FireStateStore` convention (only the switch to the published costly form is priced); the switch back is free.
+- **Autofire penalty** has one definition (`autofire-rules.js`).
+
+Remaining, not duplicate authorities: `vehicle-dogfighting.js` and `vehicle-collisions.js` are reachable subsystems; collisions deal damage through `DamageEngine.applyDamage`. Manual GM field edits on the vehicle sheet go through `ActorEngine.updateActor`.
+
+Live Foundry V13 verification: **pending** (no runtime available); nothing here certifies runtime behaviour.

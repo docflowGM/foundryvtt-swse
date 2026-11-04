@@ -42,7 +42,6 @@ const RESOLVER = 'scripts/engine/combat/attack-outcome-resolver.js';
 const ALLOWLIST = new Set([
   RESOLVER,
   'scripts/combat/rolls/attacks.js',
-  'scripts/combat/systems/vehicle/vehicle-weapons.js',
   'scripts/engine/combat/full-attack-executor.js' // consumes rollAttack()'s outcome-derived isHit/isCritical, does not compute them
 ]);
 

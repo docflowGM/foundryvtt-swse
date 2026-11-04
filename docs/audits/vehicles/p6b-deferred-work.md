@@ -12,10 +12,10 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | SOURCE_EVIDENCE_MISSING | 8 |
 | ENGINEERING_COMPLEXITY | 23 |
 | LIVE_RUNTIME_PENDING | 1 |
-| NONCRITICAL_DEFECT | 5 |
+| NONCRITICAL_DEFECT | 4 |
 | DEPENDENCY_BLOCKED | 9 |
 
-Open items: 54. Resolved items: 15 (listed at the end).
+Open items: 53. Resolved items: 16 (listed at the end).
 
 ## Items (by severity)
 
@@ -74,7 +74,6 @@ Open items: 54. Resolved items: 15 (listed at the end).
 | P6B-D-041 | STOCK | published stock groups with droid, remote or ambiguous operators | ENGINEERING_COMPLEXITY | MINOR | no | - |
 | P6B-D-057 | WEAPON-ECOSYSTEM | launcher capacity expansion and the remaining launcher kinds | RULES_DECISION_REQUIRED | MINOR | yes | V-P6A-03, V-P6C-06 |
 | P6B-D-058 | WEAPON-ECOSYSTEM | source-specific special weapons without a printed table row | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
-| P6B-D-069 | CONVERGENCE | Legacy SWSEVehicleWeapons module (missile lock-on, homing, battery fire, arcs) | NONCRITICAL_DEFECT | MINOR | no | - |
 
 ## Details
 
@@ -614,16 +613,6 @@ Open items: 54. Resolved items: 15 (listed at the end).
 - **Impact:** Ion bomb rows.
 - **Recommended action:** Add the scene setting, then reuse the launcher ammunition family.
 
-### P6B-D-069 - Legacy SWSEVehicleWeapons module (missile lock-on, homing, battery fire, arcs)
-
-- **Source:** scripts/combat/systems/vehicle/vehicle-weapons.js
-- **Category / severity:** NONCRITICAL_DEFECT / MINOR
-- **Reason:** A pre-refactor module that duplicates mechanics now owned by shared authorities (guided projectile follow-up, battery attack, firing arcs, range). It has no importers (its window global never registers) and its own header says it is unused. It is classified C (deprecated, unreferenced) but four pinned audits/tools (phase2-vehicle-attack-alignment, attack-outcome-wiring, phase2-legacy-facade-delegation, check-attack-outcome-ssot) read its source as a legacy facade, so it is not deleted inside this PR.
-- **Missing:** A pruning change that removes the module together with those four pins.
-- **Owner ruling needed:** no
-- **Impact:** None at runtime; it is a misleading duplicate.
-- **Recommended action:** Delete the module and update the four pins in a dedicated prune PR.
-
 ## Resolved items
 
 ### P6B-D-035 - published stock groups with capital-scale (x5 or other) multipliers (192 groups) and turbolasers
@@ -683,7 +672,7 @@ Open items: 54. Resolved items: 15 (listed at the end).
 
 ### P6B-D-060 - Swift-action switch to autofire mode
 
-- **Resolved:** Implemented: VehicleFireModeService.setMode spends a swift action through ActionEconomyConsumption and persists the mode on the vehicle; attacks require the weapon to be set to autofire. The switch back to single fire is charged the same swift action (project interpretation). A sheet control for the switch remains (P6B-D-062).
+- **Resolved:** Implemented: VehicleFireModeService.setMode spends a swift action through ActionEconomyConsumption for the switch TO autofire and persists the mode through ActorEngine. Following FireStateStore's established convention (only the switch to the published costly form is priced), switching back is free; no cost is invented.
 - **Was:** Autofire is requested per attack; the swift action to set the weapon to autofire is not charged and the mode is not persisted, the same as the character attack path.
 
 ### P6B-D-062 - Sheet control for the autofire mode switch
@@ -700,3 +689,8 @@ Open items: 54. Resolved items: 15 (listed at the end).
 
 - **Resolved:** OWNER INTERPRETATION V-P6C-13 implemented through the shared shield resolver (SR -10) and mitigation manager (hull halving before DR); the certified aftermarket launcher exists. Stock shieldbuster groups still need payload/launcher allocation (GM configuration path).
 - **Was:** Half-damage ordering against a shielded target is ambiguous in the printed sentence.
+
+### P6B-D-069 - Legacy SWSEVehicleWeapons module (missile lock-on, homing, battery fire, arcs)
+
+- **Resolved:** Retired: SWSEVehicleWeapons (and the equally unreachable SWSEVehicleCore) were verified unreachable from index.js by static and dynamic import analysis, had no macro/pack/template references, and were deleted. The four pinned audits now assert their absence.
+- **Was:** A pre-refactor module that duplicates mechanics now owned by shared authorities (guided projectile follow-up, battery attack, firing arcs, range). It has no importers (its window global never registers) and its own header says it is unused. It is classified C (deprecated, unreferenced) but four pinned audits/tools (phase2-vehicle-attack-alignment, attack-outcome-wiring, phase2-legacy-facade-delegation, check-attack-outcome-ssot) read its source as a legacy facade, so it is not deleted inside this PR.

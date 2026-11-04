@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
@@ -8,7 +9,6 @@ import { readFile } from 'node:fs/promises';
 // re-deriving hit/critical independently in multiple places.
 
 const attacks = await readFile(new URL('../scripts/combat/rolls/attacks.js', import.meta.url), 'utf8');
-const vehicleWeapons = await readFile(new URL('../scripts/combat/systems/vehicle/vehicle-weapons.js', import.meta.url), 'utf8');
 
 // Both rollAttack() and rollAttackAndDamageWithNarration() must resolve
 // through AttackOutcomeResolver.
@@ -37,7 +37,7 @@ assert.match(attacks, /const isCritical = outcome\.critical;/);
 // Vehicle missile second-attack path must also resolve through the shared
 // resolver instead of its own bare `roll.total >= targetReflex` comparison
 // (confirmed defect: no natural-1/20 handling for vehicle attacks).
-assert.match(vehicleWeapons, /AttackOutcomeResolver\.resolve\(/);
-assert.doesNotMatch(vehicleWeapons, /const hits = roll\.total >= targetReflex;/);
+// (the legacy vehicle missile module that carried its own hit comparison is retired; vehicle attacks resolve only through attacks.js)
+assert.equal(existsSync(new URL('../scripts/combat/systems/vehicle/vehicle-weapons.js', import.meta.url)), false);
 
 console.log('Attack outcome single-authority wiring guards passed.');
