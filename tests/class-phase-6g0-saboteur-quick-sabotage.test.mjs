@@ -84,3 +84,14 @@ test('Disable Device receives action type and tool proof before rolling; no fake
   const explosions=code.slice(b,code.indexOf('  /**\n   * JURY-RIG',b));
   assert.doesNotMatch(explosions,/planQuickSabotage\(/);
 });
+
+test('real extra-skill-use catalog presents class-adjusted time without claiming spent actions',()=>{
+  const registry=fs.readFileSync(path.join(root,'scripts/utils/extra-skill-use-registry.js'),'utf8');
+  assert.match(registry,/return this\._applyQuickSabotage\(this\._applyMedicalSecretEnhancements\(withAccess, actor\), actor\)/);
+  assert.match(registry,/const match = String\(item\?\.label \?\? ''\)\.trim\(\)\.match\(/);
+  assert.match(registry,/planQuickSabotage\(\{actor,complexity:match\[1\],hasSecurityKit:null\}\)/);
+  assert.match(registry,/rule\.actionType === 'two-swift-actions' \? '2 swift actions'/);
+  assert.match(registry,/quickSabotage: \{ \.\.\.rule, actionCostCommitted:false \}/);
+  assert.match(registry,/classFeatureSource: 'Saboteur — Quick Sabotage'/);
+  assert.match(registry,/if \(!actor \|\| item\?\.skillKey !== 'mechanics'\) return item/);
+});
