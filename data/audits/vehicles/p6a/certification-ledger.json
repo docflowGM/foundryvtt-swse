@@ -4,8 +4,8 @@
  "counts": {
   "sourceListed": 181,
   "sourceVerified": 174,
-  "mechanicSpecified": 66,
-  "operationallyIntegrated": 63
+  "mechanicSpecified": 70,
+  "operationallyIntegrated": 67
  },
  "rows": [
   {
@@ -1402,8 +1402,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon",
+    "test": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -1438,8 +1441,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon",
+    "test": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -1474,8 +1480,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon",
+    "test": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -1636,8 +1645,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon",
+    "test": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {

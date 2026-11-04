@@ -2,9 +2,9 @@
  "schema": "swse.vehicle.p6a.readiness.v1",
  "counts": {
   "exposeAsReference": 181,
-  "installable": 66,
-  "mechanicallyApplied": 63,
-  "combatUsable": 12
+  "installable": 70,
+  "mechanicallyApplied": 67,
+  "combatUsable": 16
  },
  "rows": [
   {
@@ -793,12 +793,11 @@
    "catalogId": "concussion-missile-launcher-light",
    "name": "Concussion Missile Launcher, Light",
    "exposeAsReference": true,
-   "installable": false,
-   "mechanicallyApplied": false,
-   "combatUsable": false,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": true,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
-    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+    "REQUIRES_CERTIFIED_MOUNT_OWNED_ITEM_AND_ATTACK_PREFLIGHT"
    ]
   },
   {
@@ -817,12 +816,11 @@
    "catalogId": "concussion-missile-launcher-medium",
    "name": "Concussion Missile Launcher, Medium",
    "exposeAsReference": true,
-   "installable": false,
-   "mechanicallyApplied": false,
-   "combatUsable": false,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": true,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
-    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+    "REQUIRES_CERTIFIED_MOUNT_OWNED_ITEM_AND_ATTACK_PREFLIGHT"
    ]
   },
   {
@@ -841,12 +839,11 @@
    "catalogId": "concussion-missile-launcher-heavy",
    "name": "Concussion Missile Launcher, Heavy",
    "exposeAsReference": true,
-   "installable": false,
-   "mechanicallyApplied": false,
-   "combatUsable": false,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": true,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
-    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+    "REQUIRES_CERTIFIED_MOUNT_OWNED_ITEM_AND_ATTACK_PREFLIGHT"
    ]
   },
   {
@@ -931,12 +928,11 @@
    "catalogId": "proton-torpedo-launcher",
    "name": "Proton Torpedo Launcher",
    "exposeAsReference": true,
-   "installable": false,
-   "mechanicallyApplied": false,
-   "combatUsable": false,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": true,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
-    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+    "REQUIRES_CERTIFIED_MOUNT_OWNED_ITEM_AND_ATTACK_PREFLIGHT"
    ]
   },
   {

@@ -264,3 +264,23 @@ effect names its row, but nothing resolves the attacker-target distance to a ban
 fire-linked, enhancements, point defense and autofire are SOURCE_VERIFIED rows without implementation; the executable stock groups whose label carries a configuration (49 double, 5 triple, 18 quad, 6 fire-linked; a group can carry several labels) run only because the statblock prints the combined dice ("stock printed values only"). (3) *New rules questions*
 recorded without a recommendation: V-P6C-07 (miss damage of a starship-scale area attack), V-P6C-08 (Burst Fire feat on vehicle weapons),
 V-P6C-09 (autoblaster autofire), V-P6C-10 (combining configurations).
+
+### WE-L1: aftermarket launchers and purchased ammunition (the first complete launcher family)
+
+The proton torpedo launcher and the light, medium and heavy concussion missile launchers (Table 3-5, PDF-verified; capacities 3 / 6 / 16 / 30 from
+`vehicle-launcher-capacity.js`, the single capacity authority) now take the Shipyard path. A launcher's damage is its AMMUNITION's printed damage
+(Table 3-5 prints "See Ammunition" for the launcher), a hit has the printed 4-square splash (an ordinary area: a single-target attack at starship scale,
+refused at character scale before any cost), and both are guided (lock-on follow-up, P6C-3D). Ammunition is a consumable (V-P6A-06), bought per unit at its
+printed price; it is not an installation and has no effect entry.
+
+**Ledger placement.** A stock launcher's ledger stays on its managed Item (the source family is its integrity check). An aftermarket launcher's ledger lives on the
+VEHICLE under the guarded flag `flags.swse.vehicleAmmunition` (installation id -> ledger): it belongs to the sealed installation, survives the Item being deleted and
+re-created (deleting the Item cannot refill the launcher), and is written in the SAME `TransactionEngine.executeAssetCustomizationTransaction` as the credits that paid
+for it, so a failed purchase changes neither. `isLedgerUpdateAllowed` now also guards Foundry's `==key` replace form for every guarded flag (it was previously unguarded
+for the installation ledger too). Purchased ammunition arrives in RESERVE; loading it is the GM reload (V-P6C-06; no reload action or cost is invented), so a new
+launcher is empty until a GM loads it. The sheet shows each launcher's loaded / reserve / expended / bought counts and offers Buy ammunition and the GM reload.
+
+**Not promoted.** Capacity expansion (V-P6A-03), the shieldbuster launcher (its shield rule is not implemented), mine launchers, bomb racks, discord, gravity-mine and
+every other launcher. Tests: `tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs` (purchase, install, empty refusal, ammunition purchase, GM reload, fire,
+damage formula, character-scale refusal, empty again, removal; unaffordable and malformed purchases; guard and tamper cases; Item re-creation; lock-on; roll failure refund;
+hull restriction; sheet view model, template and actions).

@@ -42,14 +42,14 @@ test('inventory: every one of the catalog weapon rows belongs to exactly one inv
 test('aftermarket column is computed from the certified effects registry, not from prose', () => {
   const installable = matrix.rows.flatMap(r => r.catalogRows).filter(c => c.installable).map(c => c.id).sort();
   assert.deepEqual(installable, Object.entries(EFFECTS).filter(([, e]) => e.kind === 'weapon').map(([id]) => id).sort());
-  assert.equal(matrix.totals.aftermarketInstallableRows, 12);
-  for (const id of ['laser-cannons', 'blaster-cannons', 'turbolasers', 'ion-cannons']) {
+  assert.equal(matrix.totals.aftermarketInstallableRows, 16);
+  for (const id of ['laser-cannons', 'blaster-cannons', 'turbolasers', 'ion-cannons', 'proton-torpedoes', 'concussion-missiles']) {
     assert.equal(row(id).aftermarket.status, 'OFFLINE_TESTED_INSTALL_FIRE_REMOVE', id);
     assert.equal(row(id).sourceCertification, 'MECHANIC_SPECIFIED', id);
     assert.equal(row(id).attackExecution, 'OFFLINE_TESTED', id);
   }
-  // launchers, ammunition, mines, tractor beams, gravity wells and every configuration are not installable
-  for (const id of ['proton-torpedoes', 'concussion-missiles', 'shieldbuster-torpedoes', 'space-mines', 'ion-bombs', 'tractor-beams', 'gravity-well-projectors', 'docking-guns', 'autoblasters',
+  // the shieldbuster launcher, mines, bombs, tractor beams, gravity wells and every configuration are not installable
+  for (const id of ['shieldbuster-torpedoes', 'space-mines', 'ion-bombs', 'tractor-beams', 'gravity-well-projectors', 'docking-guns', 'autoblasters',
     'hapan-triple-ion-cannon', 'double-cannons', 'quad-cannons', 'fire-linked-weapons', 'cannon-enhancements', 'point-defense'])
     assert.equal(row(id).aftermarket.status, 'NOT_INSTALLABLE', id);
   // ammunition rows are consumables, counted separately from installable weapon rows
@@ -68,7 +68,7 @@ test('stock column: groups are partitioned by family (no group counted twice); c
     assert.match(row(id).stock.basis, /^OVERLAY/, id);
   // the report-only label classification: spot checks
   assert.ok(row('ion-cannons').stock.groups >= 60 && row('tractor-beams').stock.groups >= 50 && row('proton-torpedoes').stock.groups >= 50);
-  // stock rows that are plain damage run; every launcher/tractor/gravity group is still refused
+  // stock rows that are plain damage run; every launcher/tractor/gravity group is still refused (the AFTERMARKET launcher family is complete; no STOCK one is)
   for (const id of ['proton-torpedoes', 'concussion-missiles', 'tractor-beams', 'gravity-well-projectors', 'shieldbuster-torpedoes', 'space-mines']) assert.equal(row(id).stock.offlineExecutable, 0, id);
   // a configuration run from printed statblock values is NOT a configuration implementation
   for (const id of ['double-cannons', 'triple-cannons', 'quad-cannons', 'fire-linked-weapons']) {
@@ -88,7 +88,7 @@ test('honesty: nothing is live-verified; no family is operational while a blocke
   for (const id of ['laser-cannons', 'blaster-cannons', 'turbolasers', 'ion-cannons']) assert.ok(row(id).openBlockers.some(b => b.code === 'RANGE_BAND_NOT_AUTOMATED'), id);
   assert.equal(matrix.totals.familiesFullyOperationalOffline, matrix.rows.filter(r => r.openBlockers.length === 0).length);
   // rules gaps are classified RULES_DEFERRED and carry no recommended ruling
-  for (const [code, b] of Object.entries(inventory.blockerCatalog)) if (b.class === 'RULES_DEFERRED') { assert.doesNotMatch(b.text, /recommend|should be|we propose/i, code); assert.match(b.text, /Register V-P6C-\d\d/); }
+  for (const [code, b] of Object.entries(inventory.blockerCatalog)) if (b.class === 'RULES_DEFERRED') { assert.doesNotMatch(b.text, /recommend|should be|we propose/i, code); assert.match(b.text, /Register V-P6[AC]-\d\d/); }
   // every authored claim of tested behaviour names a test file that exists
   for (const r of inventory.rows) for (const f of Object.values(r.evidence ?? {})) assert.ok(fs.existsSync(f), `${r.id}: ${f}`);
 });

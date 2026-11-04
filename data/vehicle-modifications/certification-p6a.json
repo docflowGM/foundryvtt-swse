@@ -165,7 +165,9 @@
    "pageResolution": "pdf-table-page"
   },
   "concussion-missile-launcher-light": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 47,
@@ -189,7 +191,9 @@
    "pageResolution": "pdf-table-page"
   },
   "concussion-missile-launcher-medium": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 47,
@@ -213,7 +217,9 @@
    "pageResolution": "pdf-table-page"
   },
   "concussion-missile-launcher-heavy": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 47,
@@ -321,7 +327,9 @@
    "pageResolution": "pdf-table-page"
   },
   "proton-torpedo-launcher": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 47,

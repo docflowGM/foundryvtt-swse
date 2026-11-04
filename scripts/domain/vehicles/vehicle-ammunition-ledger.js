@@ -95,6 +95,50 @@ export function validateLedger(ledger, family) {
   return { ok: true };
 }
 
+// ---------------------------------------------------------------------------------------------------------------------------------
+// AFTERMARKET launchers (WE-L1). The installation itself is sealed in the installation ledger; its ammunition ledger is kept on the
+// VEHICLE under a guarded flag keyed by installId (flags.swse.vehicleAmmunition), so it outlives the owned Item, can be written in the
+// same transaction as the credits that paid for it, and cannot be refilled by deleting the Item. Nothing printed in a source gives a
+// payload for an aftermarket launcher: its payload is exactly what was BOUGHT (the sum of paid purchases), and ammunition bought
+// arrives in RESERVE; moving it into the launcher is the GM reload operation (V-P6C-06: no reload action cost is invented).
+// ---------------------------------------------------------------------------------------------------------------------------------
+export const AFTERMARKET_AMMO_FLAG = 'vehicleAmmunition';
+
+/** The static family of an aftermarket launcher installation (what the certified specification and the sealed entry establish). */
+export function aftermarketFamily(spec, entry) {
+  const a = spec?.ammunition;
+  if (!a || !isInt(a.capacity) || a.capacity < 1 || !isInt(a.price) || !entry?.catalogId || !entry?.installId) return null;
+  return { origin: 'aftermarket', installId: entry.installId, payload: null, launcherId: entry.catalogId, ammunition: a.id, guided: spec.guided === true,
+    capacity: a.capacity, capacitySource: 'Starships of the Galaxy pp. 45-46', launchers: 1, allocation: 'single-launcher-verified', unitPrice: a.price };
+}
+
+/** A launcher with nothing bought yet. */
+export function emptyAftermarketLedger(family) {
+  if (family?.origin !== 'aftermarket') return null;
+  return { schema: LEDGER_SCHEMA, launcherId: family.launcherId, ammunition: family.ammunition, guided: family.guided, payload: 0, capacity: family.capacity,
+    launchers: 1, allocation: 'aftermarket', loaded: 0, reserve: 0, expended: 0, receipts: {}, log: [] };
+}
+
+/** Internal consistency of an aftermarket ledger against the certified launcher (there is no printed payload to compare with). */
+export function validateAftermarketLedger(ledger, family) {
+  if (!ledger || ledger.schema !== LEDGER_SCHEMA || family?.origin !== 'aftermarket') return fail(AMMO_REASONS.LEDGER_MISSING);
+  for (const k of ['payload', 'capacity', 'launchers', 'loaded', 'reserve', 'expended']) if (!isInt(ledger[k])) return fail(AMMO_REASONS.LEDGER_INVALID);
+  if (ledger.capacity !== family.capacity || ledger.launcherId !== family.launcherId || ledger.ammunition !== family.ammunition || ledger.launchers !== 1) return fail(AMMO_REASONS.LEDGER_INVALID);
+  if (ledger.loaded > ledger.capacity) return fail(AMMO_REASONS.LEDGER_INVALID);
+  if (ledger.loaded + ledger.reserve + ledger.expended !== ledger.payload) return fail(AMMO_REASONS.LEDGER_INVALID);       // conservation
+  return { ok: true };
+}
+
+/** Buy `units` of the launcher's ammunition at the certified unit price: payload and reserve rise together; nothing is loaded. */
+export function planPurchase(ledger, family, { units, by = null, now = Date.now() } = {}) {
+  if (!isInt(units) || units < 1) return fail('AMMO_PURCHASE_QUANTITY_INVALID');
+  const v = validateAftermarketLedger(ledger, family);
+  if (!v.ok) return v;
+  const cost = units * family.unitPrice;
+  return { ok: true, units, cost, ledger: { ...ledger, payload: ledger.payload + units, reserve: ledger.reserve + units,
+    log: [...(ledger.log ?? []), { op: 'purchase', units, unitPrice: family.unitPrice, cost, by, at: now }].slice(-MAX_RECEIPTS) } };
+}
+
 const trimReceipts = receipts => Object.fromEntries(Object.entries(receipts).sort((a, b) => (a[1].at ?? 0) - (b[1].at ?? 0)).slice(-MAX_RECEIPTS));
 
 /** Spend `units` launched by attack `attackId`. Idempotent: the same attack id spends once. @returns {{ok:true, replay:boolean, ledger:object}|{ok:false, reason}} */

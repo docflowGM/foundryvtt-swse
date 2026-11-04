@@ -8,14 +8,14 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 
 | Category | Count |
 |---|---|
-| RULES_DECISION_REQUIRED | 6 |
-| SOURCE_EVIDENCE_MISSING | 7 |
-| ENGINEERING_COMPLEXITY | 14 |
+| RULES_DECISION_REQUIRED | 8 |
+| SOURCE_EVIDENCE_MISSING | 8 |
+| ENGINEERING_COMPLEXITY | 20 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 4 |
 | DEPENDENCY_BLOCKED | 8 |
 
-Open items: 40. Resolved items: 9 (listed at the end).
+Open items: 49. Resolved items: 9 (listed at the end).
 
 ## Items (by severity)
 
@@ -31,6 +31,13 @@ Open items: 40. Resolved items: 9 (listed at the end).
 | P6B-D-034 | STOCK | published stock weapon batteries and multi-gunner stations (291 groups) | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-036 | STOCK | published stock splash, ion and ammunition-limited groups (torpedoes, missiles, ion cannons; 71 splash + 71 ion groups) | DEPENDENCY_BLOCKED | IMPORTANT | no | V-P6A-03 |
 | P6B-D-043 | STOCK | weapon batteries crewed by named gunners (assisting roster) | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
+| P6B-D-050 | WEAPON-ECOSYSTEM | weapon configurations: double, triple, quad, fire-linked, optional fire link, cannon enhancements | ENGINEERING_COMPLEXITY | IMPORTANT | no | V-P6C-10 |
+| P6B-D-051 | WEAPON-ECOSYSTEM | autofire (starship-scale single-target mode), autoblaster and Burst Fire | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-07, V-P6C-08, V-P6C-09 |
+| P6B-D-052 | WEAPON-ECOSYSTEM | point-defense weapon modification | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
+| P6B-D-053 | WEAPON-ECOSYSTEM | vehicle weapon range-band resolution | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
+| P6B-D-054 | WEAPON-ECOSYSTEM | shieldbuster torpedoes, space mines and ion bombs | ENGINEERING_COMPLEXITY | IMPORTANT | no | V-P6C-07 |
+| P6B-D-055 | WEAPON-ECOSYSTEM | vehicle tractor beams | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
+| P6B-D-056 | WEAPON-ECOSYSTEM | gravity well projectors | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-003 | P6B-1 | jamming-suite, jamming-array | ENGINEERING_COMPLEXITY | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-004 | P6B-1 | combat-thrusters | DEPENDENCY_BLOCKED | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-005 | P6B-1 | navicomputer-limited | RULES_DECISION_REQUIRED | MINOR | yes | V-P6B-01 |
@@ -61,6 +68,8 @@ Open items: 40. Resolved items: 9 (listed at the end).
 | P6B-D-038 | STOCK | legacy abstract-crew attack tier table (CREW_QUALITY_BONUS) for actors that are not source-backed or constructed | NONCRITICAL_DEFECT | MINOR | no | - |
 | P6B-D-039 | STOCK | point-defense weapon modification (catalog row "point-defense", +4,000 credits) | ENGINEERING_COMPLEXITY | MINOR | no | - |
 | P6B-D-041 | STOCK | published stock groups with droid, remote or ambiguous operators | ENGINEERING_COMPLEXITY | MINOR | no | - |
+| P6B-D-057 | WEAPON-ECOSYSTEM | launcher capacity expansion and the remaining launcher kinds | RULES_DECISION_REQUIRED | MINOR | yes | V-P6A-03, V-P6C-06 |
+| P6B-D-058 | WEAPON-ECOSYSTEM | source-specific special weapons without a printed table row | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
 
 ## Details
 
@@ -470,6 +479,96 @@ Open items: 40. Resolved items: 9 (listed at the end).
 - **Impact:** Named-gunner crews cannot fire published batteries; the generic published crew can.
 - **Recommended action:** Add a roster binding that references existing crew stations, then wire resolveBatteryAttackTotal('assigned') into the named-gunner attack math.
 
+### P6B-D-050 - weapon configurations: double, triple, quad, fire-linked, optional fire link, cannon enhancements
+
+- **Source:** Starships of the Galaxy, Weapon Systems and Table 3-5 (p. 47)
+- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
+- **Reason:** The rows are SOURCE_VERIFIED only. Stock statblocks that print a double/quad/fire-linked result run only because the printed dice are used as written. A configuration must MODIFY an installed base weapon (damage dice, EP, cost multiplier, availability = the stricter of the two, fire-linked missiles spending one unit per linked launcher, the optional link toggled by a swift action); it must not become a separate combat engine. Combining configurations is unruled (V-P6C-10) and will be refused.
+- **Missing:** A ledger attachment to an installed weapon, the multiplier-cost arithmetic, derived Item damage, and tests per configuration through purchase, install, fire and removal.
+- **Owner ruling needed:** no (V-P6C-10)
+- **Impact:** Aftermarket double/triple/quad/fire-linked/enhanced weapons cannot be bought.
+- **Recommended action:** Implement one configuration at a time on the certified base weapons (priority 6); refuse combinations.
+
+### P6B-D-051 - autofire (starship-scale single-target mode), autoblaster and Burst Fire
+
+- **Source:** Core Rulebook, Special Combat Rules: Autofire and Vehicle Combat: Scale; Starships of the Galaxy, Cannon Double/Quad and Fire-Linked Weapons (Autofire)
+- **Category / severity:** RULES_DECISION_REQUIRED / IMPORTANT
+- **Reason:** Established: eligible double, quad and fire-linked blaster/laser/light ion/light turbolaser weapons switch to autofire with a swift action; autofire is an area attack at -5; at starship scale it resolves as an attack on a single target. Not established: the miss outcome of such a single-target resolution (V-P6C-07), whether the Burst Fire feat applies to vehicle weapons (V-P6C-08) and whether an autoblaster has an autofire setting (V-P6C-09).
+- **Missing:** The swift-action mode, the -5 attack component and the starship-scale refusal at character scale can be built from the established text once configurations exist; the deferred questions stay deferred.
+- **Owner ruling needed:** yes (V-P6C-07, V-P6C-08, V-P6C-09)
+- **Impact:** No autofire for any vehicle weapon.
+- **Recommended action:** Build the established part after P6B-D-050; keep the three questions in the register.
+
+### P6B-D-052 - point-defense weapon modification
+
+- **Source:** Starships of the Galaxy, Weapon Systems: Point-Defense Weapon; Table 3-5; Core Rulebook p. 170
+- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
+- **Reason:** +4,000 credits per weapon, 0 extra EP, Restricted, Colossal or larger only; only blaster cannons, laser cannons and light ion cannons are eligible; no penalty against targets smaller than Colossal. The capital-ship penalty authority already has a point-defense exemption input; nothing sets it, and 60 stock groups are refused because their point-defense classification is unverified.
+- **Missing:** A modification attached to an installed eligible weapon, point-defense ranges (Table 10-2) and the exemption input.
+- **Owner ruling needed:** no
+- **Impact:** Point-defense weapons are not purchasable and not recognized.
+- **Recommended action:** Implement after configurations (priority 7).
+
+### P6B-D-053 - vehicle weapon range-band resolution
+
+- **Source:** Core Rulebook, Vehicles, Table 10-2: Vehicle Weapon Ranges; data/vehicle-weapon-ranges.json
+- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
+- **Reason:** The attack math applies the Core range modifier (0 / -2 / -5 / -10) from a caller-supplied rangeBand; no code resolves the attacker-target distance to a Table 10-2 band for a vehicle weapon, so attacks made from the sheet carry no range modifier. Every promoted weapon names its Table 10-2 row (rangeSlug).
+- **Missing:** Distance in squares at the encounter's scale, the band lookup per weapon family, and the decision how distance between large fighting spaces is measured.
+- **Owner ruling needed:** no
+- **Impact:** Range penalties never apply unless a macro supplies the band.
+- **Recommended action:** Resolve the band from token distance at the encounter scale; document the measurement convention.
+
+### P6B-D-054 - shieldbuster torpedoes, space mines and ion bombs
+
+- **Source:** Starships of the Galaxy, Weapon Systems and Table 3-5
+- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
+- **Reason:** Shieldbusters halve damage against anything but shields and remove 10 SR (not 5) when an attack exceeds SR; mines are deployed as a swift action, persist in a square, can be noticed (Stealth +5, Perception reaction, Use Computer reaction), are IFF-immune or command-detonated, and detonate as an area attack on every ship entering; ion bombs work only in an atmosphere at -5, may target the square beneath the ship and deal 5d10 ion damage in a 10-square radius. None is a plain direct-fire missile.
+- **Missing:** The shield rule in the damage engine, a persistent mine record with detection and detonation, the bomb atmosphere gate, launcher installation and ammunition rows for each.
+- **Owner ruling needed:** no (V-P6C-07)
+- **Impact:** Three launcher families cannot be bought or fired.
+- **Recommended action:** Implement as separate slices (priority 8).
+
+### P6B-D-055 - vehicle tractor beams
+
+- **Source:** Core Rulebook, Vehicles: Tractor Beams (cited at p. 174 by Starships of the Galaxy); Starships of the Galaxy Table 3-5
+- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
+- **Reason:** Not a damage attack: hit on equal or exceeding Reflex, then an opposed grapple check; a grabbed target of the beam vehicle's size or smaller cannot move and loses its Dexterity bonus to Reflex; each round another opposed grapple check to hold, pull up to 10 squares (1 at starship scale) or lose the target; leaving range breaks the hold. 58 stock groups are refused.
+- **Missing:** A persistent grab record, the opposed grapple check on vehicles, forced movement, and the range break.
+- **Owner ruling needed:** no
+- **Impact:** No tractor beam can be fired or bought.
+- **Recommended action:** Implement as its own slice (priority 9); never model it with hit-point damage.
+
+### P6B-D-056 - gravity well projectors
+
+- **Source:** Starships of the Galaxy, Weapon Systems: Gravity Well Projectors; Table 3-5
+- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
+- **Reason:** Not a damage attack: the operator chooses a 4x4-square (starship scale) area in range and attacks Reflex Defense 10; on success the area becomes a hyperspace interdiction field and a starship starting its turn in it may not activate its hyperdrive that turn.
+- **Missing:** A persistent field record, area placement, and a hyperdrive-activation gate.
+- **Owner ruling needed:** no
+- **Impact:** No gravity well projector can be fired or bought.
+- **Recommended action:** Implement as its own slice (priority 10).
+
+### P6B-D-057 - launcher capacity expansion and the remaining launcher kinds
+
+- **Source:** Starships of the Galaxy, Weapon Systems (launcher capacities); Table 3-5
+- **Category / severity:** RULES_DECISION_REQUIRED / MINOR
+- **Reason:** Extra launcher capacity (+20% / +25% per additional unit up to the printed maximum) is unusable until the emplacement-point effect and the base of the percentage are ruled (V-P6A-03); the shieldbuster, mine, bomb, discord and gravity-mine launchers are not promoted; reload remains a GM operation (V-P6C-06).
+- **Missing:** A ruling on capacity expansion; the launcher kinds depend on P6B-D-054.
+- **Owner ruling needed:** yes (V-P6A-03, V-P6C-06)
+- **Impact:** Launchers carry their standard capacity only.
+- **Recommended action:** Hold until V-P6A-03 is ruled.
+
+### P6B-D-058 - source-specific special weapons without a printed table row
+
+- **Source:** Clone Wars Campaign Guide (mass-driver, rail, composite beam, proton grenade); Rebellion Era Campaign Guide (flak pod); statblock-only equipment
+- **Category / severity:** SOURCE_EVIDENCE_MISSING / MINOR
+- **Reason:** These catalog rows have text descriptions but no printed price, EP or availability row (or appear only inside statblocks); their numbers came from statblocks. They cannot be priced or installed, and each needs its own verified mechanic (for example the composite beam cannon ignores 5 points of SR; the flak pod is an area attack at starship scale with half damage on a miss).
+- **Missing:** A reconciled printed source row (or an owner decision to sell them) and an individually verified mechanic per weapon.
+- **Owner ruling needed:** no
+- **Impact:** Stock groups run only where they are plain damage; none is purchasable.
+- **Recommended action:** Reconcile each against its printed source, then implement individually (priority 11).
+
 ## Resolved items
 
 ### P6B-D-035 - published stock groups with capital-scale (x5 or other) multipliers (192 groups) and turbolasers
@@ -515,4 +614,4 @@ Open items: 40. Resolved items: 9 (listed at the end).
 ### P6B-D-049 - finite ammunition ledger: IMPLEMENTED; 18 groups wait for a GM-certified allocation; reload action cost not inferred
 
 - **Resolved:** Owner addendum 2026-11-04 (PROJECT_INTERPRETATION for initial loading and the GM reload).
-- **Was:** vehicle-ammunition-ledger.js / vehicle-ammunition-service.js: payload, capacity, loaded, reserve and expended are separate, conservation payload = loaded + reserve + expended is validated at every use (a hand-edited ledger is refused), spending is atomic and idempotent per attack id and refunded when the attack fails, a refused attack spends nothing, the guided follow-up spends nothing, and the ledger does not depend on the optional blaster-charge setting. Initial loading (PROJECT_INTERPRETATION): loaded = min(payload, capacity), reserve = payload - loaded, for a verified single launcher only. Reload is a GM operation that moves reserve to loaded without creating ammunition and invents no action cost. 24 groups print a payload; none has a verified single launcher, so 0 are complete. 18 have payload + an exactly-designated launcher but an unverified launcher count (STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED): they are NOT armed and NOT counted, because arming an Item that cannot fire until a GM certifies it needs a sheet action that does not exist.
+- **Was:** vehicle-ammunition-ledger.js / vehicle-ammunition-service.js: payload, capacity, loaded, reserve and expended are separate, conservation payload = loaded + reserve + expended is validated at every use (a hand-edited ledger is refused), spending is atomic and idempotent per attack id and refunded when the attack fails, a refused attack spends nothing, the guided follow-up spends nothing, and the ledger does not depend on the optional blaster-charge setting. Initial loading (PROJECT_INTERPRETATION): loaded = min(payload, capacity), reserve = payload - loaded, for a verified single launcher only. Reload is a GM operation that moves reserve to loaded without creating ammunition and invents no action cost. 24 groups print a payload; none has a verified single launcher, so 0 are complete. 18 have payload + an exactly-designated launcher but an unverified launcher count (STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED): they are NOT armed and NOT counted, because arming an Item that cannot fire until a GM certifies it needs a sheet action that does not exist. WE-L1 (2026-11-04): AFTERMARKET launchers (proton torpedo; light, medium, heavy concussion) are a complete, tested family: the ledger lives on the vehicle under a guarded flag keyed by installation id, ammunition is bought per unit in one TransactionEngine transaction with the ledger, arrives in reserve, and the sheet offers Buy ammunition and the GM reload.

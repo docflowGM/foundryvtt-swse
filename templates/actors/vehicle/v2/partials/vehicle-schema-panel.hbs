@@ -110,6 +110,19 @@
       <p>No installation work in progress.</p>
     {{/each}}
     {{#if view.shipyard.rejected}}<p class="swse-vehicle-warning">{{view.shipyard.rejected}} job record(s) failed verification; new work is blocked.</p>{{/if}}
+    {{#if view.shipyard.hasLaunchers}}
+      <div class="swse-vehicle-launchers">
+        {{#each view.shipyard.launchers}}
+          <div class="swse-vehicle-launcher-row" data-install-id="{{installId}}">
+            <strong>{{name}}</strong> — loaded {{loaded}} / {{capacity}} · reserve {{reserve}} · expended {{expended}} · bought {{bought}} · {{unitPrice}} cr each
+            {{#if ../view.shipyard.canAct}}
+              <button type="button" data-shipyard-action="buy-ammunition" data-install-id="{{installId}}">Buy ammunition</button>
+              {{#if canReload}}<button type="button" data-shipyard-action="gm-reload" data-install-id="{{installId}}">GM: load from reserve</button>{{/if}}
+            {{/if}}
+          </div>
+        {{/each}}
+      </div>
+    {{/if}}
     {{#if view.shipyard.canAct}}
       {{#if view.shipyard.hasOptions}}
       <div class="swse-vehicle-job-start">

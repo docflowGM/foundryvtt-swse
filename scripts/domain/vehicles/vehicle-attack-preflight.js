@@ -12,6 +12,7 @@ import { isTargetWithinVehicleArc } from './vehicle-firing-arc-geometry.js';
 import { STOCK_ARC_POLICY, getStockSilentArcPolicy } from './vehicle-stock-arc-policy.js';
 import { BATTERY_REASONS } from './vehicle-weapon-battery.js';
 import { resolveEncounterScale, resolveAreaAtScale } from './vehicle-encounter-scale.js';
+import { resolveVehicleWeaponAuthority } from './vehicle-weapon-damage.js';
 
 const block = reason => ({ok:false,reason,strictStockEnforcement:true});
 const nonempty = x => typeof x === 'string' && x.trim().length > 0;
@@ -58,6 +59,14 @@ export async function authorizeVehicleAttackBeforeCosts({vehicle,weapon,target,a
     if (!target || !nonempty(target.id)) return block('TARGET_UNRESOLVED');
     if (crewStationResolved !== true) return block('CREW_STATION_UNRESOLVED');
     if (!nonempty(attackId) || !nonempty(vehicle?.id)) return block('ATTACK_SCOPE_UNRESOLVED');
+    // An aftermarket launcher's printed splash is an ORDINARY area: a single-target attack at starship scale, refused otherwise (same
+    // rule and same pre-cost position as the stock groups below).
+    const installed = resolveVehicleWeaponAuthority(weapon);
+    if (installed?.ok && installed.area) {
+      const scale = resolveEncounterScale({ attacker: vehicle, target, combat: globalThis.game?.combat ?? null });
+      const at = resolveAreaAtScale(installed.area, scale.scale);
+      if (at.mode === 'refused') return block(`INSTALLED_AREA_${at.reason}`);
+    }
     if (!isTargetWithinVehicleArc(vehicle,target,base.provenance.mount.arc)) return block('TARGET_OUTSIDE_CERTIFIED_MOUNT_ARC');
     return base;
   }

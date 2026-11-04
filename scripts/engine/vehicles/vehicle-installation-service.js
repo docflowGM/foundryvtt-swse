@@ -22,6 +22,9 @@ import { planInstalledWeaponItemSync } from "/systems/foundryvtt-swse/scripts/do
 import { planStockWeaponItemSync } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-weapon-items.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
+import { EFFECTS } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-modification-effects.js";
+import { VehicleAmmunitionService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-ammunition-service.js";
+import { AFTERMARKET_AMMO_FLAG, aftermarketFamily, emptyAftermarketLedger, planPurchase } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-ammunition-ledger.js";
 
 const CATALOG_FILES = ['accessories', 'defense-systems', 'movement-systems', 'weapon-systems'];
 
@@ -228,6 +231,51 @@ export class VehicleInstallationService {
       ...(itemsOk ? {} : { partial: true, reasons: ['WEAPON_ITEMS_NOT_SYNCHRONIZED'], repair: 'reconcileWeaponItems' }) };
   }
 
+
+  /**
+   * Buy ammunition for an installed, certified launcher (WE-L1). The credits and the ammunition ledger change in ONE
+   * TransactionEngine transaction (snapshot + rollback of both actors): if any part fails the whole purchase fails. The
+   * ammunition is a consumable (V-P6A-06) sold per unit at its certified price; it arrives in the launcher's RESERVE and is
+   * loaded by the GM reload operation. Allowed for the vehicle's owner association or a GM, like every other Shipyard charge.
+   */
+  static async purchaseAmmunition(args) { return this.#exclusive(args?.vehicle, () => this.#purchaseAmmunition(args)); }
+  static async #purchaseAmmunition({ ownerActor, vehicle, installId, units }) {
+    const p = await this.#prepare({ ownerActor, vehicle });
+    if (p.error) return { success: false, reasons: [p.error] };
+    const { entries } = readCertifiedInstallations(p.src.flags, p.src.record.identity.sourceEntryKey);
+    const entry = entries.find(e => e.installId === installId);
+    if (!entry) return { success: false, reasons: ['INSTALL_NOT_FOUND'] };
+    const family = entry.executable === true ? aftermarketFamily(EFFECTS[entry.catalogId], entry) : null;
+    if (!family) return { success: false, reasons: ['INSTALLATION_IS_NOT_AN_AMMUNITION_LAUNCHER'] };
+    const map = p.src.flags?.swse?.[AFTERMARKET_AMMO_FLAG] ?? {};
+    const plan = planPurchase(map[installId] ?? emptyAftermarketLedger(family), family, { units, by: globalThis.game?.user?.id ?? null });
+    if (!plan.ok) return { success: false, reasons: [plan.reason] };
+    const next = { ...map, [installId]: plan.ledger };
+    authorizeFlagWrite(vehicle.id, AFTERMARKET_AMMO_FLAG, next);
+    let tx;
+    try {
+      tx = await TransactionEngine.executeAssetCustomizationTransaction({
+        actor: ownerActor, assetActor: vehicle, cost: plan.cost, resaleCredit: 0,
+        assetMutationPlan: { set: { [`flags.swse.${AFTERMARKET_AMMO_FLAG}`]: next } },
+        reason: `Buy ${plan.units} x ${family.ammunition} for ${entry.name}`,
+        audit: { kind: 'vehicle-ammunition-purchase', installId, catalogId: entry.catalogId, ammunition: family.ammunition, units: plan.units, unitPrice: family.unitPrice }
+      });
+    } finally { clearLedgerWrite(vehicle.id); }
+    if (!tx.success) return { success: false, reasons: [/insufficient credits/i.test(tx.error ?? '') ? 'INSUFFICIENT_CREDITS' : 'TRANSACTION_FAILED'], error: tx.error };
+    return { success: true, transactionId: tx.transactionId, units: plan.units, cost: plan.cost, ledger: plan.ledger };
+  }
+
+  /**
+   * GM operation: load a launcher from its reserve (V-P6C-06: moves reserve to loaded, creates nothing, invents no action cost).
+   * The launcher is found by installation id, so the caller never names an Item.
+   */
+  static async reloadLauncher({ vehicle, installId, amount = Infinity }) {
+    if (!this.#isGM()) return { success: false, reasons: ['GM_REQUIRED'] };
+    const item = Array.from(vehicle?.items ?? []).find(i => i?.flags?.swse?.vehicleInstalledWeapon?.installId === installId);
+    if (!item) return { success: false, reasons: ['WEAPON_ITEM_MISSING'] };
+    const r = await VehicleAmmunitionService.gmReload(vehicle, item, { amount });
+    return r.ok ? { success: true, moved: r.moved, ledger: r.ledger } : { success: false, reasons: [r.reason] };
+  }
 
   /** Begin an installation job: validates like an installation, reserves EP, charges the first attempt. */
   static async startJob(args) { return this.#exclusive(args?.vehicle, () => this.#startJob(args)); }

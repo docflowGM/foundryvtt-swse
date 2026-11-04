@@ -60,24 +60,28 @@ const rows = inventory.rows.map(row => {
     return { id, category: c.category, certification: status, reconciliation: recon[id]?.disposition ?? null, installable, testFile };
   });
   const weaponRows = cats.filter(c => c.category === 'Weapon');
+  // Certification is judged on the INSTALLABLE rows (the weapons); consumable ammunition rows are SOURCE_VERIFIED by design (V-P6A-06)
+  // and are reported on their own line.
+  const judged = weaponRows.length ? weaponRows : cats;
   const sourceCertification = !cats.length ? 'NO_CATALOG_ROW'
-    : cats.every(c => c.certification === 'MECHANIC_SPECIFIED') ? 'MECHANIC_SPECIFIED'
-    : cats.every(c => certRank(c.certification) >= 1) ? 'SOURCE_VERIFIED'
-    : cats.some(c => certRank(c.certification) >= 1) ? 'PARTIALLY_SOURCE_VERIFIED' : 'UNCERTIFIED';
+    : judged.every(c => c.certification === 'MECHANIC_SPECIFIED') ? 'MECHANIC_SPECIFIED'
+    : judged.every(c => certRank(c.certification) >= 1) ? 'SOURCE_VERIFIED'
+    : judged.some(c => certRank(c.certification) >= 1) ? 'PARTIALLY_SOURCE_VERIFIED' : 'UNCERTIFIED';
   const installed = weaponRows.filter(c => c.installable);
   for (const c of installed) if (!fs.existsSync(c.testFile)) throw new Error(`${c.id}: effect test ${c.testFile} does not exist`);
   const aftermarket = !weaponRows.length ? 'NOT_APPLICABLE' : installed.length === weaponRows.length ? 'OFFLINE_TESTED_INSTALL_FIRE_REMOVE'
     : installed.length ? 'PARTIAL' : 'NOT_INSTALLABLE';
   const stock = OVERLAY_KINDS.has(row.kind) ? { ...tally(stockGroups.filter(g => matchers(row).some(re => re.test(g.label)))), basis: 'OVERLAY: also counted in its base-weapon row' }
     : { ...tally(owned.get(row.id) ?? []), basis: 'PARTITION: owned by this family' };
-  const plain = row.mechanic === 'ordinary-damage' || row.mechanic === 'ion-damage';
+  const DAMAGE_LABEL = { 'ordinary-damage': 'ORDINARY_DAMAGE', 'ion-damage': 'ION_LIFECYCLE', 'ammunition-limited-damage': 'AMMUNITION_LIMITED_DAMAGE' };
+  const plain = row.mechanic in DAMAGE_LABEL;
   const overlay = OVERLAY_KINDS.has(row.kind);
   // A configuration is "STOCK_PRINTED_VALUES_ONLY" when published statblocks print its combined result (e.g. "double laser cannons 4d10x2")
   // and the gate runs those printed numbers as written: the configuration itself (buying it, switching it, its rules) is not implemented.
   const attack = aftermarket === 'OFFLINE_TESTED_INSTALL_FIRE_REMOVE' && plain ? 'OFFLINE_TESTED'
     : overlay ? (row.evidence?.stock ? 'OFFLINE_TESTED_STOCK_ONLY' : stock.offlineExecutable > 0 ? 'STOCK_PRINTED_VALUES_ONLY' : 'NOT_IMPLEMENTED')
     : stock.offlineExecutable > 0 && plain ? 'OFFLINE_TESTED_STOCK_ONLY' : 'NOT_IMPLEMENTED';
-  const damageOrEffect = attack === 'NOT_IMPLEMENTED' ? 'NOT_IMPLEMENTED' : `${attack}:${overlay ? 'CONFIGURATION' : row.mechanic === 'ion-damage' ? 'ION_LIFECYCLE' : 'ORDINARY_DAMAGE'}`;
+  const damageOrEffect = attack === 'NOT_IMPLEMENTED' ? 'NOT_IMPLEMENTED' : `${attack}:${overlay ? 'CONFIGURATION' : DAMAGE_LABEL[row.mechanic] ?? 'SPECIAL'}`;
   const evidence = row.evidence ?? {};
   for (const [k, f] of Object.entries(evidence)) if (!fs.existsSync(f)) throw new Error(`${row.id}: evidence ${k} -> ${f} does not exist`);
   for (const code of row.blockers) if (!inventory.blockerCatalog[code]) throw new Error(`${row.id}: unknown blocker ${code}`);

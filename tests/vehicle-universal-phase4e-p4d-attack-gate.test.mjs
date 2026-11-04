@@ -174,7 +174,8 @@ test('install service authorizes its ledger write around the transaction and reg
   const svc = readFileSync('scripts/engine/vehicles/vehicle-installation-service.js', 'utf8');
   // uninstall authorizes inline; every job/installation write goes through #commit
   assert.equal((svc.match(/authorizeLedgerWrite\(vehicle\.id, (plan\.)?nextLedger\)/g) ?? []).length, 2);
-  assert.equal((svc.match(/finally \{ clearLedgerWrite\(vehicle\.id\); \}/g) ?? []).length, 2);
+  // (+1: purchaseAmmunition authorizes the guarded ammunition flag around its single transaction)
+  assert.equal((svc.match(/finally \{ clearLedgerWrite\(vehicle\.id\); \}/g) ?? []).length, 3);
   const hooks = readFileSync('scripts/actors/vehicle/vehicle-precreate-hooks.js', 'utf8');
   assert.match(hooks, /Hooks\.on\('preUpdateActor', guardVehicleInstallationLedger\)/);
 });

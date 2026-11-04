@@ -5,7 +5,7 @@
   "inventoryRows": 41,
   "catalogWeaponRows": 63,
   "catalogRowsCoveredByInventory": 63,
-  "aftermarketInstallableRows": 12,
+  "aftermarketInstallableRows": 16,
   "stockGroups": 846,
   "stockGroupsOwnedByAFamily": 801,
   "stockGroupsUnclassified": 45,
@@ -211,6 +211,14 @@
   "ENHANCEMENT_STACKING_UNRULED": {
    "class": "RULES_DEFERRED",
    "text": "Stacking of double/quad/fire-linked/enhancement damage dice on one weapon is not stated; no combination rule is implemented. Register V-P6C-10."
+  },
+  "CAPACITY_EXPANSION_DEFERRED": {
+   "class": "RULES_DEFERRED",
+   "text": "Extra launcher capacity (+20% / +25% cost per additional unit up to the printed maximum) is recorded but not usable: whether added capacity costs emplacement points and which cost the percentage applies to is unresolved. Register V-P6A-03."
+  },
+  "RELOAD_ACTION_UNRULED": {
+   "class": "RULES_DEFERRED",
+   "text": "Bought ammunition arrives in the launcher's reserve; moving it into the launcher is a GM operation (no reload action or cost is invented from personal launchers). Register V-P6C-06."
   },
   "OPTIONAL_LINK_NOT_IMPLEMENTED": {
    "class": "ENGINEERING",
@@ -860,15 +868,15 @@
     "4-square splash radius. A standard launcher holds three torpedoes; additional capacity costs +25% per additional torpedo up to sixteen.",
     "Aimed launch that misses: one follow-up next turn at the same bonus -5, no action; Reflex Defense 30, 10 hit points; second miss self-destructs (Core)."
    ],
-   "sourceCertification": "SOURCE_VERIFIED",
+   "sourceCertification": "MECHANIC_SPECIFIED",
    "catalogRows": [
     {
      "id": "proton-torpedo-launcher",
      "category": "Weapon",
-     "certification": "SOURCE_VERIFIED",
+     "certification": "MECHANIC_SPECIFIED",
      "reconciliation": "MATCHED_CANONICAL",
-     "installable": false,
-     "testFile": null
+     "installable": true,
+     "testFile": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs"
     },
     {
      "id": "proton-torpedo",
@@ -887,14 +895,14 @@
     "basis": "PARTITION: owned by this family"
    },
    "aftermarket": {
-    "status": "NOT_INSTALLABLE",
+    "status": "OFFLINE_TESTED_INSTALL_FIRE_REMOVE",
     "weaponRows": 1,
-    "installable": 0,
+    "installable": 1,
     "consumableRows": 1
    },
-   "attackExecution": "NOT_IMPLEMENTED",
-   "damageOrEffectExecution": "NOT_IMPLEMENTED",
-   "resourceTracking": "LEDGER_OFFLINE_TESTED_SYNTHETIC_ONLY",
+   "attackExecution": "OFFLINE_TESTED",
+   "damageOrEffectExecution": "OFFLINE_TESTED:AMMUNITION_LIMITED_DAMAGE",
+   "resourceTracking": "AFTERMARKET_LEDGER_OFFLINE_TESTED_STOCK_LEDGER_SYNTHETIC_ONLY",
    "rangeTable": {
     "slug": "missiles-torpedoes",
     "status": "TABLE_10_2_ROW_PRESENT"
@@ -905,16 +913,12 @@
     "launcher-capacity"
    ],
    "evidence": {
-    "resources": "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs"
+    "resources": "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs",
+    "aftermarket": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs"
    },
    "liveFoundryVerification": "NOT_VERIFIED",
    "overall": "NOT_FULLY_OPERATIONAL",
    "openBlockers": [
-    {
-     "code": "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE",
-     "class": "ENGINEERING",
-     "text": "Launchers and their ammunition have no certified effect: the Shipyard cannot sell or install them. The finite-ammunition ledger and lock-on projectile engine exist (P6C-3C/3D) and are tested on synthetic fixtures only."
-    },
     {
      "code": "NO_COMPLETE_STOCK_LAUNCHER_FAMILY",
      "class": "DATA",
@@ -926,12 +930,22 @@
      "text": "Core Area Attacks say creatures you miss take half damage, and the Scale rule says area attacks resolve as attacks on a single target at starship scale; whether the single target still takes half damage on a miss is not stated. Register V-P6C-07. Implemented behaviour: a miss deals no damage."
     },
     {
+     "code": "CAPACITY_EXPANSION_DEFERRED",
+     "class": "RULES_DEFERRED",
+     "text": "Extra launcher capacity (+20% / +25% cost per additional unit up to the printed maximum) is recorded but not usable: whether added capacity costs emplacement points and which cost the percentage applies to is unresolved. Register V-P6A-03."
+    },
+    {
+     "code": "RELOAD_ACTION_UNRULED",
+     "class": "RULES_DEFERRED",
+     "text": "Bought ammunition arrives in the launcher's reserve; moving it into the launcher is a GM operation (no reload action or cost is invented from personal launchers). Register V-P6C-06."
+    },
+    {
      "code": "RANGE_BAND_NOT_AUTOMATED",
      "class": "ENGINEERING",
      "text": "No code resolves the attacker-target distance to a Table 10-2 range band for vehicle weapons: the attack reads a caller-supplied rangeBand (none supplied = no range modifier). data/vehicle-weapon-ranges.json holds the table; RangeEngine.getVehicleBand has no caller."
     }
    ],
-   "nextSlice": "priority 1 remainder (launcher installation)"
+   "nextSlice": "WE-L1 done (aftermarket launcher, ammunition purchase, reload, fire, lock-on, removal); stock launcher groups wait for verified launcher counts"
   },
   {
    "id": "concussion-missiles",
@@ -958,31 +972,31 @@
     "Table 3-5: missiles 7d10x2 / 9d10x2 / 9d10x5 (heavy: Colossal or larger), 500 / 750 / 2,000 credits; launchers 2 / 5 / 20 EP, 2,000 / 3,500 / 30,000 credits.",
     "4-square splash radius. Launcher capacity: light 6, medium 16, heavy 30; additional capacity +20% per missile up to double."
    ],
-   "sourceCertification": "SOURCE_VERIFIED",
+   "sourceCertification": "MECHANIC_SPECIFIED",
    "catalogRows": [
     {
      "id": "concussion-missile-launcher-light",
      "category": "Weapon",
-     "certification": "SOURCE_VERIFIED",
+     "certification": "MECHANIC_SPECIFIED",
      "reconciliation": "UNRESOLVED_SOURCE",
-     "installable": false,
-     "testFile": null
+     "installable": true,
+     "testFile": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs"
     },
     {
      "id": "concussion-missile-launcher-medium",
      "category": "Weapon",
-     "certification": "SOURCE_VERIFIED",
+     "certification": "MECHANIC_SPECIFIED",
      "reconciliation": "UNRESOLVED_SOURCE",
-     "installable": false,
-     "testFile": null
+     "installable": true,
+     "testFile": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs"
     },
     {
      "id": "concussion-missile-launcher-heavy",
      "category": "Weapon",
-     "certification": "SOURCE_VERIFIED",
+     "certification": "MECHANIC_SPECIFIED",
      "reconciliation": "CORRECTION_REQUIRED",
-     "installable": false,
-     "testFile": null
+     "installable": true,
+     "testFile": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs"
     },
     {
      "id": "concussion-missile-light",
@@ -1017,14 +1031,14 @@
     "basis": "PARTITION: owned by this family"
    },
    "aftermarket": {
-    "status": "NOT_INSTALLABLE",
+    "status": "OFFLINE_TESTED_INSTALL_FIRE_REMOVE",
     "weaponRows": 3,
-    "installable": 0,
+    "installable": 3,
     "consumableRows": 3
    },
-   "attackExecution": "NOT_IMPLEMENTED",
-   "damageOrEffectExecution": "NOT_IMPLEMENTED",
-   "resourceTracking": "LEDGER_OFFLINE_TESTED_SYNTHETIC_ONLY",
+   "attackExecution": "OFFLINE_TESTED",
+   "damageOrEffectExecution": "OFFLINE_TESTED:AMMUNITION_LIMITED_DAMAGE",
+   "resourceTracking": "AFTERMARKET_LEDGER_OFFLINE_TESTED_STOCK_LEDGER_SYNTHETIC_ONLY",
    "rangeTable": {
     "slug": "missiles-torpedoes",
     "status": "TABLE_10_2_ROW_PRESENT"
@@ -1035,16 +1049,12 @@
     "launcher-capacity"
    ],
    "evidence": {
-    "resources": "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs"
+    "resources": "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs",
+    "aftermarket": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs"
    },
    "liveFoundryVerification": "NOT_VERIFIED",
    "overall": "NOT_FULLY_OPERATIONAL",
    "openBlockers": [
-    {
-     "code": "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE",
-     "class": "ENGINEERING",
-     "text": "Launchers and their ammunition have no certified effect: the Shipyard cannot sell or install them. The finite-ammunition ledger and lock-on projectile engine exist (P6C-3C/3D) and are tested on synthetic fixtures only."
-    },
     {
      "code": "NO_COMPLETE_STOCK_LAUNCHER_FAMILY",
      "class": "DATA",
@@ -1056,12 +1066,22 @@
      "text": "Core Area Attacks say creatures you miss take half damage, and the Scale rule says area attacks resolve as attacks on a single target at starship scale; whether the single target still takes half damage on a miss is not stated. Register V-P6C-07. Implemented behaviour: a miss deals no damage."
     },
     {
+     "code": "CAPACITY_EXPANSION_DEFERRED",
+     "class": "RULES_DEFERRED",
+     "text": "Extra launcher capacity (+20% / +25% cost per additional unit up to the printed maximum) is recorded but not usable: whether added capacity costs emplacement points and which cost the percentage applies to is unresolved. Register V-P6A-03."
+    },
+    {
+     "code": "RELOAD_ACTION_UNRULED",
+     "class": "RULES_DEFERRED",
+     "text": "Bought ammunition arrives in the launcher's reserve; moving it into the launcher is a GM operation (no reload action or cost is invented from personal launchers). Register V-P6C-06."
+    },
+    {
      "code": "RANGE_BAND_NOT_AUTOMATED",
      "class": "ENGINEERING",
      "text": "No code resolves the attacker-target distance to a Table 10-2 range band for vehicle weapons: the attack reads a caller-supplied rangeBand (none supplied = no range modifier). data/vehicle-weapon-ranges.json holds the table; RangeEngine.getVehicleBand has no caller."
     }
    ],
-   "nextSlice": "priority 1 remainder (launcher installation)"
+   "nextSlice": "WE-L1 done (aftermarket launcher, ammunition purchase, reload, fire, lock-on, removal); stock launcher groups wait for verified launcher counts"
   },
   {
    "id": "armor-piercing-concussion-missiles",

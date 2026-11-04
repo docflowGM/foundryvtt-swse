@@ -13,6 +13,7 @@
 import { digestUniversalVehicleSource } from './vehicle-source-digest.js';
 import { VEHICLE_FIRING_ARCS } from './vehicle-firing-arc-geometry.js';
 import { hasEffect, effectInstallability, EFFECTS } from './vehicle-modification-effects.js';
+import { AFTERMARKET_AMMO_FLAG } from './vehicle-ammunition-ledger.js';
 import { costModifierForSize, nonstandardAssessment, quoteInstallation, systemCost } from './vehicle-modification-rules.js';
 
 export const VEHICLE_INSTALLATION_FLAG = 'vehicleInstallations';
@@ -251,8 +252,8 @@ export function planVehicleUninstall({ record, flags, installId, rules = DEFAULT
  */
 export const VEHICLE_INSTALLATION_JOBS_FLAG = 'vehicleInstallationJobs';
 export const VEHICLE_DESIGN_PROJECTS_FLAG = 'vehicleDesignProposals';
-// Guarded on every Actor: the two vehicle stores, and the construction projects kept on a designer character.
-const GUARDED_FLAGS = [VEHICLE_INSTALLATION_FLAG, VEHICLE_INSTALLATION_JOBS_FLAG, VEHICLE_DESIGN_PROJECTS_FLAG];
+// Guarded on every Actor: the vehicle stores (installations, jobs, aftermarket ammunition), and the construction projects kept on a designer character.
+const GUARDED_FLAGS = [VEHICLE_INSTALLATION_FLAG, VEHICLE_INSTALLATION_JOBS_FLAG, VEHICLE_DESIGN_PROJECTS_FLAG, AFTERMARKET_AMMO_FLAG];
 const pendingWrites = new Map(); // `${actorId}:${flag}` -> JSON of the exact value authorized
 export function authorizeFlagWrite(actorId, flag, value) { pendingWrites.set(`${actorId}:${flag}`, JSON.stringify(value)); }
 export function authorizeLedgerWrite(actorId, ledger) { authorizeFlagWrite(actorId, VEHICLE_INSTALLATION_FLAG, ledger); }
@@ -261,14 +262,17 @@ export function clearLedgerWrite(actorId) { for (const f of GUARDED_FLAGS) pendi
 /** @returns {boolean} true when the update does not touch a guarded flag or the touch is authorized */
 export function isLedgerUpdateAllowed(actorId, changes) {
   for (const flag of GUARDED_FLAGS) {
-    const path = `flags.swse.${flag}`;
+    const path = `flags.swse.${flag}`, replacePath = `flags.swse.==${flag}`;
     const has = k => changes && Object.prototype.hasOwnProperty.call(changes, k);
     const flat = has(path);
     const nested = changes?.flags?.swse && Object.prototype.hasOwnProperty.call(changes.flags.swse, flag);
+    // Foundry's "==key" form REPLACES the stored object: it is a write of the flag like any other and must be authorized the same way
+    const replaceFlat = has(replacePath);
+    const replaceNested = changes?.flags?.swse && Object.prototype.hasOwnProperty.call(changes.flags.swse, '==' + flag);
     const removal = changes?.flags?.swse && Object.prototype.hasOwnProperty.call(changes.flags.swse, '-=' + flag);
-    if (!flat && !nested && !removal && !has(`flags.swse.-=${flag}`)) continue;
+    if (!flat && !nested && !replaceFlat && !replaceNested && !removal && !has(`flags.swse.-=${flag}`)) continue;
     if (removal || changes?.[`flags.swse.-=${flag}`] !== undefined) return false;
-    const proposed = flat ? changes[path] : changes.flags.swse[flag];
+    const proposed = flat ? changes[path] : nested ? changes.flags.swse[flag] : replaceFlat ? changes[replacePath] : changes.flags.swse['==' + flag];
     if (pendingWrites.get(`${actorId}:${flag}`) !== JSON.stringify(proposed)) return false;
   }
   return true;

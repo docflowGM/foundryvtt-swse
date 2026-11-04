@@ -27,6 +27,7 @@ import { readCertifiedInstallations } from './vehicle-installation-ledger.js';
 import { EFFECTS } from './vehicle-modification-effects.js';
 import { assessStockWeaponGroups, stockItemName, stockMountKey } from './vehicle-stock-weapon-groups.js';
 import { expandBatteryDamage, BATTERY_REASONS } from './vehicle-weapon-battery.js';
+import { aftermarketFamily } from './vehicle-ammunition-ledger.js';
 
 export const INSTALLED_WEAPON_FLAG = 'vehicleInstalledWeapon';
 export const STOCK_WEAPON_FLAG = 'vehicleStockWeapon';
@@ -129,7 +130,7 @@ export function resolveStockWeapon(weapon) {
 
 /**
  * ONE authority shape for every Item-backed vehicle weapon, whichever provenance path produced it.
- * @returns {null | {ok:true, origin:'installed'|'stock', operator:string, damageRaw:string, damageType?:string, battery?:object} | {ok:false, reason:string}}
+ * @returns {null | {ok:true, origin:'installed'|'stock', operator:string, damageRaw:string, damageType?:string, battery?:object, ammunition?:object, area?:object} | {ok:false, reason:string}}
  *   null = not a vehicle-managed weapon Item. `battery` is present only for a published weapon battery (stock, Core p. 170).
  */
 export function resolveVehicleWeaponAuthority(weapon) {
@@ -140,7 +141,12 @@ export function resolveVehicleWeaponAuthority(weapon) {
   }
   const i = resolveCertifiedInstalledWeapon(weapon);
   if (!i) return null;
-  return i.ok ? { ok: true, origin: 'installed', operator: i.mount.operatorRole, damageRaw: i.spec.damage, installed: i } : i;
+  if (!i.ok) return i;
+  // An aftermarket LAUNCHER (WE-L1) is a finite-ammunition guided weapon: it carries its ammunition family and the printed splash,
+  // derived from the certified specification and the sealed entry (never from the Item).
+  const family = aftermarketFamily(i.spec, i.entry);
+  return { ok: true, origin: 'installed', operator: i.mount.operatorRole, damageRaw: i.spec.damage, installed: i,
+    ...(family ? { ammunition: family } : {}), ...(i.spec.area ? { area: i.spec.area } : {}) };
 }
 
 /**

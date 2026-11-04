@@ -9,10 +9,29 @@
  */
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { resolveVehicleWeaponAuthority } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
-import { LEDGER_FLAG, AMMO_REASONS, validateLedger, initialLedger, planLaunch, planRefund, planGmReload, planGmAllocation, launchUnits } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-ammunition-ledger.js";
+import { LEDGER_FLAG, AFTERMARKET_AMMO_FLAG, AMMO_REASONS, validateLedger, validateAftermarketLedger, emptyAftermarketLedger, initialLedger, planLaunch, planRefund, planGmReload, planGmAllocation, launchUnits } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-ammunition-ledger.js";
+import { authorizeFlagWrite, clearLedgerWrite } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-installation-ledger.js";
 
 const flagOf = weapon => weapon?.flags?.swse?.[LEDGER_FLAG] ?? weapon?.getFlag?.('swse', LEDGER_FLAG) ?? null;
-const write = (vehicle, weapon, ledger) => ActorEngine.updateOwnedItems(vehicle, [{ _id: weapon.id, [`flags.swse.==${LEDGER_FLAG}`]: ledger }]);
+const stockWrite = (vehicle, weapon, ledger) => ActorEngine.updateOwnedItems(vehicle, [{ _id: weapon.id, [`flags.swse.==${LEDGER_FLAG}`]: ledger }]);
+
+/**
+ * Two storages, one model. A STOCK launcher keeps its ledger on its managed Item (the source family is the integrity check). An
+ * AFTERMARKET launcher (WE-L1) keeps it on the VEHICLE, keyed by installation id, under a guarded flag: it belongs to the sealed
+ * installation, survives the Item being deleted and re-created, and is written in the same transaction as the credits that paid
+ * for it. The guard (isLedgerUpdateAllowed) refuses any write this service did not authorize.
+ */
+const isAftermarket = family => family?.origin === 'aftermarket';
+/** The aftermarket ammunition map of a vehicle (installId -> ledger). */
+export const readAftermarketLedgers = vehicle => vehicle?.flags?.swse?.[AFTERMARKET_AMMO_FLAG] ?? vehicle?.getFlag?.('swse', AFTERMARKET_AMMO_FLAG) ?? {};
+const read = (vehicle, weapon, family) => (isAftermarket(family) ? readAftermarketLedgers(vehicle)[family.installId] ?? null : flagOf(weapon));
+async function write(vehicle, weapon, ledger, family) {
+  if (!isAftermarket(family)) return stockWrite(vehicle, weapon, ledger);
+  const next = { ...readAftermarketLedgers(vehicle), [family.installId]: ledger };
+  authorizeFlagWrite(vehicle.id, AFTERMARKET_AMMO_FLAG, next);
+  try { return await ActorEngine.updateActor(vehicle, { [`flags.swse.==${AFTERMARKET_AMMO_FLAG}`]: next }); }
+  finally { clearLedgerWrite(vehicle.id); }
+}
 const refuse = (reason, extra = {}) => ({ ok: false, reason, ...extra });
 
 export class VehicleAmmunitionService {
@@ -29,8 +48,14 @@ export class VehicleAmmunitionService {
   static async ensureLedger(vehicle, weapon) {
     const family = this.familyOf(weapon);
     if (!family) return refuse('AMMO_NOT_A_LAUNCHER');
-    let ledger = flagOf(weapon);
-    if (!ledger && family.allocation === 'single-launcher-verified') { ledger = initialLedger(family); await write(vehicle, weapon, ledger); }
+    let ledger = read(vehicle, weapon, family);
+    if (isAftermarket(family)) {
+      // nothing bought yet: the launcher exists with an empty magazine (no ammunition is created by looking at it)
+      if (!ledger) return refuse(AMMO_REASONS.EMPTY);
+      const va = validateAftermarketLedger(ledger, family);
+      return va.ok ? { ok: true, ledger, family } : refuse(va.reason);
+    }
+    if (!ledger && family.allocation === 'single-launcher-verified') { ledger = initialLedger(family); await write(vehicle, weapon, ledger, family); }
     if (!ledger) return refuse(AMMO_REASONS.LEDGER_MISSING);
     const v = validateLedger(ledger, family);
     return v.ok ? { ok: true, ledger, family } : refuse(v.reason);
@@ -49,7 +74,7 @@ export class VehicleAmmunitionService {
     if (!r.ok) return r;
     const plan = planLaunch(r.ledger, { attackId, units: launchUnits({ firedLaunchers }) });
     if (!plan.ok) return plan;
-    if (!plan.replay) await write(vehicle, weapon, plan.ledger);
+    if (!plan.replay) await write(vehicle, weapon, plan.ledger, r.family);
     return { ok: true, spent: !plan.replay, replay: plan.replay, attackId, vehicle, weapon };
   }
 
@@ -60,7 +85,7 @@ export class VehicleAmmunitionService {
     if (!r.ok) return r;
     const plan = planRefund(r.ledger, spend.attackId);
     if (!plan.ok) return plan;
-    await write(spend.vehicle, spend.weapon, plan.ledger);
+    await write(spend.vehicle, spend.weapon, plan.ledger, r.family);
     return { ok: true };
   }
 
@@ -71,7 +96,7 @@ export class VehicleAmmunitionService {
     if (!r.ok) return r;
     const plan = planGmReload(r.ledger, { amount, by: user?.id ?? null });
     if (!plan.ok) return plan;
-    await write(vehicle, weapon, plan.ledger);
+    await write(vehicle, weapon, plan.ledger, r.family);
     return { ok: true, moved: plan.moved, ledger: plan.ledger };
   }
 
@@ -80,10 +105,11 @@ export class VehicleAmmunitionService {
     if (user?.isGM !== true) return refuse(AMMO_REASONS.GM_ONLY);
     const family = this.familyOf(weapon);
     if (!family) return refuse('AMMO_NOT_A_LAUNCHER');
+    if (isAftermarket(family)) return refuse(AMMO_REASONS.ALLOCATION_INVALID, { detail: 'an aftermarket launcher is allocated by its installation' });
     if (flagOf(weapon)) return refuse(AMMO_REASONS.ALLOCATION_INVALID, { detail: 'an allocation is already recorded' });
     const plan = planGmAllocation(family, { launchers, loaded, by: user?.id ?? null });
     if (!plan.ok) return plan;
-    await write(vehicle, weapon, plan.ledger);
+    await write(vehicle, weapon, plan.ledger, family);
     return { ok: true, ledger: plan.ledger };
   }
 }

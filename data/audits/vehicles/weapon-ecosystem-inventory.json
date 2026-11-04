@@ -74,6 +74,14 @@
    "class": "RULES_DEFERRED",
    "text": "Stacking of double/quad/fire-linked/enhancement damage dice on one weapon is not stated; no combination rule is implemented. Register V-P6C-10."
   },
+  "CAPACITY_EXPANSION_DEFERRED": {
+   "class": "RULES_DEFERRED",
+   "text": "Extra launcher capacity (+20% / +25% cost per additional unit up to the printed maximum) is recorded but not usable: whether added capacity costs emplacement points and which cost the percentage applies to is unresolved. Register V-P6A-03."
+  },
+  "RELOAD_ACTION_UNRULED": {
+   "class": "RULES_DEFERRED",
+   "text": "Bought ammunition arrives in the launcher's reserve; moving it into the launcher is a GM operation (no reload action or cost is invented from personal launchers). Register V-P6C-06."
+  },
   "OPTIONAL_LINK_NOT_IMPLEMENTED": {
    "class": "ENGINEERING",
    "text": "Swift-action link toggle (extra damage and ammunition use apply only while linked) is not implemented."
@@ -442,16 +450,18 @@
     "optional-fire-link",
     "launcher-capacity"
    ],
-   "resources": "LEDGER_OFFLINE_TESTED_SYNTHETIC_ONLY",
+   "resources": "AFTERMARKET_LEDGER_OFFLINE_TESTED_STOCK_LEDGER_SYNTHETIC_ONLY",
    "blockers": [
-    "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE",
     "NO_COMPLETE_STOCK_LAUNCHER_FAMILY",
     "MISS_DAMAGE_OF_STARSHIP_SCALE_AREA_UNRULED",
+    "CAPACITY_EXPANSION_DEFERRED",
+    "RELOAD_ACTION_UNRULED",
     "RANGE_BAND_NOT_AUTOMATED"
    ],
-   "nextSlice": "priority 1 remainder (launcher installation)",
+   "nextSlice": "WE-L1 done (aftermarket launcher, ammunition purchase, reload, fire, lock-on, removal); stock launcher groups wait for verified launcher counts",
    "evidence": {
-    "resources": "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs"
+    "resources": "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs",
+    "aftermarket": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs"
    }
   },
   {
@@ -496,16 +506,18 @@
     "optional-fire-link",
     "launcher-capacity"
    ],
-   "resources": "LEDGER_OFFLINE_TESTED_SYNTHETIC_ONLY",
+   "resources": "AFTERMARKET_LEDGER_OFFLINE_TESTED_STOCK_LEDGER_SYNTHETIC_ONLY",
    "blockers": [
-    "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE",
     "NO_COMPLETE_STOCK_LAUNCHER_FAMILY",
     "MISS_DAMAGE_OF_STARSHIP_SCALE_AREA_UNRULED",
+    "CAPACITY_EXPANSION_DEFERRED",
+    "RELOAD_ACTION_UNRULED",
     "RANGE_BAND_NOT_AUTOMATED"
    ],
-   "nextSlice": "priority 1 remainder (launcher installation)",
+   "nextSlice": "WE-L1 done (aftermarket launcher, ammunition purchase, reload, fire, lock-on, removal); stock launcher groups wait for verified launcher counts",
    "evidence": {
-    "resources": "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs"
+    "resources": "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs",
+    "aftermarket": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs"
    }
   },
   {

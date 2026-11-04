@@ -326,7 +326,16 @@ function shipyardView({ record, flags, key, catalog, entries, supported, canAct 
     ? [...catalog.values()].filter(c => c.certification?.status === 'MECHANIC_SPECIFIED' && !effectInstallability({ catalogEntry: c, record, entries }).length)
       .map(c => ({ id: c.id, name: c.name, category: c.category, ep: c.emplacementPoints, requiresGmMount: EFFECTS[c.id]?.kind === 'weapon' })).sort((a, b) => a.name.localeCompare(b.name))
     : [];
-  return { supported, canAct, isGM, jobs: views, activeJobs: views.filter(j => j.active), reservedEp: reservedEpFromJobs(jobs), rejected, options, hasOptions: options.length > 0 };
+  // WE-L1: installed ammunition launchers with the state of their ledger (flags.swse.vehicleAmmunition, keyed by installation id)
+  const ammo = flags?.swse?.vehicleAmmunition ?? {};
+  const launchers = (entries ?? []).filter(e => e?.executable === true && EFFECTS[e.catalogId]?.ammunition).map(e => {
+    const a = EFFECTS[e.catalogId].ammunition, l = ammo[e.installId] ?? null;
+    const loaded = l?.loaded ?? 0, reserve = l?.reserve ?? 0;
+    return { installId: e.installId, name: e.name, capacity: a.capacity, unitPrice: a.price, loaded, reserve, expended: l?.expended ?? 0, bought: l?.payload ?? 0,
+      canReload: isGM === true && reserve > 0 && loaded < a.capacity };
+  });
+  return { supported, canAct, isGM, jobs: views, activeJobs: views.filter(j => j.active), reservedEp: reservedEpFromJobs(jobs), rejected, options, hasOptions: options.length > 0,
+    launchers, hasLaunchers: launchers.length > 0 };
 }
 
 /** Compact Asset Bay line set derived from the same model. */

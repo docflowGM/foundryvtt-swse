@@ -18,6 +18,7 @@
  */
 import { getVehiclePublishedFieldState } from './vehicle-runtime-contract.js';
 import { costModifierForSize, cargoToKilograms, consumablesToDays } from './vehicle-modification-rules.js';
+import { launcherStandardCapacity } from './vehicle-launcher-capacity.js';
 
 const finite = v => typeof v === 'number' && Number.isFinite(v);
 const abilityMod = score => Math.floor((score - 10) / 2);
@@ -73,6 +74,21 @@ const PLAIN_WEAPONS = Object.freeze({
   'turbolaser-medium': { family: 'turbolaser', rangeSlug: 'turbolasers', damage: '5d10x5', testFile: WE1_TEST },
   'turbolaser-heavy': { family: 'turbolaser', rangeSlug: 'turbolasers', damage: '7d10x5', testFile: WE1_TEST }
 });
+// WE-L1 (Complete Weapon Ecosystem): aftermarket MISSILE / TORPEDO LAUNCHERS. A launcher's damage is its AMMUNITION's printed damage
+// (Table 3-5 prints no damage for a launcher: "See Ammunition"), its magazine is the printed standard capacity (SotG pp. 45-46), a hit
+// has a 4-square splash radius (SotG: "All concussion missiles have a 4-square splash radius"; "All proton torpedoes have a 4-square
+// splash radius") which resolves as a single-target attack at starship scale (Core, Vehicle Combat: Scale), and both are guided
+// projectile weapons (Core, Missiles and Torpedoes). The ammunition is a CONSUMABLE bought per unit at its printed price (V-P6A-06);
+// it is tracked in the ammunition ledger of the installation (vehicle-ammunition-ledger.js). Capacity EXPANSION (V-P6A-03), the
+// shieldbuster launcher (its shield rule is not implemented), mine launchers and every other launcher are NOT promoted here.
+const CITE_LAUNCHER = 'Starships of the Galaxy, Table 3-5 (p. 47, PDF-verified launcher and ammunition rows) and Weapon Systems: Concussion Missiles / Proton Torpedoes (launcher capacity pp. 45-46, 4-square splash); Core Rulebook, Missiles and Torpedoes (guided projectiles)';
+const WE_L1_TEST = 'tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs';
+const LAUNCHERS = Object.freeze({
+  'proton-torpedo-launcher': { family: 'torpedo', ammunition: { id: 'proton-torpedo', damage: '9d10x2', price: 800 } },
+  'concussion-missile-launcher-light': { family: 'missile', ammunition: { id: 'concussion-missile-light', damage: '7d10x2', price: 500 } },
+  'concussion-missile-launcher-medium': { family: 'missile', ammunition: { id: 'concussion-missile-medium', damage: '9d10x2', price: 750 } },
+  'concussion-missile-launcher-heavy': { family: 'missile', ammunition: { id: 'concussion-missile-heavy', damage: '9d10x5', price: 2000 } }
+});
 // Capital ships (Colossal (frigate) or larger) take the Core -20 against targets smaller than Colossal in the vehicle attack
 // math (vehicle-capital-penalty.js); weapons may be installed on those hulls.
 
@@ -97,6 +113,8 @@ export const EFFECTS = Object.freeze({
   'hangar-bay': { kind: 'capacity', capacity: 'hangar', divisor: 50, unit: 'hangar units', stackable: true, group: 'hangar', citation: CITE3.hangar },
   'hangar-bay-concealed': { kind: 'capacity', capacity: 'hangar', divisor: 50, unit: 'hangar units (concealed)', stackable: true, group: 'hangar', citation: CITE3.hangar },
   ...Object.fromEntries(Object.entries(PLAIN_WEAPONS).map(([id, w]) => [id, { kind: 'weapon', family: w.family, rangeSlug: w.rangeSlug, damage: w.damage, ...(w.testFile ? { testFile: w.testFile } : {}), stackable: true, group: `weapon:${id}`, citation: CITE_WEAPON }])),
+  ...Object.fromEntries(Object.entries(LAUNCHERS).map(([id, l]) => [id, { kind: 'weapon', family: l.family, rangeSlug: 'missiles-torpedoes', damage: l.ammunition.damage,
+    ammunition: { ...l.ammunition, capacity: launcherStandardCapacity(id).standard }, guided: true, area: { kind: 'splash', squares: 4 }, testFile: WE_L1_TEST, stackable: true, group: `weapon:${id}`, citation: CITE_LAUNCHER }])),
   'atmospheric-thrusters': { kind: 'atmospheric', percent: 10, group: 'atmospheric', citation: CITE.atmospheric },
   'atmospheric-thrusters-advanced': { kind: 'atmospheric', percent: 25, group: 'atmospheric', citation: CITE.atmospheric }
 });
@@ -131,8 +149,10 @@ export function effectInstallability({ catalogEntry, record, entries = [] }) {
     case 'atmospheric': if (!flyModes(record).length) reasons.push('NO_ATMOSPHERIC_FLIGHT_MODE'); break;
     case 'recharge': break;
     case 'weapon':
-      // the printed damage must be what the effect certifies (a changed catalog row is not silently trusted)
-      if (catalogEntry.damage !== effect.damage) reasons.push('WEAPON_DAMAGE_DIFFERS_FROM_CERTIFIED_ROW');
+      // the printed damage must be what the effect certifies (a changed catalog row is not silently trusted); a launcher prints no
+      // damage ("See Ammunition"), so its catalog link to the certified ammunition row is what must agree
+      if (effect.ammunition) { if (catalogEntry.ammunition !== effect.ammunition.id) reasons.push('LAUNCHER_AMMUNITION_DIFFERS_FROM_CERTIFIED_ROW'); }
+      else if (catalogEntry.damage !== effect.damage) reasons.push('WEAPON_DAMAGE_DIFFERS_FROM_CERTIFIED_ROW');
       break;
     case 'intelligence': if (!finite(record?.abilities?.int)) reasons.push('INTELLIGENCE_UNKNOWN'); break;
     case 'cargo-pod': {

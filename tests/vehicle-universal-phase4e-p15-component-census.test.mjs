@@ -60,16 +60,17 @@ test('certification ledger and readiness manifest never overstate operation', ()
     if (l.mechanicSpecified) { assert.ok(l.sourceVerified?.book && l.sourceVerified?.printedPage, l.catalogId); assert.equal(cert[l.catalogId].status, 'MECHANIC_SPECIFIED'); }
     if (l.operationallyIntegrated) assert.ok(l.mechanicSpecified, l.catalogId);
   }
-  assert.equal(ledger.counts.mechanicSpecified, 66, '54 effects + the 12 plain cannon/turbolaser rows (laser P6B weapon slice; blaster, ion and turbolaser WE-1)');
+  assert.equal(ledger.counts.mechanicSpecified, 70, '54 effects + 12 plain cannon/turbolaser rows (laser P6B weapon slice; blaster, ion and turbolaser WE-1) + 4 launchers (WE-L1)');
   // sensor arrays: specified and installable, but no runtime consumer reads vehicle Intelligence yet -> not applied
   for (const id of ['sensor-array-2', 'sensor-array-4', 'sensor-array-6']) {
     assert.equal(ready.rows.find(r => r.catalogId === id).installable, true, id);
     assert.equal(ready.rows.find(r => r.catalogId === id).mechanicallyApplied, false, id);
   }
   // combat-usable only for certified weapon specifications (V-P2-04 slice); firing still needs mount + Item + preflight
-  // (laser cannons: P6B weapon slice; blaster cannons, ion cannons and turbolasers: WE-1)
+  // (laser cannons: P6B weapon slice; blaster cannons, ion cannons and turbolasers: WE-1; four launchers: WE-L1)
   assert.deepEqual(ready.rows.filter(r => r.combatUsable).map(r => r.catalogId).sort(), ['blaster-cannon-heavy', 'blaster-cannon-light', 'blaster-cannon-medium',
-    'ion-cannon-heavy', 'ion-cannon-light', 'ion-cannon-medium', 'laser-cannon-heavy', 'laser-cannon-light', 'laser-cannon-medium', 'turbolaser-heavy', 'turbolaser-light', 'turbolaser-medium']);
+    'concussion-missile-launcher-heavy', 'concussion-missile-launcher-light', 'concussion-missile-launcher-medium',
+    'ion-cannon-heavy', 'ion-cannon-light', 'ion-cannon-medium', 'laser-cannon-heavy', 'laser-cannon-light', 'laser-cannon-medium', 'proton-torpedo-launcher', 'turbolaser-heavy', 'turbolaser-light', 'turbolaser-medium']);
   for (const r of ready.rows) { if (r.installable) assert.ok(cert[r.catalogId]?.status === 'MECHANIC_SPECIFIED'); }
   assert.ok(ready.rows.find(r => r.catalogId === 'laser-cannon-light').reasons.includes('REQUIRES_CERTIFIED_MOUNT_OWNED_ITEM_AND_ATTACK_PREFLIGHT'));
   // atmospheric thrusters: applied since P6B-0 through the GM-set environment (only in an explicit atmosphere)
@@ -132,8 +133,8 @@ test('certification overlay: PDF-verified rows are SOURCE_VERIFIED unless a test
   assert.match(svc, /certification-p6a\.json/);
   assert.match(svc, /\.\.\.\(p6aRes\.ok[^;]*\.\.\.\(\(await certRes\.json\(\)\)\.rows/);
   const ready = load(`${DIR}/readiness-manifest.json`);
-  assert.equal(ready.counts.installable, 66);
-  assert.equal(ready.counts.combatUsable, 12);
+  assert.equal(ready.counts.installable, 70);
+  assert.equal(ready.counts.combatUsable, 16);
 });
 
 test('all 91 worksheet items carry a PDF disposition and a reconciliation outcome', () => {

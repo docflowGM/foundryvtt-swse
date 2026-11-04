@@ -33,7 +33,15 @@ const REASON_TEXT = {
   WEAPON_ITEM_SYNC_FAILED: 'The weapon item could not be written.',
   WEAPON_ITEM_SYNC_UNVERIFIED: 'The weapon items could not be verified after writing.',
   WEAPON_ITEMS_NOT_SYNCHRONIZED: 'The installation is complete and paid for, but the weapon is not operational yet: its weapon item is not in sync. Use "Resync weapons".',
-  NOT_AUTHORIZED: 'Only a GM or the vehicle\'s owner can do that.'
+  NOT_AUTHORIZED: 'Only a GM or the vehicle\'s owner can do that.',
+  AMMO_PURCHASE_QUANTITY_INVALID: 'Enter a whole number of units, at least 1.',
+  INSTALL_NOT_FOUND: 'That installation was not found.',
+  INSTALLATION_IS_NOT_AN_AMMUNITION_LAUNCHER: 'That installation does not use purchased ammunition.',
+  AMMO_LAUNCHER_EMPTY: 'The launcher has no loaded ammunition.',
+  AMMO_NOTHING_TO_RELOAD: 'There is no ammunition in reserve (or the launcher is full).',
+  AMMO_GM_OPERATION_ONLY: 'Only a GM can load a launcher from its reserve.',
+  AMMO_LEDGER_INVALID: 'The launcher\'s ammunition record failed verification.',
+  WEAPON_ITEM_MISSING: 'The launcher\'s weapon item is missing. Use "Resync weapons".'
 };
 export const describeReasons = reasons => (reasons ?? []).map(r => REASON_TEXT[r] ?? r).join(' ');
 
@@ -52,11 +60,16 @@ const OUTCOME = {
  * @param {{action:string, jobId?:string, catalogId?:string, vehicle:object}} p
  * @param {{service:object, game:object, notify:{info:Function,warn:Function}, askReason:Function, askDays:Function}} deps
  */
-export async function runShipyardAction({ action, jobId, catalogId, vehicle }, deps) {
+export async function runShipyardAction({ action, jobId, catalogId, installId, vehicle }, deps) {
   const { service, game, notify } = deps;
   if (action === 'resync-weapons') {   // repairs Items from the sealed ledger; no owner character, no credits
     const r = await service.reconcileWeaponItems({ vehicle });
     if (r.success) notify.info('Weapon items are in sync.'); else notify.warn(describeReasons(r.reasons));
+    return r;
+  }
+  if (action === 'gm-reload') {        // a GM loads a launcher from its reserve: no owner character, no credits (V-P6C-06)
+    const r = await service.reloadLauncher({ vehicle, installId });
+    if (r.success) notify.info(`Loaded ${r.moved} from reserve.`); else notify.warn(describeReasons(r.reasons));
     return r;
   }
   const ownerActor = resolveOwnerActor(vehicle, game);
@@ -73,6 +86,12 @@ export async function runShipyardAction({ action, jobId, catalogId, vehicle }, d
         if (!mount) return { success: false, reasons: ['CANCELLED'] };
       }
       r = await service.startJob({ ownerActor, vehicle, catalogId, mount }); break;
+    }
+    case 'buy-ammunition': {
+      if (!installId) return { success: false, reasons: ['NOTHING_SELECTED'] };
+      const units = await deps.askUnits?.();
+      if (units === null || units === undefined) return { success: false, reasons: ['CANCELLED'] };
+      r = await service.purchaseAmmunition({ ownerActor, vehicle, installId, units }); break;
     }
     case 'record-check': r = await service.recordCheck({ ownerActor, vehicle, jobId, installerActor }); break;
     case 'retry-job': r = await service.retryJob({ ownerActor, vehicle, jobId }); break;
@@ -98,7 +117,7 @@ export async function runShipyardAction({ action, jobId, catalogId, vehicle }, d
   }
   // A committed transaction whose weapon Items are not in sync is NOT reported as a clean success.
   if (r.success && r.partial) { notify.warn(describeReasons(r.reasons)); return r; }
-  if (r.success) notify.info(r.outcome ? `${OUTCOME[r.outcome]} (check ${r.total})` : 'Done.');
+  if (r.success) notify.info(r.outcome ? `${OUTCOME[r.outcome]} (check ${r.total})` : r.units ? `Bought ${r.units} for ${r.cost} credits; it is in the launcher's reserve.` : 'Done.');
   else notify.warn(describeReasons(r.reasons) || r.error || 'The action was refused.');
   return r;
 }
@@ -110,7 +129,7 @@ export function bindShipyardActions(root, vehicle, deps) {
       const select = root.querySelector('[data-shipyard-select="catalog"]');
       btn.disabled = true;
       try {
-        await runShipyardAction({ action: btn.dataset.shipyardAction, jobId: btn.dataset.jobId, catalogId: select?.value, vehicle }, deps);
+        await runShipyardAction({ action: btn.dataset.shipyardAction, jobId: btn.dataset.jobId, installId: btn.dataset.installId, catalogId: select?.value, vehicle }, deps);
       } finally { btn.disabled = false; }
     });
   }
@@ -147,6 +166,7 @@ export function createDefaultShipyardDeps(service) {
   return {
     service, game: globalThis.game, notify: globalThis.ui.notifications, askMount,
     askReason: title => ask(title, 'Reason (recorded with the override)'),
+    askUnits: async () => { const v = await ask('Buy ammunition', 'Units to buy', 'number'); const n = Number(v); return v === null || !Number.isInteger(n) || n <= 0 ? null : n; },
     askDays: async () => { const v = await ask('Log work days', 'Days of work completed', 'number'); const n = Number(v); return v === null || !Number.isFinite(n) || n <= 0 ? null : n; }
   };
 }

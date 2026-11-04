@@ -57,7 +57,7 @@ test('certification: the light laser cannon row is PDF-verified and certified as
   }
   // WE-1 promoted the blaster cannons, ion cannons and turbolasers (below); configurations, launchers and ammunition are not
   // promoted by that: each needs its own sourced mechanic.
-  for (const id of ['autoblaster', 'proton-torpedo-launcher', 'concussion-missile-light', 'cannon-double', 'fire-linked-2', 'point-defense', 'tractor-beam', 'gravity-well-projector'])
+  for (const id of ['autoblaster', 'shieldbuster-torpedo-launcher', 'concussion-missile-light', 'cannon-double', 'fire-linked-2', 'point-defense', 'tractor-beam', 'gravity-well-projector'])
     assert.notEqual(cert[id]?.status, 'MECHANIC_SPECIFIED', id + ' is not promoted automatically');
 });
 
