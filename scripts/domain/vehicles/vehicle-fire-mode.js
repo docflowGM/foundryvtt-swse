@@ -8,6 +8,7 @@
  *
  * A weapon is autofire-capable only when its sealed/certified authority says so (never inferred from a name). Pure: facts are passed in.
  */
+import { AUTOFIRE_ATTACK_PENALTY } from '../../engine/combat/autofire-rules.js';
 export const FIRE_MODE_REASONS = Object.freeze({
   NOT_CAPABLE: 'AUTOFIRE_CAPABILITY_NOT_ESTABLISHED',
   NO_NAMED_OPERATOR: 'BURST_FIRE_REQUIRES_A_NAMED_OPERATOR',
@@ -15,7 +16,6 @@ export const FIRE_MODE_REASONS = Object.freeze({
   AREA_AT_CHARACTER_SCALE: 'AUTOFIRE_AREA_AT_CHARACTER_SCALE_NOT_AUTOMATED',
   UNKNOWN_SCALE: 'AUTOFIRE_ENCOUNTER_SCALE_UNDETERMINED'
 });
-export const AUTOFIRE_PENALTY = -5;
 
 export function requestedVehicleFireMode(o = {}, burstActive = false) {
   if (burstActive || o.fireMode === 'burst') return 'burst';
@@ -36,7 +36,7 @@ export function resolveVehicleFireMode({ requested, authority, operatorActor, sc
     return { ok: true, mode: 'burst', attackPenalty: burstOption.attackModifier, extraDice: burstOption.damageExtraWeaponDice, halfDamageOnMiss: false };
   }
   if (scale === 'character') return { ok: false, reason: FIRE_MODE_REASONS.AREA_AT_CHARACTER_SCALE };
-  return { ok: true, mode: 'autofire', attackPenalty: AUTOFIRE_PENALTY, extraDice: 0, halfDamageOnMiss: true };
+  return { ok: true, mode: 'autofire', attackPenalty: AUTOFIRE_ATTACK_PENALTY, extraDice: 0, halfDamageOnMiss: true };
 }
 
 /** The persisted firing mode of one weapon (a vehicle flag keyed by the weapon Item id). Only 'autofire' is ever stored. */

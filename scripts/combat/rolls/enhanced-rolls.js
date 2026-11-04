@@ -1,3 +1,4 @@
+import { AUTOFIRE_ATTACK_PENALTY } from "/systems/foundryvtt-swse/scripts/engine/combat/autofire-rules.js";
 import { isVehicleManagedWeaponItem } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
@@ -638,7 +639,7 @@ export class SWSERoll {
       // Calculate attack penalty
       // Autofire: -5 normally, -2 if braced
       // Burst Fire: -5 (same as autofire)
-      const autofirePenalty = (options.braced && !options.burstFire) ? -2 : -5;
+      const autofirePenalty = (options.braced && !options.burstFire) ? -2 : AUTOFIRE_ATTACK_PENALTY;
 
       // Calculate attack bonus
       // Phase 5D-F: a canonical autofire attack uses the SAME attack composition as every other attack (proficiency of the selected
