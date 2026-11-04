@@ -1,0 +1,135 @@
+/**
+ * Finite ammunition of a vehicle launcher: the pure model of the ledger (P6C-3D).
+ *
+ * Four quantities that are NEVER conflated (Core Rulebook, statblock "Payload"; Starships of the Galaxy pp. 45-46):
+ *   payload   the vehicle's complement of this ammunition, as the source prints it ("Payload 6 proton torpedoes");
+ *   capacity  the launcher's magazine, a separately printed figure (proton torpedo launcher 3, light/medium/heavy concussion 6/16/30);
+ *   loaded    what the launcher(s) hold now;
+ *   reserve   what the vehicle carries beyond that.
+ * Conservation: payload = loaded + reserve + expended, always; ammunition is never created (a reload moves reserve to loaded,
+ * a launch moves loaded to expended). A missing payload is NOT unlimited ammunition: without a source-certified payload the
+ * weapon is not a complete family and is refused.
+ *
+ * PROJECT_INTERPRETATION (owner addendum 2026-11-04, V-P6C-06): for a verified SINGLE-launcher configuration with a printed
+ * payload and a certified capacity the initial state is  loaded = min(payload, capacity), reserve = payload - loaded.  Where the
+ * launcher count is not verified the allocation must be GM-certified before the weapon fires. Reload ACTION costs are not
+ * inferred from personal launchers: a GM reload operation moves reserve to loaded without creating ammunition.
+ *
+ * One launch is one unit (fire-linked launchers spend one unit per linked launcher, SotG Fire-Linked Weapons); the follow-up
+ * attack of the same guided projectile is NOT a launch and spends nothing. Spending is atomic and idempotent per attack id.
+ * Pure of Foundry globals.
+ */
+import { LAUNCHER_CAPACITY } from './vehicle-launcher-capacity.js';
+
+export const LEDGER_SCHEMA = 'swse.vehicle.ammunition.v1';
+export const LEDGER_FLAG = 'vehicleAmmo';
+const MAX_RECEIPTS = 40;
+
+/**
+ * Exact printed weapon designations that identify a launcher in the capacity catalog (PROJECT_INTERPRETATION: identity by the
+ * statblock's own designation, an exact match -- never a substring or a guess). `guided` = a guided projectile weapon (Core,
+ * Missiles and Torpedoes: "guided projectile weapons such as proton torpedoes or concussion missiles").
+ */
+export const LAUNCHER_DESIGNATIONS = Object.freeze({
+  'light concussion missiles': { launcherId: 'concussion-missile-launcher-light', ammunition: 'concussion missile', guided: true },
+  'medium concussion missiles': { launcherId: 'concussion-missile-launcher-medium', ammunition: 'concussion missile', guided: true },
+  'heavy concussion missiles': { launcherId: 'concussion-missile-launcher-heavy', ammunition: 'concussion missile', guided: true },
+  'proton torpedoes': { launcherId: 'proton-torpedo-launcher', ammunition: 'proton torpedo', guided: true },
+  'shieldbuster torpedoes': { launcherId: 'shieldbuster-torpedo-launcher', ammunition: 'shieldbuster torpedo', guided: true }
+});
+
+export const AMMO_REASONS = Object.freeze({
+  PAYLOAD_NOT_PRINTED: 'STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED',
+  LAUNCHER_NOT_IDENTIFIED: 'STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED',
+  ALLOCATION_REQUIRED: 'STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED',
+  LEDGER_MISSING: 'AMMO_LEDGER_MISSING_OR_ALLOCATION_REQUIRED',
+  LEDGER_INVALID: 'AMMO_LEDGER_INVALID',
+  EMPTY: 'AMMO_LAUNCHER_EMPTY',
+  NOTHING_TO_RELOAD: 'AMMO_NOTHING_TO_RELOAD',
+  GM_ONLY: 'AMMO_GM_OPERATION_ONLY',
+  ALLOCATION_INVALID: 'AMMO_ALLOCATION_INVALID',
+  NO_RECEIPT: 'AMMO_NO_SUCH_SPEND'
+});
+
+const isInt = n => Number.isInteger(n) && n >= 0;
+const fail = reason => ({ ok: false, reason });
+
+/**
+ * What the source establishes about a launcher group, and whether the family is complete.
+ * @param {{label:string, evidence:object, battery?:object|null}} group a parsed stock group
+ * @returns {{status:'complete'|'allocation-required'|'incomplete', reasons:string[], family:object|null}}
+ */
+export function resolveLauncherFamily(group) {
+  const reasons = [];
+  const payload = group?.evidence?.payloadCount;
+  if (!isInt(payload) || payload < 1) reasons.push(AMMO_REASONS.PAYLOAD_NOT_PRINTED);
+  const designation = LAUNCHER_DESIGNATIONS[String(group?.label ?? '').trim().toLowerCase()];
+  const cap = designation ? LAUNCHER_CAPACITY[designation.launcherId] : null;
+  if (!designation || !cap) reasons.push(AMMO_REASONS.LAUNCHER_NOT_IDENTIFIED);
+  if (reasons.length) return { status: 'incomplete', reasons, family: null };
+  const family = { payload, launcherId: designation.launcherId, ammunition: designation.ammunition, guided: designation.guided === true,
+    capacity: cap.standard, capacitySource: cap.source, launchers: null, allocation: null };
+  // a verified single launcher: the printed launcher count is exactly 1 and the group is not a battery of launchers
+  if (group?.evidence?.hardwareCount === 1 && !group?.battery) { family.launchers = 1; family.allocation = 'single-launcher-verified'; return { status: 'complete', reasons: [], family }; }
+  return { status: 'allocation-required', reasons: [AMMO_REASONS.ALLOCATION_REQUIRED], family };
+}
+
+/** The initial ledger of a complete (single-launcher-verified) family, or of a GM-certified allocation. */
+export function initialLedger(family, { launchers = family.launchers, loaded = null, allocation = family.allocation } = {}) {
+  if (!family || !isInt(launchers) || launchers < 1) return null;
+  const max = Math.min(family.payload, family.capacity * launchers);
+  const load = loaded === null ? max : loaded;                       // single-launcher convention: loaded = min(payload, capacity)
+  if (!isInt(load) || load > max) return null;
+  return { schema: LEDGER_SCHEMA, launcherId: family.launcherId, ammunition: family.ammunition, guided: family.guided, payload: family.payload, capacity: family.capacity,
+    launchers, allocation, loaded: load, reserve: family.payload - load, expended: 0, receipts: {}, log: [] };
+}
+
+/** Is a stored ledger internally consistent AND the one the source family calls for? (Detects hand-edited ammunition.) */
+export function validateLedger(ledger, family) {
+  if (!ledger || ledger.schema !== LEDGER_SCHEMA || !family) return fail(AMMO_REASONS.LEDGER_MISSING);
+  for (const k of ['payload', 'capacity', 'launchers', 'loaded', 'reserve', 'expended']) if (!isInt(ledger[k])) return fail(AMMO_REASONS.LEDGER_INVALID);
+  if (ledger.payload !== family.payload || ledger.capacity !== family.capacity || ledger.launcherId !== family.launcherId) return fail(AMMO_REASONS.LEDGER_INVALID);
+  if (ledger.launchers < 1 || ledger.loaded > ledger.capacity * ledger.launchers) return fail(AMMO_REASONS.LEDGER_INVALID);
+  if (ledger.loaded + ledger.reserve + ledger.expended !== ledger.payload) return fail(AMMO_REASONS.LEDGER_INVALID);       // conservation
+  if (family.allocation === 'single-launcher-verified' && ledger.launchers !== 1) return fail(AMMO_REASONS.LEDGER_INVALID);
+  return { ok: true };
+}
+
+const trimReceipts = receipts => Object.fromEntries(Object.entries(receipts).sort((a, b) => (a[1].at ?? 0) - (b[1].at ?? 0)).slice(-MAX_RECEIPTS));
+
+/** Spend `units` launched by attack `attackId`. Idempotent: the same attack id spends once. @returns {{ok:true, replay:boolean, ledger:object}|{ok:false, reason}} */
+export function planLaunch(ledger, { attackId, units = 1, now = Date.now() } = {}) {
+  if (!attackId) return fail(AMMO_REASONS.LEDGER_INVALID);
+  const prior = ledger.receipts?.[attackId];
+  if (prior) return { ok: true, replay: true, ledger };
+  if (!isInt(units) || units < 1) return fail(AMMO_REASONS.LEDGER_INVALID);
+  if (ledger.loaded < units) return fail(AMMO_REASONS.EMPTY);
+  return { ok: true, replay: false, ledger: { ...ledger, loaded: ledger.loaded - units, expended: ledger.expended + units,
+    receipts: trimReceipts({ ...ledger.receipts, [attackId]: { units, at: now, refunded: false } }) } };
+}
+
+/** Undo ONE spend (the attack failed after paying). Only a receipt that exists and has not been refunded. */
+export function planRefund(ledger, attackId) {
+  const r = ledger.receipts?.[attackId];
+  if (!r || r.refunded) return fail(AMMO_REASONS.NO_RECEIPT);
+  return { ok: true, ledger: { ...ledger, loaded: ledger.loaded + r.units, expended: ledger.expended - r.units, receipts: { ...ledger.receipts, [attackId]: { ...r, refunded: true } } } };
+}
+
+/** GM reload: moves reserve to loaded, up to the launchers' capacity; never creates ammunition and costs no action here. */
+export function planGmReload(ledger, { amount = Infinity, by = null, now = Date.now() } = {}) {
+  const room = ledger.capacity * ledger.launchers - ledger.loaded;
+  const moved = Math.min(amount, ledger.reserve, room);
+  if (!(moved >= 1)) return fail(AMMO_REASONS.NOTHING_TO_RELOAD);
+  return { ok: true, moved, ledger: { ...ledger, loaded: ledger.loaded + moved, reserve: ledger.reserve - moved, log: [...(ledger.log ?? []), { op: 'gm-reload', moved, by, at: now }].slice(-MAX_RECEIPTS) } };
+}
+
+/** GM allocation for a family whose launcher count the source does not verify: launchers and what is loaded now. */
+export function planGmAllocation(family, { launchers, loaded, by = null, now = Date.now() } = {}) {
+  if (!family || family.allocation === 'single-launcher-verified') return fail(AMMO_REASONS.ALLOCATION_INVALID);
+  const ledger = initialLedger(family, { launchers, loaded, allocation: 'gm-certified' });
+  if (!ledger) return fail(AMMO_REASONS.ALLOCATION_INVALID);
+  return { ok: true, ledger: { ...ledger, log: [{ op: 'gm-allocation', launchers, loaded, by, at: now }] } };
+}
+
+/** Units one launch spends: one per launcher that fires (fire-linked launchers fire together). */
+export const launchUnits = ({ firedLaunchers = 1 } = {}) => (isInt(firedLaunchers) && firedLaunchers >= 1 ? firedLaunchers : 1);

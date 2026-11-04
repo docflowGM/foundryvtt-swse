@@ -9,6 +9,7 @@
  */
 import { STOCK_WEAPON_FLAG } from './vehicle-weapon-damage.js';
 import { assessStockWeaponGroups, stockItemName, stockMountKey } from './vehicle-stock-weapon-groups.js';
+import { LEDGER_FLAG, initialLedger, validateLedger } from './vehicle-ammunition-ledger.js';
 
 const groupKeyOf = item => item?.flags?.swse?.[STOCK_WEAPON_FLAG]?.groupKey ?? null;
 const modeOf = item => item?.flags?.swse?.[STOCK_WEAPON_FLAG]?.fireMode ?? 'single';
@@ -26,7 +27,9 @@ export function buildStockWeaponItemData(record, group, mode = 'single') {
         attackAbilityAuthority: 'vehicle-int', importSource: 'published-stock-group', parseConfidence: 'structured'
       }
     },
-    flags: { swse: { [STOCK_WEAPON_FLAG]: { sourceEntryKey: key, groupKey: group.groupKey, ...(mode !== 'single' ? { fireMode: mode } : {}) } } }
+    flags: { swse: { [STOCK_WEAPON_FLAG]: { sourceEntryKey: key, groupKey: group.groupKey, ...(mode !== 'single' ? { fireMode: mode } : {}) },
+      // a complete launcher family starts with its ledger (loaded = min(payload, capacity), the rest in reserve): ammunition is finite from the first shot
+      ...(group.ammunition ? { [LEDGER_FLAG]: initialLedger(group.ammunition) } : {}) } }
   };
 }
 
@@ -54,14 +57,25 @@ export function executableModesOf(group) {
 export function planStockWeaponItemSync({ items = [], record }) {
   const wanted = new Map();
   for (const g of assessStockWeaponGroups(record).groups) for (const mode of executableModesOf(g)) wanted.set(itemKey(g.groupKey, mode), buildStockWeaponItemData(record, g, mode));
-  const deleteIds = [], kept = new Set();
+  const deleteIds = [], kept = new Set(), carried = new Map();
+  const groups = new Map(assessStockWeaponGroups(record).groups.map(g => [g.groupKey, g]));
   for (const item of items) {
     const groupKey = groupKeyOf(item);
     if (!groupKey) continue;
     const key = itemKey(groupKey, modeOf(item));
     const expected = wanted.get(key);
-    if (!expected || kept.has(key) || !managedStockItemMatches(item, expected)) { deleteIds.push(item.id ?? item._id); continue; }
+    if (!expected || kept.has(key) || !managedStockItemMatches(item, expected)) {
+      deleteIds.push(item.id ?? item._id);
+      // replacing an Item must not refill its launcher: a valid existing ledger is carried over to the replacement
+      const family = groups.get(groupKey)?.ammunition, old = item?.flags?.swse?.[LEDGER_FLAG];
+      if (family && old && validateLedger(old, family).ok && !carried.has(key)) carried.set(key, old);
+      continue;
+    }
     kept.add(key);
   }
-  return { create: [...wanted.entries()].filter(([k]) => !kept.has(k)).map(([, d]) => d), deleteIds };
+  const create = [...wanted.entries()].filter(([k]) => !kept.has(k)).map(([k, d]) => {
+    if (carried.has(k)) d.flags.swse[LEDGER_FLAG] = carried.get(k);
+    return d;
+  });
+  return { create, deleteIds };
 }

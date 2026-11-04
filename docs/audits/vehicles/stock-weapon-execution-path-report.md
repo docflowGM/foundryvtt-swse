@@ -210,3 +210,31 @@ the encounter's (Core, Scale): character scale when characters on foot are invol
 - Result: 3 non-ammunition groups with a 2-square splash on heavy laser cannons (Unstable Terrain Artillery Transport, Mobile Command Base,
   All Terrain Armored Heavy Transport) become executable at starship scale only: 351 executable groups on 258 vehicles. The 107
   groups with an ordinary area include 103+ finite-ammunition groups that stay refused for their ammunition (P6C-3D).
+
+## P6C-3C / 3D: finite ammunition, launch and guided projectiles (2026-11-04)
+
+**Ledger (`vehicle-ammunition-ledger.js`, `vehicle-ammunition-service.js`).** Four quantities are kept apart: the source's printed *payload*
+(the vehicle's complement), the launcher's *capacity* (Starships of the Galaxy pp. 45-46), what is *loaded* and what is in *reserve*, plus
+*expended*; payload = loaded + reserve + expended always holds and is validated against the SOURCE family at every use, so a hand-edited
+ledger is refused. It lives on the owned launcher Item (`flags.swse.vehicleAmmo`), written through ActorEngine, and does not depend on the optional
+blaster-charge setting (`AmmoSystem` is untouched). A launch spends one unit atomically and idempotently per attack id, hit or miss, after the
+pre-cost checks and before the roll, and is refunded if the attack then fails; a refused attack (permission, scale, empty or invalid
+ledger) spends nothing. Replacing a stale managed Item carries its ledger over, so a resync cannot refill a launcher.
+
+**Family completeness.** A group is a complete launcher family only when (1) its group evidence prints the payload, (2) its printed designation
+matches a catalog launcher EXACTLY (light/medium/heavy concussion missiles, proton torpedoes, shieldbuster torpedoes: PROJECT_INTERPRETATION),
+and (3) the launcher count is verified as exactly one and the group is not a battery. Then the initial ledger is loaded = min(payload, capacity),
+reserve = the rest (PROJECT_INTERPRETATION, V-P6C-06). Where the launcher count is not verified the allocation must be GM-certified before the
+weapon fires; reload is a GM operation (reserve -> loaded, nothing created, no action cost invented).
+
+**Guided projectiles (`vehicle-guided-projectile.js`, `vehicle-projectile-service.js`).** PUBLISHED_RULE (Core, Missiles and Torpedoes): an AIMED
+launch of a guided weapon that MISSES leaves one persistent projectile (Reflex 30, 10 hit points) that may attack once more on the attacker's next
+turn with the same attack bonus and -5, no action and no ammunition; a second miss self-destructs it; it can be shot down before its return attack.
+The follow-up is not a launch, keeps its target and launcher, and happens at most once.
+
+**Result.** The machinery is complete and proven end to end on a digest-verified synthetic fixture (the SotG ARC-170 with one launcher printed):
+launch, miss, aimed miss, follow-up without a second charge, wrong target, not-yet-due, no retries, interception, empty launcher, GM reload,
+tampered ledger, failed roll refund, character-scale refusal. In the published corpus no group has a verified single launcher, so **0 launcher
+groups are executable**; 18 groups have a printed payload and an exactly-designated launcher but an unverified launcher count (pending a GM-certified allocation,
+not armed, not counted); 151 lack a printed payload and/or an identifiable launcher. Not wired: the turn-change prompt and sheet actions for
+the follow-up and for the GM allocation/reload (P6B-D-047, P6B-D-049).

@@ -20,6 +20,7 @@
  * Pure; no Foundry globals.
  */
 import { establishPublishedBattery, establishIndependentBatteryWeapon, batteryAssistanceBonus } from './vehicle-weapon-battery.js';
+import { resolveLauncherFamily } from './vehicle-ammunition-ledger.js';
 
 /** Names the sheet shows: the battery keeps the printed label; its independent single weapon is plainly labelled so it is never mistaken for the battery. */
 export const stockItemName = (group, mode = 'single') => (mode === 'independent-weapon' ? `${group.label} (single weapon)` : group.label);
@@ -48,6 +49,8 @@ const INFORMATIONAL_EVIDENCE_KEYS = new Set([
   'physicalCountEvidence', 'narrativePhysicalCount', 'printedMultiplicity', 'printedRangedMultiplicity', 'rangedMultiplicity', 'printedRangedGroupCount',
   'printedRangedCount', 'printedRangedWeaponCount', 'firingGroupCountEvidence', 'attackGroupIndex', 'batteryCount', 'batteryComposition',
   'gunnerCountPrinted', 'sourceEvidenceStatus', 'printedWeaponDesignation', 'fireLink',
+  // the vehicle's printed complement of ammunition: read by the launcher-family check, never by itself a mechanic
+  'payloadCount',
   // autofire figures: autofire/burst are refused for every vehicle-managed weapon at attack time
   'autofire', 'autofireBonus', 'autofireAttackBonus', 'auto'
 ]);
@@ -167,7 +170,17 @@ export function parseStockFiringGroup(group) {
   // Fail-closed denials by wording (a name can only DENY, never authorize): finite-ammunition weapons have no magazine
   // authority yet and torpedoes/missiles/mines/grenades carry splash and payload rules; a name that says "ion" while the
   // source does not type the damage as ion stays refused.
-  if (AMMUNITION_LIMITED.test(`${group?.label ?? ''} ${notes}`)) reasons.push('STOCK_AMMUNITION_LIMITED_UNTRACKED');
+  if (AMMUNITION_LIMITED.test(`${group?.label ?? ''} ${notes}`) || out.evidence?.payloadCount !== undefined) {
+    // FINITE AMMUNITION (P6C-3D). A family is complete only when the source prints the payload, the launcher is identified by its exact
+    // printed designation (with a certified capacity) and the launcher count is verified as exactly one; then the ledger machinery
+    // (vehicle-ammunition-ledger.js) can run it. A family that lacks any of that keeps the umbrella refusal plus the specific reasons.
+    const fam = resolveLauncherFamily({ label: group?.label, evidence: out.evidence, battery: out.battery });
+    if (fam.status === 'complete') out.ammunition = fam.family;
+    else {
+      reasons.push('STOCK_AMMUNITION_LIMITED_UNTRACKED', ...fam.reasons);
+      if (fam.status === 'allocation-required') out.ammunitionPending = fam.family;
+    }
+  }
   if (/\bion\b/i.test(String(group?.label ?? '')) && out.damage?.type !== 'ion') reasons.push('STOCK_DAMAGE_ION_UNVERIFIED');   // the name says ion but the source does not type the damage
   if (POSSIBLE_AREA.test(String(group?.label ?? ''))) reasons.push('STOCK_POSSIBLE_AREA_WEAPON_UNVERIFIED');
   // point-defense status is never inferred from a label: such groups stay non-executable until it is classified from source

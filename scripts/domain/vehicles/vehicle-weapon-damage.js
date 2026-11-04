@@ -124,7 +124,7 @@ export function resolveStockWeapon(weapon) {
   // weapon is an ordinary single-weapon attack on the printed total with the assistance removed.
   const battery = fireMode === 'full-battery' ? group.battery : null;
   return { ok: true, origin: 'stock', operator: group.operator, group, record, fireMode: fireMode ?? undefined, attackBasis: modeInfo?.attackBasis ?? group.attackBasis,
-    spec: { damage: group.damage.raw, ...(group.damage.type ? { type: group.damage.type } : {}) }, arcEvidence, battery };
+    spec: { damage: group.damage.raw, ...(group.damage.type ? { type: group.damage.type } : {}) }, arcEvidence, battery, ammunition: group.ammunition ?? null };
 }
 
 /**
@@ -136,7 +136,7 @@ export function resolveVehicleWeaponAuthority(weapon) {
   if (isStockVehicleWeaponItem(weapon)) {
     if (isInstalledVehicleWeaponItem(weapon)) return { ok: false, reason: 'WEAPON_CLAIMS_BOTH_STOCK_AND_INSTALLED_PROVENANCE' };
     const s = resolveStockWeapon(weapon);
-    return s.ok ? { ok: true, origin: 'stock', operator: s.operator, damageRaw: s.spec.damage, ...(s.spec.type ? { damageType: s.spec.type } : {}), ...(s.battery ? { battery: s.battery } : {}), stock: s } : s;
+    return s.ok ? { ok: true, origin: 'stock', operator: s.operator, damageRaw: s.spec.damage, ...(s.spec.type ? { damageType: s.spec.type } : {}), ...(s.battery ? { battery: s.battery } : {}), ...(s.ammunition ? { ammunition: s.ammunition } : {}), stock: s } : s;
   }
   const i = resolveCertifiedInstalledWeapon(weapon);
   if (!i) return null;

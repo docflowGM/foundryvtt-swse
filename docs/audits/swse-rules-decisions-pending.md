@@ -1007,3 +1007,9 @@ Core p. 170 (owner-verified) is implemented in `vehicle-weapon-battery.js` and w
 **V-P6C-06 (ammunition) - partly PROJECT_INTERPRETATION.** Payload (the vehicle's complement), loaded ammunition, reserve and launcher capacity are separate quantities. Initial loading convention for a verified single-launcher configuration: loaded = min(payload, certified capacity), reserve = payload - loaded; not applied where the launcher allocation is ambiguous. Reload action costs are not inferred from personal launchers; a GM reload operation transfers reserve to loaded without creating ammunition.
 
 - **Revision 31 (2026-11-04):** appended the owner addendum. No existing text changed.
+
+### Engineering status note: ammunition ledger and guided projectiles (2026-11-04; implements the owner addendum, no new question)
+
+Implemented as PUBLISHED_RULE (lock-on, Reflex 30 / 10 HP / -5, no second charge, starship-scale single-target splash) and PROJECT_INTERPRETATION (initial loading min(payload, capacity); exact-designation launcher identity; GM reload that creates nothing). No published group is a complete launcher family (none has a verified single launcher); 18 wait for a GM-certified allocation. V-P6C-06 stays recorded as a project interpretation, with the reload action cost explicitly NOT inferred.
+
+- **Revision 32 (2026-11-04):** appended this status note. No existing entry changed.

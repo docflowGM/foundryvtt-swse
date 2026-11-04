@@ -40,17 +40,19 @@ The printed total of a battery already contains the printed gunners' assistance 
 
 Fire-linked weapons are not weapon batteries (Starships of the Galaxy, Fire-Linked Weapons) and get no battery rules. Ordinary energy weapons are every executable group that is none of these kinds.
 
-## Launchers and ammunition (no family enabled)
+## Launchers and finite ammunition (P6C-3D)
 
 | Measure | Groups |
 |---|---|
 | Ammunition-limited groups | 169 |
 | ... printing a payload count | 24 |
-| ... with area / splash stated in the record | 102 |
-| Refused for ammunition ALONE | 75 |
-| OFFLINE_EXECUTABLE | 0 |
+| COMPLETE family (payload printed, launcher identified by its exact designation with a certified capacity, ONE launcher verified) | 0 |
+| ... of those OFFLINE_EXECUTABLE | 0 |
+| Payload and launcher identified, launcher count NOT verified (needs a GM-certified allocation; not armed, not counted) | 18 |
+| Incomplete (no printed payload and/or launcher not identified) | 151 |
+| OFFLINE_EXECUTABLE ammunition-limited groups | 0 |
 
-A finite supply is never treated as unlimited, so these stay refused until a complete family exists. What is missing (deferred items P6B-D-047..049): vehicle area/splash damage (the Core prints a 4-square splash for these weapons, and the record often omits it); the missile lock-on rule (a missed missile may attack again at -5 and can be shot down); an ammunition ledger whose capacity is source-certified (the Core "Payload" line is the vehicle's complement, not a launcher's loaded count; launcher capacities are separate figures) and a reload rule for vehicle launchers (V-P6C-06).
+The ledger (payload, capacity, loaded, reserve, expended; conservation payload = loaded + reserve + expended) runs outside the optional blaster-charge house rule; a launch spends one unit atomically and idempotently per attack, a refused or failed attack spends nothing, the follow-up of a locked-on projectile spends nothing, and reloading is a GM operation that moves reserve to loaded. No published group has a verified single launcher yet, so none is executable; the machinery is proven on a digest-verified synthetic fixture (tests p30).
 
 ## Ordinary splash / burst (starship-scale rule)
 
@@ -78,12 +80,15 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | STOCK_OPERATOR_IS_A_STATION_BATTERY | 187 |
 | STOCK_GROUP_IS_A_WEAPON_BATTERY | 179 |
 | STOCK_AMMUNITION_LIMITED_UNTRACKED | 169 |
+| STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED | 145 |
+| STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED | 89 |
 | STOCK_DAMAGE_NOT_PRINTED_IN_RECORD | 85 |
 | STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED | 60 |
-| STOCK_EVIDENCE_UNMODELED | 59 |
 | STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER | 47 |
 | STOCK_BATTERY_WEAPON_COUNT_NOT_STATED | 39 |
+| STOCK_EVIDENCE_UNMODELED | 36 |
 | STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED | 22 |
+| STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED | 18 |
 | STOCK_OPERATOR_NOT_PRINTED | 17 |
 | STOCK_DAMAGE_QUALIFIED | 17 |
 | STOCK_FIRING_ARC_NOT_REVIEWED | 12 |

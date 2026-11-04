@@ -30,6 +30,9 @@ import { authorizeVehicleAttackBeforeCosts } from "/systems/foundryvtt-swse/scri
 import { resolveVehicleWeaponAuthority } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
 import { batteryMarginHits } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-battery.js";
 import { VehicleBatteryAidService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-battery-aid-service.js";
+import { VehicleAmmunitionService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-ammunition-service.js";
+import { VehicleProjectileService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-projectile-service.js";
+import { shouldCreateProjectile } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-guided-projectile.js";
 import { resolveTrustedStockAttackGroup } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-attack-authority.js";
 import { classifyInstalledVehicleWeapon } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-attack-provenance.js";
 import { resolveVehicleCrewStationEvidence } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-crew-station-evidence.js";
@@ -715,6 +718,13 @@ export async function rollAttack(actor, weapon, options = {}) {
     ui?.notifications?.warn?.('Vehicle attack was blocked: ' + vehicleDomain.reason);
     return null;
   }
+  // Finite ammunition and guided projectiles (P6C-3C/3D): a LAUNCH spends one unit of the launcher's ledger; the follow-up attack of a
+  // projectile that was already launched spends nothing, takes no action and keeps its target (Core, Missiles and Torpedoes).
+  let launcherAuth = null;
+  let followUp = null;
+  const launchAttackId = globalThis.foundry?.utils?.randomID?.() ?? `launch-${Date.now()}`;
+  let vehicleAmmoSpend = null;
+  const refundVehicleAmmo = async () => { if (vehicleAmmoSpend?.spent) await VehicleAmmunitionService.refundLaunch(vehicleAmmoSpend); };
   if (vehicleDomain.ok && vehicleDomain.domain !== 'character') {
     const vehicle = vehicleDomain.normalizedContext?.vehicleActor;
     const target = getTargetActorFromOptions(rollOptions);
@@ -750,6 +760,18 @@ export async function rollAttack(actor, weapon, options = {}) {
     if (!sourceGate.ok) {
       ui?.notifications?.warn?.('Vehicle attack blocked by strict stock-source evidence policy: ' + sourceGate.reason);
       return null;
+    }
+    launcherAuth = resolveVehicleWeaponAuthority(weapon);
+    if (rollOptions.guidedFollowUp) {
+      // the SAME projectile's one return attack: only a guided launcher, the recorded target, the recorded launcher, its due turn
+      if (!launcherAuth?.ok || !launcherAuth.ammunition?.guided) { ui?.notifications?.warn?.('Vehicle attack blocked: this weapon launches no guided projectile.'); return null; }
+      const plan = VehicleProjectileService.plan(vehicle, rollOptions.guidedFollowUp, { launcherItemId: weapon.id, targetId: target?.id ?? null });
+      if (!plan.ok) { ui?.notifications?.warn?.('Vehicle attack blocked: ' + plan.reason); return null; }
+      followUp = { id: rollOptions.guidedFollowUp, ...plan };
+    } else if (launcherAuth?.ok && launcherAuth.ammunition) {
+      // a launch needs ammunition in the launcher's ledger: checked BEFORE any cost is paid; an empty or tampered ledger refuses
+      const can = await VehicleAmmunitionService.canLaunch(vehicle, weapon);
+      if (!can.ok) { ui?.notifications?.warn?.('Vehicle attack blocked: ' + can.reason); return null; }
     }
   }
 
@@ -853,6 +875,15 @@ export async function rollAttack(actor, weapon, options = {}) {
     ui?.notifications?.error?.(ammoSpend.message || `${weapon.name} does not have enough ammunition.`);
     return null;
   }
+  if (launcherAuth?.ok && launcherAuth.ammunition && !followUp && ownedVehicle) {
+    vehicleAmmoSpend = await VehicleAmmunitionService.spendLaunch(ownedVehicle, weapon, { attackId: launchAttackId });
+    if (!vehicleAmmoSpend.ok) {
+      if (ammoSpend?.spent) await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
+      await actionOptionSpend?.rollback?.();
+      ui?.notifications?.error?.(`${weapon.name}: ammunition could not be spent (${vehicleAmmoSpend.reason}).`);
+      return null;
+    }
+  }
 
   // attack-domain-router.js decides which existing math authority this
   // attack belongs to (character / vehicle-actor-gunner / vehicle-abstract-
@@ -867,6 +898,7 @@ export async function rollAttack(actor, weapon, options = {}) {
   if (!composition.ok) {
     if (composition.attackBonusResolution?.error) {
       if (ammoSpend?.spent) await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
+      await refundVehicleAmmo();
       await actionOptionSpend?.rollback?.();
       ui?.notifications?.error?.(composition.reason === 'invalid-vehicle-actor'
         ? 'Vehicle attack could not be resolved: the vehicle actor is missing or invalid, so its Intelligence modifier cannot be sourced.'
@@ -880,13 +912,21 @@ export async function rollAttack(actor, weapon, options = {}) {
       if (ammoSpend?.spent) await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
       reportWeaponRuntimeError(composition.weaponRuntimeError, { notify: false });
     }
+    await refundVehicleAmmo();
     await actionOptionSpend?.rollback?.();
     ui?.notifications?.error?.(composition.weaponRuntimeError
       ? `Attack could not be resolved: ${composition.weaponRuntimeError.message}`
       : 'Attack could not be resolved: no valid attack-domain context (' + composition.reason + ').');
     return null;
   }
-  const { atkBonus, attackDomain, isVehicleAttack, attackBonusResolution, attackComponentLedger, sequencePenalty, domainResolution } = composition;
+  // The follow-up attack of a guided projectile uses the SAME attack bonus as the launch with a -5 penalty (Core, Missiles and Torpedoes):
+  // the recorded bonus, not a fresh composition, so a changed crew or modifier cannot rewrite it.
+  const effective = followUp ? { ...composition, atkBonus: followUp.attackBonus,
+    attackComponentLedger: [
+      { id: 'guided-launch-attack-bonus', label: 'Same attack bonus as the launch', value: followUp.baseBonus, category: 'guided', applied: true, sourceId: followUp.id, sourceName: 'Guided projectile (Core p. 173)' },
+      { id: 'guided-follow-up-penalty', label: 'Follow-up attack of a locked-on missile or torpedo', value: followUp.penalty, category: 'guided', applied: true, sourceId: followUp.id, sourceName: 'Guided projectile (Core p. 173)' }
+    ] } : composition;
+  const { atkBonus, attackDomain, isVehicleAttack, attackBonusResolution, attackComponentLedger, sequencePenalty, domainResolution } = effective;
 
   const rollFormula = `1d20 + ${atkBonus}`;
   const roll = await RollEngine.safeRoll(rollFormula, actor?.getRollData?.() ?? {}, { actor, domain: 'combat.attack', context: { weaponId: weapon?.id ?? null } });
@@ -1123,6 +1163,14 @@ export async function rollAttack(actor, weapon, options = {}) {
   const aidEntry = (attackComponentLedger ?? []).find(e => e?.id === 'battery-aid' && e.applied !== false);
   if (aidEntry && weapon?.actor?.type === 'vehicle') await VehicleBatteryAidService.consume(weapon.actor, weapon.id, aidEntry.sourceId);
 
+  // Guided projectiles (Core, Missiles and Torpedoes): an AIMED launch that MISSED leaves a projectile that may attack once more on the
+  // next turn; the follow-up attack resolves it (a hit ends its attack, a second miss self-destructs it). Neither costs ammunition.
+  if (followUp && ownedVehicle) await VehicleProjectileService.resolve(ownedVehicle, followUp.id, { hit: isHit === true });
+  else if (ownedVehicle && launcherAuth?.ok && launcherAuth.ammunition
+    && shouldCreateProjectile({ guided: launcherAuth.ammunition.guided, aimed: rollOptions.aim === true || rollOptions.isAiming === true || rollOptions.aimed === true, hit: isHit === null ? null : isHit }))
+    attackResult.guidedProjectile = await VehicleProjectileService.create(ownedVehicle, { launcherItemId: weapon.id, targetId: target?.id ?? null, attackBonus: atkBonus, attackId: launchAttackId });
+  attackResult.vehicleAmmoSpend = vehicleAmmoSpend && { spent: vehicleAmmoSpend.spent, attackId: launchAttackId };
+
   AttackRollDiagnostics.record({
     domain: 'combat.attack',
     // attackType now mirrors attack-domain-router.js's own vocabulary
@@ -1159,6 +1207,7 @@ export async function rollAttack(actor, weapon, options = {}) {
     if (ammoSpend?.spent) {
       await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
     }
+    await refundVehicleAmmo();
     await actionOptionSpend?.rollback?.();
     throw err;
   }
