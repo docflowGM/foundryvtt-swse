@@ -10,12 +10,12 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 |---|---|
 | RULES_DECISION_REQUIRED | 9 |
 | SOURCE_EVIDENCE_MISSING | 8 |
-| ENGINEERING_COMPLEXITY | 22 |
-| LIVE_RUNTIME_PENDING | 3 |
+| ENGINEERING_COMPLEXITY | 23 |
+| LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 4 |
 | DEPENDENCY_BLOCKED | 9 |
 
-Open items: 55. Resolved items: 13 (listed at the end).
+Open items: 54. Resolved items: 14 (listed at the end).
 
 ## Items (by severity)
 
@@ -41,7 +41,7 @@ Open items: 55. Resolved items: 13 (listed at the end).
 | P6B-D-064 | WEAPON-ECOSYSTEM | Shieldbuster torpedoes | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-13 |
 | P6B-D-065 | WEAPON-ECOSYSTEM | Gravity well projectors | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-14 |
 | P6B-D-066 | WEAPON-ECOSYSTEM | Space mines | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
-| P6B-D-067 | WEAPON-ECOSYSTEM | Tractor beams | LIVE_RUNTIME_PENDING | IMPORTANT | no | - |
+| P6B-D-067 | WEAPON-ECOSYSTEM | Tractor beams: aftermarket row, targets larger than the beam vehicle, docking clamps | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-068 | WEAPON-ECOSYSTEM | Ion bombs | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-003 | P6B-1 | jamming-suite, jamming-array | ENGINEERING_COMPLEXITY | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-004 | P6B-1 | combat-thrusters | DEPENDENCY_BLOCKED | MINOR | no | V-P6-05, V-P2-04 |
@@ -75,7 +75,6 @@ Open items: 55. Resolved items: 13 (listed at the end).
 | P6B-D-041 | STOCK | published stock groups with droid, remote or ambiguous operators | ENGINEERING_COMPLEXITY | MINOR | no | - |
 | P6B-D-057 | WEAPON-ECOSYSTEM | launcher capacity expansion and the remaining launcher kinds | RULES_DECISION_REQUIRED | MINOR | yes | V-P6A-03, V-P6C-06 |
 | P6B-D-058 | WEAPON-ECOSYSTEM | source-specific special weapons without a printed table row | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
-| P6B-D-062 | WEAPON-ECOSYSTEM | Sheet control for the autofire mode switch | LIVE_RUNTIME_PENDING | MINOR | no | V-P6C-08 |
 
 ## Details
 
@@ -575,16 +574,6 @@ Open items: 55. Resolved items: 13 (listed at the end).
 - **Impact:** Those combinations are refused, not guessed.
 - **Recommended action:** Extend after the operator model batch.
 
-### P6B-D-062 - Sheet control for the autofire mode switch
-
-- **Source:** Core Rulebook, Autofire
-- **Category / severity:** LIVE_RUNTIME_PENDING / MINOR
-- **Reason:** The mode switch is available as a service (VehicleFireModeService); no vehicle-sheet button calls it yet, and the sheet has no battery-aid button either.
-- **Missing:** A sheet action on autofire-capable weapon rows and live Foundry verification.
-- **Owner ruling needed:** no (V-P6C-08)
-- **Impact:** Players cannot switch the mode from the sheet until wired.
-- **Recommended action:** Add one weapon-row toggle next to the existing weapon actions.
-
 ### P6B-D-064 - Shieldbuster torpedoes
 
 - **Source:** Starships of the Galaxy, Shieldbuster Torpedoes
@@ -615,15 +604,15 @@ Open items: 55. Resolved items: 13 (listed at the end).
 - **Impact:** Mine launcher and mine rows.
 - **Recommended action:** Build the object store after the persistence design is settled.
 
-### P6B-D-067 - Tractor beams
+### P6B-D-067 - Tractor beams: aftermarket row, targets larger than the beam vehicle, docking clamps
 
-- **Source:** Core Rulebook, Tractor Beams (the reference text is partly illegible in the scanned copy)
-- **Category / severity:** LIVE_RUNTIME_PENDING / IMPORTANT
-- **Reason:** Needs a persistent grabbed state, an opposed grapple check against the vehicle's grapple modifier each round, pull/hold movement and range-break, and docking clamps. The scan loses lines of the rule.
-- **Missing:** Verified full rule text; a grab-state store and a movement hook; live runtime.
+- **Source:** Core Rulebook p.174, Tractor Beams (readable in the owner-inspected scan)
+- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
+- **Reason:** Stock tractor beams (28 groups) now run through weapon-control-effects / GrappleStateEngine: attack vs Reflex, opposed grapple with the beam's printed grapple bonus, grabbed state, per-turn opposed maintenance, move intent (10 squares / 1 starship square), range break through the vehicle range authority. Remaining: the aftermarket tractor beam (no damage-less certified weapon spec), a target LARGER than the beam's vehicle (keeps its Dexterity bonus, moves freely, and the tractoring ship may pull itself toward it), and docking clamps.
+- **Missing:** A damage-less certified weapon specification; the pull-self-toward-larger-target movement; docking clamps.
 - **Owner ruling needed:** no
-- **Impact:** 58 stock tractor-beam groups and the catalog row.
-- **Recommended action:** Verify the text against the PDF, then build on the grapple engine.
+- **Impact:** Aftermarket catalog row; large-target and boarding cases.
+- **Recommended action:** Extend the declaration with a larger-target mode; add the damage-less spec.
 
 ### P6B-D-068 - Ion bombs
 
@@ -696,6 +685,11 @@ Open items: 55. Resolved items: 13 (listed at the end).
 
 - **Resolved:** Implemented: VehicleFireModeService.setMode spends a swift action through ActionEconomyConsumption and persists the mode on the vehicle; attacks require the weapon to be set to autofire. The switch back to single fire is charged the same swift action (project interpretation). A sheet control for the switch remains (P6B-D-062).
 - **Was:** Autofire is requested per attack; the swift action to set the weapon to autofire is not charged and the mode is not persisted, the same as the character attack path.
+
+### P6B-D-062 - Sheet control for the autofire mode switch
+
+- **Resolved:** Implemented: the V2 vehicle sheet lists autofire-capable weapons with Set to autofire / Set to single fire (VehicleFireModeService, swift action). Live Foundry verification pending.
+- **Was:** The mode switch is available as a service (VehicleFireModeService); no vehicle-sheet button calls it yet, and the sheet has no battery-aid button either.
 
 ### P6B-D-063 - Weapon-battery groups whose operator prints "N gunners" (no word "battery") and printed alternative / automated operators
 

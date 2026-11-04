@@ -184,6 +184,8 @@ export function controlDeclarationOf({ identityKey = null, operation = null, def
       acquisition: { defense: tc.acquisition?.defense ?? null, comparison: tc.acquisition?.comparison ?? null, then: tc.acquisition?.then ?? null },
       maintain: { timing: tc.maintain?.timing ?? null, check: tc.maintain?.check ?? null, onLoss: tc.maintain?.onLoss ?? null },
       move: { squares: Number(tc.move?.squares ?? op.moveGrabbedObjectSquares), direction: tc.move?.direction ?? null },
+      // vehicle tractor beams: the weapon's own printed grapple bonus and the range check that breaks the hold (Core, Tractor Beams)
+      ...(Number.isFinite(Number(tc.controllerGrapple)) ? { controllerGrapple: Number(tc.controllerGrapple) } : {}), ...(tc.rangeCheck ? { rangeCheck: tc.rangeCheck } : {}),
       hurl: { squares: Number(tc.hurl?.rangeSquares ?? op.hurlGrabbedObjectRangeSquares), defense: tc.hurl?.defense ?? null, comparison: tc.hurl?.comparison ?? null, damageAuthority: tc.hurl?.damageAuthority ?? null },
     };
     d.kinds.push('tractor');
@@ -249,7 +251,7 @@ export function controlRecord(declaration, { id, controllerId, targetId, state, 
   };
 }
 
-export const CONTROL_END_REASONS = Object.freeze(['escaped', 'released', 'controller-removed', 'target-removed', 'weapon-removed', 'weapon-unequipped', 'controller-incapacitated', 'size-gate-failed', 'maintenance-failed', 'expired', 'hurled', 'weapon-dropped']);
+export const CONTROL_END_REASONS = Object.freeze(['escaped', 'released', 'controller-removed', 'target-removed', 'weapon-removed', 'weapon-unequipped', 'controller-incapacitated', 'size-gate-failed', 'maintenance-failed', 'out-of-range', 'expired', 'hurled', 'weapon-dropped']);
 
 /** the grab attack penalty: Grabber 0, Entangler -2, otherwise -5 (talents resolved by canonical identity slug, never the display name) */
 export const grabAttackPenalty = (abilityKeys) => { const keys = asArray(abilityKeys); return keys.includes('grabber') ? 0 : keys.includes('entangler') ? -2 : -5; };

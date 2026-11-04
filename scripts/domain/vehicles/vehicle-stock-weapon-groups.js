@@ -127,7 +127,13 @@ export function parseStockFiringGroup(group) {
   reasons.push(...evidenceReasons(out.evidence));
 
   const d = notes.match(DAMAGE);
-  if (!d) reasons.push('STOCK_DAMAGE_NOT_PRINTED_IN_RECORD');
+  // A tractor beam deals no damage ("Instead of damaging a vehicle's hit points, tractor beams prevent a vehicle from escaping", Core, Tractor
+  // Beams): a printed designation that names a tractor beam AND a damage line that prints none is the source stating there is no damage.
+  const tractorDesignation = rangeSlugFromPrintedDesignation(group?.label) === 'tractor-beams';
+  const printsNoDamage = /(?:printed damage|published damage|damage)\s*:?\s*(?:—|–|none|n\/a)(?![\w])/i.test(notes) || (!/damage/i.test(notes));
+  if (!d && tractorDesignation && printsNoDamage) { out.damage = { dice: 0, die: 0, bonus: 0, multiplier: 1, formula: null, raw: '', suffix: '', none: true }; out.tractorBeam = true;
+    const g = /grapple\s*([+-]\d+)/i.exec(notes); if (g) out.tractorGrapple = Number(g[1]); }
+  else if (!d) reasons.push('STOCK_DAMAGE_NOT_PRINTED_IN_RECORD');
   else {
     const dice = Number(d[1]), die = Number(d[2]), mult = d[5] ? Number(d[5]) : 1;
     const suffix = String(d[6] ?? '').trim().toLowerCase();

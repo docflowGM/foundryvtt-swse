@@ -69,7 +69,8 @@ test('stock column: groups are partitioned by family (no group counted twice); c
   // the report-only label classification: spot checks
   assert.ok(row('ion-cannons').stock.groups >= 60 && row('tractor-beams').stock.groups >= 50 && row('proton-torpedoes').stock.groups >= 50);
   // stock rows that are plain damage run; every launcher/tractor/gravity group is still refused (the AFTERMARKET launcher family is complete; no STOCK one is)
-  for (const id of ['proton-torpedoes', 'concussion-missiles', 'tractor-beams', 'gravity-well-projectors', 'shieldbuster-torpedoes', 'space-mines']) assert.equal(row(id).stock.offlineExecutable, 0, id);
+  for (const id of ['proton-torpedoes', 'concussion-missiles', 'gravity-well-projectors', 'shieldbuster-torpedoes', 'space-mines']) assert.equal(row(id).stock.offlineExecutable, 0, id);
+  assert.ok(row('tractor-beams').stock.offlineExecutable >= 20, 'stock tractor beams run through the weapon-control engines');
   // a configuration run from printed statblock values is NOT a configuration implementation; the aftermarket ones are implemented (p37), triple stays an alias
   for (const id of ['double-cannons', 'quad-cannons', 'fire-linked-weapons']) assert.equal(row(id).attackExecution, 'OFFLINE_TESTED', id);
   assert.equal(row('triple-cannons').attackExecution, 'STOCK_PRINTED_VALUES_ONLY');

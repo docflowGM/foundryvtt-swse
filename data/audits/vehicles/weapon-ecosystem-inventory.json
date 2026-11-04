@@ -28,7 +28,7 @@
   },
   "TRACTOR_BEAM_NOT_IMPLEMENTED": {
    "class": "ENGINEERING",
-   "text": "Attack vs Reflex, opposed grapple checks, grabbed/held/pulled state, escape and range-break (Core, Tractor Beams) have no vehicle implementation; stock tractor-beam groups are refused."
+   "text": "STOCK tractor beams run through the existing weapon-control / grapple engines (attack vs Reflex, opposed grapple, grabbed state, per-turn maintenance, range break). Not implemented: the AFTERMARKET tractor beam (no certified weapon specification without damage), a target larger than the beam's vehicle, docking clamps."
   },
   "GRAVITY_WELL_NOT_IMPLEMENTED": {
    "class": "ENGINEERING",

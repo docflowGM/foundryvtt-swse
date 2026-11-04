@@ -146,7 +146,7 @@ export function resolveVehicleWeaponAuthority(weapon) {
   if (isStockVehicleWeaponItem(weapon)) {
     if (isInstalledVehicleWeaponItem(weapon)) return { ok: false, reason: 'WEAPON_CLAIMS_BOTH_STOCK_AND_INSTALLED_PROVENANCE' };
     const s = resolveStockWeapon(weapon);
-    return s.ok ? { ok: true, origin: 'stock', operator: s.operator, rangeSlug: s.group.rangeSlug ?? null, pointDefense: s.group.pointDefense === true, ...(s.group.autofireCapable === true ? { autofireCapable: true } : {}), ...(s.group.area ? { area: s.group.area } : {}), damageRaw: s.spec.damage, ...(s.spec.type ? { damageType: s.spec.type } : {}), ...(s.battery ? { battery: s.battery } : {}), ...(s.ammunition ? { ammunition: s.ammunition } : {}), stock: s } : s;
+    return s.ok ? { ok: true, origin: 'stock', operator: s.operator, rangeSlug: s.group.rangeSlug ?? null, pointDefense: s.group.pointDefense === true, ...(s.group.tractorBeam === true ? { tractorBeam: true, ...(Number.isFinite(s.group.tractorGrapple) ? { tractorGrapple: s.group.tractorGrapple } : {}) } : {}), ...(s.group.autofireCapable === true ? { autofireCapable: true } : {}), ...(s.group.area ? { area: s.group.area } : {}), damageRaw: s.spec.damage, ...(s.spec.type ? { damageType: s.spec.type } : {}), ...(s.battery ? { battery: s.battery } : {}), ...(s.ammunition ? { ammunition: s.ammunition } : {}), stock: s } : s;
   }
   const i = resolveCertifiedInstalledWeapon(weapon);
   if (!i) return null;
@@ -198,4 +198,12 @@ export function resolveVehicleWeaponDamage(weapon, { batteryExtraHits = 0, fireM
   if (!x.ok) return { ok: false, reason: x.reason };
   return { ok: true, formula: x.formula, multiplier, damageType, printed: p.raw,
     battery: { gunners: a.battery.gunners, participatingWeapons: a.battery.participatingWeapons, extraHits, extraDice: x.extraDice, baseFormula: p.formula } };
+}
+
+
+/** The printed grapple modifier of a source-verified published vehicle (null for anything else). */
+export function publishedVehicleGrappleBonus(actor) {
+  if (actor?.type !== 'vehicle') return null;
+  const n = Number(getVerifiedPublishedRecord(actor)?.combat?.grappleBonusPrinted);
+  return Number.isFinite(n) ? n : null;
 }

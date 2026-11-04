@@ -1388,7 +1388,8 @@
       "reason": "The mode switch is available as a service (VehicleFireModeService); no vehicle-sheet button calls it yet, and the sheet has no battery-aid button either.",
       "missing": "A sheet action on autofire-capable weapon rows and live Foundry verification.",
       "impact": "Players cannot switch the mode from the sheet until wired.",
-      "recommendedAction": "Add one weapon-row toggle next to the existing weapon actions."
+      "recommendedAction": "Add one weapon-row toggle next to the existing weapon actions.",
+      "resolution": "Implemented: the V2 vehicle sheet lists autofire-capable weapons with Set to autofire / Set to single fire (VehicleFireModeService, swift action). Live Foundry verification pending."
     },
     {
       "workstream": "STOCK-GROUPS",
@@ -1463,14 +1464,14 @@
       "linkedDecisions": [],
       "options": [],
       "id": "P6B-D-067",
-      "component": "Tractor beams",
-      "source": "Core Rulebook, Tractor Beams (the reference text is partly illegible in the scanned copy)",
-      "status": "LIVE_RUNTIME_PENDING",
+      "component": "Tractor beams: aftermarket row, targets larger than the beam vehicle, docking clamps",
+      "source": "Core Rulebook p.174, Tractor Beams (readable in the owner-inspected scan)",
+      "status": "ENGINEERING_COMPLEXITY",
       "severity": "IMPORTANT",
-      "reason": "Needs a persistent grabbed state, an opposed grapple check against the vehicle's grapple modifier each round, pull/hold movement and range-break, and docking clamps. The scan loses lines of the rule.",
-      "missing": "Verified full rule text; a grab-state store and a movement hook; live runtime.",
-      "impact": "58 stock tractor-beam groups and the catalog row.",
-      "recommendedAction": "Verify the text against the PDF, then build on the grapple engine."
+      "reason": "Stock tractor beams (28 groups) now run through weapon-control-effects / GrappleStateEngine: attack vs Reflex, opposed grapple with the beam's printed grapple bonus, grabbed state, per-turn opposed maintenance, move intent (10 squares / 1 starship square), range break through the vehicle range authority. Remaining: the aftermarket tractor beam (no damage-less certified weapon spec), a target LARGER than the beam's vehicle (keeps its Dexterity bonus, moves freely, and the tractoring ship may pull itself toward it), and docking clamps.",
+      "missing": "A damage-less certified weapon specification; the pull-self-toward-larger-target movement; docking clamps.",
+      "impact": "Aftermarket catalog row; large-target and boarding cases.",
+      "recommendedAction": "Extend the declaration with a larger-target mode; add the damage-less spec."
     },
     {
       "workstream": "WEAPON-ECOSYSTEM",

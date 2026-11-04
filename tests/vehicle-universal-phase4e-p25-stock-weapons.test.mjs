@@ -393,16 +393,22 @@ test('CORPUS: each executable stock group arms, attacks at its printed total, an
         const expectBonus = printed + (capital && !g.pointDefense ? -20 : 0);      // (a printed point-defense weapon takes no capital-ship penalty)
         let ok = r.result && r.result.atkBonus === expectBonus && !r.blocked;
         let formula = null;
-        try { formula = buildDamageFormula(resolveDamageComposition(v, w, { weapon: w })); } catch (e) { ok = false; failures.push(`${g.groupKey}|${mode}: damage ${e.message}`); }
-        if (formula !== (g.damage.multiplier > 1 ? `(${g.damage.formula}) * ${g.damage.multiplier}` : g.damage.formula)) ok = false;
+        if (g.tractorBeam) {          // a tractor beam deals no damage: the shared disposition offers no damage roll (control: p40)
+          const { resolveDamageDisposition: disp } = await import('../scripts/engine/combat/damage-packet-builder.js');
+          if (disp(r.result?.workflowContext).damageAllowed !== false) ok = false;
+          formula = 'none';
+        } else {
+          try { formula = buildDamageFormula(resolveDamageComposition(v, w, { weapon: w })); } catch (e) { ok = false; failures.push(`${g.groupKey}|${mode}: damage ${e.message}`); }
+          if (formula !== (g.damage.multiplier > 1 ? `(${g.damage.formula}) * ${g.damage.multiplier}` : g.damage.formula)) ok = false;
+        }
         if (!ok) failures.push(`${g.groupKey}|${mode}: attack ${r.result?.atkBonus} expected ${expectBonus}; ${r.log.join('|')}; damage ${formula}`);
         else { provenGroups.add(g.groupKey); provenModes++; }
       }
     }
   }
   assert.deepEqual(failures, []);
-  assert.equal(provenGroups.size, 500, 'the corpus-wide count of offline-executable stock GROUPS (each counted once)');
-  assert.equal(provenModes, 501, 'one group (Krayt\'s Honor turbolaser battery) supports two modes');
+  assert.equal(provenGroups.size, 528, 'the corpus-wide count of offline-executable stock GROUPS (each counted once)');
+  assert.equal(provenModes, 529, 'one group (Krayt\'s Honor turbolaser battery) supports two modes');
   setPolicy(undefined);
 });
 
@@ -411,9 +417,9 @@ test('COVERAGE REPORT: current, and its executable counts are exactly what the C
   execFileSync(process.execPath, ['tools/audits/vehicles/build-stock-weapon-coverage.mjs', '--check']);
   const { readFileSync } = await import('node:fs');
   const cov = JSON.parse(readFileSync('data/audits/vehicles/stock-weapon-coverage.json', 'utf8'));
-  assert.deepEqual([cov.totals.vehicles, cov.totals.groups, cov.totals.offlineExecutableGroups, cov.totals.vehiclesWithOfflineExecutableGroup, cov.totals.liveVerifiedVehicles], [429, 846, 500, 330, 0]);
+  assert.deepEqual([cov.totals.vehicles, cov.totals.groups, cov.totals.offlineExecutableGroups, cov.totals.vehiclesWithOfflineExecutableGroup, cov.totals.liveVerifiedVehicles], [429, 846, 528, 331, 0]);
   const exec = cov.vehicles.flatMap(v => v.groups.filter(g => g.offlineExecutable));
-  assert.equal(exec.length, 500);
+  assert.equal(exec.length, 528);
   for (const g of cov.vehicles.flatMap(v => v.groups)) {
     assert.equal(g.liveVerified, false);
     if (!g.offlineExecutable) { assert.ok(g.refusals.length > 0, g.groupKey + ' has a named refusal'); assert.equal(g.attackReadiness, 'REFUSED'); }
