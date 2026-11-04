@@ -1013,3 +1013,79 @@ Core p. 170 (owner-verified) is implemented in `vehicle-weapon-battery.js` and w
 Implemented as PUBLISHED_RULE (lock-on, Reflex 30 / 10 HP / -5, no second charge, starship-scale single-target splash) and PROJECT_INTERPRETATION (initial loading min(payload, capacity); exact-designation launcher identity; GM reload that creates nothing). No published group is a complete launcher family (none has a verified single launcher); 18 wait for a GM-certified allocation. V-P6C-06 stays recorded as a project interpretation, with the reload action cost explicitly NOT inferred.
 
 - **Revision 32 (2026-11-04):** appended this status note. No existing entry changed.
+
+### Complete Weapon Ecosystem addendum (2026-11-04): newly recorded questions V-P6C-07 .. V-P6C-10 (appended; nothing above is rewritten)
+
+### V-P6C-07 - Miss damage of an area attack that resolves as a single-target attack at starship scale
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-07 |
+| Rules domain | Vehicle weapons (area attacks at starship scale) |
+| Feature | Miss damage of an area attack that resolves as a single-target attack at starship scale |
+| Source | Core Rulebook, Special Combat Rules: Area Attacks (p. 155) and Vehicle Combat: Scale; Rebellion Era Campaign Guide, Anti-Aircraft Flak Pod |
+| Evidence | Core Area Attacks: "Creatures you hit take full damage, and creatures you miss take half damage." Splash weapons: the primary target takes full damage on a hit and half if the attack misses. Core Scale: "area attacks (including autofire, burst radius weapons, and splash weapons) are resolved as attacks on a single target in starship scale unless the weapon is specifically listed as having a starship-scale area attack." The flak pod, which IS listed as a starship-scale area attack, prints half damage on a miss. |
+| Confirmed behavior | At starship scale an ordinary splash, burst or autofire attack is an attack on a single target (owner direction, PUBLISHED_RULE); the hit deals the ordinary damage. Implemented since P6C-3B. |
+| Unresolved question | Whether the single target of such an attack takes half damage when the attack misses (the area-attack miss rule), or nothing (an ordinary single-target miss). Implemented behaviour is the ordinary single-target miss (no damage); it is the absence of an effect, not a chosen reading. |
+| Options | Source text supports both: the area-attack miss rule (Area Attacks, splash weapons) and the single-target resolution (Scale). No other published text addresses it. |
+| Recommended ruling | None |
+| Implementation impact | Affects the 3 executable starship-scale-only stock groups, every future splash/torpedo/missile/ion-bomb group and starship-scale autofire. They stay OFFLINE_EXECUTABLE for the hit outcome; the miss outcome is pending this ruling. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6C-08 - Burst Fire feat on a vehicle weapon
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-08 |
+| Rules domain | Feats and vehicle weapons |
+| Feature | Burst Fire feat on a vehicle weapon |
+| Source | Core Rulebook, Feats (Burst Fire) and Special Combat Rules: Autofire |
+| Evidence | Burst Fire (Strength 13, Weapon Proficiency (heavy weapons), proficient with the weapon): when using a ranged weapon with autofire capability in autofire mode, fire a short burst as a single attack against a single target at -5 for +2 dice of damage; expends five shots; not an area attack. Starships of the Galaxy lists the autofire-capable vehicle weapons (double, quad and fire-linked blaster cannons, laser cannons, light ion cannons and light turbolasers). |
+| Confirmed behavior | Autofire is a swift-action mode of an autofire-capable vehicle weapon; Burst Fire is a feat of a character. |
+| Unresolved question | Whether the feat applies when the gunner or pilot fires a vehicle weapon (and whether the feat's prerequisites and heavy-weapon proficiency are evaluated for the operating character), and what shots a vehicle weapon expends. |
+| Options | None supported by the text. |
+| Recommended ruling | None |
+| Implementation impact | Burst Fire for vehicle weapons is not implemented (no automation is offered). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6C-09 - Whether an autoblaster has an autofire setting
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-09 |
+| Rules domain | Vehicle weapons (modifications) |
+| Feature | Whether an autoblaster has an autofire setting |
+| Source | Starships of the Galaxy, Weapon Systems: Autoblaster; Table 3-5 (p. 47) |
+| Evidence | "Blaster cannons can be designed with a higher cyclic firing rate so long as they have sufficient cooling systems to keep the firing elements from overheating. Only single-mounted blasters are generally made into autoblasters, however." Table 3-5 prints no damage, +0 EP, Restricted, cost x2. The text names the autofire-capable vehicle weapons in the Double/Quad and Fire-Linked paragraphs and does not name the autoblaster there. |
+| Confirmed behavior | Cost multiplier x2, availability Restricted, +0 emplacement points, applies to a single-mounted blaster cannon. |
+| Unresolved question | Whether the higher cyclic rate gives the weapon an autofire setting (and how it interacts with the autofire rules for double, quad and fire-linked weapons), or has a different effect. |
+| Options | None supported by the text. |
+| Recommended ruling | None |
+| Implementation impact | The autoblaster row stays SOURCE_VERIFIED and is not installable. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6C-10 - Combining double, quad, fire-linked and cannon-enhancement damage on one weapon
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-10 |
+| Rules domain | Vehicle weapons (configurations) |
+| Feature | Combining double, quad, fire-linked and cannon-enhancement damage on one weapon |
+| Source | Starships of the Galaxy, Weapon Systems: Cannon, Double/Quad; Cannon Enhancements; Fire-Linked Weapons; Table 3-5 (p. 47) |
+| Evidence | Each configuration prints its own damage increase (+1d10 / +2d10), emplacement points and cost multiplier. Fire-linked weapons: "Weapons of any type that deal damage can be fire-linked"; double and quad cannons are "reciprocating multibarrel weapons"; enhancements "boost the damage output" of a blaster, a laser (but not a turbolaser) or an ion cannon. |
+| Confirmed behavior | Each configuration individually; fire-linked turbolasers are not weapon batteries; triple cannons are functionally identical to double cannons. |
+| Unresolved question | Whether (and how) the damage increases combine when a weapon carries more than one configuration (for example a fire-linked double cannon with enhancements), and the cost and emplacement-point arithmetic of a combination. |
+| Options | None supported by the text. |
+| Recommended ruling | None |
+| Implementation impact | Combinations are refused when configurations are implemented; each configuration is applied alone. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 33 (2026-11-04):** appended V-P6C-07 .. V-P6C-10 (Complete Weapon Ecosystem addendum). No existing entry changed.
