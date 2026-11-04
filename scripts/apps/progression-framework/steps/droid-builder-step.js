@@ -15,6 +15,7 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { DROID_SYSTEMS } from '../../../data/droid-systems.js';
+import { resolveDroidBuilderQuote } from '../../../domain/droids/droid-component-quote-authority.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { ProgressionRules } from '../../../engine/progression/ProgressionRules.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
@@ -144,11 +145,11 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
         // The chassis' default locomotion is part of the baseline frame in chargen.
         // It should not consume construction credits until the player replaces it.
         cost: 0,
-        weight: this._calculateLocomotionWeight(defaultLocomotionId, costFactor),
+        weight: resolveDroidBuilderQuote({ definition: DROID_SYSTEMS.locomotion.find(entry => entry.id === defaultLocomotionId), category: 'locomotion', size, speed: defaultSpeed }).kg,
         isDefault: true,
         isGranted: true
       },
-      processor: { id: 'heuristic', name: 'Heuristic Processor', cost: 0, weight: 5 },
+      processor: { id: 'heuristic', name: 'Heuristic Processor', cost: 0, weight: 5, isGranted: true },
       appendages: [
         { id: 'hand-1', name: 'Hand (Right)', type: 'hand', cost: 0, weight: 0, isDefault: true },
         { id: 'hand-2', name: 'Hand (Left)', type: 'hand', cost: 0, weight: 0, isDefault: true }
@@ -368,20 +369,30 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    * Helper: Calculate locomotion cost based on system and size
    * @private
    */
-  _calculateLocomotionCost(locomotionId, baseSpeed, costFactor) {
-    const system = DROID_SYSTEMS.locomotion?.find(l => l.id === locomotionId);
-    if (!system || !system.costFormula) return 0;
-    return system.costFormula(baseSpeed, costFactor);
-  }
-
   /**
-   * Helper: Calculate locomotion weight based on size
-   * @private
+   * Published DROID_SYSTEMS facts pass through a single mechanical resolver.
+   * Explicit builder grants adjust the charged price AFTER the source quote.
    */
-  _calculateLocomotionWeight(locomotionId, costFactor) {
-    const system = DROID_SYSTEMS.locomotion?.find(l => l.id === locomotionId);
-    if (!system || !system.weightFormula) return 0;
-    return system.weightFormula(costFactor);
+  _quoteDroidSystem(definition, category, subcategory = null, options = {}) {
+    const size = options.size ?? this._droidState?.droidSize ?? null;
+    const group = category === 'enhancement'
+      ? (subcategory === 'appendageEnhancement' ? 'appendageEnhancement' : 'locomotionEnhancement')
+      : category;
+    const locomotion = this._droidState?.droidSystems?.locomotion;
+    const baseDefinition = DROID_SYSTEMS.locomotion?.find(entry => entry.id === locomotion?.id);
+    const baseSpeed = locomotion?.speed ?? null;
+    const baseQuote = group === 'locomotionEnhancement' && baseDefinition
+      ? resolveDroidBuilderQuote({
+          definition: baseDefinition, category: 'locomotion', size, speed: baseSpeed
+        }) : null;
+    return resolveDroidBuilderQuote({
+      definition, category: group, subcategory, size,
+      speed: options.speed ?? null,
+      variant: options.variant ?? null,
+      baseLocomotionCost: baseQuote?.status === 'OK' ? baseQuote.credits : null,
+      appendageBaseCost: options.appendageBaseCost ?? null,
+      appendageBaseWeight: options.appendageBaseWeight ?? null
+    });
   }
 
   _getDroidBuilderContextMode(shell = null) {
@@ -661,6 +672,17 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       issues.push('At least one appendage required');
     }
 
+    // Source-quoted numbers must survive every size refresh. A blocked or
+    // unquoted draft component may never be finalized with a free price.
+    const quotedEntries = [sys.locomotion, sys.processor,
+      ...(sys.appendages || []), ...(sys.accessories || []),
+      ...(sys.locomotionEnhancements || []), ...(sys.appendageEnhancements || [])].filter(Boolean);
+    for (const entry of quotedEntries) {
+      if (entry.quoteStatus === 'BLOCKED' || !Number.isFinite(entry.cost) || !Number.isFinite(entry.weight)) {
+        issues.push(`Unresolved component quote: ${entry.name || entry.id || 'unknown'}`);
+      }
+    }
+
     // Check budget
     if (Number(credits.remaining || 0) < 0) {
       issues.push('Over budget - remove systems to proceed');
@@ -710,7 +732,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    */
   _getCostFactor() {
     const size = this._droidState?.droidSize || 'medium';
-    return getDroidSizeCostFactor(size) || 1;
+    return getDroidSizeCostFactor(size);
   }
 
   /**
@@ -824,73 +846,63 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     const sys = this._droidState?.droidSystems;
     const credits = this._droidState?.droidCredits;
     if (!sys || !credits) return;
-
     this._dedupeInstalledSingletonSystems();
 
-    let recalculatedSpent = 0;
+    const quoteEntry = (entry, definition, group, subcategory = null, options = {}) => {
+      if (!definition) return { ...entry, cost: null, weight: null, quoteStatus: 'BLOCKED', quoteBlockingReason: 'Source definition not found' };
+      const quote = this._quoteDroidSystem(definition, group, subcategory, options);
+      const granted = !!entry.isDefault || !!entry.isGranted || !!options.granted;
+      return {
+        ...entry,
+        name: entry.name || definition.name,
+        cost: quote.status === 'OK' ? (granted ? 0 : quote.credits) : null,
+        weight: quote.kg,
+        quoteStatus: quote.status,
+        quoteBlockingReason: quote.blockingReason,
+        isGranted: !!entry.isGranted || !!options.granted
+      };
+    };
 
     if (sys.locomotion) {
-      const definition = DROID_SYSTEMS.locomotion?.find(system => system.id === sys.locomotion.id);
-      if (definition) {
-        const speed = this._calculateLocomotionSpeed(definition);
-        const weight = this._calculateWeight(definition);
-        const isGranted = !!sys.locomotion.isDefault || !!sys.locomotion.isGranted;
-        const cost = isGranted ? 0 : this._calculateLocomotionCost(definition, speed);
-        sys.locomotion = { ...sys.locomotion, name: definition.name, speed, weight, cost };
-      }
-      recalculatedSpent += Number(sys.locomotion.cost || 0);
+      const def = DROID_SYSTEMS.locomotion?.find(item => item.id === sys.locomotion.id);
+      const speed = def ? this._calculateLocomotionSpeed(def) : null;
+      sys.locomotion = {
+        ...quoteEntry(sys.locomotion, def, 'locomotion', null, { speed }),
+        speed
+      };
     }
 
     if (sys.processor) {
-      const definition = DROID_SYSTEMS.processors?.find(system => system.id === sys.processor.id);
-      if (definition) {
-        const cost = this._calculateProcessorCost(definition);
-        const weight = this._calculateProcessorWeight(definition);
-        sys.processor = { ...sys.processor, name: definition.name, cost, weight };
-      }
-      recalculatedSpent += Number(sys.processor.cost || 0);
+      const def = DROID_SYSTEMS.processors?.find(item => item.id === sys.processor.id);
+      sys.processor = quoteEntry(sys.processor, def, 'processor');
     }
 
-    sys.appendages = (sys.appendages || []).map((appendage, index) => {
-      const lookupId = appendage.id === 'hand-1' || appendage.id === 'hand-2' ? 'hand' : appendage.id;
-      const definition = DROID_SYSTEMS.appendages?.find(system => system.id === lookupId);
-      if (!definition) return appendage;
-      const isGranted = !!appendage.isDefault || !!appendage.isGranted || appendage.id === 'hand-1' || appendage.id === 'hand-2' || (lookupId === 'hand' && index < 2 && Number(appendage.cost || 0) === 0);
-      const cost = isGranted ? 0 : this._calculateAppendageCost(definition);
-      const weight = this._calculateWeight(definition);
-      return { ...appendage, name: appendage.name || definition.name, cost, weight };
+    sys.appendages = (sys.appendages || []).map((entry, index) => {
+      const id = ['hand-1', 'hand-2'].includes(entry.id) ? 'hand' : entry.id;
+      const def = DROID_SYSTEMS.appendages?.find(item => item.id === id);
+      const granted = ['hand-1', 'hand-2'].includes(entry.id) || (id === 'hand' && index < 2 && entry.cost === 0);
+      return quoteEntry(entry, def, 'appendage', null, { granted });
     });
-    recalculatedSpent += (sys.appendages || []).reduce((sum, appendage) => sum + Number(appendage.cost || 0), 0);
 
-    sys.accessories = (sys.accessories || []).map(accessory => {
-      const category = accessory.category || accessory.subcategory;
-      const definition = DROID_SYSTEMS.accessories?.[category]?.find(system => system.id === accessory.id);
-      if (!definition) return accessory;
-      const cost = this._isSpeciesBonusEquipmentChoice('accessory', definition.id, category) && Number(accessory.cost || 0) === 0
-        ? 0
-        : this._calculateAccessoryCost(definition);
-      const weight = this._calculateWeight(definition);
-      return { ...accessory, name: definition.name, category, cost, weight, data: definition };
+    sys.accessories = (sys.accessories || []).map(entry => {
+      const subcategory = entry.category || entry.subcategory;
+      const def = DROID_SYSTEMS.accessories?.[subcategory]?.find(item => item.id === entry.id);
+      return { ...quoteEntry(entry, def, 'accessory', subcategory), category: subcategory };
     });
-    recalculatedSpent += (sys.accessories || []).reduce((sum, accessory) => sum + Number(accessory.cost || 0), 0);
 
-    sys.locomotionEnhancements = (sys.locomotionEnhancements || []).map(enhancement => {
-      const definition = DROID_SYSTEMS.locomotionEnhancements?.find(system => system.id === enhancement.id);
-      if (!definition) return enhancement;
-      return { ...enhancement, name: definition.name, cost: this._calculateEnhancementCost(definition), weight: 0 };
+    sys.locomotionEnhancements = (sys.locomotionEnhancements || []).map(entry => {
+      const def = DROID_SYSTEMS.locomotionEnhancements?.find(item => item.id === entry.id);
+      return quoteEntry(entry, def, 'locomotionEnhancement');
     });
-    recalculatedSpent += (sys.locomotionEnhancements || []).reduce((sum, enhancement) => sum + Number(enhancement.cost || 0), 0);
-
-    sys.appendageEnhancements = (sys.appendageEnhancements || []).map(enhancement => {
-      const definition = DROID_SYSTEMS.appendageEnhancements?.find(system => system.id === enhancement.id);
-      if (!definition) return enhancement;
-      return { ...enhancement, name: definition.name, cost: this._calculateEnhancementCost(definition), weight: Number(enhancement.weight || 0) };
+    sys.appendageEnhancements = (sys.appendageEnhancements || []).map(entry => {
+      const def = DROID_SYSTEMS.appendageEnhancements?.find(item => item.id === entry.id);
+      return quoteEntry(entry, def, 'appendageEnhancement');
     });
-    recalculatedSpent += (sys.appendageEnhancements || []).reduce((sum, enhancement) => sum + Number(enhancement.cost || 0), 0);
 
-    // Spent tracks charged/purchased systems only. A fresh chargen chassis with
-    // only granted defaults should therefore remain at 0 spent / full budget.
-    credits.spent = Math.max(0, Number(recalculatedSpent || 0));
+    const all = [sys.locomotion, sys.processor, ...(sys.appendages || []),
+      ...(sys.accessories || []), ...(sys.locomotionEnhancements || []),
+      ...(sys.appendageEnhancements || [])].filter(Boolean);
+    credits.spent = all.reduce((sum, entry) => sum + (Number.isFinite(entry.cost) ? entry.cost : 0), 0);
     this._normalizeDroidCredits();
     this._recalculateTotals();
   }
@@ -901,144 +913,66 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    */
   purchaseSystem(category, id, subcategory = null) {
     if (!this._droidState) return false;
-
     const sys = this._droidState.droidSystems;
     const credits = this._normalizeDroidCredits();
-    let system = null;
-    let cost = 0;
 
     try {
-      if (!this._systemAllowedBySpeciesConstraints(category, id, subcategory)) {
-        swseLogger.warn('[DroidBuilderStep] System blocked by species droid-builder constraints', {
-          category, id, subcategory, sourceSpecies: this._droidState?.sourceSpecies,
-        });
+      if (!this._systemAllowedBySpeciesConstraints(category, id, subcategory)
+          || this._isSingletonSystemInstalled(category, id, subcategory)) return false;
+
+      const group = category === 'enhancement'
+        ? (subcategory === 'appendageEnhancement' ? 'appendageEnhancement' : 'locomotionEnhancement')
+        : category;
+      const options = {
+        locomotion: DROID_SYSTEMS.locomotion,
+        processor: DROID_SYSTEMS.processors,
+        appendage: DROID_SYSTEMS.appendages,
+        locomotionEnhancement: DROID_SYSTEMS.locomotionEnhancements,
+        appendageEnhancement: DROID_SYSTEMS.appendageEnhancements,
+        accessory: DROID_SYSTEMS.accessories?.[subcategory],
+      };
+      const system = options[group]?.find(entry => entry.id === id);
+      if (!system) return false; // Unknown component is never a free construction.
+      const speed = group === 'locomotion' ? this._calculateLocomotionSpeed(system) : null;
+      const quote = this._quoteDroidSystem(system, group, subcategory, { speed });
+      if (quote.status !== 'OK') {
+        swseLogger.warn('[DroidBuilderStep] Blocked component quote', { category, id, subcategory, reason: quote.blockingReason });
         return false;
       }
 
-      if (this._isSingletonSystemInstalled(category, id, subcategory)) {
-        swseLogger.warn('[DroidBuilderStep] Duplicate singleton install ignored', { category, id, subcategory });
+      const freeHand = group === 'appendage' && id === 'hand' && this._countFreeHands() < 2;
+      const speciesGrant = group === 'accessory' && this._isSpeciesBonusEquipmentChoice(category, id, subcategory);
+      const startingHeuristic = group === 'processor' && id === 'heuristic'
+        && !!sys.processor?.isGranted;
+      const granted = freeHand || speciesGrant || startingHeuristic;
+      const cost = granted ? 0 : quote.credits;
+      const old = group === 'locomotion' ? sys.locomotion : group === 'processor' ? sys.processor : null;
+      const recovered = Number.isFinite(old?.cost) ? old.cost : 0;
+      if (Math.max(0, cost - recovered) > credits.remaining) {
+        swseLogger.warn('[DroidBuilderStep] Not enough credits for component', { category, id, cost });
         return false;
       }
 
-      if (category === 'locomotion') {
-        system = DROID_SYSTEMS.locomotion.find(s => s.id === id);
-        if (system) {
-          const speed = this._calculateLocomotionSpeed(system);
-          const weight = this._calculateWeight(system);
-          cost = this._calculateLocomotionCost(system, speed);
+      const entry = { id: system.id, name: system.name, cost,
+        weight: quote.kg, quoteStatus: quote.status, quoteBlockingReason: null,
+        ...(granted ? { isGranted: true } : {}),
+        ...(speed === null ? {} : { speed }),
+        ...(group === 'accessory' ? { category: subcategory, data: system } : {})
+      };
+      if (group === 'locomotion') sys.locomotion = entry;
+      else if (group === 'processor') sys.processor = entry;
+      else if (group === 'appendage') (sys.appendages ??= []).push(entry);
+      else if (group === 'accessory') (sys.accessories ??= []).push(entry);
+      else if (group === 'locomotionEnhancement') (sys.locomotionEnhancements ??= []).push(entry);
+      else if (group === 'appendageEnhancement') (sys.appendageEnhancements ??= []).push(entry);
+      else return false;
 
-          if (cost > credits.remaining) {
-            swseLogger.warn('[DroidBuilderStep] Not enough credits for locomotion');
-            return false;
-          }
-
-          // Remove old locomotion cost if replacing
-          if (sys.locomotion) {
-            credits.spent -= sys.locomotion.cost;
-          }
-
-          sys.locomotion = {
-            id: system.id,
-            name: system.name,
-            cost,
-            weight,
-            speed
-          };
-        }
-      } else if (category === 'processor') {
-        system = DROID_SYSTEMS.processors.find(s => s.id === id);
-        if (system) {
-          cost = this._calculateProcessorCost(system);
-          const weight = this._calculateProcessorWeight(system);
-
-          if (cost > credits.remaining) {
-            swseLogger.warn('[DroidBuilderStep] Not enough credits for processor');
-            return false;
-          }
-
-          // Remove old processor cost if replacing
-          if (sys.processor) {
-            credits.spent -= sys.processor.cost;
-          }
-
-          sys.processor = {
-            id: system.id,
-            name: system.name,
-            cost,
-            weight
-          };
-        }
-      } else if (category === 'appendage') {
-        system = DROID_SYSTEMS.appendages.find(s => s.id === id);
-        if (system) {
-          const weight = this._calculateWeight(system);
-          const isFreeHand = (id === 'hand' && this._countFreeHands() < 2);
-          cost = isFreeHand ? 0 : this._calculateAppendageCost(system);
-
-          if (cost > credits.remaining) {
-            swseLogger.warn('[DroidBuilderStep] Not enough credits for appendage');
-            return false;
-          }
-
-          sys.appendages.push({
-            id: system.id,
-            name: system.name,
-            cost,
-            weight
-          });
-        }
-      } else if (category === 'accessory') {
-        const accessoryCategory = DROID_SYSTEMS.accessories[subcategory];
-        system = accessoryCategory?.find(s => s.id === id);
-        if (system) {
-          cost = this._isSpeciesBonusEquipmentChoice(category, id, subcategory) ? 0 : this._calculateAccessoryCost(system);
-          const weight = this._calculateWeight(system);
-
-          if (cost > credits.remaining) {
-            swseLogger.warn('[DroidBuilderStep] Not enough credits for accessory');
-            return false;
-          }
-
-          sys.accessories.push({
-            id: system.id,
-            name: system.name,
-            category: subcategory,
-            cost,
-            weight,
-            data: system
-          });
-        }
-      } else if (category === 'enhancement') {
-        const enhancement = DROID_SYSTEMS.locomotionEnhancements?.find(e => e.id === id);
-        if (enhancement) {
-          cost = this._calculateEnhancementCost(enhancement);
-
-          if (cost > credits.remaining) {
-            swseLogger.warn('[DroidBuilderStep] Not enough credits for enhancement');
-            return false;
-          }
-
-          if (!sys.locomotionEnhancements) sys.locomotionEnhancements = [];
-          sys.locomotionEnhancements.push({
-            id: enhancement.id,
-            name: enhancement.name,
-            cost,
-            weight: 0
-          });
-        }
-      }
-
-      // Update remaining and recalculate totals. Cost is applied once here;
-      // species bonus equipment can set cost to 0 before this point.
-      if (cost > 0) {
-        credits.spent += cost;
-      }
+      credits.spent += cost - recovered;
       this._normalizeDroidCredits();
       this._recalculateTotals();
-
       return true;
-    } catch (e) {
-      swseLogger.error('[DroidBuilderStep.purchaseSystem]', e);
+    } catch (error) {
+      swseLogger.error('[DroidBuilderStep.purchaseSystem]', error);
       return false;
     }
   }
@@ -1166,91 +1100,6 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
   _calculateLocomotionSpeed(system) {
     const size = this._droidState.droidSize || 'medium';
     return system.speeds?.[size] || system.speeds?.medium || 6;
-  }
-
-  /**
-   * Helper: Calculate locomotion cost.
-   */
-  _calculateLocomotionCost(system, speed) {
-    const costFactor = this._getCostFactor();
-    if (typeof system.costFormula === 'function') {
-      return system.costFormula(speed, costFactor);
-    }
-    return system.cost || 0;
-  }
-
-  /**
-   * Helper: Calculate appendage cost.
-   */
-  _calculateAppendageCost(system) {
-    const costFactor = this._getCostFactor();
-    if (typeof system.cost === 'function') {
-      return system.cost(costFactor);
-    }
-    return system.cost || 0;
-  }
-
-  /**
-   * Helper: Calculate processor cost.
-   */
-  _calculateProcessorCost(system) {
-    const costFactor = this._getCostFactor();
-    // Heuristic is free in chargen
-    if (system.id === 'heuristic') return 0;
-    if (typeof system.costFormula === 'function') {
-      return system.costFormula(costFactor);
-    }
-    return system.cost || 0;
-  }
-
-  /**
-   * Helper: Calculate processor weight.
-   */
-  _calculateProcessorWeight(system) {
-    const costFactor = this._getCostFactor();
-    if (typeof system.weightFormula === 'function') {
-      return system.weightFormula(costFactor);
-    }
-    return system.weight || 0;
-  }
-
-  /**
-   * Helper: Calculate accessory cost.
-   */
-  _calculateAccessoryCost(system) {
-    const costFactor = this._getCostFactor();
-    if (typeof system.costFormula === 'function') {
-      return system.costFormula(costFactor);
-    }
-    return system.cost || 0;
-  }
-
-  /**
-   * Helper: Calculate enhancement cost.
-   */
-  _calculateEnhancementCost(enhancement) {
-    const costFactor = this._getCostFactor();
-    if (typeof enhancement.costFormula === 'function') {
-      return enhancement.costFormula(costFactor);
-    }
-    if (typeof enhancement.cost === 'function') {
-      return enhancement.cost(costFactor);
-    }
-    return enhancement.cost || 0;
-  }
-
-  /**
-   * Helper: Calculate weight for any system.
-   */
-  _calculateWeight(system) {
-    const costFactor = this._getCostFactor();
-    if (typeof system.weightFormula === 'function') {
-      return system.weightFormula(costFactor);
-    }
-    if (typeof system.weight === 'function') {
-      return system.weight(costFactor);
-    }
-    return system.weight || 0;
   }
 
   /**
