@@ -29,6 +29,7 @@
  */
 
 import { DROID_SYSTEMS } from "/systems/foundryvtt-swse/scripts/data/droid-systems.js";
+import { getDroidPriceFactor, resolveDroidComponentQuote } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-component-quote-authority.js";
 
 export const DROID_PART_CATEGORIES = Object.freeze({
   PROCESSOR: 'processor',
@@ -547,111 +548,56 @@ export function getAllDroidPartDefinitions() {
   return out.sort((a, b) => String(a.category).localeCompare(String(b.category)) || String(a.name).localeCompare(String(b.name)));
 }
 
-export function getDroidCostFactor(size = 'medium') {
-  const factors = {
-    fine: 0.125,
-    diminutive: 0.2,
-    tiny: 0.25,
-    small: 0.5,
-    medium: 1,
-    large: 2,
-    huge: 4,
-    gargantuan: 8,
-    colossal: 16
-  };
-  return factors[slug(size)] ?? 1;
+/**
+ * Compatibility export is a delegation, not a second factor table.
+ * Unknown sizes are invalid (null), never silently Medium.
+ */
+export function getDroidCostFactor(size) {
+  return getDroidPriceFactor(size);
 }
 
-function getActorDroidSize(actor) {
-  return slug(actor?.system?.droidSystems?.size ?? actor?.system?.size ?? actor?.system?.droidSize ?? 'medium') || 'medium';
+function getActorDroidSize(actor, explicitSize = null) {
+  return explicitSize ?? actor?.system?.droidSystems?.size ?? actor?.system?.size ?? actor?.system?.droidSize ?? null;
 }
 
-function getActorPrimaryLocomotion(actor) {
-  const systems = actor?.system?.droidSystems ?? {};
-  return systems.locomotion?.id ?? systems.locomotion?.name ?? actor?.system?.locomotion?.type ?? 'walking';
+/**
+ * One read-only adapter from live droid-part identities to the V2 source
+ * quote authority. Installed instance cost/weight are deliberately NOT inputs:
+ * they cannot override canonical source calculations.
+ */
+export function resolveDroidPartQuote(actor, part, options = {}) {
+  const def = getDroidPartDefinition(part?.ruleId ?? part?.id ?? part?.name ?? part);
+  if (!def?.source) {
+    return { status: 'BLOCKED', credits: null, kg: null, blockingReason: 'No canonical source definition for this droid component' };
+  }
+  return resolveDroidComponentQuote({
+    definition: def.source,
+    size: getActorDroidSize(actor, options.size),
+    category: def.category,
+    sourcePath: def.sourcePath,
+    speed: options.speed,
+    variant: options.variant,
+    appendageBaseCost: options.appendageBaseCost,
+    appendageBaseWeight: options.appendageBaseWeight,
+    baseLocomotionCost: options.baseLocomotionCost
+  });
 }
 
 export function computeDroidLocomotionCost(actor, locomotionId = null, options = {}) {
-  const size = getActorDroidSize(actor);
-  const costFactor = getDroidCostFactor(size);
-  const id = canonicalPartId(locomotionId ?? getActorPrimaryLocomotion(actor));
-  const def = getDroidPartDefinition(id) ?? getDroidPartDefinition('walking');
-  const baseSpeed = Number(options.speed ?? def?.source?.baseSpeed?.[size] ?? def?.source?.speeds?.[size] ?? def?.baseSpeed?.[size] ?? 6);
-  if (typeof def?.costFormula === 'function') return Math.max(0, Math.ceil(def.costFormula(baseSpeed, costFactor)));
-  if (typeof def?.source?.costFormula === 'function') return Math.max(0, Math.ceil(def.source.costFormula(baseSpeed, costFactor)));
-  return Math.max(0, Number(def?.cost ?? 0) || 0);
+  const id = locomotionId ?? actor?.system?.droidSystems?.locomotion?.id;
+  return resolveDroidPartQuote(actor, id, options).credits;
 }
 
-function computeAppendageBaseCost(actor, appendageId = 'hand') {
-  const costFactor = getDroidCostFactor(getActorDroidSize(actor));
-  const def = getDroidPartDefinition(appendageId) ?? getDroidPartDefinition('hand');
-  const raw = def?.source?.cost ?? def?.cost;
-  if (typeof raw === 'function') return Math.max(0, Math.ceil(raw(costFactor)));
-  return Math.max(0, Number(raw ?? 50 * costFactor) || 0);
-}
-
-function resolveVariantCost(value, actor, options = {}) {
-  if (typeof value === 'number') return value;
-  if (typeof value === 'function') return value(getDroidCostFactor(getActorDroidSize(actor)));
-  if (Array.isArray(value)) {
-    const wanted = slug(options.variant ?? options.type ?? '');
-    const match = wanted ? value.find(entry => slug(entry.version ?? entry.type ?? entry.id ?? entry.name) === wanted) : null;
-    const selected = match ?? value[0];
-    if (!selected) return null;
-    return resolveVariantCost(selected.cost ?? selected.price ?? 0, actor, options);
-  }
-  return firstFinite(value);
-}
-
+/**
+ * null means not quotable. It is NOT a free component and must reject
+ * checkout/installation instead of coercing null to 0.
+ */
 export function computeDroidPartCost(actor, part, options = {}) {
-  const def = getDroidPartDefinition(part?.id ?? part?.ruleId ?? part?.name ?? part);
-  if (!def) return 0;
-  const size = getActorDroidSize(actor);
-  const costFactor = getDroidCostFactor(size);
-  const source = def.source ?? {};
-  const explicit = resolveVariantCost(options.cost ?? part?.cost, actor, options);
-  if (explicit !== null && explicit !== 0) return Math.max(0, Math.ceil(explicit));
-
-  const flatCost = resolveVariantCost(source.cost ?? def.cost, actor, options);
-  if (flatCost !== null) return Math.max(0, Math.ceil(flatCost));
-
-  if (typeof source.costFormula === 'function' || typeof def.costFormula === 'function') {
-    const fn = source.costFormula ?? def.costFormula;
-    const baseSpeed = Number(options.speed ?? source.baseSpeed?.[size] ?? source.speeds?.[size] ?? 6);
-    return Math.max(0, Math.ceil(fn(baseSpeed, costFactor)));
-  }
-
-  const multiplier = Number(source.costMultiplier ?? def.costMultiplier ?? 0);
-  if (Number.isFinite(multiplier) && multiplier > 0) {
-    const category = def.category ?? sourceCategoryFromPath(source.sourcePath);
-    if (category === DROID_PART_CATEGORIES.LOCOMOTION) {
-      return Math.max(0, Math.ceil(computeDroidLocomotionCost(actor, options.baseLocomotionId) * multiplier));
-    }
-    if (category === DROID_PART_CATEGORIES.APPENDAGE || String(def.slot).startsWith('appendage')) {
-      return Math.max(0, Math.ceil(computeAppendageBaseCost(actor, options.baseAppendageId) * multiplier));
-    }
-  }
-
-  // Source data sometimes uses a custom build marker like "5000+". Keep the
-  // minimum floor if a number is embedded so Garage can quote a conservative cost.
-  const costText = String(source.cost ?? def.cost ?? '');
-  const embedded = costText.match(/\d+/);
-  if (embedded) return Math.max(0, Number(embedded[0]) || 0);
-  return 0;
+  return resolveDroidPartQuote(actor, part, options).credits;
 }
 
 export function computeDroidPartWeight(actor, part, options = {}) {
-  const def = getDroidPartDefinition(part?.id ?? part?.ruleId ?? part?.name ?? part);
-  if (!def) return 0;
-  const costFactor = getDroidCostFactor(getActorDroidSize(actor));
-  const source = def.source ?? {};
-  const raw = options.weight ?? part?.weight ?? source.weight ?? def.weight;
-  if (typeof raw === 'function') return Math.max(0, Number(raw(costFactor)) || 0);
-  if (Array.isArray(raw)) return resolveVariantCost(raw.map(entry => ({ ...entry, cost: entry.weight })), actor, options) ?? 0;
-  const numeric = firstFinite(raw);
-  if (numeric !== null) return Math.max(0, numeric);
-  if (typeof source.weightFormula === 'function') return Math.max(0, Number(source.weightFormula(costFactor)) || 0);
-  return 0;
+  return resolveDroidPartQuote(actor, part, options).kg;
 }
 
 export function getSelfDestructBurstSquares(size, { miniaturized = false } = {}) {
@@ -688,8 +634,11 @@ export function hydrateDroidPart(part = {}, options = {}) {
     features: part.features || def?.features || [],
     restrictions: part.restrictions || def?.restrictions || [],
     availability: part.availability || def?.availability || '-',
-    cost: computeDroidPartCost(options.actor ?? null, part),
-    weight: computeDroidPartWeight(options.actor ?? null, part)
+    ...(() => {
+      const quote = resolveDroidPartQuote(options.actor ?? null, part, options);
+      return { cost: quote.credits, weight: quote.kg,
+        quoteStatus: quote.status, quoteBlockingReason: quote.blockingReason };
+    })()
   };
 }
 
