@@ -8,14 +8,14 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 
 | Category | Count |
 |---|---|
-| RULES_DECISION_REQUIRED | 10 |
+| RULES_DECISION_REQUIRED | 8 |
 | SOURCE_EVIDENCE_MISSING | 7 |
 | ENGINEERING_COMPLEXITY | 16 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 4 |
 | DEPENDENCY_BLOCKED | 8 |
 
-Open items: 46. Resolved items: 3 (listed at the end).
+Open items: 44. Resolved items: 5 (listed at the end).
 
 ## Items (by severity)
 
@@ -31,7 +31,6 @@ Open items: 46. Resolved items: 3 (listed at the end).
 | P6B-D-034 | STOCK | published stock weapon batteries and multi-gunner stations (291 groups) | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-036 | STOCK | published stock splash, ion and ammunition-limited groups (torpedoes, missiles, ion cannons; 71 splash + 71 ion groups) | DEPENDENCY_BLOCKED | IMPORTANT | no | V-P6A-03 |
 | P6B-D-043 | STOCK | weapon batteries crewed by named gunners (assisting roster) | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
-| P6B-D-045 | STOCK | ion damage: ordering with shield rating / damage reduction, organics, and interplay with optional variants | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-04 |
 | P6B-D-047 | STOCK | missile and torpedo lock-on (second attack at -5, self-destruct, shoot-down) | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-048 | STOCK | area and splash damage for vehicle weapons | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-049 | STOCK | finite ammunition ledger for vehicle launchers: payload versus launcher capacity, and reloading | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-06 |
@@ -66,7 +65,6 @@ Open items: 46. Resolved items: 3 (listed at the end).
 | P6B-D-039 | STOCK | point-defense weapon modification (catalog row "point-defense", +4,000 credits) | ENGINEERING_COMPLEXITY | MINOR | no | - |
 | P6B-D-041 | STOCK | published stock groups with droid, remote or ambiguous operators | ENGINEERING_COMPLEXITY | MINOR | no | - |
 | P6B-D-044 | STOCK | battery aiding another battery (independent firing is now implemented) | RULES_DECISION_REQUIRED | MINOR | yes | V-P6C-03 |
-| P6B-D-046 | STOCK | AAT-1 ion vulnerability ("takes double damage from ion weapons", Core p. 176) and R-28 ion naming (Legacy Era p. 85) | RULES_DECISION_REQUIRED | MINOR | yes | V-P6C-05 |
 
 ## Details
 
@@ -486,26 +484,6 @@ Open items: 46. Resolved items: 3 (listed at the end).
 - **Impact:** Battery-aids-battery is not offered at runtime.
 - **Recommended action:** Owner ruling on V-P6C-03, then add one action that records the aid on the existing effect/modifier authority.
 
-### P6B-D-045 - ion damage: ordering with shield rating / damage reduction, organics, and interplay with optional variants
-
-- **Source:** Core Rulebook pp. 159-160 (owner-verified); damage-resolution-engine.js; damage-packet-rules.js
-- **Category / severity:** RULES_DECISION_REQUIRED / IMPORTANT
-- **Reason:** The verified rule gives: half to HP, full (unhalved) to the threshold, 2 steps at the threshold, 5 steps and disabled at 0 HP, ordinary organics only the half effect with no other ill effect, creatures with prosthetics full damage with the extra effects. Shield rating is applied before damage reduction (Core). The text does not say whether the FULL ion amount compared to the threshold is taken before or after shields and damage reduction (the engine compares the rolled amount for ion and stun, the amount after them for ordinary damage), and the generic 0-HP rule destroys a droid/object/vehicle (kills a creature) whose reducing damage also meets its threshold while the ion text says only "disabled". Ion hits that touch either point are reported with `ionRuleDeferred` (the reversible outcome, disabled, is applied).
-- **Missing:** Order of shield rating / damage reduction relative to the ion threshold comparison; whether the generic destroyed/killed rule governs an ion hit that reaches 0 HP and the threshold.
-- **Owner ruling needed:** yes (V-P6C-04)
-- **Impact:** Ion results on shielded or damage-reduced targets, and ion hits at 0 HP that also reach the threshold, carry an explicit unresolved flag.
-- **Recommended action:** Owner ruling on V-P6C-04; the p27 ORDERING and 0-HP tests pin the current behavior so a ruling changes it deliberately.
-
-### P6B-D-046 - AAT-1 ion vulnerability ("takes double damage from ion weapons", Core p. 176) and R-28 ion naming (Legacy Era p. 85)
-
-- **Source:** canonical records core-aat-1 (text.mechanicalNotes), le-r-28-starfighter
-- **Category / severity:** RULES_DECISION_REQUIRED / MINOR
-- **Reason:** The AAT-1 vulnerability is read from the verified source record by an exact pattern (damage-vulnerability-authority.js) and recorded on the damage packet, but NOT applied: the text does not order the doubling against ion halving, shield rating, damage reduction (the AAT-1 has DR 15), the threshold, the weapon multiplier or battery dice, so no combination is fully settled. The R-28's weapon is NAMED medium ion cannons but its printed damage line (6d10x2) does not type it as ion.
-- **Missing:** What the AAT-1 vulnerability multiplies and where in the damage event; whether the R-28 weapon deals ion damage.
-- **Owner ruling needed:** yes (V-P6C-05)
-- **Impact:** AAT-1 receives no ion vulnerability (it is flagged as not applied); the R-28 ion cannons stay refused.
-- **Recommended action:** Owner ruling on V-P6C-05.
-
 ### P6B-D-047 - missile and torpedo lock-on (second attack at -5, self-destruct, shoot-down)
 
 - **Source:** Core Rulebook, Vehicles: Missiles and Torpedoes
@@ -552,3 +530,13 @@ Open items: 46. Resolved items: 3 (listed at the end).
 
 - **Resolved:** Owner direction 2026-11-03: do not guess the weapon count; support independent single-weapon firing. Implemented in vehicle-weapon-battery.js, vehicle-stock-weapon-groups.js (modes), vehicle-stock-weapon-items.js (one Item per mode).
 - **Was:** Core p. 170 caps extra hits by the identical weapons actually participating. A battery statblock prints "battery (N gunners)"; only Krayt's Honor and the Rendili Light Corvette also print the number of weapons. Owner direction 2026-11-03 (V-P6C-02): the weapon count and the gunner count are independent and neither is inferred from the other; the equality requirement written in 2B was an invented restriction and is removed. A battery's weapons may fire independently without battery assistance (Core p. 170), which needs only the printed gunner count: that independent-weapon mode is executable for 64 printed batteries (63 of them independent-only). Full-battery mode (assistance + margin hits) still needs a printed weapon count.
+
+### P6B-D-045 - ion damage: ordering with shield rating / damage reduction and 0 HP + threshold (resolved by approved project interpretation)
+
+- **Resolved:** Owner addendum 2026-11-04: approved sequencing and specific-over-general at 0 HP (PROJECT_INTERPRETATION).
+- **Was:** Resolved 2026-11-04 as PROJECT_INTERPRETATION V-P6C-04 (owner addendum): vulnerability -> shield rating -> damage reduction -> kept full amount -> HP halving -> threshold on the kept amount; at 0 HP the specific ion disable outcome governs the general destroy outcome for an ion-only hit. Implemented in damage-packet-rules.js and damage-resolution-engine.js; the damage type stays ion for every target and only the ion special effects are switched off for an ordinary organic. Hits that exercise an interpretation report it in result.projectInterpretations.
+
+### P6B-D-046 - R-28 "medium ion cannons" damage typing (Legacy Era Campaign Guide p. 85); AAT-1 vulnerability is implemented
+
+- **Resolved:** AAT-1 part resolved 2026-11-04 (owner addendum, PROJECT_INTERPRETATION).
+- **Was:** AAT-1 (Core p. 176): implemented as PROJECT_INTERPRETATION V-P6C-05 through damage-vulnerability-authority.js (x2 on the incoming ion damage before shield rating, damage reduction and halving). R-28: the statblock prints `Medium ion cannons (pilot) Atk +7, Dmg 6d10x2` with no ion type, while the narrative calls 'the fire-linked ion cannons' the ship's 'nonlethal munitions'. The canonical group evidence does not type the damage and canonical records are not edited.

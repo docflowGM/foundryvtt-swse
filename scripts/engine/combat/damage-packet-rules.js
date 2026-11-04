@@ -403,11 +403,25 @@ export function applyTargetDamagePacketRules(packet = {}, target = null) {
     }
   }
 
+  // A published source-backed vulnerability multiplies the INCOMING damage of its type after the weapon's own damage calculation
+  // and BEFORE shield rating, damage reduction and ion halving (PROJECT_INTERPRETATION V-P6C-05; the AAT-1, Core p. 176). It is
+  // applied once, here, never to the attack roll.
+  const vulnerability = resolveSourceDamageVulnerability(target, requestedType);
+  if (vulnerability) {
+    const before = amount;
+    if (vulnerability.state === VULNERABILITY_STATE.ACTIVE) amount = Math.max(0, Math.floor(amount * vulnerability.multiplier));
+    next.flags.damageVulnerability = { ...vulnerability, applied: vulnerability.state === VULNERABILITY_STATE.ACTIVE, amountBefore: before, amountAfter: amount };
+  }
+
   if (requestedType === 'ion') {
-    // Core pp. 159-160 (owner-verified), three kinds of target:
-    //   electronic (droid, vehicle, object, device): HP takes HALF; the full amount is compared to the threshold; the extra effects apply;
-    //   cybernetic (a creature with prosthetics, or class-flagged): HP takes FULL damage (Cybernetic Prosthesis, p. 137); the extra effects apply;
-    //   ordinary organic: HP takes HALF and the creature suffers "no other ill effects" (no threshold or condition-track effect).
+    // Core pp. 159-160 and p. 137, three kinds of target:
+    //   electronic (droid, vehicle, object, device): HP takes HALF; the ion effects apply (2 steps at the threshold, 5 steps / disabled at 0 HP);
+    //   cybernetic (a creature with prosthetics, or class-flagged): HP takes FULL damage (Cybernetic Prosthesis); the ion effects apply;
+    //   ordinary organic: HP takes HALF and the creature suffers "no other ill effects".
+    // The damage TYPE stays ion in every case (so type-specific protections, reporting and effects keep seeing ion damage); only
+    // the ion SPECIAL EFFECTS are switched off for an ordinary organic (`ionEffectsApply: false`, threshold effects suppressed).
+    // The threshold gets NO packet-level override: the engine compares the full amount that survives shield rating and damage
+    // reduction, before the hit-point halving (PROJECT_INTERPRETATION V-P6C-04).
     const electronic = target ? isIonEligibleDamageTarget(target) : undefined;
     const cybernetic = target && !electronic ? (next.flags.ionEligibleByClass === true || creatureHasCyberneticProsthetics(target)) : false;
     const eligible = target ? (electronic || cybernetic) : undefined;
@@ -415,41 +429,26 @@ export function applyTargetDamagePacketRules(packet = {}, target = null) {
     next.flags.ion = true;
     next.flags.ionEligible = eligible;
 
-    if (eligible === true) {
+    if (eligible !== undefined) {
       next.type = 'ion';
       next.options.type = 'ion';
       next.options.damageType = 'ion';
       next.options.ion = true;
-      next.options.ionEligible = true;
+      next.options.ionEligible = eligible;
+      next.options.ionEffectsApply = eligible;
+      next.flags.ionThresholdUsesOriginalDamage = eligible;       // = the full, pre-halving amount that survives mitigation
+    }
+    if (eligible === true) {
       next.options.hpDamageMultiplier = asNumber(next.options.hpDamageMultiplier, cybernetic ? 1 : 0.5);
-      if (next.disposition?.damageAllowed !== false && amount > 0) {
-        next.options.thresholdDamageOverride = Math.max(0, asNumber(next.options.thresholdDamageOverride, amount));
-      }
       next.flags.ionHpHalved = !cybernetic;
       next.flags.ionFullHpDamage = cybernetic;
-      next.flags.ionThresholdUsesOriginalDamage = true;
     } else if (eligible === false) {
-      next.type = 'normal';
-      next.options.type = 'normal';
-      next.options.damageType = 'normal';
-      next.options.ion = false;
-      next.options.ionEligible = false;
-      next.options.ionSuppressed = true;
-      next.flags.ionSuppressed = true;
-      next.flags.ionHpHalved = false;
-      next.flags.ionThresholdUsesOriginalDamage = false;
       next.options.hpDamageMultiplier = asNumber(next.options.hpDamageMultiplier, 0.5);
       next.options.thresholdEffectsSuppressed = true;
+      next.flags.ionSuppressed = true;
+      next.flags.ionHpHalved = false;
       next.flags.ionOrganicHalved = true;
     }
-  }
-
-  // A published vulnerability (the AAT-1's double ion damage, Core p. 176) is recorded on the packet. It is NOT applied while
-  // its interaction with the other steps of the event is unsettled (V-P6C-05); the packet says so instead of guessing.
-  const vulnerability = resolveSourceDamageVulnerability(target, requestedType);
-  if (vulnerability) {
-    next.flags.damageVulnerability = vulnerability;
-    if (vulnerability.state !== VULNERABILITY_STATE.ACTIVE) next.flags.damageVulnerabilityDeferred = vulnerability.decision;
   }
 
   next.amount = amount;

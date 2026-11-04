@@ -245,11 +245,14 @@ export class DamageResolutionEngine {
     result.damageToHP = Math.max(0, Math.floor(hpDamageBeforeSpecial * hpDamageMultiplier));
     result.hpAfter = Math.max(0, result.hpBefore - result.damageToHP);
 
-    // Ion: the published text orders shield rating before damage reduction but does not say whether the FULL ion amount compared
-    // to the threshold is taken before or after them (V-P6C-04). The engine keeps its existing reading (the rolled amount) and
-    // SAYS when the two readings would differ, rather than presenting the outcome as settled.
-    if (damageType === 'ion' && (Number(mitigationResult.shield?.applied) > 0 || Number(mitigationResult.damageReduction?.applied) > 0)) {
-      (result.ionRuleDeferred ??= []).push('V-P6C-04:shield-damage-reduction-order');
+    // ION (Core pp. 159-160, 161). The damage TYPE stays 'ion' for every target, so type-specific protections, reporting and
+    // effects keep seeing ion damage; the ion SPECIAL EFFECTS (the 2-step threshold move, the 5-step disable at 0 HP) apply only
+    // where the packet rules say the target is reached by them (`ionEffectsApply !== false`). Project interpretation V-P6C-04
+    // (PROJECT_INTERPRETATION, not a printed sequence): vulnerability -> shield rating -> damage reduction -> [full amount kept for
+    // the threshold] -> hit-point halving -> threshold comparison on the kept amount.
+    const ionEffects = damageType === 'ion' && options?.ionEffectsApply !== false;
+    if (ionEffects && (Number(mitigationResult.shield?.applied) > 0 || Number(mitigationResult.damageReduction?.applied) > 0)) {
+      (result.projectInterpretations ??= []).push('V-P6C-04:threshold-after-shield-and-damage-reduction');
     }
 
     result.mitigation = {
@@ -304,7 +307,7 @@ export class DamageResolutionEngine {
         target: actor,
         damage: thresholdDamage,
         isStun: damageType === 'stun',
-        isIon: damageType === 'ion',
+        isIon: ionEffects,
         attacker: source,
         thresholdAdjustment: Number.isFinite(thresholdAdjustment) ? thresholdAdjustment : 0
       });
@@ -344,7 +347,7 @@ export class DamageResolutionEngine {
         }
       }
 
-      if (damageRules.capIonDamageCtToOneStep && damageType === 'ion') {
+      if (damageRules.capIonDamageCtToOneStep && ionEffects) {
         thresholdShift = Math.min(1, thresholdShift);
         result.ionShielding = { applied: true, cappedConditionShift: thresholdShift };
       }
@@ -424,20 +427,18 @@ export class DamageResolutionEngine {
         return result;
       }
 
-      // Ion (Core pp. 159-160, owner-verified): ion damage that reduces a susceptible target to 0 hit points moves it 5 steps down
-      // the condition track and DISABLES it (unconscious for a creature). The packet type is 'ion' only for a target the ion rules
-      // reach, so nothing else takes this path. It is one outcome: the 2-step threshold shift is not added on top, and the
-      // threshold/instant-death destruction below does not also apply.
-      if (damageType === 'ion') {
+      // Ion (Core pp. 159-160): ion damage that reduces a susceptible target to 0 hit points moves it 5 steps down the condition
+      // track and DISABLES it (unconscious for a creature). It is one outcome: the 2-step threshold shift is not added on top.
+      // PROJECT_INTERPRETATION (V-P6C-04, specific over general): the generic 0-HP rule destroys a droid/object/vehicle (kills a
+      // creature) whose reducing damage also meets its threshold; the more specific ion rule says only "disabled", and for an
+      // ion-only hit that outcome governs, so no destruction is added.
+      if (ionEffects) {
         const cap = ConditionTrackRules.getConditionStepCap();
         const steps = Math.min(5, Math.max(0, cap - result.conditionBefore));
         result.conditionDelta = steps;
         result.conditionAfter = result.conditionBefore + steps;
         result.ionDisabled = true;
-        // The generic 0-HP rule says a droid, object or vehicle whose reducing damage also meets its threshold is DESTROYED (a creature
-        // is killed) instead; the ion text says only "disabled". Which governs an ion hit that does both is unsettled (V-P6C-04): the
-        // reversible outcome is applied and the conflict is reported.
-        if (result.thresholdExceeded) (result.ionRuleDeferred ??= []).push('V-P6C-04:zero-hit-points-and-threshold');
+        if (result.thresholdExceeded) (result.projectInterpretations ??= []).push('V-P6C-04:zero-hit-points-specific-over-general');
         result.dead = false;
         result.destroyed = false;
         result.forceRescueEligible = false;

@@ -989,3 +989,21 @@ Core p. 170 (owner-verified) is implemented in `vehicle-weapon-battery.js` and w
 | Resolution | |
 
 - **Revision 30 (2026-11-04):** appended V-P6C-06. No existing entry changed.
+
+### Owner addendum 2026-11-04: V-P6C-03, V-P6C-04, V-P6C-05 (appended; nothing above is rewritten)
+
+**Decision hierarchy adopted by the owner:** A explicit published rule -> implement, no ruling; B existing system authority -> reuse; C explicit project interpretation -> implement and document as policy (not RAW); D genuine rules gap -> ask. Every decision is classified PUBLISHED_RULE / EXISTING_ENGINE_AUTHORITY / PROJECT_INTERPRETATION / SOURCE_UNRESOLVED.
+
+**V-P6C-03 (battery aiding battery) - resolved by PUBLISHED_RULE.** Core Rulebook p. 170 (Aid Another, read from the OCR): "As a standard action, you can aid an ally's next skill check, ability or attack roll... A gunner can grant a +2 bonus on another character's attack roll by making an attack against a Reflex Defense of 10." Timing is the ally's next attack roll; the bonus is consumed once; no end-of-round expiry. Multiple assisting batteries and unusual stacking remain SOURCE_UNRESOLVED and stay unavailable. Status: `RESOLVED_PUBLISHED_RULE` for the ordinary single-aid case.
+
+**V-P6C-04 (ion ordering) - resolved by PROJECT_INTERPRETATION.** Sequence: vulnerability -> shield rating -> damage reduction -> kept full amount -> hit-point halving -> threshold comparison on the kept amount; at 0 HP the specific ion disable (-5 steps, disabled/unconscious) governs the generic destroy rule for an ion-only hit, with no extra -2. The damage type stays ion for every target. Decision matrix: docs/audits/vehicles/ion-damage-decision-matrix.md. Status: `RESOLVED_PROJECT_INTERPRETATION`.
+
+**V-P6C-05 (AAT-1) - resolved by PROJECT_INTERPRETATION for the AAT-1; R-28 remains `SOURCE_UNRESOLVED`.** The published x2 applies to the incoming ion damage after the weapon's own calculation and before shield rating, damage reduction and halving (worked example: 40 -> 80 -> DR 15 -> 65; HP 32; 65 vs threshold 33). The R-28's medium ion cannons print no ion type on the damage line (the narrative calls them nonlethal ion munitions); the canonical evidence is not edited, so the group stays refused.
+
+**Starship-scale area attacks - PUBLISHED_RULE (Core, Vehicle Combat).** "Area attacks (including autofire, burst radius weapons, and splash weapons) are resolved as attacks on a single target in starship scale unless the weapon is specifically listed as having a starship-scale area attack." The encounter scale is character scale when characters on foot are involved and starship scale when the scene involves vehicles only (Core, Scale).
+
+**Guided missiles - PUBLISHED_RULE (Core, Missiles and Torpedoes).** Aiming locks the weapon on; a missed missile or torpedo attacks again on the next turn at the same bonus with -5 and no action, then self-destructs; Reflex Defense 30, 10 hit points; one launch is one unit of ammunition.
+
+**V-P6C-06 (ammunition) - partly PROJECT_INTERPRETATION.** Payload (the vehicle's complement), loaded ammunition, reserve and launcher capacity are separate quantities. Initial loading convention for a verified single-launcher configuration: loaded = min(payload, certified capacity), reserve = payload - loaded; not applied where the launcher allocation is ambiguous. Reload action costs are not inferred from personal launchers; a GM reload operation transfers reserve to loaded without creating ammunition.
+
+- **Revision 31 (2026-11-04):** appended the owner addendum. No existing text changed.

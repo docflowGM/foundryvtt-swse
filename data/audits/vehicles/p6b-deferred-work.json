@@ -1087,37 +1087,39 @@
     },
     {
       "workstream": "STOCK",
-      "ownerRulingNeeded": true,
+      "ownerRulingNeeded": false,
       "linkedDecisions": [
         "V-P6C-04"
       ],
       "options": [],
       "id": "P6B-D-045",
-      "component": "ion damage: ordering with shield rating / damage reduction, organics, and interplay with optional variants",
+      "component": "ion damage: ordering with shield rating / damage reduction and 0 HP + threshold (resolved by approved project interpretation)",
       "source": "Core Rulebook pp. 159-160 (owner-verified); damage-resolution-engine.js; damage-packet-rules.js",
-      "status": "RULES_DECISION_REQUIRED",
-      "reason": "The verified rule gives: half to HP, full (unhalved) to the threshold, 2 steps at the threshold, 5 steps and disabled at 0 HP, ordinary organics only the half effect with no other ill effect, creatures with prosthetics full damage with the extra effects. Shield rating is applied before damage reduction (Core). The text does not say whether the FULL ion amount compared to the threshold is taken before or after shields and damage reduction (the engine compares the rolled amount for ion and stun, the amount after them for ordinary damage), and the generic 0-HP rule destroys a droid/object/vehicle (kills a creature) whose reducing damage also meets its threshold while the ion text says only \"disabled\". Ion hits that touch either point are reported with `ionRuleDeferred` (the reversible outcome, disabled, is applied).",
-      "missing": "Order of shield rating / damage reduction relative to the ion threshold comparison; whether the generic destroyed/killed rule governs an ion hit that reaches 0 HP and the threshold.",
-      "impact": "Ion results on shielded or damage-reduced targets, and ion hits at 0 HP that also reach the threshold, carry an explicit unresolved flag.",
+      "status": "NONCRITICAL_DEFECT",
+      "reason": "Resolved 2026-11-04 as PROJECT_INTERPRETATION V-P6C-04 (owner addendum): vulnerability -> shield rating -> damage reduction -> kept full amount -> HP halving -> threshold on the kept amount; at 0 HP the specific ion disable outcome governs the general destroy outcome for an ion-only hit. Implemented in damage-packet-rules.js and damage-resolution-engine.js; the damage type stays ion for every target and only the ion special effects are switched off for an ordinary organic. Hits that exercise an interpretation report it in result.projectInterpretations.",
+      "missing": "Nothing blocking. Remaining limits: prostheses are recognized only through owned equipment tagged cybernetic + prosthesis; the ion baseline and the optional double-threshold house rule combine as the larger.",
+      "impact": "None on readiness; the decision matrix (docs/audits/vehicles/ion-damage-decision-matrix.md) pins the adopted outputs.",
       "severity": "IMPORTANT",
-      "recommendedAction": "Owner ruling on V-P6C-04; the p27 ORDERING and 0-HP tests pin the current behavior so a ruling changes it deliberately."
+      "recommendedAction": "Revisit only if the owner changes the interpretation: the p27 DECISION MATRIX test fails first.",
+      "resolution": "Owner addendum 2026-11-04: approved sequencing and specific-over-general at 0 HP (PROJECT_INTERPRETATION)."
     },
     {
       "workstream": "STOCK",
-      "ownerRulingNeeded": true,
+      "ownerRulingNeeded": false,
       "linkedDecisions": [
         "V-P6C-05"
       ],
       "options": [],
       "id": "P6B-D-046",
-      "component": "AAT-1 ion vulnerability (\"takes double damage from ion weapons\", Core p. 176) and R-28 ion naming (Legacy Era p. 85)",
+      "component": "R-28 \"medium ion cannons\" damage typing (Legacy Era Campaign Guide p. 85); AAT-1 vulnerability is implemented",
       "source": "canonical records core-aat-1 (text.mechanicalNotes), le-r-28-starfighter",
-      "status": "RULES_DECISION_REQUIRED",
-      "reason": "The AAT-1 vulnerability is read from the verified source record by an exact pattern (damage-vulnerability-authority.js) and recorded on the damage packet, but NOT applied: the text does not order the doubling against ion halving, shield rating, damage reduction (the AAT-1 has DR 15), the threshold, the weapon multiplier or battery dice, so no combination is fully settled. The R-28's weapon is NAMED medium ion cannons but its printed damage line (6d10x2) does not type it as ion.",
-      "missing": "What the AAT-1 vulnerability multiplies and where in the damage event; whether the R-28 weapon deals ion damage.",
-      "impact": "AAT-1 receives no ion vulnerability (it is flagged as not applied); the R-28 ion cannons stay refused.",
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "reason": "AAT-1 (Core p. 176): implemented as PROJECT_INTERPRETATION V-P6C-05 through damage-vulnerability-authority.js (x2 on the incoming ion damage before shield rating, damage reduction and halving). R-28: the statblock prints `Medium ion cannons (pilot) Atk +7, Dmg 6d10x2` with no ion type, while the narrative calls 'the fire-linked ion cannons' the ship's 'nonlethal munitions'. The canonical group evidence does not type the damage and canonical records are not edited.",
+      "missing": "A source-evidence amendment that types the R-28 group's damage as ion (not a name match).",
+      "impact": "The R-28 medium ion cannons stay refused (STOCK_DAMAGE_ION_UNVERIFIED).",
       "severity": "MINOR",
-      "recommendedAction": "Owner ruling on V-P6C-05."
+      "recommendedAction": "Owner decision to amend the canonical evidence for this one group, or leave it refused.",
+      "resolution": "AAT-1 part resolved 2026-11-04 (owner addendum, PROJECT_INTERPRETATION)."
     },
     {
       "workstream": "STOCK",

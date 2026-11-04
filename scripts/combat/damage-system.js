@@ -92,7 +92,7 @@ export class DamageSystem {
               : result?.resolution?.mitigation?.componentMitigation === true
                 ? ' (component-aware mitigation)'
                 : '';
-      const deferredLabel = result?.resolution?.ionRuleDeferred?.length ? ' (ion interaction unresolved: V-P6C-04)' : (targetPacket.flags?.damageVulnerabilityDeferred ? ` (vulnerability not applied: ${targetPacket.flags.damageVulnerabilityDeferred})` : '');
+      const deferredLabel = result?.resolution?.projectInterpretations?.length ? ' (project interpretation: V-P6C-04)' : (targetPacket.flags?.damageVulnerability?.applied ? ` (vulnerability x${targetPacket.flags.damageVulnerability.multiplier} applied)` : '');
       ui.notifications.info(`${actor.name} takes ${applied}${typeLabel} damage${specialLabel}${deferredLabel}.`);
       return result;
     } catch (err) {

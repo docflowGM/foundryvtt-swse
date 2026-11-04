@@ -164,3 +164,17 @@ A finite-ammunition family needs every one of these, and none exists yet:
 3. An ammunition ledger. The existing `AmmoSystem` is gated on the optional `trackBlasterCharges` house rule (off by default => unlimited), so it cannot be the authority for a finite vehicle supply. The Core statblock "Payload" is "the vehicle's complement of grenades, rockets, missiles, and torpedoes"; a launcher's loaded capacity is a different, separately printed figure (Starships of the Galaxy pp. 45-46: light 6, medium 16, heavy 30, proton torpedo 3, shieldbuster 4, mines 6); only 24 groups print a payload at all.
 4. A reload rule for vehicle launchers: the Core gives one only for personal launchers (a full-round action), and spending when the vehicle carries fire-linked launchers (one shot per linked launcher, SotG Fire-Linked Weapons) needs the launcher count.
 Registered as deferred items P6B-D-047 (lock-on), P6B-D-048 (vehicle area damage), P6B-D-049 (ledger, payload versus capacity, reload) and owner question V-P6C-06. 33 groups are refused for ammunition alone; they stay refused because enabling one without 1-4 would either spend wrongly or drop mechanics.
+
+## P6C-3A: ion pipeline per the approved ordering (2026-11-04)
+
+Implemented as PROJECT_INTERPRETATION (V-P6C-04, V-P6C-05; decision matrix: `ion-damage-decision-matrix.md`):
+- the ion threshold is compared to the full amount that survives shield rating and damage reduction, before the hit-point halving (the
+  packet no longer carries a raw-amount override; the shield-less, DR-less case is unchanged);
+- the damage TYPE stays ion for every target. An ordinary organic keeps its ion identity (type-specific protections, reporting and
+  effects still see ion damage); only the ion special effects are switched off (`ionEffectsApply: false`, threshold effects suppressed);
+- at 0 HP the specific ion disable (-5 steps, disabled/unconscious) governs the generic destroy rule for an ion-only hit, with no extra -2;
+- the AAT-1's published x2 (Core p. 176) is applied once through `damage-vulnerability-authority.js` to the incoming ion damage before
+  shield rating, damage reduction and halving: 40 -> 80 -> DR 15 -> 65 kept -> HP 32; 65 vs threshold 33 -> -2 steps. No vehicle name is tested;
+  only a digest-verified source record carries the vulnerability;
+- a hit that exercises an interpretation reports it in `result.projectInterpretations`.
+The R-28's "medium ion cannons" stay refused: the damage line is untyped and canonical evidence is not edited (see the matrix).
