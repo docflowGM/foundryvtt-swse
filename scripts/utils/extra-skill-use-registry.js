@@ -1,6 +1,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SkillUseFilter } from "/systems/foundryvtt-swse/scripts/utils/skill-use-filter.js";
 import { TreatInjuryMedicalSecretResolver } from "/systems/foundryvtt-swse/scripts/engine/progression/medical/treat-injury-medical-secret-resolver.js";
+import { planQuickSabotage } from "/systems/foundryvtt-swse/scripts/engine/skills/class-saboteur-quick-sabotage.js";
 
 
 
@@ -121,7 +122,7 @@ export class ExtraSkillUseRegistry {
         accessible,
         hidden: !accessible,
       };
-      return this._applyMedicalSecretEnhancements(withAccess, actor);
+      return this._applyQuickSabotage(this._applyMedicalSecretEnhancements(withAccess, actor), actor);
     });
 
     if (effectiveSkillKey === 'treatInjury') {
@@ -137,6 +138,32 @@ export class ExtraSkillUseRegistry {
     }
 
     return includeInaccessible ? hydrated : hydrated.filter((item) => item.accessible !== false);
+  }
+
+  /** Decorate the real player-facing Disable Device uses from the same
+   * Quick Sabotage planner consumed by MechanicsUses.disableDevice().
+   * This changes catalog presentation, NOT ActionEconomyConsumption.
+   */
+  static _applyQuickSabotage(item, actor) {
+    if (!actor || item?.skillKey !== 'mechanics') return item;
+    // Only the three canonical Disable Device records can receive the
+    // class-feature timing. Never fuzzy-match a differently named action.
+    const match = String(item?.label ?? '').trim().match(/^Disable Device\s*[-–—]\s*(Simple|Tricky|Complex)$/i);
+    if (!match) return item;
+    const rule = planQuickSabotage({actor,complexity:match[1],hasSecurityKit:null});
+    if (!rule.allowed || !rule.source) return item;
+    const time = rule.actionType === 'swift' ? '1 swift action'
+      : rule.actionType === 'two-swift-actions' ? '2 swift actions'
+      : 'full-round';
+    const note = `Quick Sabotage: ${time}. Security Kit may be replaced by improvised tools if unavailable. Combat action expenditure remains GM-managed.`;
+    return {
+      ...item,
+      time,
+      description: appendSentence(item.description, note),
+      effect: appendSentence(item.effect, note),
+      quickSabotage: { ...rule, actionCostCommitted:false },
+      classFeatureSource: 'Saboteur — Quick Sabotage',
+    };
   }
 
   static _retargetAthleticsUse(item) {
