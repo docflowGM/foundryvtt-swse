@@ -19,13 +19,14 @@ These are the *Saboteur class levels*, not overall heroic levels. The complexity
 
 - `scripts/engine/skills/class-saboteur-quick-sabotage.js`: pure class-item eligibility, device-complexity validator, action plan and explicit tool availability. It never treats an Item merely named Saboteur as a class, and refuses unknown device complexity rather than silently treating it as simple.
 - `scripts/skills/skill-uses.js` — `MechanicsUses.disableDevice()`: requests the plan before the check, reports the action requirement and tools in chat and the result receipt, permits improvised tools only when the feature applies, and refuses explicit no-Security-Kit cases where the actor lacks Quick Sabotage. Existing call sites without verified tool availability remain operational for compatibility but display `Security Kit (GM verify)` rather than falsely claiming the item exists.
+- `scripts/utils/extra-skill-use-registry.js`: decorates only the three actual Disable Device skill-use catalog records (Simple, Tricky, Complex) for an eligible Saboteur. Their `time`, description, and effect notes reflect the same action plan on the character sheet. Catalog output explicitly says `actionCostCommitted:false`; it is not evidence of spent actions.
 - `tests/class-phase-6g0-saboteur-quick-sabotage.test.mjs`: all class-level/complexity breakpoints, exact two-swift-action requirement, improvised tool policy, spoofed class items, invalid device complexity and check/receipt wiring.
 
 ## Explicit certification limits
 
 1. **The current `MechanicsUses.disableDevice` path only reports action cost.** It does not call the canonical ActionEconomyConsumption owner. Receipts say `committed:false`, and chat says `GM-managed`. Do not represent the swift/full-round cost as automatically deducted until the live extra-skill-use dispatcher threads action expenditure into the skill-use API.
 2. The caller can supply `context.hasSecurityKit` when the GM or a trusted inventory check has established tool availability. When omitted, the result clearly marks availability unverified; this change does not create an independent toolkit identity authority.
-3. `MechanicsUses` currently has no repository consumer outside `scripts/skills/skill-uses.js`, so the class modifier is wired into that implementation, **not certified as reachable through the Foundry character sheet**. The separate extra-skill-use registry and dispatch must be reviewed before claiming player-facing activation.
+3. The **character-sheet extra-skill-use catalog** is now decorated for eligible Saboteurs, but the catalog's roll-dispatch path is separate from `MechanicsUses.disableDevice()` (which has no verified repository consumer). Catalog presentation is implemented; **automatic execution of the customized check/action spend via the actual sheet dispatch is not certified**. An action label alone does not spend swift actions.
 4. The feature is *not* a level-up or bonus-feat record change. The existing class unlock record remains authoritative. Other unmerged class-feature PRs are unaffected.
 5. CI, independent review and Foundry v13 action-economy integration remain required before merging.
 
