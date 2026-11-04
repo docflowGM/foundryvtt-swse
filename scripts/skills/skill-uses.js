@@ -13,6 +13,7 @@ import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
+import { planQuickSabotage } from "/systems/foundryvtt-swse/scripts/engine/skills/class-saboteur-quick-sabotage.js";
 
 // ============================================================================
 // JUMP SKILL (STR)
@@ -460,11 +461,23 @@ export class MechanicsUses {
    * DISABLE DEVICE - Disarm traps, bypass locks, sabotage devices
    * Full-Round Action, DC 15-25
    */
-  static async disableDevice(actor, deviceType = 'mechanical', complexity = 'simple', leaveNoTrace = false) {
+  static async disableDevice(actor, deviceType = 'mechanical', complexity = 'simple', leaveNoTrace = false, context = {}) {
     if (!actor) {
       return { success: false, message: 'Invalid actor' };
     }
 
+    const quickSabotage=planQuickSabotage({
+      actor,complexity,hasSecurityKit:context?.hasSecurityKit ?? null,
+    });
+    if(!quickSabotage.allowed) {
+      return {success:false,message:quickSabotage.reason,quickSabotage};
+    }
+    // Skill-use dispatch does not currently own combat ActionEconomyConsumption.
+    // This receipt states the cost, but does not pretend it was already paid.
+    const actionLabel=quickSabotage.actionType==='two-swift-actions'
+      ? 'Two Swift Actions'
+      : quickSabotage.actionType==='swift'?'Swift Action':'Full-Round Action';
+    const toolsLabel=quickSabotage.required;
     const mechanicsBonus = actor.system.skills?.mechanics?.total || 0;
 
     const dcByComplexity = {
@@ -473,7 +486,7 @@ export class MechanicsUses {
       'complex': 25
     };
 
-    let dc = dcByComplexity[complexity.toLowerCase()] || 15;
+    let dc = dcByComplexity[quickSabotage.complexity] || 15;
     if (leaveNoTrace) {
       dc += 5;
     }
@@ -486,7 +499,7 @@ export class MechanicsUses {
     await SWSEChat.postRoll({
       roll,
       actor: actor,
-      flavor: `<strong>Disable Device</strong> - ${complexity} ${deviceType}<br>Base DC: ${dcByComplexity[complexity.toLowerCase()]}<br>${leaveNoTrace ? 'No Trace Modifier: +5<br>' : ''}Final DC: ${dc}<br>Mechanics Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action<br>Required: Security Kit${springsOrFails ? '<br><strong style="color:red">TRAP SPRUNG/DEVICE FAILS!</strong>' : ''}`
+      flavor: `<strong>Disable Device</strong> - ${complexity} ${deviceType}<br>Base DC: ${dcByComplexity[quickSabotage.complexity]}<br>${leaveNoTrace ? 'No Trace Modifier: +5<br>' : ''}Final DC: ${dc}<br>Mechanics Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: ${actionLabel} (GM-managed)<br>Required: ${toolsLabel}${quickSabotage.source ? `<br>Class Feature: ${quickSabotage.source}` : ''}${springsOrFails ? '<br><strong style="color:red">TRAP SPRUNG/DEVICE FAILS!</strong>' : ''}`
     });
 
     SWSELogger.log(
@@ -501,8 +514,10 @@ export class MechanicsUses {
       deviceType: deviceType,
       complexity: complexity,
       leaveNoTrace: leaveNoTrace,
-      action: 'Full-Round Action',
-      required: 'Security Kit',
+      action: actionLabel,
+      actionCost: {type:quickSabotage.actionType,swiftActions:quickSabotage.swiftActions,committed:false},
+      required: toolsLabel,
+      quickSabotage,
       springsOrFails: springsOrFails,
       message: success
         ? `Disables ${deviceType} device`
