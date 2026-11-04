@@ -33,7 +33,7 @@ test('registry and certification agree exactly: MECHANIC_SPECIFIED <=> implement
   const certified = Object.entries(overlay).filter(([, r]) => r.status === 'MECHANIC_SPECIFIED').map(([id]) => id).sort();
   assert.deepEqual(certified, [...E.IMPLEMENTED_EFFECT_IDS].sort());
   assert.equal(certified.length, Object.keys(E.EFFECTS).length);
-  assert.equal(certified.length, 71, 'P6B-1 added 4; P6B-2 added 11 accessories; the weapon slice added the laser cannons; WE-1 added the blaster cannons, ion cannons and turbolasers; WE-L1 added four launchers; WE-PD added the point-defense option');
+  assert.equal(certified.length, 78, 'P6B-1 added 4; P6B-2 added 11 accessories; the weapon slice added the laser cannons; WE-1 added the blaster cannons, ion cannons and turbolasers; WE-L1 added four launchers; WE-PD added the point-defense option; WE-4 added seven configurations');
   for (const id of E.IMPLEMENTED_EFFECT_IDS) {
     assert.ok(catalog.some(c => c.id === id), id);
     assert.match(E.EFFECTS[id].citation, /Starships of the Galaxy/);

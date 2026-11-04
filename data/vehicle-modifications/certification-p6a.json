@@ -63,7 +63,9 @@
    "pageResolution": "pdf-table-page"
   },
   "autoblaster": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 47,
@@ -117,7 +119,9 @@
    "pageResolution": "pdf-table-page"
   },
   "cannon-double": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 47,
@@ -129,7 +133,9 @@
    "pageResolution": "pdf-table-page"
   },
   "cannon-quad": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 47,
@@ -141,7 +147,9 @@
    "pageResolution": "pdf-table-page"
   },
   "cannon-enhancement": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 47,
@@ -153,7 +161,9 @@
    "pageResolution": "pdf-table-page"
   },
   "cannon-enhancement-advanced": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 47,
@@ -421,7 +431,9 @@
    "pageResolution": "pdf-table-page"
   },
   "fire-linked-2": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 47,
@@ -433,7 +445,9 @@
    "pageResolution": "pdf-table-page"
   },
   "fire-linked-4": {
-   "status": "SOURCE_VERIFIED",
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
    "evidence": "PDF_REVIEWED_P6A",
    "book": "Starships of the Galaxy",
    "printedPage": 47,

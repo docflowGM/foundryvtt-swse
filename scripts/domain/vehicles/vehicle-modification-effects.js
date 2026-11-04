@@ -99,6 +99,41 @@ const LAUNCHERS = Object.freeze({
 const WE_PD_TEST = 'tests/vehicle-universal-phase4e-p34-point-defense.test.mjs';
 export const POINT_DEFENSE_BASE_WEAPONS = Object.freeze(['blaster-cannon-light', 'blaster-cannon-medium', 'blaster-cannon-heavy',
   'laser-cannon-light', 'laser-cannon-medium', 'laser-cannon-heavy', 'ion-cannon-light']);
+// WE-4 (accelerated completion; owner rulings V-P6C-10/11, 2026-11-04): the published weapon CONFIGURATIONS of Table 3-5 are options of a weapon purchase
+// (the same carrier as point defense), never separate combat engines. The configured weapon's price is the base price x the printed multiplier (a TOTAL,
+// not a surcharge), emplacement points add as printed, and the printed extra damage dice join the weapon's dice BEFORE the vehicle damage multiplier
+// (4d10x2 as a double cannon is 5d10x2). Double/quad (multibarrel), fire-linked 2/4, and the standard/advanced enhancements are alternatives within
+// their group; one option per weapon (no automatic stacking). Cannon enhancements never apply to turbolasers. Triple cannons are mechanically a
+// double cannon (no catalog row: stock statblocks print them). Fire-linked LAUNCHERS (one shot per linked launcher, launcher count) and the optional
+// fire link need their own launcher rule and are bucketed. Autofire eligibility: the printed list (blaster, laser, light ion cannon, light turbolaser).
+const CFG_TEST = 'tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs';
+const WE_CFG_TEST = CFG_TEST;
+const CITE_CONFIG = 'Starships of the Galaxy, Weapon Systems (Cannon Double/Quad, Cannon Enhancements, Fire-Linked Weapons, Autoblaster) and Table 3-5 (p. 47, PDF-verified rows)';
+const BLASTER = ['blaster-cannon-light', 'blaster-cannon-medium', 'blaster-cannon-heavy'], LASER = ['laser-cannon-light', 'laser-cannon-medium', 'laser-cannon-heavy'];
+const ION = ['ion-cannon-light', 'ion-cannon-medium', 'ion-cannon-heavy'], TURBO = ['turbolaser-light', 'turbolaser-medium', 'turbolaser-heavy'];
+const AUTOFIRE_BASES = Object.freeze([...BLASTER, ...LASER, 'ion-cannon-light', 'turbolaser-light']);
+const CONFIGURATIONS = Object.freeze({
+  'cannon-double': { option: 'multibarrel', label: 'Double', group: 'multibarrel', bases: [...BLASTER, ...LASER, ...ION, ...TURBO], priceMultiplier: 3, extraDice: 1, ep: 0, autofireBases: AUTOFIRE_BASES },
+  'cannon-quad': { option: 'multibarrel', label: 'Quad', group: 'multibarrel', bases: [...BLASTER, ...LASER, ...ION, ...TURBO], priceMultiplier: 5, extraDice: 2, ep: 1, autofireBases: AUTOFIRE_BASES },
+  'fire-linked-2': { option: 'fire-link', label: 'Fire-Linked (2)', group: 'fire-link', bases: [...BLASTER, ...LASER, ...ION, ...TURBO], priceMultiplier: 2, extraDice: 1, ep: 1, autofireBases: AUTOFIRE_BASES },
+  'fire-linked-4': { option: 'fire-link', label: 'Fire-Linked (4)', group: 'fire-link', bases: [...BLASTER, ...LASER, ...ION, ...TURBO], priceMultiplier: 4, extraDice: 2, ep: 2, autofireBases: AUTOFIRE_BASES },
+  'cannon-enhancement': { option: 'enhancement', label: 'Enhanced', group: 'enhancement', bases: [...BLASTER, ...LASER, ...ION], priceMultiplier: 2, extraDice: 1, ep: 1, autofireBases: [] },
+  'cannon-enhancement-advanced': { option: 'enhancement', label: 'Advanced Enhanced', group: 'enhancement', bases: [...BLASTER, ...LASER, ...ION], priceMultiplier: 5, extraDice: 2, ep: 2, autofireBases: [] },
+  // V-P6C-09 (project interpretation): the autoblaster grants autofire capability to a single-mounted blaster cannon; the base dice are unchanged
+  'autoblaster': { option: 'autoblaster', label: 'Autoblaster', group: 'autoblaster', bases: [...BLASTER], priceMultiplier: 2, extraDice: 0, ep: 0, autofireBases: [...BLASTER] }
+});
+
+/** The weapon's certified damage string with a configuration's extra dice added to its dice (before the printed multiplier). */
+export function composeWeaponDamage(damage, extraDice = 0) {
+  if (!extraDice) return damage;
+  const m = /^(\d+)d(\d+)((?:x\d+)?)((?: \(Ion\))?)$/.exec(String(damage ?? '').trim());
+  return m ? `${Number(m[1]) + extraDice}d${m[2]}${m[3]}${m[4]}` : null;
+}
+/** The damage a sealed installation entry calls for: the certified specification plus the dice of its certified option. */
+export function effectiveWeaponDamage(spec, entry) {
+  const o = entry?.option ? EFFECTS[entry.option.catalogId] : null;
+  return composeWeaponDamage(spec?.damage, o?.kind === 'weapon-option' ? o.extraDice ?? 0 : 0);
+}
 // Capital ships (Colossal (frigate) or larger) take the Core -20 against targets smaller than Colossal in the vehicle attack
 // math (vehicle-capital-penalty.js); weapons may be installed on those hulls.
 
@@ -128,6 +163,8 @@ export const EFFECTS = Object.freeze({
   'point-defense': { kind: 'weapon-option', option: 'point-defense', label: 'Point-Defense', pointDefense: true, eligibleBases: POINT_DEFENSE_BASE_WEAPONS, extraCredits: 4000, extraEmplacementPoints: 0,
     rangeSlug: 'point-defense', testFile: WE_PD_TEST, stackable: true, group: 'weapon-option:point-defense',
     citation: 'Starships of the Galaxy, Weapon Systems: Point-Defense Weapon and Table 3-5 (p. 47, PDF-verified row); Core Rulebook p. 170' },
+  ...Object.fromEntries(Object.entries(CONFIGURATIONS).map(([id, c]) => [id, { kind: 'weapon-option', option: c.option, label: c.label, pointDefense: false, eligibleBases: c.bases, priceMultiplier: c.priceMultiplier,
+    extraDice: c.extraDice, extraEmplacementPoints: c.ep, autofireBases: c.autofireBases, rangeSlug: null, testFile: WE_CFG_TEST, alternativesGroup: c.group, stackable: true, group: `weapon-option:${id}`, citation: CITE_CONFIG }])),
   'atmospheric-thrusters': { kind: 'atmospheric', percent: 10, group: 'atmospheric', citation: CITE.atmospheric },
   'atmospheric-thrusters-advanced': { kind: 'atmospheric', percent: 25, group: 'atmospheric', citation: CITE.atmospheric }
 });

@@ -73,6 +73,10 @@
   "OPTIONAL_LINK_NOT_IMPLEMENTED": {
    "class": "ENGINEERING",
    "text": "Swift-action link toggle (extra damage and ammunition use apply only while linked) is not implemented."
+  },
+  "FIRE_LINKED_LAUNCHERS_BUCKETED": {
+   "class": "RULES_DEFERRED",
+   "text": "Fire-linked LAUNCHERS (one shot per linked launcher, launcher count and magazine of a linked pair) and the optional fire link (a swift-action toggle on a fire-linked weapon) are not implemented: the published text gives no launcher count or capacity for a linked launcher. Register V-P6C-06; bucketed as P6B-D-050 remainder; fire-linked energy weapons are implemented."
   }
  },
  "rows": [
@@ -210,11 +214,11 @@
    ],
    "applicableConfigurations": [],
    "resources": "NOT_APPLICABLE",
-   "blockers": [
-    "CONFIGURATION_NOT_IMPLEMENTED",
-    "AUTOFIRE_NOT_IMPLEMENTED"
-   ],
-   "nextSlice": "WE-6 (V-P6C-09 resolved: project interpretation; after WE-4 and WE-5)"
+   "blockers": [],
+   "nextSlice": "done (WE-4); autofire mode WE-5",
+   "evidence": {
+    "aftermarket": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
+   }
   },
   {
    "id": "turbolasers",
@@ -1202,10 +1206,11 @@
    ],
    "applicableConfigurations": [],
    "resources": "NOT_APPLICABLE",
-   "blockers": [
-    "CONFIGURATION_NOT_IMPLEMENTED"
-   ],
-   "nextSlice": "priority 6"
+   "blockers": [],
+   "nextSlice": "done (WE-4); autofire mode WE-5",
+   "evidence": {
+    "aftermarket": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
+   }
   },
   {
    "id": "triple-cannons",
@@ -1263,10 +1268,11 @@
    ],
    "applicableConfigurations": [],
    "resources": "NOT_APPLICABLE",
-   "blockers": [
-    "CONFIGURATION_NOT_IMPLEMENTED"
-   ],
-   "nextSlice": "priority 6"
+   "blockers": [],
+   "nextSlice": "done (WE-4); autofire mode WE-5",
+   "evidence": {
+    "aftermarket": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
+   }
   },
   {
    "id": "fire-linked-weapons",
@@ -1300,9 +1306,12 @@
    "applicableConfigurations": [],
    "resources": "NOT_APPLICABLE",
    "blockers": [
-    "CONFIGURATION_NOT_IMPLEMENTED"
+    "FIRE_LINKED_LAUNCHERS_BUCKETED"
    ],
-   "nextSlice": "priority 6"
+   "nextSlice": "done (WE-4); autofire mode WE-5",
+   "evidence": {
+    "aftermarket": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
+   }
   },
   {
    "id": "optional-fire-link",
@@ -1332,8 +1341,7 @@
    "applicableConfigurations": [],
    "resources": "NOT_APPLICABLE",
    "blockers": [
-    "CONFIGURATION_NOT_IMPLEMENTED",
-    "OPTIONAL_LINK_NOT_IMPLEMENTED"
+    "FIRE_LINKED_LAUNCHERS_BUCKETED"
    ],
    "nextSlice": "priority 6"
   },
@@ -1366,10 +1374,11 @@
    ],
    "applicableConfigurations": [],
    "resources": "NOT_APPLICABLE",
-   "blockers": [
-    "CONFIGURATION_NOT_IMPLEMENTED"
-   ],
-   "nextSlice": "priority 6"
+   "blockers": [],
+   "nextSlice": "done (WE-4); autofire mode WE-5",
+   "evidence": {
+    "aftermarket": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
+   }
   },
   {
    "id": "weapon-batteries",

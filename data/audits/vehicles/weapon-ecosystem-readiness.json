@@ -5,12 +5,12 @@
   "inventoryRows": 41,
   "catalogWeaponRows": 63,
   "catalogRowsCoveredByInventory": 63,
-  "aftermarketInstallableRows": 17,
+  "aftermarketInstallableRows": 24,
   "stockGroups": 846,
   "stockGroupsOwnedByAFamily": 801,
   "stockGroupsUnclassified": 45,
   "stockOfflineExecutableGroups": 379,
-  "familiesFullyOperationalOffline": 0,
+  "familiesFullyOperationalOffline": 4,
   "liveVerifiedFamilies": 0
  },
  "unclassifiedStockLabels": [
@@ -211,6 +211,10 @@
   "OPTIONAL_LINK_NOT_IMPLEMENTED": {
    "class": "ENGINEERING",
    "text": "Swift-action link toggle (extra damage and ammunition use apply only while linked) is not implemented."
+  },
+  "FIRE_LINKED_LAUNCHERS_BUCKETED": {
+   "class": "RULES_DEFERRED",
+   "text": "Fire-linked LAUNCHERS (one shot per linked launcher, launcher count and magazine of a linked pair) and the optional fire link (a swift-action toggle on a fire-linked weapon) are not implemented: the published text gives no launcher count or capacity for a linked launcher. Register V-P6C-06; bucketed as P6B-D-050 remainder; fire-linked energy weapons are implemented."
   }
  },
  "rows": [
@@ -305,7 +309,7 @@
     {
      "code": "APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
-     "text": "Configurations or modes the source allows for this family that have no tested implementation: double, triple, quad, fire-linked, cannon-enhancements, autofire."
+     "text": "Configurations or modes the source allows for this family that have no tested implementation: triple, autofire."
     }
    ],
    "nextSlice": "done (P6B weapon slice)"
@@ -401,7 +405,7 @@
     {
      "code": "APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
-     "text": "Configurations or modes the source allows for this family that have no tested implementation: double, triple, quad, fire-linked, cannon-enhancements, autofire, autoblaster."
+     "text": "Configurations or modes the source allows for this family that have no tested implementation: triple, autofire, autoblaster."
     }
    ],
    "nextSlice": "WE-1 done"
@@ -428,15 +432,15 @@
     "Blaster cannons can be designed with a higher cyclic firing rate if they have sufficient cooling; only single-mounted blasters are generally made into autoblasters.",
     "Owner interpretation V-P6C-09: the autoblaster grants autofire capability to an eligible single-mounted blaster cannon; the base dice are unchanged; normal fire and autofire both remain; no compatibility with double or quad is inferred."
    ],
-   "sourceCertification": "SOURCE_VERIFIED",
+   "sourceCertification": "MECHANIC_SPECIFIED",
    "catalogRows": [
     {
      "id": "autoblaster",
      "category": "Weapon",
-     "certification": "SOURCE_VERIFIED",
+     "certification": "MECHANIC_SPECIFIED",
      "reconciliation": "MATCHED_CANONICAL",
-     "installable": false,
-     "testFile": null
+     "installable": true,
+     "testFile": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
     }
    ],
    "stock": {
@@ -447,9 +451,9 @@
     "basis": "PARTITION: owned by this family"
    },
    "aftermarket": {
-    "status": "NOT_INSTALLABLE",
+    "status": "OFFLINE_TESTED_INSTALL_FIRE_REMOVE",
     "weaponRows": 1,
-    "installable": 0,
+    "installable": 1,
     "consumableRows": 0
    },
    "attackExecution": "NOT_IMPLEMENTED",
@@ -460,22 +464,13 @@
     "status": "TABLE_10_2_ROW_PRESENT"
    },
    "configurations": [],
-   "evidence": {},
+   "evidence": {
+    "aftermarket": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
+   },
    "liveFoundryVerification": "NOT_VERIFIED",
-   "overall": "NOT_FULLY_OPERATIONAL",
-   "openBlockers": [
-    {
-     "code": "CONFIGURATION_NOT_IMPLEMENTED",
-     "class": "ENGINEERING",
-     "text": "The configuration/modification row is SOURCE_VERIFIED only: no certified effect, no Shipyard installation, no attack-time behaviour."
-    },
-    {
-     "code": "AUTOFIRE_NOT_IMPLEMENTED",
-     "class": "ENGINEERING",
-     "text": "Vehicle autofire (swift-action mode switch, -5 attack, area attack that resolves as a single target at starship scale) has no implementation; stock groups printing autofire are refused as unmodeled."
-    }
-   ],
-   "nextSlice": "WE-6 (V-P6C-09 resolved: project interpretation; after WE-4 and WE-5)"
+   "overall": "OFFLINE_OPERATIONAL_LIVE_PENDING",
+   "openBlockers": [],
+   "nextSlice": "done (WE-4); autofire mode WE-5"
   },
   {
    "id": "turbolasers",
@@ -566,7 +561,7 @@
     {
      "code": "APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
-     "text": "Configurations or modes the source allows for this family that have no tested implementation: double, triple, quad, fire-linked, autofire."
+     "text": "Configurations or modes the source allows for this family that have no tested implementation: triple, autofire."
     }
    ],
    "nextSlice": "WE-1 done"
@@ -666,7 +661,7 @@
     {
      "code": "APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
-     "text": "Configurations or modes the source allows for this family that have no tested implementation: double, triple, quad, fire-linked, cannon-enhancements."
+     "text": "Configurations or modes the source allows for this family that have no tested implementation: triple."
     }
    ],
    "nextSlice": "WE-1 done"
@@ -911,7 +906,7 @@
     {
      "code": "APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
-     "text": "Configurations or modes the source allows for this family that have no tested implementation: fire-linked, optional-fire-link, launcher-capacity."
+     "text": "Configurations or modes the source allows for this family that have no tested implementation: optional-fire-link, launcher-capacity."
     }
    ],
    "nextSlice": "WE-L1 done (aftermarket launcher, ammunition purchase, reload, fire, lock-on, removal); stock launcher groups wait for verified launcher counts"
@@ -1042,7 +1037,7 @@
     {
      "code": "APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
-     "text": "Configurations or modes the source allows for this family that have no tested implementation: fire-linked, optional-fire-link, launcher-capacity."
+     "text": "Configurations or modes the source allows for this family that have no tested implementation: optional-fire-link, launcher-capacity."
     }
    ],
    "nextSlice": "WE-L1 done (aftermarket launcher, ammunition purchase, reload, fire, lock-on, removal); stock launcher groups wait for verified launcher counts"
@@ -1186,7 +1181,7 @@
     {
      "code": "APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED",
      "class": "ENGINEERING",
-     "text": "Configurations or modes the source allows for this family that have no tested implementation: fire-linked, optional-fire-link, launcher-capacity."
+     "text": "Configurations or modes the source allows for this family that have no tested implementation: optional-fire-link, launcher-capacity."
     }
    ],
    "nextSlice": "priority 8"
@@ -2509,15 +2504,15 @@
     "Table 3-5: +1d10 damage; +0 EP; Licensed; cost x3.",
     "Available for blasters, lasers, ion cannons and turbolasers (reciprocating multibarrel weapons); availability is the given one or the base weapon's, whichever is more restrictive."
    ],
-   "sourceCertification": "SOURCE_VERIFIED",
+   "sourceCertification": "MECHANIC_SPECIFIED",
    "catalogRows": [
     {
      "id": "cannon-double",
      "category": "Weapon",
-     "certification": "SOURCE_VERIFIED",
+     "certification": "MECHANIC_SPECIFIED",
      "reconciliation": "MATCHED_CANONICAL",
-     "installable": false,
-     "testFile": null
+     "installable": true,
+     "testFile": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
     }
    ],
    "stock": {
@@ -2528,30 +2523,26 @@
     "basis": "OVERLAY: also counted in its base-weapon row"
    },
    "aftermarket": {
-    "status": "NOT_INSTALLABLE",
+    "status": "OFFLINE_TESTED_INSTALL_FIRE_REMOVE",
     "weaponRows": 1,
-    "installable": 0,
+    "installable": 1,
     "consumableRows": 0
    },
-   "attackExecution": "STOCK_PRINTED_VALUES_ONLY",
-   "damageOrEffectExecution": "STOCK_PRINTED_VALUES_ONLY:CONFIGURATION",
+   "attackExecution": "OFFLINE_TESTED",
+   "damageOrEffectExecution": "OFFLINE_TESTED:CONFIGURATION",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
     "slug": null,
     "status": "NO_PUBLISHED_RANGE_ROW"
    },
    "configurations": [],
-   "evidence": {},
+   "evidence": {
+    "aftermarket": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
+   },
    "liveFoundryVerification": "NOT_VERIFIED",
-   "overall": "NOT_FULLY_OPERATIONAL",
-   "openBlockers": [
-    {
-     "code": "CONFIGURATION_NOT_IMPLEMENTED",
-     "class": "ENGINEERING",
-     "text": "The configuration/modification row is SOURCE_VERIFIED only: no certified effect, no Shipyard installation, no attack-time behaviour."
-    }
-   ],
-   "nextSlice": "priority 6"
+   "overall": "OFFLINE_OPERATIONAL_LIVE_PENDING",
+   "openBlockers": [],
+   "nextSlice": "done (WE-4); autofire mode WE-5"
   },
   {
    "id": "triple-cannons",
@@ -2623,15 +2614,15 @@
    "established": [
     "Table 3-5: +2d10 damage; +1 EP; Restricted; cost x5."
    ],
-   "sourceCertification": "SOURCE_VERIFIED",
+   "sourceCertification": "MECHANIC_SPECIFIED",
    "catalogRows": [
     {
      "id": "cannon-quad",
      "category": "Weapon",
-     "certification": "SOURCE_VERIFIED",
+     "certification": "MECHANIC_SPECIFIED",
      "reconciliation": "MATCHED_CANONICAL",
-     "installable": false,
-     "testFile": null
+     "installable": true,
+     "testFile": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
     }
    ],
    "stock": {
@@ -2642,30 +2633,26 @@
     "basis": "OVERLAY: also counted in its base-weapon row"
    },
    "aftermarket": {
-    "status": "NOT_INSTALLABLE",
+    "status": "OFFLINE_TESTED_INSTALL_FIRE_REMOVE",
     "weaponRows": 1,
-    "installable": 0,
+    "installable": 1,
     "consumableRows": 0
    },
-   "attackExecution": "STOCK_PRINTED_VALUES_ONLY",
-   "damageOrEffectExecution": "STOCK_PRINTED_VALUES_ONLY:CONFIGURATION",
+   "attackExecution": "OFFLINE_TESTED",
+   "damageOrEffectExecution": "OFFLINE_TESTED:CONFIGURATION",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
     "slug": null,
     "status": "NO_PUBLISHED_RANGE_ROW"
    },
    "configurations": [],
-   "evidence": {},
+   "evidence": {
+    "aftermarket": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
+   },
    "liveFoundryVerification": "NOT_VERIFIED",
-   "overall": "NOT_FULLY_OPERATIONAL",
-   "openBlockers": [
-    {
-     "code": "CONFIGURATION_NOT_IMPLEMENTED",
-     "class": "ENGINEERING",
-     "text": "The configuration/modification row is SOURCE_VERIFIED only: no certified effect, no Shipyard installation, no attack-time behaviour."
-    }
-   ],
-   "nextSlice": "priority 6"
+   "overall": "OFFLINE_OPERATIONAL_LIVE_PENDING",
+   "openBlockers": [],
+   "nextSlice": "done (WE-4); autofire mode WE-5"
   },
   {
    "id": "fire-linked-weapons",
@@ -2688,23 +2675,23 @@
     "Table 3-5: fire-linked 2: +1d10, +1 EP, Licensed, x2; fire-linked 4: +2d10, +2 EP, Restricted, x4.",
     "Weapons of any type that deal damage can be fire-linked. Fire-linked turbolasers are often described as batteries but this is not a weapon battery in game terms. Fire-linked missiles and torpedoes consume shots equal to the number of fire-linked launchers per attack."
    ],
-   "sourceCertification": "SOURCE_VERIFIED",
+   "sourceCertification": "MECHANIC_SPECIFIED",
    "catalogRows": [
     {
      "id": "fire-linked-2",
      "category": "Weapon",
-     "certification": "SOURCE_VERIFIED",
+     "certification": "MECHANIC_SPECIFIED",
      "reconciliation": "MATCHED_CANONICAL",
-     "installable": false,
-     "testFile": null
+     "installable": true,
+     "testFile": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
     },
     {
      "id": "fire-linked-4",
      "category": "Weapon",
-     "certification": "SOURCE_VERIFIED",
+     "certification": "MECHANIC_SPECIFIED",
      "reconciliation": "MATCHED_CANONICAL",
-     "installable": false,
-     "testFile": null
+     "installable": true,
+     "testFile": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
     }
    ],
    "stock": {
@@ -2715,30 +2702,32 @@
     "basis": "OVERLAY: also counted in its base-weapon row"
    },
    "aftermarket": {
-    "status": "NOT_INSTALLABLE",
+    "status": "OFFLINE_TESTED_INSTALL_FIRE_REMOVE",
     "weaponRows": 2,
-    "installable": 0,
+    "installable": 2,
     "consumableRows": 0
    },
-   "attackExecution": "STOCK_PRINTED_VALUES_ONLY",
-   "damageOrEffectExecution": "STOCK_PRINTED_VALUES_ONLY:CONFIGURATION",
+   "attackExecution": "OFFLINE_TESTED",
+   "damageOrEffectExecution": "OFFLINE_TESTED:CONFIGURATION",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
     "slug": null,
     "status": "NO_PUBLISHED_RANGE_ROW"
    },
    "configurations": [],
-   "evidence": {},
+   "evidence": {
+    "aftermarket": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
+   },
    "liveFoundryVerification": "NOT_VERIFIED",
    "overall": "NOT_FULLY_OPERATIONAL",
    "openBlockers": [
     {
-     "code": "CONFIGURATION_NOT_IMPLEMENTED",
-     "class": "ENGINEERING",
-     "text": "The configuration/modification row is SOURCE_VERIFIED only: no certified effect, no Shipyard installation, no attack-time behaviour."
+     "code": "FIRE_LINKED_LAUNCHERS_BUCKETED",
+     "class": "RULES_DEFERRED",
+     "text": "Fire-linked LAUNCHERS (one shot per linked launcher, launcher count and magazine of a linked pair) and the optional fire link (a swift-action toggle on a fire-linked weapon) are not implemented: the published text gives no launcher count or capacity for a linked launcher. Register V-P6C-06; bucketed as P6B-D-050 remainder; fire-linked energy weapons are implemented."
     }
    ],
-   "nextSlice": "priority 6"
+   "nextSlice": "done (WE-4); autofire mode WE-5"
   },
   {
    "id": "optional-fire-link",
@@ -2797,14 +2786,9 @@
    "overall": "NOT_FULLY_OPERATIONAL",
    "openBlockers": [
     {
-     "code": "CONFIGURATION_NOT_IMPLEMENTED",
-     "class": "ENGINEERING",
-     "text": "The configuration/modification row is SOURCE_VERIFIED only: no certified effect, no Shipyard installation, no attack-time behaviour."
-    },
-    {
-     "code": "OPTIONAL_LINK_NOT_IMPLEMENTED",
-     "class": "ENGINEERING",
-     "text": "Swift-action link toggle (extra damage and ammunition use apply only while linked) is not implemented."
+     "code": "FIRE_LINKED_LAUNCHERS_BUCKETED",
+     "class": "RULES_DEFERRED",
+     "text": "Fire-linked LAUNCHERS (one shot per linked launcher, launcher count and magazine of a linked pair) and the optional fire link (a swift-action toggle on a fire-linked weapon) are not implemented: the published text gives no launcher count or capacity for a linked launcher. Register V-P6C-06; bucketed as P6B-D-050 remainder; fire-linked energy weapons are implemented."
     }
    ],
    "nextSlice": "priority 6"
@@ -2830,23 +2814,23 @@
     "Table 3-5: +1d10, +1 EP, Military, x2 / advanced +2d10, +2 EP, Military, x5.",
     "Boost the damage of a blaster, a laser (but not a turbolaser) or an ion cannon."
    ],
-   "sourceCertification": "SOURCE_VERIFIED",
+   "sourceCertification": "MECHANIC_SPECIFIED",
    "catalogRows": [
     {
      "id": "cannon-enhancement",
      "category": "Weapon",
-     "certification": "SOURCE_VERIFIED",
+     "certification": "MECHANIC_SPECIFIED",
      "reconciliation": "UNRESOLVED_SOURCE",
-     "installable": false,
-     "testFile": null
+     "installable": true,
+     "testFile": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
     },
     {
      "id": "cannon-enhancement-advanced",
      "category": "Weapon",
-     "certification": "SOURCE_VERIFIED",
+     "certification": "MECHANIC_SPECIFIED",
      "reconciliation": "MATCHED_CANONICAL",
-     "installable": false,
-     "testFile": null
+     "installable": true,
+     "testFile": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
     }
    ],
    "stock": {
@@ -2857,30 +2841,26 @@
     "basis": "OVERLAY: also counted in its base-weapon row"
    },
    "aftermarket": {
-    "status": "NOT_INSTALLABLE",
+    "status": "OFFLINE_TESTED_INSTALL_FIRE_REMOVE",
     "weaponRows": 2,
-    "installable": 0,
+    "installable": 2,
     "consumableRows": 0
    },
-   "attackExecution": "NOT_IMPLEMENTED",
-   "damageOrEffectExecution": "NOT_IMPLEMENTED",
+   "attackExecution": "OFFLINE_TESTED",
+   "damageOrEffectExecution": "OFFLINE_TESTED:CONFIGURATION",
    "resourceTracking": "NOT_APPLICABLE",
    "rangeTable": {
     "slug": null,
     "status": "NO_PUBLISHED_RANGE_ROW"
    },
    "configurations": [],
-   "evidence": {},
+   "evidence": {
+    "aftermarket": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
+   },
    "liveFoundryVerification": "NOT_VERIFIED",
-   "overall": "NOT_FULLY_OPERATIONAL",
-   "openBlockers": [
-    {
-     "code": "CONFIGURATION_NOT_IMPLEMENTED",
-     "class": "ENGINEERING",
-     "text": "The configuration/modification row is SOURCE_VERIFIED only: no certified effect, no Shipyard installation, no attack-time behaviour."
-    }
-   ],
-   "nextSlice": "priority 6"
+   "overall": "OFFLINE_OPERATIONAL_LIVE_PENDING",
+   "openBlockers": [],
+   "nextSlice": "done (WE-4); autofire mode WE-5"
   },
   {
    "id": "weapon-batteries",

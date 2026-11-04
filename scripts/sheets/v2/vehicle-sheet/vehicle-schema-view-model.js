@@ -338,7 +338,7 @@ function shipyardView({ record, flags, key, catalog, entries, supported, canAct 
   const weaponOptions = supported && catalog
     ? [...catalog.values()].filter(c => c.certification?.status === 'MECHANIC_SPECIFIED' && EFFECTS[c.id]?.kind === 'weapon-option'
       && evaluateSizeRestriction(c.sizeRestriction, record?.classification?.printedSize) === 'ok')
-      .map(c => ({ id: c.id, name: c.name, extraCredits: EFFECTS[c.id].extraCredits, eligibleBases: EFFECTS[c.id].eligibleBases })).sort((a, b) => a.name.localeCompare(b.name))
+      .map(c => ({ id: c.id, name: c.name, extraCredits: EFFECTS[c.id].extraCredits, priceMultiplier: EFFECTS[c.id].priceMultiplier ?? null, priceLabel: EFFECTS[c.id].priceMultiplier ? `x${EFFECTS[c.id].priceMultiplier} the weapon's price` : `+${EFFECTS[c.id].extraCredits} cr per weapon`, eligibleBases: EFFECTS[c.id].eligibleBases })).sort((a, b) => a.name.localeCompare(b.name))
     : [];
   return { supported, canAct, isGM, jobs: views, activeJobs: views.filter(j => j.active), reservedEp: reservedEpFromJobs(jobs), rejected, options, hasOptions: options.length > 0,
     launchers, hasLaunchers: launchers.length > 0, weaponOptions, hasWeaponOptions: weaponOptions.length > 0 };

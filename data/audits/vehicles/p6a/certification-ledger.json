@@ -4,7 +4,7 @@
  "counts": {
   "sourceListed": 181,
   "sourceVerified": 174,
-  "mechanicSpecified": 71,
+  "mechanicSpecified": 78,
   "operationallyIntegrated": 67
  },
  "rows": [
@@ -1249,8 +1249,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon-option",
+    "test": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
+   },
+   "operationallyIntegrated": "EXPOSED_NOT_APPLIED",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -1330,8 +1333,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon-option",
+    "test": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
+   },
+   "operationallyIntegrated": "EXPOSED_NOT_APPLIED",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -1348,8 +1354,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon-option",
+    "test": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
+   },
+   "operationallyIntegrated": "EXPOSED_NOT_APPLIED",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -1366,8 +1375,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon-option",
+    "test": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
+   },
+   "operationallyIntegrated": "EXPOSED_NOT_APPLIED",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -1384,8 +1396,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon-option",
+    "test": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
+   },
+   "operationallyIntegrated": "EXPOSED_NOT_APPLIED",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -1786,8 +1801,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon-option",
+    "test": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
+   },
+   "operationallyIntegrated": "EXPOSED_NOT_APPLIED",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -1804,8 +1822,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon-option",
+    "test": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
+   },
+   "operationallyIntegrated": "EXPOSED_NOT_APPLIED",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {

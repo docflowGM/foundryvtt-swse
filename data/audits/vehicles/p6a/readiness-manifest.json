@@ -3,7 +3,7 @@
  "counts": {
   "exposeAsReference": 181,
   "installable": 70,
-  "installableAsOption": 1,
+  "installableAsOption": 8,
   "mechanicallyApplied": 67,
   "combatUsable": 16
  },
@@ -763,11 +763,12 @@
    "name": "Autoblaster",
    "exposeAsReference": true,
    "installable": false,
-   "installableAsOption": false,
+   "installableAsOption": true,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
+    "CONDITIONAL_EFFECT_NOT_APPLIED",
+    "BOUGHT_ONLY_WITH_AN_ELIGIBLE_BASE_WEAPON",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -812,11 +813,12 @@
    "name": "Cannon, Double",
    "exposeAsReference": true,
    "installable": false,
-   "installableAsOption": false,
+   "installableAsOption": true,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
+    "CONDITIONAL_EFFECT_NOT_APPLIED",
+    "BOUGHT_ONLY_WITH_AN_ELIGIBLE_BASE_WEAPON",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -825,11 +827,12 @@
    "name": "Cannon, Quad",
    "exposeAsReference": true,
    "installable": false,
-   "installableAsOption": false,
+   "installableAsOption": true,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
+    "CONDITIONAL_EFFECT_NOT_APPLIED",
+    "BOUGHT_ONLY_WITH_AN_ELIGIBLE_BASE_WEAPON",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -838,11 +841,12 @@
    "name": "Cannon Enhancements",
    "exposeAsReference": true,
    "installable": false,
-   "installableAsOption": false,
+   "installableAsOption": true,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
+    "CONDITIONAL_EFFECT_NOT_APPLIED",
+    "BOUGHT_ONLY_WITH_AN_ELIGIBLE_BASE_WEAPON",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -851,11 +855,12 @@
    "name": "Cannon Enhancements, Advanced",
    "exposeAsReference": true,
    "installable": false,
-   "installableAsOption": false,
+   "installableAsOption": true,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
+    "CONDITIONAL_EFFECT_NOT_APPLIED",
+    "BOUGHT_ONLY_WITH_AN_ELIGIBLE_BASE_WEAPON",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1099,11 +1104,12 @@
    "name": "Fire-Linked Weapon, 2",
    "exposeAsReference": true,
    "installable": false,
-   "installableAsOption": false,
+   "installableAsOption": true,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
+    "CONDITIONAL_EFFECT_NOT_APPLIED",
+    "BOUGHT_ONLY_WITH_AN_ELIGIBLE_BASE_WEAPON",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },
@@ -1112,11 +1118,12 @@
    "name": "Fire-Linked Weapon, 4",
    "exposeAsReference": true,
    "installable": false,
-   "installableAsOption": false,
+   "installableAsOption": true,
    "mechanicallyApplied": false,
    "combatUsable": false,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
+    "CONDITIONAL_EFFECT_NOT_APPLIED",
+    "BOUGHT_ONLY_WITH_AN_ELIGIBLE_BASE_WEAPON",
     "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
    ]
   },

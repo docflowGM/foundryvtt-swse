@@ -59,9 +59,9 @@ export function world({ hull = 'fighter', credits = 500000 } = {}) {
   };
   S.rules = rules;
 }
-export const catalogOf = id => new Map([[id, catalogRow(id)]]);
-export async function install(id) {
-  const r = await S.gmInstantInstall({ ownerActor: owner, vehicle, catalogId: id, catalog: catalogOf(id), reason: 'refit', mount: GM_MOUNT });
+export const catalogOf = (id, optionId = null) => new Map([[id, catalogRow(id)], ...(optionId ? [[optionId, catalogRow(optionId)]] : [])]);
+export async function install(id, optionId = null, mountKey = 'turret-1') {
+  const r = await S.gmInstantInstall({ ownerActor: owner, vehicle, catalogId: id, optionId, catalog: catalogOf(id, optionId), reason: 'refit', mount: { ...GM_MOUNT, mountKey } });
   assert.equal(r.success, true, JSON.stringify(r));
   return [...items.values()].filter(i => i.flags?.swse?.vehicleInstalledWeapon).at(-1);
 }

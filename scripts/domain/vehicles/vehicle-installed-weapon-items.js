@@ -8,7 +8,7 @@
  * because the provenance check needs the ledger entry). Damage comes from the CERTIFIED weapon specification, not
  * from an editable catalog row. Pure; no Foundry globals.
  */
-import { EFFECTS } from './vehicle-modification-effects.js';
+import { EFFECTS, effectiveWeaponDamage } from './vehicle-modification-effects.js';
 import { INSTALLED_WEAPON_FLAG } from './vehicle-weapon-damage.js';
 
 export { INSTALLED_WEAPON_FLAG };
@@ -21,7 +21,7 @@ export function buildInstalledWeaponItemData(entry) {
   return {
     name: entry.name, type: 'weapon',
     system: {
-      damage: fx.damage, meleeOrRanged: 'ranged', weaponCategory: 'ranged', mounted: true, arc: m.arc,
+      damage: effectiveWeaponDamage(fx, entry), meleeOrRanged: 'ranged', weaponCategory: 'ranged', mounted: true, arc: m.arc,
       vehicleMount: {
         installId: entry.installId, mountKey: m.mountKey, mountLabel: entry.name, arc: m.arc, crewRole: m.operatorRole,
         attackAbilityAuthority: 'vehicle-int', importSource: 'shipyard-certified-installation', parseConfidence: 'structured',

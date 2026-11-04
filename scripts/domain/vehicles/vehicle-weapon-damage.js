@@ -24,7 +24,7 @@
 import { parseVehicleWeaponDamageSpec } from '../../engine/combat/vehicle-weapon-damage-parser.js';
 import { getVerifiedPublishedRecord } from './vehicle-source-identity.js';
 import { readCertifiedInstallations } from './vehicle-installation-ledger.js';
-import { EFFECTS } from './vehicle-modification-effects.js';
+import { EFFECTS, effectiveWeaponDamage } from './vehicle-modification-effects.js';
 import { assessStockWeaponGroups, stockItemName, stockMountKey } from './vehicle-stock-weapon-groups.js';
 import { expandBatteryDamage, BATTERY_REASONS } from './vehicle-weapon-battery.js';
 import { aftermarketFamily } from './vehicle-ammunition-ledger.js';
@@ -84,16 +84,17 @@ export function resolveCertifiedInstalledWeapon(weapon) {
   if (vm.mountKey !== m.mountKey || vm.arc !== m.arc || vm.crewRole !== m.operatorRole)
     return { ok: false, reason: 'INSTALLED_WEAPON_ITEM_MOUNT_MISMATCH' };
   if (!sameLabel(entry.name, weapon.name)) return { ok: false, reason: 'INSTALLED_WEAPON_ITEM_NAME_MISMATCH' };
-  if (text(weapon.system.damage) !== spec.damage) return { ok: false, reason: 'INSTALLED_WEAPON_ITEM_DAMAGE_DIVERGES_FROM_CERTIFIED_SPECIFICATION' };
+  if (text(weapon.system.damage) !== effectiveWeaponDamage(spec, entry)) return { ok: false, reason: 'INSTALLED_WEAPON_ITEM_DAMAGE_DIVERGES_FROM_CERTIFIED_SPECIFICATION' };
   // An OPTION sealed into the entry (WE-PD) must still be a certified option of THIS base weapon; what it does is read from the
   // certified specification, not from the entry's own words.
-  let pointDefense = false;
+  let pointDefense = false, autofire = false;
   if (entry.option) {
     const ofx = EFFECTS[entry.option.catalogId];
     if (ofx?.kind !== 'weapon-option' || !ofx.eligibleBases.includes(entry.catalogId) || spec.ammunition) return { ok: false, reason: 'INSTALLED_WEAPON_OPTION_NOT_CERTIFIED' };
     pointDefense = ofx.pointDefense === true;
+    autofire = (ofx.autofireBases ?? []).includes(entry.catalogId);
   }
-  return { ok: true, entry, spec, mount: m, option: entry.option ?? null, pointDefense, rangeSlug: pointDefense ? EFFECTS[entry.option.catalogId].rangeSlug : spec.rangeSlug ?? null };
+  return { ok: true, entry, spec, mount: m, option: entry.option ?? null, pointDefense, autofire, damage: effectiveWeaponDamage(spec, entry), rangeSlug: pointDefense ? EFFECTS[entry.option.catalogId].rangeSlug : spec.rangeSlug ?? null };
 }
 
 /**
@@ -153,7 +154,7 @@ export function resolveVehicleWeaponAuthority(weapon) {
   // An aftermarket LAUNCHER (WE-L1) is a finite-ammunition guided weapon: it carries its ammunition family and the printed splash,
   // derived from the certified specification and the sealed entry (never from the Item).
   const family = aftermarketFamily(i.spec, i.entry);
-  return { ok: true, origin: 'installed', operator: i.mount.operatorRole, rangeSlug: i.rangeSlug ?? null, damageRaw: i.spec.damage, installed: i,
+  return { ok: true, origin: 'installed', operator: i.mount.operatorRole, rangeSlug: i.rangeSlug ?? null, damageRaw: i.damage, ...(i.autofire ? { autofireCapable: true } : {}), installed: i,
     ...(family ? { ammunition: family } : {}), ...(i.spec.area ? { area: i.spec.area } : {}) };
 }
 

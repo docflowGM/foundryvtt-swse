@@ -137,7 +137,7 @@ test('SOURCE: every row equals the PDF-verified Table 3-5 cell set (damage, EP, 
     'ion-cannon-light': 'ion', 'ion-cannon-medium': 'ion', 'ion-cannon-heavy': 'ion',
     'turbolaser-light': 'turbolaser', 'turbolaser-medium': 'turbolaser', 'turbolaser-heavy': 'turbolaser' });
   // rows the Core / SotG text restricts further are still NOT promoted by this slice
-  for (const id of ['ion-cannon-hapan-triple', 'autoblaster', 'cannon-double', 'cannon-quad', 'fire-linked-2'])
+  for (const id of ['ion-cannon-hapan-triple', 'fire-linked-optional'])
     assert.notEqual(cert[id]?.status, 'MECHANIC_SPECIFIED', id);
 });
 

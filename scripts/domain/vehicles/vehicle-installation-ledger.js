@@ -154,7 +154,10 @@ export function resolveWeaponOption({ baseEntry, optionEntry, hullSize }) {
   else {
     if (optionEntry.certification?.status !== 'MECHANIC_SPECIFIED') reasons.push('OPTION_UNCERTIFIED');
     if (baseFx?.kind !== 'weapon' || baseFx.ammunition || !fx.eligibleBases.includes(baseEntry.id)) reasons.push('OPTION_BASE_WEAPON_INELIGIBLE');
-    if (optionEntry.costType !== 'modifier' || optionEntry.cost !== fx.extraCredits) reasons.push('OPTION_PRICE_DIFFERS_FROM_CERTIFIED_ROW');
+    // price: an ADDITION per weapon ("+4,000") or a TOTAL-cost multiplier of the base price ("x3", owner ruling V-P6C-11); the catalog row must still say so
+    if (fx.priceMultiplier) { if (optionEntry.costType !== 'multiplier' || optionEntry.costMultiplier !== fx.priceMultiplier) reasons.push('OPTION_PRICE_DIFFERS_FROM_CERTIFIED_ROW'); }
+    else if (optionEntry.costType !== 'modifier' || optionEntry.cost !== fx.extraCredits) reasons.push('OPTION_PRICE_DIFFERS_FROM_CERTIFIED_ROW');
+    if (fx.extraDice !== undefined) { const m = /^\+(\d+)d10$/.exec(String(optionEntry.damage ?? '')); if ((m ? Number(m[1]) : 0) !== (fx.extraDice ?? 0)) reasons.push('OPTION_DAMAGE_DIFFERS_FROM_CERTIFIED_ROW'); }
     if (optionEntry.emplacementPoints !== fx.extraEmplacementPoints) reasons.push('OPTION_EP_DIFFERS_FROM_CERTIFIED_ROW');
     const size = evaluateSizeRestriction(optionEntry.sizeRestriction, hullSize);
     if (size !== 'ok') reasons.push('OPTION_SIZE_' + size.toUpperCase());
@@ -163,8 +166,9 @@ export function resolveWeaponOption({ baseEntry, optionEntry, hullSize }) {
   if (reasons.length) return { ok: false, reasons };
   return {
     ok: true,
-    derived: { ...baseEntry, name: `${baseEntry.name} (${fx.label})`, cost: baseEntry.cost + fx.extraCredits, emplacementPoints: baseEntry.emplacementPoints + fx.extraEmplacementPoints },
-    option: { catalogId: optionEntry.id, label: fx.label, extraCredits: fx.extraCredits, extraEmplacementPoints: fx.extraEmplacementPoints, pointDefense: fx.pointDefense === true, rangeSlug: fx.rangeSlug ?? null }
+    derived: { ...baseEntry, name: `${baseEntry.name} (${fx.label})`, cost: fx.priceMultiplier ? baseEntry.cost * fx.priceMultiplier : baseEntry.cost + fx.extraCredits, emplacementPoints: baseEntry.emplacementPoints + fx.extraEmplacementPoints },
+    option: { catalogId: optionEntry.id, label: fx.label, ...(fx.priceMultiplier ? { priceMultiplier: fx.priceMultiplier } : { extraCredits: fx.extraCredits }), ...(fx.extraDice ? { extraDice: fx.extraDice } : {}), extraEmplacementPoints: fx.extraEmplacementPoints,
+      pointDefense: fx.pointDefense === true, autofire: (fx.autofireBases ?? []).includes(baseEntry.id), rangeSlug: fx.rangeSlug ?? null }
   };
 }
 
