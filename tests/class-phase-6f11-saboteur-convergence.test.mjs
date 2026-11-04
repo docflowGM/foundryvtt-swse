@@ -9,6 +9,7 @@ import {
   canMasterSaboteurReroll, rollMasterSaboteurMechanicsCheck,
   masterSaboteurRerollSummary,
 } from '../scripts/engine/combat/class-master-saboteur-reroll.js';
+import {ActionEngine} from '../scripts/engine/combat/action/action-engine-v2.js';
 
 const source=fs.readFileSync(new URL('../scripts/skills/skill-uses.js',import.meta.url),'utf8');
 const owner=level=>({
@@ -91,6 +92,25 @@ test('second swift expenditure refused: no die is rolled, first swift is refunde
   const x=integratedCheck({spendFailure:2});
   await assert.rejects(x.execute(),/not committed/);
   assert.deepEqual(x.history,['spend-swift-1','spend-swift-2','rollback-1']);
+});
+
+test('real V2 ActionEngine permits the two swift payments through ordinary conversion',()=>{
+  const first=ActionEngine.consume(ActionEngine.startTurn(),{swift:1});
+  assert.equal(first.allowed,true);
+  assert.equal(first.consumed.swift,1);
+  const second=ActionEngine.consume(first.turnState,{swift:1});
+  assert.equal(second.allowed,true);
+  assert.equal(second.consumed.move,1);
+  assert.equal(second.turnState.remaining.standard,1);
+  assert.equal(second.turnState.remaining.move,0);
+  assert.equal(second.turnState.remaining.swift,0);
+  // Spending two swift actions is not a free special action: the second
+  // consumes the move action, preserving canonical downgrade semantics.
+  const strict={remaining:{standard:0,move:0,swift:1},degraded:{standard:0,move:0,swift:0},fullRoundUsed:false};
+  const spent=ActionEngine.consume(strict,{swift:1});
+  assert.equal(spent.allowed,true);
+  const denied=ActionEngine.consume(spent.turnState,{swift:1});
+  assert.equal(denied.allowed,false);
 });
 
 test('Master Saboteur applies to explosives; Quick Sabotage does not',()=>{
