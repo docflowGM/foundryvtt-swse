@@ -11,6 +11,7 @@ import { authorizeVehicleArcEvidence } from './vehicle-evidence-runtime-gate.js'
 import { isTargetWithinVehicleArc } from './vehicle-firing-arc-geometry.js';
 import { STOCK_ARC_POLICY, getStockSilentArcPolicy } from './vehicle-stock-arc-policy.js';
 import { BATTERY_REASONS } from './vehicle-weapon-battery.js';
+import { resolveEncounterScale, resolveAreaAtScale } from './vehicle-encounter-scale.js';
 
 const block = reason => ({ok:false,reason,strictStockEnforcement:true});
 const nonempty = x => typeof x === 'string' && x.trim().length > 0;
@@ -72,6 +73,14 @@ export async function authorizeVehicleAttackBeforeCosts({vehicle,weapon,target,a
   // evidence is incomplete and the attack is refused rather than guessed (nothing is inferred from a displayed bonus). The
   // independent-weapon mode carries no battery (source.battery is null) and accepts a named gunner like any single weapon.
   if (source.battery && operatorActor) return block(BATTERY_REASONS.ASSIGNED_CREW_ROSTER_UNMODELED);
+  // An ORDINARY area (splash / burst radius) resolves as an attack on a single target at STARSHIP scale (Core, Vehicle Combat); at
+  // character scale it needs the multi-target area engine, which does not exist, so the attack is refused. The scale comes from
+  // the encounter's participants (vehicles only = starship scale), never from the weapon's name. Checked before any cost.
+  if (source.area) {
+    const scale = resolveEncounterScale({ attacker: vehicle, target, combat: globalThis.game?.combat ?? null });
+    const at = resolveAreaAtScale(source.area, scale.scale);
+    if (at.mode === 'refused') return block(`STOCK_AREA_${at.reason}`);
+  }
   const scope={vehicleId:vehicle.id,attackId,weaponGroupKey:source.weaponGroupKey,targetId:target.id};
   if (source.attackBonusEvidence?.state === 'PUBLISHED_CONFLICT') {
     // The computed vehicle INT math cannot consume a printed-flat override.

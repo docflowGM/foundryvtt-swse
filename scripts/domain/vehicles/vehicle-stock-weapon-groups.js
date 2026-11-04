@@ -54,10 +54,31 @@ const INFORMATIONAL_EVIDENCE_KEYS = new Set([
 const SIZE_FIGURE_KEY = /smaller|small|vs|against/i;          // the size-dependent attack figures checkSizeDependentAdjustments() verifies
 const AREA_EVIDENCE_KEY = /^(splash|area.*|hit|miss|recharge.*)$/i;
 
+const ORDINARY_AREA_SQUARES = /^\s*(\d+)[- ]?squares?\s*$/i;
+const ORDINARY_AREA_IN_TEXT = /(\d+)[- ]square\s+(splash|burst)\b/i;
+
+/**
+ * An ORDINARY area (splash / burst radius, printed as "N-square splash" on the damage line or as `splash: "N-square"` in the
+ * evidence) is a character-scale area. At STARSHIP scale it resolves as an attack on a single target (Core, Vehicle Combat); at
+ * character scale it needs the multi-target area engine, which does not exist, so the attack is refused there (see
+ * vehicle-encounter-scale.js). Any other area wording (an unsized radius, an explicit starship-scale area, hit/miss riders,
+ * recharge) is not ordinary and stays refused.
+ * @returns {null | {kind:'splash'|'burst', squares:number|null, source:string}}
+ */
+export function extractOrdinaryArea(evidence = {}, suffix = '') {
+  const fromText = ORDINARY_AREA_IN_TEXT.exec(String(suffix)) ?? (/\bsplash\b/i.test(suffix) ? [null, null, 'splash'] : null);
+  const fromEvidence = typeof evidence?.splash === 'string' ? ORDINARY_AREA_SQUARES.exec(evidence.splash) : null;
+  if (!fromText && !fromEvidence) return null;
+  const textSquares = fromText?.[1] ? Number(fromText[1]) : null, evSquares = fromEvidence ? Number(fromEvidence[1]) : null;
+  return { kind: fromText ? String(fromText[2]).toLowerCase() : 'splash', squares: textSquares ?? evSquares, source: fromText ? 'damage-line' : 'evidence',
+    conflict: textSquares !== null && evSquares !== null && textSquares !== evSquares };
+}
+
 export function evidenceReasons(evidence = {}) {
   const out = [];
   for (const [k, v] of Object.entries(evidence ?? {})) {
     if (INFORMATIONAL_EVIDENCE_KEYS.has(k) || SIZE_FIGURE_KEY.test(k)) continue;
+    if (k === 'splash') { if (v !== null && v !== undefined && !ORDINARY_AREA_SQUARES.test(String(v))) out.push('STOCK_DAMAGE_AREA_OR_SPLASH'); continue; }   // "4-square": an ordinary (character-scale) splash, see extractOrdinaryArea()
     if (AREA_EVIDENCE_KEY.test(k)) { if (v !== null && v !== undefined) out.push('STOCK_DAMAGE_AREA_OR_SPLASH'); continue; }
     if (k === 'applicableVariants') { if (Array.isArray(v) && v.length) out.push('STOCK_VARIANT_SPECIFIC_GROUP_UNMODELED'); continue; }
     if (k === 'qualitativeDirection') { if (v) out.push('STOCK_FIRING_ARC_STATED_UNPARSED'); continue; }
@@ -89,7 +110,10 @@ export function parseStockFiringGroup(group) {
     const suffix = String(d[6] ?? '').trim().toLowerCase();
     out.damage = { dice, die, bonus: d[3] ? Number(`${d[3]}${d[4]}`) : 0, multiplier: mult, formula: `${dice}d${die}`, raw: `${d[1]}d${d[2]}${d[5] ? `x${d[5]}` : ''}`, suffix };
     if (d[3]) reasons.push('STOCK_DAMAGE_HAS_FLAT_TERM');
-    if (/splash|burst|radius|area/.test(suffix)) reasons.push('STOCK_DAMAGE_AREA_OR_SPLASH');
+    const area = extractOrdinaryArea(out.evidence, suffix);
+    if (area) { out.area = area; if (area.conflict) reasons.push('STOCK_DAMAGE_AREA_OR_SPLASH'); }
+    const afterArea = suffix.replace(ORDINARY_AREA_IN_TEXT, ' ').replace(/\bsplash\b/i, ' ');
+    if (/splash|burst|radius|area/.test(afterArea)) reasons.push('STOCK_DAMAGE_AREA_OR_SPLASH');
     // Ion damage (Core pp. 159-160): the damage TYPE is taken only from what the source states -- the printed damage line
     // ("6d10x2 ion") or the group's structured evidence (damageType: "ion") -- and only as the whole word "ion" ("concussion"
     // is not ion). A weapon NAME can only deny, never type.
@@ -99,7 +123,7 @@ export function parseStockFiringGroup(group) {
     if (evidenceType === 'ion') out.damage.type = 'ion';
     if (suffixIon && evidenceType && evidenceType !== 'ion') reasons.push('STOCK_DAMAGE_TYPE_CONFLICT');
     if (evidenceType && evidenceType !== 'ion' && !suffixIon) reasons.push('STOCK_DAMAGE_TYPE_NOT_ORDINARY');
-    const rest = suffix.replace(/(^|[\s,])ion\b/, ' ').replace(/^[\s,]+|[\s,]+$/g, '');
+    const rest = afterArea.replace(/(^|[\s,])ion\b/, ' ').replace(/^[\s,]+|[\s,]+$/g, '');
     if (rest && !/splash|burst|radius|area/.test(rest)) reasons.push('STOCK_DAMAGE_QUALIFIED');
     // Core: weapon damage x the listed multiplier. A plain expression (no multiplier) is simply the dice (x1; owner ruling
     // 2026-11-03: an omitted multiplier neither invalidates a vehicle weapon nor makes it a personal weapon); x2, x5, x10...

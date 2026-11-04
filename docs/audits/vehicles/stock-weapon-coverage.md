@@ -9,9 +9,9 @@ Three claims are kept apart: **SOURCE_VERIFIED** (the published configuration is
 | Published vehicles | 429 |
 | Published attack groups | 846 |
 | Groups SOURCE_VERIFIED | 557 (65.8%) |
-| Groups OFFLINE_EXECUTABLE | 348 (41.1%) |
-| Vehicles with at least one OFFLINE_EXECUTABLE group | 256 (59.7%) |
-| Vehicles with every group executable | 123 |
+| Groups OFFLINE_EXECUTABLE | 351 (41.5%) |
+| Vehicles with at least one OFFLINE_EXECUTABLE group | 258 (60.1%) |
+| Vehicles with every group executable | 125 |
 | Vehicles LIVE_VERIFIED | 0 |
 
 ## Weapon batteries (Core p. 170)
@@ -35,7 +35,7 @@ The printed total of a battery already contains the printed gunners' assistance 
 | weapon-battery | 104 | 64 |
 | fire-linked | 18 | 7 |
 | ammunition-limited | 169 | 0 |
-| area-or-splash | 110 | 0 |
+| area-or-splash | 110 | 3 |
 | ion | 69 | 43 |
 
 Fire-linked weapons are not weapon batteries (Starships of the Galaxy, Fire-Linked Weapons) and get no battery rules. Ordinary energy weapons are every executable group that is none of these kinds.
@@ -47,10 +47,19 @@ Fire-linked weapons are not weapon batteries (Starships of the Galaxy, Fire-Link
 | Ammunition-limited groups | 169 |
 | ... printing a payload count | 24 |
 | ... with area / splash stated in the record | 102 |
-| Refused for ammunition ALONE | 33 |
+| Refused for ammunition ALONE | 75 |
 | OFFLINE_EXECUTABLE | 0 |
 
 A finite supply is never treated as unlimited, so these stay refused until a complete family exists. What is missing (deferred items P6B-D-047..049): vehicle area/splash damage (the Core prints a 4-square splash for these weapons, and the record often omits it); the missile lock-on rule (a missed missile may attack again at -5 and can be shot down); an ammunition ledger whose capacity is source-certified (the Core "Payload" line is the vehicle's complement, not a launcher's loaded count; launcher capacities are separate figures) and a reload rule for vehicle launchers (V-P6C-06).
+
+## Ordinary splash / burst (starship-scale rule)
+
+| Measure | Groups |
+|---|---|
+| Groups printing an ordinary "N-square" splash or burst | 107 |
+| ... OFFLINE_EXECUTABLE (starship scale only) | 3 |
+
+PUBLISHED_RULE (Core, Vehicle Combat): area attacks, including splash and burst-radius weapons, are resolved as attacks on a single target in starship scale unless the weapon is specifically listed as having a starship-scale area attack. The encounter is in starship scale only when it involves vehicles only; with characters on foot it is character scale, where the multi-target area engine does not exist, so these attacks are refused. Explicit starship-scale areas, unsized radii and hit/miss riders stay refused.
 
 ## Ion damage (Core pp. 159-160)
 
@@ -69,7 +78,6 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | STOCK_OPERATOR_IS_A_STATION_BATTERY | 187 |
 | STOCK_GROUP_IS_A_WEAPON_BATTERY | 179 |
 | STOCK_AMMUNITION_LIMITED_UNTRACKED | 169 |
-| STOCK_DAMAGE_AREA_OR_SPLASH | 110 |
 | STOCK_DAMAGE_NOT_PRINTED_IN_RECORD | 85 |
 | STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED | 60 |
 | STOCK_EVIDENCE_UNMODELED | 59 |
@@ -77,10 +85,11 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | STOCK_BATTERY_WEAPON_COUNT_NOT_STATED | 39 |
 | STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED | 22 |
 | STOCK_OPERATOR_NOT_PRINTED | 17 |
-| STOCK_DAMAGE_QUALIFIED | 15 |
+| STOCK_DAMAGE_QUALIFIED | 17 |
 | STOCK_FIRING_ARC_NOT_REVIEWED | 12 |
 | STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT | 10 |
 | STOCK_ATTACK_TOTAL_NOT_PRINTED | 8 |
+| STOCK_DAMAGE_AREA_OR_SPLASH | 5 |
 | STOCK_FIRING_ARC_STATED_UNPARSED | 5 |
 | STOCK_VARIANT_SPECIFIC_GROUP_UNMODELED | 3 |
 | STOCK_CREW_ATTACK_BASIS_UNKNOWN | 2 |
@@ -92,13 +101,13 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Book | Vehicles | Groups | Executable groups | Vehicles with an executable group |
 |---|---|---|---|---|
 | Core Rulebook | 17 | 39 | 10 | 7 |
-| Clone Wars Campaign Guide | 67 | 124 | 54 | 39 |
-| Force Unleashed Campaign Guide | 34 | 58 | 21 | 18 |
+| Clone Wars Campaign Guide | 67 | 124 | 55 | 40 |
+| Force Unleashed Campaign Guide | 34 | 58 | 22 | 19 |
 | Galaxy at War | 11 | 17 | 8 | 6 |
 | Galaxy of Intrigue | 8 | 9 | 0 | 0 |
 | Jedi Academy Training Manual | 1 | 1 | 0 | 0 |
 | Knights of the Old Republic Campaign Guide | 39 | 73 | 15 | 14 |
-| Legacy Era Campaign Guide | 49 | 109 | 31 | 27 |
+| Legacy Era Campaign Guide | 49 | 109 | 32 | 27 |
 | Rebellion Era Campaign Guide | 53 | 94 | 41 | 33 |
 | Scum and Villainy | 13 | 24 | 13 | 10 |
 | Scavenger's Guide to Droids | 1 | 2 | 0 | 0 |
@@ -116,10 +125,10 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | walker | 15 | 8 |
 | airspeeder | 15 | 6 |
 | ground-speeder | 14 | 6 |
-| tracked-vehicle | 10 | 4 |
+| tracked-vehicle | 10 | 5 |
 | speeder-bike | 9 | 4 |
 | space-station | 8 | 4 |
-| repulsorlift-tank | 7 | 3 |
+| repulsorlift-tank | 7 | 4 |
 | landspeeder | 7 | 2 |
 | ground-speeder-bike | 4 | 1 |
 | wheeled-vehicle | 3 | 0 |
@@ -192,6 +201,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Self-Propelled Heavy Artillery (SPHA) | Clone Wars Campaign Guide p. 168 | 4 / 6 | SPHA-T heavy turbolaser (7d10x5, gunner, +7); SPHA-I heavy ion cannon (3d10x5, gunner, +7); SPHA-V heavy laser cannon (5d10x2, gunner, +7); SPHA-M mass-driver cannon (7d10x2, gunner, +7) |
 | Single Trooper Aerial Platform (STAP) | Clone Wars Campaign Guide p. 202 | 1 / 1 | twin blaster cannons (4d10, pilot, +4) |
 | Soulless One (Modified Belbullab-22) | Clone Wars Campaign Guide p. 204 | 1 / 1 | triple laser cannons (5d10x2, pilot, +9) |
+| Unstable Terrain Artillery Transport (UT-AT) | Clone Wars Campaign Guide p. 170 | 1 / 4 | heavy laser cannon (6d10x2, pilot, +8) |
 | A-7 Hunter Interceptor | Force Unleashed Campaign Guide p. 204 | 1 / 1 | laser cannons (4d10x2, pilot, +4) |
 | Aratech 74-Z Speeder Bike | Force Unleashed Campaign Guide p. 142 | 1 / 1 | laser cannon (4d10, pilot, +7) |
 | Armored Groundcar | Force Unleashed Campaign Guide p. 110 | 1 / 1 | blaster cannons (3d10x2, gunner, +1) |
@@ -201,6 +211,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | KAAC Freerunner | Force Unleashed Campaign Guide p. 113 | 2 / 2 | laser cannons (5d10x2, gunner, +4); blaster cannons (4d10, gunner, +4) |
 | M3-A Scyk Fighter | Force Unleashed Campaign Guide p. 115 | 1 / 1 | laser cannons (4d10x2, pilot, +1) |
 | Maka-Eekai L4000 Transport | Force Unleashed Campaign Guide p. 120 | 1 / 1 | double laser cannons (4d10x2, gunner, +4) |
+| Mobile Command Base | Force Unleashed Campaign Guide p. 202 | 1 / 1 | heavy laser cannon (4d10x2, gunner, +5) |
 | Modified SoroSuub X-34 Speeder Escort | Force Unleashed Campaign Guide p. 142 | 1 / 1 | laser cannon (4d10, pilot, +7) |
 | NovaSword Space Superiority Fighter | Force Unleashed Campaign Guide p. 115 | 1 / 2 | laser cannons (5d10x2, pilot, +5) |
 | R-41 Starchaser | Force Unleashed Campaign Guide p. 116 | 2 / 3 | laser cannons (5d10x2, pilot, +6); ion cannon (3d10x2, pilot, +6) |
@@ -231,7 +242,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Star Forge Manufacture Sith Interceptor | Knights of the Old Republic Campaign Guide p. 164 | 1 / 1 | laser cannon (3d10x2, pilot, +4) |
 | Teroch-type Fast Attack Gunship | Knights of the Old Republic Campaign Guide p. 205 | 1 / 1 | double laser cannons (6d10x2, gunner, +4) |
 | A519 Invader Close Support Starfighter | Legacy Era Campaign Guide p. 218 | 1 / 2 | twin laser cannons (standard) (5d10x2, pilot, +4) |
-| All Terrain Armored Heavy Transport (AT-AHT) | Legacy Era Campaign Guide p. 185 | 1 / 2 | Heavy blaster cannons (5d10x2, gunner, +8) |
+| All Terrain Armored Heavy Transport (AT-AHT) | Legacy Era Campaign Guide p. 185 | 2 / 2 | Heavy laser cannons (8d10x2, gunner, +8); Heavy blaster cannons (5d10x2, gunner, +8) |
 | All Terrain Riot Control Transport (AT-RCT) | Legacy Era Campaign Guide p. 184 | 1 / 2 | Double medium blaster cannons (5d10x2, pilot, +9) |
 | BB-2 Starfire Fighter/Bomber | Legacy Era Campaign Guide p. 142 | 2 / 5 | laser cannons (4d10x2, pilot, +8); light laser cannon (3d10x2, gunner, +6) |
 | Besh-Type Personal Starfighter | Legacy Era Campaign Guide p. 83 | 1 / 1 | light laser cannons (5d10x2, pilot, +8) |

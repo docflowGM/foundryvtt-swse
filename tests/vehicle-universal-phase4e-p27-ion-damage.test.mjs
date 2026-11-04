@@ -91,7 +91,8 @@ test('SOURCE: ion is a typed damage only where the source types it (printed dama
   // ion plus splash (BB-2 ion bomb) stays refused; ion batteries need their battery facts
   const bomb = assessStockWeaponGroups(recordOf('le-bb-2-starfire-fighter-bomber')).groups.find(g => g.label === 'ion bomb');
   assert.equal(bomb.executable, false);
-  assert.ok(bomb.reasons.includes('STOCK_DAMAGE_AREA_OR_SPLASH'));
+  assert.ok(bomb.reasons.includes('STOCK_AMMUNITION_LIMITED_UNTRACKED'));
+  assert.equal(bomb.area.squares, 10, 'a 10-square splash is an ordinary area: it is the bomb\'s finite ammunition that keeps it refused');
   const isd = assessStockWeaponGroups(recordOf('core-imperial-i-class-star-destroyer')).groups.find(g => g.label === 'ion cannon battery');
   assert.equal(isd.executable, false);
   assert.equal(isd.damage.type, 'ion', 'typed as ion, refused for its battery facts');

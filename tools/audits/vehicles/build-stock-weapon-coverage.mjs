@@ -27,7 +27,8 @@ const vehicles = records.map(r => {
   const groups = assessStockWeaponGroups(r).groups.map(g => ({
     groupKey: g.groupKey, label: g.label, printedAttackTotal: g.attackBonusPrinted, printedDamage: g.damage?.raw ?? null, damageType: g.damage?.type ?? null, payloadCount: Number.isFinite(g.evidence?.payloadCount) ? g.evidence.payloadCount : null,
     kinds: [g.battery ? 'weapon-battery' : null, /fire[- ]?linked/i.test(g.label ?? '') || g.evidence?.fireLink !== undefined || g.evidence?.fireLinkOption !== undefined ? 'fire-linked' : null,
-      g.reasons.includes('STOCK_AMMUNITION_LIMITED_UNTRACKED') ? 'ammunition-limited' : null, g.reasons.includes('STOCK_DAMAGE_AREA_OR_SPLASH') ? 'area-or-splash' : null, g.damage?.type === 'ion' ? 'ion' : null].filter(Boolean),
+      g.reasons.includes('STOCK_AMMUNITION_LIMITED_UNTRACKED') ? 'ammunition-limited' : null, g.reasons.includes('STOCK_DAMAGE_AREA_OR_SPLASH') || g.area ? 'area-or-splash' : null, g.damage?.type === 'ion' ? 'ion' : null].filter(Boolean),
+    scaleRestriction: g.area ? 'starship-scale-only' : null, area: g.area ? { kind: g.area.kind, squares: g.area.squares } : null,
     operator: g.operator,
     sourceVerified: !!(g.damage && g.operator && g.attackBonusPrinted !== null && (!g.battery || g.battery.independentWeapon)),
     offlineExecutable: g.executable, liveVerified: false,
@@ -90,6 +91,11 @@ const doc = {
     refusedForAmmunitionAlone: allGroups.filter(g => g.refusals.length === 1 && g.refusals[0] === 'STOCK_AMMUNITION_LIMITED_UNTRACKED').length,
     executable: allGroups.filter(g => g.kinds.includes('ammunition-limited') && g.offlineExecutable).length
   },
+  // Ordinary splash / burst (Core, Vehicle Combat): resolved against a single target at STARSHIP scale; refused at character scale.
+  area: {
+    ordinaryAreaGroups: allGroups.filter(g => g.area).length,
+    executableAtStarshipScaleOnly: allGroups.filter(g => g.area && g.offlineExecutable).length
+  },
   // Core pp. 159-160 ion damage: typed ONLY where the source states it (printed damage line / structured evidence).
   ion: {
     typedByTheSource: allGroups.filter(g => g.damageType === 'ion').length,
@@ -110,6 +116,8 @@ md += `## Weapon batteries (Core p. 170)\n\n| Measure | Groups |\n|---|---|\n| P
 const kinds = doc.kinds, am = doc.ammunition;
 md += `## Weapon kinds the source distinguishes (overlapping; never summed)\n\n| Kind | Groups | OFFLINE_EXECUTABLE |\n|---|---|---|\n${Object.entries(kinds).map(([k, v]) => `| ${k} | ${v.groups} | ${v.executable} |`).join('\n')}\n\nFire-linked weapons are not weapon batteries (Starships of the Galaxy, Fire-Linked Weapons) and get no battery rules. Ordinary energy weapons are every executable group that is none of these kinds.\n\n`;
 md += `## Launchers and ammunition (no family enabled)\n\n| Measure | Groups |\n|---|---|\n| Ammunition-limited groups | ${am.limitedGroups} |\n| ... printing a payload count | ${am.payloadPrinted} |\n| ... with area / splash stated in the record | ${am.areaOrSplashStated} |\n| Refused for ammunition ALONE | ${am.refusedForAmmunitionAlone} |\n| OFFLINE_EXECUTABLE | ${am.executable} |\n\nA finite supply is never treated as unlimited, so these stay refused until a complete family exists. What is missing (deferred items P6B-D-047..049): vehicle area/splash damage (the Core prints a 4-square splash for these weapons, and the record often omits it); the missile lock-on rule (a missed missile may attack again at -5 and can be shot down); an ammunition ledger whose capacity is source-certified (the Core "Payload" line is the vehicle's complement, not a launcher's loaded count; launcher capacities are separate figures) and a reload rule for vehicle launchers (V-P6C-06).\n\n`;
+const ar = doc.area;
+md += `## Ordinary splash / burst (starship-scale rule)\n\n| Measure | Groups |\n|---|---|\n| Groups printing an ordinary "N-square" splash or burst | ${ar.ordinaryAreaGroups} |\n| ... OFFLINE_EXECUTABLE (starship scale only) | ${ar.executableAtStarshipScaleOnly} |\n\nPUBLISHED_RULE (Core, Vehicle Combat): area attacks, including splash and burst-radius weapons, are resolved as attacks on a single target in starship scale unless the weapon is specifically listed as having a starship-scale area attack. The encounter is in starship scale only when it involves vehicles only; with characters on foot it is character scale, where the multi-target area engine does not exist, so these attacks are refused. Explicit starship-scale areas, unsized radii and hit/miss riders stay refused.\n\n`;
 const ion = doc.ion;
 md += `## Ion damage (Core pp. 159-160)\n\n| Measure | Groups |\n|---|---|\n| Groups whose source types the damage as ion (printed damage line / evidence) | ${ion.typedByTheSource} |\n| ... OFFLINE_EXECUTABLE (also passing every other gate) | ${ion.offlineExecutable} |\n\nA weapon name alone never types damage as ion: a group named "ion" whose printed damage line does not say ion stays refused (STOCK_DAMAGE_ION_UNVERIFIED). Target-side ordering with shield rating and damage reduction follows the existing damage engine pending owner question V-P6C-04.\n\n`;
 md += `## Why groups are refused (a group can have several reasons)\n\n| Reason | Groups |\n|---|---|\n${Object.entries(doc.refusalReasons).map(([k, v]) => `| ${k} | ${v} |`).join('\n')}\n\n`;

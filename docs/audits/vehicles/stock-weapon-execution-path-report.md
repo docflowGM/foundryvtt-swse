@@ -194,3 +194,19 @@ incomplete pair gives nothing), no margin hits from the aid, consumed once, no e
   (stacking is SOURCE_UNRESOLVED), an incomplete pair, a named gunner on the assisting station, a user who may not operate the vehicle.
 - Limits: the published corpus has ONE full battery, so no published ship can use it yet (tests use a synthetic two-battery fixture whose
   record digest verifies; Item sync would reject it by design, so the test builds its Items with the sync's own builder); no sheet button is wired (P6B-D-044).
+
+## P6C-3B: ordinary splash at starship scale (2026-11-04)
+
+PUBLISHED_RULE (Core, Vehicle Combat): "Area attacks (including autofire, burst radius weapons, and splash weapons) are resolved as attacks
+on a single target in starship scale unless the weapon is specifically listed as having a starship-scale area attack." The scale is
+the encounter's (Core, Scale): character scale when characters on foot are involved, starship scale when the scene involves vehicles only.
+- `vehicle-encounter-scale.js` derives the scale from the encounter's participants (the active combat's combatants when the attacker
+  is among them, otherwise the attacker's vehicle and the target); undetermined is refused. It never reads a weapon name.
+- The stock gate now reads an ordinary "N-square splash/burst" (damage line or `splash: "N-square"` evidence) as an area attached to
+  the group instead of refusing it; unsized radii, explicit starship-scale areas, hit/miss riders and recharge stay refused.
+- `authorizeVehicleAttackBeforeCosts` resolves the area at the encounter's scale BEFORE any cost: single-target at starship scale,
+  refused at character scale (`STOCK_AREA_CHARACTER_SCALE_AREA_NOT_IMPLEMENTED`: the multi-target area engine is a later slice) or when
+  the scale is undetermined.
+- Result: 3 non-ammunition groups with a 2-square splash on heavy laser cannons (Unstable Terrain Artillery Transport, Mobile Command Base,
+  All Terrain Armored Heavy Transport) become executable at starship scale only: 351 executable groups on 258 vehicles. The 107
+  groups with an ordinary area include 103+ finite-ammunition groups that stay refused for their ammunition (P6C-3D).

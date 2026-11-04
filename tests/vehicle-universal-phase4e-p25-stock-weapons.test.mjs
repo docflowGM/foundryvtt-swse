@@ -64,7 +64,8 @@ test('SOURCE: the X-wing record yields exactly one executable stock group; torpe
   assert.equal(lc.executable, true);
   assert.deepEqual([lc.damage.raw, lc.operator, lc.attackBonusPrinted], ['6d10x2', 'pilot', 5]);
   assert.equal(pt.executable, false);
-  assert.ok(pt.reasons.includes('STOCK_DAMAGE_AREA_OR_SPLASH'));
+  assert.ok(pt.reasons.includes('STOCK_AMMUNITION_LIMITED_UNTRACKED'), 'finite ammunition has no complete family yet');
+  assert.deepEqual([pt.area.kind, pt.area.squares], ['splash', 4], 'its 4-square splash is read as an ordinary area (single target at starship scale), not as a refusal');
 });
 
 test('IMPORT -> DISPLAY: creating the vehicle arms its factory laser cannons as an owned Item; no ledger, no credits', async () => {
@@ -366,7 +367,7 @@ test('CORPUS: each executable stock group arms, attacks at its printed total, an
         const w = items.find(i => i.flags.swse.vehicleStockWeapon.groupKey === g.groupKey && (i.flags.swse.vehicleStockWeapon.fireMode ?? 'single') === mode);
         if (!w) { failures.push(`${g.groupKey}|${mode}: not armed`); continue; }
         const capital = CAPITAL_SIZES.has(rec.classification.printedSize);
-        const r = await fire(v, w, target('medium'));
+        const r = await fire(v, w, g.area ? target('medium', 'vehicle') : target('medium'));      // an ordinary splash resolves at starship scale only (vehicles-only encounter)
         const expectBonus = printed + (capital ? -20 : 0);
         let ok = r.result && r.result.atkBonus === expectBonus && !r.blocked;
         let formula = null;
@@ -378,8 +379,8 @@ test('CORPUS: each executable stock group arms, attacks at its printed total, an
     }
   }
   assert.deepEqual(failures, []);
-  assert.equal(provenGroups.size, 348, 'the corpus-wide count of offline-executable stock GROUPS (each counted once)');
-  assert.equal(provenModes, 349, 'one group (Krayt\'s Honor turbolaser battery) supports two modes');
+  assert.equal(provenGroups.size, 351, 'the corpus-wide count of offline-executable stock GROUPS (each counted once)');
+  assert.equal(provenModes, 352, 'one group (Krayt\'s Honor turbolaser battery) supports two modes');
   setPolicy(undefined);
 });
 
@@ -388,9 +389,9 @@ test('COVERAGE REPORT: current, and its executable counts are exactly what the C
   execFileSync(process.execPath, ['tools/audits/vehicles/build-stock-weapon-coverage.mjs', '--check']);
   const { readFileSync } = await import('node:fs');
   const cov = JSON.parse(readFileSync('data/audits/vehicles/stock-weapon-coverage.json', 'utf8'));
-  assert.deepEqual([cov.totals.vehicles, cov.totals.groups, cov.totals.offlineExecutableGroups, cov.totals.vehiclesWithOfflineExecutableGroup, cov.totals.liveVerifiedVehicles], [429, 846, 348, 256, 0]);
+  assert.deepEqual([cov.totals.vehicles, cov.totals.groups, cov.totals.offlineExecutableGroups, cov.totals.vehiclesWithOfflineExecutableGroup, cov.totals.liveVerifiedVehicles], [429, 846, 351, 258, 0]);
   const exec = cov.vehicles.flatMap(v => v.groups.filter(g => g.offlineExecutable));
-  assert.equal(exec.length, 348);
+  assert.equal(exec.length, 351);
   for (const g of cov.vehicles.flatMap(v => v.groups)) {
     assert.equal(g.liveVerified, false);
     if (!g.offlineExecutable) { assert.ok(g.refusals.length > 0, g.groupKey + ' has a named refusal'); assert.equal(g.attackReadiness, 'REFUSED'); }
