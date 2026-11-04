@@ -388,7 +388,7 @@ export class DroidBuilderViewModelAdapter {
 
   static #normalizeInstalledItem(item, groupId, index, selectedComponentKey = null) {
     const actionCategory = this.#actionCategoryForGroup(groupId);
-    const subcategory = item.category || item.subcategory || null;
+    const subcategory = item.category || item.subcategory || (actionCategory === 'enhancement' ? groupId : null);
     const detailKey = `${actionCategory}:${subcategory || 'base'}:${item.id || ''}`;
 
     return {
@@ -570,7 +570,7 @@ export class DroidBuilderViewModelAdapter {
       ...context,
       groupId: id,
       actionCategory,
-      subcategory: null,
+      subcategory: actionCategory === 'enhancement' ? id : null,
     }));
 
     const isRequired = REQUIRED_GROUPS.has(actionCategory);
