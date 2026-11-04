@@ -98,6 +98,7 @@ export function resolveDroidComponentQuote(input = {}) {
   } else if (Array.isArray(definition.variants) && definition.variants.length) {
     return invalid('Select an exact published component variant');
   }
+  if (variant && selected === definition) return invalid('No published variant matches the requested selection');
 
   let credits = null;
   const cost = selected.cost ?? selected.price ?? (selected === definition ? definition.cost : null);
@@ -139,4 +140,36 @@ export function resolveDroidComponentQuote(input = {}) {
   if (kg === null || kg < 0) return invalid('Published component mass is unavailable or unresolved');
 
   return { status: 'OK', credits, kg, blockingReason: null };
+}
+
+/**
+ * Entry point for every chargen/follower/preview consumer of DROID_SYSTEMS.
+ * Keep sourcePath derivation here; callers must never supply their own
+ * competing price or accessory weight factors.
+ * Quoting a component is not permission to install or to charge the wallet:
+ * source-status, host and ownership gates remain separate requirements.
+ */
+export function resolveDroidBuilderQuote({
+  definition, category, subcategory = null, size, speed = null,
+  variant = null, appendageBaseCost = null, appendageBaseWeight = null,
+  baseLocomotionCost = null
+} = {}) {
+  const group = category === 'enhancement' ? 'locomotionEnhancement' : category;
+  const paths = {
+    locomotion: 'locomotion',
+    processor: 'processors',
+    appendage: 'appendages',
+    locomotionEnhancement: 'locomotionEnhancements',
+    appendageEnhancement: 'appendageEnhancements'
+  };
+  const sourcePath = group === 'accessory'
+    ? (subcategory ? `accessories.${subcategory}` : '')
+    : paths[group];
+  if (!sourcePath) return invalid('Component source category is not recognized');
+
+  return resolveDroidComponentQuote({
+    definition, size, category: group === 'accessory' ? subcategory : group,
+    sourcePath, speed, variant, appendageBaseCost,
+    appendageBaseWeight, baseLocomotionCost
+  });
 }
