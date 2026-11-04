@@ -86,3 +86,21 @@ test('STOCK: a group is autofire-capable exactly when its record prints an autof
   }
   assert.ok(capable >= 100 && executableCapable >= 50, `${capable} capable, ${executableCapable} executable`);
 });
+
+test('SHEET: the firing-mode view lists only autofire-capable weapons and the action drives the swift-action service', async () => {
+  const { buildWeaponOpsView, runWeaponAction } = await import('../scripts/sheets/v2/vehicle-sheet/vehicle-weapon-ops.js');
+  world();
+  const dbl = await install('blaster-cannon-light', 'cannon-double');
+  await install('laser-cannon-light', null, 'turret-2');
+  const { vehicle } = state();
+  vehicle.items.contents ??= [...vehicle.items.values()];
+  const view = buildWeaponOpsView(vehicle, { isGM: true });
+  assert.deepEqual(view.fireModes.map(r => r.itemId), [dbl.id], 'a plain cannon has no mode switch');
+  assert.deepEqual([view.fireModes[0].mode, view.fireModes[0].canSwitchToAutofire, view.fireModes[0].canSwitchToSingle, view.fireModes[0].cost], ['single', true, false, 'Swift action']);
+  const said = [];
+  const r = await runWeaponAction({ action: 'fire-mode-autofire', itemId: dbl.id, vehicle }, { service: VehicleFireModeService, notify: { info: m => said.push(m), warn: m => said.push('W ' + m) } });
+  assert.equal(r.ok, true, said.join('|'));
+  const after = buildWeaponOpsView(vehicle, { isGM: true }).fireModes[0];
+  assert.deepEqual([after.mode, after.canSwitchToAutofire, after.canSwitchToSingle], ['autofire', false, true]);
+  assert.equal(buildWeaponOpsView(vehicle, { isGM: false }).canAct, vehicle.isOwner === true);
+});

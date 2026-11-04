@@ -699,5 +699,5 @@ Open items: 55. Resolved items: 13 (listed at the end).
 
 ### P6B-D-063 - Weapon-battery groups whose operator prints "N gunners" (no word "battery") and printed alternative / automated operators
 
-- **Resolved:** Implemented as a project interpretation under V-P6C-02; flagged here for review. Full-battery mode still requires a printed weapon count.
+- **Resolved:** OWNER APPROVED 2026-11-04. A printed 'N gunners' operator on a group the record independently establishes as a published weapon battery is accepted; the gunner count only removes the assistance bonus of an independently fired weapon; the number of identical weapons is never inferred; full-battery execution requires a source-backed weapon count; an ordinary multi-gunner station is never a battery without independent evidence; unreconciled attack totals stay rejected.
 - **Was:** 170 printed weapon-battery groups were refused only because the operator line read "6 gunners" instead of "battery (6 gunners)". The record's own classification marks them printed batteries and the gunner count is printed. They now run in the existing independent-weapon mode (no weapon count is inferred). Operators printed as alternatives ("pilot or gunner") or as droid / automated systems are parsed once and enforced at the station evidence.

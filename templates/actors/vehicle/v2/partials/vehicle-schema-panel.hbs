@@ -147,6 +147,20 @@
 </section>
 {{/if}}
 
+{{#if view.weaponOps.hasFireModes}}
+<section class="swse-vehicle-panel swse-vehicle-weapon-ops-panel">
+  <header><h3>Firing modes</h3></header>
+  {{#each view.weaponOps.fireModes}}
+    <div class="swse-vehicle-firemode-row" data-item-id="{{itemId}}">
+      <strong>{{name}}</strong> — {{modeLabel}} · switching costs a {{cost}}
+      {{#if canSwitchToAutofire}}<button type="button" data-weapon-action="fire-mode-autofire" data-item-id="{{itemId}}">Set to autofire</button>{{/if}}
+      {{#if canSwitchToSingle}}<button type="button" data-weapon-action="fire-mode-single" data-item-id="{{itemId}}">Set to single fire</button>{{/if}}
+      {{#if disabledReason}}<small>{{disabledReason}}</small>{{/if}}
+      <small>{{burstNote}}</small>
+    </div>
+  {{/each}}
+</section>
+{{/if}}
 {{#if view.operating}}
 <section class="swse-vehicle-panel swse-vehicle-operating-panel" data-environment="{{view.operating.environment}}">
   <header class="swse-vehicle-panel-header">

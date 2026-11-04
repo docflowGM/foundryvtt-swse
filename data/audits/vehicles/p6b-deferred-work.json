@@ -1405,8 +1405,8 @@
       "reason": "170 printed weapon-battery groups were refused only because the operator line read \"6 gunners\" instead of \"battery (6 gunners)\". The record's own classification marks them printed batteries and the gunner count is printed. They now run in the existing independent-weapon mode (no weapon count is inferred). Operators printed as alternatives (\"pilot or gunner\") or as droid / automated systems are parsed once and enforced at the station evidence.",
       "missing": "Owner confirmation that the record's printed-battery classification is the authority (this was implemented under the existing battery ruling V-P6C-02; revert is one regex).",
       "impact": "+120 executable stock groups (379 to 499) depend on it.",
-      "recommendedAction": "Confirm or revert.",
-      "resolution": "Implemented as a project interpretation under V-P6C-02; flagged here for review. Full-battery mode still requires a printed weapon count."
+      "recommendedAction": "None: approved.",
+      "resolution": "OWNER APPROVED 2026-11-04. A printed 'N gunners' operator on a group the record independently establishes as a published weapon battery is accepted; the gunner count only removes the assistance bonus of an independently fired weapon; the number of identical weapons is never inferred; full-battery execution requires a source-backed weapon count; an ordinary multi-gunner station is never a battery without independent evidence; unreconciled attack totals stay rejected."
     },
     {
       "workstream": "WEAPON-ECOSYSTEM",
