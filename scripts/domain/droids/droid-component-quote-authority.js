@@ -5,6 +5,7 @@
  * This module calculates numbers only. It does NOT certify an item's source
  * identity, grant an installation host, or authorize a transaction.
  */
+const SIZE_ORDER = ['fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'];
 const FACTORS = Object.freeze({
   fine:       Object.freeze({ price: 20, accessoryWeight: 0.1 }),
   diminutive: Object.freeze({ price: 10, accessoryWeight: 0.2 }),
@@ -65,6 +66,7 @@ function accessoryCategory(category, sourcePath) {
  * @param {number} [input.appendageBaseCost] Cost of selected appendage
  * @param {number} [input.appendageBaseWeight] Weight of selected appendage
  * @param {number} [input.baseLocomotionCost] Quoted base locomotion cost
+ * @param {number} [input.selectedInstalledShieldRating] SR from an actual installed shield generator
  *
  * All output fields are consumed by the droid-part adapter and its clients.
  * BLOCKED is a mandatory hard stop for callers, never a free quotation.
@@ -72,11 +74,29 @@ function accessoryCategory(category, sourcePath) {
 export function resolveDroidComponentQuote(input = {}) {
   const {
     definition, size, category = '', sourcePath = '',
-    speed, variant, appendageBaseCost, appendageBaseWeight, baseLocomotionCost
+    speed, variant, appendageBaseCost, appendageBaseWeight, baseLocomotionCost,
+    selectedInstalledShieldRating
   } = input;
   const factors = getDroidSizeFactors(size);
   if (!factors) return invalid('Unknown droid size; choose a published size');
   if (!definition || typeof definition !== 'object') return invalid('Unknown component source definition');
+  const orderedSize = SIZE_ORDER.indexOf(String(size).toLowerCase());
+  const minimum = definition.sizeMinimum ?? definition.minSize ?? null;
+  if (minimum && (SIZE_ORDER.indexOf(String(minimum).toLowerCase()) < 0
+      || orderedSize < SIZE_ORDER.indexOf(String(minimum).toLowerCase()))) {
+    return invalid('Droid is smaller than the published component minimum size');
+  }
+  const maximum = definition.maxSize ?? null;
+  if (maximum && (SIZE_ORDER.indexOf(String(maximum).toLowerCase()) < 0
+      || orderedSize > SIZE_ORDER.indexOf(String(maximum).toLowerCase()))) {
+    return invalid('Droid is larger than the published component maximum size');
+  }
+  const isShieldExpansion = definition.id === 'shield-expansion-module';
+  if (isShieldExpansion && (!Number.isInteger(selectedInstalledShieldRating)
+      || ![5, 10, 15, 20].includes(selectedInstalledShieldRating)
+      || orderedSize < SIZE_ORDER.indexOf('small'))) {
+    return invalid('Shield expansion requires a Small-or-larger droid with an installed eligible shield generator SR');
+  }
 
   const kind = String(category).toLowerCase();
   const path = String(sourcePath || definition.sourcePath || '').toLowerCase();
@@ -109,7 +129,7 @@ export function resolveDroidComponentQuote(input = {}) {
     const base = path.includes('appendageenhancement')
       ? appendageBaseCost : priceFactor;
     if (!Number.isFinite(base)) return invalid('Select a priced base appendage');
-    credits = numerical(cost(base));
+    credits = numerical(isShieldExpansion ? cost(base, selectedInstalledShieldRating) : cost(base));
   } else {
     credits = numerical(cost);
   }
@@ -133,7 +153,7 @@ export function resolveDroidComponentQuote(input = {}) {
     const base = path.includes('appendageenhancement')
       ? appendageBaseWeight : massFactor;
     if (!Number.isFinite(base)) return invalid('Select a weighed base appendage');
-    kg = numerical(weightValue(base));
+    kg = numerical(isShieldExpansion ? weightValue(base, selectedInstalledShieldRating) : weightValue(base));
   } else {
     kg = numerical(weightValue);
   }
@@ -152,7 +172,7 @@ export function resolveDroidComponentQuote(input = {}) {
 export function resolveDroidBuilderQuote({
   definition, category, subcategory = null, size, speed = null,
   variant = null, appendageBaseCost = null, appendageBaseWeight = null,
-  baseLocomotionCost = null
+  baseLocomotionCost = null, selectedInstalledShieldRating = null
 } = {}) {
   const group = category === 'enhancement' ? 'locomotionEnhancement' : category;
   const paths = {
@@ -170,6 +190,6 @@ export function resolveDroidBuilderQuote({
   return resolveDroidComponentQuote({
     definition, size, category: group === 'accessory' ? subcategory : group,
     sourcePath, speed, variant, appendageBaseCost,
-    appendageBaseWeight, baseLocomotionCost
+    appendageBaseWeight, baseLocomotionCost, selectedInstalledShieldRating
   });
 }
