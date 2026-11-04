@@ -9,9 +9,9 @@ Three claims are kept apart: **SOURCE_VERIFIED** (the published configuration is
 | Published vehicles | 429 |
 | Published attack groups | 846 |
 | Groups SOURCE_VERIFIED | 557 (65.8%) |
-| Groups OFFLINE_EXECUTABLE | 356 (42.1%) |
-| Vehicles with at least one OFFLINE_EXECUTABLE group | 263 (61.3%) |
-| Vehicles with every group executable | 125 |
+| Groups OFFLINE_EXECUTABLE | 348 (41.1%) |
+| Vehicles with at least one OFFLINE_EXECUTABLE group | 256 (59.7%) |
+| Vehicles with every group executable | 123 |
 | Vehicles LIVE_VERIFIED | 0 |
 
 ## Weapon batteries (Core p. 170)
@@ -28,12 +28,36 @@ Three claims are kept apart: **SOURCE_VERIFIED** (the published configuration is
 
 The printed total of a battery already contains the printed gunners' assistance (+2 per assisting gunner). Full-battery mode applies it once and adds margin hits capped by the printed weapon count; independent-weapon mode removes exactly that assistance. The two counts are independent quantities and neither is inferred from the other. Fire-linked weapons that a statblock calls "batteries" are not weapon batteries (Starships of the Galaxy, Fire-Linked Weapons). Named gunners on a full battery are refused (BATTERY_ASSIGNED_CREW_ROSTER_UNMODELED). Refusal reasons overlap.
 
+## Weapon kinds the source distinguishes (overlapping; never summed)
+
+| Kind | Groups | OFFLINE_EXECUTABLE |
+|---|---|---|
+| weapon-battery | 104 | 64 |
+| fire-linked | 18 | 7 |
+| ammunition-limited | 169 | 0 |
+| area-or-splash | 110 | 0 |
+| ion | 69 | 43 |
+
+Fire-linked weapons are not weapon batteries (Starships of the Galaxy, Fire-Linked Weapons) and get no battery rules. Ordinary energy weapons are every executable group that is none of these kinds.
+
+## Launchers and ammunition (no family enabled)
+
+| Measure | Groups |
+|---|---|
+| Ammunition-limited groups | 169 |
+| ... printing a payload count | 24 |
+| ... with area / splash stated in the record | 102 |
+| Refused for ammunition ALONE | 33 |
+| OFFLINE_EXECUTABLE | 0 |
+
+A finite supply is never treated as unlimited, so these stay refused until a complete family exists. What is missing (deferred items P6B-D-047..049): vehicle area/splash damage (the Core prints a 4-square splash for these weapons, and the record often omits it); the missile lock-on rule (a missed missile may attack again at -5 and can be shot down); an ammunition ledger whose capacity is source-certified (the Core "Payload" line is the vehicle's complement, not a launcher's loaded count; launcher capacities are separate figures) and a reload rule for vehicle launchers (V-P6C-06).
+
 ## Ion damage (Core pp. 159-160)
 
 | Measure | Groups |
 |---|---|
 | Groups whose source types the damage as ion (printed damage line / evidence) | 69 |
-| ... OFFLINE_EXECUTABLE (also passing every other gate) | 44 |
+| ... OFFLINE_EXECUTABLE (also passing every other gate) | 43 |
 
 A weapon name alone never types damage as ion: a group named "ion" whose printed damage line does not say ion stays refused (STOCK_DAMAGE_ION_UNVERIFIED). Target-side ordering with shield rating and damage reduction follows the existing damage engine pending owner question V-P6C-04.
 
@@ -45,17 +69,20 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | STOCK_OPERATOR_IS_A_STATION_BATTERY | 187 |
 | STOCK_GROUP_IS_A_WEAPON_BATTERY | 179 |
 | STOCK_AMMUNITION_LIMITED_UNTRACKED | 169 |
+| STOCK_DAMAGE_AREA_OR_SPLASH | 110 |
 | STOCK_DAMAGE_NOT_PRINTED_IN_RECORD | 85 |
-| STOCK_DAMAGE_AREA_OR_SPLASH | 71 |
 | STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED | 60 |
+| STOCK_EVIDENCE_UNMODELED | 59 |
 | STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER | 47 |
 | STOCK_BATTERY_WEAPON_COUNT_NOT_STATED | 39 |
+| STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED | 22 |
 | STOCK_OPERATOR_NOT_PRINTED | 17 |
 | STOCK_DAMAGE_QUALIFIED | 15 |
 | STOCK_FIRING_ARC_NOT_REVIEWED | 12 |
-| STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT | 9 |
+| STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT | 10 |
 | STOCK_ATTACK_TOTAL_NOT_PRINTED | 8 |
-| STOCK_FIRING_ARC_STATED_UNPARSED | 4 |
+| STOCK_FIRING_ARC_STATED_UNPARSED | 5 |
+| STOCK_VARIANT_SPECIFIC_GROUP_UNMODELED | 3 |
 | STOCK_CREW_ATTACK_BASIS_UNKNOWN | 2 |
 | STOCK_POSSIBLE_AREA_WEAPON_UNVERIFIED | 2 |
 | STOCK_DAMAGE_ION_UNVERIFIED | 2 |
@@ -65,12 +92,12 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Book | Vehicles | Groups | Executable groups | Vehicles with an executable group |
 |---|---|---|---|---|
 | Core Rulebook | 17 | 39 | 10 | 7 |
-| Clone Wars Campaign Guide | 67 | 124 | 58 | 42 |
+| Clone Wars Campaign Guide | 67 | 124 | 54 | 39 |
 | Force Unleashed Campaign Guide | 34 | 58 | 21 | 18 |
 | Galaxy at War | 11 | 17 | 8 | 6 |
 | Galaxy of Intrigue | 8 | 9 | 0 | 0 |
 | Jedi Academy Training Manual | 1 | 1 | 0 | 0 |
-| Knights of the Old Republic Campaign Guide | 39 | 73 | 19 | 18 |
+| Knights of the Old Republic Campaign Guide | 39 | 73 | 15 | 14 |
 | Legacy Era Campaign Guide | 49 | 109 | 31 | 27 |
 | Rebellion Era Campaign Guide | 53 | 94 | 41 | 33 |
 | Scum and Villainy | 13 | 24 | 13 | 10 |
@@ -83,9 +110,9 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 
 | Category | Vehicles | With an executable group |
 |---|---|---|
-| starfighter | 132 | 119 |
-| space-transport | 99 | 71 |
-| capital-ship | 84 | 28 |
+| starfighter | 132 | 116 |
+| space-transport | 99 | 68 |
+| capital-ship | 84 | 27 |
 | walker | 15 | 8 |
 | airspeeder | 15 | 6 |
 | ground-speeder | 14 | 6 |
@@ -132,7 +159,6 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Azure Angel | Clone Wars Campaign Guide p. 138 | 1 / 2 | laser cannons (7d10x2, pilot, +14) |
 | BARC Speeder | Clone Wars Campaign Guide p. 165 | 1 / 1 | twin light blaster cannons (5d10, pilot, +8) |
 | Barloz-class Freighter | Clone Wars Campaign Guide p. 76 | 1 / 1 | laser cannon (4d10x2, copilot, +1) |
-| Belbullab Heavy Starfighter | Clone Wars Campaign Guide p. 204 | 2 / 3 | Belbullab-22 triple laser cannons (5d10x2, pilot, +6); Belbullab-23/24 triple laser cannons (6d10x2, pilot, +6) |
 | C-9979 Landing Craft | Clone Wars Campaign Guide p. 205 | 2 / 2 | fire-linked laser cannons (5d10x2, gunner, +3); fire-linked blaster cannons (5d10x2, gunner, +3) |
 | CIS-Advanced Starfighter | Clone Wars Campaign Guide p. 206 | 1 / 2 | heavy blaster cannons (6d10x2, pilot, +7) |
 | CR-20 Troop Carrier | Clone Wars Campaign Guide p. 166 | 2 / 2 | fire-linked medium turbolasers (6d10x5, pilot, +10); fire-linked medium turbolasers (6d10x5, copilot, +8) |
@@ -163,11 +189,9 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Republic Troop Transport | Clone Wars Campaign Guide p. 168 | 1 / 2 | laser cannons (4d10, pilot, +10) |
 | S40K Phoenix Hawk-class Light Pinnace | Clone Wars Campaign Guide p. 84 | 2 / 2 | heavy blaster cannons (6d10x2, pilot, +3); light ion cannons (3d10x2, pilot, +3) |
 | Sabaoth Starfighter | Clone Wars Campaign Guide p. 221 | 1 / 1 | laser cannons (4d10x2, pilot, +8) |
-| Scurrg H-6 Prototype Bomber | Clone Wars Campaign Guide p. 85 | 1 / 3 | forward-mounted laser cannons (8d10x2, pilot, +7) |
 | Self-Propelled Heavy Artillery (SPHA) | Clone Wars Campaign Guide p. 168 | 4 / 6 | SPHA-T heavy turbolaser (7d10x5, gunner, +7); SPHA-I heavy ion cannon (3d10x5, gunner, +7); SPHA-V heavy laser cannon (5d10x2, gunner, +7); SPHA-M mass-driver cannon (7d10x2, gunner, +7) |
 | Single Trooper Aerial Platform (STAP) | Clone Wars Campaign Guide p. 202 | 1 / 1 | twin blaster cannons (4d10, pilot, +4) |
 | Soulless One (Modified Belbullab-22) | Clone Wars Campaign Guide p. 204 | 1 / 1 | triple laser cannons (5d10x2, pilot, +9) |
-| Subjugator-class Heavy Cruiser | Clone Wars Campaign Guide p. 211 | 1 / 5 | ion pulse cannons (9d10x10, gunner, +7) |
 | A-7 Hunter Interceptor | Force Unleashed Campaign Guide p. 204 | 1 / 1 | laser cannons (4d10x2, pilot, +4) |
 | Aratech 74-Z Speeder Bike | Force Unleashed Campaign Guide p. 142 | 1 / 1 | laser cannon (4d10, pilot, +7) |
 | Armored Groundcar | Force Unleashed Campaign Guide p. 110 | 1 / 1 | blaster cannons (3d10x2, gunner, +1) |
@@ -203,13 +227,9 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Hoersch-Kessel Drive G-Type Light Shuttle | Knights of the Old Republic Campaign Guide p. 98 | 1 / 1 | double laser cannons (5d10x2, pilot, +5) |
 | Koros Spaceworks CX-133 Chaos Fighter | Knights of the Old Republic Campaign Guide p. 220 | 1 / 1 | light laser cannons (5d10x2, pilot, +4) |
 | Pelagia Duplex Command Assault Gunship | Knights of the Old Republic Campaign Guide p. 100 | 1 / 2 | heavy laser cannons (6d10x2, gunner, +8) |
-| Republic Fleet Systems Aurek Tactical Strikefighter | Knights of the Old Republic Campaign Guide p. 181 | 1 / 2 | heavy laser cannon (6d10x2, pilot, +6) |
-| Republic Fleet Systems Conductor-class Short-haul Landing Craft | Knights of the Old Republic Campaign Guide p. 182 | 1 / 1 | light laser cannon (4d10x2, pilot, +5) |
 | Republic Fleet Systems KT-400 Military Droid Carrier | Knights of the Old Republic Campaign Guide p. 183 | 1 / 1 | double medium laser cannon (6d10x2, gunner, +3) |
-| Star Forge Manufacture Herald-class Shuttle | Knights of the Old Republic Campaign Guide p. 164 | 1 / 2 | light turbolaser cannons (3d10x5, pilot, +7) |
 | Star Forge Manufacture Sith Interceptor | Knights of the Old Republic Campaign Guide p. 164 | 1 / 1 | laser cannon (3d10x2, pilot, +4) |
 | Teroch-type Fast Attack Gunship | Knights of the Old Republic Campaign Guide p. 205 | 1 / 1 | double laser cannons (6d10x2, gunner, +4) |
-| Zentine Dynamics Ministry-class Orbital Shuttle | Knights of the Old Republic Campaign Guide p. 182 | 1 / 1 | double laser cannons [detail; Ranged names medium laser cannons] (5d10x2, copilot, +5) |
 | A519 Invader Close Support Starfighter | Legacy Era Campaign Guide p. 218 | 1 / 2 | twin laser cannons (standard) (5d10x2, pilot, +4) |
 | All Terrain Armored Heavy Transport (AT-AHT) | Legacy Era Campaign Guide p. 185 | 1 / 2 | Heavy blaster cannons (5d10x2, gunner, +8) |
 | All Terrain Riot Control Transport (AT-RCT) | Legacy Era Campaign Guide p. 184 | 1 / 2 | Double medium blaster cannons (5d10x2, pilot, +9) |

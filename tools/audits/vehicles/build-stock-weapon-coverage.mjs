@@ -25,7 +25,10 @@ const CAPITAL = new Set(['Colossal (frigate)', 'Colossal (cruiser)', 'Colossal (
 
 const vehicles = records.map(r => {
   const groups = assessStockWeaponGroups(r).groups.map(g => ({
-    groupKey: g.groupKey, label: g.label, printedAttackTotal: g.attackBonusPrinted, printedDamage: g.damage?.raw ?? null, damageType: g.damage?.type ?? null, operator: g.operator,
+    groupKey: g.groupKey, label: g.label, printedAttackTotal: g.attackBonusPrinted, printedDamage: g.damage?.raw ?? null, damageType: g.damage?.type ?? null, payloadCount: Number.isFinite(g.evidence?.payloadCount) ? g.evidence.payloadCount : null,
+    kinds: [g.battery ? 'weapon-battery' : null, /fire[- ]?linked/i.test(g.label ?? '') || g.evidence?.fireLink !== undefined || g.evidence?.fireLinkOption !== undefined ? 'fire-linked' : null,
+      g.reasons.includes('STOCK_AMMUNITION_LIMITED_UNTRACKED') ? 'ammunition-limited' : null, g.reasons.includes('STOCK_DAMAGE_AREA_OR_SPLASH') ? 'area-or-splash' : null, g.damage?.type === 'ion' ? 'ion' : null].filter(Boolean),
+    operator: g.operator,
     sourceVerified: !!(g.damage && g.operator && g.attackBonusPrinted !== null && (!g.battery || g.battery.independentWeapon)),
     offlineExecutable: g.executable, liveVerified: false,
     itemReadiness: g.executable ? 'ARMED_AT_IMPORT' : 'NOT_ARMED', crewReadiness: g.executable ? `${g.operator} station (generic or assigned crew)` : 'NOT_APPLICABLE',
@@ -75,6 +78,18 @@ const doc = {
     independentWeaponOnly: allGroups.filter(g => g.executableModes.length === 1 && g.executableModes[0] === 'independent-weapon').length,
     bothModes: allGroups.filter(g => g.executableModes.length === 2).length
   },
+  // The kinds of weapon the source distinguishes. A group can belong to several (overlapping, never summed): an ion battery,
+  // a fire-linked missile launcher. Only the source-certified classification decides: a name can only deny.
+  kinds: Object.fromEntries(['weapon-battery', 'fire-linked', 'ammunition-limited', 'area-or-splash', 'ion'].map(k => [k, { groups: allGroups.filter(g => g.kinds.includes(k)).length, executable: allGroups.filter(g => g.kinds.includes(k) && g.offlineExecutable).length }])),
+  // Launchers and ammunition (P6C-2D): no finite-ammunition family is enabled. Core: the statblock "Payload" is the vehicle's
+  // COMPLEMENT of missiles/torpedoes; a launcher's capacity is a different figure (Starships of the Galaxy pp. 45-46).
+  ammunition: {
+    limitedGroups: allGroups.filter(g => g.kinds.includes('ammunition-limited')).length,
+    payloadPrinted: allGroups.filter(g => g.kinds.includes('ammunition-limited') && g.payloadCount !== null).length,
+    areaOrSplashStated: allGroups.filter(g => g.kinds.includes('ammunition-limited') && g.kinds.includes('area-or-splash')).length,
+    refusedForAmmunitionAlone: allGroups.filter(g => g.refusals.length === 1 && g.refusals[0] === 'STOCK_AMMUNITION_LIMITED_UNTRACKED').length,
+    executable: allGroups.filter(g => g.kinds.includes('ammunition-limited') && g.offlineExecutable).length
+  },
   // Core pp. 159-160 ion damage: typed ONLY where the source states it (printed damage line / structured evidence).
   ion: {
     typedByTheSource: allGroups.filter(g => g.damageType === 'ion').length,
@@ -92,6 +107,9 @@ md += `Three claims are kept apart: **SOURCE_VERIFIED** (the published configura
 md += `| Measure | Count |\n|---|---|\n| Published vehicles | ${t.vehicles} |\n| Published attack groups | ${t.groups} |\n| Groups SOURCE_VERIFIED | ${t.sourceVerifiedGroups} (${pct(t.sourceVerifiedGroups, t.groups)}%) |\n| Groups OFFLINE_EXECUTABLE | ${t.offlineExecutableGroups} (${pct(t.offlineExecutableGroups, t.groups)}%) |\n| Vehicles with at least one OFFLINE_EXECUTABLE group | ${t.vehiclesWithOfflineExecutableGroup} (${pct(t.vehiclesWithOfflineExecutableGroup, t.vehicles)}%) |\n| Vehicles with every group executable | ${t.vehiclesAllGroupsExecutable} |\n| Vehicles LIVE_VERIFIED | ${t.liveVerifiedVehicles} |\n\n`;
 const b = doc.batteries;
 md += `## Weapon batteries (Core p. 170)\n\n| Measure | Groups |\n|---|---|\n| Printed weapon batteries ("battery (N gunners)") | ${b.printedBatteryGroups} |\n| ... printing the number of identical weapons | ${b.weaponCountPrinted} |\n| ... OFFLINE_EXECUTABLE in at least one mode (each group counted once) | ${b.executableGroups} |\n| ... full-battery mode executable (assistance, margin hits; needs the printed weapon count) | ${b.fullBatteryExecutable} |\n| ... independent-weapon mode executable (one weapon; no assistance, no margin hits) | ${b.independentWeaponExecutable} |\n| ... independent-weapon ONLY | ${b.independentWeaponOnly} |\n| ... both modes | ${b.bothModes} |\n\nThe printed total of a battery already contains the printed gunners' assistance (+2 per assisting gunner). Full-battery mode applies it once and adds margin hits capped by the printed weapon count; independent-weapon mode removes exactly that assistance. The two counts are independent quantities and neither is inferred from the other. Fire-linked weapons that a statblock calls "batteries" are not weapon batteries (Starships of the Galaxy, Fire-Linked Weapons). Named gunners on a full battery are refused (BATTERY_ASSIGNED_CREW_ROSTER_UNMODELED). Refusal reasons overlap.\n\n`;
+const kinds = doc.kinds, am = doc.ammunition;
+md += `## Weapon kinds the source distinguishes (overlapping; never summed)\n\n| Kind | Groups | OFFLINE_EXECUTABLE |\n|---|---|---|\n${Object.entries(kinds).map(([k, v]) => `| ${k} | ${v.groups} | ${v.executable} |`).join('\n')}\n\nFire-linked weapons are not weapon batteries (Starships of the Galaxy, Fire-Linked Weapons) and get no battery rules. Ordinary energy weapons are every executable group that is none of these kinds.\n\n`;
+md += `## Launchers and ammunition (no family enabled)\n\n| Measure | Groups |\n|---|---|\n| Ammunition-limited groups | ${am.limitedGroups} |\n| ... printing a payload count | ${am.payloadPrinted} |\n| ... with area / splash stated in the record | ${am.areaOrSplashStated} |\n| Refused for ammunition ALONE | ${am.refusedForAmmunitionAlone} |\n| OFFLINE_EXECUTABLE | ${am.executable} |\n\nA finite supply is never treated as unlimited, so these stay refused until a complete family exists. What is missing (deferred items P6B-D-047..049): vehicle area/splash damage (the Core prints a 4-square splash for these weapons, and the record often omits it); the missile lock-on rule (a missed missile may attack again at -5 and can be shot down); an ammunition ledger whose capacity is source-certified (the Core "Payload" line is the vehicle's complement, not a launcher's loaded count; launcher capacities are separate figures) and a reload rule for vehicle launchers (V-P6C-06).\n\n`;
 const ion = doc.ion;
 md += `## Ion damage (Core pp. 159-160)\n\n| Measure | Groups |\n|---|---|\n| Groups whose source types the damage as ion (printed damage line / evidence) | ${ion.typedByTheSource} |\n| ... OFFLINE_EXECUTABLE (also passing every other gate) | ${ion.offlineExecutable} |\n\nA weapon name alone never types damage as ion: a group named "ion" whose printed damage line does not say ion stays refused (STOCK_DAMAGE_ION_UNVERIFIED). Target-side ordering with shield rating and damage reduction follows the existing damage engine pending owner question V-P6C-04.\n\n`;
 md += `## Why groups are refused (a group can have several reasons)\n\n| Reason | Groups |\n|---|---|\n${Object.entries(doc.refusalReasons).map(([k, v]) => `| ${k} | ${v} |`).join('\n')}\n\n`;

@@ -20,7 +20,7 @@ record). Stock weapons never pass through the ledger, EP or credits and are neve
 
 ## Result (offline; nothing is live-verified)
 
-- 846 published groups; 557 SOURCE_VERIFIED (configuration established); **356 OFFLINE_EXECUTABLE on 263 vehicles** (125 vehicles have every group executable; each group counted once however many modes it supports) after the P6C-2B correction and P6C-2C, each driven
+- 846 published groups; 557 SOURCE_VERIFIED (configuration established); **348 OFFLINE_EXECUTABLE on 256 vehicles** (123 vehicles have every group executable; each group counted once however many modes it supports) after the evidence-gate hardening that followed the P6C-2B correction and P6C-2C, each driven
   through arm -> attack -> damage by the CORPUS test; 0 LIVE_VERIFIED. See `stock-weapon-coverage.md`.
 - Includes the X-wing laser cannons (6d10 x 2, pilot, +5), TIE fighter, TIE interceptor, Y-wing, ARC-170, YT-1300, AAT and others.
   The X-wing proton torpedoes stay reference-only (splash, finite payload).
@@ -34,7 +34,7 @@ keep their certified mount and arc. The world setting can switch unstated arcs t
 
 ## What genuinely needs new mechanics (all recorded in the deferred register, P6B-D-033..039)
 
-- Printed attack totals: explained for the 356 executable groups (crew BAB + Int; +2 on pilot-crewed groups = Core p. 171); the battery +2 per additional gunner is documented but batteries need their own model; about 50 single-operator groups stay unexplained.
+- Printed attack totals: explained for the 348 executable groups (crew BAB + Int; +2 on pilot-crewed groups = Core p. 171); the battery +2 per additional gunner is documented but batteries need their own model; about 50 single-operator groups stay unexplained.
 - Weapon batteries: 102 printed batteries do not print their number of weapons (owner ruling V-P6C-02); multi-gunner stations that are not printed batteries; splash/ammunition groups; ion groups that are batteries or fail another gate; point-defense.
 - 12 groups on records with no arc evidence; 5 groups with arcs the system cannot yet interpret.
 
@@ -136,5 +136,31 @@ condition-track effect); a creature with cybernetic prosthetics (structured equi
 cybernetic class answer) takes FULL ion damage and the extra effects; droids, vehicles, devices and objects take half and the extra effects.
 The AAT-1's double ion damage is read from its source record by a vulnerability authority and recorded, not applied. Shield rating is
 applied before damage reduction (Core); the order of the ion threshold comparison against them, and an ion hit that both reaches 0 HP
-and the threshold, are reported on the result as unsettled (`ionRuleDeferred`, V-P6C-04). 44 ion groups are OFFLINE_EXECUTABLE (32
-single-operator + 12 batteries as one independent weapon).
+and the threshold, are reported on the result as unsettled (`ionRuleDeferred`, V-P6C-04). 43 ion groups are OFFLINE_EXECUTABLE (31
+single-operator + 12 batteries as one independent weapon; the Subjugator's area ion pulse cannons are refused, see the next section).
+
+## Gate hardening found during P6C-2D (2026-11-04): 356 -> 348 executable groups
+
+The audit for launchers and ammunition showed that the stock gate read the damage line of each group but not the group's
+structured source evidence. Eight groups that were counted executable carried evidence for a mechanic the runtime does not
+model, and are now refused by name (the correction is stated plainly, as the 274 -> 230 one was):
+- Subjugator-class Heavy Cruiser "ion pulse cannons" (9d10x10): a 5-square area weapon with hit, miss and recharge rules (STOCK_DAMAGE_AREA_OR_SPLASH);
+- Belbullab Heavy Starfighter "Belbullab-22" and "Belbullab-23/24" triple laser cannons: groups that apply to only some variants (STOCK_VARIANT_SPECIFIC_GROUP_UNMODELED);
+- Scurrg H-6 forward-mounted laser cannons: a qualitative direction the source calls "not a fully defined firing arc" (STOCK_FIRING_ARC_STATED_UNPARSED, per the V-P6C-01 hierarchy);
+- Aurek Tactical Strikefighter, Conductor-class Landing Craft, Herald-class Shuttle, Ministry-class Orbital Shuttle: special attack notations the gate does not model (STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED; the Herald group also carries an unreconciled size-dependent figure).
+The evidence object is now read as a whole: informational and handled keys pass; a key that carries an unmodeled mechanic refuses; a key the gate has never seen refuses
+(STOCK_EVIDENCE_UNMODELED); null figures mean "the source states nothing" and refuse nothing. A test pins the invariant over the whole corpus.
+
+## P6C-2D: launchers and ammunition (2026-11-04) - no family is enabled
+
+The weapon kinds the source distinguishes are now reported apart (overlapping, never summed): ordinary energy weapons, printed weapon
+batteries (104; 64 executable), fire-linked weapons (18; 7 executable: they are not batteries and get no battery rules), ammunition-limited
+launchers (169; 0 executable), area / splash weapons (110; 0 executable) and ion (69; 43 executable).
+
+A finite-ammunition family needs every one of these, and none exists yet:
+1. Area / splash damage for vehicle weapons: the Core prints "4-square splash" for concussion missiles and proton torpedoes, and the
+   record's structured evidence states it for 102 of the 169 groups (the damage line alone missed many); a hit without splash would drop a published mechanic.
+2. The Core "Missiles and Torpedoes" rule: aiming locks the weapon on; a missed missile or torpedo attacks again on the next turn at -5 and then self-destructs; it has Reflex 30 and 10 HP and can be shot down.
+3. An ammunition ledger. The existing `AmmoSystem` is gated on the optional `trackBlasterCharges` house rule (off by default => unlimited), so it cannot be the authority for a finite vehicle supply. The Core statblock "Payload" is "the vehicle's complement of grenades, rockets, missiles, and torpedoes"; a launcher's loaded capacity is a different, separately printed figure (Starships of the Galaxy pp. 45-46: light 6, medium 16, heavy 30, proton torpedo 3, shieldbuster 4, mines 6); only 24 groups print a payload at all.
+4. A reload rule for vehicle launchers: the Core gives one only for personal launchers (a full-round action), and spending when the vehicle carries fire-linked launchers (one shot per linked launcher, SotG Fire-Linked Weapons) needs the launcher count.
+Registered as deferred items P6B-D-047 (lock-on), P6B-D-048 (vehicle area damage), P6B-D-049 (ledger, payload versus capacity, reload) and owner question V-P6C-06. 33 groups are refused for ammunition alone; they stay refused because enabling one without 1-4 would either spend wrongly or drop mechanics.

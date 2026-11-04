@@ -969,3 +969,23 @@ Core p. 170 (owner-verified) is implemented in `vehicle-weapon-battery.js` and w
 **V-P6C-05 - findings (status unchanged: `DEFERRED_RULES_REVIEW`).** AAT-1 (Core p. 176): "Due to a design flaw, the AAT takes double damage from ion weapons." The source-backed vulnerability authority (`damage-vulnerability-authority.js`) reads this from the digest-verified record only and records it on the packet; it is NOT applied because the text does not order the doubling against ion halving, shield rating, damage reduction (the AAT-1 has DR 15 and no shield rating), the threshold comparison, the weapon multiplier or battery dice, and no combination is fully settled.
 
 - **Revision 29 (2026-11-03):** appended the owner direction on V-P6C-02 and the findings on V-P6C-04 and V-P6C-05. No existing text changed.
+
+### V-P6C-06 - Payload versus launcher capacity, and reloading, for vehicle launchers
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-06 |
+| Rules domain | Vehicle weapons (finite ammunition) |
+| Feature | Ammunition supply and reloading of vehicle missile, torpedo, rocket, mine and grenade launchers |
+| Source | Core Rulebook, Vehicles (statblock "Payload" line; Missiles and Torpedoes); Core Equipment (personal launchers: "holds four missiles... reloaded as a full-round action"); Starships of the Galaxy pp. 45-46 (launcher capacities) and Fire-Linked Weapons (ammunition consumption) |
+| Evidence | The Core defines the statblock Payload as the vehicle's complement of grenades, rockets, missiles and torpedoes ("if the vehicle has no payload, this line is absent"). Starships of the Galaxy prints launcher capacities as separate figures (light concussion missile launcher 6, medium 16, heavy 30, proton torpedo launcher 3, shieldbuster 4, mine launchers 6) and says fire-linked missiles and torpedoes consume one shot per fire-linked launcher. 169 stock groups are ammunition-limited; 24 print a payload count; 33 are refused for ammunition alone. |
+| Confirmed behavior | Nothing is enabled: a finite supply is never treated as unlimited. The existing `AmmoSystem` only tracks when the optional `trackBlasterCharges` house rule is on. |
+| Unresolved question | (1) How does the printed payload relate to the launchers' loaded capacity (is the loaded count a share of the payload)? (2) What action reloads a vehicle launcher from the payload, and what does it cost? (3) Does each attack always spend one unit per launcher, including for a missed lock-on follow-up attack? |
+| Options | None supported by the verified text beyond the figures above. |
+| Recommended ruling | None |
+| Implementation impact | The ammunition ledger (P6B-D-049) cannot be specified; area damage (P6B-D-048) and lock-on (P6B-D-047) are separate engineering items. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 30 (2026-11-04):** appended V-P6C-06. No existing entry changed.

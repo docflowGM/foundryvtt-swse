@@ -35,6 +35,41 @@ const EVIDENCE = /\{[^{}]*\}/;
 const POSSIBLE_AREA = /\b(flak|pulse-wave|barrage|cluster)\b/i;
 const AMMUNITION_LIMITED = /\b(missiles?|torpedo(?:es)?|rockets?|mines?|bombs?|bomblets?|grenades?|launchers?|projectiles?|shells?|canisters?|payload)\b/i;
 
+
+/**
+ * The group's structured source evidence (the JSON the record keeps beside the free-text notes) is read as a WHOLE: a key the
+ * gate understands is informational or handled by another check; a key that carries a mechanic the runtime does not model
+ * (area / splash, hit-and-miss riders, recharge, variants, special attack notations...) refuses the group; any key the gate has
+ * never seen refuses it too (fail closed). Values that are null mean "the source states nothing" and refuse nothing.
+ */
+const INFORMATIONAL_EVIDENCE_KEYS = new Set([
+  'firingArc', 'damageType',
+  'hardwareCount', 'hardwareCountBasis', 'hardwareCountKind', 'hardwareCountStatus', 'hardwareEvidence', 'physicalMountCount', 'physicalMountSource',
+  'physicalCountEvidence', 'narrativePhysicalCount', 'printedMultiplicity', 'printedRangedMultiplicity', 'rangedMultiplicity', 'printedRangedGroupCount',
+  'printedRangedCount', 'printedRangedWeaponCount', 'firingGroupCountEvidence', 'attackGroupIndex', 'batteryCount', 'batteryComposition',
+  'gunnerCountPrinted', 'sourceEvidenceStatus', 'printedWeaponDesignation', 'fireLink',
+  // autofire figures: autofire/burst are refused for every vehicle-managed weapon at attack time
+  'autofire', 'autofireBonus', 'autofireAttackBonus', 'auto'
+]);
+const SIZE_FIGURE_KEY = /smaller|small|vs|against/i;          // the size-dependent attack figures checkSizeDependentAdjustments() verifies
+const AREA_EVIDENCE_KEY = /^(splash|area.*|hit|miss|recharge.*)$/i;
+
+export function evidenceReasons(evidence = {}) {
+  const out = [];
+  for (const [k, v] of Object.entries(evidence ?? {})) {
+    if (INFORMATIONAL_EVIDENCE_KEYS.has(k) || SIZE_FIGURE_KEY.test(k)) continue;
+    if (AREA_EVIDENCE_KEY.test(k)) { if (v !== null && v !== undefined) out.push('STOCK_DAMAGE_AREA_OR_SPLASH'); continue; }
+    if (k === 'applicableVariants') { if (Array.isArray(v) && v.length) out.push('STOCK_VARIANT_SPECIFIC_GROUP_UNMODELED'); continue; }
+    if (k === 'qualitativeDirection') { if (v) out.push('STOCK_FIRING_ARC_STATED_UNPARSED'); continue; }
+    if (k === 'specialAttackNotation') { if (v) out.push('STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED'); continue; }
+    if (k === 'ammunition') { if (v !== 'SOURCE_SILENT_CONFIRMED') out.push('STOCK_AMMUNITION_LIMITED_UNTRACKED'); continue; }
+    if (k === 'attackScale') { if (v !== 'starship') out.push('STOCK_EVIDENCE_UNMODELED'); continue; }
+    if (k === 'fireLinkOption') continue;                      // an option flag; the printed damage is the published figure
+    out.push('STOCK_EVIDENCE_UNMODELED');                      // payload*, pointDefense, effect, weaponKind, deviceType, configuration, sourceConflict...
+  }
+  return out;
+}
+
 /** Parse one printed group. Never throws; `reasons` names everything that makes it non-executable. */
 export function parseStockFiringGroup(group) {
   const notes = String(group?.specialNotes ?? '');
@@ -44,6 +79,8 @@ export function parseStockFiringGroup(group) {
 
   const e = notes.match(EVIDENCE);
   if (e) { try { out.evidence = JSON.parse(e[0]); } catch { reasons.push('STOCK_EVIDENCE_UNREADABLE'); } }
+
+  reasons.push(...evidenceReasons(out.evidence));
 
   const d = notes.match(DAMAGE);
   if (!d) reasons.push('STOCK_DAMAGE_NOT_PRINTED_IN_RECORD');
@@ -180,12 +217,12 @@ export function explainPrintedAttackTotal(parsed, bab, intScore) {
  * @returns {string|null} refusal reason
  */
 export function checkSizeDependentAdjustments(parsed, record) {
-  const keys = Object.keys(parsed.evidence ?? {}).filter(k => /smaller|vs|against/i.test(k));
+  const keys = Object.keys(parsed.evidence ?? {}).filter(k => SIZE_FIGURE_KEY.test(k) && parsed.evidence[k] !== null && parsed.evidence[k] !== undefined);
   if (!keys.length) return null;
   const capital = ['colossal (frigate)', 'colossal (cruiser)', 'colossal (station)'].includes(String(record?.classification?.printedSize ?? '').trim().toLowerCase());
   for (const k of keys) {
     const v = parsed.evidence[k];
-    if (!/smaller/i.test(k) || !finite(v) || !finite(parsed.attackBonusPrinted) || v !== parsed.attackBonusPrinted - 20 || !capital) return 'STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT';
+    if (!/smaller|small/i.test(k) || !finite(v) || !finite(parsed.attackBonusPrinted) || v !== parsed.attackBonusPrinted - 20 || !capital) return 'STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT';
   }
   return null;
 }

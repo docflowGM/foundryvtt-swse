@@ -8,14 +8,14 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 
 | Category | Count |
 |---|---|
-| RULES_DECISION_REQUIRED | 9 |
+| RULES_DECISION_REQUIRED | 10 |
 | SOURCE_EVIDENCE_MISSING | 7 |
-| ENGINEERING_COMPLEXITY | 14 |
+| ENGINEERING_COMPLEXITY | 16 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 4 |
 | DEPENDENCY_BLOCKED | 8 |
 
-Open items: 43. Resolved items: 3 (listed at the end).
+Open items: 46. Resolved items: 3 (listed at the end).
 
 ## Items (by severity)
 
@@ -32,6 +32,9 @@ Open items: 43. Resolved items: 3 (listed at the end).
 | P6B-D-036 | STOCK | published stock splash, ion and ammunition-limited groups (torpedoes, missiles, ion cannons; 71 splash + 71 ion groups) | DEPENDENCY_BLOCKED | IMPORTANT | no | V-P6A-03 |
 | P6B-D-043 | STOCK | weapon batteries crewed by named gunners (assisting roster) | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
 | P6B-D-045 | STOCK | ion damage: ordering with shield rating / damage reduction, organics, and interplay with optional variants | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-04 |
+| P6B-D-047 | STOCK | missile and torpedo lock-on (second attack at -5, self-destruct, shoot-down) | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
+| P6B-D-048 | STOCK | area and splash damage for vehicle weapons | ENGINEERING_COMPLEXITY | IMPORTANT | no | - |
+| P6B-D-049 | STOCK | finite ammunition ledger for vehicle launchers: payload versus launcher capacity, and reloading | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-06 |
 | P6B-D-003 | P6B-1 | jamming-suite, jamming-array | ENGINEERING_COMPLEXITY | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-004 | P6B-1 | combat-thrusters | DEPENDENCY_BLOCKED | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-005 | P6B-1 | navicomputer-limited | RULES_DECISION_REQUIRED | MINOR | yes | V-P6B-01 |
@@ -502,6 +505,36 @@ Open items: 43. Resolved items: 3 (listed at the end).
 - **Owner ruling needed:** yes (V-P6C-05)
 - **Impact:** AAT-1 receives no ion vulnerability (it is flagged as not applied); the R-28 ion cannons stay refused.
 - **Recommended action:** Owner ruling on V-P6C-05.
+
+### P6B-D-047 - missile and torpedo lock-on (second attack at -5, self-destruct, shoot-down)
+
+- **Source:** Core Rulebook, Vehicles: Missiles and Torpedoes
+- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
+- **Reason:** The rule is clearly printed: aiming locks the weapon on; a missed missile or torpedo attacks again on the next turn at the same bonus with -5 and no action, then self-destructs; it has Reflex 30 and 10 hit points, occupies its target's square and can be shot down (a readied action is needed to attack it before its first attack). The system has no persistent projectile object.
+- **Missing:** A projectile entity with its own attack, turn timing, defenses and hit points.
+- **Owner ruling needed:** no
+- **Impact:** No missile or torpedo group can be a complete weapon family.
+- **Recommended action:** Model one projectile record on the existing combat-effect/turn authorities; reuse the attack and damage runtime.
+
+### P6B-D-048 - area and splash damage for vehicle weapons
+
+- **Source:** Core Rulebook (Splash; Area Attacks); canonical group evidence (splash, area*)
+- **Category / severity:** ENGINEERING_COMPLEXITY / IMPORTANT
+- **Reason:** Torpedoes, missiles, bombs, mines and pulse weapons print splash or area figures (102 of the 169 ammunition-limited groups state them in structured evidence; the Subjugator's ion pulse cannons state a 5-square starship-scale radius with hit and miss rules). Vehicle weapons currently resolve single-target attacks only.
+- **Missing:** Target enumeration by radius, per-target attack rolls and damage packets at vehicle scale.
+- **Owner ruling needed:** no
+- **Impact:** 110 groups carry area or splash evidence and are refused.
+- **Recommended action:** Extend the existing canonical area-attack authority to vehicle scale; do not add a vehicle-only area engine.
+
+### P6B-D-049 - finite ammunition ledger for vehicle launchers: payload versus launcher capacity, and reloading
+
+- **Source:** Core Rulebook (Payload line); Starships of the Galaxy pp. 45-46; ammo-system.js
+- **Category / severity:** RULES_DECISION_REQUIRED / IMPORTANT
+- **Reason:** The Core statblock Payload is the vehicle's complement of ammunition; launcher capacities are separate printed figures; only 24 groups print a payload; the Core gives a reload rule (full-round action) only for personal launchers; fire-linked launchers spend one shot per linked launcher. AmmoSystem tracking depends on the optional trackBlasterCharges setting, which would make a finite vehicle supply unlimited when off.
+- **Missing:** How the payload relates to the loaded launchers; the reload action for vehicle launchers; where the supply lives so it can never be unlimited.
+- **Owner ruling needed:** yes (V-P6C-06)
+- **Impact:** 169 ammunition-limited groups stay refused.
+- **Recommended action:** Owner ruling on V-P6C-06, then a mandatory (setting-independent) ledger on the owned launcher Items through ActorEngine.
 
 ## Resolved items
 

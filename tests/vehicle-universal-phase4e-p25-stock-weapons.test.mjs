@@ -378,8 +378,8 @@ test('CORPUS: each executable stock group arms, attacks at its printed total, an
     }
   }
   assert.deepEqual(failures, []);
-  assert.equal(provenGroups.size, 356, 'the corpus-wide count of offline-executable stock GROUPS (each counted once): 260 plain + 32 ion + 64 batteries');
-  assert.equal(provenModes, 357, 'one group (Krayt\'s Honor turbolaser battery) supports two modes');
+  assert.equal(provenGroups.size, 348, 'the corpus-wide count of offline-executable stock GROUPS (each counted once)');
+  assert.equal(provenModes, 349, 'one group (Krayt\'s Honor turbolaser battery) supports two modes');
   setPolicy(undefined);
 });
 
@@ -388,9 +388,9 @@ test('COVERAGE REPORT: current, and its executable counts are exactly what the C
   execFileSync(process.execPath, ['tools/audits/vehicles/build-stock-weapon-coverage.mjs', '--check']);
   const { readFileSync } = await import('node:fs');
   const cov = JSON.parse(readFileSync('data/audits/vehicles/stock-weapon-coverage.json', 'utf8'));
-  assert.deepEqual([cov.totals.vehicles, cov.totals.groups, cov.totals.offlineExecutableGroups, cov.totals.vehiclesWithOfflineExecutableGroup, cov.totals.liveVerifiedVehicles], [429, 846, 356, 263, 0]);
+  assert.deepEqual([cov.totals.vehicles, cov.totals.groups, cov.totals.offlineExecutableGroups, cov.totals.vehiclesWithOfflineExecutableGroup, cov.totals.liveVerifiedVehicles], [429, 846, 348, 256, 0]);
   const exec = cov.vehicles.flatMap(v => v.groups.filter(g => g.offlineExecutable));
-  assert.equal(exec.length, 356);
+  assert.equal(exec.length, 348);
   for (const g of cov.vehicles.flatMap(v => v.groups)) {
     assert.equal(g.liveVerified, false);
     if (!g.offlineExecutable) { assert.ok(g.refusals.length > 0, g.groupKey + ' has a named refusal'); assert.equal(g.attackReadiness, 'REFUSED'); }
@@ -495,4 +495,43 @@ test('P6C-2A: a group with a plain multiplier but another special mechanic stays
   assert.equal(pulse.executable, false);
   const torp = find('cw-cr-20-troop-carrier', 'fire-linked medium turbolasers');
   assert.ok(torp, 'turbolaser group parsed');
+});
+
+// ---------------------------------------------------------------------------------------------------------------------
+// The structured source evidence is read as a whole (fail closed): the audit found 8 groups that were executable although
+// their evidence states a mechanic the runtime does not model.
+// ---------------------------------------------------------------------------------------------------------------------
+test('EVIDENCE GATE: area, variant-specific, qualitatively-aimed and specially-notated groups are refused by name', () => {
+  const find = (key, label) => assessStockWeaponGroups(docs.find(d => keyOf(d) === key).flags.swse.universalVehicleSource.source).groups.find(g => g.label === label);
+  const pulse = find('cw-subjugator-class-heavy-cruiser', 'ion pulse cannons');
+  assert.equal(pulse.executable, false);
+  assert.ok(pulse.reasons.includes('STOCK_DAMAGE_AREA_OR_SPLASH'), 'a 5-square area weapon with hit/miss/recharge rules is not a plain weapon');
+  const variants = assessStockWeaponGroups(docs.find(d => /belbullab/i.test(keyOf(d))).flags.swse.universalVehicleSource.source).groups.filter(g => /Belbullab-2\d/.test(g.label));
+  assert.ok(variants.length >= 2 && variants.every(g => !g.executable && g.reasons.includes('STOCK_VARIANT_SPECIFIC_GROUP_UNMODELED')), 'a group that applies to only some variants is not armed on the generic ship');
+  const scurrg = assessStockWeaponGroups(docs.find(d => /scurrg/i.test(keyOf(d))).flags.swse.universalVehicleSource.source).groups.find(g => /forward-mounted/.test(g.label));
+  assert.ok(scurrg.reasons.includes('STOCK_FIRING_ARC_STATED_UNPARSED'), 'a qualitative direction the source calls "not a fully defined firing arc" is a stated, uninterpreted arc');
+  assert.equal(scurrg.executable, false);
+  // an unknown evidence key refuses; a null figure refuses nothing
+  const rec = structuredClone(docs.find(d => keyOf(d) === XW).flags.swse.universalVehicleSource.source);
+  const lc = rec.armament.firingGroups.find(g => g.label === 'laser cannons');
+  const base = assessStockWeaponGroups(rec).groups.find(g => g.label === 'laser cannons');
+  assert.equal(base.executable, true);
+  lc.specialNotes = lc.specialNotes.replace(/\{[^{}]*\}/, m => m.replace('}', ',"mysteryMechanic":1}'));
+  if (!/\{/.test(lc.specialNotes)) lc.specialNotes += ' remaining source attack evidence {"mysteryMechanic":1}';
+  const unknown = assessStockWeaponGroups(rec).groups.find(g => g.label === 'laser cannons');
+  assert.ok(unknown.reasons.includes('STOCK_EVIDENCE_UNMODELED'));
+  assert.equal(unknown.executable, false);
+});
+
+test('EVIDENCE GATE invariant: no executable group carries an evidence key outside the understood set', () => {
+  const understood = new Set(['firingArc', 'damageType', 'hardwareCount', 'hardwareCountBasis', 'hardwareCountKind', 'hardwareCountStatus', 'hardwareEvidence', 'physicalMountCount', 'physicalMountSource', 'physicalCountEvidence', 'narrativePhysicalCount', 'printedMultiplicity', 'printedRangedMultiplicity', 'rangedMultiplicity', 'printedRangedGroupCount', 'printedRangedCount', 'printedRangedWeaponCount', 'firingGroupCountEvidence', 'attackGroupIndex', 'batteryCount', 'batteryComposition', 'gunnerCountPrinted', 'sourceEvidenceStatus', 'printedWeaponDesignation', 'fireLink', 'fireLinkOption', 'autofire', 'autofireBonus', 'autofireAttackBonus', 'auto', 'ammunition', 'attackScale', 'specialAttackNotation', 'qualitativeDirection', 'applicableVariants']);
+  const sizeKey = /smaller|small|vs|against/i;
+  for (const d of docs) for (const g of assessStockWeaponGroups(d.flags.swse.universalVehicleSource.source).groups.filter(x => x.executable)) {
+    for (const [k, v] of Object.entries(g.evidence ?? {})) {
+      assert.ok(understood.has(k) || sizeKey.test(k), `${g.groupKey}: unexplained evidence key ${k}`);
+      if (['specialAttackNotation', 'qualitativeDirection'].includes(k)) assert.ok(!v, `${g.groupKey}: ${k} must be empty on an executable group`);
+      if (k === 'applicableVariants') assert.equal(v?.length ?? 0, 0);
+      if (k === 'ammunition') assert.equal(v, 'SOURCE_SILENT_CONFIRMED');
+    }
+  }
 });
