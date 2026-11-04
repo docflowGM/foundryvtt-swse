@@ -8,6 +8,7 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { ActionEconomyConsumption } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js";
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
+import { resolveVehicleCrewActor } from "/systems/foundryvtt-swse/scripts/engine/crew/vehicle-crew-actor-authority.js";
 import { resolveVehicleWeaponAuthority } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
 import { FIRE_MODE_FLAG, FIRE_MODE_REASONS, MODE_REASONS, readPersistedFireMode } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-fire-mode.js";
 
@@ -28,15 +29,21 @@ const refuse = reason => ({ ok: false, reason });
 export class VehicleFireModeService {
   static async setMode({ vehicle, weapon, mode, user = globalThis.game?.user ?? null } = {}) {
     if (!vehicle || !weapon || !['single', 'autofire'].includes(mode)) return refuse('FIRE_MODE_CONTEXT_INVALID');
-    if (!(user && (user.isGM === true || vehicle.isOwner === true))) return refuse(MODE_REASONS.NOT_AUTHORIZED);
     const a = resolveVehicleWeaponAuthority(weapon);
     if (!a?.ok || a.autofireCapable !== true) return refuse(FIRE_MODE_REASONS.NOT_CAPABLE);
+    // WHOSE action: the crew member who operates the weapon's station (the same crew assignment authority the attack uses). A named
+    // operator pays from their own action economy; an unassigned station is the generic crew, which acts as the vehicle; a printed
+    // automated operator has no seat and also acts as the vehicle. An assignment that no longer resolves refuses.
+    const crew = a.automatedOperator === true ? { source: 'unassigned', actor: null } : await resolveVehicleCrewActor(vehicle, a.operator);
+    if (crew.source === 'invalid') return refuse(MODE_REASONS.CREW_INVALID);
+    const payer = crew.source === 'actor' ? crew.actor : vehicle;
+    if (!(user && (user.isGM === true || vehicle.isOwner === true || payer?.isOwner === true))) return refuse(MODE_REASONS.NOT_AUTHORIZED);
     if (readPersistedFireMode(vehicle, weapon.id) === mode) return { ok: true, mode, unchanged: true };
-    const spend = mode === 'autofire' ? await ActionEconomyConsumption.spend(vehicle, 'swift', { actionName: 'Set to autofire', source: weapon.name }) : null;
+    const spend = mode === 'autofire' ? await ActionEconomyConsumption.spend(payer, 'swift', { actionName: 'Set to autofire', source: weapon.name }) : null;
     if (spend?.allowed === false) return refuse(MODE_REASONS.ACTION_UNAVAILABLE);
     try {
       await ActorEngine.updateActor(vehicle, { [`flags.swse.${FIRE_MODE_FLAG}.${weapon.id}`]: mode === 'autofire' ? 'autofire' : null });
     } catch (err) { await spend?.rollback?.(); throw err; }
-    return { ok: true, mode };
+    return { ok: true, mode, paidBy: payer?.id ?? null };
   }
 }

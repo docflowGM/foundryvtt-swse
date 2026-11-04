@@ -31,7 +31,7 @@ export async function runWeaponAction({ action, itemId, vehicle }, { service, no
   if (action === 'fire-mode-autofire' || action === 'fire-mode-single') {
     const mode = action === 'fire-mode-autofire' ? 'autofire' : 'single';
     const r = await service.setMode({ vehicle, weapon, mode });
-    if (r.ok) notify.info(r.unchanged ? `${weapon.name} is already set to ${mode === 'autofire' ? 'autofire' : 'single fire'}.` : `${weapon.name} set to ${mode === 'autofire' ? 'autofire' : 'single fire'} (swift action).`);
+    if (r.ok) notify.info(r.unchanged ? `${weapon.name} is already set to ${mode === 'autofire' ? 'autofire' : 'single fire'}.` : mode === 'autofire' ? `${weapon.name} set to autofire (swift action).` : `${weapon.name} set back to single fire (no action cost).`);
     else notify.warn(`${weapon.name}: ${r.reason}`);
     return r;
   }

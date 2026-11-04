@@ -107,19 +107,7 @@ test('PRODUCTION: the vehicle guards, arming hooks and every shared authority a 
   assert.doesNotMatch(read('index.js'), /SWSEVehicleWeapons|SWSEVehicleCore/);
 });
 
-test('PRODUCTION: index.js registers the vehicle hooks, and registration installs the guards and the arming hook exactly once', async () => {
-  assert.match(read('index.js'), /registerVehiclePreCreateHooks\(\);/);
-  const on = [];
-  const realHooks = globalThis.Hooks;
-  globalThis.Hooks = { on: (name, fn) => on.push([name, fn.name]), once() {}, callAll() {} };
-  try {
-    const { registerVehiclePreCreateHooks } = await import('../scripts/actors/vehicle/vehicle-precreate-hooks.js');
-    registerVehiclePreCreateHooks(); registerVehiclePreCreateHooks();
-  } finally { globalThis.Hooks = realHooks; }
-  const names = on.map(x => x.join(':'));
-  for (const h of ['preCreateActor:validateVehicleCreation', 'preUpdateActor:guardVehicleInstallationLedger', 'preUpdateActor:guardVehicleProvenance', 'preUpdateItem:guardShipyardWeaponItem', 'createActor:armStockWeaponsOnCreate'])
-    assert.equal(names.filter(n => n === h).length <= 1, true, h + ' registered at most once');
-});
+// (hook registration is verified exactly-once, with handler behaviour, in vehicle-universal-phase4e-p42-startup-and-operator.test.mjs)
 
 test('BOUNDARY: no vehicle module registers a combat-turn hook or owns a second turn processor (the control engine\'s turn hook is the only one)', () => {
   for (const f of vehicleModules) assert.doesNotMatch(strip(read(f)), /Hooks\.(on|once)\(\s*['"](combatTurn|combatRound|updateCombat|combatStart|deleteCombat)/, f);
