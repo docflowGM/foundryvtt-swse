@@ -91,6 +91,14 @@ export function resolveDroidComponentQuote(input = {}) {
       || orderedSize > SIZE_ORDER.indexOf(String(maximum).toLowerCase()))) {
     return invalid('Droid is larger than the published component maximum size');
   }
+  // Source entries with a secondary price/weight progression are not a
+  // single retail variant. Until their variant and host are source-certified,
+  // never sell the cheapest base value while ignoring higher-tier fields.
+  if (definition.costWithHigherDefense !== undefined
+      || definition.costIncrement !== undefined
+      || definition.weightIncrement !== undefined) {
+    return invalid('Component has unselected or unresolved published price/weight variants');
+  }
   const isShieldExpansion = definition.id === 'shield-expansion-module';
   if (isShieldExpansion && (!Number.isInteger(selectedInstalledShieldRating)
       || ![5, 10, 15, 20].includes(selectedInstalledShieldRating)
