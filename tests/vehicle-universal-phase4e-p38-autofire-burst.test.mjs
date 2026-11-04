@@ -6,14 +6,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { world, install, state, shootD20, targetAt, log } from './helpers/vehicle-weapon-world.mjs';
+import fs from 'node:fs';
 import { resolveVehicleFireMode, requestedVehicleFireMode, FIRE_MODE_REASONS } from '../scripts/domain/vehicles/vehicle-fire-mode.js';
 import { resolveVehicleWeaponDamage } from '../scripts/domain/vehicles/vehicle-weapon-damage.js';
 
-const { VehicleFireModeService } = await import('../scripts/engine/vehicles/vehicle-fire-mode-service.js');
+const { VehicleFireModeService, burstFireOptionOf } = await import('../scripts/engine/vehicles/vehicle-fire-mode-service.js');
 const { resolveDamageDisposition } = await import('../scripts/engine/combat/damage-packet-builder.js');
 const total = r => r.roll?.total ?? r.attackRoll?.total ?? r.total;
-const feat = name => ({ type: 'feat', name });
-const gunner = (...feats) => ({ type: 'character', items: { contents: feats.map(feat) } });
+// the REAL Burst Fire feat record: its ATTACK_OPTION rule is what CombatOptionResolver reads (no name lookup anywhere in the vehicle path)
+const burstRules = JSON.parse(fs.readFileSync('packs/feats.db', 'utf8').split('\n').filter(l => l.includes('"name":"Burst Fire"')).map(l => l)[0]).system.abilityMeta.rules;
+const feat = name => ({ type: 'feat', name, system: { abilityMeta: { rules: burstRules } } });
+const gunner = (...feats) => { const items = feats.map(feat); return { type: 'character', name: 'G', items: { contents: items, [Symbol.iterator]: () => items[Symbol.iterator]() }, system: { abilities: { str: { total: 14, value: 14, mod: 2 } } } }; };
 
 test('PURE: capability, scale, named operator and the feat are each required', () => {
   const cap = { ok: true, autofireCapable: true }, plain = { ok: true };
@@ -24,10 +27,12 @@ test('PURE: capability, scale, named operator and the feat are each required', (
   assert.deepEqual([a.ok, a.attackPenalty, a.extraDice, a.halfDamageOnMiss], [true, -5, 0, true]);
   assert.equal(resolveVehicleFireMode({ requested: 'autofire', authority: cap, scale: 'character' }).reason, FIRE_MODE_REASONS.AREA_AT_CHARACTER_SCALE);
   assert.equal(resolveVehicleFireMode({ requested: 'autofire', authority: cap, scale: null }).reason, FIRE_MODE_REASONS.UNKNOWN_SCALE);
+  const w = { id: 'w', name: 'Double Blaster Cannon', type: 'weapon', system: {} };
   assert.equal(resolveVehicleFireMode({ requested: 'burst', authority: cap, operatorActor: null, scale: 'starship' }).reason, FIRE_MODE_REASONS.NO_NAMED_OPERATOR);
-  assert.equal(resolveVehicleFireMode({ requested: 'burst', authority: cap, operatorActor: gunner(), scale: 'starship' }).reason, FIRE_MODE_REASONS.NO_FEAT);
+  assert.equal(resolveVehicleFireMode({ requested: 'burst', authority: cap, operatorActor: gunner(), scale: 'starship', burstOption: burstFireOptionOf(gunner(), w) }).reason, FIRE_MODE_REASONS.NO_FEAT);
   for (const scale of ['starship', 'character']) {
-    const b = resolveVehicleFireMode({ requested: 'burst', authority: cap, operatorActor: gunner('Burst Fire'), scale });
+    const g = gunner('Burst Fire');
+    const b = resolveVehicleFireMode({ requested: 'burst', authority: cap, operatorActor: g, scale, burstOption: burstFireOptionOf(g, w) });
     assert.deepEqual([b.ok, b.attackPenalty, b.extraDice, b.halfDamageOnMiss], [true, -5, 2, false], 'burst is single-target: not an area attack');
   }
   assert.equal(requestedVehicleFireMode({ autofire: true }), 'autofire');

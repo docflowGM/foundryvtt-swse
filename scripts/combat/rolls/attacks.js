@@ -34,6 +34,7 @@ const stockOperatorStation = (g, requested) => {
   const want = String(requested ?? '').trim().toLowerCase();
   return want && (g.operatorStations ?? []).includes(want) ? want : g.operator ?? null;
 };
+import { burstFireOptionOf } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-fire-mode-service.js";
 import { resolveVehicleFireMode, requestedVehicleFireMode, readPersistedFireMode, MODE_REASONS } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-fire-mode.js";
 import { batteryMarginHits } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-battery.js";
 import { VehicleBatteryAidService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-battery-aid-service.js";
@@ -800,7 +801,8 @@ export async function rollAttack(actor, weapon, options = {}) {
 
   if (requestedFireMode !== 'single') {
     // WE-5: autofire / Burst Fire need an autofire-capable certified weapon, the named operator's Burst Fire feat and a scale that resolves the area
-    vehicleFireMode = resolveVehicleFireMode({ requested: requestedFireMode, authority: launcherAuth, operatorActor: vehicleDomain.normalizedContext?.gunnerActor ?? null, scale: vehicleRange?.scale ?? null });
+    vehicleFireMode = resolveVehicleFireMode({ requested: requestedFireMode, authority: launcherAuth, operatorActor: vehicleDomain.normalizedContext?.gunnerActor ?? null, scale: vehicleRange?.scale ?? null,
+      burstOption: requestedFireMode === 'burst' ? burstFireOptionOf(vehicleDomain.normalizedContext?.gunnerActor ?? null, weapon) : null });
     if (!vehicleFireMode.ok) { ui?.notifications?.warn?.(`Vehicle attack blocked: ${vehicleFireMode.reason}.`); return null; }
     const { burstFire: _bf, ...restAttackOptions } = rollOptions.attackOptions ?? {};
     rollOptions = { ...rollOptions, fireMode: vehicleFireMode.mode, ...(rollOptions.attackOptions ? { attackOptions: restAttackOptions } : {}),

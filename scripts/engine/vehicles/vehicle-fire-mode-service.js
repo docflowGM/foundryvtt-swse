@@ -6,8 +6,22 @@
  */
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { ActionEconomyConsumption } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js";
+import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
 import { resolveVehicleWeaponAuthority } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
 import { FIRE_MODE_FLAG, FIRE_MODE_REASONS, MODE_REASONS, readPersistedFireMode } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-fire-mode.js";
+
+/**
+ * Burst Fire for a named operator, asked of the SAME CombatOptionResolver the character attack uses (feat ownership, autofire-capability
+ * gate, -5 attack, +2 weapon dice). @returns {{available:boolean, attackModifier:number, damageExtraWeaponDice:number}}
+ */
+export function burstFireOptionOf(operatorActor, weapon) {
+  if (!operatorActor || !weapon) return { available: false, attackModifier: 0, damageExtraWeaponDice: 0 };
+  const ctx = { autofire: true, attackMode: 'autofire', combatOptions: { burstFire: true }, attackOptions: { burstFire: true } };
+  const available = CombatOptionResolver.getAvailableAttackOptions(operatorActor, weapon, ctx).some(o => o.id === 'burstFire');
+  if (!available) return { available: false, attackModifier: 0, damageExtraWeaponDice: 0 };
+  const m = CombatOptionResolver.collectAttackModifiers(operatorActor, weapon, ctx);
+  return { available: true, attackModifier: Number(m.attackBonus) || 0, damageExtraWeaponDice: Number(m.damageExtraWeaponDice) || 0 };
+}
 
 const refuse = reason => ({ ok: false, reason });
 export class VehicleFireModeService {

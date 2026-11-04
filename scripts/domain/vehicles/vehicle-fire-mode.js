@@ -16,7 +16,6 @@ export const FIRE_MODE_REASONS = Object.freeze({
   UNKNOWN_SCALE: 'AUTOFIRE_ENCOUNTER_SCALE_UNDETERMINED'
 });
 export const AUTOFIRE_PENALTY = -5;
-export const BURST_EXTRA_DICE = 2;
 
 export function requestedVehicleFireMode(o = {}, burstActive = false) {
   if (burstActive || o.fireMode === 'burst') return 'burst';
@@ -24,20 +23,17 @@ export function requestedVehicleFireMode(o = {}, burstActive = false) {
   return 'single';
 }
 
-const hasFeat = (actor, name) => {
-  const items = actor?.items?.contents ?? (actor?.items ? [...actor.items] : []);
-  return items.some(i => i?.type === 'feat' && String(i.name ?? '').trim().toLowerCase() === name);
-};
-
 /** @returns {{ok:true, mode:string}|{ok:true, mode:'autofire'|'burst', attackPenalty:number, extraDice:number, halfDamageOnMiss:boolean}|{ok:false, reason:string}} */
-export function resolveVehicleFireMode({ requested, authority, operatorActor, scale }) {
+export function resolveVehicleFireMode({ requested, authority, operatorActor, scale, burstOption = null }) {
   if (requested === 'single' || !requested) return { ok: true, mode: 'single' };
   if (!authority?.ok || authority.autofireCapable !== true) return { ok: false, reason: FIRE_MODE_REASONS.NOT_CAPABLE };
   if (scale !== 'starship' && scale !== 'character') return { ok: false, reason: FIRE_MODE_REASONS.UNKNOWN_SCALE };
   if (requested === 'burst') {
+    // Burst Fire is the CombatOptionResolver's own option (feat ownership, eligibility, penalty and extra dice): this adapter only supplies the
+    // named operating actor's result. An abstract crew has no feats.
     if (!operatorActor || operatorActor.type === 'vehicle') return { ok: false, reason: FIRE_MODE_REASONS.NO_NAMED_OPERATOR };
-    if (!hasFeat(operatorActor, 'burst fire')) return { ok: false, reason: FIRE_MODE_REASONS.NO_FEAT };
-    return { ok: true, mode: 'burst', attackPenalty: AUTOFIRE_PENALTY, extraDice: BURST_EXTRA_DICE, halfDamageOnMiss: false };
+    if (!burstOption?.available) return { ok: false, reason: FIRE_MODE_REASONS.NO_FEAT };
+    return { ok: true, mode: 'burst', attackPenalty: burstOption.attackModifier, extraDice: burstOption.damageExtraWeaponDice, halfDamageOnMiss: false };
   }
   if (scale === 'character') return { ok: false, reason: FIRE_MODE_REASONS.AREA_AT_CHARACTER_SCALE };
   return { ok: true, mode: 'autofire', attackPenalty: AUTOFIRE_PENALTY, extraDice: 0, halfDamageOnMiss: true };
