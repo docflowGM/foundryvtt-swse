@@ -100,7 +100,7 @@ export function resolveDroidComponentQuote(input = {}) {
   }
 
   let credits = null;
-  const cost = selected.cost ?? selected.price ?? null;
+  const cost = selected.cost ?? selected.price ?? (selected === definition ? definition.cost : null);
   if (typeof definition.costFormula === 'function') {
     if (!Number.isFinite(speed) || speed < 0) return invalid('Locomotion speed must be selected');
     credits = numerical(definition.costFormula(speed, priceFactor));
@@ -124,7 +124,7 @@ export function resolveDroidComponentQuote(input = {}) {
   if (credits < 0) return invalid('Construction-only credit offsets are not retail prices');
   credits = Math.ceil(credits);
 
-  const weightValue = selected.weight ?? null;
+  const weightValue = selected.weight ?? (selected === definition ? definition.weight : null);
   let kg = null;
   if (typeof definition.weightFormula === 'function') {
     kg = numerical(definition.weightFormula(massFactor));
