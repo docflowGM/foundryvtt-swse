@@ -266,7 +266,13 @@ export class RollCore {
     try {
       if (baseDice.includes('d20')) {
         const d20Dice = roll.dice.find(d => d.faces === 20);
-        if (d20Dice && d20Dice.results.length > 0) return d20Dice.results[0].result;
+        if (d20Dice && d20Dice.results.length > 0) {
+          // Kept-high/kept-low rolls expose inactive discarded dice.
+          // Reporting the first physical die instead of the active die made
+          // the skill breakdown disagree with the final result.
+          const active = d20Dice.results.find(result => result.active !== false);
+          return (active ?? d20Dice.results[0]).result;
+        }
       }
       if (roll.dice.length > 0 && roll.dice[0].results.length > 0) return roll.dice[0].results[0].result;
       return 0;
