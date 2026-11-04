@@ -1001,11 +1001,14 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       });
     }
 
-    if (normalizedCategory === 'enhancement' || normalizedCategory === 'locomotionEnhancement') {
+    const enhancementGroup = normalizedCategory === 'enhancement'
+      ? (normalizedSubcategory === 'appendageEnhancement' ? 'appendageEnhancement' : 'locomotionEnhancement')
+      : normalizedCategory;
+    if (enhancementGroup === 'locomotionEnhancement') {
       return (sys.locomotionEnhancements || []).some(enhancement => enhancement.id === normalizedId);
     }
 
-    if (normalizedCategory === 'appendageEnhancement') {
+    if (enhancementGroup === 'appendageEnhancement') {
       return (sys.appendageEnhancements || []).some(enhancement => enhancement.id === normalizedId);
     }
 
