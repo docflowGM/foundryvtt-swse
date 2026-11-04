@@ -55,7 +55,9 @@ test('certification: the light laser cannon row is PDF-verified and certified as
     assert.equal(row(id).damage, dmg);
     assert.match(pr, new RegExp(`"printedName":"Laser cannon, ${id.split('-').pop()}","damage":"${dmg}","damageStatus":"PDF_VERIFIED"`));
   }
-  for (const id of ['blaster-cannon-light', 'ion-cannon-light', 'turbolaser-light', 'autoblaster', 'proton-torpedo-launcher', 'concussion-missile-light'])
+  // WE-1 promoted the blaster cannons, ion cannons and turbolasers (below); configurations, launchers and ammunition are not
+  // promoted by that: each needs its own sourced mechanic.
+  for (const id of ['autoblaster', 'proton-torpedo-launcher', 'concussion-missile-light', 'cannon-double', 'fire-linked-2', 'point-defense', 'tractor-beam', 'gravity-well-projector'])
     assert.notEqual(cert[id]?.status, 'MECHANIC_SPECIFIED', id + ' is not promoted automatically');
 });
 
@@ -81,8 +83,8 @@ test('installation: GM-certified mount + certified row -> executable sealed entr
   assert.ok(plan(a, 'laser-cannon-light', null).reasons.includes('WEAPON_MOUNT_UNCERTIFIED'));
   assert.ok(plan(a, 'laser-cannon-light', { ...GM_MOUNT, arc: 'sideways' }).reasons.includes('WEAPON_MOUNT_ARC_INVALID'));
   assert.ok(plan(a, 'laser-cannon-light', { ...GM_MOUNT, operatorRole: 'cook' }).reasons.includes('WEAPON_MOUNT_OPERATOR_INVALID'));
-  // a GM mount does not certify an uncertified weapon row
-  assert.ok(plan(a, 'blaster-cannon-light').reasons.includes('MODIFICATION_EFFECT_NOT_IMPLEMENTED'));
+  // a GM mount does not certify an uncertified weapon row (an autoblaster is a modification of a blaster cannon: not yet specified)
+  assert.ok(plan(a, 'autoblaster').reasons.includes('MODIFICATION_EFFECT_NOT_IMPLEMENTED'));
   // capital hulls accept weapons now: the Core -20 is applied at attack time (p24)
   const capital = structuredClone(docs.find(d => d.flags.swse.universalVehicleSource.source.classification.printedSize === 'Colossal (frigate)'));
   assert.equal(L.planVehicleInstallation({ record: capital.flags.swse.universalVehicleSource.source, flags: capital.flags, catalogEntry: row('laser-cannon-light'), installId: 'c1', availableCredits: 1e9, rules, mount: GM_MOUNT, nonstandard: false }).ok, true);

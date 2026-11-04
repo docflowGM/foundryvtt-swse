@@ -4,8 +4,8 @@
  "counts": {
   "sourceListed": 181,
   "sourceVerified": 174,
-  "mechanicSpecified": 57,
-  "operationallyIntegrated": 54
+  "mechanicSpecified": 66,
+  "operationallyIntegrated": 63
  },
  "rows": [
   {
@@ -1267,8 +1267,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon",
+    "test": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -1285,8 +1288,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon",
+    "test": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -1303,8 +1309,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon",
+    "test": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -1501,8 +1510,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon",
+    "test": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -1519,8 +1531,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon",
+    "test": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -1537,8 +1552,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon",
+    "test": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -1654,8 +1672,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon",
+    "test": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -1672,8 +1693,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon",
+    "test": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {
@@ -1690,8 +1714,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon",
+    "test": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {

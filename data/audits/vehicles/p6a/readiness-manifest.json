@@ -2,9 +2,9 @@
  "schema": "swse.vehicle.p6a.readiness.v1",
  "counts": {
   "exposeAsReference": 181,
-  "installable": 57,
-  "mechanicallyApplied": 54,
-  "combatUsable": 3
+  "installable": 66,
+  "mechanicallyApplied": 63,
+  "combatUsable": 12
  },
  "rows": [
   {
@@ -712,36 +712,33 @@
    "catalogId": "blaster-cannon-light",
    "name": "Blaster Cannon, Light",
    "exposeAsReference": true,
-   "installable": false,
-   "mechanicallyApplied": false,
-   "combatUsable": false,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": true,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
-    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+    "REQUIRES_CERTIFIED_MOUNT_OWNED_ITEM_AND_ATTACK_PREFLIGHT"
    ]
   },
   {
    "catalogId": "blaster-cannon-medium",
    "name": "Blaster Cannon, Medium",
    "exposeAsReference": true,
-   "installable": false,
-   "mechanicallyApplied": false,
-   "combatUsable": false,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": true,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
-    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+    "REQUIRES_CERTIFIED_MOUNT_OWNED_ITEM_AND_ATTACK_PREFLIGHT"
    ]
   },
   {
    "catalogId": "blaster-cannon-heavy",
    "name": "Blaster Cannon, Heavy",
    "exposeAsReference": true,
-   "installable": false,
-   "mechanicallyApplied": false,
-   "combatUsable": false,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": true,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
-    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+    "REQUIRES_CERTIFIED_MOUNT_OWNED_ITEM_AND_ATTACK_PREFLIGHT"
    ]
   },
   {
@@ -868,36 +865,33 @@
    "catalogId": "ion-cannon-light",
    "name": "Ion Cannon, Light",
    "exposeAsReference": true,
-   "installable": false,
-   "mechanicallyApplied": false,
-   "combatUsable": false,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": true,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
-    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+    "REQUIRES_CERTIFIED_MOUNT_OWNED_ITEM_AND_ATTACK_PREFLIGHT"
    ]
   },
   {
    "catalogId": "ion-cannon-medium",
    "name": "Ion Cannon, Medium",
    "exposeAsReference": true,
-   "installable": false,
-   "mechanicallyApplied": false,
-   "combatUsable": false,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": true,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
-    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+    "REQUIRES_CERTIFIED_MOUNT_OWNED_ITEM_AND_ATTACK_PREFLIGHT"
    ]
   },
   {
    "catalogId": "ion-cannon-heavy",
    "name": "Ion Cannon, Heavy",
    "exposeAsReference": true,
-   "installable": false,
-   "mechanicallyApplied": false,
-   "combatUsable": false,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": true,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
-    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+    "REQUIRES_CERTIFIED_MOUNT_OWNED_ITEM_AND_ATTACK_PREFLIGHT"
    ]
   },
   {
@@ -961,36 +955,33 @@
    "catalogId": "turbolaser-light",
    "name": "Turbolaser, Light",
    "exposeAsReference": true,
-   "installable": false,
-   "mechanicallyApplied": false,
-   "combatUsable": false,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": true,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
-    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+    "REQUIRES_CERTIFIED_MOUNT_OWNED_ITEM_AND_ATTACK_PREFLIGHT"
    ]
   },
   {
    "catalogId": "turbolaser-medium",
    "name": "Turbolaser, Medium",
    "exposeAsReference": true,
-   "installable": false,
-   "mechanicallyApplied": false,
-   "combatUsable": false,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": true,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
-    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+    "REQUIRES_CERTIFIED_MOUNT_OWNED_ITEM_AND_ATTACK_PREFLIGHT"
    ]
   },
   {
    "catalogId": "turbolaser-heavy",
    "name": "Turbolaser, Heavy",
    "exposeAsReference": true,
-   "installable": false,
-   "mechanicallyApplied": false,
-   "combatUsable": false,
+   "installable": true,
+   "mechanicallyApplied": true,
+   "combatUsable": true,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
-    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+    "REQUIRES_CERTIFIED_MOUNT_OWNED_ITEM_AND_ATTACK_PREFLIGHT"
    ]
   },
   {

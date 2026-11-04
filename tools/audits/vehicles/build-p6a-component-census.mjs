@@ -256,7 +256,7 @@ const OPERATIONAL_KINDS = new Set(['armor', 'shield', 'dexterity', 'hyperdrive',
 const certificationP6a = Object.fromEntries(pdfReconciliation.filter(r => r.disposition === 'MATCHED_CANONICAL' && r.evidence.startsWith('PDF') && !certification[r.catalogId])
   .map(r => [r.catalogId, { status: EFFECTS[r.catalogId] ? 'MECHANIC_SPECIFIED' : 'SOURCE_VERIFIED',
     ...(EFFECTS[r.catalogId] ? { effectModule: 'scripts/domain/vehicles/vehicle-modification-effects.js',
-      effectTest: EFFECTS[r.catalogId].kind === 'weapon' ? 'tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs' : 'tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs' } : {}),
+      effectTest: EFFECTS[r.catalogId].kind === 'weapon' ? (EFFECTS[r.catalogId].testFile ?? 'tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs') : 'tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs' } : {}),
     evidence: r.evidence === 'PDF_VISUAL_REVIEW' ? 'PDF_REVIEWED_P6A' : 'PDF_PROSE_REVIEWED_P6A', book: r.source.book,
     printedPage: r.source.printedPage, printedPageRange: [r.source.printedPage, r.source.printedPage], table: r.source.table ?? r.source.section, pageResolution: 'pdf-table-page' }]));
 const ledger = catalog.map(cat => {

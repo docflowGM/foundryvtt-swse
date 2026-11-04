@@ -49,11 +49,29 @@ const CITE3 = Object.freeze({
 // (damage, EP, cost, availability, size) and the Core vehicle-weapon rules cover it without special behaviour: attack =
 // gunner BAB + vehicle Int + range (Core Vehicle Combat), damage = weapon dice x multiplier (Core Damage). It is
 // executed only through the sealed ledger + GM/printed mount + owned Item + attack preflight.
+//
+// WE-1 (Complete Weapon Ecosystem): the same path carries the plain blaster cannons, ion cannons and turbolasers of
+// Table 3-5. They differ from the laser cannons only in their printed dice, EP, cost and size footnote (all PDF-verified in
+// data/audits/vehicles/p6a/print-verified-components-v2.json) and, for the ion cannons, in the printed damage TYPE (Ion,
+// Core pp. 159-160), which travels in the damage string itself ("3d10x2 (Ion)") so the damage type is never guessed from a
+// name. `family` names the printed weapon family; `rangeSlug` names its row of Core Table 10-2 (data/vehicle-weapon-ranges.json).
+// Configurations (double / quad / fire-linked / enhancements / point-defense / autofire) are NOT here: they modify one of
+// these base weapons and are separate, individually sourced rows.
 const CITE_WEAPON = 'Starships of the Galaxy, Table 3-5 Starship Weapons (p. 47, PDF-verified row); Core Rulebook, Vehicle Combat: attack and damage of vehicle weapons';
+const WE1_TEST = 'tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs';
 const PLAIN_WEAPONS = Object.freeze({
-  'laser-cannon-light': { family: 'laser', damage: '3d10x2' },
-  'laser-cannon-medium': { family: 'laser', damage: '4d10x2' },
-  'laser-cannon-heavy': { family: 'laser', damage: '5d10x2' }
+  'laser-cannon-light': { family: 'laser', rangeSlug: 'laser-cannons', damage: '3d10x2' },
+  'laser-cannon-medium': { family: 'laser', rangeSlug: 'laser-cannons', damage: '4d10x2' },
+  'laser-cannon-heavy': { family: 'laser', rangeSlug: 'laser-cannons', damage: '5d10x2' },
+  'blaster-cannon-light': { family: 'blaster', rangeSlug: 'blaster-cannons', damage: '3d10x2', testFile: WE1_TEST },
+  'blaster-cannon-medium': { family: 'blaster', rangeSlug: 'blaster-cannons', damage: '4d10x2', testFile: WE1_TEST },
+  'blaster-cannon-heavy': { family: 'blaster', rangeSlug: 'blaster-cannons', damage: '5d10x2', testFile: WE1_TEST },
+  'ion-cannon-light': { family: 'ion', rangeSlug: 'ion-cannons', damage: '3d10x2 (Ion)', testFile: WE1_TEST },
+  'ion-cannon-medium': { family: 'ion', rangeSlug: 'ion-cannons', damage: '5d10x2 (Ion)', testFile: WE1_TEST },
+  'ion-cannon-heavy': { family: 'ion', rangeSlug: 'ion-cannons', damage: '3d10x5 (Ion)', testFile: WE1_TEST },
+  'turbolaser-light': { family: 'turbolaser', rangeSlug: 'turbolasers', damage: '3d10x5', testFile: WE1_TEST },
+  'turbolaser-medium': { family: 'turbolaser', rangeSlug: 'turbolasers', damage: '5d10x5', testFile: WE1_TEST },
+  'turbolaser-heavy': { family: 'turbolaser', rangeSlug: 'turbolasers', damage: '7d10x5', testFile: WE1_TEST }
 });
 // Capital ships (Colossal (frigate) or larger) take the Core -20 against targets smaller than Colossal in the vehicle attack
 // math (vehicle-capital-penalty.js); weapons may be installed on those hulls.
@@ -78,7 +96,7 @@ export const EFFECTS = Object.freeze({
   'cryogenic-chambers': { kind: 'capacity', capacity: 'cryogenic', divisor: 5, unit: 'Medium or smaller creatures in stasis', stackable: true, group: 'cryogenic', citation: CITE3.cryogenic },
   'hangar-bay': { kind: 'capacity', capacity: 'hangar', divisor: 50, unit: 'hangar units', stackable: true, group: 'hangar', citation: CITE3.hangar },
   'hangar-bay-concealed': { kind: 'capacity', capacity: 'hangar', divisor: 50, unit: 'hangar units (concealed)', stackable: true, group: 'hangar', citation: CITE3.hangar },
-  ...Object.fromEntries(Object.entries(PLAIN_WEAPONS).map(([id, w]) => [id, { kind: 'weapon', family: w.family, damage: w.damage, stackable: true, group: `weapon:${id}`, citation: CITE_WEAPON }])),
+  ...Object.fromEntries(Object.entries(PLAIN_WEAPONS).map(([id, w]) => [id, { kind: 'weapon', family: w.family, rangeSlug: w.rangeSlug, damage: w.damage, ...(w.testFile ? { testFile: w.testFile } : {}), stackable: true, group: `weapon:${id}`, citation: CITE_WEAPON }])),
   'atmospheric-thrusters': { kind: 'atmospheric', percent: 10, group: 'atmospheric', citation: CITE.atmospheric },
   'atmospheric-thrusters-advanced': { kind: 'atmospheric', percent: 25, group: 'atmospheric', citation: CITE.atmospheric }
 });

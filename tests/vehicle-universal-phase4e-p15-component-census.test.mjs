@@ -60,14 +60,16 @@ test('certification ledger and readiness manifest never overstate operation', ()
     if (l.mechanicSpecified) { assert.ok(l.sourceVerified?.book && l.sourceVerified?.printedPage, l.catalogId); assert.equal(cert[l.catalogId].status, 'MECHANIC_SPECIFIED'); }
     if (l.operationallyIntegrated) assert.ok(l.mechanicSpecified, l.catalogId);
   }
-  assert.equal(ledger.counts.mechanicSpecified, 57, '54 effects + light, medium and heavy laser cannons (P6B weapon slice)');
+  assert.equal(ledger.counts.mechanicSpecified, 66, '54 effects + the 12 plain cannon/turbolaser rows (laser P6B weapon slice; blaster, ion and turbolaser WE-1)');
   // sensor arrays: specified and installable, but no runtime consumer reads vehicle Intelligence yet -> not applied
   for (const id of ['sensor-array-2', 'sensor-array-4', 'sensor-array-6']) {
     assert.equal(ready.rows.find(r => r.catalogId === id).installable, true, id);
     assert.equal(ready.rows.find(r => r.catalogId === id).mechanicallyApplied, false, id);
   }
   // combat-usable only for certified weapon specifications (V-P2-04 slice); firing still needs mount + Item + preflight
-  assert.deepEqual(ready.rows.filter(r => r.combatUsable).map(r => r.catalogId).sort(), ['laser-cannon-heavy', 'laser-cannon-light', 'laser-cannon-medium']);
+  // (laser cannons: P6B weapon slice; blaster cannons, ion cannons and turbolasers: WE-1)
+  assert.deepEqual(ready.rows.filter(r => r.combatUsable).map(r => r.catalogId).sort(), ['blaster-cannon-heavy', 'blaster-cannon-light', 'blaster-cannon-medium',
+    'ion-cannon-heavy', 'ion-cannon-light', 'ion-cannon-medium', 'laser-cannon-heavy', 'laser-cannon-light', 'laser-cannon-medium', 'turbolaser-heavy', 'turbolaser-light', 'turbolaser-medium']);
   for (const r of ready.rows) { if (r.installable) assert.ok(cert[r.catalogId]?.status === 'MECHANIC_SPECIFIED'); }
   assert.ok(ready.rows.find(r => r.catalogId === 'laser-cannon-light').reasons.includes('REQUIRES_CERTIFIED_MOUNT_OWNED_ITEM_AND_ATTACK_PREFLIGHT'));
   // atmospheric thrusters: applied since P6B-0 through the GM-set environment (only in an explicit atmosphere)
@@ -121,7 +123,7 @@ test('certification overlay: PDF-verified rows are SOURCE_VERIFIED unless a test
   assert.ok(Object.keys(overlay).length > 100);
   for (const [id, row] of Object.entries(overlay)) {
     assert.equal(row.status, EFFECTS[id] ? 'MECHANIC_SPECIFIED' : 'SOURCE_VERIFIED', id);
-    if (EFFECTS[id]) assert.equal(row.effectTest, EFFECTS[id].kind === 'weapon' ? 'tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs' : 'tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs', id);
+    if (EFFECTS[id]) assert.equal(row.effectTest, EFFECTS[id].kind === 'weapon' ? (EFFECTS[id].testFile ?? 'tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs') : 'tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs', id);
     assert.ok(row.book && Number.isInteger(row.printedPage), id);
     assert.equal(base[id], undefined, 'no overlap with certification.json');
   }
@@ -130,8 +132,8 @@ test('certification overlay: PDF-verified rows are SOURCE_VERIFIED unless a test
   assert.match(svc, /certification-p6a\.json/);
   assert.match(svc, /\.\.\.\(p6aRes\.ok[^;]*\.\.\.\(\(await certRes\.json\(\)\)\.rows/);
   const ready = load(`${DIR}/readiness-manifest.json`);
-  assert.equal(ready.counts.installable, 57);
-  assert.equal(ready.counts.combatUsable, 3);
+  assert.equal(ready.counts.installable, 66);
+  assert.equal(ready.counts.combatUsable, 12);
 });
 
 test('all 91 worksheet items carry a PDF disposition and a reconciliation outcome', () => {
