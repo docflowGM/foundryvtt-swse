@@ -31,3 +31,5 @@ One owner per mechanic. Guarded by `tests/architecture-combat-authority.test.mjs
 | Credits | `TransactionEngine` |
 
 Known remaining items (bucketed): `FireStateStore` and the vehicle mode flag could share a reset policy if vehicle weapons are ever made canonical; guided-projectile follow-up records are written by `VehicleAmmunitionService` only.
+
+Remaining duplicate (bucketed, P6B-D-069): the unreferenced legacy `scripts/combat/systems/vehicle/vehicle-weapons.js` (class C: pinned by four audits; delete in a prune PR).

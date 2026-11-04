@@ -1488,6 +1488,21 @@
       "missing": "A scene atmosphere setting and printed payload counts.",
       "impact": "Ion bomb rows.",
       "recommendedAction": "Add the scene setting, then reuse the launcher ammunition family."
+    },
+    {
+      "workstream": "CONVERGENCE",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-069",
+      "component": "Legacy SWSEVehicleWeapons module (missile lock-on, homing, battery fire, arcs)",
+      "source": "scripts/combat/systems/vehicle/vehicle-weapons.js",
+      "status": "NONCRITICAL_DEFECT",
+      "severity": "MINOR",
+      "reason": "A pre-refactor module that duplicates mechanics now owned by shared authorities (guided projectile follow-up, battery attack, firing arcs, range). It has no importers (its window global never registers) and its own header says it is unused. It is classified C (deprecated, unreferenced) but four pinned audits/tools (phase2-vehicle-attack-alignment, attack-outcome-wiring, phase2-legacy-facade-delegation, check-attack-outcome-ssot) read its source as a legacy facade, so it is not deleted inside this PR.",
+      "missing": "A pruning change that removes the module together with those four pins.",
+      "impact": "None at runtime; it is a misleading duplicate.",
+      "recommendedAction": "Delete the module and update the four pins in a dedicated prune PR."
     }
   ]
 }

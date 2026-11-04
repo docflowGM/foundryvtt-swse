@@ -12,10 +12,10 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | SOURCE_EVIDENCE_MISSING | 8 |
 | ENGINEERING_COMPLEXITY | 23 |
 | LIVE_RUNTIME_PENDING | 1 |
-| NONCRITICAL_DEFECT | 4 |
+| NONCRITICAL_DEFECT | 5 |
 | DEPENDENCY_BLOCKED | 9 |
 
-Open items: 53. Resolved items: 15 (listed at the end).
+Open items: 54. Resolved items: 15 (listed at the end).
 
 ## Items (by severity)
 
@@ -74,6 +74,7 @@ Open items: 53. Resolved items: 15 (listed at the end).
 | P6B-D-041 | STOCK | published stock groups with droid, remote or ambiguous operators | ENGINEERING_COMPLEXITY | MINOR | no | - |
 | P6B-D-057 | WEAPON-ECOSYSTEM | launcher capacity expansion and the remaining launcher kinds | RULES_DECISION_REQUIRED | MINOR | yes | V-P6A-03, V-P6C-06 |
 | P6B-D-058 | WEAPON-ECOSYSTEM | source-specific special weapons without a printed table row | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
+| P6B-D-069 | CONVERGENCE | Legacy SWSEVehicleWeapons module (missile lock-on, homing, battery fire, arcs) | NONCRITICAL_DEFECT | MINOR | no | - |
 
 ## Details
 
@@ -612,6 +613,16 @@ Open items: 53. Resolved items: 15 (listed at the end).
 - **Owner ruling needed:** no
 - **Impact:** Ion bomb rows.
 - **Recommended action:** Add the scene setting, then reuse the launcher ammunition family.
+
+### P6B-D-069 - Legacy SWSEVehicleWeapons module (missile lock-on, homing, battery fire, arcs)
+
+- **Source:** scripts/combat/systems/vehicle/vehicle-weapons.js
+- **Category / severity:** NONCRITICAL_DEFECT / MINOR
+- **Reason:** A pre-refactor module that duplicates mechanics now owned by shared authorities (guided projectile follow-up, battery attack, firing arcs, range). It has no importers (its window global never registers) and its own header says it is unused. It is classified C (deprecated, unreferenced) but four pinned audits/tools (phase2-vehicle-attack-alignment, attack-outcome-wiring, phase2-legacy-facade-delegation, check-attack-outcome-ssot) read its source as a legacy facade, so it is not deleted inside this PR.
+- **Missing:** A pruning change that removes the module together with those four pins.
+- **Owner ruling needed:** no
+- **Impact:** None at runtime; it is a misleading duplicate.
+- **Recommended action:** Delete the module and update the four pins in a dedicated prune PR.
 
 ## Resolved items
 
