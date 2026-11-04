@@ -385,13 +385,18 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       ? resolveDroidBuilderQuote({
           definition: baseDefinition, category: 'locomotion', size, speed: baseSpeed
         }) : null;
+    const installedShields = (this._droidState?.droidSystems?.accessories ?? [])
+      .map(entry => DROID_SYSTEMS.accessories?.shields?.find(def => def.id === entry.id)?.sr ?? null)
+      .filter(sr => Number.isInteger(sr));
+    const selectedInstalledShieldRating = installedShields.length === 1 ? installedShields[0] : null;
     return resolveDroidBuilderQuote({
       definition, category: group, subcategory, size,
       speed: options.speed ?? null,
       variant: options.variant ?? null,
       baseLocomotionCost: baseQuote?.status === 'OK' ? baseQuote.credits : null,
       appendageBaseCost: options.appendageBaseCost ?? null,
-      appendageBaseWeight: options.appendageBaseWeight ?? null
+      appendageBaseWeight: options.appendageBaseWeight ?? null,
+      selectedInstalledShieldRating
     });
   }
 
