@@ -15,7 +15,7 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { DROID_SYSTEMS } from '../../../data/droid-systems.js';
-import { resolveDroidBuilderQuote } from '../../../domain/droids/droid-component-quote-authority.js';
+import { quoteDroidBuilderSelection } from '../../../domain/droids/droid-builder-quote-consumer.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { ProgressionRules } from '../../../engine/progression/ProgressionRules.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
@@ -374,29 +374,13 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    * Explicit builder grants adjust the charged price AFTER the source quote.
    */
   _quoteDroidSystem(definition, category, subcategory = null, options = {}) {
-    const size = options.size ?? this._droidState?.droidSize ?? null;
-    const group = category === 'enhancement'
-      ? (subcategory === 'appendageEnhancement' ? 'appendageEnhancement' : 'locomotionEnhancement')
-      : category;
-    const locomotion = this._droidState?.droidSystems?.locomotion;
-    const baseDefinition = DROID_SYSTEMS.locomotion?.find(entry => entry.id === locomotion?.id);
-    const baseSpeed = locomotion?.speed ?? null;
-    const baseQuote = group === 'locomotionEnhancement' && baseDefinition
-      ? resolveDroidBuilderQuote({
-          definition: baseDefinition, category: 'locomotion', size, speed: baseSpeed
-        }) : null;
-    const installedShields = (this._droidState?.droidSystems?.accessories ?? [])
-      .map(entry => DROID_SYSTEMS.accessories?.shields?.find(def => def.id === entry.id)?.sr ?? null)
-      .filter(sr => Number.isInteger(sr));
-    const selectedInstalledShieldRating = installedShields.length === 1 ? installedShields[0] : null;
-    return resolveDroidBuilderQuote({
-      definition, category: group, subcategory, size,
-      speed: options.speed ?? null,
-      variant: options.variant ?? null,
-      baseLocomotionCost: baseQuote?.status === 'OK' ? baseQuote.credits : null,
+    return quoteDroidBuilderSelection({
+      definition, category, subcategory,
+      size: options.size ?? this._droidState?.droidSize ?? null,
+      droidSystems: this._droidState?.droidSystems,
+      speed: options.speed ?? null, variant: options.variant ?? null,
       appendageBaseCost: options.appendageBaseCost ?? null,
-      appendageBaseWeight: options.appendageBaseWeight ?? null,
-      selectedInstalledShieldRating
+      appendageBaseWeight: options.appendageBaseWeight ?? null
     });
   }
 
