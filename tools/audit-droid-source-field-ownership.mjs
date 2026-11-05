@@ -13,7 +13,10 @@ const FIELD_TREATMENT = Object.freeze({
   QUOTE_OR_SOURCE_GATE: [
     'id', 'name', 'cost', 'weight', 'costFormula', 'weightFormula',
     'costMultiplier', 'baseSpeed', 'speeds', 'rangeOptions', 'sizeMinimum',
-    'costWithHigherDefense', 'costIncrement', 'weightIncrement'
+    'costWithHigherDefense', 'costIncrement', 'weightIncrement',
+    // Source mechanical prerequisite gates are used by PC/follower builders
+    // and Garage, not inferred from display descriptions.
+    'sizeRestriction', 'requiredLocomotion', 'requiredSystems', 'requiresAppendage'
   ],
   // These are currently primarily explanatory/presentation data, NOT mechanics.
   PRESENTATION_NOT_PROOF_OF_RULE: [
@@ -25,9 +28,8 @@ const FIELD_TREATMENT = Object.freeze({
   NEEDS_MECHANICAL_CONSUMER_PROOF: [
     'armorType', 'armorCheckPenalty', 'armorBonus', 'maxDexBonus',
     'runningSpeedMultiplier', 'specialBonus', 'tier',
-    'behavioralInhibitors', 'sizeRestriction', 'multiplier',
-    'hpBonus', 'dtBonus', 'sr', 'requiredLocomotion', 'requiresLocomtion',
-    'requiredSystems', 'requiresAppendage', 'dc',
+    'behavioralInhibitors', 'multiplier',
+    'hpBonus', 'dtBonus', 'sr', 'dc',
     'damageType', 'canManipulate', 'canAttack', 'createsUnarmedAttack',
     'createsRangedWeapon', 'weaponStats',
     'isFree'
