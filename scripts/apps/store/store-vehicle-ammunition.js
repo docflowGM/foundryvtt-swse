@@ -5,6 +5,7 @@
  * Party Fund). Purchased ammunition goes to the launcher's RESERVE; nothing is loaded. Only the vehicle's own launchers' ammunition is ever listed.
  */
 import { VehicleAmmunitionPurchaseService as P } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-ammunition-purchase-service.js";
+import { VehicleLogisticsService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-logistics-service.js";
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 
 const inFlight = new Set();
@@ -15,9 +16,10 @@ const info = m => globalThis.ui?.notifications?.info?.(m);
 export function initVehicleAmmunitionContext(store, options = {}) {
   const ctx = options.vehicleAmmunition;
   if (!ctx?.vehicleId) { store.vehicleAmmo = null; return; }
-  store.vehicleAmmo = { vehicleId: ctx.vehicleId, launcherKey: ctx.launcherKey ?? null, quantities: {}, payment: 'credits', busy: false };
+  store.vehicleAmmo = { vehicleId: ctx.vehicleId, launcherKey: ctx.launcherKey ?? null, mode: ctx.mode ?? 'ammunition', quantities: {}, payment: 'credits', busy: false };
   // the weapon-level shortcut selects the correct ammunition immediately (still no purchase without confirmation)
   if (ctx.launcherKey) store.vehicleAmmo.quantities[ctx.launcherKey] = 1;
+  if (store.vehicleAmmo.mode !== 'ammunition') store.vehicleAmmo.quantities[`resource:${store.vehicleAmmo.mode}`] = 1;
   store.currentView = 'vehicle-ammunition';
 }
 
@@ -29,23 +31,27 @@ export async function buildVehicleAmmunitionView(store) {
   if (!vehicle) return { unavailable: true, message: 'This vehicle is no longer available.' };
   const opts = await P.options({ vehicle, requesterActor: store.actor });
   if (st.payment === 'party-fund' && !opts.partyFund.available) st.payment = 'credits';     // a disabled / unavailable fund is never left selected
-  const rows = opts.offers.map(o => {
+  const lineOf = (key, quantity) => { const q = quantity > 0 ? P.quoteLine({ vehicle, key, units: quantity }) : null; return { lineTotal: q?.success ? q.total : 0, lineError: q && !q.success ? q.reason : null, resulting: q?.success ? q.resulting ?? null : null }; };
+  const sources = st.mode === 'fuel' ? [(() => { const f = VehicleLogisticsService.view(vehicle).fuel; return { launcherKey: 'resource:fuel', launcherName: 'Fuel', ammunitionLabel: 'Fuel-days', unitPrice: f.pricePerDay, canBuy: f.canBuy, disabledReason: f.disabledReason, stockLabel: f.label, priceLabel: f.priceLabel }; })()]
+    : st.mode === 'supplies' ? [(() => { const c = VehicleLogisticsService.view(vehicle).consumables; return { launcherKey: 'resource:supplies', launcherName: 'Consumables / Life Support', ammunitionLabel: 'Days of supplies', unitPrice: c.occupants > 0 ? c.perPersonDay * c.occupants : null, canBuy: c.canBuy, disabledReason: c.disabledReason, stockLabel: `${c.label} · ${c.occupants} living occupant(s)`, priceLabel: c.rateLabel }; })()]
+    : opts.offers.map(o => ({ ...o, priceLabel: o.unitPrice === null ? 'Price not published' : `${o.unitPrice.toLocaleString()} credits each`, stockLabel: `${o.loaded} / ${o.capacity} loaded · ${o.reserve} in reserve` }));
+  const rows = sources.map(o => {
     const quantity = Math.max(0, Math.floor(Number(st.quantities[o.launcherKey]) || 0));
-    return { ...o, quantity, lineTotal: o.canBuy ? quantity * o.unitPrice : 0, selected: o.launcherKey === st.launcherKey,
-      priceLabel: o.unitPrice === null ? 'Price not published' : `${o.unitPrice.toLocaleString()} credits each`, stockLabel: `${o.loaded} / ${o.capacity} loaded · ${o.reserve} in reserve` };
+    return { ...o, quantity, ...lineOf(o.launcherKey, quantity), selected: o.launcherKey === st.launcherKey || st.mode !== 'ammunition' };
   });
-  const total = rows.reduce((s, r) => s + r.lineTotal, 0);
+  const total = rows.reduce((sum, r) => sum + r.lineTotal, 0);
+  const hasLineError = rows.some(r => r.lineError);
   const credits = LedgerService.getCurrentCredits(store.actor);
   const credit = { id: 'credits', label: 'Personal Credits — Purchase Now', available: opts.personal.available, selected: st.payment === 'credits', note: opts.personal.available ? `You have ${credits.toLocaleString()} credits` : 'This character is not recorded as an owner of the vehicle.' };
   const fund = opts.partyFund.enabled ? { id: 'party-fund', label: 'Party Fund — Request GM Approval', available: opts.partyFund.available, selected: st.payment === 'party-fund',
     note: opts.partyFund.balance === null ? 'GM approval required' : `Party Fund: ${opts.partyFund.balance.toLocaleString()} credits · GM approval required` } : null;
   const chosen = st.payment === 'party-fund' ? fund : credit;
   return {
-    vehicleId: vehicle.id, vehicleName: vehicle.name, payerName: store.actor?.name ?? '', rows, hasRows: rows.length > 0, total, credits,
+    vehicleId: vehicle.id, vehicleName: vehicle.name, mode: st.mode, title: st.mode === 'fuel' ? 'Buy Fuel' : st.mode === 'supplies' ? 'Buy Supplies' : 'Buy Ammunition', payerName: store.actor?.name ?? '', rows, hasRows: rows.length > 0, total, credits,
     payments: fund ? [credit, fund] : [credit], showPaymentChoice: !!fund, payment: st.payment,
-    canConfirm: total > 0 && !st.busy && chosen?.available === true && (st.payment !== 'credits' || credits >= total),
+    canConfirm: total > 0 && !hasLineError && !st.busy && chosen?.available === true && (st.payment !== 'credits' || credits >= total),
     confirmLabel: st.payment === 'party-fund' ? 'Submit Request to GM' : 'Purchase Now', insufficient: st.payment === 'credits' && total > credits,
-    notice: st.payment === 'party-fund' ? 'No credits are deducted and no ammunition is delivered until the GM approves.' : 'Ammunition is delivered to the launcher\'s reserve; loading remains a separate step.'
+    notice: st.payment === 'party-fund' ? 'No credits are deducted and nothing is delivered until the GM approves.' : (st.mode === 'ammunition' ? 'Ammunition is delivered to the launcher\'s reserve; loading remains a separate step.' : 'The purchase never exceeds the ship\'s capacity.')
   };
 }
 
@@ -62,21 +68,21 @@ export async function confirmVehicleAmmunition(store) {
   inFlight.add(key); st.busy = true;
   const results = [];
   try {
-    const quotes = lines.map(l => P.quote({ vehicle, ...l }));
+    const quotes = lines.map(l => P.quoteLine({ vehicle, key: l.launcherKey, units: l.units }));
     const bad = quotes.find(q => !q.success);
     if (bad) { warn(`Cannot buy: ${bad.reason}`); return { success: false, reason: bad.reason }; }
     const total = quotes.reduce((s, q) => s + q.total, 0);
     if (st.payment === 'credits' && LedgerService.getCurrentCredits(store.actor) < total) { warn('Not enough credits for this basket.'); return { success: false, reason: 'INSUFFICIENT_CREDITS' }; }
     for (const l of lines) {
       const r = st.payment === 'party-fund'
-        ? await P.requestPartyFund({ vehicle, requesterActor: store.actor, ...l })
-        : await P.buyWithCredits({ vehicle, ownerActor: store.actor, ...l });
+        ? await P.requestLine({ vehicle, requesterActor: store.actor, key: l.launcherKey, units: l.units })
+        : await P.buyLine({ vehicle, ownerActor: store.actor, key: l.launcherKey, units: l.units });
       results.push({ ...l, ...r });
       if (r.success) delete st.quantities[l.launcherKey]; else { warn(`${l.launcherKey}: ${(r.reasons ?? [r.reason]).join(', ')}`); break; }       // each line is atomic; stop at the first refusal
     }
     const done = results.filter(r => r.success);
     if (done.length) {
-      info(st.payment === 'party-fund' ? 'Purchase request submitted to GM. No credits have been deducted and no ammunition has been delivered.' : `Purchased ammunition for ${vehicle.name}: it is in the launcher reserve.`);
+      info(st.payment === 'party-fund' ? 'Purchase request submitted to GM. No credits have been deducted and nothing has been delivered.' : (st.mode === 'ammunition' ? `Purchased ammunition for ${vehicle.name}: it is in the launcher reserve.` : `Purchased for ${vehicle.name}.`));
       try { vehicle.sheet?.render?.(); } catch (_e) { /* the sheet refreshes on its next render */ }
       try { store._onCheckoutComplete?.({ vehicleAmmunition: true, results }); } catch (_e) { /* ignore */ }
     }

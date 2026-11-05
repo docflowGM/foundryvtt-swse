@@ -53,7 +53,21 @@ export function buildWeaponOpsView(actor, { isGM = false } = {}) {
 export async function runWeaponAction({ action, itemId, vehicle, actorId = null }, deps) {
   const { service, notify } = deps;
   const weapon = vehicle?.items?.get?.(itemId) ?? [...(vehicle?.items ?? [])].find(i => i.id === itemId);
-  if (!weapon && !/^(ammo-config|battery-config|interdiction-|buy-ammo|mine-(detonate|remove|notice|resolve|adjudicate))/.test(String(action))) { notify.warn('That weapon is no longer on the vehicle.'); return { ok: false, reason: 'WEAPON_NOT_FOUND' }; }
+  if (!weapon && !/^(ammo-config|battery-config|interdiction-|buy-|logistics-|mine-(detonate|remove|notice|resolve|adjudicate))/.test(String(action))) { notify.warn('That weapon is no longer on the vehicle.'); return { ok: false, reason: 'WEAPON_NOT_FOUND' }; }
+  // Ship Logistics: the sheet only forwards decisions. Buying opens the same store context; GM controls collect values and call the logistics service.
+  if (action === 'buy-fuel' || action === 'buy-supplies') {
+    const app = await deps.openAmmunitionStore?.(vehicle, { mode: action === 'buy-fuel' ? 'fuel' : 'supplies' });
+    return { ok: !!app, app };
+  }
+  if (/^logistics-/.test(String(action))) {
+    const svc = deps.logistics, say = r => { if (r.success) notify.info('Done.'); else notify.warn(r.reason); return r; };
+    if (action === 'logistics-init') return say(await svc.initialize(vehicle));
+    if (action === 'logistics-config-fuel') { const v = await deps.askFuelConfig?.(); return v ? say(await svc.gmConfigureFuel(vehicle, v)) : { ok: false, reason: 'CANCELLED' }; }
+    if (action === 'logistics-occupants') { const v = await deps.askOccupants?.(); return v ? say(await svc.gmSetOccupants(vehicle, v)) : { ok: false, reason: 'CANCELLED' }; }
+    if (action === 'logistics-consumables') { const v = await deps.askConsumablesRemaining?.(); return v ? say(await svc.gmSetConsumables(vehicle, v)) : { ok: false, reason: 'CANCELLED' }; }
+    if (action === 'logistics-fuel-event') { const v = await deps.askFuelEvent?.(svc.fuelEvents); return v ? say(await svc.consumeFuel(vehicle, { ...v, eventId: globalThis.foundry?.utils?.randomID?.() })) : { ok: false, reason: 'CANCELLED' }; }
+    return { ok: false, reason: 'LOGISTICS_ACTION_UNKNOWN' };
+  }
   if (action === 'buy-ammo-all' || action === 'buy-ammo') {
     // both shortcuts open the same store context; the weapon button preselects that launcher (itemId = the launcher's Item id)
     const { ammunitionOffers } = await import("/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-ammunition-shop.js");

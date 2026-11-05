@@ -170,6 +170,9 @@ export async function armStockWeaponsOnCreate(actor, _options, userId) {
     const { VehicleInstallationService } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-installation-service.js');
     const r = await VehicleInstallationService.syncWeaponItems(actor);
     if (!r.success) console.warn('[foundryvtt-swse] Stock weapon arming incomplete; use "Resync weapons" on the vehicle sheet:', r.reasons);
+    // ship logistics: ONE-TIME initial consumables (full printed endurance, an explicit project default; fuel is never invented); never re-run on resync
+    const { VehicleLogisticsService } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-logistics-service.js');
+    await VehicleLogisticsService.initialize(actor, { system: true });
   } catch (err) { console.warn('[foundryvtt-swse] Stock weapon arming failed; use "Resync weapons" on the vehicle sheet:', err); }
 }
 

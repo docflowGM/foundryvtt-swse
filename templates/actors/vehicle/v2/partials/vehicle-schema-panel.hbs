@@ -147,6 +147,42 @@
 </section>
 {{/if}}
 
+{{#if view.logistics}}
+<section class="swse-vehicle-panel swse-vehicle-logistics-panel">
+  <header><h3>Ship Logistics</h3></header>
+  <div class="swse-vehicle-logistics-row swse-vehicle-logistics-fuel">
+    <strong>Fuel</strong>
+    <span>{{view.logistics.fuel.label}}</span>
+    {{#if view.logistics.fuel.capacity}}<div class="swse-vehicle-resource-bar" role="progressbar" aria-label="Fuel"><span style="width: {{view.logistics.fuel.percent}}%"></span></div>{{/if}}
+    <small>{{view.logistics.fuel.priceLabel}}{{#if view.logistics.fuel.capacityBasis}} · capacity: GM-configured{{/if}} · {{view.logistics.fuel.source}}</small>
+    <small>One fuel-day is spent by: {{#each view.logistics.fuel.consumption}}{{this}}{{#unless @last}}; {{/unless}}{{/each}}.</small>
+    <button type="button" data-weapon-action="buy-fuel" {{#unless view.logistics.fuel.canBuy}}disabled title="{{view.logistics.fuel.disabledReason}}"{{/unless}}>Buy Fuel</button>
+    {{#if view.logistics.isGM}}
+      <button type="button" data-weapon-action="logistics-config-fuel">Configure tank (GM)</button>
+      <button type="button" data-weapon-action="logistics-fuel-event">Record fuel use (GM)</button>
+    {{/if}}
+  </div>
+  <div class="swse-vehicle-logistics-row swse-vehicle-logistics-consumables">
+    <strong>Consumables / Life Support</strong>
+    <span>{{view.logistics.consumables.label}}</span>
+    {{#if view.logistics.consumables.maxDays}}<div class="swse-vehicle-resource-bar" role="progressbar" aria-label="Consumables"><span style="width: {{view.logistics.consumables.percent}}%"></span></div>{{/if}}
+    <small>Printed: {{view.logistics.consumables.printed}} · maximum {{view.logistics.consumables.maxDays}} days{{#if view.logistics.consumables.maxBasis}} ({{view.logistics.consumables.maxBasis}}){{/if}}</small>
+    <small>{{view.logistics.consumables.rateLabel}} · living occupants counted: {{view.logistics.consumables.occupants}} ({{view.logistics.consumables.occupantsBasis}})</small>
+    <button type="button" data-weapon-action="buy-supplies" {{#unless view.logistics.consumables.canBuy}}disabled title="{{view.logistics.consumables.disabledReason}}"{{/unless}}>Buy Supplies</button>
+    {{#if view.logistics.isGM}}
+      {{#unless view.logistics.consumables.initialized}}<button type="button" data-weapon-action="logistics-init">Initialize supplies (GM)</button>{{/unless}}
+      <button type="button" data-weapon-action="logistics-occupants">Living occupants (GM)</button>
+      <button type="button" data-weapon-action="logistics-consumables">Adjust remaining (GM)</button>
+    {{/if}}
+  </div>
+  <div class="swse-vehicle-logistics-row swse-vehicle-logistics-reference">
+    <strong>Docking and Maintenance</strong> <em>GM Administered</em>
+    <small>{{view.logistics.docking.label}} ({{view.logistics.docking.source}})</small>
+    <small>{{view.logistics.maintenance.label}}. {{view.logistics.maintenance.consequence}}</small>
+    <small>Simplified upkeep ({{view.logistics.simplified.source}}): {{view.logistics.simplified.perMonth}} cr/month covers these expenses instead of itemizing them; it is never charged in addition.</small>
+  </div>
+</section>
+{{/if}}
 {{#if view.weaponOps.hasAmmoRows}}
 <section class="swse-vehicle-panel swse-vehicle-ammo-config-panel">
   <header><h3>Launcher ammunition (GM)</h3></header>

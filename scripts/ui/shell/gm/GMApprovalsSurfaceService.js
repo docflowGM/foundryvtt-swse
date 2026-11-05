@@ -660,8 +660,9 @@ function buildVehicleAmmunitionApprovalRequest(approval, index) {
     { id: 'request', label: 'Ammunition Request', icon: 'fa-solid fa-bullseye', rows: [
       makeReadonlyRow('Requested By', requester?.name ?? approval.ownerActorName ?? 'Unknown'),
       makeReadonlyRow('Vehicle', vehicle?.name ?? approval.vehicleName ?? 'Unknown'),
-      makeReadonlyRow('Launcher', approval.launcherName ?? approval.launcherKey ?? 'Unknown'),
-      makeReadonlyRow('Ammunition', `${approval.units} × ${approval.ammunitionLabel ?? approval.ammunitionId}`),
+      ...(approval.resource ? [makeReadonlyRow('Resource', approval.resource === 'fuel' ? `${approval.days} fuel-day(s)` : `${approval.days} day(s) of consumables`)] : [
+        makeReadonlyRow('Launcher', approval.launcherName ?? approval.launcherKey ?? 'Unknown'),
+        makeReadonlyRow('Ammunition', `${approval.units} × ${approval.ammunitionLabel ?? approval.ammunitionId}`)]),
       makeReadonlyRow('Submitted', submitted),
       makeReadonlyRow('State', state)
     ] },
@@ -675,7 +676,7 @@ function buildVehicleAmmunitionApprovalRequest(approval, index) {
   ].map((category) => ({ ...category, rows: category.rows.map((row) => ({ ...row, fieldId: null, originalValue: row.value ?? row.displayValue ?? '' })) }));
   return {
     key: `custom:${index}`, stableKey: approval?.id ? `custom-id:${approval.id}` : '', sourceType: 'store-custom', actorId: requester?.id ?? null, requestIndex: index,
-    type: 'vehicle-ammunition', typeLabel: 'Party Fund Ammunition Purchase', title: approval.draftData?.name ?? 'Vehicle ammunition',
+    type: 'vehicle-ammunition', typeLabel: approval.resource ? 'Party Fund Logistics Purchase' : 'Party Fund Ammunition Purchase', title: approval.draftData?.name ?? 'Vehicle ammunition',
     subtitle: `${requester?.name ?? approval.ownerActorName ?? 'Unknown'} · ${displayCredits(cost)}`, ownerLabel: requester?.name ?? approval.ownerActorName ?? 'Unknown',
     costLabel: displayCredits(cost), submittedLabel: submitted, icon: 'fa-solid fa-rocket', tone: 'vehicle', categories,
     warnings: [
@@ -689,7 +690,7 @@ function buildVehicleAmmunitionApprovalRequest(approval, index) {
 }
 
 function buildStoreApprovalRequest(approval, index) {
-  if (approval?.approvalKind === 'vehicle-ammunition-party-fund') return buildVehicleAmmunitionApprovalRequest(approval, index);
+  if (['vehicle-ammunition-party-fund', 'vehicle-logistics-party-fund'].includes(approval?.approvalKind)) return buildVehicleAmmunitionApprovalRequest(approval, index);
   if (approval?.type === 'store-item' || approval?.approvalKind === 'store-policy-item') return buildStoreItemApprovalRequest(approval, index);
 
   const draftActor = game.actors.get(approval.draftActorId) ?? null;

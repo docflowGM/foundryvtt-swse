@@ -1291,3 +1291,18 @@ Implemented as PUBLISHED_RULE (lock-on, Reflex 30 / 10 HP / -5, no second charge
 | Engineering notes (not rules) | A multi-line basket is bought line by line (each line atomic; checkout stops at the first refusal). There is no GM tool yet to resolve an `indeterminate` request beyond reconciling the fund ledger and the reserve by hand (P6B-D-074). |
 
 - **Revision 45 (2026-11-05):** recorded V-P6C-19.
+
+### V-P6C-20 - Ship logistics: fuel, consumables, docking, maintenance (OWNER-APPROVED INTERPRETATIONS AND PROJECT CONVENTIONS, 2026-11-05)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-20 |
+| Source | Starships of the Galaxy, printed pp. 10 and 14 |
+| Published (implemented as printed) | Fuel 50 cr per fuel-day for a Colossal or smaller starship, x100 per larger size (frigate 5,000; cruiser 500,000; station 50,000,000). One fuel-day is spent by a day of realspace or hyperspace travel, an hour of atmospheric flight or combat, or one jump to lightspeed. Restocking consumables costs 10 cr x living creatures aboard x days (droids are not living creatures for this formula). Docking about 20 cr/day, long-term storage 200 cr/month, routine maintenance (every 20 hyperspace jumps, four fuel-days) are reference prices. Simplified upkeep (p. 10) is an alternative method, never charged in addition. |
+| Owner interpretation | The printed Consumables value is the ship's MAXIMUM endurance (source data); the remaining supply is mutable play state; a ship cannot hold more than its maximum (plus certified modifications, the existing Extended Range computation). Fuel and consumables are separate resources. |
+| Project conventions | Calendar units use the existing V-P6B-02 policy (a month = 30 days, a year = 365); a fuel-tank capacity is not published, so it exists only as an explicit GM configuration (labeled GM_CONFIGURED) and is never derived from Consumables; consumables are initialized once at vehicle creation to the full printed endurance (an explicit project default, GM override); fuel is never invented (0 until the GM configures a tank); living occupants are the assigned living crew plus GM-recorded passengers, or a GM override -- none established means no purchase; the 10 cr/person/day price is applied at purchase time to the current occupants. |
+| Not authorized / not implemented | Automatic docking, maintenance or simplified-upkeep billing; maintenance readiness tracking (no reliable hyperjump record exists); automatic consumable depletion (no dependable campaign clock; the GM adjusts); crew wages (GM-defined contracts, no published formula). |
+| Status | `RESOLVED_PROJECT_INTERPRETATION` |
+| Implementation | commit 3e8a7d2 -- `vehicle-logistics.js` (domain), `VehicleLogisticsService` (the only writer of the guarded flag `shipLogistics`), the logistics kind of the Party Fund workflow, store modes `fuel` / `supplies`, the Ship Logistics section of the V2 sheet; tests p54 |
+
+- **Revision 46 (2026-11-05):** recorded V-P6C-20.

@@ -124,7 +124,7 @@ test('BOTH BUTTONS open the same store context: global lists everything, the wea
   globalThis.game.user.character = owner;
   const app = await SC.openVehicleAmmunitionStore(v, { launcherKey: `stock:${w.id}`, store: Store, game: globalThis.game });
   assert.ok(app);
-  assert.deepEqual([calls[0][0], calls[0][1].vehicleAmmunition, calls[0][1].entryOrigin, calls[0][1].closeAfterCheckout], ['owner1', { vehicleId: 'veh1', launcherKey: `stock:${w.id}` }, 'vehicle-sheet-ammunition', false]);
+  assert.deepEqual([calls[0][0], calls[0][1].vehicleAmmunition, calls[0][1].entryOrigin, calls[0][1].closeAfterCheckout], ['owner1', { vehicleId: 'veh1', launcherKey: `stock:${w.id}`, mode: 'ammunition' }, 'vehicle-sheet-ammunition', false]);
   // no payer resolved: nobody is debited by default
   v.system.ownedByActorId = null; globalThis.game.user.character = null; warns.length = 0; calls.length = 0;
   assert.equal(await SC.openVehicleAmmunitionStore(v, { store: Store, game: globalThis.game, notify: globalThis.ui.notifications }), null);
@@ -195,7 +195,7 @@ test('CHECKOUT with the Party Fund: a request is queued; nothing is charged or d
   assert.deepEqual([view.confirmLabel, view.canConfirm, /No credits are deducted/.test(view.notice)], ['Submit Request to GM', true, true]);
   const r = await SV.confirmVehicleAmmunition(s);
   assert.equal(r.success, true, JSON.stringify(r));
-  assert.ok(infos.some(m => /submitted to GM\. No credits have been deducted and no ammunition has been delivered/.test(m)));
+  assert.ok(infos.some(m => /submitted to GM\. No credits have been deducted and nothing has been delivered/.test(m)));
   assert.deepEqual([P.pendingRequests().length, owner.system.credits, fundState.balance, ledgerOf(w)], [1, 100000, 10000, before]);
   // the GM approves later: the reserve rises, never the magazine
   setUser(true);
@@ -227,7 +227,7 @@ test('NO FREE AMMUNITION: opening the sheet, the store and the shop list again a
 test('GM APPROVALS SURFACE: the request is routed through the existing approve / deny operations and shown to the GM', async () => {
   const ops = readFileSync('scripts/ui/shell/gm/GMApprovalOperationsService.js', 'utf8');
   const surface = readFileSync('scripts/ui/shell/gm/GMApprovalsSurfaceService.js', 'utf8');
-  assert.match(ops, /approvalKind === 'vehicle-ammunition-party-fund'\) return this\._approveVehicleAmmunition/);
-  assert.match(ops, /approvals\[index\]\?\.approvalKind === 'vehicle-ammunition-party-fund'\) return this\._denyVehicleAmmunition/);
-  assert.match(surface, /approval\?\.approvalKind === 'vehicle-ammunition-party-fund'\) return buildVehicleAmmunitionApprovalRequest/);
+  assert.match(ops, /\['vehicle-ammunition-party-fund', 'vehicle-logistics-party-fund'\]\.includes\(approval\.approvalKind\)\) return this\._approveVehicleAmmunition/);
+  assert.match(ops, /\['vehicle-ammunition-party-fund', 'vehicle-logistics-party-fund'\]\.includes\(approvals\[index\]\?\.approvalKind\)\) return this\._denyVehicleAmmunition/);
+  assert.match(surface, /\['vehicle-ammunition-party-fund', 'vehicle-logistics-party-fund'\]\.includes\(approval\?\.approvalKind\)\) return buildVehicleAmmunitionApprovalRequest/);
 });

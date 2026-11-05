@@ -9,13 +9,13 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | Category | Count |
 |---|---|
 | RULES_DECISION_REQUIRED | 8 |
-| SOURCE_EVIDENCE_MISSING | 9 |
-| ENGINEERING_COMPLEXITY | 25 |
+| SOURCE_EVIDENCE_MISSING | 10 |
+| ENGINEERING_COMPLEXITY | 26 |
 | LIVE_RUNTIME_PENDING | 1 |
-| NONCRITICAL_DEFECT | 4 |
-| DEPENDENCY_BLOCKED | 9 |
+| NONCRITICAL_DEFECT | 5 |
+| DEPENDENCY_BLOCKED | 11 |
 
-Open items: 56. Resolved items: 19 (listed at the end).
+Open items: 61. Resolved items: 19 (listed at the end).
 
 ## Items (by severity)
 
@@ -77,6 +77,11 @@ Open items: 56. Resolved items: 19 (listed at the end).
 | P6B-D-070 | WEAPON-ECOSYSTEM | GM-configured stock launchers: groups with other blockers, battery launchers, configuration edit | ENGINEERING_COMPLEXITY | MINOR | no | V-P6C-06 |
 | P6B-D-074 | WEAPON-ECOSYSTEM | GM reconciliation tool for an indeterminate Party Fund ammunition settlement | ENGINEERING_COMPLEXITY | MINOR | no | V-P6C-19 |
 | P6B-D-075 | WEAPON-ECOSYSTEM | Stock launcher groups with a verified single launcher (initial ammunition rule has no canonical group yet) | SOURCE_EVIDENCE_MISSING | MINOR | no | V-P6C-18 |
+| P6B-D-076 | WEAPON-ECOSYSTEM | Fuel-tank capacity is not published | SOURCE_EVIDENCE_MISSING | MINOR | no | V-P6C-20 |
+| P6B-D-077 | WEAPON-ECOSYSTEM | Maintenance readiness has no hyperjump record | ENGINEERING_COMPLEXITY | MINOR | no | V-P6C-20 |
+| P6B-D-078 | WEAPON-ECOSYSTEM | Docking, maintenance and simplified upkeep billing are GM administered | DEPENDENCY_BLOCKED | MINOR | no | V-P6C-20 |
+| P6B-D-079 | WEAPON-ECOSYSTEM | Consumables are not depleted by campaign time | DEPENDENCY_BLOCKED | MINOR | no | V-P6C-20 |
+| P6B-D-080 | WEAPON-ECOSYSTEM | Existing vehicles need a GM to initialize supplies | NONCRITICAL_DEFECT | MINOR | no | V-P6C-20 |
 
 ## Details
 
@@ -645,6 +650,56 @@ Open items: 56. Resolved items: 19 (listed at the end).
 - **Owner ruling needed:** no (V-P6C-18)
 - **Impact:** None for play: the GM allocates stock launchers deliberately; the rule applies automatically to any complete family.
 - **Recommended action:** Review the sources of the 18 allocation-required groups.
+
+### P6B-D-076 - Fuel-tank capacity is not published
+
+- **Source:** Starships of the Galaxy, printed p. 14
+- **Category / severity:** SOURCE_EVIDENCE_MISSING / MINOR
+- **Reason:** The book prices and consumes fuel-days but prints no tank capacity, and it must not be derived from Consumables.
+- **Missing:** A published fuel capacity per ship.
+- **Owner ruling needed:** no (V-P6C-20)
+- **Impact:** Fuel purchasing is disabled until a GM configures a tank (labeled GM_CONFIGURED).
+- **Recommended action:** Configure per ship; revisit if a source prints capacities.
+
+### P6B-D-077 - Maintenance readiness has no hyperjump record
+
+- **Source:** Starships of the Galaxy, printed p. 14
+- **Category / severity:** ENGINEERING_COMPLEXITY / MINOR
+- **Reason:** Routine maintenance depends on a count of hyperspace jumps; the system records none and none was fabricated.
+- **Missing:** A reliable jump record (hyperdrive activation flow).
+- **Owner ruling needed:** no (V-P6C-20)
+- **Impact:** Maintenance is a GM-administered reference rule and cost.
+- **Recommended action:** Count jumps when a hyperdrive activation action exists (P6B-D-072).
+
+### P6B-D-078 - Docking, maintenance and simplified upkeep billing are GM administered
+
+- **Source:** Starships of the Galaxy, printed p. 14
+- **Category / severity:** DEPENDENCY_BLOCKED / MINOR
+- **Reason:** Owner directive: no automatic billing, player checkout or persistence for these yet.
+- **Missing:** A dedicated GM Holopad logistics application.
+- **Owner ruling needed:** no (V-P6C-20)
+- **Impact:** Reference prices shown read-only on the sheet; the GM charges them by hand.
+- **Recommended action:** The logistics service exposes governed operations a future GM interface can reuse.
+
+### P6B-D-079 - Consumables are not depleted by campaign time
+
+- **Source:** Starships of the Galaxy, printed p. 14
+- **Category / severity:** DEPENDENCY_BLOCKED / MINOR
+- **Reason:** No dependable campaign clock exists; a sheet render must never consume supplies.
+- **Missing:** An authoritative time/event source for depletion.
+- **Owner ruling needed:** no (V-P6C-20)
+- **Impact:** The GM adjusts the remaining supply (gmSetConsumables).
+- **Recommended action:** Wire to a campaign clock if one is introduced.
+
+### P6B-D-080 - Existing vehicles need a GM to initialize supplies
+
+- **Source:** Starships of the Galaxy, printed p. 14
+- **Category / severity:** NONCRITICAL_DEFECT / MINOR
+- **Reason:** Initialization runs once when a vehicle is created; vehicles that existed before get no hidden refill.
+- **Missing:** -
+- **Owner ruling needed:** no (V-P6C-20)
+- **Impact:** A GM presses Initialize supplies (full printed endurance) once per older vehicle.
+- **Recommended action:** None; this is the no-silent-refill rule.
 
 ## Resolved items
 

@@ -10,6 +10,7 @@
  * turns an unresolved value into a number: unknown is `null` with an explicit state/label.
  * No Foundry globals (the optional table loader uses fetch when called from the client).
  */
+import { VehicleLogisticsService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-logistics-service.js";
 import { buildWeaponOpsView } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-weapon-ops.js";
 import { classifyVehicleActorRuntime, getVehicleRuntimeProjection } from '../../../domain/vehicles/vehicle-runtime-contract.js';
 import { CREW_QUALITY, makeUnusedEmplacementResolver } from '../../../domain/vehicles/vehicle-modification-rules.js';
@@ -256,7 +257,7 @@ export function buildVehicleSchemaViewModel(actor, options = {}) {
         book: source.book, page: source.page, sourceLabel: `${source.book}, p. ${source.page}`,
         sourceKey: source.sourceEntryKey, category: source.primaryCategory, size: record.classification?.printedSize ?? null
       },
-      hp, shield, shipyard, weaponOps: buildWeaponOpsView(actor, { isGM: options.isGM === true }),
+      hp, shield, shipyard, weaponOps: buildWeaponOpsView(actor, { isGM: options.isGM === true }), logistics: { ...VehicleLogisticsService.view(actor), isGM: options.isGM === true },
       ep: epView({ supported, record, entries: installed.modifications, rules: DEFAULT_CONSTRUCTION_RULES, epTable: options.epTable ?? null, constructed: false, reserved: shipyard.reservedEp }),
       installed: { entries, count: entries.length, certification: installed.certification, rejected: installed.rejectedLedgerEntries,
         equipmentItemCount: installed.equipmentItemCount, uncertifiedWeaponItems: installed.uncertifiedWeaponItems },

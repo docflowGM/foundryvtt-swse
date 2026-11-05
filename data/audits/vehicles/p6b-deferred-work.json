@@ -1611,6 +1611,91 @@
       "missing": "A printed launcher count for stock launcher groups.",
       "impact": "None for play: the GM allocates stock launchers deliberately; the rule applies automatically to any complete family.",
       "recommendedAction": "Review the sources of the 18 allocation-required groups."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-20"
+      ],
+      "options": [],
+      "id": "P6B-D-076",
+      "component": "Fuel-tank capacity is not published",
+      "source": "Starships of the Galaxy, printed p. 14",
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "severity": "MINOR",
+      "reason": "The book prices and consumes fuel-days but prints no tank capacity, and it must not be derived from Consumables.",
+      "missing": "A published fuel capacity per ship.",
+      "impact": "Fuel purchasing is disabled until a GM configures a tank (labeled GM_CONFIGURED).",
+      "recommendedAction": "Configure per ship; revisit if a source prints capacities."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-20"
+      ],
+      "options": [],
+      "id": "P6B-D-077",
+      "component": "Maintenance readiness has no hyperjump record",
+      "source": "Starships of the Galaxy, printed p. 14",
+      "status": "ENGINEERING_COMPLEXITY",
+      "severity": "MINOR",
+      "reason": "Routine maintenance depends on a count of hyperspace jumps; the system records none and none was fabricated.",
+      "missing": "A reliable jump record (hyperdrive activation flow).",
+      "impact": "Maintenance is a GM-administered reference rule and cost.",
+      "recommendedAction": "Count jumps when a hyperdrive activation action exists (P6B-D-072)."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-20"
+      ],
+      "options": [],
+      "id": "P6B-D-078",
+      "component": "Docking, maintenance and simplified upkeep billing are GM administered",
+      "source": "Starships of the Galaxy, printed p. 14",
+      "status": "DEPENDENCY_BLOCKED",
+      "severity": "MINOR",
+      "reason": "Owner directive: no automatic billing, player checkout or persistence for these yet.",
+      "missing": "A dedicated GM Holopad logistics application.",
+      "impact": "Reference prices shown read-only on the sheet; the GM charges them by hand.",
+      "recommendedAction": "The logistics service exposes governed operations a future GM interface can reuse."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-20"
+      ],
+      "options": [],
+      "id": "P6B-D-079",
+      "component": "Consumables are not depleted by campaign time",
+      "source": "Starships of the Galaxy, printed p. 14",
+      "status": "DEPENDENCY_BLOCKED",
+      "severity": "MINOR",
+      "reason": "No dependable campaign clock exists; a sheet render must never consume supplies.",
+      "missing": "An authoritative time/event source for depletion.",
+      "impact": "The GM adjusts the remaining supply (gmSetConsumables).",
+      "recommendedAction": "Wire to a campaign clock if one is introduced."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-20"
+      ],
+      "options": [],
+      "id": "P6B-D-080",
+      "component": "Existing vehicles need a GM to initialize supplies",
+      "source": "Starships of the Galaxy, printed p. 14",
+      "status": "NONCRITICAL_DEFECT",
+      "severity": "MINOR",
+      "reason": "Initialization runs once when a vehicle is created; vehicles that existed before get no hidden refill.",
+      "missing": "-",
+      "impact": "A GM presses Initialize supplies (full printed endurance) once per older vehicle.",
+      "recommendedAction": "None; this is the no-silent-refill rule."
     }
   ]
 }

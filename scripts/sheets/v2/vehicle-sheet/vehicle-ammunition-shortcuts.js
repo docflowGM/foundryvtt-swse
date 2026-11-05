@@ -29,7 +29,7 @@ export function resolvePayerActor(vehicle, game = globalThis.game) {
 }
 
 /** Open the store for this vehicle (optionally preselecting a launcher). @returns {Promise<object|null>} the store app, or null with a notice */
-export async function openVehicleAmmunitionStore(vehicle, { launcherKey = null, game = globalThis.game, notify = globalThis.ui?.notifications, store = null, choosePayer = null } = {}) {
+export async function openVehicleAmmunitionStore(vehicle, { launcherKey = null, mode = 'ammunition', game = globalThis.game, notify = globalThis.ui?.notifications, store = null, choosePayer = null } = {}) {
   let payer = resolvePayerActor(vehicle, game);
   if (!payer && game?.user?.isGM === true) {
     // a GM with no resolved owner picks among the vehicle's RECORDED owners explicitly; nobody is debited by default
@@ -38,5 +38,5 @@ export async function openVehicleAmmunitionStore(vehicle, { launcherKey = null, 
   }
   if (!payer) { notify?.warn?.('No purchasing character is resolved for this vehicle: record an owner for it (or ask the GM).'); return null; }
   const Store = store ?? (await import("/systems/foundryvtt-swse/scripts/apps/store/store-main.js")).SWSEStore;
-  return Store.open(payer, { entryOrigin: 'vehicle-sheet-ammunition', vehicleAmmunition: { vehicleId: vehicle.id, launcherKey }, closeAfterCheckout: false, onCheckoutComplete: () => { try { vehicle.sheet?.render?.(); } catch (_e) { /* ignore */ } } });
+  return Store.open(payer, { entryOrigin: 'vehicle-sheet-ammunition', vehicleAmmunition: { vehicleId: vehicle.id, launcherKey, mode }, closeAfterCheckout: false, onCheckoutComplete: () => { try { vehicle.sheet?.render?.(); } catch (_e) { /* ignore */ } } });
 }

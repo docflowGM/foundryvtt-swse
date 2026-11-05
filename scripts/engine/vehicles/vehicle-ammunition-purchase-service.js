@@ -1,5 +1,5 @@
 /**
- * Vehicle ammunition purchasing -- the ONE workflow behind the vehicle sheet's two Buy Ammunition buttons and the store's vehicle-ammunition
+ * Vehicle purchasing (ammunition, fuel, consumables) -- the ONE workflow behind the vehicle sheet's two Buy Ammunition buttons and the store's vehicle-ammunition
  * context. It adds no store, wallet, ledger or approval system:
  *
  *   Personal Credits  VehicleInstallationService.purchaseLauncherAmmunition (TransactionEngine: credits + ledger in one transaction).
@@ -16,10 +16,13 @@ import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { VehicleInstallationService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-installation-service.js";
 import { VehicleAmmunitionService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-ammunition-service.js";
+import { VehicleLogisticsService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-logistics-service.js";
 import { ammunitionOffers, offerFor } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-ammunition-shop.js";
 
 export const AMMO_REQUEST_KIND = 'vehicle-ammunition-party-fund';
+export const LOGISTICS_REQUEST_KIND = 'vehicle-logistics-party-fund';
 export const REQUESTS_FLAG = 'ammunitionPurchaseRequests';
+const OUR_KINDS = new Set([AMMO_REQUEST_KIND, LOGISTICS_REQUEST_KIND]);
 export const REQUEST_STATES = Object.freeze({ PENDING: 'pending', SETTLING: 'settling', APPROVED: 'approved', REJECTED: 'rejected', FAILED: 'failed', INDETERMINATE: 'indeterminate' });
 export const REQUEST_REASONS = Object.freeze({
   PARTY_FUND_DISABLED: 'PARTY_FUND_DISABLED', NOT_AUTHORIZED: 'AMMO_PURCHASE_NOT_AUTHORIZED', GM_ONLY: 'AMMO_REQUEST_GM_ONLY', NOT_FOUND: 'AMMO_REQUEST_NOT_FOUND',
@@ -45,29 +48,73 @@ let queueChain = Promise.resolve();                       // serializes this cli
 const withQueue = fn => { const run = queueChain.then(fn); queueChain = run.then(() => {}, () => {}); return run; };
 const inFlight = new Set();
 
-const requestsOf = () => deps.queue.read().filter(a => a?.approvalKind === AMMO_REQUEST_KIND);
-const findRequest = id => deps.queue.read().find(a => a?.approvalKind === AMMO_REQUEST_KIND && a.id === id) ?? null;
+const requestsOf = () => deps.queue.read().filter(a => OUR_KINDS.has(a?.approvalKind));
+const findRequest = id => deps.queue.read().find(a => OUR_KINDS.has(a?.approvalKind) && a.id === id) ?? null;
 async function patchRequest(id, patch) {
   return withQueue(async () => {
     const list = deps.queue.read();
-    const i = list.findIndex(a => a?.approvalKind === AMMO_REQUEST_KIND && a.id === id);
+    const i = list.findIndex(a => OUR_KINDS.has(a?.approvalKind) && a.id === id);
     if (i < 0) return null;
     list[i] = { ...list[i], ...patch };
     await deps.queue.write(list);
     return list[i];
   });
 }
-const removeRequest = id => withQueue(async () => { await deps.queue.write(deps.queue.read().filter(a => !(a?.approvalKind === AMMO_REQUEST_KIND && a.id === id))); });
+const removeRequest = id => withQueue(async () => { await deps.queue.write(deps.queue.read().filter(a => !(OUR_KINDS.has(a?.approvalKind) && a.id === id))); });
 /** The persistent record of a request's state on the vehicle (survives the queue entry; best-effort mirror for display and audit). */
 async function mirror(vehicle, request, state, extra = {}) {
   if (!vehicle) return;
   try {
-    await ActorEngine.updateActor(vehicle, { [`flags.swse.${REQUESTS_FLAG}.${request.id}`]: { id: request.id, state, launcherKey: request.launcherKey, ammunition: request.ammunitionId, units: request.units,
+    await ActorEngine.updateActor(vehicle, { [`flags.swse.${REQUESTS_FLAG}.${request.id}`]: { id: request.id, state, kind: request.approvalKind, launcherKey: request.launcherKey ?? null, resource: request.resource ?? 'ammunition', ammunition: request.ammunitionId ?? null, units: request.units ?? request.days ?? null,
       unitPrice: request.unitPrice, cost: request.costCredits, paymentSource: 'party-fund', requesterActorId: request.ownerActorId, requestedAt: request.requestedAt, decidedAt: Date.now(), ...extra } });
   } catch (_e) { /* the queue record is authoritative while it exists */ }
 }
 
+/** What differs between the purchase kinds: how a request is revalidated against the CURRENT vehicle and how the resource is delivered. The fund / claim / rollback core is shared. */
+const ADAPTERS = {
+  [AMMO_REQUEST_KIND]: {
+    revalidate(vehicle, req) {
+      const offer = offerFor(vehicle, req.launcherKey);
+      if (!offer || offer.launcherId !== req.launcherId || offer.ammunitionId !== req.ammunitionId || !offer.canBuy) return { ok: false, reason: REQUEST_REASONS.LAUNCHER_CHANGED, message: 'the launcher or its ammunition changed' };
+      if (offer.unitPrice !== req.unitPrice) return { ok: false, reason: REQUEST_REASONS.PRICE_CHANGED, message: `the published price changed (${money(req.unitPrice)} -> ${money(offer.unitPrice)} cr). Submit a new request` };
+      const cost = req.units * offer.unitPrice;
+      return cost === req.costCredits ? { ok: true, cost, offer } : { ok: false, reason: REQUEST_REASONS.PRICE_CHANGED, message: 'the total no longer matches' };
+    },
+    async deliver(vehicle, req, requestId, check) {
+      const weapon = Array.from(vehicle.items ?? []).find(i => i?.id === check.offer.itemId);
+      return weapon ? VehicleAmmunitionService.deliverPurchased(vehicle, weapon, { units: req.units, unitPrice: req.unitPrice, source: `party-fund:${requestId}` }) : { ok: false, reason: 'WEAPON_ITEM_MISSING' };
+    },
+    success: (req, cost) => `${req.units} x ${req.ammunitionLabel} (${money(cost)} cr) are in ${req.launcherName}'s reserve. They are not loaded yet.`
+  },
+  [LOGISTICS_REQUEST_KIND]: {
+    revalidate(vehicle, req) {
+      const q = req.resource === 'fuel' ? VehicleLogisticsService.quoteFuel(vehicle, req.days) : VehicleLogisticsService.quoteSupplies(vehicle, req.days);
+      if (!q.success) return { ok: false, reason: q.reason, message: `the purchase no longer fits (${q.reason})` };
+      if (q.unitPrice !== req.unitPrice || q.cost !== req.costCredits) return { ok: false, reason: REQUEST_REASONS.PRICE_CHANGED, message: 'the price or the living-occupant basis changed. Submit a new request' };
+      return { ok: true, cost: q.cost };
+    },
+    deliver: (vehicle, req, requestId) => VehicleLogisticsService.deliverPurchased({ vehicle, resource: req.resource, days: req.days, unitPrice: req.unitPrice, source: `party-fund:${requestId}` }),
+    success: (req, cost) => `${req.days} ${req.resource === 'fuel' ? 'fuel-day(s)' : 'day(s) of consumables'} (${money(cost)} cr) were added to ${req.vehicleName}.`
+  }
+};
+
 export class VehicleAmmunitionPurchaseService {
+  // ---- generic basket lines: an ammunition launcher key, or a logistics resource key ('resource:fuel' | 'resource:supplies'); the store context uses only these ----
+  static quoteLine({ vehicle, key, units }) {
+    if (key === 'resource:fuel') { const q = VehicleLogisticsService.quoteFuel(vehicle, units); return q.success ? { success: true, units, unitPrice: q.unitPrice, total: q.cost, resulting: q.resulting } : q; }
+    if (key === 'resource:supplies') { const q = VehicleLogisticsService.quoteSupplies(vehicle, units); return q.success ? { success: true, units, unitPrice: q.unitPrice, total: q.cost, resulting: q.resulting } : q; }
+    return this.quote({ vehicle, launcherKey: key, units });
+  }
+  static async buyLine({ vehicle, ownerActor, key, units }) {
+    if (key === 'resource:fuel') return VehicleLogisticsService.purchaseFuel({ ownerActor, vehicle, days: units });
+    if (key === 'resource:supplies') return VehicleLogisticsService.purchaseSupplies({ ownerActor, vehicle, days: units });
+    return this.buyWithCredits({ vehicle, ownerActor, launcherKey: key, units });
+  }
+  static async requestLine({ vehicle, requesterActor, key, units, user }) {
+    if (key === 'resource:fuel' || key === 'resource:supplies') return this.requestResourcePartyFund({ vehicle, requesterActor, resource: key.slice('resource:'.length), days: units, user });
+    return this.requestPartyFund({ vehicle, requesterActor, launcherKey: key, units, user });
+  }
+
   /** What can be bought, and which payment sources are offered to this user for this vehicle. */
   static async options({ vehicle, requesterActor = null, user = globalThis.game?.user ?? null } = {}) {
     const auth = requesterActor ? VehicleInstallationService.authorizePurchaser({ ownerActor: requesterActor, vehicle }) : { ok: false, reason: 'NO_PAYER' };
@@ -119,6 +166,30 @@ export class VehicleAmmunitionPurchaseService {
     return { success: true, requestId: id, request, message: 'Purchase request submitted to GM. No credits have been deducted and no ammunition has been delivered.' };
   }
 
+  /** Party Fund request for FUEL or CONSUMABLES (same queue, same GM approval, same settlement core). */
+  static async requestResourcePartyFund({ vehicle, requesterActor, resource, days, user = globalThis.game?.user ?? null }) {
+    const fund = await deps.fund();
+    if (fund.isEnabled() !== true) return refuse(REQUEST_REASONS.PARTY_FUND_DISABLED);
+    const auth = VehicleInstallationService.authorizePurchaser({ ownerActor: requesterActor, vehicle });
+    if (!auth.ok) return refuse(REQUEST_REASONS.NOT_AUTHORIZED);
+    if (!['fuel', 'supplies'].includes(resource)) return refuse(REQUEST_REASONS.LAUNCHER_CHANGED);
+    const q = resource === 'fuel' ? VehicleLogisticsService.quoteFuel(vehicle, days) : VehicleLogisticsService.quoteSupplies(vehicle, days);
+    if (!q.success) return q;
+    const id = `pending_vehicle_logistics_${globalThis.foundry?.utils?.randomID?.() ?? Date.now().toString(36)}`;
+    const label = resource === 'fuel' ? 'fuel-day(s)' : 'day(s) of consumables';
+    const request = {
+      id, type: 'vehicle-logistics', approvalKind: LOGISTICS_REQUEST_KIND, state: REQUEST_STATES.PENDING, paymentSource: 'party-fund', resource,
+      ownerPlayerId: user?.id ?? null, ownerActorId: requesterActor.id, ownerActorName: requesterActor.name ?? null, vehicleId: vehicle.id, vehicleName: vehicle.name ?? null,
+      days: q.days, unitPrice: q.unitPrice, costCredits: q.cost, occupants: q.occupants ?? null, requestedAt: Date.now(),
+      draftData: { name: `${q.days} ${label} for ${vehicle.name ?? 'vehicle'}`, type: 'vehicle-logistics', cost: q.cost,
+        details: `${q.days} ${label} at ${money(q.unitPrice)} cr = ${money(q.cost)} cr (Party Fund)`, description: 'Party Fund logistics purchase: GM approval required' }
+    };
+    await withQueue(async () => { const list = deps.queue.read(); list.push(request); await deps.queue.write(list); });
+    await mirror(vehicle, request, REQUEST_STATES.PENDING);
+    globalThis.Hooks?.callAll?.('swseStoreApprovalRequested', { approval: request, actor: requesterActor });
+    return { success: true, requestId: id, request, message: 'Purchase request submitted to GM. No credits have been deducted and nothing has been delivered.' };
+  }
+
   /** GM: reject. No credits move, nothing is delivered; the requester is told. */
   static async reject({ requestId, reason = '', user = globalThis.game?.user ?? null }) {
     if (user?.isGM !== true) return refuse(REQUEST_REASONS.GM_ONLY);
@@ -164,11 +235,10 @@ export class VehicleAmmunitionPurchaseService {
     if (!vehicle) return this.#fail(req, null, REQUEST_STATES.FAILED, REQUEST_REASONS.VEHICLE_GONE, `Your Party Fund ammunition request failed: the vehicle is no longer available. Nothing was deducted or delivered.`);
     // the requester must STILL be a recorded owner (the approving GM's own authority does not stand in for it)
     if (!requester || !VehicleInstallationService.isRecordedOwner(requester, vehicle)) return this.#fail(req, vehicle, REQUEST_STATES.FAILED, REQUEST_REASONS.OWNER_CHANGED, `Your Party Fund ammunition request failed: you are no longer recorded as an owner of ${vehicle.name}. Nothing was deducted or delivered.`);
-    const offer = offerFor(vehicle, req.launcherKey);
-    if (!offer || offer.launcherId !== req.launcherId || offer.ammunitionId !== req.ammunitionId || !offer.canBuy) return this.#fail(req, vehicle, REQUEST_STATES.FAILED, REQUEST_REASONS.LAUNCHER_CHANGED, `Your Party Fund ammunition request failed: the launcher or its ammunition changed. Nothing was deducted or delivered.`);
-    if (offer.unitPrice !== req.unitPrice) return this.#fail(req, vehicle, REQUEST_STATES.FAILED, REQUEST_REASONS.PRICE_CHANGED, `Your Party Fund ammunition request failed: the published price changed (${money(req.unitPrice)} -> ${money(offer.unitPrice)} cr). Submit a new request. Nothing was deducted or delivered.`);
-    const cost = req.units * offer.unitPrice;
-    if (cost !== req.costCredits) return this.#fail(req, vehicle, REQUEST_STATES.FAILED, REQUEST_REASONS.PRICE_CHANGED, `Your Party Fund ammunition request failed: the total no longer matches. Nothing was deducted or delivered.`);
+    const adapter = ADAPTERS[req.approvalKind];
+    const check = adapter.revalidate(vehicle, req);
+    if (!check.ok) return this.#fail(req, vehicle, REQUEST_STATES.FAILED, check.reason, `Your Party Fund request failed: ${check.message}. Nothing was deducted or delivered.`);
+    const cost = check.cost;
     if (fund.balance() < cost) { await deps.notify(req, `The Party Fund has ${money(fund.balance())} credits; ${money(cost)} are needed. The request stays pending.`, { gm: true }); return refuse(REQUEST_REASONS.INSUFFICIENT_FUND, { balance: fund.balance(), cost }); }
 
     // claim: pending -> settling, persisted BEFORE any money moves (a second approval, on any client, now sees it)
@@ -180,9 +250,8 @@ export class VehicleAmmunitionPurchaseService {
       await fund.setBalance(snapshot.balance - cost);
       await fund.appendLedger({ type: 'vehicle-ammunition', amount: -cost, requestId, vehicleId: vehicle.id, launcherKey: req.launcherKey, ammunition: req.ammunitionId, units: req.units, unitPrice: req.unitPrice, requesterActorId: req.ownerActorId, approvedBy: user?.id ?? null });
       debited = true;
-      const weapon = Array.from(vehicle.items ?? []).find(i => i?.id === offer.itemId);
-      const d = weapon ? await VehicleAmmunitionService.deliverPurchased(vehicle, weapon, { units: req.units, unitPrice: req.unitPrice, source: `party-fund:${requestId}` }) : { ok: false, reason: 'WEAPON_ITEM_MISSING' };
-      if (!d.ok) throw new Error(d.reason ?? REQUEST_REASONS.DELIVERY_FAILED);
+      const d = await adapter.deliver(vehicle, req, requestId, check);
+      if (!d.ok && !d.success) throw new Error(d.reason ?? REQUEST_REASONS.DELIVERY_FAILED);
     } catch (err) {
       let proven = false;
       try {
@@ -198,7 +267,7 @@ export class VehicleAmmunitionPurchaseService {
     await patchRequest(requestId, { state: REQUEST_STATES.APPROVED, approvedBy: user?.id ?? null, approvedAt: Date.now() });
     await mirror(vehicle, req, REQUEST_STATES.APPROVED, { approvedBy: user?.id ?? null });
     await removeRequest(requestId);
-    await deps.notify(req, `GM approved your Party Fund ammunition request: ${req.units} x ${req.ammunitionLabel} (${money(cost)} cr) are in ${req.launcherName}'s reserve. They are not loaded yet.`);
+    await deps.notify(req, `GM approved your Party Fund request: ${adapter.success(req, cost)}`);
     return { success: true, state: REQUEST_STATES.APPROVED, units: req.units, cost, balance: fund.balance() };
   }
 

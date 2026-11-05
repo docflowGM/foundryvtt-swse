@@ -198,3 +198,14 @@ test('AMMUNITION PURCHASING: one workflow -- the shortcuts and the store context
   // the house rule reads through HouseRuleService only
   assert.match(strip(read('scripts/engine/vehicles/vehicle-installation-service.js')), /HouseRuleService\.getBoolean\('initialVehicleAmmunitionIncluded'/);
 });
+
+test('SHIP LOGISTICS: formulas live in the domain, the guarded flag is written only by VehicleLogisticsService, the Party Fund core is shared, and the sheet does no logistics math', () => {
+  const svc = strip(read('scripts/engine/vehicles/vehicle-logistics-service.js'));
+  assert.ok(svc.includes('TransactionEngine.executeAssetCustomizationTransaction') && svc.includes('authorizeFlagWrite'));
+  for (const f of walk('scripts').filter(f => f.endsWith('.js') && !f.endsWith('vehicle-logistics-service.js') && !f.endsWith('vehicle-logistics.js') && !f.endsWith('vehicle-installation-ledger.js'))) {
+    assert.doesNotMatch(strip(read(f)), /flags\.swse\.(==)?shipLogistics|\['shipLogistics'\]/, `${f}: only the logistics service writes the resource state`);
+  }
+  const purchase = strip(read('scripts/engine/vehicles/vehicle-ammunition-purchase-service.js'));
+  assert.ok(purchase.includes('VehicleLogisticsService.deliverPurchased') && purchase.includes('LOGISTICS_REQUEST_KIND'), 'fuel and supplies reuse the Party Fund settlement core');
+  assert.doesNotMatch(strip(read('scripts/apps/store/store-vehicle-ammunition.js')), /fuelPricePerDay|consumablesCost/, 'the store context prices through the services');
+});

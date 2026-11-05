@@ -467,7 +467,7 @@ export class GMApprovalOperationsService {
 
     const approval = approvals[index];
     // Party Fund vehicle ammunition: the one governed settlement (revalidate, claim, debit the fund + deliver to the reserve, or restore)
-    if (approval.approvalKind === 'vehicle-ammunition-party-fund') return this._approveVehicleAmmunition(host, approval);
+    if (['vehicle-ammunition-party-fund', 'vehicle-logistics-party-fund'].includes(approval.approvalKind)) return this._approveVehicleAmmunition(host, approval);
     const ownerActor = game.actors.get(approval.ownerActorId);
     const draftActor = game.actors.get(approval.draftActorId);
 
@@ -562,7 +562,7 @@ export class GMApprovalOperationsService {
       return false;
     }
 
-    if (approvals[index]?.approvalKind === 'vehicle-ammunition-party-fund') return this._denyVehicleAmmunition(host, approvals[index], reason);
+    if (['vehicle-ammunition-party-fund', 'vehicle-logistics-party-fund'].includes(approvals[index]?.approvalKind)) return this._denyVehicleAmmunition(host, approvals[index], reason);
     try {
       const denial = approvals[index];
       const ownerActor = game.actors.get(denial.ownerActorId);

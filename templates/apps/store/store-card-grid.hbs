@@ -44,9 +44,9 @@
     {{#if vehicleAmmunition.unavailable}}
       <p class="store-empty">{{vehicleAmmunition.message}}</p>
     {{else}}
-      <h3>Buy Ammunition — {{vehicleAmmunition.vehicleName}}</h3>
-      <p class="muted">Only the ammunition used by this vehicle's launchers is listed. Purchases go to the launcher's reserve; loading is a separate step.</p>
-      {{#unless vehicleAmmunition.hasRows}}<p class="store-empty">This vehicle has no weapon that uses purchased ammunition.</p>{{/unless}}
+      <h3>{{vehicleAmmunition.title}} — {{vehicleAmmunition.vehicleName}}</h3>
+      {{#if (eq vehicleAmmunition.mode 'ammunition')}}<p class="muted">Only the ammunition used by this vehicle's launchers is listed. Purchases go to the launcher's reserve; loading is a separate step.</p>{{else}}<p class="muted">Published Starships of the Galaxy prices (p. 14). A purchase never exceeds the ship's capacity.</p>{{/if}}
+      {{#unless vehicleAmmunition.hasRows}}<p class="store-empty">Nothing to buy for this vehicle.</p>{{/unless}}
       <div class="store-vehicle-ammo-list">
         {{#each vehicleAmmunition.rows as |row|}}
           <div class="store-vehicle-ammo-row {{#if row.selected}}is-selected{{/if}}">
@@ -57,7 +57,7 @@
             </div>
             {{#if row.canBuy}}
               <label>Quantity <input type="number" min="0" step="1" value="{{row.quantity}}" data-vehicle-ammo-qty="{{row.launcherKey}}"></label>
-              <span class="store-vehicle-ammo-line">{{row.lineTotal}} cr</span>
+              <span class="store-vehicle-ammo-line">{{row.lineTotal}} cr</span>{{#if row.lineError}}<span class="store-error">{{row.lineError}}</span>{{/if}}
             {{else}}
               <span class="store-vehicle-ammo-disabled" title="{{row.disabledReason}}">Unavailable: {{row.disabledReason}}</span>
             {{/if}}
