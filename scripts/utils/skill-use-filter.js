@@ -1,6 +1,8 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { SkillFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/skills/skill-feat-resolver.js";
+import { resolveSaboteurSkillUse, planQuickSabotage, executeQuickSabotage } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/saboteur-quick-sabotage.js";
+import { ActionEconomyConsumption } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js";
 
 const ATHLETICS_COMPONENT_KEYS = ['acrobatics', 'climb', 'jump', 'swim'];
 
@@ -340,20 +342,52 @@ export class SkillUseFilter {
       return null;
     }
 
+    const saboteurApplication = skillKey === 'mechanics'
+      ? resolveSaboteurSkillUse(skillUse) : null;
+    const quickSabotage = saboteurApplication?.application === 'disable-device'
+      ? planQuickSabotage(actor, saboteurApplication.complexity) : null;
+
+    // The generic sheet path previously bypassed MechanicsUses entirely.
+    // Validate the exact source application and charge its expedited action
+    // before the normal RollCore skill check, instead of rolling a second,
+    // incompatible skill total via the old MechanicsUses convenience service.
+    if (saboteurApplication && skill?.trained !== true
+      && actor.system?.derived?.skills?.mechanics?.trained !== true) {
+      ui?.notifications?.warn?.('Mechanics requires training for this application.');
+      return null;
+    }
+    if (quickSabotage && options?.hasSecurityKit === false
+      && !quickSabotage.improvisedSecurityKitAllowed) {
+      ui?.notifications?.warn?.('A Security Kit is required; this actor lacks Quick Sabotage.');
+      return null;
+    }
+
     const dc = this._parseDc(skillUse.dc ?? skillUse.DC ?? skillUse.system?.dc ?? skillUse._source?.system?.dc);
     const { rollSkillCheck } = await import('/systems/foundryvtt-swse/scripts/rolls/skills.js');
-    const roll = await rollSkillCheck(actor, skillKey, {
-      ...options,
-      dc,
-      skillUse,
-      substitution,
-      useKey: skillUse?.useKey ?? skillUse?.key ?? skillUse?._source?._id ?? null,
-      actionType: options?.actionType ?? skillUse?.actionType ?? skillUse?.system?.actionType ?? null
-    });
+    const perform = async () => {
+      const roll = await rollSkillCheck(actor, skillKey, {
+        ...options,
+        dc,
+        skillUse,
+        substitution,
+        useKey: skillUse?.useKey ?? skillUse?.key ?? skillUse?._source?._id ?? null,
+        actionType: quickSabotage?.quick ? 'swift'
+          : (options?.actionType ?? skillUse?.actionType ?? skillUse?.system?.actionType ?? null)
+      });
+      if (!roll && quickSabotage?.quick)
+        throw new Error('Quick Sabotage skill check did not complete; action refund required');
+      await this._dispatchRestoreShieldRating(actor, skillUse, dc, roll, options);
+      return roll;
+    };
 
-    await this._dispatchRestoreShieldRating(actor, skillUse, dc, roll, options);
-
-    return roll;
+    if (quickSabotage?.quick) {
+      return executeQuickSabotage({
+        actor, plan: quickSabotage,
+        spend: (owner, type, metadata) => ActionEconomyConsumption.spend(owner, type, metadata),
+        perform,
+      });
+    }
+    return perform();
   }
 
   /**

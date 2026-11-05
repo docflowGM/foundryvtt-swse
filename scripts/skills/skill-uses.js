@@ -13,6 +13,9 @@ import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
+import { ActionEconomyConsumption } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js";
+import { planQuickSabotage, executeQuickSabotage } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/saboteur-quick-sabotage.js";
+import { rollMasterSaboteurMechanicsCheck, masterSaboteurRerollSummary } from "/systems/foundryvtt-swse/scripts/engine/combat/class-master-saboteur-reroll.js";
 
 // ============================================================================
 // JUMP SKILL (STR)
@@ -460,11 +463,20 @@ export class MechanicsUses {
    * DISABLE DEVICE - Disarm traps, bypass locks, sabotage devices
    * Full-Round Action, DC 15-25
    */
-  static async disableDevice(actor, deviceType = 'mechanical', complexity = 'simple', leaveNoTrace = false) {
+  static async disableDevice(actor, deviceType = 'mechanical', complexity = 'simple', leaveNoTrace = false, options = {}) {
     if (!actor) {
       return { success: false, message: 'Invalid actor' };
     }
 
+    const quickSabotage=planQuickSabotage(actor,complexity);
+    // Unknown absence of a kit is not guessed. A caller that explicitly
+    // reports no Security Kit must prove the class's improvised-tools right.
+    const usesImprovisedTools=options?.hasSecurityKit===false;
+    if(usesImprovisedTools && !quickSabotage.improvisedSecurityKitAllowed){
+      return {success:false,message:'Security Kit required (Quick Sabotage not unlocked)'};
+    }
+
+    const performCheck=async()=>{
     const mechanicsBonus = actor.system.skills?.mechanics?.total || 0;
 
     const dcByComplexity = {
@@ -478,7 +490,12 @@ export class MechanicsUses {
       dc += 5;
     }
 
-    const roll = await RollEngine.safeRoll('1d20');
+    // Run the class reroll only AFTER Quick Sabotage's swift costs commit.
+    const masterSaboteurRoll=await rollMasterSaboteurMechanicsCheck({
+      actor,application:'disable-device',rollD20:()=>RollEngine.safeRoll('1d20')
+    });
+    const roll=masterSaboteurRoll.roll;
+    const masterSaboteur=masterSaboteurRerollSummary(masterSaboteurRoll);
     const checkResult = roll.total + mechanicsBonus;
     const success = checkResult >= dc;
     const springsOrFails = (dc - checkResult) >= 5;
@@ -486,7 +503,7 @@ export class MechanicsUses {
     await SWSEChat.postRoll({
       roll,
       actor: actor,
-      flavor: `<strong>Disable Device</strong> - ${complexity} ${deviceType}<br>Base DC: ${dcByComplexity[complexity.toLowerCase()]}<br>${leaveNoTrace ? 'No Trace Modifier: +5<br>' : ''}Final DC: ${dc}<br>Mechanics Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action<br>Required: Security Kit${springsOrFails ? '<br><strong style="color:red">TRAP SPRUNG/DEVICE FAILS!</strong>' : ''}`
+      flavor: `<strong>Disable Device</strong> - ${complexity} ${deviceType}<br>Base DC: ${dcByComplexity[complexity.toLowerCase()]}<br>${leaveNoTrace ? 'No Trace Modifier: +5<br>' : ''}Final DC: ${dc}<br>${masterSaboteur ? `Master Saboteur d20: ${masterSaboteur.original} → ${masterSaboteur.reroll} (kept ${masterSaboteur.selected})<br>` : ''}Mechanics Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: ${quickSabotage.actionLabel}<br>Required: ${usesImprovisedTools ? 'Improvised Tools (Quick Sabotage)' : 'Security Kit'}${springsOrFails ? '<br><strong style="color:red">TRAP SPRUNG/DEVICE FAILS!</strong>' : ''}`
     });
 
     SWSELogger.log(
@@ -501,8 +518,10 @@ export class MechanicsUses {
       deviceType: deviceType,
       complexity: complexity,
       leaveNoTrace: leaveNoTrace,
-      action: 'Full-Round Action',
-      required: 'Security Kit',
+      action: quickSabotage.actionLabel,
+      quickSabotage,
+      masterSaboteur,
+      required: usesImprovisedTools ? 'Improvised Tools (Quick Sabotage)' : 'Security Kit',
       springsOrFails: springsOrFails,
       message: success
         ? `Disables ${deviceType} device`
@@ -510,6 +529,16 @@ export class MechanicsUses {
           ? `${deviceType} device trap springs or failure obvious!`
           : `Cannot disable ${deviceType} device`
     };
+    };
+    // Keep ordinary full-round behavior unchanged for all other actors.
+    // A class-granted swift action is charged before rolling in combat;
+    // a failed second swift spend rolls back the first.
+    if(!quickSabotage.quick)return performCheck();
+    return executeQuickSabotage({
+      actor,plan:quickSabotage,
+      spend:(owner,type,meta)=>ActionEconomyConsumption.spend(owner,type,meta),
+      perform:performCheck,
+    });
   }
 
   /**
@@ -538,7 +567,13 @@ export class MechanicsUses {
       actionName = `Booby Trap (${explosivePower} damage)`;
     }
 
-    const roll = await RollEngine.safeRoll('1d20');
+    // Handle Explosives retains the Master Saboteur reroll but NEVER
+    // inherits Quick Sabotage's device-only swift speed.
+    const masterSaboteurRoll=await rollMasterSaboteurMechanicsCheck({
+      actor,application:'handle-explosives',rollD20:()=>RollEngine.safeRoll('1d20')
+    });
+    const roll=masterSaboteurRoll.roll;
+    const masterSaboteur=masterSaboteurRerollSummary(masterSaboteurRoll);
     const checkResult = roll.total + mechanicsBonus;
     const success = checkResult >= dc;
     const failureMargin = dc - checkResult;
@@ -546,7 +581,7 @@ export class MechanicsUses {
     await SWSEChat.postRoll({
       roll,
       actor: actor,
-      flavor: `<strong>Handle Explosives</strong> - ${actionName}<br>DC: ${dc}<br>Mechanics Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action${failureMargin >= 10 && action.toLowerCase() === 'connect' ? '<br><strong style="color:red">EXPLOSION!</strong>' : ''}${failureMargin >= 5 && action.toLowerCase() === 'disarm' ? '<br><strong style="color:red">DETONATES WHILE ADJACENT!</strong>' : ''}`
+      flavor: `<strong>Handle Explosives</strong> - ${actionName}<br>DC: ${dc}<br>${masterSaboteur ? `Master Saboteur d20: ${masterSaboteur.original} → ${masterSaboteur.reroll} (kept ${masterSaboteur.selected})<br>` : ''}Mechanics Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action${failureMargin >= 10 && action.toLowerCase() === 'connect' ? '<br><strong style="color:red">EXPLOSION!</strong>' : ''}${failureMargin >= 5 && action.toLowerCase() === 'disarm' ? '<br><strong style="color:red">DETONATES WHILE ADJACENT!</strong>' : ''}`
     });
 
     SWSELogger.log(
@@ -559,6 +594,7 @@ export class MechanicsUses {
       dc: dc,
       action: action,
       actionName: actionName,
+      masterSaboteur,
       explosion: action.toLowerCase() === 'connect' && failureMargin >= 10,
       detonates: action.toLowerCase() === 'disarm' && failureMargin >= 5,
       message: success ? `${actionName} successful` : `${actionName} failed`

@@ -19,6 +19,8 @@ import { RebellionSpeciesSkillFeatRuntime } from "/systems/foundryvtt-swse/scrip
 import { resolveEquipmentForSkillUse } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-skill-hook-resolver.js";
 import { shaperLoreBonus } from "/systems/foundryvtt-swse/scripts/engine/skills/class-shaper-lore.js";
 import { resolveArmorUsageEffects } from "/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js";
+import { canMasterSaboteurReroll } from "/systems/foundryvtt-swse/scripts/engine/combat/class-master-saboteur-reroll.js";
+import { resolveSaboteurSkillUse } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/saboteur-quick-sabotage.js";
 
 
 const ATHLETICS_COMPONENT_KEYS = ['acrobatics', 'climb', 'jump', 'swim'];
@@ -255,13 +257,25 @@ export async function rollSkill(actor, skillKey, options = {}) {
   const skillTakeXValue = skillCheckMode === 'take20' ? 20 : skillCheckMode === 'take10' ? 10 : 10;
   const skillIsTakeX = skillCheckMode === 'take10' || skillCheckMode === 'take20';
 
+  // A real class-owned Master Saboteur rolls two d20s and retains the better
+  // die. Use one canonical RollCore invocation so all normal modifiers,
+  // equipment hooks, Force Point spending and the chat card apply ONCE.
+  // The published skill-use identity gates this, not arbitrary options.
+  const saboteurUse = effectiveSkillKey === 'mechanics'
+    ? resolveSaboteurSkillUse(skillContext.skillUse) : null;
+  const masterSaboteurDice = skillCheckMode === 'roll' && saboteurUse
+    && canMasterSaboteurReroll(actor, saboteurUse.application);
+  const masterSaboteurEvidence = masterSaboteurDice
+    ? { source: 'Saboteur — Master Saboteur', application: saboteurUse.application, dice: '2d20kh1' }
+    : null;
+
   const domain = `skill.${effectiveSkillKey}`;
   const rollResult = await RollCore.execute({
     actor,
     domain,
     baseBonus: canonicalTotal + Number(options?.customModifier || 0) + Number(featSkillBonuses.total || 0) + Number(equipmentSkill.total || 0) + shaperLore,
     rollOptions: {
-      baseDice: '1d20',
+      baseDice: masterSaboteurDice ? '2d20kh1' : '1d20',
       useForce: options?.useForcePoint === true,
       forcePointDieUpgradeSteps: forcePointDieUpgrade?.steps ?? 0,
       forcePointDieUpgradeSource: forcePointDieUpgrade?.source ?? null,
@@ -274,6 +288,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
       trained: isTrained,
       skillUse: skillContext.skillUse,
       useKey: skillContext.useKey,
+      masterSaboteur: masterSaboteurEvidence,
       featSkillBonuses: featSkillBonuses.bonuses,
       equipmentSkillModifiers: equipmentSkill.modifiers,
       shaperLoreBonus: shaperLore,
@@ -299,7 +314,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
     const total = chatRoll?.total ?? rollResult.finalTotal ?? 'unknown';
     const resultRiders = buildSkillResultRiders(actor, effectiveSkillKey, total, skillContext);
     const resultRiderText = resultRiders.length ? ` ${resultRiders.map(rider => rider.text).join(' ')}` : '';
-    const flavor = `${actor.name} used ${skillLabel} and got ${total}.${shaperLore ? ` Shaper Lore +${shaperLore} (biotech device).` : ""}${resultRiderText}`;
+    const flavor = `${actor.name} used ${skillLabel} and got ${total}.${shaperLore ? ` Shaper Lore +${shaperLore} (biotech device).` : ""}${resultRiderText}${masterSaboteurDice ? ' Master Saboteur: rolled twice, kept the higher d20.' : ''}`;
 
     const rerollOptions = [
       ...SkillFeatResolver.buildRerollChatOptions(actor, effectiveSkillKey, chatRoll, skillContext),
@@ -314,6 +329,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
         swse: {
           skillRoll: true,
           skillKey: effectiveSkillKey,
+          masterSaboteur: masterSaboteurEvidence,
           skillUseKey: skillContext.useKey ?? null,
           featSkillBonuses: featSkillBonuses.bonuses,
           equipmentSkillModifiers: equipmentSkill.modifiers,
@@ -350,6 +366,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
         forcePointDieUpgrade: forcePointDieUpgrade ?? null,
         skillResultRiders: resultRiders,
         rerollOptions,
+        masterSaboteur: masterSaboteurEvidence,
         dc: options?.dc ?? null,
         sourceElement: options?.sourceElement ?? null,
         companionSource: options?.companionSource ?? null,

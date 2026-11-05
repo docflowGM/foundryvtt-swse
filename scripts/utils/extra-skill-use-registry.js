@@ -1,6 +1,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SkillUseFilter } from "/systems/foundryvtt-swse/scripts/utils/skill-use-filter.js";
 import { TreatInjuryMedicalSecretResolver } from "/systems/foundryvtt-swse/scripts/engine/progression/medical/treat-injury-medical-secret-resolver.js";
+import { planQuickSabotage, resolveSaboteurSkillUse } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/saboteur-quick-sabotage.js";
 
 
 
@@ -121,7 +122,7 @@ export class ExtraSkillUseRegistry {
         accessible,
         hidden: !accessible,
       };
-      return this._applyMedicalSecretEnhancements(withAccess, actor);
+      return this._applyQuickSabotage(this._applyMedicalSecretEnhancements(withAccess, actor), actor);
     });
 
     if (effectiveSkillKey === 'treatInjury') {
@@ -137,6 +138,31 @@ export class ExtraSkillUseRegistry {
     }
 
     return includeInaccessible ? hydrated : hydrated.filter((item) => item.accessible !== false);
+  }
+
+  /**
+   * Reflect the shared Quick Sabotage planner in the ACTUAL extra-skill-use
+   * catalog. The dispatcher separately consumes this same planner.
+   * Do not mutate the published _source record or label a cost committed here.
+   */
+  static _applyQuickSabotage(item, actor) {
+    if (!actor) return item;
+    const match = resolveSaboteurSkillUse(item);
+    if (match?.application !== 'disable-device') return item;
+    const plan = planQuickSabotage(actor, match.complexity);
+    if (!plan.improvisedSecurityKitAllowed) return item;
+
+    const time = plan.swiftActions === 2 ? '2 swift actions'
+      : plan.swiftActions === 1 ? '1 swift action' : 'full-round';
+    const note = `Quick Sabotage: ${time}. If a Security Kit is unavailable, improvised tools may be used.`;
+    return {
+      ...item,
+      time,
+      description: appendSentence(item.description, note),
+      effect: appendSentence(item.effect, note),
+      quickSabotage: { ...plan, actionCostCommitted: false },
+      classFeatureSource: 'Saboteur — Quick Sabotage',
+    };
   }
 
   static _retargetAthleticsUse(item) {
