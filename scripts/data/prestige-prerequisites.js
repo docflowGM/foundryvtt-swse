@@ -171,13 +171,15 @@ export const PRESTIGE_PREREQUISITES = {
         minBAB: 7,
         skills: ['Use the Force'],
         feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
-        special: 'Must be a member of The Jedi',
+        special: 'Must have built your own lightsaber and belong to the Jedi tradition',
         requirements: [
             { type: 'bab', min: 7 },
             { type: 'skill', key: 'use_the_force', name: 'Use the Force', trained: true },
             { type: 'force_sensitive', required: true },
             { type: 'feat', key: 'weapon-proficiency', name: 'Weapon Proficiency',
               choice: { kind: 'weapon-group', key: 'lightsabers', name: 'Lightsabers' } },
+            { type: 'table_state', key: 'must-have-built-own-lightsaber',
+              raw: 'Must have built your own lightsaber (Core p. 218)', severity: 'advisory' },
             { type: 'table_state', key: 'must-be-member-jedi',
               raw: 'Must be a member of The Jedi', severity: 'advisory' }
         ]
