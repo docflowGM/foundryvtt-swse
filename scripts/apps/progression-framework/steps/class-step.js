@@ -265,6 +265,7 @@ export class ClassStep extends ProgressionStepPlugin {
     const isLocked = eligibility?.eligible === false;
     const missingPrereqs = this._formatEligibilityReasons(eligibility);
     const prerequisiteRows = this._formatPrerequisiteRows(eligibility);
+    const classAdvisories = Array.isArray(eligibility?.advisories) ? eligibility.advisories : [];
     const mentor = resolveMentorData(getMentorForClass(classData.name));
     const levelOne = Array.isArray(classData.levelProgression) ? (classData.levelProgression.find(l => Number(l.level) === 1) || classData.levelProgression[0]) : null;
     const babValue = levelOne?.bab ?? (classData.babProgression === 'fast' ? 1 : 0);
@@ -318,6 +319,7 @@ export class ClassStep extends ProgressionStepPlugin {
         hasMentorProse: normalized.fallbacks.hasMentorProse,
         isLocked,
         missingPrereqs,
+        classAdvisories,
         prerequisiteRows,
         hasPrerequisiteRows: prerequisiteRows.length > 0,
         lockReason: missingPrereqs.join('; ') || 'Prerequisites not met',
@@ -475,7 +477,9 @@ export class ClassStep extends ProgressionStepPlugin {
     if (!entry) return;
 
     const pendingData = this._buildPendingPrerequisiteData(shell);
-    const eligibility = this._classEligibility.get(entry.id) || this._evaluateClassEligibilityForDisplay(entry, shell, pendingData);
+    // Recompute at commit, never trust a cached browser eligibility verdict:
+    // Piracy and other ongoing restrictions may change while the step is open.
+    const eligibility = this._evaluateClassEligibilityForDisplay(entry, shell, pendingData);
     if (eligibility?.eligible === false) {
       swseLogger.warn('[ClassStep] Blocked commit of unavailable class', {
         className: entry.name,
@@ -895,6 +899,7 @@ export class ClassStep extends ProgressionStepPlugin {
       isLocked,
       lockedReasons,
       lockedReasonText,
+      classAdvisories: Array.isArray(eligibility?.advisories) ? eligibility.advisories : [],
       badgeLabel: isLocked ? 'Unavailable' : recommendedLabel,
       confidenceLevel: confidenceData?.confidenceLevel || null,
       metaChips: [

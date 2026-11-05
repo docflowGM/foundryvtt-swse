@@ -22,6 +22,8 @@ import { normalizeClassPrerequisites } from "/systems/foundryvtt-swse/scripts/en
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
+import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
+import { evaluateMasterPrivateerPiracy } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/master-privateer-piracy-rules.js";
 
 /**
  * In-memory cache: className → normalized prerequisites + eligibility
@@ -117,18 +119,28 @@ export function evaluateClassEligibility({
     actor,
     pendingData = {}
 }) {
+    // GM-only adjudication of a narrative fall: attach an advisory but do not
+    // override the ordinary mechanical prestige entry/prerequisite verdict.
+    const piracy = actor ? evaluateMasterPrivateerPiracy({
+        actor, className,
+        darkSideScore: DSPEngine.getValue(actor),
+        darkSideMax: DSPEngine.getMax(actor),
+    }) : { advisory:false };
+    const annotate = result => piracy.advisory
+        ? { ...result, advisories:[...(result.advisories || []),piracy.reason], piracy }
+        : result;
     const cached = getCachedPrerequisites(className);
     const classDoc = ClassesRegistry.getByName?.(className) || ClassesRegistry.get?.(className) || null;
     const isPrestige = classDoc ? (classDoc.baseClass === false || classDoc.prestigeClass === true) : !!cached;
 
     if (!cached && !isPrestige) {
-        return {
+        return annotate({
             eligible: true,
             className,
             isPrestige: false,
             eligibilityResult: { met: true, missing: [], details: {} },
             reasons: { missing: [], met: ['No prerequisites'] }
-        };
+        });
     }
 
     if (!cached && isPrestige) {
@@ -138,7 +150,7 @@ export function evaluateClassEligibility({
             pendingData
         );
 
-        return {
+        return annotate({
             eligible: assessment.legal,
             className,
             isPrestige: true,
@@ -147,7 +159,7 @@ export function evaluateClassEligibility({
                 missing: assessment.missingPrereqs || [],
                 met: assessment.legal ? ['All prerequisites met'] : []
             }
-        };
+        });
     }
 
     // Check prestige class prerequisites using normalized data
@@ -157,7 +169,7 @@ export function evaluateClassEligibility({
         pendingData
     );
 
-    return {
+    return annotate({
         eligible: assessment.legal,
         className,
         isPrestige: true,
@@ -166,7 +178,7 @@ export function evaluateClassEligibility({
             missing: assessment.missingPrereqs || [],
             met: assessment.legal ? ['All prerequisites met'] : []
         }
-    };
+    });
 }
 
 /**
