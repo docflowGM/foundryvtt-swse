@@ -18,7 +18,8 @@ const blocked = reason => ({
 export function quoteDroidBuilderSelection({
   definition, category, subcategory = null, size,
   droidSystems = null, speed = null, variant = null,
-  appendageBaseCost = null, appendageBaseWeight = null
+  appendageBaseCost = null, appendageBaseWeight = null,
+  operationPhase = 'INITIAL_BUILD'
 } = {}) {
   if (!definition || typeof definition !== 'object') {
     return blocked('No published component definition was selected');
@@ -34,7 +35,9 @@ export function quoteDroidBuilderSelection({
     const baseDef = DROID_SYSTEMS.locomotion?.find(part => part.id === current?.id);
     if (!baseDef) return blocked('A source-known locomotion platform is required');
     const base = resolveDroidBuilderQuote({
-      definition: baseDef, category: 'locomotion', size, speed: current.speed
+      definition: baseDef, category: 'locomotion', size, speed: current.speed,
+      operationPhase, locomotionSlotOrdinal: operationPhase === 'INITIAL_BUILD' ? 1 : null,
+      restrictedLocomotion: operationPhase === 'INITIAL_BUILD' ? false : null
     });
     if (base.status !== 'OK') {
       return blocked('Base locomotion quote is unresolved');
@@ -54,6 +57,9 @@ export function quoteDroidBuilderSelection({
     definition, category: group, subcategory, size,
     speed: derivedSpeed, variant,
     appendageBaseCost, appendageBaseWeight, baseLocomotionCost,
-    selectedInstalledShieldRating
+    selectedInstalledShieldRating,
+    operationPhase,
+    locomotionSlotOrdinal: group === 'locomotion' && operationPhase === 'INITIAL_BUILD' ? 1 : null,
+    restrictedLocomotion: group === 'locomotion' && operationPhase === 'INITIAL_BUILD' ? false : null
   });
 }
