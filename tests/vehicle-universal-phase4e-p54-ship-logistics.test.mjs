@@ -145,20 +145,22 @@ test('FUEL: unresolved until the GM configures a tank (never derived from Consum
   assert.equal(V.quoteFuel(big.v, 2).cost, 10000);
 });
 
+const ID = Object.fromEntries(['e1', 'e2', 'e3', 'e4', 'e5'].map((k, i) => [k, G.newFuelEventId(1700000000000 + i * 1000, 'r' + i)]));
+
 test('FUEL CONSUMPTION: an authoritative event spends one fuel-day per unit, once per event id; never below zero; GM only; a sheet render spends nothing', async () => {
   const { v } = ship();
   await V.gmConfigureFuel(v, { capacity: 5, current: 3, reason: 'r', user: globalThis.game.user });
   for (let i = 0; i < 4; i++) V.view(v);                                                       // rendering consumes nothing
   assert.equal(V.view(v).fuel.current, 3);
-  assert.equal((await V.consumeFuel(v, { event: 'lightspeed-jump', eventId: 'e1', user: globalThis.game.user })).remaining, 2);
-  assert.equal((await V.consumeFuel(v, { event: 'lightspeed-jump', eventId: 'e1', user: globalThis.game.user })).reason, 'FUEL_EVENT_ALREADY_PROCESSED');
+  assert.equal((await V.consumeFuel(v, { event: 'lightspeed-jump', eventId: ID.e1, user: globalThis.game.user })).remaining, 2);
+  assert.equal((await V.consumeFuel(v, { event: 'lightspeed-jump', eventId: ID.e1, user: globalThis.game.user })).reason, 'FUEL_EVENT_ALREADY_PROCESSED');
   assert.equal(V.view(v).fuel.current, 2, 'the duplicate spent nothing');
-  assert.equal((await V.consumeFuel(v, { event: 'combat-hour', quantity: 3, eventId: 'e2', user: globalThis.game.user })).reason, 'FUEL_INSUFFICIENT');
+  assert.equal((await V.consumeFuel(v, { event: 'combat-hour', quantity: 3, eventId: ID.e2, user: globalThis.game.user })).reason, 'FUEL_INSUFFICIENT');
   assert.equal(V.view(v).fuel.current, 2, 'nothing half-spent');
-  assert.equal((await V.consumeFuel(v, { event: 'warp', eventId: 'e3', user: globalThis.game.user })).reason, 'FUEL_EVENT_UNKNOWN');
-  assert.equal((await V.consumeFuel(v, { event: 'atmosphere-hour', quantity: 2, eventId: 'e4', user: globalThis.game.user })).remaining, 0);
+  assert.equal((await V.consumeFuel(v, { event: 'warp', eventId: ID.e3, user: globalThis.game.user })).reason, 'FUEL_EVENT_UNKNOWN');
+  assert.equal((await V.consumeFuel(v, { event: 'atmosphere-hour', quantity: 2, eventId: ID.e4, user: globalThis.game.user })).remaining, 0);
   setUser(false);
-  assert.equal((await V.consumeFuel(v, { event: 'realspace-day', eventId: 'e5', user: globalThis.game.user })).reason, 'LOGISTICS_GM_OPERATION');
+  assert.equal((await V.consumeFuel(v, { event: 'realspace-day', eventId: ID.e5, user: globalThis.game.user })).reason, 'LOGISTICS_GM_OPERATION');
   GM_USER();
 });
 
@@ -266,7 +268,7 @@ test('PERSISTENCE: reopening the sheet, resynchronizing weapons and re-running i
   await V.gmConfigureFuel(v, { capacity: 10, current: 4, reason: 'r', user: globalThis.game.user });
   await V.gmSetConsumables(v, { remainingDays: 2, reason: 'r', user: globalThis.game.user });
   const before = structuredClone(v.flags.swse.shipLogistics);
-  for (let i = 0; i < 3; i++) { V.view(v); sync(v); await V.initialize(v, { system: true }); }
+  for (let i = 0; i < 3; i++) { V.view(v); sync(v); await V.initialize(v, { user: globalThis.game.user }); await V.initializeOnCreate(v, 'gm1'); }
   assert.deepEqual(v.flags.swse.shipLogistics, before);
   // the resource is a guarded flag: only the service writes it
   assert.equal(isLedgerUpdateAllowed('veh1', { 'flags.swse.shipLogistics': { schema: 'x' } }), false);
@@ -346,7 +348,7 @@ test('SHEET BUTTONS: Buy Fuel / Buy Supplies open the store context; GM controls
   const { v } = ship();
   const opened = [];
   const deps2 = { notify: { warn() {}, info() {} }, openAmmunitionStore: async (veh, o) => { opened.push([veh.id, o.mode]); return { app: true }; },
-    logistics: { initialize: async () => ({ success: true }), gmConfigureFuel: async (veh, val) => ({ success: true, val }), gmSetOccupants: async () => ({ success: true }), gmSetConsumables: async () => ({ success: true }), consumeFuel: async (veh, val) => ({ success: true, val }), fuelEvents: G.FUEL_EVENTS },
+    logistics: { initialize: async () => ({ success: true }), gmConfigureFuel: async (veh, val) => ({ success: true, val }), gmSetOccupants: async () => ({ success: true }), gmSetConsumables: async () => ({ success: true }), consumeFuel: async (veh, val) => ({ success: true, val }), newFuelEventId: () => G.newFuelEventId(), fuelEvents: G.FUEL_EVENTS },
     askFuelConfig: async () => ({ capacity: 5, current: null, reason: 'r' }), askFuelEvent: async () => ({ event: 'lightspeed-jump', quantity: 1 }) };
   await OPS.runWeaponAction({ action: 'buy-fuel', vehicle: v }, deps2);
   await OPS.runWeaponAction({ action: 'buy-supplies', vehicle: v }, deps2);
@@ -357,4 +359,71 @@ test('SHEET BUTTONS: Buy Fuel / Buy Supplies open the store context; GM controls
   for (const a of ['buy-fuel', 'buy-supplies', 'logistics-config-fuel', 'logistics-fuel-event', 'logistics-occupants', 'logistics-consumables']) assert.match(tpl, new RegExp(`data-weapon-action="${a}"`));
   const view = V.view(v);
   assert.equal(view.fuel.source, 'Starships of the Galaxy, printed p. 14');
+});
+
+test('DELIVERY IS NOT A FREE DOOR: deliverPurchased needs a GM and the persisted settlement record; initialize cannot be self-granted by an owner', async () => {
+  const { v, owner } = ship();
+  await V.gmConfigureFuel(v, { capacity: 10, current: 0, reason: 'r', user: globalThis.game.user });
+  const args = { vehicle: v, resource: 'fuel', days: 3, unitPrice: 50 };
+  // a player calling it directly, with or without a request id
+  setUser(false);
+  assert.equal((await V.deliverPurchased({ ...args, requestId: 'x', user: globalThis.game.user })).reason, G.LOGISTICS_REASONS.GM_ONLY);
+  GM_USER();
+  // a GM with no record, an unknown record, or a record that is not mid-settlement
+  assert.equal((await V.deliverPurchased({ ...args, user: globalThis.game.user })).reason, G.LOGISTICS_REASONS.SETTLEMENT_NOT_AUTHORIZED);
+  assert.equal((await V.deliverPurchased({ ...args, requestId: 'nope', user: globalThis.game.user })).reason, G.LOGISTICS_REASONS.SETTLEMENT_NOT_AUTHORIZED);
+  setUser(false);
+  const req = await P.requestResourcePartyFund({ vehicle: v, requesterActor: owner, resource: 'fuel', days: 3 });
+  GM_USER();
+  assert.equal((await V.deliverPurchased({ ...args, requestId: req.requestId, user: globalThis.game.user })).reason, G.LOGISTICS_REASONS.SETTLEMENT_NOT_AUTHORIZED, 'a merely pending request authorizes nothing');
+  assert.equal(V.view(v).fuel.current, 0);
+  // the genuine settlement delivers once; replaying the same call afterwards delivers nothing
+  assert.equal((await P.approve({ requestId: req.requestId })).success, true);
+  assert.equal(V.view(v).fuel.current, 3);
+  assert.equal((await V.deliverPurchased({ ...args, requestId: req.requestId, user: globalThis.game.user })).reason, G.LOGISTICS_REASONS.SETTLEMENT_NOT_AUTHORIZED, 'duplicate settlement');
+  assert.equal(V.view(v).fuel.current, 3);
+  // a record for different amounts does not authorize other amounts
+  setUser(false);
+  const small = await P.requestResourcePartyFund({ vehicle: v, requesterActor: owner, resource: 'fuel', days: 1 });
+  GM_USER();
+  queue = queue.map(q => (q.id === small.requestId ? { ...q, state: 'settling' } : q));
+  assert.equal((await V.deliverPurchased({ ...args, days: 5, requestId: small.requestId, user: globalThis.game.user })).reason, G.LOGISTICS_REASONS.SETTLEMENT_NOT_AUTHORIZED);
+  // initialization: an owner cannot grant themselves supplies on an existing vehicle
+  setUser(false);
+  assert.equal((await V.initialize(v, { user: globalThis.game.user })).reason, G.LOGISTICS_REASONS.GM_ONLY);
+  assert.equal((await V.initialize(v, { user: globalThis.game.user, system: true })).reason, G.LOGISTICS_REASONS.GM_ONLY, 'there is no system bypass flag');
+  assert.equal((await V.initializeOnCreate(v, 'p1')).reason, G.LOGISTICS_REASONS.CREATION_ONLY, 'the vehicle is not freshly created');
+  assert.equal(V.view(v).consumables.initialized, false);
+  // the creation route: the creating user, a just-created vehicle, once
+  const fresh = ship().v; setUser(false, 'p1');
+  fresh._stats = { createdTime: Date.now() };
+  assert.equal((await V.initializeOnCreate(fresh, 'someone-else')).reason, G.LOGISTICS_REASONS.CREATION_ONLY);
+  assert.equal((await V.initializeOnCreate(fresh, 'p1')).success, true);
+  assert.equal(V.view(fresh).consumables.initialized, true);
+  assert.equal((await V.initializeOnCreate(fresh, 'p1')).reason, G.LOGISTICS_REASONS.ALREADY_INITIALIZED);
+  fresh._stats = { createdTime: Date.now() - 3600000 };
+  GM_USER();
+});
+
+test('FUEL EVENT IDEMPOTENCY is permanent: after far more than the stored window, an old id is still refused and a fresh id is accepted', async () => {
+  const { v } = ship();
+  await V.gmConfigureFuel(v, { capacity: 1000, current: 1000, reason: 'r', user: globalThis.game.user });
+  const base = 1700000000000, ids = Array.from({ length: 260 }, (_, i) => G.newFuelEventId(base + i * 1000, 'x' + i));
+  for (const id of ids) assert.equal((await V.consumeFuel(v, { event: 'realspace-day', eventId: id, user: globalThis.game.user })).success, true);
+  assert.equal(V.view(v).fuel.current, 1000 - 260);
+  assert.ok(v.flags.swse.shipLogistics.events.length <= 200, 'storage stays bounded');
+  for (const id of [ids[0], ids[10], ids[59], ids[259]]) assert.equal((await V.consumeFuel(v, { event: 'realspace-day', eventId: id, user: globalThis.game.user })).reason, 'FUEL_EVENT_ALREADY_PROCESSED', id);
+  assert.equal(V.view(v).fuel.current, 1000 - 260, 'no replay spent anything');
+  assert.equal((await V.consumeFuel(v, { event: 'realspace-day', eventId: V.newFuelEventId(), user: globalThis.game.user })).success, true);
+  assert.equal((await V.consumeFuel(v, { event: 'realspace-day', eventId: 'not-an-id', user: globalThis.game.user })).reason, 'FUEL_EVENT_UNKNOWN');
+});
+
+test('STORE / SHEET: supplies pricing and the basket total come from the services; UI code holds no pricing arithmetic', async () => {
+  const { v } = ship();
+  await V.initialize(v, { user: globalThis.game.user }); await V.gmSetOccupants(v, { passengers: 3, reason: 'r', user: globalThis.game.user });
+  assert.equal(V.view(v).consumables.pricePerDay, 30);
+  for (const f of ['scripts/apps/store/store-vehicle-ammunition.js', 'scripts/sheets/v2/vehicle-sheet/vehicle-weapon-ops.js', 'scripts/sheets/v2/vehicle-sheet/vehicle-ammunition-shortcuts.js']) {
+    const src = readFileSync(f, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
+    assert.doesNotMatch(src, /perPersonDay|\bunitPrice\s*\*|\*\s*(units|quantity|occupants)|\.reduce\s*\(\s*\(\s*\w+\s*,\s*\w+\s*\)\s*=>\s*\w+\s*\+/, `${f}: no pricing arithmetic`);
+  }
 });

@@ -170,10 +170,12 @@ export async function armStockWeaponsOnCreate(actor, _options, userId) {
     const { VehicleInstallationService } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-installation-service.js');
     const r = await VehicleInstallationService.syncWeaponItems(actor);
     if (!r.success) console.warn('[foundryvtt-swse] Stock weapon arming incomplete; use "Resync weapons" on the vehicle sheet:', r.reasons);
-    // ship logistics: ONE-TIME initial consumables (full printed endurance, an explicit project default; fuel is never invented); never re-run on resync
-    const { VehicleLogisticsService } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-logistics-service.js');
-    await VehicleLogisticsService.initialize(actor, { system: true });
   } catch (err) { console.warn('[foundryvtt-swse] Stock weapon arming failed; use "Resync weapons" on the vehicle sheet:', err); }
+  // ship logistics: ONE-TIME initial consumables for a vehicle created just now by this user (a separate step: its failure never affects weapon arming)
+  try {
+    const { VehicleLogisticsService } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-logistics-service.js');
+    await VehicleLogisticsService.initializeOnCreate(actor, userId);
+  } catch (err) { console.warn('[foundryvtt-swse] Ship logistics initialization failed; a GM can initialize supplies on the vehicle sheet:', err); }
 }
 
 export function registerVehiclePreCreateHooks() {

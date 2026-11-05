@@ -25,6 +25,9 @@ const { LOGISTICS_FLAG, LOGISTICS_REASONS: R } = L;
 const refuse = (reason, extra = {}) => ({ success: false, ok: false, reason, reasons: [reason], ...extra });
 const isGM = u => u?.isGM === true;
 const busy = new Set();
+/** The persisted record that authorizes a paid delivery (the GM approval queue entry). Replaceable in tests; the purchase service points it at its own queue. */
+export const settlementAuthority = { find: id => (globalThis.game?.settings?.get?.('foundryvtt-swse', 'pendingCustomPurchases') ?? []).find?.(a => a?.id === id) ?? null };
+const FRESH_VEHICLE_MS = 120000;
 const exclusive = async (vehicle, work) => {
   const id = vehicle?.id;
   if (!id) return refuse('VEHICLE_ID_MISSING');
@@ -78,6 +81,7 @@ export class VehicleLogisticsService {
     const occ = occupantsOf(vehicle, state);
     const sPlanProbe = state && max.ok ? L.planSuppliesPurchase(state, { maxDays: max.days, occupants: occ.count, days: 1 }) : null;
     const maint = L.maintenanceReferenceCost(size);
+    const pricePerDay = occ.count > 0 ? L.consumablesCost(occ.count, 1) : null;
     const pct = (a, b) => (Number.isInteger(a) && Number.isInteger(b) && b > 0 ? Math.round((a / b) * 100) : null);
     const fuelDisabled = price === null ? R.PRICE_UNRESOLVED : !cap ? R.FUEL_CAPACITY_UNCONFIGURED : (fuelPlanProbe && !fuelPlanProbe.ok ? fuelPlanProbe.reason : null);
     const suppliesDisabled = !max.ok ? R.CONSUMABLES_UNRESOLVED : !state?.consumables?.initialized ? R.CONSUMABLES_UNINITIALIZED : (sPlanProbe && !sPlanProbe.ok ? sPlanProbe.reason : null);
@@ -88,7 +92,7 @@ export class VehicleLogisticsService {
         label: cap ? `${state.fuel.current} / ${cap.value} fuel-days` : 'Fuel capacity not configured (GM)', canBuy: fuelDisabled === null, disabledReason: fuelDisabled,
         consumption: Object.values(L.FUEL_EVENTS).map(e => e.label), source: 'Starships of the Galaxy, printed p. 14' },
       consumables: { printed: max.printed ?? null, maxDays: max.ok ? max.days : null, maxBasis: max.basis ?? null, remainingDays: state?.consumables?.remainingDays ?? null, initialized: state?.consumables?.initialized === true,
-        percent: max.ok ? pct(state?.consumables?.remainingDays, max.days) : null, occupants: occ.count, occupantsBasis: occ.basis, perPersonDay: L.CONSUMABLES_CREDITS_PER_PERSON_DAY,
+        percent: max.ok ? pct(state?.consumables?.remainingDays, max.days) : null, pricePerDay, occupants: occ.count, occupantsBasis: occ.basis, perPersonDay: L.CONSUMABLES_CREDITS_PER_PERSON_DAY,
         rateLabel: `${L.CONSUMABLES_CREDITS_PER_PERSON_DAY} cr per living occupant per day (droids excluded)`,
         label: max.ok ? `${state?.consumables?.remainingDays ?? '?'} / ${max.days} days` : 'Consumables not established', canBuy: suppliesDisabled === null, disabledReason: suppliesDisabled, source: 'Starships of the Galaxy, printed p. 14' },
       docking: { ...L.DOCKING_REFERENCE, label: `Docking about ${L.DOCKING_REFERENCE.dockingPerDay} cr/day; long-term storage ${L.DOCKING_REFERENCE.storagePerMonth} cr/month` },
@@ -136,22 +140,49 @@ export class VehicleLogisticsService {
     });
   }
 
-  /** Resource side of a GM-approved Party Fund settlement: re-planned against the CURRENT state at the recorded price, then written by the one writer. */
-  static async deliverPurchased({ vehicle, resource, days, unitPrice, source = 'party-fund' }) {
+  /**
+   * Resource side of a GM-approved Party Fund settlement. It is NOT a free-delivery door: it requires a GM caller AND the persisted approval record of THIS settlement
+   * (the queue entry the settlement core has just claimed: state `settling`, same vehicle, resource, days and price). Without that proof -- or after the settlement
+   * finished and its record is gone -- nothing is delivered. The plan is then re-run against the CURRENT state at the recorded price and written by the one writer.
+   */
+  static async deliverPurchased({ vehicle, resource, days, unitPrice, requestId = null, user = globalThis.game?.user ?? null }) {
+    if (!isGM(user)) return refuse(R.GM_ONLY);
+    const rec = requestId ? settlementAuthority.find(requestId) : null;
+    const kindOk = rec?.approvalKind === 'vehicle-logistics-party-fund' && rec.state === 'settling' && rec.vehicleId === vehicle?.id
+      && rec.resource === resource && rec.days === days && rec.unitPrice === unitPrice;
+    if (!kindOk) return refuse(R.SETTLEMENT_NOT_AUTHORIZED);
     return exclusive(vehicle, async () => {
       const q = resource === 'fuel' ? this.quoteFuel(vehicle, days) : this.quoteSupplies(vehicle, days);
       if (!q.success) return q;
       if (q.unitPrice !== unitPrice) return refuse('LOGISTICS_PRICE_CHANGED');
       const state = stateOf(vehicle);
-      const next = resource === 'fuel' ? L.applyFuel(state, q, { by: source }) : L.applySupplies(state, q, { by: source });
+      const next = resource === 'fuel' ? L.applyFuel(state, q, { by: `party-fund:${requestId}` }) : L.applySupplies(state, q, { by: `party-fund:${requestId}` });
       await write(vehicle, next);
       return { success: true, days: q.days, cost: q.cost, resulting: q.resulting };
     });
   }
 
-  /** Once per vehicle: full printed consumables as the explicit project default; fuel is NOT invented (it stays 0 until the GM configures a tank). */
-  static async initialize(vehicle, { user = globalThis.game?.user ?? null, system = false } = {}) {
-    if (!system && !isGM(user)) return refuse(R.GM_ONLY);
+  /** A fresh, unique id for one authoritative fuel event (the sheet asks the service; it never invents one). */
+  static newFuelEventId() { return L.newFuelEventId(); }
+
+  /** GM: once per vehicle, full printed consumables (the explicit project default); fuel is NOT invented. Nobody else can initialize an existing vehicle. */
+  static async initialize(vehicle, { user = globalThis.game?.user ?? null } = {}) {
+    if (!isGM(user)) return refuse(R.GM_ONLY);
+    return this.#initialize(vehicle);
+  }
+
+  /**
+   * The creation hook's route: valid only for the user who CREATED the vehicle, only within moments of its creation, and only once. An owner of an older vehicle
+   * cannot call it into a refill; there is no flag that bypasses this.
+   */
+  static async initializeOnCreate(vehicle, creatorUserId) {
+    const created = Number(vehicle?._stats?.createdTime);
+    if (!creatorUserId || creatorUserId !== globalThis.game?.user?.id) return refuse(R.CREATION_ONLY);
+    if (!Number.isFinite(created) || Math.abs(Date.now() - created) > FRESH_VEHICLE_MS) return refuse(R.CREATION_ONLY);
+    return this.#initialize(vehicle);
+  }
+
+  static async #initialize(vehicle) {
     return exclusive(vehicle, async () => {
       const existing = readLogistics(vehicle);
       if (existing?.consumables?.initialized) return refuse(R.ALREADY_INITIALIZED);

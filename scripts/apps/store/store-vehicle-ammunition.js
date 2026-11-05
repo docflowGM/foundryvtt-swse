@@ -33,13 +33,13 @@ export async function buildVehicleAmmunitionView(store) {
   if (st.payment === 'party-fund' && !opts.partyFund.available) st.payment = 'credits';     // a disabled / unavailable fund is never left selected
   const lineOf = (key, quantity) => { const q = quantity > 0 ? P.quoteLine({ vehicle, key, units: quantity }) : null; return { lineTotal: q?.success ? q.total : 0, lineError: q && !q.success ? q.reason : null, resulting: q?.success ? q.resulting ?? null : null }; };
   const sources = st.mode === 'fuel' ? [(() => { const f = VehicleLogisticsService.view(vehicle).fuel; return { launcherKey: 'resource:fuel', launcherName: 'Fuel', ammunitionLabel: 'Fuel-days', unitPrice: f.pricePerDay, canBuy: f.canBuy, disabledReason: f.disabledReason, stockLabel: f.label, priceLabel: f.priceLabel }; })()]
-    : st.mode === 'supplies' ? [(() => { const c = VehicleLogisticsService.view(vehicle).consumables; return { launcherKey: 'resource:supplies', launcherName: 'Consumables / Life Support', ammunitionLabel: 'Days of supplies', unitPrice: c.occupants > 0 ? c.perPersonDay * c.occupants : null, canBuy: c.canBuy, disabledReason: c.disabledReason, stockLabel: `${c.label} · ${c.occupants} living occupant(s)`, priceLabel: c.rateLabel }; })()]
+    : st.mode === 'supplies' ? [(() => { const c = VehicleLogisticsService.view(vehicle).consumables; return { launcherKey: 'resource:supplies', launcherName: 'Consumables / Life Support', ammunitionLabel: 'Days of supplies', unitPrice: c.pricePerDay, canBuy: c.canBuy, disabledReason: c.disabledReason, stockLabel: `${c.label} · ${c.occupants} living occupant(s)`, priceLabel: c.rateLabel }; })()]
     : opts.offers.map(o => ({ ...o, priceLabel: o.unitPrice === null ? 'Price not published' : `${o.unitPrice.toLocaleString()} credits each`, stockLabel: `${o.loaded} / ${o.capacity} loaded · ${o.reserve} in reserve` }));
   const rows = sources.map(o => {
     const quantity = Math.max(0, Math.floor(Number(st.quantities[o.launcherKey]) || 0));
     return { ...o, quantity, ...lineOf(o.launcherKey, quantity), selected: o.launcherKey === st.launcherKey || st.mode !== 'ammunition' };
   });
-  const total = rows.reduce((sum, r) => sum + r.lineTotal, 0);
+  const total = P.basketTotal({ vehicle, lines: rows.filter(r => r.quantity > 0).map(r => ({ key: r.launcherKey, units: r.quantity })) }).total;
   const hasLineError = rows.some(r => r.lineError);
   const credits = LedgerService.getCurrentCredits(store.actor);
   const credit = { id: 'credits', label: 'Personal Credits — Purchase Now', available: opts.personal.available, selected: st.payment === 'credits', note: opts.personal.available ? `You have ${credits.toLocaleString()} credits` : 'This character is not recorded as an owner of the vehicle.' };
@@ -68,10 +68,10 @@ export async function confirmVehicleAmmunition(store) {
   inFlight.add(key); st.busy = true;
   const results = [];
   try {
-    const quotes = lines.map(l => P.quoteLine({ vehicle, key: l.launcherKey, units: l.units }));
-    const bad = quotes.find(q => !q.success);
+    const basket = P.basketTotal({ vehicle, lines });
+    const bad = basket.quotes.find(q => !q.success);
     if (bad) { warn(`Cannot buy: ${bad.reason}`); return { success: false, reason: bad.reason }; }
-    const total = quotes.reduce((s, q) => s + q.total, 0);
+    const total = basket.total;
     if (st.payment === 'credits' && LedgerService.getCurrentCredits(store.actor) < total) { warn('Not enough credits for this basket.'); return { success: false, reason: 'INSUFFICIENT_CREDITS' }; }
     for (const l of lines) {
       const r = st.payment === 'party-fund'

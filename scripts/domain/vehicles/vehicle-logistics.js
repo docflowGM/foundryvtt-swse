@@ -53,15 +53,27 @@ export const LOGISTICS_REASONS = Object.freeze({
   FUEL_CAPACITY_EXCEEDED: 'FUEL_PURCHASE_EXCEEDS_CAPACITY', FUEL_INSUFFICIENT: 'FUEL_INSUFFICIENT', CONSUMABLES_UNRESOLVED: 'CONSUMABLES_CAPACITY_NOT_ESTABLISHED', CONSUMABLES_UNINITIALIZED: 'CONSUMABLES_NOT_INITIALIZED',
   CONSUMABLES_AT_MAXIMUM: 'CONSUMABLES_AT_MAXIMUM', CONSUMABLES_CAPACITY_EXCEEDED: 'CONSUMABLES_PURCHASE_EXCEEDS_MAXIMUM', OCCUPANTS_NOT_ESTABLISHED: 'LIVING_OCCUPANTS_NOT_ESTABLISHED',
   EVENT_UNKNOWN: 'FUEL_EVENT_UNKNOWN', EVENT_DUPLICATE: 'FUEL_EVENT_ALREADY_PROCESSED', GM_ONLY: 'LOGISTICS_GM_OPERATION', REASON_REQUIRED: 'LOGISTICS_REASON_REQUIRED', STATE_INVALID: 'LOGISTICS_STATE_INVALID',
-  ALREADY_INITIALIZED: 'LOGISTICS_ALREADY_INITIALIZED'
+  ALREADY_INITIALIZED: 'LOGISTICS_ALREADY_INITIALIZED', SETTLEMENT_NOT_AUTHORIZED: 'LOGISTICS_SETTLEMENT_NOT_AUTHORIZED', CREATION_ONLY: 'LOGISTICS_INITIALIZATION_CREATION_ONLY'
 });
 
 const isInt = n => Number.isInteger(n) && n >= 0;
 const fail = (reason, extra = {}) => ({ ok: false, reason, ...extra });
 const MAX_EVENTS = 50;
+const MAX_EVENT_IDS = 200;
+
+// ---- fuel event identity -----------------------------------------------------------------------------------------------------------------------------
+// An event id is `fe_<millisecond clock, base 36>_<random>`. The state keeps the most recent ids AND a floor (the time of the newest id it ever dropped): an
+// id is a duplicate if it is in the window, and is refused if it is no newer than the floor -- so an id can never be processed twice, however many events
+// followed it, while the stored list stays bounded.
+export const newFuelEventId = (now = Date.now(), rand = Math.random().toString(36).slice(2, 10)) => `fe_${now.toString(36)}_${rand}`;
+export function fuelEventTime(id) {
+  const m = /^fe_([0-9a-z]+)_([0-9a-z]+)$/.exec(String(id ?? ''));
+  const t = m ? parseInt(m[1], 36) : NaN;
+  return Number.isFinite(t) ? t : null;
+}
 
 /** A vehicle with no logistics state yet. */
-export const emptyLogistics = () => ({ schema: LOGISTICS_SCHEMA, fuel: { current: 0, capacity: null }, consumables: { remainingDays: null, initialized: false }, passengers: null, occupantsOverride: null, events: [], log: [] });
+export const emptyLogistics = () => ({ schema: LOGISTICS_SCHEMA, fuel: { current: 0, capacity: null }, consumables: { remainingDays: null, initialized: false }, passengers: null, occupantsOverride: null, events: [], eventFloor: 0, log: [] });
 export function validateLogistics(s) {
   if (!s || s.schema !== LOGISTICS_SCHEMA) return fail(LOGISTICS_REASONS.STATE_INVALID);
   if (!isInt(s.fuel?.current)) return fail(LOGISTICS_REASONS.STATE_INVALID);
@@ -117,13 +129,16 @@ const log = (state, entry) => [...(state.log ?? []), entry].slice(-MAX_EVENTS);
 export function applyFuel(state, plan, { by = null, now = Date.now() } = {}) { return { ...state, fuel: { ...state.fuel, current: plan.resulting }, log: log(state, { op: 'fuel-purchase', days: plan.days, unitPrice: plan.unitPrice, cost: plan.cost, by, at: now }) }; }
 export function applySupplies(state, plan, { by = null, now = Date.now() } = {}) { return { ...state, consumables: { ...state.consumables, remainingDays: plan.resulting }, log: log(state, { op: 'supplies-purchase', days: plan.days, occupants: plan.occupants, cost: plan.cost, by, at: now }) }; }
 
-/** Spend fuel for one authoritative event. Idempotent per event id; never below zero (a ship without fuel cannot move: the event is refused, nothing is half-spent). */
+/** Spend fuel for one authoritative event. Idempotent per event id FOREVER (window + floor, see above); never below zero (a ship without fuel cannot move: the event is refused, nothing is half-spent). */
 export function planFuelConsumption(state, { event, quantity = 1, eventId, now = Date.now(), by = null }) {
   if (!FUEL_EVENTS[event]) return fail(LOGISTICS_REASONS.EVENT_UNKNOWN);
-  if (!eventId || typeof eventId !== 'string') return fail(LOGISTICS_REASONS.EVENT_UNKNOWN);
+  const eventTime = fuelEventTime(eventId);
+  if (eventTime === null) return fail(LOGISTICS_REASONS.EVENT_UNKNOWN);
   if (!isInt(quantity) || quantity < 1) return fail(LOGISTICS_REASONS.QUANTITY_INVALID);
-  if ((state.events ?? []).includes(eventId)) return fail(LOGISTICS_REASONS.EVENT_DUPLICATE);
+  if ((state.events ?? []).includes(eventId) || eventTime <= (state.eventFloor ?? 0)) return fail(LOGISTICS_REASONS.EVENT_DUPLICATE);
   const spend = FUEL_DAYS_PER_EVENT * quantity;
   if (state.fuel.current < spend) return fail(LOGISTICS_REASONS.FUEL_INSUFFICIENT, { have: state.fuel.current, need: spend });
-  return { ok: true, spend, next: { ...state, fuel: { ...state.fuel, current: state.fuel.current - spend }, events: [...(state.events ?? []), eventId].slice(-MAX_EVENTS), log: log(state, { op: 'fuel-use', event, quantity, spend, eventId, by, at: now }) } };
+  const all = [...(state.events ?? []), eventId], kept = all.slice(-MAX_EVENT_IDS), dropped = all.slice(0, all.length - kept.length);
+  const floor = Math.max(state.eventFloor ?? 0, ...dropped.map(d => fuelEventTime(d) ?? 0));
+  return { ok: true, spend, next: { ...state, fuel: { ...state.fuel, current: state.fuel.current - spend }, events: kept, eventFloor: floor, log: log(state, { op: 'fuel-use', event, quantity, spend, eventId, by, at: now }) } };
 }

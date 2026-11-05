@@ -16,7 +16,7 @@ import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { VehicleInstallationService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-installation-service.js";
 import { VehicleAmmunitionService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-ammunition-service.js";
-import { VehicleLogisticsService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-logistics-service.js";
+import { VehicleLogisticsService, settlementAuthority } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-logistics-service.js";
 import { ammunitionOffers, offerFor } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-ammunition-shop.js";
 
 export const AMMO_REQUEST_KIND = 'vehicle-ammunition-party-fund';
@@ -44,6 +44,8 @@ export const deps = {
   }
 };
 
+// the logistics service authorizes a paid delivery only against THIS queue's persisted settlement record
+settlementAuthority.find = id => deps.queue.read().find(a => a?.id === id) ?? null;
 let queueChain = Promise.resolve();                       // serializes this client's queue read-modify-write
 const withQueue = fn => { const run = queueChain.then(fn); queueChain = run.then(() => {}, () => {}); return run; };
 const inFlight = new Set();
@@ -93,7 +95,7 @@ const ADAPTERS = {
       if (q.unitPrice !== req.unitPrice || q.cost !== req.costCredits) return { ok: false, reason: REQUEST_REASONS.PRICE_CHANGED, message: 'the price or the living-occupant basis changed. Submit a new request' };
       return { ok: true, cost: q.cost };
     },
-    deliver: (vehicle, req, requestId) => VehicleLogisticsService.deliverPurchased({ vehicle, resource: req.resource, days: req.days, unitPrice: req.unitPrice, source: `party-fund:${requestId}` }),
+    deliver: (vehicle, req, requestId) => VehicleLogisticsService.deliverPurchased({ vehicle, resource: req.resource, days: req.days, unitPrice: req.unitPrice, requestId }),
     success: (req, cost) => `${req.days} ${req.resource === 'fuel' ? 'fuel-day(s)' : 'day(s) of consumables'} (${money(cost)} cr) were added to ${req.vehicleName}.`
   }
 };
@@ -104,6 +106,11 @@ export class VehicleAmmunitionPurchaseService {
     if (key === 'resource:fuel') { const q = VehicleLogisticsService.quoteFuel(vehicle, units); return q.success ? { success: true, units, unitPrice: q.unitPrice, total: q.cost, resulting: q.resulting } : q; }
     if (key === 'resource:supplies') { const q = VehicleLogisticsService.quoteSupplies(vehicle, units); return q.success ? { success: true, units, unitPrice: q.unitPrice, total: q.cost, resulting: q.resulting } : q; }
     return this.quote({ vehicle, launcherKey: key, units });
+  }
+  /** The basket total of the lines (the store context displays it; it adds nothing itself). */
+  static basketTotal({ vehicle, lines }) {
+    const quotes = lines.map(l => this.quoteLine({ vehicle, key: l.launcherKey ?? l.key, units: l.units }));
+    return { quotes, ok: quotes.every(q => q.success), total: quotes.reduce((sum, q) => sum + (q.success ? q.total : 0), 0) };
   }
   static async buyLine({ vehicle, ownerActor, key, units }) {
     if (key === 'resource:fuel') return VehicleLogisticsService.purchaseFuel({ ownerActor, vehicle, days: units });
