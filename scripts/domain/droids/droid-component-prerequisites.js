@@ -83,6 +83,21 @@ export function evaluateDroidComponentPrerequisites({
 
   const available = selectedIds(droidSystems, Array.isArray(installedComponentIds)
     ? installedComponentIds : []);
+  // Core Hardened Systems are levels of ONE chassis system, not cumulative
+  // HP/DT bonuses. The source ledger expressly states tier stacking is
+  // NOT GRANTED; a replacement requires a separate atomic remove-and-add.
+  if (/^hardened-systems-x[2-5]$/.test(namedId(definition))) {
+    const tier = Number(namedId(definition).slice(-1));
+    if (!Number.isInteger(definition.multiplier) || definition.multiplier !== tier) {
+      return fail('Hardened Systems tier metadata conflicts with its source identity', 'multiplier');
+    }
+    const otherTier = [...available].find(id =>
+      /^(?:droid-)?hardened-systems-x[2-5]$/.test(id) &&
+      !id.endsWith(namedId(definition)));
+    if (otherTier) {
+      return fail('Only one Hardened Systems tier may be installed; remove the previous tier first', 'multiplier');
+    }
+  }
   const dependencies = listed(definition.requiredSystems ?? []);
   const missing = dependencies.filter(dep => !available.has(dep));
   if (missing.length) {
