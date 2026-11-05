@@ -166,3 +166,18 @@ test('Imperial Knight prerequisites require both armor proficiency feats and oat
   assert.match(entry,/Must be a sworn defender of Emperor Roan Fel/);
   assert.match(entry,/severity: 'advisory'/,'oath must require GM adjudication rather than inferred membership');
 });
+
+test('Jedi Knight requires self-built lightsaber separately from Jedi tradition',()=>{
+  const data=JSON.parse(read('data/prestige-class-prerequisites.json'))['Jedi Knight'];
+  assert.ok(data.other.includes('Built Own Lightsaber'));
+  assert.ok(data.other.includes('Member of The Jedi'));
+  const all=read('scripts/data/prestige-prerequisites.js');
+  const i=all.indexOf("'Jedi Knight':"),j=all.indexOf("'Jedi Master':",i);
+  const entry=all.slice(i,j);
+  assert.ok(i>=0&&j>i);
+  assert.match(entry,/must-have-built-own-lightsaber/);
+  assert.match(entry,/Must have built your own lightsaber/);
+  assert.match(entry,/must-be-member-jedi/);
+  assert.equal((entry.match(/severity: 'advisory'/g)??[]).length,2);
+  assert.doesNotMatch(entry,/owning a lightsaber/i,'inventory possession is not equivalent to self-construction');
+});
