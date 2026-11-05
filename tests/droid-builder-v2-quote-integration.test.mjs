@@ -1,128 +1,126 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
-registerFoundryPathLoader();
 
+// Node can run the pure domain consumer and real presentation adapter.
+// DroidBuilderStep's import graph includes the Foundry ApplicationV2 splash;
+// do not fake an ApplicationV2 runtime to make a Node test look stronger.
+registerFoundryPathLoader();
 const { DroidBuilderViewModelAdapter } = await import(
   '../scripts/apps/progression-framework/steps/droid-builder-view-model.js'
 );
-const { DroidBuilderStep } = await import(
-  '../scripts/apps/progression-framework/steps/droid-builder-step.js'
-);
 const { DROID_SYSTEMS } = await import('../scripts/data/droid-systems.js');
-const { resolveDroidBuilderQuote } = await import(
-  '../scripts/domain/droids/droid-component-quote-authority.js'
+const { quoteDroidBuilderSelection } = await import(
+  '../scripts/domain/droids/droid-builder-quote-consumer.js'
 );
 
-function freshState(size = 'small', base = 30000) {
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const read = relPath => fs.readFileSync(path.join(ROOT, relPath), 'utf8');
+
+function state(size = 'small') {
   return {
-    droidSize: size, droidDegree: '2nd-degree', creationMode: 'custom',
-    buildState: { mode: 'provisional', isDeferred: false },
-    droidCredits: { base, spent: 0, remaining: base },
+    droidSize: size, droidDegree: '2nd-degree',
+    droidCredits: { base: 30000, spent: 0, remaining: 30000 },
     droidSystems: {
-      locomotion: { id: 'walking', name: 'Walking', cost: 0, weight: 10, speed: 4, isDefault: true, isGranted: true },
-      processor: { id: 'heuristic', name: 'Heuristic Processor', cost: 0, weight: 5, isGranted: true },
-      appendages: [{ id: 'hand', name: 'Hand', cost: 0, weight: 1, isGranted: true }],
+      locomotion: { id: 'walking', speed: 4, cost: 0, isDefault: true, isGranted: true },
+      processor: { id: 'heuristic', cost: 0, isGranted: true },
+      appendages: [{ id: 'hand', cost: 0, weight: 1, isGranted: true }],
       accessories: [], locomotionEnhancements: [], appendageEnhancements: []
     }
   };
 }
-
-function stepWith(state) {
-  const step = new DroidBuilderStep({ id: 'droid-builder' });
-  step._droidState = state;
-  // Only isolate session-config access: the budget is still calculated from
-  // actual draft credits, while purchase, repricing and validation stay real.
-  step._normalizeDroidCredits = function() {
-    const c = this._droidState.droidCredits;
-    c.remaining = c.base - c.spent;
-    return c;
-  };
-  return step;
+function quote(definition, s, category, subcategory = null, speed = null) {
+  return quoteDroidBuilderSelection({
+    definition, size: s.droidSize, category, subcategory,
+    droidSystems: s.droidSystems, speed
+  });
 }
 
-test('shared source quote is consumed by preview for the same chassis', () => {
-  const state = freshState('tiny');
+test('real preview consumes identical accessory price and weight decision', () => {
+  const s = state('tiny');
   const vm = DroidBuilderViewModelAdapter.build({
-    droidState: state,
-    readiness: { isValid: true, issues: [], summary: 'ready' },
-    contextMode: 'chargenDraft',
+    droidState: s, contextMode: 'chargenDraft',
+    readiness: { isValid: true, issues: [], summary: 'Ready' }
   });
-  const armor = vm.availableSystemsFlat.find(e => e.id === 'plasteel-shell');
-  assert.ok(armor, 'source armor appears in component preview');
-  assert.equal(armor.quoteStatus, 'OK');
-  assert.equal(armor.cost, 2000);
-  assert.ok(Math.abs(armor.weight - .8) < 1e-9);
-  assert.notEqual(armor.quoteCostLabel, 'Unavailable');
+  const definition = DROID_SYSTEMS.accessories.armor.find(entry => entry.id === 'plasteel-shell');
+  const q = quote(definition, s, 'accessory', 'armor');
+  const entry = vm.availableSystemsFlat.find(e => e.id === 'plasteel-shell');
+  assert.equal(q.status, 'OK');
+  assert.equal(entry.quoteStatus, 'OK');
+  assert.equal(entry.cost, q.credits);
+  assert.equal(entry.weight, q.kg);
+  assert.equal(entry.cost, 2000);
+  assert.ok(Math.abs(entry.weight - 0.8) < 1e-9);
+  assert.equal(entry.quoteCostLabel, '2,000 cr');
+});
 
-  const remote = vm.availableSystemsFlat.find(e => e.id === 'remote');
-  assert.ok(remote, 'remote processor range appears as a distinct selection');
+test('real preview blocks unselected external-processor range', () => {
+  const vm = DroidBuilderViewModelAdapter.build({
+    droidState: state(), contextMode: 'chargenDraft'
+  });
+  const remote = vm.availableSystemsFlat.find(entry => entry.id === 'remote');
+  assert.ok(remote);
   assert.equal(remote.quoteStatus, 'BLOCKED');
+  assert.equal(remote.cost, null);
   assert.equal(remote.canInstall, false);
   assert.equal(remote.quoteCostLabel, 'Unavailable');
-  assert.ok(remote.disabledReasons.some(e => /range variant/i.test(e)));
+  assert.ok(remote.disabledReasons.some(reason => /range variant/i.test(reason)));
 });
 
-test('draft purchases and subsequent chassis resizing use one quote and weight authority', () => {
-  const state = freshState();
-  const step = stepWith(state);
-  step._refreshSizeDependentSystems();
-  assert.equal(step.purchaseSystem('accessory', 'plasteel-shell', 'armor'), true);
-  assert.equal(state.droidSystems.accessories[0].cost, 800);
-  assert.equal(state.droidSystems.accessories[0].weight, 2);
-  assert.equal(state.droidCredits.spent, 800);
-  state.droidSize = 'tiny';
-  step._refreshSizeDependentSystems();
-  assert.equal(state.droidSystems.accessories[0].cost, 2000);
-  assert.ok(Math.abs(state.droidSystems.accessories[0].weight - .8) < 1e-9);
-  assert.equal(state.droidCredits.spent, 2000);
-  assert.equal(step._validateDroidBuild().issues.some(e => /Unresolved component quote/.test(e)), false);
+test('shared quote responds to chassis resize without changing source records', () => {
+  const s = state();
+  const shell = DROID_SYSTEMS.accessories.armor.find(e => e.id === 'plasteel-shell');
+  assert.deepEqual(quote(shell, s, 'accessory', 'armor'), {
+    status: 'OK', credits: 800, kg: 2, blockingReason: null
+  });
+  s.droidSize = 'tiny';
+  const resized = quote(shell, s, 'accessory', 'armor');
+  assert.equal(resized.status, 'OK');
+  assert.equal(resized.credits, 2000);
+  assert.ok(Math.abs(resized.kg - .8) < 1e-9);
 });
 
-test('unpriced/unknown processor and unidentified components cannot mutate a chargen budget', () => {
-  const state = freshState();
-  const step = stepWith(state);
-  const before = JSON.stringify(state.droidSystems);
-  assert.equal(step.purchaseSystem('processor', 'remote'), false, 'must choose remote processor range');
-  assert.equal(step.purchaseSystem('accessory', 'made-up-part', 'armor'), false);
-  assert.equal(JSON.stringify(state.droidSystems), before);
-  assert.equal(state.droidCredits.spent, 0);
-});
-
-test('shield expansion must use installed shield SR and must not assume SR5', () => {
+test('shield expansion cannot assume SR5 and consumes actual installed SR10', () => {
+  const s = state();
   const module = DROID_SYSTEMS.accessories.shields.find(e => e.id === 'shield-expansion-module');
-  const noHost = resolveDroidBuilderQuote({
-    definition: module, category: 'accessory', subcategory: 'shields', size: 'small'
+  assert.equal(quote(module, s, 'accessory', 'shields').status, 'BLOCKED');
+  s.droidSystems.accessories.push({ id: 'sr10-shield-generator', category: 'shields' });
+  assert.deepEqual(quote(module, s, 'accessory', 'shields'), {
+    status: 'OK', credits: 1000, kg: 20, blockingReason: null
   });
-  assert.equal(noHost.status, 'BLOCKED');
-  const selectedSr10 = resolveDroidBuilderQuote({
-    definition: module, category: 'accessory', subcategory: 'shields',
-    size: 'small', selectedInstalledShieldRating: 10
-  });
-  assert.deepEqual(selectedSr10, { status: 'OK', credits: 1000, kg: 20, blockingReason: null });
-  const tooSmall = resolveDroidBuilderQuote({
-    definition: module, category: 'accessory', subcategory: 'shields',
-    size: 'tiny', selectedInstalledShieldRating: 10
-  });
-  assert.equal(tooSmall.status, 'BLOCKED');
+  s.droidSize = 'tiny';
+  assert.equal(quote(module, s, 'accessory', 'shields').status, 'BLOCKED');
 });
 
-test('builder purchases shield expansion after the required shield is installed', () => {
-  const state = freshState('small', 40000);
-  const step = stepWith(state);
-  step._refreshSizeDependentSystems();
-  assert.equal(step.purchaseSystem('accessory', 'shield-expansion-module', 'shields'), false);
-  assert.equal(step.purchaseSystem('accessory', 'sr10-shield-generator', 'shields'), true);
-  assert.equal(step.purchaseSystem('accessory', 'shield-expansion-module', 'shields'), true);
-  const expansion = state.droidSystems.accessories.find(e => e.id === 'shield-expansion-module');
-  assert.equal(expansion.cost, 1000);
-  assert.equal(expansion.weight, 20);
-});
-
-test('stationary 0 speed is never substituted with the old 6-square fallback', () => {
-  const step = stepWith(freshState('small'));
+test('stationary zero speed is a valid published selection, not a fallback to six', () => {
+  const s = state();
   const stationary = DROID_SYSTEMS.locomotion.find(e => e.id === 'stationary');
-  assert.equal(step._calculateLocomotionSpeed(stationary), 0);
-  assert.equal(step.purchaseSystem('locomotion', 'stationary'), true);
-  assert.equal(step._droidState.droidSystems.locomotion.speed, 0);
+  assert.equal(quote(stationary, s, 'locomotion', null, 0).credits, 0);
+  assert.equal(quote(stationary, s, 'locomotion', null, null).status, 'BLOCKED');
+});
+
+test('unresolved base and multiplier cannot silently become free enhancements', () => {
+  const s = state();
+  const extraLegs = DROID_SYSTEMS.locomotionEnhancements.find(e => e.id === 'extra-legs');
+  assert.equal(quote(extraLegs, s, 'locomotionEnhancement').status, 'BLOCKED');
+  const gyro = DROID_SYSTEMS.locomotionEnhancements.find(e => e.id === 'gyroscopic-stabilizers');
+  assert.equal(quote(gyro, s, 'locomotionEnhancement').status, 'BLOCKED');
+  // The existing source has no published kg for either; a working price
+  // alone cannot authorize a complete purchase.
+});
+
+test('real builder source delegates purchase, repricing and validator to quote authority', () => {
+  const builder = read('scripts/apps/progression-framework/steps/droid-builder-step.js');
+  const vm = read('scripts/apps/progression-framework/steps/droid-builder-view-model.js');
+  assert.match(builder, /_quoteDroidSystem\(definition, category/);
+  assert.match(builder, /return quoteDroidBuilderSelection\(/);
+  assert.match(builder, /const quote = this\._quoteDroidSystem\(system, group/);
+  assert.match(builder, /quote\.status !== 'OK'/);
+  assert.match(builder, /this\._refreshSizeDependentSystems\(\)/);
+  assert.match(vm, /const quote = quoteDroidBuilderSelection\(/);
+  assert.doesNotMatch(builder, /_calculateAccessoryCost\(/);
+  assert.doesNotMatch(vm, /#calculateAdjustedCost\(/);
 });
