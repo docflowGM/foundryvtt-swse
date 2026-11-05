@@ -152,18 +152,23 @@ export class VehicleLogisticsService {
       && rec.resource === resource && rec.days === days && rec.unitPrice === unitPrice;
     if (!kindOk) return refuse(R.SETTLEMENT_NOT_AUTHORIZED);
     return exclusive(vehicle, async () => {
+      const state = stateOf(vehicle);
+      if (!state) return refuse(R.STATE_INVALID);
+      // at most once per settlement, INCLUDING repeated calls while the request is still `settling`: the id is recorded in the same write as the delivery
+      const once = L.deliveryAllowed(state, requestId, rec.requestedAt);
+      if (!once.ok) return refuse(once.reason);
       const q = resource === 'fuel' ? this.quoteFuel(vehicle, days) : this.quoteSupplies(vehicle, days);
       if (!q.success) return q;
       if (q.unitPrice !== unitPrice) return refuse('LOGISTICS_PRICE_CHANGED');
-      const state = stateOf(vehicle);
-      const next = resource === 'fuel' ? L.applyFuel(state, q, { by: `party-fund:${requestId}` }) : L.applySupplies(state, q, { by: `party-fund:${requestId}` });
+      const applied = resource === 'fuel' ? L.applyFuel(state, q, { by: `party-fund:${requestId}` }) : L.applySupplies(state, q, { by: `party-fund:${requestId}` });
+      const next = L.markDelivered(applied, requestId, rec.requestedAt);
       await write(vehicle, next);
       return { success: true, days: q.days, cost: q.cost, resulting: q.resulting };
     });
   }
 
   /** A fresh, unique id for one authoritative fuel event (the sheet asks the service; it never invents one). */
-  static newFuelEventId() { return L.newFuelEventId(); }
+  static newFuelEventId(vehicle = null) { return L.newFuelEventId(L.nextEventTime(vehicle ? stateOf(vehicle) : null)); }
 
   /** GM: once per vehicle, full printed consumables (the explicit project default); fuel is NOT invented. Nobody else can initialize an existing vehicle. */
   static async initialize(vehicle, { user = globalThis.game?.user ?? null } = {}) {

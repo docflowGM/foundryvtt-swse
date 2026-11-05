@@ -412,7 +412,8 @@ test('FUEL EVENT IDEMPOTENCY is permanent: after far more than the stored window
   for (const id of ids) assert.equal((await V.consumeFuel(v, { event: 'realspace-day', eventId: id, user: globalThis.game.user })).success, true);
   assert.equal(V.view(v).fuel.current, 1000 - 260);
   assert.ok(v.flags.swse.shipLogistics.events.length <= 200, 'storage stays bounded');
-  for (const id of [ids[0], ids[10], ids[59], ids[259]]) assert.equal((await V.consumeFuel(v, { event: 'realspace-day', eventId: id, user: globalThis.game.user })).reason, 'FUEL_EVENT_ALREADY_PROCESSED', id);
+  for (const id of [ids[0], ids[10], ids[59]]) assert.equal((await V.consumeFuel(v, { event: 'realspace-day', eventId: id, user: globalThis.game.user })).reason, 'FUEL_EVENT_STALE_REISSUE', `${id}: dropped from the window, refused by the floor`);
+  assert.equal((await V.consumeFuel(v, { event: 'realspace-day', eventId: ids[259], user: globalThis.game.user })).reason, 'FUEL_EVENT_ALREADY_PROCESSED', 'still in the window');
   assert.equal(V.view(v).fuel.current, 1000 - 260, 'no replay spent anything');
   assert.equal((await V.consumeFuel(v, { event: 'realspace-day', eventId: V.newFuelEventId(), user: globalThis.game.user })).success, true);
   assert.equal((await V.consumeFuel(v, { event: 'realspace-day', eventId: 'not-an-id', user: globalThis.game.user })).reason, 'FUEL_EVENT_UNKNOWN');
@@ -426,4 +427,58 @@ test('STORE / SHEET: supplies pricing and the basket total come from the service
     const src = readFileSync(f, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
     assert.doesNotMatch(src, /perPersonDay|\bunitPrice\s*\*|\*\s*(units|quantity|occupants)|\.reduce\s*\(\s*\(\s*\w+\s*,\s*\w+\s*\)\s*=>\s*\w+\s*\+/, `${f}: no pricing arithmetic`);
   }
+});
+
+test('FUEL EVENT IDS (integrity): same-millisecond ids, out-of-order processing and a backward clock never reject a genuinely new event; a replay never spends', async () => {
+  const { v } = ship();
+  await V.gmConfigureFuel(v, { capacity: 1000, current: 1000, reason: 'r', user: globalThis.game.user });
+  const gm = globalThis.game.user, use = id => V.consumeFuel(v, { event: 'combat-hour', eventId: id, user: gm });
+  const realNow = Date.now;
+  try {
+    // two ids made in the same millisecond are distinct and both accepted
+    Date.now = () => 1800000000000;
+    const a = V.newFuelEventId(v), b = V.newFuelEventId(v);
+    assert.notEqual(a, b);
+    // processed out of the order they were issued
+    assert.equal((await use(b)).success, true);
+    assert.equal((await use(a)).success, true, 'an older-issued id is not falsely rejected');
+    assert.equal(V.view(v).fuel.current, 998);
+    // the clock moves backward: the next id is still newer than everything recorded
+    Date.now = () => 1700000000000;
+    const c = V.newFuelEventId(v);
+    assert.ok(G.fuelEventTime(c) > Math.max(G.fuelEventTime(a), G.fuelEventTime(b)));
+    assert.equal((await use(c)).success, true);
+    // replays: in the window, then far past it
+    assert.equal((await use(c)).reason, 'FUEL_EVENT_ALREADY_PROCESSED');
+    for (let i = 0; i < 230; i++) assert.equal((await use(V.newFuelEventId(v))).success, true);
+    const before = V.view(v).fuel.current;
+    for (const old of [a, b, c]) assert.equal((await use(old)).reason, 'FUEL_EVENT_STALE_REISSUE', 'a replay is refused and spends nothing');
+    assert.equal(V.view(v).fuel.current, before);
+    // a genuinely new event (a freshly issued id) is accepted; an id issued long ago and never used is refused as stale with a clear remedy
+    assert.equal((await use(V.newFuelEventId(v))).success, true);
+    assert.equal(V.view(v).fuel.current, before - 1);
+  } finally { Date.now = realNow; }
+});
+
+test('PARTY FUND DELIVERY is once per settlement, even while the request stays `settling`', async () => {
+  const { v, owner } = ship();
+  await V.gmConfigureFuel(v, { capacity: 20, current: 0, reason: 'r', user: globalThis.game.user });
+  setUser(false);
+  const req = await P.requestResourcePartyFund({ vehicle: v, requesterActor: owner, resource: 'fuel', days: 4 });
+  GM_USER();
+  queue = queue.map(q => (q.id === req.requestId ? { ...q, state: 'settling' } : q));            // the settlement core has claimed it and is mid-flight
+  const call = () => V.deliverPurchased({ vehicle: v, resource: 'fuel', days: 4, unitPrice: 50, requestId: req.requestId, user: globalThis.game.user });
+  const results = await Promise.all([call(), call(), call()]);
+  assert.equal(results.filter(r => r.success).length, 1, 'concurrent calls deliver once');
+  assert.equal(V.view(v).fuel.current, 4);
+  const again = await call();
+  assert.deepEqual([again.success, again.reason, V.view(v).fuel.current], [false, G.LOGISTICS_REASONS.SETTLEMENT_ALREADY_DELIVERED, 4], 'a repeat while still settling adds nothing');
+  assert.equal(v.flags.swse.shipLogistics.deliveries.length, 1);
+  assert.equal(v.flags.swse.shipLogistics.deliveries[0].id, req.requestId, 'recorded in the same write as the delivery');
+  // a different settlement is independent
+  setUser(false);
+  const req2 = await P.requestResourcePartyFund({ vehicle: v, requesterActor: owner, resource: 'fuel', days: 2 });
+  GM_USER();
+  assert.equal((await P.approve({ requestId: req2.requestId })).success, true);
+  assert.equal(V.view(v).fuel.current, 6);
 });

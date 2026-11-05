@@ -65,7 +65,7 @@ export async function runWeaponAction({ action, itemId, vehicle, actorId = null 
     if (action === 'logistics-config-fuel') { const v = await deps.askFuelConfig?.(); return v ? say(await svc.gmConfigureFuel(vehicle, v)) : { ok: false, reason: 'CANCELLED' }; }
     if (action === 'logistics-occupants') { const v = await deps.askOccupants?.(); return v ? say(await svc.gmSetOccupants(vehicle, v)) : { ok: false, reason: 'CANCELLED' }; }
     if (action === 'logistics-consumables') { const v = await deps.askConsumablesRemaining?.(); return v ? say(await svc.gmSetConsumables(vehicle, v)) : { ok: false, reason: 'CANCELLED' }; }
-    if (action === 'logistics-fuel-event') { const v = await deps.askFuelEvent?.(svc.fuelEvents); return v ? say(await svc.consumeFuel(vehicle, { ...v, eventId: svc.newFuelEventId() })) : { ok: false, reason: 'CANCELLED' }; }
+    if (action === 'logistics-fuel-event') { const v = await deps.askFuelEvent?.(svc.fuelEvents); return v ? say(await svc.consumeFuel(vehicle, { ...v, eventId: svc.newFuelEventId(vehicle) })) : { ok: false, reason: 'CANCELLED' }; }
     return { ok: false, reason: 'LOGISTICS_ACTION_UNKNOWN' };
   }
   if (action === 'buy-ammo-all' || action === 'buy-ammo') {

@@ -52,7 +52,7 @@ export const LOGISTICS_REASONS = Object.freeze({
   NOT_A_VEHICLE: 'LOGISTICS_NOT_A_VEHICLE', QUANTITY_INVALID: 'LOGISTICS_QUANTITY_INVALID', PRICE_UNRESOLVED: 'FUEL_PRICE_SIZE_UNRESOLVED', FUEL_CAPACITY_UNCONFIGURED: 'FUEL_CAPACITY_NOT_CONFIGURED',
   FUEL_CAPACITY_EXCEEDED: 'FUEL_PURCHASE_EXCEEDS_CAPACITY', FUEL_INSUFFICIENT: 'FUEL_INSUFFICIENT', CONSUMABLES_UNRESOLVED: 'CONSUMABLES_CAPACITY_NOT_ESTABLISHED', CONSUMABLES_UNINITIALIZED: 'CONSUMABLES_NOT_INITIALIZED',
   CONSUMABLES_AT_MAXIMUM: 'CONSUMABLES_AT_MAXIMUM', CONSUMABLES_CAPACITY_EXCEEDED: 'CONSUMABLES_PURCHASE_EXCEEDS_MAXIMUM', OCCUPANTS_NOT_ESTABLISHED: 'LIVING_OCCUPANTS_NOT_ESTABLISHED',
-  EVENT_UNKNOWN: 'FUEL_EVENT_UNKNOWN', EVENT_DUPLICATE: 'FUEL_EVENT_ALREADY_PROCESSED', GM_ONLY: 'LOGISTICS_GM_OPERATION', REASON_REQUIRED: 'LOGISTICS_REASON_REQUIRED', STATE_INVALID: 'LOGISTICS_STATE_INVALID',
+  EVENT_UNKNOWN: 'FUEL_EVENT_UNKNOWN', EVENT_DUPLICATE: 'FUEL_EVENT_ALREADY_PROCESSED', EVENT_STALE: 'FUEL_EVENT_STALE_REISSUE', SETTLEMENT_ALREADY_DELIVERED: 'LOGISTICS_SETTLEMENT_ALREADY_DELIVERED', GM_ONLY: 'LOGISTICS_GM_OPERATION', REASON_REQUIRED: 'LOGISTICS_REASON_REQUIRED', STATE_INVALID: 'LOGISTICS_STATE_INVALID',
   ALREADY_INITIALIZED: 'LOGISTICS_ALREADY_INITIALIZED', SETTLEMENT_NOT_AUTHORIZED: 'LOGISTICS_SETTLEMENT_NOT_AUTHORIZED', CREATION_ONLY: 'LOGISTICS_INITIALIZATION_CREATION_ONLY'
 });
 
@@ -66,6 +66,16 @@ const MAX_EVENT_IDS = 200;
 // id is a duplicate if it is in the window, and is refused if it is no newer than the floor -- so an id can never be processed twice, however many events
 // followed it, while the stored list stays bounded.
 export const newFuelEventId = (now = Date.now(), rand = Math.random().toString(36).slice(2, 10)) => `fe_${now.toString(36)}_${rand}`;
+/**
+ * The time a NEW event id should carry: never earlier than anything this state has seen (the newest retained event, the floor), whatever the local clock says --
+ * so a clock that moved backward, or two ids made in the same millisecond, still produce ids that are newer than every recorded one.
+ * GUARANTEE (proved by the planner below): no id is ever processed twice; a never-processed id is refused only when it is older than the floor (more than
+ * MAX_EVENT_IDS later events have been processed since it was issued) -- the remedy is to issue a fresh id, never a replay.
+ */
+export function nextEventTime(state, now = Date.now()) {
+  const latest = Math.max(0, ...(state?.events ?? []).map(e => fuelEventTime(e) ?? 0));
+  return Math.max(now, (state?.eventFloor ?? 0) + 1, latest + 1);
+}
 export function fuelEventTime(id) {
   const m = /^fe_([0-9a-z]+)_([0-9a-z]+)$/.exec(String(id ?? ''));
   const t = m ? parseInt(m[1], 36) : NaN;
@@ -73,7 +83,7 @@ export function fuelEventTime(id) {
 }
 
 /** A vehicle with no logistics state yet. */
-export const emptyLogistics = () => ({ schema: LOGISTICS_SCHEMA, fuel: { current: 0, capacity: null }, consumables: { remainingDays: null, initialized: false }, passengers: null, occupantsOverride: null, events: [], eventFloor: 0, log: [] });
+export const emptyLogistics = () => ({ schema: LOGISTICS_SCHEMA, fuel: { current: 0, capacity: null }, consumables: { remainingDays: null, initialized: false }, passengers: null, occupantsOverride: null, events: [], eventFloor: 0, deliveries: [], deliveryFloor: 0, log: [] });
 export function validateLogistics(s) {
   if (!s || s.schema !== LOGISTICS_SCHEMA) return fail(LOGISTICS_REASONS.STATE_INVALID);
   if (!isInt(s.fuel?.current)) return fail(LOGISTICS_REASONS.STATE_INVALID);
@@ -135,10 +145,24 @@ export function planFuelConsumption(state, { event, quantity = 1, eventId, now =
   const eventTime = fuelEventTime(eventId);
   if (eventTime === null) return fail(LOGISTICS_REASONS.EVENT_UNKNOWN);
   if (!isInt(quantity) || quantity < 1) return fail(LOGISTICS_REASONS.QUANTITY_INVALID);
-  if ((state.events ?? []).includes(eventId) || eventTime <= (state.eventFloor ?? 0)) return fail(LOGISTICS_REASONS.EVENT_DUPLICATE);
+  if ((state.events ?? []).includes(eventId)) return fail(LOGISTICS_REASONS.EVENT_DUPLICATE);
+  if (eventTime <= (state.eventFloor ?? 0)) return fail(LOGISTICS_REASONS.EVENT_STALE);                // possibly processed and dropped: refused, never re-spent
   const spend = FUEL_DAYS_PER_EVENT * quantity;
   if (state.fuel.current < spend) return fail(LOGISTICS_REASONS.FUEL_INSUFFICIENT, { have: state.fuel.current, need: spend });
   const all = [...(state.events ?? []), eventId], kept = all.slice(-MAX_EVENT_IDS), dropped = all.slice(0, all.length - kept.length);
   const floor = Math.max(state.eventFloor ?? 0, ...dropped.map(d => fuelEventTime(d) ?? 0));
   return { ok: true, spend, next: { ...state, fuel: { ...state.fuel, current: state.fuel.current - spend }, events: kept, eventFloor: floor, log: log(state, { op: 'fuel-use', event, quantity, spend, eventId, by, at: now }) } };
+}
+
+// ---- one paid delivery per settlement ---------------------------------------------------------------------------------------------------------------
+// A settlement (request id, with the time it was requested) delivers its resource at most once: the id is recorded IN THE SAME WRITE as the delivery. A bounded
+// window of recent settlements plus a floor (the request time of the newest dropped one) keeps the guarantee permanent without unbounded storage.
+export function deliveryAllowed(state, requestId, requestedAt) {
+  if ((state.deliveries ?? []).some(d => d.id === requestId)) return fail(LOGISTICS_REASONS.SETTLEMENT_ALREADY_DELIVERED);
+  if (!Number.isFinite(requestedAt) || requestedAt <= (state.deliveryFloor ?? 0)) return fail(LOGISTICS_REASONS.SETTLEMENT_ALREADY_DELIVERED);
+  return { ok: true };
+}
+export function markDelivered(state, requestId, requestedAt) {
+  const all = [...(state.deliveries ?? []), { id: requestId, requestedAt }], kept = all.slice(-MAX_EVENT_IDS), dropped = all.slice(0, all.length - kept.length);
+  return { ...state, deliveries: kept, deliveryFloor: Math.max(state.deliveryFloor ?? 0, ...dropped.map(d => d.requestedAt ?? 0)) };
 }
