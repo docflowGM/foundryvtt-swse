@@ -18,6 +18,27 @@
 import fs from 'node:fs';
 import { assessStockWeaponGroups } from '../../../scripts/domain/vehicles/vehicle-stock-weapon-groups.js';
 
+// CERTIFIED OUTCOMES (every stock group is accounted for in exactly one; the denominators above stay 846 / 429):
+//   CANONICAL_EXECUTABLE          the printed record establishes everything the engines need;
+//   IMPLEMENTATION_REQUIRED       a mechanic, notation or integration is not built yet (shared causes first);
+//   SOURCE_EVIDENCE_REQUIRED      the record lacks a printed fact (research the PDF, repair the record, or the book is silent);
+//   RULES_DECISION_REQUIRED       only an owner ruling is missing (V-P6C-21: launcher count);
+//   GM_CONFIGURATION_REQUIRED     only facts the book leaves open remain and a GM route makes it playable (never labeled canonical).
+const IMPLEMENTATION = new Set(['STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED', 'STOCK_EVIDENCE_UNMODELED', 'STOCK_RANGE_TABLE_NOT_IDENTIFIED', 'STOCK_VARIANT_SPECIFIC_GROUP_UNMODELED', 'STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT',
+  'STOCK_DAMAGE_QUALIFIED', 'STOCK_DAMAGE_AREA_OR_SPLASH', 'STOCK_DAMAGE_ION_UNVERIFIED', 'STOCK_OPERATOR_IS_A_STATION_BATTERY', 'STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER', 'STOCK_GROUP_IS_A_WEAPON_BATTERY',
+  'STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA', 'STOCK_FIRING_ARC_STATED_UNPARSED', 'STOCK_POSSIBLE_AREA_WEAPON_UNVERIFIED', 'STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED', 'STOCK_FIRE_LINKED_IS_NOT_A_WEAPON_BATTERY']);
+const SOURCE = new Set(['STOCK_DAMAGE_NOT_PRINTED_IN_RECORD', 'STOCK_OPERATOR_NOT_PRINTED', 'STOCK_ATTACK_TOTAL_NOT_PRINTED', 'STOCK_FIRING_ARC_NOT_REVIEWED', 'STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED', 'STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED', 'STOCK_CREW_ATTACK_BASIS_UNKNOWN']);
+function outcomeOf(g) {
+  if (g.executable) return 'CANONICAL_EXECUTABLE';
+  const r = g.reasons ?? [];
+  if (r.some(x => IMPLEMENTATION.has(x))) return 'IMPLEMENTATION_REQUIRED';
+  if (r.some(x => SOURCE.has(x))) return 'SOURCE_EVIDENCE_REQUIRED';
+  if (g.ammunitionPending) return 'RULES_DECISION_REQUIRED';
+  return 'GM_CONFIGURATION_REQUIRED';
+}
+
+
+
 const MODE = process.argv[2];
 if (!['--write', '--check'].includes(MODE)) { console.error('usage: --write|--check'); process.exit(2); }
 const records = fs.readFileSync('data/canonical/vehicles/vehicles.json', 'utf8').trim().split('\n').map(JSON.parse);
@@ -39,6 +60,7 @@ const vehicles = records.map(r => {
     executableModes: g.executable ? (g.modes ? Object.entries(g.modes).filter(([, m]) => m.executable).map(([k]) => k) : ['single']) : [],
     capitalShipPenaltyApplies: g.executable && CAPITAL.has(r.classification.printedSize),
     refusals: g.reasons,
+    outcome: outcomeOf(g),
     ...(g.gmConfigurable ? { gmConfigurable: true } : {}),
     ...(g.gmBatteryConfigurable ? { gmBatteryConfigurable: true } : {})
   }));
@@ -55,6 +77,17 @@ const allGroups = vehicles.flatMap(v => v.groups.map(g => ({ ...g, book: v.book,
 const reasons = {};
 for (const g of allGroups) for (const r of g.refusals) reasons[r] = (reasons[r] ?? 0) + 1;
 const byBook = {};
+// Armed-vehicle denominator: a vehicle with no printed attack group is excluded ONLY when its statblock is certified unarmed (unarmed-vehicle-certification.json,
+// from the printed statblock); every other vehicle -- including a statblock that prints an attack the record lacks -- stays in the armed denominator.
+function armedVehicleTotals(vehicles) {
+  const f = 'data/audits/vehicles/unarmed-vehicle-certification.json';
+  if (!fs.existsSync(f)) return {};
+  const cert = JSON.parse(fs.readFileSync(f, 'utf8')).rows, unarmed = new Set(cert.filter(r => r.status === 'UNARMED_CONFIRMED').map(r => r.sourceEntryKey));
+  const armed = vehicles.filter(v => !unarmed.has(v.sourceEntryKey));
+  return { unarmedCertifiedVehicles: unarmed.size, armedRecordGapVehicles: cert.filter(r => r.status === 'ARMED_RECORD_GAP').length, armedVehicles: armed.length,
+    armedVehiclesWithExecutableGroup: armed.filter(v => v.offlineExecutableGroups > 0).length, armedVehiclesFullyExecutable: armed.filter(v => v.groupCount > 0 && v.status === 'OFFLINE_EXECUTABLE_ALL_GROUPS').length };
+}
+
 for (const v of vehicles) { const b = byBook[v.book] ??= { vehicles: 0, groups: 0, executableGroups: 0, vehiclesWithExecutable: 0 }; b.vehicles++; b.groups += v.groupCount; b.executableGroups += v.offlineExecutableGroups; if (v.offlineExecutableGroups) b.vehiclesWithExecutable++; }
 const byCategory = {};
 for (const v of vehicles) { const b = byCategory[v.category] ??= { vehicles: 0, vehiclesWithExecutable: 0 }; b.vehicles++; if (v.offlineExecutableGroups) b.vehiclesWithExecutable++; }
@@ -68,6 +101,8 @@ const doc = {
     offlineExecutableGroups: allGroups.filter(g => g.offlineExecutable).length,
     vehiclesWithOfflineExecutableGroup: vehicles.filter(v => v.offlineExecutableGroups > 0).length,
     vehiclesAllGroupsExecutable: vehicles.filter(v => v.status === 'OFFLINE_EXECUTABLE_ALL_GROUPS').length,
+    outcomes: allGroups.reduce((m, g) => (m[g.outcome] = (m[g.outcome] ?? 0) + 1, m), {}),
+    ...armedVehicleTotals(vehicles),
     // groups blocked ONLY by missing ammunition facts: a GM can complete them on the world Actor (reported apart; never added to the canonical counts)
     gmConfigurableGroups: allGroups.filter(g => g.gmConfigurable).length,
     // printed batteries whose source prints no weapon count: a GM can certify it to enable FULL-BATTERY mode (they already run as one independent weapon)
@@ -119,7 +154,7 @@ const pct = (n, d) => (d ? Math.round((n / d) * 1000) / 10 : 0);
 const t = doc.totals;
 let md = `# Stock weapon coverage (published vehicles)\n\nGenerated by \`tools/audits/vehicles/build-stock-weapon-coverage.mjs\`; do not edit. Data: \`data/audits/vehicles/stock-weapon-coverage.json\`.\n\n`;
 md += `Three claims are kept apart: **SOURCE_VERIFIED** (the published configuration is established), **OFFLINE_EXECUTABLE** (the group passes the runtime gate and the automated corpus test drives it through arm -> attack -> damage) and **LIVE_VERIFIED** (tested in Foundry V13: none yet).\n\n`;
-md += `| Measure | Count |\n|---|---|\n| Published vehicles | ${t.vehicles} |\n| Published attack groups | ${t.groups} |\n| Groups SOURCE_VERIFIED | ${t.sourceVerifiedGroups} (${pct(t.sourceVerifiedGroups, t.groups)}%) |\n| Groups OFFLINE_EXECUTABLE | ${t.offlineExecutableGroups} (${pct(t.offlineExecutableGroups, t.groups)}%) |\n| Vehicles with at least one OFFLINE_EXECUTABLE group | ${t.vehiclesWithOfflineExecutableGroup} (${pct(t.vehiclesWithOfflineExecutableGroup, t.vehicles)}%) |\n| Vehicles with every group executable | ${t.vehiclesAllGroupsExecutable} |\n| Groups GM-configurable (missing ammunition facts only; not counted above) | ${t.gmConfigurableGroups} |\n| Printed batteries a GM can certify for full-battery mode (already executable independently; not counted above) | ${t.gmBatteryConfigurableGroups} |\n| Vehicles LIVE_VERIFIED | ${t.liveVerifiedVehicles} |\n\n`;
+md += `| Measure | Count |\n|---|---|\n| Published vehicles | ${t.vehicles} |\n| Published attack groups | ${t.groups} |\n| Groups SOURCE_VERIFIED | ${t.sourceVerifiedGroups} (${pct(t.sourceVerifiedGroups, t.groups)}%) |\n| Groups OFFLINE_EXECUTABLE | ${t.offlineExecutableGroups} (${pct(t.offlineExecutableGroups, t.groups)}%) |\n| Vehicles with at least one OFFLINE_EXECUTABLE group | ${t.vehiclesWithOfflineExecutableGroup} (${pct(t.vehiclesWithOfflineExecutableGroup, t.vehicles)}%) |\n| Vehicles with every group executable | ${t.vehiclesAllGroupsExecutable} |\n| Vehicles certified UNARMED from the printed statblock (excluded from the armed denominator) | ${t.unarmedCertifiedVehicles ?? 'n/a'} |\n| Armed vehicles (published vehicles minus certified unarmed) | ${t.armedVehicles ?? 'n/a'} |\n| Armed vehicles whose statblock prints an attack the record lacks (data defect) | ${t.armedRecordGapVehicles ?? 'n/a'} |\n| Armed vehicles with at least one OFFLINE_EXECUTABLE group | ${t.armedVehiclesWithExecutableGroup ?? 'n/a'} (${t.armedVehicles ? pct(t.armedVehiclesWithExecutableGroup, t.armedVehicles) : 'n/a'}%) |\n| Armed vehicles with EVERY group executable | ${t.armedVehiclesFullyExecutable ?? 'n/a'} (${t.armedVehicles ? pct(t.armedVehiclesFullyExecutable, t.armedVehicles) : 'n/a'}%) |\n| Groups GM-configurable (missing ammunition facts only; not counted above) | ${t.gmConfigurableGroups} |\n| Printed batteries a GM can certify for full-battery mode (already executable independently; not counted above) | ${t.gmBatteryConfigurableGroups} |\n| Vehicles LIVE_VERIFIED | ${t.liveVerifiedVehicles} |\n\n**Certified outcome of every group (each group in exactly one):** ${Object.entries(t.outcomes ?? {}).map(([k, n]) => `${k} ${n}`).join(' · ')}\n\n`;
 const b = doc.batteries;
 md += `## Weapon batteries (Core p. 170)\n\n| Measure | Groups |\n|---|---|\n| Printed weapon batteries ("battery (N gunners)") | ${b.printedBatteryGroups} |\n| ... printing the number of identical weapons | ${b.weaponCountPrinted} |\n| ... OFFLINE_EXECUTABLE in at least one mode (each group counted once) | ${b.executableGroups} |\n| ... full-battery mode executable (assistance, margin hits; needs the printed weapon count) | ${b.fullBatteryExecutable} |\n| ... independent-weapon mode executable (one weapon; no assistance, no margin hits) | ${b.independentWeaponExecutable} |\n| ... independent-weapon ONLY | ${b.independentWeaponOnly} |\n| ... both modes | ${b.bothModes} |\n\nThe printed total of a battery already contains the printed gunners' assistance (+2 per assisting gunner). Full-battery mode applies it once and adds margin hits capped by the printed weapon count; independent-weapon mode removes exactly that assistance. The two counts are independent quantities and neither is inferred from the other. Fire-linked weapons that a statblock calls "batteries" are not weapon batteries (Starships of the Galaxy, Fire-Linked Weapons). Named gunners on a full battery are refused (BATTERY_ASSIGNED_CREW_ROSTER_UNMODELED). Refusal reasons overlap.\n\n`;
 const kinds = doc.kinds, am = doc.ammunition;

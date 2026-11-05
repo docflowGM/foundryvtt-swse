@@ -8,14 +8,14 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 
 | Category | Count |
 |---|---|
-| RULES_DECISION_REQUIRED | 8 |
+| RULES_DECISION_REQUIRED | 9 |
 | SOURCE_EVIDENCE_MISSING | 10 |
 | ENGINEERING_COMPLEXITY | 26 |
 | LIVE_RUNTIME_PENDING | 1 |
-| NONCRITICAL_DEFECT | 5 |
+| NONCRITICAL_DEFECT | 6 |
 | DEPENDENCY_BLOCKED | 11 |
 
-Open items: 61. Resolved items: 19 (listed at the end).
+Open items: 63. Resolved items: 19 (listed at the end).
 
 ## Items (by severity)
 
@@ -42,6 +42,8 @@ Open items: 61. Resolved items: 19 (listed at the end).
 | P6B-D-068 | WEAPON-ECOSYSTEM | Ion bombs | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-16 |
 | P6B-D-071 | BATTERIES | Named-gunner rosters for multi-gunner batteries | ENGINEERING_COMPLEXITY | IMPORTANT | no | V-P6C-02 |
 | P6B-D-072 | WEAPON-ECOSYSTEM | Hyperdrive activation consumer for gravity-well interdiction | ENGINEERING_COMPLEXITY | IMPORTANT | no | V-P6C-14 |
+| P6B-D-081 | STOCK | Stock launcher groups whose only missing fact is the launcher count (63 groups, 63 vehicles) | RULES_DECISION_REQUIRED | IMPORTANT | yes | V-P6C-21 |
+| P6B-D-082 | STOCK | Armed vehicles whose canonical record has no firing group although the statblock prints one (4 vehicles) | NONCRITICAL_DEFECT | IMPORTANT | no | - |
 | P6B-D-003 | P6B-1 | jamming-suite, jamming-array | ENGINEERING_COMPLEXITY | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-004 | P6B-1 | combat-thrusters | DEPENDENCY_BLOCKED | MINOR | no | V-P6-05, V-P2-04 |
 | P6B-D-005 | P6B-1 | navicomputer-limited | RULES_DECISION_REQUIRED | MINOR | yes | V-P6B-01 |
@@ -700,6 +702,26 @@ Open items: 61. Resolved items: 19 (listed at the end).
 - **Owner ruling needed:** no (V-P6C-20)
 - **Impact:** A GM presses Initialize supplies (full printed endurance) once per older vehicle.
 - **Recommended action:** None; this is the no-silent-refill rule.
+
+### P6B-D-081 - Stock launcher groups whose only missing fact is the launcher count (63 groups, 63 vehicles)
+
+- **Source:** statblock Payload lines (armament.carriedPayloads); SotG pp. 45-46
+- **Category / severity:** RULES_DECISION_REQUIRED / IMPORTANT
+- **Reason:** Payload and exact launcher identity are now reconciled from the records; the statblocks print no launcher count, and whether a printed Payload alone is a canonical pool is the owner's question V-P6C-21.
+- **Missing:** A ruling (V-P6C-21) or a printed launcher count.
+- **Owner ruling needed:** yes (V-P6C-21)
+- **Impact:** These groups stay GM_CONFIGURED_EXECUTABLE only (never counted as canonical).
+- **Recommended action:** Owner decision V-P6C-21.
+
+### P6B-D-082 - Armed vehicles whose canonical record has no firing group although the statblock prints one (4 vehicles)
+
+- **Source:** cw-bc-714-luxury-transport (double laser cannon), cw-sheathipede-class-shuttle (microtractor-pressor), goi-corona-limited-luxury-groundspeeder (4 heavy laser cannons), ur-landing-sphere (6 turbolaser batteries)
+- **Category / severity:** NONCRITICAL_DEFECT / IMPORTANT
+- **Reason:** unarmed-vehicle-certification.json classifies them ARMED_RECORD_GAP from the printed statblock (they stay in the armed denominator).
+- **Missing:** The firing groups in the canonical records (a data repair through the errata path, reviewed against the PDF).
+- **Owner ruling needed:** no
+- **Impact:** 4 armed vehicles have no stock weapon at all.
+- **Recommended action:** Repair the four records through the errata migration after PDF review.
 
 ## Resolved items
 

@@ -1309,3 +1309,23 @@ Implemented as PUBLISHED_RULE (lock-on, Reflex 30 / 10 HP / -5, no second charge
 
 - **Acceptance corrections to V-P6C-20 (2026-11-05):** (1) paid resource delivery (`deliverPurchased`) requires a GM caller and the persisted settlement record of that very request (state `settling`, same vehicle, resource, days and price) -- a pending, mismatched or finished request authorizes nothing; initialization has no system bypass: only a GM, or the creating user for a just-created vehicle (`initializeOnCreate`), and only once; (2) the supplies price per day and the basket total are computed by the services; (3) fuel event ids are service-issued (`fe_<clock>_<rand>`) and idempotency is permanent: a bounded window of recent ids plus a floor (the newest dropped id time) refuses any replay, however old.
 - **Final integrity checks on V-P6C-20 (2026-11-05):** (a) a Party Fund settlement delivers fuel or consumables at most once, including repeated or concurrent calls while the request is still `settling`: the request id is recorded in the SAME write as the delivery (bounded window + floor by request time); (b) fuel-event idempotency, stated precisely: **no event id is ever processed twice**; ids are issued newer than everything the state has recorded (so a backward clock or the same millisecond never makes a new event look old); an id that was issued but never used is refused only if more than 200 later events have been processed since (reason `FUEL_EVENT_STALE_REISSUE`: issue a fresh id) -- it is never replayed and never a double spend.
+
+### V-P6C-21 - Stock launchers: does a printed Payload line alone establish a canonical ammunition pool? (QUESTION, 2026-11-05)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-21 |
+| Rules domain | Vehicle weapons (finite ammunition, stock statblocks) |
+| Feature | Stock missile / torpedo / launcher groups with a printed Payload line |
+| Source | Core Rulebook and Starships of the Galaxy statblocks ("Payload 12 medium concussion missiles", recorded as `armament.carriedPayloads`); Starships of the Galaxy pp. 45-46 (launcher capacities) |
+| Evidence | The statblock prints how many missiles or torpedoes the vehicle carries (the Payload line) and names the ammunition. It prints NO launcher count and no magazine. The magazine sizes (for example a proton torpedo launcher holds three) are published as properties of the launchers a ship BUYS (SotG pp. 45-46); the stock statblocks do not state how many launchers a group has. |
+| Confirmed behavior | The Payload is printed. The launcher is identified by its exact printed designation for the groups listed below (payload and identity are now reconciled from the record: 63 groups on 63 vehicles; 52 of them are blocked by nothing else). |
+| Unresolved question | Whether a printed Payload alone defines the vehicle's ammunition pool for execution (every carried round may be launched, with no launcher count, magazine or reload step modeled), or whether the number of launchers must also be established before the ammunition ledger runs (the current behavior: a GM certifies the count, reported as GM_CONFIGURED_EXECUTABLE and never counted as canonical). |
+| Options | (1) The Payload is the pool; no magazine / reload modeling for stock groups. (2) The launcher count is required (a GM certifies it; or a source prints it). Both are supported by the evidence above; neither is chosen here. |
+| Recommended ruling | None |
+| Implementation impact | Option 1 would make up to 63 stock groups executable canonically (52 with no other blocker); option 2 keeps them GM-configured. No code path changes until a ruling. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 47 (2026-11-05):** appended V-P6C-21 (with the payload / designation reconciliation that narrowed it to the single launcher-count fact).

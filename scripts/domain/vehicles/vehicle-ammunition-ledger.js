@@ -55,6 +55,37 @@ const isInt = n => Number.isInteger(n) && n >= 0;
 const fail = reason => ({ ok: false, reason });
 
 /**
+ * The exact launcher designation a PRINTED label names, read with only grammatical normalization (case, singular / plural, a trailing "launcher(s)"):
+ * "medium concussion missile", "Proton torpedo launchers" and "proton torpedoes" all name the table's designation. A label with no size ("concussion
+ * missile launcher") or any other wording names none -- it is never guessed. @returns {{key:string, designation:object, viaLauncherWord:boolean}|null}
+ */
+export function launcherDesignationOf(label) {
+  let t = String(label ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
+  const viaLauncherWord = /\blaunchers?$/.test(t);
+  t = t.replace(/\s+launchers?$/, '');
+  const cands = [t, t.replace(/\s+missile$/, ' missiles'), t.replace(/\s+torpedo$/, ' torpedoes'), t.replace(/\s+torpedoes?$/, ' torpedoes')];
+  const key = cands.find(k => LAUNCHER_DESIGNATIONS[k]);
+  return key ? { key, designation: LAUNCHER_DESIGNATIONS[key], viaLauncherWord } : null;
+}
+
+const squash = s => String(s ?? '').toLowerCase().replace(/\([^)]*\)/g, '').replace(/[^a-z]/g, '');
+/**
+ * The payload a statblock PRINTS ("Payload 12 medium concussion missiles", recorded in armament.carriedPayloads) for this group's exact ammunition: one
+ * single-item entry whose unit IS the designation's ammunition (same words, size included), claimed by exactly one group of the vehicle. A composite entry
+ * ("3 ion bombs; 2 torpedoes"), an unsized or qualified one ("concussion missiles (Belbullab-24 only)"), or a payload that two groups could share, is not used.
+ * @returns {{value:number, raw:string}|null}
+ */
+export function matchPrintedPayload(label, payloads, siblingLabels = []) {
+  const d = launcherDesignationOf(label);
+  if (!d || !Array.isArray(payloads)) return null;
+  const want = squash(d.key);
+  const claimants = siblingLabels.filter(l => launcherDesignationOf(l)?.key === d.key).length;
+  if (claimants !== 1) return null;
+  const hits = payloads.filter(p => p && !/[;,]/.test(String(p.unit)) && !/\d/.test(String(p.unit)) && !/\(/.test(String(p.unit)) && squash(p.unit) === want && Number.isInteger(p.value) && p.value >= 1);
+  return hits.length === 1 ? { value: hits[0].value, raw: hits[0].raw ?? `${hits[0].value} ${hits[0].unit}` } : null;
+}
+
+/**
  * What the source establishes about a launcher group, and whether the family is complete.
  * @param {{label:string, evidence:object, battery?:object|null}} group a parsed stock group
  * @returns {{status:'complete'|'allocation-required'|'incomplete', reasons:string[], family:object|null}}
@@ -63,14 +94,18 @@ export function resolveLauncherFamily(group) {
   const reasons = [];
   const payload = group?.evidence?.payloadCount;
   if (!isInt(payload) || payload < 1) reasons.push(AMMO_REASONS.PAYLOAD_NOT_PRINTED);
-  const designation = LAUNCHER_DESIGNATIONS[String(group?.label ?? '').trim().toLowerCase()];
+  const named = launcherDesignationOf(group?.label);
+  const designation = named?.designation;
   const cap = designation ? LAUNCHER_CAPACITY[designation.launcherId] : null;
   if (!designation || !cap) reasons.push(AMMO_REASONS.LAUNCHER_NOT_IDENTIFIED);
   if (reasons.length) return { status: 'incomplete', reasons, family: null };
   const family = { payload, launcherId: designation.launcherId, ammunition: designation.ammunition, guided: designation.guided === true,
     capacity: cap.standard, capacitySource: cap.source, launchers: null, allocation: null };
   // a verified single launcher: the printed launcher count is exactly 1 and the group is not a battery of launchers
-  if (group?.evidence?.hardwareCount === 1 && !group?.battery) { family.launchers = 1; family.allocation = 'single-launcher-verified'; return { status: 'complete', reasons: [], family }; }
+  const hw = group?.evidence?.hardwareCount;
+  if (hw === 1 && !group?.battery) { family.launchers = 1; family.allocation = 'single-launcher-verified'; return { status: 'complete', reasons: [], family }; }
+  // a launcher count the statblock PRINTS for a group named as a launcher ("2 proton torpedo launchers"): the count is source data, not an inference
+  if (Number.isInteger(hw) && hw > 1 && !group?.battery && named?.viaLauncherWord) { family.launchers = hw; family.allocation = 'printed-launcher-count'; return { status: 'complete', reasons: [], family }; }
   return { status: 'allocation-required', reasons: [AMMO_REASONS.ALLOCATION_REQUIRED], family };
 }
 
@@ -140,6 +175,7 @@ export function validateLedger(ledger, family) {
   if (ledger.launchers < 1 || ledger.loaded > ledger.capacity * ledger.launchers) return fail(AMMO_REASONS.LEDGER_INVALID);
   if (ledger.loaded + ledger.reserve + ledger.expended !== ledger.payload) return fail(AMMO_REASONS.LEDGER_INVALID);       // conservation
   if (family.allocation === 'single-launcher-verified' && ledger.launchers !== 1) return fail(AMMO_REASONS.LEDGER_INVALID);
+  if (family.allocation === 'printed-launcher-count' && ledger.launchers !== family.launchers) return fail(AMMO_REASONS.LEDGER_INVALID);
   return { ok: true };
 }
 
@@ -217,7 +253,7 @@ export function planGmReload(ledger, { amount = Infinity, by = null, now = Date.
 
 /** GM allocation for a family whose launcher count the source does not verify: launchers and what is loaded now. */
 export function planGmAllocation(family, { launchers, loaded, by = null, now = Date.now() } = {}) {
-  if (!family || family.allocation === 'single-launcher-verified') return fail(AMMO_REASONS.ALLOCATION_INVALID);
+  if (!family || family.allocation === 'single-launcher-verified' || family.allocation === 'printed-launcher-count') return fail(AMMO_REASONS.ALLOCATION_INVALID);
   const ledger = initialLedger(family, { launchers, loaded, allocation: 'gm-certified' });
   if (!ledger) return fail(AMMO_REASONS.ALLOCATION_INVALID);
   return { ok: true, ledger: { ...ledger, log: [{ op: 'gm-allocation', launchers, loaded, by, at: now }] } };

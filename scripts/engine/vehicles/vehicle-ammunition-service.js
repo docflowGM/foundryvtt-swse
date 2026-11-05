@@ -55,7 +55,7 @@ export class VehicleAmmunitionService {
       const va = validateAftermarketLedger(ledger, family);
       return va.ok ? { ok: true, ledger, family } : refuse(va.reason);
     }
-    if (!ledger && family.allocation === 'single-launcher-verified') { ledger = initialLedger(family); await write(vehicle, weapon, ledger, family); }
+    if (!ledger && (family.allocation === 'single-launcher-verified' || family.allocation === 'printed-launcher-count')) { ledger = initialLedger(family); await write(vehicle, weapon, ledger, family); }
     if (!ledger) return refuse(AMMO_REASONS.LEDGER_MISSING);
     const v = validateLedger(ledger, family);
     return v.ok ? { ok: true, ledger, family } : refuse(v.reason);

@@ -100,11 +100,12 @@ test('RUNTIME: an ordinary-splash cannon fires at a vehicle in a vehicles-only e
   assert.ok(only.r, only.log.join('|'));
 });
 
-test('COVERAGE: three ordinary-splash groups are executable at starship scale only; none is ammunition-limited', () => {
+test('COVERAGE: five ordinary-splash groups are executable at starship scale only; the only ammunition-limited ones are the two complete source-established launcher families', () => {
   const all = docs.flatMap(d => assessStockWeaponGroups(d.flags.swse.universalVehicleSource.source).groups.map(g => ({ key: keyOf(d), g })));
   const area = all.filter(x => x.g.area);
   assert.equal(area.length, 107);
-  assert.equal(area.filter(x => x.g.executable).length, 3);
+  assert.equal(area.filter(x => x.g.executable).length, 5);
   assert.ok(area.filter(x => x.g.executable).every(x => !x.g.reasons.includes('STOCK_AMMUNITION_LIMITED_UNTRACKED')));
+  assert.deepEqual(area.filter(x => x.g.executable && x.g.ammunition).map(x => x.key).sort(), ['sotg-mandalmotors-starviper-assault-fighter', 'sotg-sorosuub-cutlass-9-patrol-fighter']);
   assert.equal(area.filter(x => x.g.reasons.includes('STOCK_AMMUNITION_LIMITED_UNTRACKED')).length > 50, true);
 });

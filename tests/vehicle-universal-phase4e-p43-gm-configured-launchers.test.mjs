@@ -47,7 +47,7 @@ test('SOURCE: only the four ammunition refusals are liftable; canonical coverage
   assert.equal(isGmConfigurable(['STOCK_AMMUNITION_LIMITED_UNTRACKED'], { battery: {} }), false);
   let canonical = 0, configurable = 0;
   for (const d of actors) for (const g of assessStockWeaponGroups(d.flags.swse.universalVehicleSource.source).groups) { if (g.executable) canonical++; if (g.gmConfigurable) configurable++; assert.notEqual(g.gmConfigured, true); }
-  assert.equal(canonical, 528, 'the canonical stock count never includes configurations');
+  assert.equal(canonical, 530, 'the canonical stock count never includes configurations');
   assert.ok(configurable >= 90, `${configurable} groups are GM-configurable`);
 });
 

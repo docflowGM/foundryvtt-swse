@@ -12,7 +12,7 @@
   },
   "NO_COMPLETE_STOCK_LAUNCHER_FAMILY": {
    "class": "DATA",
-   "text": "No published firing group carries a verified single launcher, so no stock launcher group is armed; 18 groups wait for a GM-certified launcher allocation."
+   "text": "No published firing group carries a verified launcher count, so no stock launcher group is armed canonically. Payload and exact launcher identity are reconciled from the statblock Payload lines for 63 groups; the launcher count is the single missing fact (owner question V-P6C-21); those groups can only be GM-configured."
   },
   "SOURCE_ROW_NOT_RECONCILED": {
    "class": "SOURCE",

@@ -9,12 +9,19 @@ Three claims are kept apart: **SOURCE_VERIFIED** (the published configuration is
 | Published vehicles | 429 |
 | Published attack groups | 846 |
 | Groups SOURCE_VERIFIED | 769 (90.9%) |
-| Groups OFFLINE_EXECUTABLE | 528 (62.4%) |
-| Vehicles with at least one OFFLINE_EXECUTABLE group | 331 (77.2%) |
-| Vehicles with every group executable | 169 |
-| Groups GM-configurable (missing ammunition facts only; not counted above) | 97 |
+| Groups OFFLINE_EXECUTABLE | 530 (62.6%) |
+| Vehicles with at least one OFFLINE_EXECUTABLE group | 332 (77.4%) |
+| Vehicles with every group executable | 170 |
+| Vehicles certified UNARMED from the printed statblock (excluded from the armed denominator) | 38 |
+| Armed vehicles (published vehicles minus certified unarmed) | 391 |
+| Armed vehicles whose statblock prints an attack the record lacks (data defect) | 4 |
+| Armed vehicles with at least one OFFLINE_EXECUTABLE group | 332 (84.9%) |
+| Armed vehicles with EVERY group executable | 170 (43.5%) |
+| Groups GM-configurable (missing ammunition facts only; not counted above) | 102 |
 | Printed batteries a GM can certify for full-battery mode (already executable independently; not counted above) | 201 |
 | Vehicles LIVE_VERIFIED | 0 |
+
+**Certified outcome of every group (each group in exactly one):** SOURCE_EVIDENCE_REQUIRED 95 · CANONICAL_EXECUTABLE 530 · IMPLEMENTATION_REQUIRED 164 · RULES_DECISION_REQUIRED 57
 
 ## Weapon batteries (Core p. 170)
 
@@ -36,8 +43,8 @@ The printed total of a battery already contains the printed gunners' assistance 
 |---|---|---|
 | weapon-battery | 274 | 202 |
 | fire-linked | 18 | 7 |
-| ammunition-limited | 169 | 0 |
-| area-or-splash | 110 | 3 |
+| ammunition-limited | 169 | 2 |
+| area-or-splash | 110 | 5 |
 | ion | 69 | 59 |
 
 Fire-linked weapons are not weapon batteries (Starships of the Galaxy, Fire-Linked Weapons) and get no battery rules. Ordinary energy weapons are every executable group that is none of these kinds.
@@ -47,12 +54,12 @@ Fire-linked weapons are not weapon batteries (Starships of the Galaxy, Fire-Link
 | Measure | Groups |
 |---|---|
 | Ammunition-limited groups | 169 |
-| ... printing a payload count | 24 |
-| COMPLETE family (payload printed, launcher identified by its exact designation with a certified capacity, ONE launcher verified) | 0 |
-| ... of those OFFLINE_EXECUTABLE | 0 |
-| Payload and launcher identified, launcher count NOT verified (needs a GM-certified allocation; not armed, not counted) | 18 |
-| Incomplete (no printed payload and/or launcher not identified) | 151 |
-| OFFLINE_EXECUTABLE ammunition-limited groups | 0 |
+| ... printing a payload count | 75 |
+| COMPLETE family (payload printed, launcher identified by its exact designation with a certified capacity, ONE launcher verified) | 2 |
+| ... of those OFFLINE_EXECUTABLE | 2 |
+| Payload and launcher identified, launcher count NOT verified (needs a GM-certified allocation; not armed, not counted) | 64 |
+| Incomplete (no printed payload and/or launcher not identified) | 103 |
+| OFFLINE_EXECUTABLE ammunition-limited groups | 2 |
 
 The ledger (payload, capacity, loaded, reserve, expended; conservation payload = loaded + reserve + expended) runs outside the optional blaster-charge house rule; a launch spends one unit atomically and idempotently per attack, a refused or failed attack spends nothing, the follow-up of a locked-on projectile spends nothing, and reloading is a GM operation that moves reserve to loaded. No published group has a verified single launcher yet, so none is executable; the machinery is proven on a digest-verified synthetic fixture (tests p30).
 
@@ -61,7 +68,7 @@ The ledger (payload, capacity, loaded, reserve, expended; conservation payload =
 | Measure | Groups |
 |---|---|
 | Groups printing an ordinary "N-square" splash or burst | 107 |
-| ... OFFLINE_EXECUTABLE (starship scale only) | 3 |
+| ... OFFLINE_EXECUTABLE (starship scale only) | 5 |
 
 PUBLISHED_RULE (Core, Vehicle Combat): area attacks, including splash and burst-radius weapons, are resolved as attacks on a single target in starship scale unless the weapon is specifically listed as having a starship-scale area attack. The encounter is in starship scale only when it involves vehicles only; with characters on foot it is character scale, where the multi-target area engine does not exist, so these attacks are refused. Explicit starship-scale areas, unsized radii and hit/miss riders stay refused.
 
@@ -78,16 +85,16 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 
 | Reason | Groups |
 |---|---|
-| STOCK_AMMUNITION_LIMITED_UNTRACKED | 169 |
-| STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED | 145 |
-| STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED | 89 |
+| STOCK_AMMUNITION_LIMITED_UNTRACKED | 167 |
+| STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED | 94 |
+| STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED | 80 |
 | STOCK_BATTERY_WEAPON_COUNT_NOT_STATED | 71 |
+| STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED | 64 |
 | STOCK_RANGE_TABLE_NOT_IDENTIFIED | 47 |
 | STOCK_DAMAGE_NOT_PRINTED_IN_RECORD | 43 |
-| STOCK_EVIDENCE_UNMODELED | 36 |
 | STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA | 29 |
+| STOCK_EVIDENCE_UNMODELED | 26 |
 | STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED | 22 |
-| STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED | 18 |
 | STOCK_OPERATOR_NOT_PRINTED | 17 |
 | STOCK_OPERATOR_IS_A_STATION_BATTERY | 17 |
 | STOCK_DAMAGE_QUALIFIED | 17 |
@@ -117,7 +124,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Rebellion Era Campaign Guide | 53 | 94 | 50 | 35 |
 | Scum and Villainy | 13 | 24 | 21 | 13 |
 | Scavenger's Guide to Droids | 1 | 2 | 0 | 0 |
-| Starships of the Galaxy | 105 | 258 | 180 | 96 |
+| Starships of the Galaxy | 105 | 258 | 182 | 97 |
 | Threats of the Galaxy | 5 | 5 | 2 | 2 |
 | Unknown Regions | 26 | 33 | 21 | 18 |
 
@@ -125,7 +132,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 
 | Category | Vehicles | With an executable group |
 |---|---|---|
-| starfighter | 132 | 123 |
+| starfighter | 132 | 124 |
 | space-transport | 99 | 80 |
 | capital-ship | 84 | 73 |
 | walker | 15 | 9 |
@@ -433,6 +440,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Kuat Systems Engineering Firespray-31 Patrol Craft | Starships of the Galaxy p. 84 | 2 / 2 | blaster cannons (5d10x2, pilot, +6); tractor beam (, pilot, +6) |
 | Loronar Corporation Strike-class Medium Cruiser | Starships of the Galaxy p. 135 | 3 / 4 | turbolaser battery (7d10x5, gunner, +13); light turbolaser battery (2d10x5, gunner, +13); ion cannon battery (3d10x5, gunner, +13) |
 | Lusankya | Starships of the Galaxy p. 138 | 4 / 6 | heavy turbolaser battery (11d10x5, gunner, +15); turbolaser battery (8d10x5, gunner, +15); point-defense laser cannon battery (3d10x2, gunner, +15); heavy ion cannon battery (4d10x5, gunner, +15) |
+| MandalMotors StarViper Assault Fighter | Starships of the Galaxy p. 134 | 1 / 2 | proton torpedo launcher (9d10x2, pilot, +6) |
 | Millennium Falcon | Starships of the Galaxy p. 156 | 1 / 3 | quad laser cannon (6d10x2, gunner, +13) |
 | Modified Republic Sienar Systems Armored Star Courier | Starships of the Galaxy p. 128 | 1 / 1 | laser cannons (3d10x5, pilot, +15) |
 | Mon Calamari MC80 Star Cruiser | Starships of the Galaxy p. 114 | 3 / 3 | turbolaser battery (5d10x5, gunner, +15); heavy ion cannon battery (3d10x5, gunner, +11); tractor beam battery (, gunner, +15) |
@@ -464,7 +472,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Slayn & Korpil B-wing/E2 Starfighter | Starships of the Galaxy p. 67 | 2 / 3 | laser cannons (8d10x2, pilot, +8); light ion cannons (4d10x2, gunner, +6) |
 | Slayn & Korpil B-wing Shuttle | Starships of the Galaxy p. 67 | 2 / 2 | laser cannons (6d10x2, pilot, +6); light ion cannons (4d10x2, pilot, +6) |
 | Slayn & Korpil B-wing Starfighter | Starships of the Galaxy p. 66 | 3 / 4 | autoblasters (4d10x2, pilot, +8); laser cannons (7d10x2, pilot, +8); light ion cannons (4d10x2, pilot, +8) |
-| SoroSuub Cutlass-9 Patrol Fighter | Starships of the Galaxy p. 132 | 1 / 2 | laser cannons (4d10x2, pilot, +4) |
+| SoroSuub Cutlass-9 Patrol Fighter | Starships of the Galaxy p. 132 | 2 / 2 | laser cannons (4d10x2, pilot, +4); medium concussion missile (8d10x2, pilot, +4) |
 | Territorial Defense Starfighter | Starships of the Galaxy p. 86 | 1 / 1 | laser cannons (3d10x2, pilot, +6) |
 | Theed Palace Space Vessel Engineering Corps N-1 Royal Starfighter | Starships of the Galaxy p. 118 | 1 / 2 | laser cannons (5d10x2, pilot, +6) |
 | Theta-class Shuttle | Starships of the Galaxy p. 141 | 2 / 2 | quad laser cannon (6d10x2, gunner, +4); laser cannons (4d10x2, gunner, +4) |

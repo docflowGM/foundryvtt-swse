@@ -22,7 +22,7 @@
 import { isBatteryConfigurable, validateStockBatteryConfig } from './vehicle-stock-battery-config.js';
 import { isGmConfigurable, validateStockAmmoConfig, familyFromConfig } from './vehicle-stock-ammo-config.js';
 import { establishPublishedBattery, establishIndependentBatteryWeapon, batteryAssistanceBonus } from './vehicle-weapon-battery.js';
-import { resolveLauncherFamily } from './vehicle-ammunition-ledger.js';
+import { resolveLauncherFamily, matchPrintedPayload } from './vehicle-ammunition-ledger.js';
 import { rangeSlugFromPrintedDesignation } from './vehicle-weapon-range.js';
 
 /** Names the sheet shows: the battery keeps the printed label; its independent single weapon is plainly labelled so it is never mistaken for the battery. */
@@ -47,7 +47,7 @@ const AMMUNITION_LIMITED = /\b(missiles?|torpedo(?:es)?|rockets?|mines?|bombs?|b
  * never seen refuses it too (fail closed). Values that are null mean "the source states nothing" and refuse nothing.
  */
 const INFORMATIONAL_EVIDENCE_KEYS = new Set([
-  'firingArc', 'damageType',
+  'firingArc', 'damageType', 'payloadSource', 'payload',
   'hardwareCount', 'hardwareCountBasis', 'hardwareCountKind', 'hardwareCountStatus', 'hardwareEvidence', 'physicalMountCount', 'physicalMountSource',
   'physicalCountEvidence', 'narrativePhysicalCount', 'printedMultiplicity', 'printedRangedMultiplicity', 'rangedMultiplicity', 'printedRangedGroupCount',
   'printedRangedCount', 'printedRangedWeaponCount', 'firingGroupCountEvidence', 'attackGroupIndex', 'batteryCount', 'batteryComposition',
@@ -117,7 +117,7 @@ export function parseOperatorText(text) {
 }
 
 /** Parse one printed group. Never throws; `reasons` names everything that makes it non-executable. */
-export function parseStockFiringGroup(group, { gmWeaponCount = null } = {}) {
+export function parseStockFiringGroup(group, { gmWeaponCount = null, recordPayloads = null, siblingLabels = [] } = {}) {
   const notes = String(group?.specialNotes ?? '');
   const reasons = [];
   const out = { groupKey: group?.groupKey ?? null, label: group?.label ?? null, attackBonusPrinted: finite(group?.attackBonusPrinted) ? group.attackBonusPrinted : null,
@@ -208,6 +208,12 @@ export function parseStockFiringGroup(group, { gmWeaponCount = null } = {}) {
     // FINITE AMMUNITION (P6C-3D). A family is complete only when the source prints the payload, the launcher is identified by its exact
     // printed designation (with a certified capacity) and the launcher count is verified as exactly one; then the ledger machinery
     // (vehicle-ammunition-ledger.js) can run it. A family that lacks any of that keeps the umbrella refusal plus the specific reasons.
+    // the payload may be printed on the statblock's own Payload line (armament.carriedPayloads) rather than in the group's evidence: reconcile it
+    // for this exact ammunition (one unambiguous entry), recording where it came from
+    // (the group's own evidence may name the same fact `payload`: a vocabulary variant of payloadCount, read as such)
+    if (out.evidence?.payloadCount === undefined && Number.isInteger(out.evidence?.payload) && out.evidence.payload >= 1) out.evidence = { ...out.evidence, payloadCount: out.evidence.payload, payloadSource: 'group evidence: payload' };
+    const printed = out.evidence?.payloadCount === undefined ? matchPrintedPayload(group?.label, recordPayloads, siblingLabels) : null;
+    if (printed) out.evidence = { ...out.evidence, payloadCount: printed.value, payloadSource: `armament.carriedPayloads: ${printed.raw}` };
     const fam = resolveLauncherFamily({ label: group?.label, evidence: out.evidence, battery: out.battery });
     if (fam.status === 'complete') out.ammunition = fam.family;
     else {
@@ -326,11 +332,12 @@ export function assessStockWeaponGroups(record, { gmAmmo = null, gmBattery = nul
   const bab = record?.combat?.baseAttackBonusPrinted;
   const intScore = record?.abilities?.int;
   return {
-    groups: (record?.armament?.firingGroups ?? []).map(g => {
-      let p = parseStockFiringGroup(g);
+    groups: (record?.armament?.firingGroups ?? []).map((g, _i, all) => {
+      const reconcile = { recordPayloads: record?.armament?.carriedPayloads ?? null, siblingLabels: all.map(x => x.label) };
+      let p = parseStockFiringGroup(g, reconcile);
       // GM-certified participating-weapon count of a printed battery (full-battery mode); the source and the gunner count are untouched
       const bcfg = isBatteryConfigurable(p) ? gmBattery?.[p.groupKey] : null;
-      if (bcfg && validateStockBatteryConfig(bcfg, p, record?.identity?.sourceEntryKey).ok) p = { ...parseStockFiringGroup(g, { gmWeaponCount: bcfg.weaponCount }), gmBatteryConfigured: true };
+      if (bcfg && validateStockBatteryConfig(bcfg, p, record?.identity?.sourceEntryKey).ok) p = { ...parseStockFiringGroup(g, { gmWeaponCount: bcfg.weaponCount, ...reconcile }), gmBatteryConfigured: true };
       else if (isBatteryConfigurable(p)) p = { ...p, gmBatteryConfigurable: true };
       const common = [...p.reasons];
       const arc = determineStockArc(record, p);

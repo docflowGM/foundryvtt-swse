@@ -1696,6 +1696,38 @@
       "missing": "-",
       "impact": "A GM presses Initialize supplies (full printed endurance) once per older vehicle.",
       "recommendedAction": "None; this is the no-silent-refill rule."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6C-21"
+      ],
+      "options": [],
+      "id": "P6B-D-081",
+      "component": "Stock launcher groups whose only missing fact is the launcher count (63 groups, 63 vehicles)",
+      "source": "statblock Payload lines (armament.carriedPayloads); SotG pp. 45-46",
+      "status": "RULES_DECISION_REQUIRED",
+      "severity": "IMPORTANT",
+      "reason": "Payload and exact launcher identity are now reconciled from the records; the statblocks print no launcher count, and whether a printed Payload alone is a canonical pool is the owner's question V-P6C-21.",
+      "missing": "A ruling (V-P6C-21) or a printed launcher count.",
+      "impact": "These groups stay GM_CONFIGURED_EXECUTABLE only (never counted as canonical).",
+      "recommendedAction": "Owner decision V-P6C-21."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-082",
+      "component": "Armed vehicles whose canonical record has no firing group although the statblock prints one (4 vehicles)",
+      "source": "cw-bc-714-luxury-transport (double laser cannon), cw-sheathipede-class-shuttle (microtractor-pressor), goi-corona-limited-luxury-groundspeeder (4 heavy laser cannons), ur-landing-sphere (6 turbolaser batteries)",
+      "status": "NONCRITICAL_DEFECT",
+      "severity": "IMPORTANT",
+      "reason": "unarmed-vehicle-certification.json classifies them ARMED_RECORD_GAP from the printed statblock (they stay in the armed denominator).",
+      "missing": "The firing groups in the canonical records (a data repair through the errata path, reviewed against the PDF).",
+      "impact": "4 armed vehicles have no stock weapon at all.",
+      "recommendedAction": "Repair the four records through the errata migration after PDF review."
     }
   ]
 }

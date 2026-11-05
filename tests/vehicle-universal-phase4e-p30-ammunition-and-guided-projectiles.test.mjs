@@ -93,7 +93,8 @@ test('FAMILY: a launcher is complete only with a printed payload, an exactly-des
   // no payload is NOT unlimited ammunition; a designation that is not an exact catalog designation identifies nothing
   assert.deepEqual(L.resolveLauncherFamily(g('proton torpedoes', { hardwareCount: 1 })).reasons, [L.AMMO_REASONS.PAYLOAD_NOT_PRINTED]);
   assert.deepEqual(L.resolveLauncherFamily(g('concussion missiles', { payloadCount: 6, hardwareCount: 1 })).reasons, [L.AMMO_REASONS.LAUNCHER_NOT_IDENTIFIED], 'the size is not stated');
-  assert.deepEqual(L.resolveLauncherFamily(g('medium concussion missile', { payloadCount: 6, hardwareCount: 1 })).reasons, [L.AMMO_REASONS.LAUNCHER_NOT_IDENTIFIED], 'exact match only');
+  assert.equal(L.resolveLauncherFamily(g('medium concussion missile', { payloadCount: 6, hardwareCount: 1 })).status, 'complete', 'singular / plural is grammatical normalization of the exact designation');
+  assert.deepEqual(L.resolveLauncherFamily(g('medium concussion warheads', { payloadCount: 6, hardwareCount: 1 })).reasons, [L.AMMO_REASONS.LAUNCHER_NOT_IDENTIFIED], 'any other wording names no launcher');
   assert.equal(L.resolveLauncherFamily(g('medium concussion missiles', { payloadCount: 20, hardwareCount: 1 })).family.capacity, 16);
 });
 
@@ -153,14 +154,16 @@ test('PROJECTILE (pure): Reflex 30 / 10 HP / -5; created only by an AIMED, GUIDE
 // =====================================================================================================================
 // The gate and the corpus
 // =====================================================================================================================
-test('CORPUS: no published group has a verified single launcher; 18 have payload + launcher but need a GM allocation; none is armed', () => {
+test('CORPUS: 169 finite-ammunition groups; 2 have a COMPLETE source-established family (and run); 64 have payload + launcher but no printed launcher count (GM allocation); the rest lack more', () => {
   const all = docs.flatMap(d => assessStockWeaponGroups(d.flags.swse.universalVehicleSource.source).groups.map(g => ({ key: keyOf(d), g })));
   const ammo = all.filter(x => x.g.reasons.includes('STOCK_AMMUNITION_LIMITED_UNTRACKED') || x.g.ammunition);
   assert.equal(ammo.length, 169);
-  assert.equal(ammo.filter(x => x.g.ammunition).length, 0, 'no complete family');
-  assert.equal(ammo.filter(x => x.g.ammunitionPending).length, 18);
+  assert.deepEqual(ammo.filter(x => x.g.ammunition).map(x => [x.key, x.g.ammunition.launchers, x.g.ammunition.allocation]).sort(),
+    [['sotg-mandalmotors-starviper-assault-fighter', 2, 'printed-launcher-count'], ['sotg-sorosuub-cutlass-9-patrol-fighter', 1, 'single-launcher-verified']]);
+  assert.ok(ammo.filter(x => x.g.ammunition).every(x => x.g.executable), 'a complete family with nothing else blocking runs');
+  assert.equal(ammo.filter(x => x.g.ammunitionPending).length, 64);
   assert.ok(ammo.filter(x => x.g.ammunitionPending).every(x => x.g.reasons.includes(L.AMMO_REASONS.ALLOCATION_REQUIRED) && !x.g.executable));
-  assert.equal(ammo.filter(x => x.g.executable).length, 0, 'finite ammunition is never executable without a complete family');
+  assert.equal(ammo.filter(x => x.g.executable).length, 2, 'finite ammunition is executable only with a complete family');
 });
 
 test('FIXTURE: the synthetic ship has a COMPLETE launcher family and arms one Item whose ledger starts loaded 3 / reserve 3', () => {

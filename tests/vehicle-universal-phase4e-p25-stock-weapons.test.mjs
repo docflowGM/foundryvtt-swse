@@ -39,6 +39,10 @@ let seq = 0;
 function persistItemsFor(v) {
   ActorEngine.createEmbeddedDocuments = async (_a, _n, data) => { for (const x of data) { const id = 'i' + (++seq); v.items.set(id, { id, ...structuredClone(x), actor: v }); } };
   ActorEngine.deleteEmbeddedDocuments = async (_a, _n, ids) => { for (const id of ids) v.items.delete(id); };
+  // a finite-ammunition stock group (a complete printed family) keeps its ledger on its Item and the arming marker on the vehicle: land those writes in memory
+  const setPath = (obj, key, value) => { const parts = key.split('.'); let o = obj; for (const q of parts.slice(0, -1)) o = (o[q.replace(/^==/, '')] ??= {}); o[parts.at(-1).replace(/^==/, '')] = structuredClone(value); };
+  ActorEngine.updateOwnedItems = async (actor, ups) => { for (const u of ups) { const it = actor.items.get(u._id); for (const [k, val] of Object.entries(u)) if (k !== '_id') setPath(it, k, val); } };
+  ActorEngine.updateActor = async (actor, data) => { for (const [k, val] of Object.entries(data)) setPath(actor, k, val); };
 }
 async function armed(key, over) {
   const v = importVehicle(key, over); persistItemsFor(v);
@@ -407,8 +411,8 @@ test('CORPUS: each executable stock group arms, attacks at its printed total, an
     }
   }
   assert.deepEqual(failures, []);
-  assert.equal(provenGroups.size, 528, 'the corpus-wide count of offline-executable stock GROUPS (each counted once)');
-  assert.equal(provenModes, 529, 'one group (Krayt\'s Honor turbolaser battery) supports two modes');
+  assert.equal(provenGroups.size, 530, 'the corpus-wide count of offline-executable stock GROUPS (each counted once)');
+  assert.equal(provenModes, 531, 'one group (Krayt\'s Honor turbolaser battery) supports two modes');
   setPolicy(undefined);
 });
 
@@ -417,9 +421,9 @@ test('COVERAGE REPORT: current, and its executable counts are exactly what the C
   execFileSync(process.execPath, ['tools/audits/vehicles/build-stock-weapon-coverage.mjs', '--check']);
   const { readFileSync } = await import('node:fs');
   const cov = JSON.parse(readFileSync('data/audits/vehicles/stock-weapon-coverage.json', 'utf8'));
-  assert.deepEqual([cov.totals.vehicles, cov.totals.groups, cov.totals.offlineExecutableGroups, cov.totals.vehiclesWithOfflineExecutableGroup, cov.totals.liveVerifiedVehicles], [429, 846, 528, 331, 0]);
+  assert.deepEqual([cov.totals.vehicles, cov.totals.groups, cov.totals.offlineExecutableGroups, cov.totals.vehiclesWithOfflineExecutableGroup, cov.totals.liveVerifiedVehicles], [429, 846, 530, 332, 0]);
   const exec = cov.vehicles.flatMap(v => v.groups.filter(g => g.offlineExecutable));
-  assert.equal(exec.length, 528);
+  assert.equal(exec.length, 530);
   for (const g of cov.vehicles.flatMap(v => v.groups)) {
     assert.equal(g.liveVerified, false);
     if (!g.offlineExecutable) { assert.ok(g.refusals.length > 0, g.groupKey + ' has a named refusal'); assert.equal(g.attackReadiness, 'REFUSED'); }
@@ -433,14 +437,19 @@ test('AMMUNITION-LIMITED groups are never executable (no magazine authority); an
   const all = docs.flatMap(d => assessStockWeaponGroups(d.flags.swse.universalVehicleSource.source).groups.map(g => ({ key: keyOf(d), g })));
   const ammo = all.filter(x => /\b(missiles?|torpedo(es)?|rockets?|mines?|bombs?|grenades?|launchers?|projectiles?)\b/i.test(x.g.label));
   assert.ok(ammo.length > 50, 'there are many ammunition-based groups');
-  for (const x of ammo) { assert.equal(x.g.executable, false, `${x.key}: ${x.g.label}`); assert.ok(x.g.reasons.includes('STOCK_AMMUNITION_LIMITED_UNTRACKED')); }
+  // a finite-ammunition group runs only with a COMPLETE source-established family (printed payload, exact launcher, printed launcher count): otherwise it is refused
+  for (const x of ammo) {
+    if (x.g.ammunition) continue;
+    assert.equal(x.g.executable, false, `${x.key}: ${x.g.label}`); assert.ok(x.g.reasons.includes('STOCK_AMMUNITION_LIMITED_UNTRACKED'));
+  }
+  assert.ok(ammo.filter(x => x.g.executable).every(x => x.g.ammunition), 'every executable ammunition group has a complete family');
   // a name alone never types damage: an executable ion-named group has the ion type stated by its source (P6C-2C, see p27)
   for (const x of all.filter(y => /\bion\b/i.test(y.g.label))) {
     if (x.g.executable) assert.equal(x.g.damage.type, 'ion', `${x.key}: ${x.g.label}`);
     else assert.ok(x.g.reasons.length > 0, `${x.key}: ${x.g.label}`);
   }
-  // the executable set contains no wording that denotes finite ammunition
-  assert.equal(all.filter(x => x.g.executable && /missile|torpedo|mine|rocket|bomb|grenade|launcher/i.test(x.g.label)).length, 0);
+  // the executable set contains finite-ammunition wording ONLY for the complete source-established families (the Starviper's two printed launchers, the Cutlass-9's one)
+  assert.deepEqual(all.filter(x => x.g.executable && /missile|torpedo|mine|rocket|bomb|grenade|launcher/i.test(x.g.label)).map(x => x.key).sort(), ['sotg-mandalmotors-starviper-assault-fighter', 'sotg-sorosuub-cutlass-9-patrol-fighter']);
 });
 
 test('COPILOT-operated stock groups: armed, fire from the copilot station, and get no pilot bonus', async () => {
@@ -553,7 +562,7 @@ test('EVIDENCE GATE: area, variant-specific, qualitatively-aimed and specially-n
 });
 
 test('EVIDENCE GATE invariant: no executable group carries an evidence key outside the understood set', () => {
-  const understood = new Set(['firingArc', 'damageType', 'hardwareCount', 'hardwareCountBasis', 'hardwareCountKind', 'hardwareCountStatus', 'hardwareEvidence', 'physicalMountCount', 'physicalMountSource', 'physicalCountEvidence', 'narrativePhysicalCount', 'printedMultiplicity', 'printedRangedMultiplicity', 'rangedMultiplicity', 'printedRangedGroupCount', 'printedRangedCount', 'printedRangedWeaponCount', 'firingGroupCountEvidence', 'attackGroupIndex', 'batteryCount', 'batteryComposition', 'gunnerCountPrinted', 'sourceEvidenceStatus', 'printedWeaponDesignation', 'fireLink', 'fireLinkOption', 'autofire', 'autofireBonus', 'autofireAttackBonus', 'auto', 'ammunition', 'attackScale', 'specialAttackNotation', 'qualitativeDirection', 'applicableVariants']);
+  const understood = new Set(['splash', 'payload', 'payloadCount', 'payloadSource', 'firingArc', 'damageType', 'hardwareCount', 'hardwareCountBasis', 'hardwareCountKind', 'hardwareCountStatus', 'hardwareEvidence', 'physicalMountCount', 'physicalMountSource', 'physicalCountEvidence', 'narrativePhysicalCount', 'printedMultiplicity', 'printedRangedMultiplicity', 'rangedMultiplicity', 'printedRangedGroupCount', 'printedRangedCount', 'printedRangedWeaponCount', 'firingGroupCountEvidence', 'attackGroupIndex', 'batteryCount', 'batteryComposition', 'gunnerCountPrinted', 'sourceEvidenceStatus', 'printedWeaponDesignation', 'fireLink', 'fireLinkOption', 'autofire', 'autofireBonus', 'autofireAttackBonus', 'auto', 'ammunition', 'attackScale', 'specialAttackNotation', 'qualitativeDirection', 'applicableVariants']);
   const sizeKey = /smaller|small|vs|against/i;
   for (const d of docs) for (const g of assessStockWeaponGroups(d.flags.swse.universalVehicleSource.source).groups.filter(x => x.executable)) {
     for (const [k, v] of Object.entries(g.evidence ?? {})) {

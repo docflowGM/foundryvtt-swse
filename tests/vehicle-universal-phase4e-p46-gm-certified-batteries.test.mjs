@@ -47,7 +47,7 @@ test('SOURCE: the canonical count never includes certifications; the certifiable
     if (g.modes?.['full-battery']?.executable) full++;
     assert.notEqual(g.gmBatteryConfigured, true);
   }
-  assert.equal(canonical, 528);
+  assert.equal(canonical, 530);
   assert.equal(full, 1, 'canonically only one group has a printed weapon count');
   assert.ok(certifiable >= 150, `${certifiable} printed batteries can be certified`);
 });

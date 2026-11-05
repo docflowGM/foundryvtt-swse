@@ -94,6 +94,10 @@ test('STOCK: the executable splash groups follow the same rule; their single-tar
   let n = 0;
   ActorEngine.createEmbeddedDocuments = async (_a, _n, data) => { for (const x of data) { const id = 'si' + (++n); veh.items.set(id, { id, ...structuredClone(x), actor: veh }); } };
   ActorEngine.deleteEmbeddedDocuments = async (_a, ids) => {};
+  // (a finite-ammunition splash group keeps its ledger on its Item and the arming marker on the vehicle: land those writes in memory)
+  const setP = (obj, key, value) => { const parts = key.split('.'); let o = obj; for (const q of parts.slice(0, -1)) o = (o[q.replace(/^==/, '')] ??= {}); o[parts.at(-1).replace(/^==/, '')] = structuredClone(value); };
+  ActorEngine.updateOwnedItems = async (actor, ups) => { for (const u of ups) { const it = actor.items.get(u._id); for (const [k, val] of Object.entries(u)) if (k !== '_id') setP(it, k, val); } };
+  ActorEngine.updateActor = async (actor, data) => { for (const [k, val] of Object.entries(data)) setP(actor, k, val); };
   globalThis.game.user.id = 'u1';
   await armStockWeaponsOnCreate(veh, {}, 'u1');
   const split = veh.items.contents.filter(i => i.flags?.swse?.vehicleStockWeapon);

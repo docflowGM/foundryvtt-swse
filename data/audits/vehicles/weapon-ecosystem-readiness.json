@@ -9,7 +9,7 @@
   "stockGroups": 846,
   "stockGroupsOwnedByAFamily": 801,
   "stockGroupsUnclassified": 45,
-  "stockOfflineExecutableGroups": 528,
+  "stockOfflineExecutableGroups": 530,
   "familiesFullyOperationalOffline": 6,
   "liveVerifiedFamilies": 0
  },
@@ -150,7 +150,7 @@
   },
   "NO_COMPLETE_STOCK_LAUNCHER_FAMILY": {
    "class": "DATA",
-   "text": "No published firing group carries a verified single launcher, so no stock launcher group is armed; 18 groups wait for a GM-certified launcher allocation."
+   "text": "No published firing group carries a verified launcher count, so no stock launcher group is armed canonically. Payload and exact launcher identity are reconciled from the statblock Payload lines for 63 groups; the launcher count is the single missing fact (owner question V-P6C-21); those groups can only be GM-configured."
   },
   "SOURCE_ROW_NOT_RECONCILED": {
    "class": "SOURCE",
@@ -875,9 +875,9 @@
    ],
    "stock": {
     "groups": 55,
-    "offlineExecutable": 0,
+    "offlineExecutable": 1,
     "vehicles": 55,
-    "vehiclesWithExecutableGroup": 0,
+    "vehiclesWithExecutableGroup": 1,
     "basis": "PARTITION: owned by this family"
    },
    "aftermarket": {
@@ -909,7 +909,7 @@
     {
      "code": "NO_COMPLETE_STOCK_LAUNCHER_FAMILY",
      "class": "DATA",
-     "text": "No published firing group carries a verified single launcher, so no stock launcher group is armed; 18 groups wait for a GM-certified launcher allocation."
+     "text": "No published firing group carries a verified launcher count, so no stock launcher group is armed canonically. Payload and exact launcher identity are reconciled from the statblock Payload lines for 63 groups; the launcher count is the single missing fact (owner question V-P6C-21); those groups can only be GM-configured."
     },
     {
      "code": "CAPACITY_EXPANSION_DEFERRED",
@@ -1007,9 +1007,9 @@
    ],
    "stock": {
     "groups": 71,
-    "offlineExecutable": 0,
+    "offlineExecutable": 1,
     "vehicles": 71,
-    "vehiclesWithExecutableGroup": 0,
+    "vehiclesWithExecutableGroup": 1,
     "basis": "PARTITION: owned by this family"
    },
    "aftermarket": {
@@ -1041,7 +1041,7 @@
     {
      "code": "NO_COMPLETE_STOCK_LAUNCHER_FAMILY",
      "class": "DATA",
-     "text": "No published firing group carries a verified single launcher, so no stock launcher group is armed; 18 groups wait for a GM-certified launcher allocation."
+     "text": "No published firing group carries a verified launcher count, so no stock launcher group is armed canonically. Payload and exact launcher identity are reconciled from the statblock Payload lines for 63 groups; the launcher count is the single missing fact (owner question V-P6C-21); those groups can only be GM-configured."
     },
     {
      "code": "CAPACITY_EXPANSION_DEFERRED",
