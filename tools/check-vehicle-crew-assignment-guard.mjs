@@ -135,10 +135,18 @@ if (serviceText) {
 // assignment service writes — not a second, independent crew-lookup
 // implementation.
 const crewRouter = read(CREW_ROUTER_FILE);
+const crewAuthorityFile = 'scripts/engine/crew/vehicle-crew-actor-authority.js';
+const crewAuthority = read(crewAuthorityFile);
 if (!crewRouter) {
-  problems.push(`${CREW_ROUTER_FILE} not found.`);
-} else if (!/positions\s*=\s*system\.crewPositions/.test(crewRouter)) {
-  problems.push(`${CREW_ROUTER_FILE}: does not read system.crewPositions directly — attack-operator resolution must read the same field VehicleCrewAssignmentService writes.`);
+  problems.push(CREW_ROUTER_FILE + ' not found.');
+} else if (!/resolveVehicleCrewActor\(vehicle, stationKey\)/.test(crewRouter) ||
+           !/vehicle-crew-actor-authority\.js/.test(crewRouter)) {
+  problems.push(CREW_ROUTER_FILE + ': must delegate to the shared vehicle crew actor authority.');
+}
+if (!crewAuthority ||
+    !/system\.crewPositions\?\.\[stationKey\]/.test(crewAuthority) ||
+    !/getVehicleCrewEntry\(vehicle,stationKey\)/.test(crewAuthority)) {
+  problems.push(crewAuthorityFile + ': shared crew resolution must read system.crewPositions by exact station key.');
 }
 if (serviceText && !/system\.crewPositions\.\$\{targetStation\}/.test(serviceText)) {
   problems.push(`${SERVICE_FILE}: does not write system.crewPositions.\${targetStation} — assignment writes and attack-operator reads must target the same field.`);

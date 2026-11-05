@@ -96,6 +96,9 @@ export function resolveDamageDisposition(workflowContext = null, options = {}) {
   const halfDamageOnMiss = ruleData.halfDamageOnMiss === true || options.halfDamageOnMiss === true;
   const damageOnMiss = ruleData.damageOnMiss === true || options.damageOnMiss === true;
 
+  if (ruleData.noDamage === true) {
+    return { damageAllowed: false, multiplier: 0, reason: 'This weapon deals no damage.', hit, areaAttack, burstFire, autofire, halfDamageOnMiss, damageOnMiss };
+  }
   if (natural1) {
     return {
       damageAllowed: false,

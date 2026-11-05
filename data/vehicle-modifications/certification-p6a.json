@@ -1,0 +1,1504 @@
+{
+ "schema": "swse.vehicle.p6a.modification-certification-overlay.v1",
+ "note": "Rows from the independent P6A PDF review whose catalog values equal every printed cell: SOURCE_VERIFIED, or MECHANIC_SPECIFIED when the effect is registered in vehicle-modification-effects.js and tested (P6B-2). certification.json wins where both exist.",
+ "rows": {
+  "anti-boarding-systems": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "com-jammers": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "reinforced-keel": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "reinforced-keel-boarding": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "security-bracing": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "autoblaster": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "blaster-cannon-light": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "blaster-cannon-medium": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "blaster-cannon-heavy": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "cannon-double": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "cannon-quad": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "cannon-enhancement": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "cannon-enhancement-advanced": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "concussion-missile-launcher-light": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "concussion-missile-light": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "concussion-missile-launcher-medium": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "concussion-missile-medium": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "concussion-missile-launcher-heavy": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "concussion-missile-heavy": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "ion-cannon-light": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "ion-cannon-medium": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "ion-cannon-heavy": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "laser-cannon-light": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "laser-cannon-medium": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "laser-cannon-heavy": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "proton-torpedo-launcher": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "proton-torpedo": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "turbolaser-light": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "turbolaser-medium": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "turbolaser-heavy": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "tractor-beam": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p44-gravity-well.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "point-defense": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p34-point-defense.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "fire-linked-2": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "fire-linked-4": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "space-mine-launcher": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p45-space-mines.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "space-mine-standard": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "ion-bomb-rack": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p49-ion-bombs.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "ion-bomb": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "shieldbuster-torpedo-launcher": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "shieldbuster-torpedo": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "discord-missile-launcher": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_PROSE_REVIEWED_P6A",
+   "book": "Threats of the Galaxy",
+   "printedPage": 142,
+   "printedPageRange": [
+    142,
+    142
+   ],
+   "table": "Discord Missile Launcher",
+   "pageResolution": "pdf-table-page"
+  },
+  "discord-missile": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_PROSE_REVIEWED_P6A",
+   "book": "Threats of the Galaxy",
+   "printedPage": 142,
+   "printedPageRange": [
+    142,
+    142
+   ],
+   "table": "Discord Missile Launcher",
+   "pageResolution": "pdf-table-page"
+  },
+  "gravity-mine-launcher": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Legacy Era Campaign Guide",
+   "printedPage": 191,
+   "printedPageRange": [
+    191,
+    191
+   ],
+   "table": "Gravity Mines sidebar",
+   "pageResolution": "pdf-table-page"
+  },
+  "gravity-mine-standard": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Legacy Era Campaign Guide",
+   "printedPage": 191,
+   "printedPageRange": [
+    191,
+    191
+   ],
+   "table": "Gravity Mines sidebar",
+   "pageResolution": "pdf-table-page"
+  },
+  "droid-jammer": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "gravity-well-projector": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p44-gravity-well.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "docking-gun": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "fire-linked-optional": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "ion-cannon-hapan-triple": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "space-mine-launcher-heavy": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p45-space-mines.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "space-mine-advanced": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "space-mine-heavy": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 47,
+   "printedPageRange": [
+    47,
+    47
+   ],
+   "table": "3-5",
+   "pageResolution": "pdf-table-page"
+  },
+  "gravity-mine-magnetic": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Legacy Era Campaign Guide",
+   "printedPage": 191,
+   "printedPageRange": [
+    191,
+    191
+   ],
+   "table": "Gravity Mines sidebar",
+   "pageResolution": "pdf-table-page"
+  },
+  "chaff-gun": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Galaxy at War",
+   "printedPage": 67,
+   "printedPageRange": [
+    67,
+    67
+   ],
+   "table": "2-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "defoliator-launcher": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Galaxy at War",
+   "printedPage": 67,
+   "printedPageRange": [
+    67,
+    67
+   ],
+   "table": "2-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "defoliator-shell": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Galaxy at War",
+   "printedPage": 67,
+   "printedPageRange": [
+    67,
+    67
+   ],
+   "table": "2-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "cargo-jettison": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "cargo-pod-light": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "cargo-pod-medium": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "cargo-pod-heavy": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "cloaking-hibridium": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "cloaking-stygium": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "cryogenic-chambers": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "docking-clamps": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "droid-repair-team": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "escape-pod-small": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "escape-pod-large": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "extended-range": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "hangar-bay": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "hangar-bay-concealed": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "holonet-transceiver": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "hyper-transceiver": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "luxury-basic": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "luxury-advanced": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "luxury-extreme": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "medical-suite": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "passenger-seating": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "passenger-quarters": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "sensor-array-2": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "sensor-array-4": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "sensor-array-6": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "sensor-enhancement": {
+   "status": "MECHANIC_SPECIFIED",
+   "effectModule": "scripts/domain/vehicles/vehicle-modification-effects.js",
+   "effectTest": "tests/vehicle-universal-phase4e-p19-p6b2-accessories.test.mjs",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "slave-circuits-basic": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "slave-circuits-advanced": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "slave-circuits-recall": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "smuggler-compartments": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "transponder-iff": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "transponder-masked": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "transponder-disguised-1": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "transponder-disguised-2": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "transponder-disguised-3": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Starships of the Galaxy",
+   "printedPage": 49,
+   "printedPageRange": [
+    49,
+    49
+   ],
+   "table": "3-7",
+   "pageResolution": "pdf-table-page"
+  },
+  "amphibious-seals": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "auxiliary-generators-2": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "auxiliary-generators-4": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "auxiliary-generators-6": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "backup-battery": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "baffled-drive": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "cockpit-ejection": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "cofferdam": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "environmental-filters": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "fuel-converters": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "grappler-mag": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "hardpoint": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "hidden-cargo-25": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "hidden-cargo-50": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "hidden-cargo-75": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "holding-cells-25": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "holding-cells-50": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "holding-cells-75": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "interrogation-chamber": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "personalized-controls": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "sensor-baffling": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "sensor-decoy": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "sensor-mask": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "workshop": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "plasma-punch": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "plasma-torch": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  },
+  "tractor-clamp": {
+   "status": "SOURCE_VERIFIED",
+   "evidence": "PDF_REVIEWED_P6A",
+   "book": "Scum and Villainy",
+   "printedPage": 58,
+   "printedPageRange": [
+    58,
+    58
+   ],
+   "table": "2-10",
+   "pageResolution": "pdf-table-page"
+  }
+ }
+}

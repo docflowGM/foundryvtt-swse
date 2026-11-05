@@ -18,7 +18,7 @@ import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-
 import { calculateFinalCost } from "/systems/foundryvtt-swse/scripts/engine/store/pricing.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { VehicleCustomizationRouter } from "/systems/foundryvtt-swse/scripts/applications/vehicle/vehicle-customization-router.js";
-import { VehicleModificationManager } from "/systems/foundryvtt-swse/scripts/apps/vehicle-modification-manager.js";
+import { evaluateVehicleMerchantPurchase } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-store-eligibility.js";
 import { launchNewProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { getRandomDialogue } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
 import { SWSEVehicleHandler } from "/systems/foundryvtt-swse/scripts/actors/vehicle/swse-vehicle-handler.js";
@@ -334,9 +334,9 @@ async function revalidateCart(store, actor, originalTotal) {
                 };
             }
 
-            const priceDiff = Math.abs(currentPrice - vehicle.cost);
-            const threshold = vehicle.cost * 0.05;
-            if (priceDiff > threshold) {
+            // Vehicles are charged exactly the price the player reviewed: any drift
+            // (no tolerance) sends the cart back for review.
+            if (currentPrice !== vehicle.cost) {
                 return {
                     valid: false,
                     error: `Price of ${vehicle.condition} "${vehicle.name}" changed. Please review your cart.`
@@ -346,11 +346,15 @@ async function revalidateCart(store, actor, originalTotal) {
 
         return { valid: true, error: null };
     } catch (err) {
-        SWSELogger.warn('StoreCheckout: Cart re-validation failed, proceeding anyway', {
-            error: err.message
+        // Fail closed: a cart that cannot be verified is never purchased.
+        SWSELogger.error('StoreCheckout: Cart re-validation failed; purchase blocked', {
+            error: err?.message
         });
-        // Non-fatal: if validation fails, allow purchase to proceed
-        return { valid: true, error: null };
+        return {
+            valid: false,
+            error: 'Your cart could not be verified, so nothing was purchased and no credits were charged.',
+            diagnostic: String(err?.message ?? err)
+        };
     }
 }
 
@@ -505,6 +509,12 @@ export async function buyDroid(store, actorId) {
  * @param {string} condition - "new" or "used"
  */
 export async function buyVehicle(store, actorId, condition) {
+    return withPurchaseLock(store?.actor?.id, () => buyVehicleUnguarded(store, actorId, condition), () => {
+        ui.notifications.warn('A purchase is already in progress.');
+    });
+}
+
+async function buyVehicleUnguarded(store, actorId, condition) {
     if (!actorId) {
         ui.notifications.warn(storeI18n('SWSE.Store.Notifications.InvalidVehicleSelection'));
         return;
@@ -521,12 +531,16 @@ export async function buyVehicle(store, actorId, condition) {
     // legacy support only and may not include GM policy overlays.
     let vehicleTemplate = store.itemsById?.get(actorId) || game.actors.get(actorId);
 
-    // If not found in world, search compendiums
+    // Never fall back to the retired catch-all vehicles pack. New canonical
+    // inventory is spread over 11 source-specific Actor packs; identify
+    // publications by sourceEntryKey or exact indexed document ID.
     if (!vehicleTemplate) {
-        const pack = game.packs.get('foundryvtt-swse.vehicles');  // Fixed typo: was 'foundryvtt-foundryvtt-swse'
-        if (pack) {
-            vehicleTemplate = await pack.getDocument(actorId);
-        }
+        const { VehiclePackDataLoader } = await import('/systems/foundryvtt-swse/scripts/core/vehicle-pack-data-loader.js');
+        const index = await VehiclePackDataLoader.loadVehicleIndex();
+        const matches = index.filter(entry =>
+            entry.id === actorId || entry.sourceEntryKey === actorId || entry.documentId === actorId);
+        if (matches.length === 1)
+            vehicleTemplate = await VehiclePackDataLoader.loadVehicleDocument(matches[0]);
     }
 
     if (!vehicleTemplate) {
@@ -559,6 +573,25 @@ export async function buyVehicle(store, actorId, condition) {
         return;
     }
 
+    // P0 source preflight: construct and validate the exact source-backed
+    // Actor mutation BEFORE asking StoreEngine to debit credits. Index-only
+    // views may omit flags, so hydrate the full canonical Actor from its
+    // sourceEntryKey. Never purchase a legacy or partial vehicle record.
+    let vehiclePlans;
+    try {
+        vehiclePlans = await createVehiclePlans([{
+            id: actorId,
+            name: vehicleTemplate.name,
+            template: vehicleTemplate,
+            condition,
+            cost: finalCost
+        }], store.itemsById);
+    } catch (err) {
+        SWSELogger.error('SWSE Store | Vehicle source preflight failed:', err);
+        ui.notifications.warn('Vehicle purchase unavailable: canonical source record could not be verified.');
+        return;
+    }
+
     // Confirm purchase
     const confirmed = await SWSEDialogV2.confirm({
         title: 'Confirm Vehicle Purchase',
@@ -577,12 +610,7 @@ export async function buyVehicle(store, actorId, condition) {
             totalCost: finalCost,
             itemGrantCallback: async (actor, items) => {
                 // PHASE 1: Return MutationPlans instead of mutating directly
-                return await createVehiclePlans([{
-                    id: actorId,
-                    name: vehicleTemplate.name,
-                    template: vehicleTemplate,
-                    condition: condition
-                }], store.itemsById);
+                return vehiclePlans;
             }
         });
 
@@ -618,48 +646,11 @@ export async function createCustomDroid(actor, closeCallback) {
  * @param {Function} closeCallback - Callback to close the store
  */
 export async function createCustomStarship(actor, closeCallback) {
-    const credits = LedgerService.getCurrentCredits(actor);
-
-    if (!VehicleModificationManager._initialized) {
-        await VehicleModificationManager.init();
-    }
-
-    const stockShips = VehicleModificationManager.getStockShips();
-    const frameCosts = stockShips.map(ship => normalizeCredits(ship.cost)).filter(cost => cost > 0);
-    const minimumFrameCost = frameCosts.length ? Math.min(...frameCosts) : 30000;
-
-    if (credits < minimumFrameCost) {
-        ui.notifications.warn(storeI18n('SWSE.Store.Notifications.NeedCreditsForStarship', { required: minimumFrameCost.toLocaleString() }));
-        return;
-    }
-
-    // Confirm
-    const confirmed = await SWSEDialogV2.confirm({
-        title: storeI18n('SWSE.Store.Dialogs.BuildCustomStarship'),
-        content: `<p>Enter Marl Skindar's shipyard builder?</p>
-                 <p>Select a stock frame, then customize it with real vehicle modification data.</p>
-                 <p><strong>Budget:</strong> your current wallet (${credits.toLocaleString()} credits), not a fixed chargen pool.</p>
-                 <p><strong>Minimum frame cost:</strong> ${minimumFrameCost.toLocaleString()} credits</p>
-                 <p><em>Restricted, military, and high-value builds may route to GM approval.</em></p>`,
-        defaultYes: true
-    });
-
-    if (!confirmed) {return;}
-
-    try {
-        // Close this store window
-        if (closeCallback) {
-            closeCallback();
-        }
-
-        // Launch store-construction shipyard lane
-        VehicleCustomizationRouter.openVehicleCustomization(actor, {
-            contextMode: 'storeConstruction'
-        });
-    } catch (err) {
-        SWSELogger.error('SWSE Store | Failed to launch starship builder:', err);
-        ui.notifications.error(storeI18n('SWSE.Store.Notifications.FailedOpenStarshipBuilder'));
-    }
+    // The old builder started from data/stock-ships.json frames, which is no longer
+    // a stock authority. Published hulls are bought from the vehicle catalog and
+    // modified through certified installations (see rules decisions V-P2-01..04).
+    ui.notifications.warn('The legacy starship builder is retired. Buy a published hull from the vehicle catalog; modifications become available once certified.');
+    return;
 }
 
 /**
@@ -919,6 +910,9 @@ async function createDroidPlans(cartDroids) {
 async function createVehiclePlans(cartVehicles, itemsById) {
   // Import VehicleFactory dynamically to avoid circular deps
   const { VehicleFactory } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-factory.js');
+  const { VehiclePackDataLoader } = await import('/systems/foundryvtt-swse/scripts/core/vehicle-pack-data-loader.js');
+  const index = await VehiclePackDataLoader.loadVehicleIndex();
+  const { getVehicleRuntimeProjection } = await import('/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js');
 
   const plans = [];
 
@@ -928,10 +922,41 @@ async function createVehiclePlans(cartVehicles, itemsById) {
       throw new Error(`Vehicle template not found for id=${vehicle.id}`);
     }
 
-    // PHASE 5: Use VehicleFactory to build MutationPlan
+    // A store card is a catalog view, not a source Actor. Resolve by exact
+    // publication identity and hydrate the one owning canonical pack.
+    const key = template.sourceEntryKey ?? template.system?.vehicleSourceEntryKey ??
+      template.raw?.system?.vehicleSourceEntryKey ??
+      template.doc?.system?.vehicleSourceEntryKey ??
+      template.template?.system?.vehicleSourceEntryKey;
+    const matches = index.filter(entry => key
+      ? entry.sourceEntryKey === key
+      : entry.id === vehicle.id || entry.documentId === vehicle.id);
+    if (matches.length !== 1)
+      throw new Error('UNIVERSAL_VEHICLE_STORE_SOURCE_IDENTITY_REQUIRED: ' + String(vehicle.id));
+    const canonicalActor = await VehiclePackDataLoader.loadVehicleDocument(matches[0]);
+    if (!canonicalActor)
+      throw new Error('UNIVERSAL_VEHICLE_STORE_DOCUMENT_UNAVAILABLE: ' + matches[0].sourceEntryKey);
+    const projection = getVehicleRuntimeProjection(canonicalActor);
+    if (projection.kind !== 'canonical')
+      throw new Error('UNIVERSAL_VEHICLE_STORE_NOT_CANONICAL: ' + matches[0].sourceEntryKey);
+    // Re-evaluate source eligibility for THIS condition under the transaction: the
+    // published price state must allow it (used needs a published used price) and
+    // the store's offer must be a positive price. No GM override is wired here.
+    // The charge must equal the Store's own policy-applied offer for this item (looked up
+    // by id in the merchant index), never just a cart value the client holds.
+    const merchantItem = itemsById?.get(vehicle.id) ?? template;
+    const condition = vehicle.condition === 'used' ? 'used' : 'new';
+    const verdict = evaluateVehicleMerchantPurchase(canonicalActor.toObject().flags.swse.universalVehicleSource.source, {
+      condition,
+      merchantPrice: getVehicleConditionCost(merchantItem, condition),
+      cartPrice: vehicle.cost ?? null
+    });
+    if (!verdict.ok)
+      throw new Error('UNIVERSAL_VEHICLE_STORE_NOT_ELIGIBLE: ' + matches[0].sourceEntryKey + ': ' + verdict.reasons.join(','));
+
     try {
       const plan = VehicleFactory.buildMutationPlan({
-        template: template,
+        template: canonicalActor,
         condition: vehicle.condition
       });
       plans.push(plan);
@@ -1101,7 +1126,24 @@ async function submitStoreItemApprovalRequest(actor, approvalItems = []) {
  * @param {Function} animateNumberCallback - Callback to animate numbers
  * @returns {Promise<Object>} { success: boolean, transactionId?: string, total?: number, error?: string }
  */
+const purchasesInFlight = new Set();
+
+/** One checkout/vehicle purchase per wallet actor at a time (double-click / concurrent clients). */
+async function withPurchaseLock(actorId, work, onBusy) {
+    const key = String(actorId ?? '');
+    if (!key || purchasesInFlight.has(key)) return onBusy();
+    purchasesInFlight.add(key);
+    try { return await work(); } finally { purchasesInFlight.delete(key); }
+}
+
 export async function checkout(store, animateNumberCallback) {
+    return withPurchaseLock(store?.actor?.id, () => checkoutUnguarded(store, animateNumberCallback), () => {
+        ui.notifications.warn('A purchase is already in progress.');
+        return { success: false, error: 'purchase-in-progress' };
+    });
+}
+
+async function checkoutUnguarded(store, animateNumberCallback) {
     const actor = store.actor;
     if (SettingsHelper.getSafe('storeOpen', true) !== true) {
         ui.notifications.warn(storeI18n('SWSE.Store.Notifications.StoreClosed'));
@@ -1164,6 +1206,13 @@ export async function checkout(store, animateNumberCallback) {
             return { success: false, error: cartValidation.error };
         }
 
+        // Compile source-backed vehicle plans before the transactional debit.
+        // A stale cart view, unknown source price, or incomplete canonical
+        // Actor cannot fail only AFTER the character has spent credits.
+        const stagedVehiclePlans = store.cart.vehicles?.length > 0
+            ? await createVehiclePlans(store.cart.vehicles, store.itemsById)
+            : [];
+
         // Execute engine transaction
         const result = await StoreEngine.purchase({
             actor,
@@ -1182,10 +1231,8 @@ export async function checkout(store, animateNumberCallback) {
                     plans.push(...(await createDroidPlans(store.cart.droids)));
                 }
 
-                // Compile vehicle plans
-                if (store.cart.vehicles?.length > 0) {
-                    plans.push(...(await createVehiclePlans(store.cart.vehicles, store.itemsById)));
-                }
+                // Vehicle plans were source-verified before debiting credits.
+                plans.push(...stagedVehiclePlans);
 
                 return plans;
             }

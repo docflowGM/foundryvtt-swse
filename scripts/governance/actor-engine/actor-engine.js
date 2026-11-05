@@ -1,4 +1,5 @@
 // scripts/actor-engine.js
+import { getEffectiveRechargeShieldsAmount } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-published-derived.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 import { applyActorUpdateAtomic } from "/systems/foundryvtt-swse/scripts/utils/actor-utils.js";
 import { MutationInterceptor } from "/systems/foundryvtt-swse/scripts/governance/mutation/MutationInterceptor.js";
@@ -1499,6 +1500,8 @@ export const ActorEngine = {
    */
   async rechargeShields(actor, { amount = 5 } = {}) {
     if (!actor) {throw new Error('rechargeShields() requires actor');}
+    // Regenerating shields (certified installation) raise a vehicle's normal 5 to 10.
+    amount = getEffectiveRechargeShieldsAmount(actor, amount);
 
     const shields = actor.system?.shields || {};
     const max = Math.max(

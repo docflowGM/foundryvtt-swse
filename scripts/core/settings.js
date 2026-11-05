@@ -20,6 +20,19 @@ export async function registerSystemSettings() {
 
 
 
+  // Owner ruling V-P6C-01 (2026-11-03): firing arcs of published stock vehicle weapons.
+  if (!game.settings.settings.has('foundryvtt-swse.vehicleStockSilentArcPolicy')) {
+    game.settings.register('foundryvtt-swse', 'vehicleStockSilentArcPolicy', {
+      name: 'Published vehicle weapons: unstated firing arcs',
+      hint: "Where a sourcebook states a weapon's firing arc (for example a fixed-forward cannon) that arc is enforced. Where the source states no arc, 'No arc restriction' (default) lets the weapon fire; 'GM approves each attack' requires a GM adjudication instead. Targets, crew, permissions and every other check apply either way.",
+      scope: 'world',
+      config: true,
+      type: String,
+      choices: { 'unrestricted': 'No arc restriction when the source states none (default)', 'gm-per-attack': 'GM approves each attack' },
+      default: 'unrestricted'
+    });
+  }
+
   if (!game.settings.settings.has('foundryvtt-swse.maxTemplatesPerItem')) {
     game.settings.register('foundryvtt-swse', 'maxTemplatesPerItem', {
       name: 'Maximum Templates Per Item',

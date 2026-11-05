@@ -1,5 +1,6 @@
 import { applyDamageTypeProtectionToPacket, damageTypesFromContext } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 import { applyTargetComponentProtections } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-component-rules.js";
+import { resolveSourceDamageVulnerability, VULNERABILITY_STATE } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-vulnerability-authority.js";
 
 function asArray(value) {
   if (Array.isArray(value)) return value;
@@ -182,6 +183,19 @@ export function getDamageTargetCategory(target = null) {
 
 export function isIonEligibleDamageTarget(target = null) {
   return ['droid', 'vehicle', 'object', 'device'].includes(getDamageTargetCategory(target));
+}
+
+/**
+ * Does this creature carry cybernetic prosthetics (Core, Cybernetic Prosthesis, p. 137: such a creature "takes full damage
+ * from weapons and attacks that deal ion damage")? Read from the creature's own equipment, by the structured item tags
+ * (`cybernetic` + `prosthesis`) -- never by an item name. Installation is a manual GM procedure in this system (see
+ * data/cybernetics), so an owned prosthesis item is the record of having one.
+ */
+export function creatureHasCyberneticProsthetics(target = null) {
+  const items = target?.items;
+  if (!items) return false;
+  const list = Array.isArray(items) ? items : Array.from(items.contents ?? items);
+  return list.some(i => i?.type === 'equipment' && Array.isArray(i.system?.tags) && i.system.tags.includes('cybernetic') && i.system.tags.includes('prosthesis'));
 }
 
 export function isStunEligibleDamageTarget(target = null) {
@@ -389,34 +403,51 @@ export function applyTargetDamagePacketRules(packet = {}, target = null) {
     }
   }
 
+  // A published source-backed vulnerability multiplies the INCOMING damage of its type after the weapon's own damage calculation
+  // and BEFORE shield rating, damage reduction and ion halving (PROJECT_INTERPRETATION V-P6C-05; the AAT-1, Core p. 176). It is
+  // applied once, here, never to the attack roll.
+  const vulnerability = resolveSourceDamageVulnerability(target, requestedType);
+  if (vulnerability) {
+    const before = amount;
+    if (vulnerability.state === VULNERABILITY_STATE.ACTIVE) amount = Math.max(0, Math.floor(amount * vulnerability.multiplier));
+    next.flags.damageVulnerability = { ...vulnerability, applied: vulnerability.state === VULNERABILITY_STATE.ACTIVE, amountBefore: before, amountAfter: amount };
+  }
+
   if (requestedType === 'ion') {
-    const eligible = target ? (isIonEligibleDamageTarget(target) || next.flags.ionEligibleByClass === true) : undefined;
+    // Core pp. 159-160 and p. 137, three kinds of target:
+    //   electronic (droid, vehicle, object, device): HP takes HALF; the ion effects apply (2 steps at the threshold, 5 steps / disabled at 0 HP);
+    //   cybernetic (a creature with prosthetics, or class-flagged): HP takes FULL damage (Cybernetic Prosthesis); the ion effects apply;
+    //   ordinary organic: HP takes HALF and the creature suffers "no other ill effects".
+    // The damage TYPE stays ion in every case (so type-specific protections, reporting and effects keep seeing ion damage); only
+    // the ion SPECIAL EFFECTS are switched off for an ordinary organic (`ionEffectsApply: false`, threshold effects suppressed).
+    // The threshold gets NO packet-level override: the engine compares the full amount that survives shield rating and damage
+    // reduction, before the hit-point halving (PROJECT_INTERPRETATION V-P6C-04).
+    const electronic = target ? isIonEligibleDamageTarget(target) : undefined;
+    const cybernetic = target && !electronic ? (next.flags.ionEligibleByClass === true || creatureHasCyberneticProsthetics(target)) : false;
+    const eligible = target ? (electronic || cybernetic) : undefined;
     next.originalType = 'ion';
     next.flags.ion = true;
     next.flags.ionEligible = eligible;
 
-    if (eligible === true) {
+    if (eligible !== undefined) {
       next.type = 'ion';
       next.options.type = 'ion';
       next.options.damageType = 'ion';
       next.options.ion = true;
-      next.options.ionEligible = true;
-      next.options.hpDamageMultiplier = asNumber(next.options.hpDamageMultiplier, 0.5);
-      if (next.disposition?.damageAllowed !== false && amount > 0) {
-        next.options.thresholdDamageOverride = Math.max(0, asNumber(next.options.thresholdDamageOverride, amount));
-      }
-      next.flags.ionHpHalved = true;
-      next.flags.ionThresholdUsesOriginalDamage = true;
+      next.options.ionEligible = eligible;
+      next.options.ionEffectsApply = eligible;
+      next.flags.ionThresholdUsesOriginalDamage = eligible;       // = the full, pre-halving amount that survives mitigation
+    }
+    if (eligible === true) {
+      next.options.hpDamageMultiplier = asNumber(next.options.hpDamageMultiplier, cybernetic ? 1 : 0.5);
+      next.flags.ionHpHalved = !cybernetic;
+      next.flags.ionFullHpDamage = cybernetic;
     } else if (eligible === false) {
-      next.type = 'normal';
-      next.options.type = 'normal';
-      next.options.damageType = 'normal';
-      next.options.ion = false;
-      next.options.ionEligible = false;
-      next.options.ionSuppressed = true;
+      next.options.hpDamageMultiplier = asNumber(next.options.hpDamageMultiplier, 0.5);
+      next.options.thresholdEffectsSuppressed = true;
       next.flags.ionSuppressed = true;
       next.flags.ionHpHalved = false;
-      next.flags.ionThresholdUsesOriginalDamage = false;
+      next.flags.ionOrganicHalved = true;
     }
   }
 
@@ -433,6 +464,7 @@ export function applyTargetDamagePacketRules(packet = {}, target = null) {
 export const DamagePacketRules = {
   getDamageTargetCategory,
   isIonEligibleDamageTarget,
+  creatureHasCyberneticProsthetics,
   isStunEligibleDamageTarget,
   getEvasionState,
   applyTargetDamagePacketRules

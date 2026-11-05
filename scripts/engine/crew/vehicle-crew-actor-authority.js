@@ -21,6 +21,9 @@ export function getVehicleCrewEntry(vehicle, stationKey) {
   const system=vehicle?.system ?? {};
   const entry=system.crewPositions?.[stationKey];
   if (entry) return entry;
+  // Source-backed vehicles read crewPositions only: an asset link in ownedActors is
+  // never a crew assignment (and there is no legacy save to be compatible with).
+  if (typeof system.vehicleSourceEntryKey==='string' && system.vehicleSourceEntryKey) return null;
   const owned=Array.isArray(system.ownedActors)?system.ownedActors:[];
   return owned.find(x=>x?.position===stationKey || x?.role===stationKey) ?? null;
 }

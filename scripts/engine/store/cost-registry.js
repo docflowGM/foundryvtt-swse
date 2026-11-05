@@ -57,7 +57,14 @@ function isReviewText(value) {
  * @param {Object} rawDoc - Raw item document from pack
  * @returns {Object} Cost record with status, pricing fields, metadata
  */
+import { buildCanonicalVehicleCostRecord } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-store-eligibility.js";
+
 export function buildStoreCostRecord(rawDoc) {
+  // Source-backed vehicles price from their published economics only (new / used /
+  // not-for-sale / ambiguous / absent), never from the legacy mirrored system.cost.
+  const economics = rawDoc?.flags?.swse?.universalVehicleSource?.source?.economics;
+  if (rawDoc?.type === 'vehicle' && rawDoc?.flags?.swse?.universalVehicleSource?.source?.recordType === 'vehicle-source-entry')
+    return buildCanonicalVehicleCostRecord(economics);
   const rawPricing = rawDoc?.__storeRawPricing || rawDoc?.__storeSource?.rawPricing || null;
   const cost = rawPricing?.cost ?? rawDoc?.system?.cost;
   const costNumeric = rawPricing?.costNumeric ?? rawDoc?.system?.costNumeric;
@@ -190,10 +197,9 @@ export function resolveStoreCost(record, options = {}) {
 
   // Conditional new/used pricing
   if (record.pricingMode === 'new-used') {
-    const newBase = record.baseCostNew ?? 0;
-    const usedBase = record.baseCostUsed ?? 0;
-    const finalNew = applyMarkup(newBase, markup);
-    const finalUsed = applyMarkup(usedBase, markup);
+    // A missing new/used price stays missing (null); it is never priced as 0.
+    const finalNew = record.baseCostNew == null ? null : applyMarkup(record.baseCostNew, markup);
+    const finalUsed = record.baseCostUsed == null ? null : applyMarkup(record.baseCostUsed, markup);
 
     // Determine which to return as primary cost
     let primaryCost = null;

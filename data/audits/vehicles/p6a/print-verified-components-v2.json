@@ -1,0 +1,5409 @@
+{
+  "schema": "swse.p6a.primary-source-component-tables.v2",
+  "purpose": "Printed-PDF component evidence and per-item disposition for the 91 P6A review worksheet entries; source data ONLY, not installation or combat authority.",
+  "sourcePDFs": [
+    {
+      "book": "Starships of the Galaxy",
+      "localProjectFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+      "printedToPdfPageOffset": 1,
+      "byteLength": 119327056,
+      "sha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0"
+    },
+    {
+      "book": "Scum and Villainy",
+      "localProjectFile": "SAGA EDITION - Scum and Villainy.pdf",
+      "printedToPdfPageOffset": 1,
+      "byteLength": 84764748,
+      "sha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399"
+    },
+    {
+      "book": "Clone Wars Campaign Guide",
+      "localProjectFile": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+      "printedToPdfPageOffset": 1,
+      "byteLength": 39370473,
+      "sha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "book": "Rebellion Era Campaign Guide",
+      "localProjectFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+      "printedToPdfPageOffset": 1,
+      "byteLength": 51591216,
+      "sha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8"
+    },
+    {
+      "book": "Galaxy at War",
+      "localProjectFile": "SW_Saga_Galaxy_at_War.pdf",
+      "printedToPdfPageOffset": 1,
+      "coverage": "PDF_TABLE_2_7",
+      "byteLength": 48066362,
+      "sha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a"
+    },
+    {
+      "book": "Legacy Era Campaign Guide",
+      "localProjectFile": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+      "printedToPdfPageOffset": 1,
+      "sha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+      "byteLength": 42852392
+    },
+    {
+      "book": "Threats of the Galaxy",
+      "localProjectFile": "SAGA EDITION - Threats of the Galaxy.pdf",
+      "printedToPdfPageOffset": 1,
+      "sha256": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
+      "byteLength": 10489728
+    }
+  ],
+  "reviewedTables": [
+    {
+      "id": "SOTG_TABLE_3_3",
+      "title": "Movement Systems",
+      "printedPage": 41,
+      "pdfPage1Based": 42,
+      "rows": [
+        {
+          "row": 1,
+          "printedName": "Atmospheric thruster",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Common",
+          "sizeRestriction": "Colossal or smaller",
+          "sizeRestrictionPrinted": "Colossal or smaller",
+          "cost": {
+            "kind": "base",
+            "credits": 2000,
+            "printed": "2000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 2,
+          "printedName": "Atmospheric thruster, advanced",
+          "emplacementPoints": 5,
+          "emplacementPointsPrinted": "5",
+          "availability": "Common",
+          "sizeRestriction": "Gargantuan or smaller",
+          "sizeRestrictionPrinted": "Gargantuan or smaller",
+          "cost": {
+            "kind": "base",
+            "credits": 5000,
+            "printed": "5000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 3,
+          "printedName": "Combat thruster",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "1",
+          "availability": "Common",
+          "sizeRestriction": "Colossal",
+          "sizeRestrictionPrinted": "Colossal",
+          "cost": {
+            "kind": "base",
+            "credits": 2000,
+            "printed": "2000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 4,
+          "printedName": "Hyperdrive, class .75",
+          "emplacementPoints": 4,
+          "emplacementPointsPrinted": "4",
+          "availability": "Military",
+          "sizeRestriction": "Colossal (cruiser) or smaller",
+          "sizeRestrictionPrinted": "Colossal (cruiser) or smaller",
+          "cost": {
+            "kind": "base",
+            "credits": 5000,
+            "printed": "5000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 5,
+          "printedName": "Hyperdrive, class 1",
+          "emplacementPoints": 3,
+          "emplacementPointsPrinted": "3",
+          "availability": "Licensed",
+          "sizeRestriction": "Colossal (cruiser) or smaller",
+          "sizeRestrictionPrinted": "Colossal (cruiser) or smaller",
+          "cost": {
+            "kind": "base",
+            "credits": 3000,
+            "printed": "3000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 6,
+          "printedName": "Hyperdrive, class 1.5",
+          "emplacementPoints": 3,
+          "emplacementPointsPrinted": "3",
+          "availability": "Licensed",
+          "sizeRestriction": "Colossal (cruiser) or smaller",
+          "sizeRestrictionPrinted": "Colossal (cruiser) or smaller",
+          "cost": {
+            "kind": "base",
+            "credits": 2500,
+            "printed": "2500 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 7,
+          "printedName": "Hyperdrive, class 2",
+          "emplacementPoints": 3,
+          "emplacementPointsPrinted": "3",
+          "availability": "Common",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "—",
+          "cost": {
+            "kind": "base",
+            "credits": 2000,
+            "printed": "2000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 8,
+          "printedName": "Hyperdrive, class 3",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Common",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "—",
+          "cost": {
+            "kind": "base",
+            "credits": 1500,
+            "printed": "1500 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 9,
+          "printedName": "Hyperdrive, class 4",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Common",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "—",
+          "cost": {
+            "kind": "base",
+            "credits": 1000,
+            "printed": "1000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 10,
+          "printedName": "Hyperdrive, class 5",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Common",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "—",
+          "cost": {
+            "kind": "base",
+            "credits": 500,
+            "printed": "500 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 11,
+          "printedName": "Hyperdrive, class 6",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Common",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "—",
+          "cost": {
+            "kind": "base",
+            "credits": 400,
+            "printed": "400 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 12,
+          "printedName": "Hyperdrive, class 8",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "1",
+          "availability": "Common",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "—",
+          "cost": {
+            "kind": "base",
+            "credits": 300,
+            "printed": "300 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 13,
+          "printedName": "Hyperdrive, class 10",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "1",
+          "availability": "Common",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "—",
+          "cost": {
+            "kind": "base",
+            "credits": 200,
+            "printed": "200 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 14,
+          "printedName": "Hyperdrive, class 15",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "1",
+          "availability": "Common",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "—",
+          "cost": {
+            "kind": "base",
+            "credits": 100,
+            "printed": "100 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 15,
+          "printedName": "Maneuvering jets +2",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Common",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "—",
+          "cost": {
+            "kind": "base",
+            "credits": 2000,
+            "printed": "2000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 16,
+          "printedName": "Maneuvering jets +4",
+          "emplacementPoints": 3,
+          "emplacementPointsPrinted": "3",
+          "availability": "Common",
+          "sizeRestriction": "Colossal or smaller",
+          "sizeRestrictionPrinted": "Colossal or smaller",
+          "cost": {
+            "kind": "base",
+            "credits": 5000,
+            "printed": "5000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 17,
+          "printedName": "Maneuvering jets +6",
+          "emplacementPoints": 4,
+          "emplacementPointsPrinted": "4",
+          "availability": "Licensed",
+          "sizeRestriction": "Gargantuan or smaller",
+          "sizeRestrictionPrinted": "Gargantuan or smaller",
+          "cost": {
+            "kind": "base",
+            "credits": 10000,
+            "printed": "10000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 18,
+          "printedName": "Navicomputer, limited",
+          "emplacementPoints": 0,
+          "emplacementPointsPrinted": "0",
+          "availability": "Common",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "—",
+          "cost": {
+            "kind": "flat",
+            "credits": 500,
+            "printed": "500"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 19,
+          "printedName": "Navicomputer",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "1",
+          "availability": "Licensed",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "—",
+          "cost": {
+            "kind": "flat",
+            "credits": 2000,
+            "printed": "2000"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 20,
+          "printedName": "Navicomputer, advanced",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Licensed",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "—",
+          "cost": {
+            "kind": "flat",
+            "credits": 20000,
+            "printed": "20000"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 21,
+          "printedName": "SubLight Accelerator Motor",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Military",
+          "sizeRestriction": "Gargantuan or smaller",
+          "sizeRestrictionPrinted": "Gargantuan or smaller",
+          "cost": {
+            "kind": "base",
+            "credits": 25000,
+            "printed": "25000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 22,
+          "printedName": "Sublight drive (speed 1 square)",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Common",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "—",
+          "cost": {
+            "kind": "base",
+            "credits": 1000,
+            "printed": "1000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 23,
+          "printedName": "Sublight drive (speed 2 squares)",
+          "emplacementPoints": 3,
+          "emplacementPointsPrinted": "3",
+          "availability": "Common",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "—",
+          "cost": {
+            "kind": "base",
+            "credits": 2000,
+            "printed": "2000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 24,
+          "printedName": "Sublight drive (speed 3 squares)",
+          "emplacementPoints": 4,
+          "emplacementPointsPrinted": "4",
+          "availability": "Licensed",
+          "sizeRestriction": "Colossal (cruiser) or smaller",
+          "sizeRestrictionPrinted": "Colossal (cruiser) or smaller",
+          "cost": {
+            "kind": "base",
+            "credits": 5000,
+            "printed": "5000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 25,
+          "printedName": "Sublight drive (speed 4 squares)",
+          "emplacementPoints": 5,
+          "emplacementPointsPrinted": "5",
+          "availability": "Restricted",
+          "sizeRestriction": "Colossal (cruiser) or smaller",
+          "sizeRestrictionPrinted": "Colossal (cruiser) or smaller",
+          "cost": {
+            "kind": "base",
+            "credits": 10000,
+            "printed": "10000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 26,
+          "printedName": "Sublight drive (speed 5 squares)",
+          "emplacementPoints": 6,
+          "emplacementPointsPrinted": "6",
+          "availability": "Military",
+          "sizeRestriction": "Colossal or smaller",
+          "sizeRestrictionPrinted": "Colossal or smaller",
+          "cost": {
+            "kind": "base",
+            "credits": 20000,
+            "printed": "20000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 27,
+          "printedName": "Sublight drive (speed 6 squares)",
+          "emplacementPoints": 7,
+          "emplacementPointsPrinted": "7",
+          "availability": "Military",
+          "sizeRestriction": "Gargantuan or smaller",
+          "sizeRestrictionPrinted": "Gargantuan or smaller",
+          "cost": {
+            "kind": "base",
+            "credits": 100000,
+            "printed": "100000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 41,
+            "pdfPage1Based": 42,
+            "table": "3-3"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        }
+      ]
+    },
+    {
+      "id": "SOTG_TABLE_3_4",
+      "title": "Defense Systems",
+      "printedPage": 43,
+      "pdfPage1Based": 44,
+      "rows": [
+        {
+          "row": 1,
+          "printedName": "Armor, +1",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Licensed",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "base",
+            "credits": 2000,
+            "printed": "2000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 2,
+          "printedName": "Armor, +2",
+          "emplacementPoints": 5,
+          "emplacementPointsPrinted": "5",
+          "availability": "Restricted",
+          "sizeRestriction": "Colossal or larger",
+          "sizeRestrictionPrinted": "Colossal or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 5000,
+            "printed": "5000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 3,
+          "printedName": "Armor, +3",
+          "emplacementPoints": 10,
+          "emplacementPointsPrinted": "10",
+          "availability": "Military",
+          "sizeRestriction": "Colossal (frigate) or larger",
+          "sizeRestrictionPrinted": "Colossal (frigate) or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 10000,
+            "printed": "10000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 4,
+          "printedName": "Armor, +4",
+          "emplacementPoints": 20,
+          "emplacementPointsPrinted": "20",
+          "availability": "Military",
+          "sizeRestriction": "Colossal (cruiser) or larger",
+          "sizeRestrictionPrinted": "Colossal (cruiser) or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 20000,
+            "printed": "20000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 5,
+          "printedName": "Jamming suite",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "1",
+          "availability": "Common",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "base",
+            "credits": 5000,
+            "printed": "5000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 6,
+          "printedName": "Jamming array",
+          "emplacementPoints": 5,
+          "emplacementPointsPrinted": "5",
+          "availability": "Common",
+          "sizeRestriction": "Colossal or larger",
+          "sizeRestrictionPrinted": "Colossal or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 20000,
+            "printed": "20000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 7,
+          "printedName": "Regenerating shields",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Restricted",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "base",
+            "credits": 5000,
+            "printed": "5000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 8,
+          "printedName": "Reinforced bulkheads +10%",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Common",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "base",
+            "credits": 2000,
+            "printed": "2000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 9,
+          "printedName": "Reinforced bulkheads +20%",
+          "emplacementPoints": 5,
+          "emplacementPointsPrinted": "5",
+          "availability": "Licensed",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "base",
+            "credits": 5000,
+            "printed": "5000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 10,
+          "printedName": "Reinforced bulkheads +30%",
+          "emplacementPoints": 10,
+          "emplacementPointsPrinted": "10",
+          "availability": "Restricted",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "base",
+            "credits": 10000,
+            "printed": "10000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 11,
+          "printedName": "Shields, SR 10",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "1",
+          "availability": "Common",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "base",
+            "credits": 750,
+            "printed": "750 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 12,
+          "printedName": "Shields, SR 15",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "1",
+          "availability": "Common",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "base",
+            "credits": 1000,
+            "printed": "1000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 13,
+          "printedName": "Shields, SR 20",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "1",
+          "availability": "Common",
+          "sizeRestriction": "Gargantuan or larger",
+          "sizeRestrictionPrinted": "Gargantuan or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 1250,
+            "printed": "1250 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 14,
+          "printedName": "Shields, SR 25",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "1",
+          "availability": "Common",
+          "sizeRestriction": "Gargantuan or larger",
+          "sizeRestrictionPrinted": "Gargantuan or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 1500,
+            "printed": "1500 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 15,
+          "printedName": "Shields, SR 30",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Common",
+          "sizeRestriction": "Gargantuan or larger",
+          "sizeRestrictionPrinted": "Gargantuan or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 2000,
+            "printed": "2000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 16,
+          "printedName": "Shields, SR 35",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Common",
+          "sizeRestriction": "Gargantuan or larger",
+          "sizeRestrictionPrinted": "Gargantuan or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 2500,
+            "printed": "2500 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 17,
+          "printedName": "Shields, SR 40",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Common",
+          "sizeRestriction": "Colossal or larger",
+          "sizeRestrictionPrinted": "Colossal or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 3000,
+            "printed": "3000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 18,
+          "printedName": "Shields, SR 45",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Common",
+          "sizeRestriction": "Colossal or larger",
+          "sizeRestrictionPrinted": "Colossal or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 4000,
+            "printed": "4000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 19,
+          "printedName": "Shields, SR 50",
+          "emplacementPoints": 3,
+          "emplacementPointsPrinted": "3",
+          "availability": "Common",
+          "sizeRestriction": "Colossal or larger",
+          "sizeRestrictionPrinted": "Colossal or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 5000,
+            "printed": "5000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 20,
+          "printedName": "Shields, SR 55",
+          "emplacementPoints": 3,
+          "emplacementPointsPrinted": "3",
+          "availability": "Common",
+          "sizeRestriction": "Colossal or larger",
+          "sizeRestrictionPrinted": "Colossal or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 6000,
+            "printed": "6000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 21,
+          "printedName": "Shields, SR 60",
+          "emplacementPoints": 3,
+          "emplacementPointsPrinted": "3",
+          "availability": "Common",
+          "sizeRestriction": "Colossal (frigate) or larger",
+          "sizeRestrictionPrinted": "Colossal (frigate) or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 8000,
+            "printed": "8000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 22,
+          "printedName": "Shields, SR 70",
+          "emplacementPoints": 3,
+          "emplacementPointsPrinted": "3",
+          "availability": "Common",
+          "sizeRestriction": "Colossal (frigate) or larger",
+          "sizeRestrictionPrinted": "Colossal (frigate) or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 10000,
+            "printed": "10000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 23,
+          "printedName": "Shields, SR 80",
+          "emplacementPoints": 4,
+          "emplacementPointsPrinted": "4",
+          "availability": "Common",
+          "sizeRestriction": "Colossal (frigate) or larger",
+          "sizeRestrictionPrinted": "Colossal (frigate) or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 12500,
+            "printed": "12500 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 24,
+          "printedName": "Shields, SR 90",
+          "emplacementPoints": 4,
+          "emplacementPointsPrinted": "4",
+          "availability": "Common",
+          "sizeRestriction": "Colossal (frigate) or larger",
+          "sizeRestrictionPrinted": "Colossal (frigate) or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 15000,
+            "printed": "15000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 25,
+          "printedName": "Shields, SR 100",
+          "emplacementPoints": 5,
+          "emplacementPointsPrinted": "5",
+          "availability": "Common",
+          "sizeRestriction": "Colossal (frigate) or larger",
+          "sizeRestrictionPrinted": "Colossal (frigate) or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 20000,
+            "printed": "20000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 26,
+          "printedName": "Shields, SR 125",
+          "emplacementPoints": 6,
+          "emplacementPointsPrinted": "6",
+          "availability": "Common",
+          "sizeRestriction": "Colossal (frigate) or larger",
+          "sizeRestrictionPrinted": "Colossal (frigate) or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 25000,
+            "printed": "25000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 27,
+          "printedName": "Shields, SR 150",
+          "emplacementPoints": 7,
+          "emplacementPointsPrinted": "7",
+          "availability": "Common",
+          "sizeRestriction": "Colossal (cruiser) or larger",
+          "sizeRestrictionPrinted": "Colossal (cruiser) or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 30000,
+            "printed": "30000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 28,
+          "printedName": "Shields, SR 175",
+          "emplacementPoints": 8,
+          "emplacementPointsPrinted": "8",
+          "availability": "Common",
+          "sizeRestriction": "Colossal (cruiser) or larger",
+          "sizeRestrictionPrinted": "Colossal (cruiser) or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 40000,
+            "printed": "40000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 29,
+          "printedName": "Shields, SR 200",
+          "emplacementPoints": 10,
+          "emplacementPointsPrinted": "10",
+          "availability": "Common",
+          "sizeRestriction": "Colossal (cruiser) or larger",
+          "sizeRestrictionPrinted": "Colossal (cruiser) or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 50000,
+            "printed": "50000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 43,
+            "pdfPage1Based": 44,
+            "table": "3-4"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        }
+      ]
+    },
+    {
+      "id": "SOTG_TABLE_3_5",
+      "title": "Weapon Systems",
+      "printedPage": 47,
+      "pdfPage1Based": 48,
+      "rows": [
+        {
+          "row": 1,
+          "printedName": "Autoblaster",
+          "damage": null,
+          "damageStatus": "NOT_STATED",
+          "emplacementPoints": 0,
+          "emplacementPointsPrinted": "+0",
+          "availability": "Restricted",
+          "cost": {
+            "kind": "multiplier",
+            "value": 2,
+            "printed": "x2"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "autoblaster",
+          "emplacementPointSemantics": "ADDITIONAL_TO_BASE_WEAPON"
+        },
+        {
+          "row": 2,
+          "printedName": "Blaster cannon, light",
+          "damage": "3d10x2",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "1",
+          "availability": "Licensed",
+          "cost": {
+            "kind": "flat",
+            "credits": 1200,
+            "printed": "1200"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "blaster-cannon-light",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 3,
+          "printedName": "Blaster cannon, medium",
+          "damage": "4d10x2",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "1",
+          "availability": "Restricted",
+          "cost": {
+            "kind": "flat",
+            "credits": 2500,
+            "printed": "2500"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "blaster-cannon-medium",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 4,
+          "printedName": "Blaster cannon, heavy",
+          "damage": "5d10x2",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 5500,
+            "printed": "5500"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "blaster-cannon-heavy",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 5,
+          "printedName": "Cannon, double",
+          "damage": "+1d10",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 0,
+          "emplacementPointsPrinted": "+0",
+          "availability": "Licensed",
+          "cost": {
+            "kind": "multiplier",
+            "value": 3,
+            "printed": "x3"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "ADDITIONAL_TO_BASE_WEAPON"
+        },
+        {
+          "row": 6,
+          "printedName": "Cannon, quad",
+          "damage": "+2d10",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "+1",
+          "availability": "Restricted",
+          "cost": {
+            "kind": "multiplier",
+            "value": 5,
+            "printed": "x5"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "ADDITIONAL_TO_BASE_WEAPON"
+        },
+        {
+          "row": 7,
+          "printedName": "Cannon enhancements",
+          "damage": "+1d10",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "+1",
+          "availability": "Military",
+          "cost": {
+            "kind": "multiplier",
+            "value": 2,
+            "printed": "x2"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "ADDITIONAL_TO_BASE_WEAPON"
+        },
+        {
+          "row": 8,
+          "printedName": "Cannon enhancements, advanced",
+          "damage": "+2d10",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "+2",
+          "availability": "Military",
+          "cost": {
+            "kind": "multiplier",
+            "value": 5,
+            "printed": "x5"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "ADDITIONAL_TO_BASE_WEAPON"
+        },
+        {
+          "row": 9,
+          "printedName": "Concussion missile, light",
+          "damage": "7d10x2",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 0,
+          "emplacementPointsPrinted": "0",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 500,
+            "printed": "500"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 10,
+          "printedName": "Concussion missile, medium",
+          "damage": "9d10x2",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 0,
+          "emplacementPointsPrinted": "0",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 750,
+            "printed": "750"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 11,
+          "printedName": "Concussion missile, heavy",
+          "damage": "9d10x5",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 0,
+          "emplacementPointsPrinted": "0",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 2000,
+            "printed": "2000"
+          },
+          "sizeRestriction": "Colossal or larger starships only",
+          "sizeRestrictionBasis": "FOOTNOTE_1",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 12,
+          "printedName": "Concussion missile launcher, light",
+          "damage": null,
+          "damageStatus": "NOT_STATED",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 2000,
+            "printed": "2000"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "concussion-missile-launcher-light",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 13,
+          "printedName": "Concussion missile launcher, medium",
+          "damage": null,
+          "damageStatus": "NOT_STATED",
+          "emplacementPoints": 5,
+          "emplacementPointsPrinted": "5",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 3500,
+            "printed": "3500"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "concussion-missile-launcher-medium",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 14,
+          "printedName": "Concussion missile launcher, heavy",
+          "damage": null,
+          "damageStatus": "NOT_STATED",
+          "emplacementPoints": 20,
+          "emplacementPointsPrinted": "20",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 30000,
+            "printed": "30000"
+          },
+          "sizeRestriction": "Colossal or larger starships only",
+          "sizeRestrictionBasis": "FOOTNOTE_1",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "concussion-missile-launcher-heavy",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 15,
+          "printedName": "Docking gun",
+          "damage": "By weapon",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "1",
+          "availability": "Licensed",
+          "cost": {
+            "kind": "addition",
+            "value": 1000,
+            "printed": "+1000"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 16,
+          "printedName": "Droid jammer",
+          "damage": "Special",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "1",
+          "availability": "Licensed",
+          "cost": {
+            "kind": "flat",
+            "credits": 8000,
+            "printed": "8000"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 17,
+          "printedName": "Fire-linked weapon, 2",
+          "damage": "+1d10",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "+1",
+          "availability": "Licensed",
+          "cost": {
+            "kind": "multiplier",
+            "value": 2,
+            "printed": "x2"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "ADDITIONAL_TO_BASE_WEAPON"
+        },
+        {
+          "row": 18,
+          "printedName": "Fire-linked weapon, 4",
+          "damage": "+2d10",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "+2",
+          "availability": "Restricted",
+          "cost": {
+            "kind": "multiplier",
+            "value": 4,
+            "printed": "x4"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "ADDITIONAL_TO_BASE_WEAPON"
+        },
+        {
+          "row": 19,
+          "printedName": "Fire-linked weapon, optional",
+          "damage": "Special",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 0,
+          "emplacementPointsPrinted": "+0",
+          "availability": "Licensed",
+          "cost": {
+            "kind": "addition",
+            "value": 1000,
+            "printed": "+1000"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "fire-linked-optional",
+          "emplacementPointSemantics": "ADDITIONAL_TO_BASE_WEAPON"
+        },
+        {
+          "row": 20,
+          "printedName": "Gravity well projector",
+          "damage": "Special",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 5,
+          "emplacementPointsPrinted": "5",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 50000,
+            "printed": "50000"
+          },
+          "sizeRestriction": "Colossal or larger starships only",
+          "sizeRestrictionBasis": "FOOTNOTE_1",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "gravity-well-projector",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 21,
+          "printedName": "Ion bomb",
+          "damage": "5d10 ion",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": null,
+          "emplacementPointsPrinted": "—",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 500,
+            "printed": "500"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "ion-bomb",
+          "emplacementPointSemantics": "NOT_SPECIFIED_IN_TABLE"
+        },
+        {
+          "row": 22,
+          "printedName": "Ion bomb rack",
+          "damage": null,
+          "damageStatus": "NOT_STATED",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "1",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 1000,
+            "printed": "1000"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 23,
+          "printedName": "Ion cannon, light",
+          "damage": "3d10x2 ion",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "1",
+          "availability": "Licensed",
+          "cost": {
+            "kind": "flat",
+            "credits": 2000,
+            "printed": "2000"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 24,
+          "printedName": "Ion cannon, medium",
+          "damage": "5d10x2 ion",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Restricted",
+          "cost": {
+            "kind": "flat",
+            "credits": 3000,
+            "printed": "3000"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 25,
+          "printedName": "Ion cannon, heavy",
+          "damage": "3d10x5 ion",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 5,
+          "emplacementPointsPrinted": "5",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 6000,
+            "printed": "6000"
+          },
+          "sizeRestriction": "Colossal or larger starships only",
+          "sizeRestrictionBasis": "FOOTNOTE_1",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 26,
+          "printedName": "Ion cannon, Hapan triple",
+          "damage": "5d10x5 ion",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 3,
+          "emplacementPointsPrinted": "3",
+          "availability": "Illegal",
+          "cost": {
+            "kind": "flat",
+            "credits": 12000,
+            "printed": "12000"
+          },
+          "sizeRestriction": "Colossal or larger starships only",
+          "sizeRestrictionBasis": "FOOTNOTE_1",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 27,
+          "printedName": "Laser cannon, light",
+          "damage": "3d10x2",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "1",
+          "availability": "Licensed",
+          "cost": {
+            "kind": "flat",
+            "credits": 1500,
+            "printed": "1500"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 28,
+          "printedName": "Laser cannon, medium",
+          "damage": "4d10x2",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "1",
+          "availability": "Restricted",
+          "cost": {
+            "kind": "flat",
+            "credits": 4000,
+            "printed": "4000"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 29,
+          "printedName": "Laser cannon, heavy",
+          "damage": "5d10x2",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 6000,
+            "printed": "6000"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 30,
+          "printedName": "Point-defense weapon",
+          "damage": null,
+          "damageStatus": "NOT_STATED",
+          "emplacementPoints": 0,
+          "emplacementPointsPrinted": "0",
+          "availability": "Restricted",
+          "cost": {
+            "kind": "addition",
+            "value": 4000,
+            "printed": "+4000"
+          },
+          "sizeRestriction": "Colossal or larger starships only",
+          "sizeRestrictionBasis": "FOOTNOTE_1",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 31,
+          "printedName": "Proton torpedo",
+          "damage": "9d10x2",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 0,
+          "emplacementPointsPrinted": "0",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 800,
+            "printed": "800"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "proton-torpedo",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 32,
+          "printedName": "Proton torpedo launcher",
+          "damage": null,
+          "damageStatus": "NOT_STATED",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "1",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 2500,
+            "printed": "2500"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 33,
+          "printedName": "Shieldbuster torpedo",
+          "damage": "10d10x2",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 0,
+          "emplacementPointsPrinted": "0",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 1000,
+            "printed": "1000"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "shieldbuster-torpedo",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 34,
+          "printedName": "Shieldbuster torpedo launcher",
+          "damage": null,
+          "damageStatus": "NOT_STATED",
+          "emplacementPoints": 3,
+          "emplacementPointsPrinted": "3",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 10000,
+            "printed": "10000"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 35,
+          "printedName": "Space mine, standard",
+          "damage": "7d10x2",
+          "damageStatus": "PDF_PROSE_CONFIRMED",
+          "emplacementPoints": 0,
+          "emplacementPointsPrinted": "0",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 1000,
+            "printed": "1000"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "space-mine-standard",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE",
+          "damageSource": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 46,
+            "pdfPage1Based": 47,
+            "section": "Space Mines"
+          }
+        },
+        {
+          "row": 36,
+          "printedName": "Space mine, advanced",
+          "damage": "9d10x2",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 0,
+          "emplacementPointsPrinted": "0",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 5000,
+            "printed": "5000"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 37,
+          "printedName": "Space mine, heavy",
+          "damage": "6d10x5",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 0,
+          "emplacementPointsPrinted": "0",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 5000,
+            "printed": "5000"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 38,
+          "printedName": "Space mine launcher",
+          "damage": null,
+          "damageStatus": "NOT_STATED",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 5000,
+            "printed": "5000"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 39,
+          "printedName": "Space mine launcher, heavy",
+          "damage": null,
+          "damageStatus": "NOT_STATED",
+          "emplacementPoints": 4,
+          "emplacementPointsPrinted": "4",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 5000,
+            "printed": "5000"
+          },
+          "sizeRestriction": "Colossal or larger starships only",
+          "sizeRestrictionBasis": "FOOTNOTE_1",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "space-mine-launcher-heavy",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 40,
+          "printedName": "Tractor beam",
+          "damage": "Special",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 10,
+          "emplacementPointsPrinted": "10",
+          "availability": "Licensed",
+          "cost": {
+            "kind": "flat",
+            "credits": 10000,
+            "printed": "10000"
+          },
+          "sizeRestriction": null,
+          "sizeRestrictionBasis": "NO_RESTRICTION_IN_TABLE",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "tractor-beam",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 41,
+          "printedName": "Turbolaser, light",
+          "damage": "3d10x5",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 5000,
+            "printed": "5000"
+          },
+          "sizeRestriction": "Colossal or larger starships only",
+          "sizeRestrictionBasis": "FOOTNOTE_1",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 42,
+          "printedName": "Turbolaser, medium",
+          "damage": "5d10x5",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 5,
+          "emplacementPointsPrinted": "5",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 10000,
+            "printed": "10000"
+          },
+          "sizeRestriction": "Colossal or larger starships only",
+          "sizeRestrictionBasis": "FOOTNOTE_1",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        },
+        {
+          "row": 43,
+          "printedName": "Turbolaser, heavy",
+          "damage": "7d10x5",
+          "damageStatus": "PDF_VERIFIED",
+          "emplacementPoints": 10,
+          "emplacementPointsPrinted": "10",
+          "availability": "Military",
+          "cost": {
+            "kind": "flat",
+            "credits": 20000,
+            "printed": "20000"
+          },
+          "sizeRestriction": "Colossal or larger starships only",
+          "sizeRestrictionBasis": "FOOTNOTE_1",
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 47,
+            "table": "3-5",
+            "pdfPage1Based": 48
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "emplacementPointSemantics": "FIXED_ENTRY_VALUE"
+        }
+      ]
+    },
+    {
+      "id": "SOTG_TABLE_3_7",
+      "title": "Starship Accessories",
+      "printedPage": 49,
+      "pdfPage1Based": 50,
+      "rows": [
+        {
+          "row": 1,
+          "printedName": "Cargo jettison system",
+          "emplacementPoints": 1,
+          "availability": "Licensed",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "base",
+            "credits": 1000,
+            "printed": "1000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "cargo-jettison"
+        },
+        {
+          "row": 2,
+          "printedName": "Cargo pod, light",
+          "emplacementPoints": 0,
+          "availability": "Common",
+          "sizeRestriction": "Gargantuan or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 500,
+            "printed": "500 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "cargo-pod-light"
+        },
+        {
+          "row": 3,
+          "printedName": "Cargo pod, medium",
+          "emplacementPoints": 1,
+          "availability": "Common",
+          "sizeRestriction": "Colossal or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 1000,
+            "printed": "1000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "cargo-pod-medium"
+        },
+        {
+          "row": 4,
+          "printedName": "Cargo pod, heavy",
+          "emplacementPoints": 2,
+          "availability": "Common",
+          "sizeRestriction": "Colossal (frigate) or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 1500,
+            "printed": "1500 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "cargo-pod-heavy"
+        },
+        {
+          "row": 5,
+          "printedName": "Cloaking device, hibridium",
+          "emplacementPoints": 3,
+          "availability": "Military",
+          "sizeRestriction": "Colossal or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 50000,
+            "printed": "50000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "cloaking-hibridium"
+        },
+        {
+          "row": 6,
+          "printedName": "Cloaking device, stygium",
+          "emplacementPoints": 1,
+          "availability": "Military",
+          "sizeRestriction": "Huge or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 100000000,
+            "printed": "100000000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "cloaking-stygium",
+          "requiresErrataCheck": true
+        },
+        {
+          "row": 7,
+          "printedName": "Cryogenic chambers",
+          "emplacementPoints": 2,
+          "availability": "Common",
+          "sizeRestriction": "Colossal or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 500,
+            "printed": "500 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "cryogenic-chambers"
+        },
+        {
+          "row": 8,
+          "printedName": "Docking clamp",
+          "emplacementPoints": 1,
+          "availability": "Common",
+          "sizeRestriction": "Colossal (frigate) or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 2000,
+            "printed": "2000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "docking-clamps"
+        },
+        {
+          "row": 9,
+          "printedName": "Droid repair team",
+          "emplacementPoints": 1,
+          "availability": "Common",
+          "sizeRestriction": "Colossal or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 5000,
+            "printed": "5000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "droid-repair-team"
+        },
+        {
+          "row": 10,
+          "printedName": "Escape pod, small lifeboat",
+          "emplacementPoints": 1,
+          "availability": "Common",
+          "sizeRestriction": "Colossal or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 400,
+            "printed": "400 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "escape-pod-small"
+        },
+        {
+          "row": 11,
+          "printedName": "Escape pod, large lifeboat",
+          "emplacementPoints": 2,
+          "availability": "Common",
+          "sizeRestriction": "Colossal (frigate) or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 800,
+            "printed": "800 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "escape-pod-large"
+        },
+        {
+          "row": 12,
+          "printedName": "Extended range",
+          "emplacementPoints": 2,
+          "availability": "Common",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "base",
+            "credits": 100,
+            "printed": "100 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "extended-range"
+        },
+        {
+          "row": 13,
+          "printedName": "Hangar bay",
+          "emplacementPoints": 8,
+          "availability": "Common",
+          "sizeRestriction": "Colossal (frigate) or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 10,
+            "printed": "10 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "hangar-bay",
+          "requiresErrataCheck": true
+        },
+        {
+          "row": 14,
+          "printedName": "Hangar bay, concealed",
+          "emplacementPoints": 40,
+          "availability": "Restricted",
+          "sizeRestriction": "Colossal (frigate) or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 1000,
+            "printed": "1000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "hangar-bay-concealed",
+          "requiresErrataCheck": true
+        },
+        {
+          "row": 15,
+          "printedName": "HoloNet transceiver",
+          "emplacementPoints": 4,
+          "availability": "Restricted",
+          "sizeRestriction": "Colossal or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 50000,
+            "printed": "50000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "holonet-transceiver"
+        },
+        {
+          "row": 16,
+          "printedName": "Hypertransceiver",
+          "emplacementPoints": 1,
+          "availability": "Licensed",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "base",
+            "credits": 2000,
+            "printed": "2000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "hyper-transceiver"
+        },
+        {
+          "row": 17,
+          "printedName": "Luxury upgrade, basic",
+          "emplacementPoints": 1,
+          "availability": "Common",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "base",
+            "credits": 10000,
+            "printed": "10000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "luxury-basic"
+        },
+        {
+          "row": 18,
+          "printedName": "Luxury upgrade, advanced",
+          "emplacementPoints": 1,
+          "availability": "Common",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "base",
+            "credits": 20000,
+            "printed": "20000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "luxury-advanced"
+        },
+        {
+          "row": 19,
+          "printedName": "Luxury upgrade, extreme",
+          "emplacementPoints": 1,
+          "availability": "Common",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "base",
+            "credits": 50000,
+            "printed": "50000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "luxury-extreme"
+        },
+        {
+          "row": 20,
+          "printedName": "Medical suite",
+          "emplacementPoints": 1,
+          "availability": "Common",
+          "sizeRestriction": "Colossal or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 3000,
+            "printed": "3000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "medical-suite"
+        },
+        {
+          "row": 21,
+          "printedName": "Passenger seating",
+          "emplacementPoints": 1,
+          "availability": "Common",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "base",
+            "credits": 200,
+            "printed": "200 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "passenger-seating"
+        },
+        {
+          "row": 22,
+          "printedName": "Passenger quarters",
+          "emplacementPoints": 10,
+          "availability": "Common",
+          "sizeRestriction": "Colossal or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 500,
+            "printed": "500 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "passenger-quarters"
+        },
+        {
+          "row": 23,
+          "printedName": "Sensor array computer +2",
+          "emplacementPoints": 1,
+          "availability": "Common",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "base",
+            "credits": 5000,
+            "printed": "5000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "sensor-array-2"
+        },
+        {
+          "row": 24,
+          "printedName": "Sensor array computer +4",
+          "emplacementPoints": 2,
+          "availability": "Common",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "base",
+            "credits": 25000,
+            "printed": "25000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "sensor-array-4"
+        },
+        {
+          "row": 25,
+          "printedName": "Sensor array computer +6",
+          "emplacementPoints": 3,
+          "availability": "Licensed",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "base",
+            "credits": 50000,
+            "printed": "50000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "sensor-array-6"
+        },
+        {
+          "row": 26,
+          "printedName": "Sensor enhancement package",
+          "emplacementPoints": 1,
+          "availability": "Common",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "base",
+            "credits": 15000,
+            "printed": "15000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "sensor-enhancement"
+        },
+        {
+          "row": 27,
+          "printedName": "Slave circuits, basic",
+          "emplacementPoints": 1,
+          "availability": "Common",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "base",
+            "credits": 1000,
+            "printed": "1000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "slave-circuits-basic"
+        },
+        {
+          "row": 28,
+          "printedName": "Slave circuits, advanced",
+          "emplacementPoints": 1,
+          "availability": "Common",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "base",
+            "credits": 4000,
+            "printed": "4000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "slave-circuits-advanced"
+        },
+        {
+          "row": 29,
+          "printedName": "Slave circuits, recall",
+          "emplacementPoints": 0,
+          "availability": "Military",
+          "sizeRestriction": "Colossal or smaller",
+          "cost": {
+            "kind": "base",
+            "credits": 6000,
+            "printed": "6000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "slave-circuits-recall"
+        },
+        {
+          "row": 30,
+          "printedName": "Smuggler's compartments",
+          "emplacementPoints": 1,
+          "availability": "Illegal",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "base",
+            "credits": 200,
+            "printed": "200 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "smuggler-compartments"
+        },
+        {
+          "row": 31,
+          "printedName": "Transponder, IFF",
+          "emplacementPoints": 0,
+          "availability": "Military",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "flat",
+            "credits": 1000,
+            "printed": "1000 flat"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "transponder-iff"
+        },
+        {
+          "row": 32,
+          "printedName": "Transponder, masked",
+          "emplacementPoints": 0,
+          "availability": "Illegal",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "base",
+            "credits": 200,
+            "printed": "200 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "transponder-masked"
+        },
+        {
+          "row": 33,
+          "printedName": "Transponder, disguised (1)",
+          "emplacementPoints": 0,
+          "availability": "Illegal",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "base",
+            "credits": 500,
+            "printed": "500 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "transponder-disguised-1"
+        },
+        {
+          "row": 34,
+          "printedName": "Transponder, disguised (2)",
+          "emplacementPoints": 0,
+          "availability": "Illegal",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "base",
+            "credits": 1000,
+            "printed": "1000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "transponder-disguised-2"
+        },
+        {
+          "row": 35,
+          "printedName": "Transponder, disguised (3)",
+          "emplacementPoints": 0,
+          "availability": "Illegal",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "base",
+            "credits": 2000,
+            "printed": "2000 base"
+          },
+          "source": {
+            "book": "Starships of the Galaxy",
+            "printedPage": 49,
+            "table": "3-7",
+            "pdfPage1Based": 50
+          },
+          "verification": "PDF_VISUAL_REVIEW",
+          "suggestedCatalogId": "transponder-disguised-3"
+        }
+      ]
+    },
+    {
+      "id": "SCUM_TABLE_2_10",
+      "title": "Starship Systems",
+      "printedPage": 58,
+      "pdfPage1Based": 59,
+      "rows": [
+        {
+          "row": 1,
+          "printedName": "Amphibious seals",
+          "emplacementPoints": 2,
+          "availability": "Common",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "base",
+            "credits": 4000,
+            "printed": "4000 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 2,
+          "printedName": "Anti-boarding systems",
+          "emplacementPoints": 5,
+          "availability": "Restricted",
+          "sizeRestriction": "Colossal or larger",
+          "sizeRestrictionPrinted": "Colossal or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 20000,
+            "printed": "20000 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 3,
+          "printedName": "Auxiliary generators +2",
+          "emplacementPoints": 2,
+          "availability": "Common",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "base",
+            "credits": 2000,
+            "printed": "2000 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 4,
+          "printedName": "Auxiliary generators +4",
+          "emplacementPoints": 3,
+          "availability": "Common",
+          "sizeRestriction": "Gargantuan or larger only",
+          "sizeRestrictionPrinted": "Gargantuan or larger only",
+          "cost": {
+            "kind": "base",
+            "credits": 5000,
+            "printed": "5000 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 5,
+          "printedName": "Auxiliary generators +6",
+          "emplacementPoints": 4,
+          "availability": "Licensed",
+          "sizeRestriction": "Colossal or larger only",
+          "sizeRestrictionPrinted": "Colossal or larger only",
+          "cost": {
+            "kind": "base",
+            "credits": 10000,
+            "printed": "10000 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 6,
+          "printedName": "Backup battery",
+          "emplacementPoints": 0,
+          "availability": "Licensed",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "base",
+            "credits": 10000,
+            "printed": "10000 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 7,
+          "printedName": "Baffled drive",
+          "emplacementPoints": 1,
+          "availability": "Military",
+          "sizeRestriction": "Colossal or larger",
+          "sizeRestrictionPrinted": "Colossal or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 100000,
+            "printed": "100000 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 8,
+          "printedName": "Cockpit ejection system",
+          "emplacementPoints": 2,
+          "availability": "Common",
+          "sizeRestriction": "Gargantuan or Colossal",
+          "sizeRestrictionPrinted": "Gargantuan or Colossal",
+          "cost": {
+            "kind": "flat",
+            "credits": 8000,
+            "printed": "8000"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 9,
+          "printedName": "Com jammers",
+          "emplacementPoints": 1,
+          "availability": "Military",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "flat",
+            "credits": 20000,
+            "printed": "20000"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 10,
+          "printedName": "Cofferdam",
+          "emplacementPoints": 1,
+          "availability": "Licensed",
+          "sizeRestriction": "Colossal or larger",
+          "sizeRestrictionPrinted": "Colossal or larger",
+          "cost": {
+            "kind": "flat",
+            "credits": 3000,
+            "printed": "3000"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 11,
+          "printedName": "Environmental filters",
+          "emplacementPoints": 2,
+          "availability": "Licensed",
+          "sizeRestriction": "Gargantuan or larger",
+          "sizeRestrictionPrinted": "Gargantuan or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 2000,
+            "printed": "2000 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 12,
+          "printedName": "Fuel converters",
+          "emplacementPoints": 1,
+          "availability": "Licensed",
+          "sizeRestriction": "Colossal or larger",
+          "sizeRestrictionPrinted": "Colossal or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 2400,
+            "printed": "2400 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 13,
+          "printedName": "Grappler mag",
+          "emplacementPoints": 1,
+          "availability": "Common",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "flat",
+            "credits": 1000,
+            "printed": "1000"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 14,
+          "printedName": "Hardpoint",
+          "emplacementPoints": 1,
+          "availability": "Military",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "flat",
+            "credits": 500,
+            "printed": "500"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 15,
+          "printedName": "Hidden cargo hold (25% of cargo)",
+          "emplacementPoints": 1,
+          "availability": "Illegal",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "base",
+            "credits": 2000,
+            "printed": "2000 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 16,
+          "printedName": "Hidden cargo hold (50% of cargo)",
+          "emplacementPoints": 2,
+          "availability": "Illegal",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "base",
+            "credits": 5000,
+            "printed": "5000 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 17,
+          "printedName": "Hidden cargo hold (75% of cargo)",
+          "emplacementPoints": 4,
+          "availability": "Illegal",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "base",
+            "credits": 10000,
+            "printed": "10000 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 18,
+          "printedName": "Holding cells (25% of passengers)",
+          "emplacementPoints": 1,
+          "availability": "Military",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "base",
+            "credits": 1000,
+            "printed": "1000 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 19,
+          "printedName": "Holding cells (50% of passengers)",
+          "emplacementPoints": 2,
+          "availability": "Military",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "base",
+            "credits": 2000,
+            "printed": "2000 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 20,
+          "printedName": "Holding cells (75% of passengers)",
+          "emplacementPoints": 4,
+          "availability": "Military",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "base",
+            "credits": 4000,
+            "printed": "4000 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 21,
+          "printedName": "Interrogation chamber",
+          "emplacementPoints": 0,
+          "availability": "Illegal",
+          "sizeRestriction": "Colossal or larger",
+          "sizeRestrictionPrinted": "Colossal or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 10000,
+            "printed": "10000 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 22,
+          "printedName": "Personalized controls",
+          "emplacementPoints": 0,
+          "availability": "Common",
+          "sizeRestriction": "Colossal or smaller",
+          "sizeRestrictionPrinted": "Colossal or smaller",
+          "cost": {
+            "kind": "flat",
+            "credits": 1000,
+            "printed": "1000"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 23,
+          "printedName": "Plasma punch",
+          "emplacementPoints": 1,
+          "availability": "Military",
+          "sizeRestriction": "Colossal or larger",
+          "sizeRestrictionPrinted": "Colossal or larger",
+          "cost": {
+            "kind": "flat",
+            "credits": 25000,
+            "printed": "25000"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 24,
+          "printedName": "Plasma torch",
+          "emplacementPoints": 1,
+          "availability": "Military",
+          "sizeRestriction": "Gargantuan or larger",
+          "sizeRestrictionPrinted": "Gargantuan or larger",
+          "cost": {
+            "kind": "flat",
+            "credits": 6000,
+            "printed": "6000"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 25,
+          "printedName": "Reinforced keel",
+          "emplacementPoints": 2,
+          "availability": "Military",
+          "sizeRestriction": "Gargantuan or larger",
+          "sizeRestrictionPrinted": "Gargantuan or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 4000,
+            "printed": "4000 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 26,
+          "printedName": "Reinforced keel, boarding",
+          "emplacementPoints": 4,
+          "availability": "Military",
+          "sizeRestriction": "Gargantuan or larger",
+          "sizeRestrictionPrinted": "Gargantuan or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 10000,
+            "printed": "10000 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 27,
+          "printedName": "Security bracing",
+          "emplacementPoints": 2,
+          "availability": "Common",
+          "sizeRestriction": "Gargantuan or larger",
+          "sizeRestrictionPrinted": "Gargantuan or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 2000,
+            "printed": "2000 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 28,
+          "printedName": "Sensor baffling",
+          "emplacementPoints": 0,
+          "availability": "Military",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "base",
+            "credits": 20000,
+            "printed": "20000 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 29,
+          "printedName": "Sensor decoy",
+          "emplacementPoints": 1,
+          "availability": "Restricted",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "base",
+            "credits": 2000,
+            "printed": "2000 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 30,
+          "printedName": "Sensor mask",
+          "emplacementPoints": 1,
+          "availability": "Illegal",
+          "sizeRestriction": "Gargantuan or larger",
+          "sizeRestrictionPrinted": "Gargantuan or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 150000,
+            "printed": "150000 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 31,
+          "printedName": "Tractor clamp",
+          "emplacementPoints": 12,
+          "availability": "Military",
+          "sizeRestriction": null,
+          "sizeRestrictionPrinted": "None",
+          "cost": {
+            "kind": "flat",
+            "credits": 15000,
+            "printed": "15000"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 32,
+          "printedName": "Workshop",
+          "emplacementPoints": 1,
+          "availability": "Common",
+          "sizeRestriction": "Gargantuan or larger",
+          "sizeRestrictionPrinted": "Gargantuan or larger",
+          "cost": {
+            "kind": "base",
+            "credits": 3000,
+            "printed": "3000 base"
+          },
+          "source": {
+            "book": "Scum and Villainy",
+            "printedPage": 58,
+            "pdfPage1Based": 59,
+            "table": "2-10"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        }
+      ]
+    },
+    {
+      "id": "GAW_TABLE_2_7",
+      "title": "Vehicle Weapons",
+      "printedPage": 67,
+      "pdfPage1Based": 68,
+      "rows": [
+        {
+          "row": 1,
+          "printedName": "Chaff gun",
+          "damage": null,
+          "damagePrinted": "—",
+          "emplacementPoints": 1,
+          "emplacementPointsPrinted": "1",
+          "availability": null,
+          "availabilityState": "NOT_IN_PRINTED_TABLE",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "flat",
+            "credits": 2000,
+            "printed": "2,000"
+          },
+          "source": {
+            "book": "Galaxy at War",
+            "printedPage": 67,
+            "pdfPage1Based": 68,
+            "table": "2-7"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 2,
+          "printedName": "Glowing defoliator launcher",
+          "damage": null,
+          "damagePrinted": "—",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": null,
+          "availabilityState": "NOT_IN_PRINTED_TABLE",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "flat",
+            "credits": 15000,
+            "printed": "15,000"
+          },
+          "source": {
+            "book": "Galaxy at War",
+            "printedPage": 67,
+            "pdfPage1Based": 68,
+            "table": "2-7"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 3,
+          "printedName": "Glowing defoliator shell",
+          "damage": "4d10x2",
+          "damagePrinted": "4d10x2*",
+          "damageFootnote": "Droids and creatures in sealed environmental suits or vehicles are immune",
+          "emplacementPoints": null,
+          "emplacementPointsPrinted": "—",
+          "emplacementPointsState": "PRINTED_DASH",
+          "availability": null,
+          "availabilityState": "NOT_IN_PRINTED_TABLE",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "flat",
+            "credits": 3500,
+            "printed": "3,500"
+          },
+          "source": {
+            "book": "Galaxy at War",
+            "printedPage": 67,
+            "pdfPage1Based": 68,
+            "table": "2-7"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        }
+      ]
+    },
+    {
+      "id": "LEGACY_GRAVITY_MINES",
+      "title": "Gravity Mines (sidebar price/EP table)",
+      "printedPage": 191,
+      "pdfPage1Based": 192,
+      "rows": [
+        {
+          "row": 1,
+          "printedName": "Gravity mine launcher",
+          "damage": null,
+          "damagePrinted": "—",
+          "emplacementPoints": 2,
+          "emplacementPointsPrinted": "2",
+          "availability": "Military",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "flat",
+            "credits": 5000,
+            "printed": "5000"
+          },
+          "source": {
+            "book": "Legacy Era Campaign Guide",
+            "printedPage": 191,
+            "pdfPage1Based": 192,
+            "table": "Gravity Mines sidebar"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 2,
+          "printedName": "Gravity mine, standard",
+          "damage": null,
+          "damagePrinted": "—",
+          "emplacementPoints": null,
+          "emplacementPointsPrinted": "—",
+          "availability": "Military",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "flat",
+            "credits": 1000,
+            "printed": "1000"
+          },
+          "source": {
+            "book": "Legacy Era Campaign Guide",
+            "printedPage": 191,
+            "pdfPage1Based": 192,
+            "table": "Gravity Mines sidebar"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        },
+        {
+          "row": 3,
+          "printedName": "Gravity mine, magnetic",
+          "damage": null,
+          "damagePrinted": "—",
+          "emplacementPoints": null,
+          "emplacementPointsPrinted": "—",
+          "availability": "Military",
+          "sizeRestriction": null,
+          "cost": {
+            "kind": "flat",
+            "credits": 4000,
+            "printed": "4000"
+          },
+          "source": {
+            "book": "Legacy Era Campaign Guide",
+            "printedPage": 191,
+            "pdfPage1Based": 192,
+            "table": "Gravity Mines sidebar"
+          },
+          "verification": "PDF_VISUAL_REVIEW"
+        }
+      ]
+    }
+  ],
+  "counts": {
+    "SOTGWeaponRows": 43,
+    "SOTGAccessoryRows": 35,
+    "ScumSystemRows": 32,
+    "GAWWeaponRows": 3,
+    "allPrintedTableRows": 172,
+    "worksheetItemsReviewed": 91,
+    "worksheetItemsDirectTable": 77,
+    "SOTGMovementRows": 27,
+    "SOTGDefenseRows": 29,
+    "LegacyGravityMineRows": 3,
+    "ThreatsDiscordProseEntries": 2
+  },
+  "explicitReviewFindings": [
+    {
+      "kind": "CONFIRMED_PRINTED_PRICE",
+      "printedName": "Cloaking device, stygium",
+      "printedCost": "100,000,000 credits base",
+      "page": 49,
+      "note": "Strongly differs from current catalog; do not assume errata without a published correction."
+    },
+    {
+      "kind": "CONFIRMED_PRINTED_PRICE",
+      "printedName": "Hangar bay",
+      "printedCost": "10 credits base",
+      "page": 49,
+      "note": "Unusually low but visibly printed. Check errata before recommending changing production data."
+    },
+    {
+      "kind": "CONFIRMED_PRINTED_PRICE",
+      "printedName": "Hangar bay, concealed",
+      "printedCost": "1,000 credits base",
+      "page": 49,
+      "note": "Unusually low relative to some catalog data; requires impact assessment."
+    },
+    {
+      "kind": "UNRESOLVED_SCAN_CELL",
+      "printedName": "Space mine, standard",
+      "field": "damage",
+      "page": 47,
+      "note": "Visible print is distorted; do not convert to numeric damage until visually verified."
+    }
+  ],
+  "certificationBoundary": {
+    "sourceEvidence": "PDF visually reviewed printed table rows; prose section values likewise recorded separately. Original PDF pages identified.",
+    "catalogIdentity": "Suggested catalog mapping is a lookup aid and must be reconciled against source identities by Claude.",
+    "mechanics": "Printed data does not imply mechanical/operational certification.",
+    "combat": "Weapon installation never grants execution authorization without the existing weapon mount/attack gates.",
+    "unknown": "Unknown, absent and not stated must never be converted into zero or guessed."
+  },
+  "stillToReview": [
+    {
+      "book": "All sources",
+      "area": "Official errata, full narrative mechanical interpretations and any identity remapping",
+      "status": "SEPARATE_REVIEW_REQUIRED"
+    }
+  ],
+  "catalogIdentityCaution": "suggestedCatalogId is a lookup aid, not certified identity; independently reconcile aliases and variants before using an ID in production.",
+  "proseOnlyOptions": [
+    {
+      "id": "sotg-concussion-missile-armor-piercing",
+      "name": "Armor-Piercing Concussion Missiles",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "printedPage": 44,
+        "pdfPage1Based": 45,
+        "section": "Concussion Missiles"
+      },
+      "verifiedRule": {
+        "penetration": 10,
+        "attackPenalty": -5
+      },
+      "purchaseCost": null,
+      "purchaseCostState": "NOT_STATED_AS_DISTINCT_PRICE",
+      "type": "VARIANT_RULE"
+    },
+    {
+      "id": "sotg-concussion-launcher-capacity",
+      "name": "Concussion missile launcher additional capacity",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "printedPage": 44,
+        "pdfPage1Based": 45,
+        "section": "Concussion Missiles / Launchers"
+      },
+      "verifiedRule": {
+        "baseCapacities": {
+          "light": 6,
+          "medium": 16,
+          "heavy": 30
+        },
+        "costIncreasePerExtraRoundPercent": 20,
+        "maxCapacityMultiplier": 2,
+        "additionalEp": null
+      },
+      "additionalEpState": "NOT_STATED_IN_PROSE",
+      "type": "CAPACITY_UPGRADE_RULE"
+    },
+    {
+      "id": "sotg-proton-launcher-capacity",
+      "name": "Proton torpedo launcher additional capacity",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "printedPage": 46,
+        "pdfPage1Based": 47,
+        "section": "Proton Torpedoes / Launchers"
+      },
+      "verifiedRule": {
+        "baseCapacity": 3,
+        "costIncreasePerExtraRoundPercent": 25,
+        "maxCapacity": 16,
+        "additionalEp": null
+      },
+      "additionalEpState": "NOT_STATED_IN_PROSE",
+      "type": "CAPACITY_UPGRADE_RULE"
+    },
+    {
+      "id": "sotg-shieldbuster-launcher-capacity",
+      "name": "Shieldbuster torpedo launcher additional capacity",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "printedPage": 46,
+        "pdfPage1Based": 47,
+        "section": "Shieldbuster Torpedoes / Launchers"
+      },
+      "verifiedRule": {
+        "baseCapacity": 4,
+        "costIncreasePerExtraRoundPercent": 25,
+        "maxCapacity": 8,
+        "additionalEp": null
+      },
+      "additionalEpState": "NOT_STATED_IN_PROSE",
+      "type": "CAPACITY_UPGRADE_RULE"
+    },
+    {
+      "id": "sotg-mine-launcher-capacity",
+      "name": "Space mine launcher additional capacity",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "printedPage": 46,
+        "pdfPage1Based": 47,
+        "section": "Space Mines / Mine Launcher"
+      },
+      "verifiedRule": {
+        "baseCapacity": 6,
+        "costIncreasePerExtraRoundPercent": 25,
+        "maxCapacity": 12,
+        "additionalEp": null
+      },
+      "additionalEpState": "NOT_STATED_IN_PROSE",
+      "type": "CAPACITY_UPGRADE_RULE"
+    },
+    {
+      "id": "sotg-cargo-pod-detachable",
+      "name": "Detachable cargo pod",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "printedPage": 48,
+        "pdfPage1Based": 49,
+        "section": "Cargo Pods"
+      },
+      "verifiedRule": {
+        "costMultiplier": 5,
+        "function": "can act as escape pod",
+        "additionalEp": null
+      },
+      "additionalEpState": "NOT_STATED_IN_PROSE",
+      "type": "VARIANT_RULE"
+    },
+    {
+      "id": "sotg-cannon-triple-alias",
+      "name": "Triple cannon",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "printedPage": 44,
+        "pdfPage1Based": 45,
+        "section": "Cannon Double/Quad"
+      },
+      "verifiedRule": {
+        "functionallyIdenticalTo": "Double cannon"
+      },
+      "purchaseCost": null,
+      "purchaseCostState": "IDENTICAL_FUNCTION_NOT_EXPLICIT_PRICE",
+      "type": "ALIAS_NOT_SEPARATE_PRICE"
+    }
+  ],
+  "supplementalProseOnlySystems": [
+    {
+      "id": "composite-beam-cannon",
+      "name": "Composite Beam Cannon",
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "printedPage": 162,
+        "pdfPage1Based": 163,
+        "section": "Republic Vehicles / Weapon Systems"
+      },
+      "printedEffect": "Ignores 5 points of target shield rating",
+      "independentCost": null,
+      "independentEp": null,
+      "independentAvailability": null,
+      "evidenceClass": "RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+    },
+    {
+      "id": "mass-driver-cannon-standard",
+      "name": "Mass-Driver Cannon",
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "printedPage": 162,
+        "pdfPage1Based": 163,
+        "section": "Republic Vehicles / Weapon Systems"
+      },
+      "printedSizeRestriction": "Gargantuan or larger",
+      "independentCost": null,
+      "independentEp": null,
+      "evidenceClass": "RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+    },
+    {
+      "id": "mass-driver-cannon-heavy",
+      "name": "Heavy Mass-Driver Cannon",
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "printedPage": 162,
+        "pdfPage1Based": 163,
+        "section": "Republic Vehicles / Weapon Systems"
+      },
+      "printedSizeRestriction": "Gargantuan or larger",
+      "independentCost": null,
+      "independentEp": null,
+      "evidenceClass": "RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+    },
+    {
+      "id": "rail-cannon",
+      "name": "Rail Cannon",
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "printedPage": 162,
+        "pdfPage1Based": 163,
+        "section": "Republic Vehicles / Weapon Systems"
+      },
+      "printedSizeRestriction": "Gargantuan or larger",
+      "independentCost": null,
+      "independentEp": null,
+      "evidenceClass": "RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+    },
+    {
+      "id": "proton-grenade",
+      "name": "Proton Grenade",
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "printedPage": 162,
+        "pdfPage1Based": 163,
+        "section": "Republic Vehicles / Weapon Systems"
+      },
+      "printedEffect": "3-square burst radius; successful attack deals full damage, otherwise half",
+      "independentCost": null,
+      "independentEp": null,
+      "evidenceClass": "RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+    },
+    {
+      "id": "proton-grenade-launcher",
+      "name": "Proton Grenade Launcher",
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "printedPage": 162,
+        "pdfPage1Based": 163,
+        "section": "Republic Vehicles / Weapon Systems"
+      },
+      "independentCost": null,
+      "independentEp": null,
+      "evidenceClass": "RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+    },
+    {
+      "id": "anti-aircraft-flak-pod",
+      "name": "Anti-Aircraft Flak Pod",
+      "source": {
+        "book": "Rebellion Era Campaign Guide",
+        "printedPage": 130,
+        "pdfPage1Based": 131,
+        "section": "Vehicles and Starships / Weapon Systems"
+      },
+      "printedEffect": "Area attack targets 2x2 starship-scale square, Reflex DC 10 to affect area; each vehicle then compared with same attack",
+      "independentCost": null,
+      "independentEp": null,
+      "independentDamage": null,
+      "evidenceClass": "RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+    },
+    {
+      "id": "discord-missile-launcher",
+      "name": "Discord Missile Launcher",
+      "source": {
+        "book": "Threats of the Galaxy",
+        "printedPage": 142,
+        "pdfPage1Based": 143,
+        "section": "Discord Missile Launcher"
+      },
+      "printedSizeRestriction": "Huge size or larger",
+      "emplacementPoints": 2,
+      "availability": "Restricted",
+      "cost": {
+        "kind": "flat",
+        "credits": 4000
+      },
+      "evidenceClass": "PRINTED_COMPONENT_PROSE",
+      "verification": "PDF_VISUAL_REVIEW"
+    },
+    {
+      "id": "discord-missile",
+      "name": "Discord Missile",
+      "source": {
+        "book": "Threats of the Galaxy",
+        "printedPage": 142,
+        "pdfPage1Based": 143,
+        "section": "Discord Missile Launcher"
+      },
+      "damage": "Special",
+      "availability": "Restricted",
+      "cost": {
+        "kind": "flat",
+        "credits": 1000
+      },
+      "emplacementPoints": null,
+      "emplacementPointsState": "NOT_STATED_IN_PARAGRAPH",
+      "evidenceClass": "PRINTED_COMPONENT_PROSE",
+      "verification": "PDF_VISUAL_REVIEW"
+    }
+  ],
+  "reviewedWorksheetItems": [
+    {
+      "worksheetIndex": 1,
+      "requestedCatalogOrCensusId": "cloaking-stygium",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 6
+      },
+      "printedName": "Cloaking device, stygium",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 2,
+      "requestedCatalogOrCensusId": "hangar-bay",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 13
+      },
+      "printedName": "Hangar bay",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 3,
+      "requestedCatalogOrCensusId": "hangar-bay-concealed",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 14
+      },
+      "printedName": "Hangar bay, concealed",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 4,
+      "requestedCatalogOrCensusId": "anti-boarding-systems",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 2
+      },
+      "printedName": "Anti-boarding systems",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 5,
+      "requestedCatalogOrCensusId": "com-jammers",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 9
+      },
+      "printedName": "Com jammers",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 6,
+      "requestedCatalogOrCensusId": "reinforced-keel",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 25
+      },
+      "printedName": "Reinforced keel",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 7,
+      "requestedCatalogOrCensusId": "reinforced-keel-boarding",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 26
+      },
+      "printedName": "Reinforced keel, boarding",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 8,
+      "requestedCatalogOrCensusId": "security-bracing",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 27
+      },
+      "printedName": "Security bracing",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 9,
+      "requestedCatalogOrCensusId": "cannon-enhancement",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-5",
+        "printedPage": 47,
+        "book": "Starships of the Galaxy",
+        "row": 7
+      },
+      "printedName": "Cannon enhancements",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 10,
+      "requestedCatalogOrCensusId": "concussion-missile-launcher-light",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-5",
+        "printedPage": 47,
+        "book": "Starships of the Galaxy",
+        "row": 12
+      },
+      "printedName": "Concussion missile launcher, light",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 11,
+      "requestedCatalogOrCensusId": "concussion-missile-launcher-medium",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-5",
+        "printedPage": 47,
+        "book": "Starships of the Galaxy",
+        "row": 13
+      },
+      "printedName": "Concussion missile launcher, medium",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 12,
+      "requestedCatalogOrCensusId": "concussion-missile-launcher-heavy",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-5",
+        "printedPage": 47,
+        "book": "Starships of the Galaxy",
+        "row": 14
+      },
+      "printedName": "Concussion missile launcher, heavy",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 13,
+      "requestedCatalogOrCensusId": "proton-torpedo",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-5",
+        "printedPage": 47,
+        "book": "Starships of the Galaxy",
+        "row": 31
+      },
+      "printedName": "Proton torpedo",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 14,
+      "requestedCatalogOrCensusId": "tractor-beam",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-5",
+        "printedPage": 47,
+        "book": "Starships of the Galaxy",
+        "row": 40
+      },
+      "printedName": "Tractor beam",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 15,
+      "requestedCatalogOrCensusId": "space-mine-standard",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-5",
+        "printedPage": 47,
+        "book": "Starships of the Galaxy",
+        "row": 35
+      },
+      "printedName": "Space mine, standard",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 16,
+      "requestedCatalogOrCensusId": "ion-bomb",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-5",
+        "printedPage": 47,
+        "book": "Starships of the Galaxy",
+        "row": 21
+      },
+      "printedName": "Ion bomb",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 17,
+      "requestedCatalogOrCensusId": "shieldbuster-torpedo",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-5",
+        "printedPage": 47,
+        "book": "Starships of the Galaxy",
+        "row": 33
+      },
+      "printedName": "Shieldbuster torpedo",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 18,
+      "requestedCatalogOrCensusId": "fire-linked-optional",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-5",
+        "printedPage": 47,
+        "book": "Starships of the Galaxy",
+        "row": 19
+      },
+      "printedName": "Fire-linked weapon, optional",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 19,
+      "requestedCatalogOrCensusId": "space-mine-launcher-heavy",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-5",
+        "printedPage": 47,
+        "book": "Starships of the Galaxy",
+        "row": 39
+      },
+      "printedName": "Space mine launcher, heavy",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 20,
+      "requestedCatalogOrCensusId": "composite-beam-cannon",
+      "disposition": "PDF_PROSE_REVIEWED_NO_INSTALL_PRICE_TABLE",
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "printedPage": 162,
+        "pdfPage1Based": 163,
+        "section": "Republic Vehicles / Weapon Systems"
+      },
+      "independentCost": null,
+      "independentEp": null,
+      "unresolved": "No independent catalog cost or EP printed in the reviewed weapons prose; vehicle statblock statistics are not a universal price table"
+    },
+    {
+      "worksheetIndex": 21,
+      "requestedCatalogOrCensusId": "mass-driver-cannon-standard",
+      "disposition": "PDF_PROSE_REVIEWED_NO_INSTALL_PRICE_TABLE",
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "printedPage": 162,
+        "pdfPage1Based": 163,
+        "section": "Republic Vehicles / Weapon Systems"
+      },
+      "independentCost": null,
+      "independentEp": null,
+      "unresolved": "No independent catalog cost or EP printed in the reviewed weapons prose; vehicle statblock statistics are not a universal price table"
+    },
+    {
+      "worksheetIndex": 22,
+      "requestedCatalogOrCensusId": "mass-driver-cannon-heavy",
+      "disposition": "PDF_PROSE_REVIEWED_NO_INSTALL_PRICE_TABLE",
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "printedPage": 162,
+        "pdfPage1Based": 163,
+        "section": "Republic Vehicles / Weapon Systems"
+      },
+      "independentCost": null,
+      "independentEp": null,
+      "unresolved": "No independent catalog cost or EP printed in the reviewed weapons prose; vehicle statblock statistics are not a universal price table"
+    },
+    {
+      "worksheetIndex": 23,
+      "requestedCatalogOrCensusId": "proton-grenade-launcher",
+      "disposition": "PDF_PROSE_REVIEWED_NO_INSTALL_PRICE_TABLE",
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "printedPage": 162,
+        "pdfPage1Based": 163,
+        "section": "Republic Vehicles / Weapon Systems"
+      },
+      "independentCost": null,
+      "independentEp": null,
+      "unresolved": "No independent catalog cost or EP printed in the reviewed weapons prose; vehicle statblock statistics are not a universal price table"
+    },
+    {
+      "worksheetIndex": 24,
+      "requestedCatalogOrCensusId": "proton-grenade",
+      "disposition": "PDF_PROSE_REVIEWED_NO_INSTALL_PRICE_TABLE",
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "printedPage": 162,
+        "pdfPage1Based": 163,
+        "section": "Republic Vehicles / Weapon Systems"
+      },
+      "independentCost": null,
+      "independentEp": null,
+      "unresolved": "No independent catalog cost or EP printed in the reviewed weapons prose; vehicle statblock statistics are not a universal price table"
+    },
+    {
+      "worksheetIndex": 25,
+      "requestedCatalogOrCensusId": "rail-cannon",
+      "disposition": "PDF_PROSE_REVIEWED_NO_INSTALL_PRICE_TABLE",
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "printedPage": 162,
+        "pdfPage1Based": 163,
+        "section": "Republic Vehicles / Weapon Systems"
+      },
+      "independentCost": null,
+      "independentEp": null,
+      "unresolved": "No independent catalog cost or EP printed in the reviewed weapons prose; vehicle statblock statistics are not a universal price table"
+    },
+    {
+      "worksheetIndex": 26,
+      "requestedCatalogOrCensusId": "anti-aircraft-flak-pod",
+      "disposition": "PDF_PROSE_REVIEWED_NO_INSTALL_PRICE_TABLE",
+      "source": {
+        "book": "Rebellion Era Campaign Guide",
+        "printedPage": 130,
+        "pdfPage1Based": 131,
+        "section": "Vehicles and Starships / Weapon Systems"
+      },
+      "independentCost": null,
+      "independentEp": null,
+      "unresolved": "No independent catalog cost or EP printed in the reviewed weapons prose; vehicle statblock statistics are not a universal price table"
+    },
+    {
+      "worksheetIndex": 27,
+      "requestedCatalogOrCensusId": "defoliator-shell",
+      "disposition": "PDF_PRINTED_DASH_CONFIRMED",
+      "evidenceRef": {
+        "book": "Galaxy at War",
+        "printedPage": 67,
+        "table": "2-7",
+        "row": 3
+      },
+      "emplacementPoints": null,
+      "emplacementPointsPrinted": "—",
+      "unresolved": "Printed dash is not an explicit numeric zero; verify semantics before using as an ammo EP charge"
+    },
+    {
+      "worksheetIndex": 28,
+      "requestedCatalogOrCensusId": "cargo-jettison",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 1
+      },
+      "printedName": "Cargo jettison system",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 29,
+      "requestedCatalogOrCensusId": "cargo-pod-light",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 2
+      },
+      "printedName": "Cargo pod, light",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 30,
+      "requestedCatalogOrCensusId": "cargo-pod-medium",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 3
+      },
+      "printedName": "Cargo pod, medium",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 31,
+      "requestedCatalogOrCensusId": "cargo-pod-heavy",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 4
+      },
+      "printedName": "Cargo pod, heavy",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 32,
+      "requestedCatalogOrCensusId": "cloaking-hibridium",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 5
+      },
+      "printedName": "Cloaking device, hibridium",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 33,
+      "requestedCatalogOrCensusId": "cryogenic-chambers",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 7
+      },
+      "printedName": "Cryogenic chambers",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 34,
+      "requestedCatalogOrCensusId": "docking-clamps",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 8
+      },
+      "printedName": "Docking clamp",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 35,
+      "requestedCatalogOrCensusId": "droid-repair-team",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 9
+      },
+      "printedName": "Droid repair team",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 36,
+      "requestedCatalogOrCensusId": "escape-pod-small",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 10
+      },
+      "printedName": "Escape pod, small lifeboat",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 37,
+      "requestedCatalogOrCensusId": "escape-pod-large",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 11
+      },
+      "printedName": "Escape pod, large lifeboat",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 38,
+      "requestedCatalogOrCensusId": "extended-range",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 12
+      },
+      "printedName": "Extended range",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 39,
+      "requestedCatalogOrCensusId": "holonet-transceiver",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 15
+      },
+      "printedName": "HoloNet transceiver",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 40,
+      "requestedCatalogOrCensusId": "hyper-transceiver",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 16
+      },
+      "printedName": "Hypertransceiver",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 41,
+      "requestedCatalogOrCensusId": "luxury-basic",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 17
+      },
+      "printedName": "Luxury upgrade, basic",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 42,
+      "requestedCatalogOrCensusId": "luxury-advanced",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 18
+      },
+      "printedName": "Luxury upgrade, advanced",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 43,
+      "requestedCatalogOrCensusId": "luxury-extreme",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 19
+      },
+      "printedName": "Luxury upgrade, extreme",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 44,
+      "requestedCatalogOrCensusId": "medical-suite",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 20
+      },
+      "printedName": "Medical suite",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 45,
+      "requestedCatalogOrCensusId": "passenger-seating",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 21
+      },
+      "printedName": "Passenger seating",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 46,
+      "requestedCatalogOrCensusId": "passenger-quarters",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 22
+      },
+      "printedName": "Passenger quarters",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 47,
+      "requestedCatalogOrCensusId": "sensor-array-2",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 23
+      },
+      "printedName": "Sensor array computer +2",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 48,
+      "requestedCatalogOrCensusId": "sensor-array-4",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 24
+      },
+      "printedName": "Sensor array computer +4",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 49,
+      "requestedCatalogOrCensusId": "sensor-array-6",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 25
+      },
+      "printedName": "Sensor array computer +6",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 50,
+      "requestedCatalogOrCensusId": "sensor-enhancement",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 26
+      },
+      "printedName": "Sensor enhancement package",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 51,
+      "requestedCatalogOrCensusId": "slave-circuits-basic",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 27
+      },
+      "printedName": "Slave circuits, basic",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 52,
+      "requestedCatalogOrCensusId": "slave-circuits-advanced",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 28
+      },
+      "printedName": "Slave circuits, advanced",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 53,
+      "requestedCatalogOrCensusId": "slave-circuits-recall",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 29
+      },
+      "printedName": "Slave circuits, recall",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 54,
+      "requestedCatalogOrCensusId": "smuggler-compartments",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 30
+      },
+      "printedName": "Smuggler's compartments",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 55,
+      "requestedCatalogOrCensusId": "transponder-iff",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 31
+      },
+      "printedName": "Transponder, IFF",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 56,
+      "requestedCatalogOrCensusId": "transponder-masked",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 32
+      },
+      "printedName": "Transponder, masked",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 57,
+      "requestedCatalogOrCensusId": "transponder-disguised-1",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 33
+      },
+      "printedName": "Transponder, disguised (1)",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 58,
+      "requestedCatalogOrCensusId": "transponder-disguised-2",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 34
+      },
+      "printedName": "Transponder, disguised (2)",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 59,
+      "requestedCatalogOrCensusId": "transponder-disguised-3",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "3-7",
+        "printedPage": 49,
+        "book": "Starships of the Galaxy",
+        "row": 35
+      },
+      "printedName": "Transponder, disguised (3)",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 60,
+      "requestedCatalogOrCensusId": "amphibious-seals",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 1
+      },
+      "printedName": "Amphibious seals",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 61,
+      "requestedCatalogOrCensusId": "auxiliary-generators-2",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 3
+      },
+      "printedName": "Auxiliary generators +2",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 62,
+      "requestedCatalogOrCensusId": "auxiliary-generators-4",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 4
+      },
+      "printedName": "Auxiliary generators +4",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 63,
+      "requestedCatalogOrCensusId": "auxiliary-generators-6",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 5
+      },
+      "printedName": "Auxiliary generators +6",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 64,
+      "requestedCatalogOrCensusId": "backup-battery",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 6
+      },
+      "printedName": "Backup battery",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 65,
+      "requestedCatalogOrCensusId": "cockpit-ejection",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 8
+      },
+      "printedName": "Cockpit ejection system",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 66,
+      "requestedCatalogOrCensusId": "cofferdam",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 10
+      },
+      "printedName": "Cofferdam",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 67,
+      "requestedCatalogOrCensusId": "environmental-filters",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 11
+      },
+      "printedName": "Environmental filters",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 68,
+      "requestedCatalogOrCensusId": "fuel-converters",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 12
+      },
+      "printedName": "Fuel converters",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 69,
+      "requestedCatalogOrCensusId": "grappler-mag",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 13
+      },
+      "printedName": "Grappler mag",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 70,
+      "requestedCatalogOrCensusId": "hardpoint",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 14
+      },
+      "printedName": "Hardpoint",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 71,
+      "requestedCatalogOrCensusId": "hidden-cargo-25",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 15
+      },
+      "printedName": "Hidden cargo hold (25% of cargo)",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 72,
+      "requestedCatalogOrCensusId": "hidden-cargo-50",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 16
+      },
+      "printedName": "Hidden cargo hold (50% of cargo)",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 73,
+      "requestedCatalogOrCensusId": "hidden-cargo-75",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 17
+      },
+      "printedName": "Hidden cargo hold (75% of cargo)",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 74,
+      "requestedCatalogOrCensusId": "holding-cells-25",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 18
+      },
+      "printedName": "Holding cells (25% of passengers)",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 75,
+      "requestedCatalogOrCensusId": "holding-cells-50",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 19
+      },
+      "printedName": "Holding cells (50% of passengers)",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 76,
+      "requestedCatalogOrCensusId": "holding-cells-75",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 20
+      },
+      "printedName": "Holding cells (75% of passengers)",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 77,
+      "requestedCatalogOrCensusId": "interrogation-chamber",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 21
+      },
+      "printedName": "Interrogation chamber",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 78,
+      "requestedCatalogOrCensusId": "personalized-controls",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 22
+      },
+      "printedName": "Personalized controls",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 79,
+      "requestedCatalogOrCensusId": "sensor-baffling",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 28
+      },
+      "printedName": "Sensor baffling",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 80,
+      "requestedCatalogOrCensusId": "sensor-decoy",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 29
+      },
+      "printedName": "Sensor decoy",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 81,
+      "requestedCatalogOrCensusId": "sensor-mask",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 30
+      },
+      "printedName": "Sensor mask",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 82,
+      "requestedCatalogOrCensusId": "workshop",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 32
+      },
+      "printedName": "Workshop",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 83,
+      "requestedCatalogOrCensusId": "plasma-punch",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 23
+      },
+      "printedName": "Plasma punch",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 84,
+      "requestedCatalogOrCensusId": "plasma-torch",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 24
+      },
+      "printedName": "Plasma torch",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 85,
+      "requestedCatalogOrCensusId": "tractor-clamp",
+      "disposition": "PDF_TABLE_CELLS_VERIFIED",
+      "evidenceRef": {
+        "table": "2-10",
+        "printedPage": 58,
+        "book": "Scum and Villainy",
+        "row": 31
+      },
+      "printedName": "Tractor clamp",
+      "requiredFollowup": "Reconcile catalog identity and values; table verification is not mechanic certification"
+    },
+    {
+      "worksheetIndex": 86,
+      "requestedCatalogOrCensusId": "sotg-concussion-missile-armor-piercing",
+      "disposition": "PDF_PROSE_REVIEWED",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "printedPage": 44,
+        "pdfPage1Based": 45,
+        "section": "Concussion Missiles"
+      },
+      "printedRule": {
+        "penetration": 10,
+        "attackPenalty": -5
+      },
+      "unresolved": "No separately printed EP or fixed price where noted; do not invent them"
+    },
+    {
+      "worksheetIndex": 87,
+      "requestedCatalogOrCensusId": "sotg-concussion-launcher-capacity",
+      "disposition": "PDF_PROSE_REVIEWED",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "printedPage": 44,
+        "pdfPage1Based": 45,
+        "section": "Concussion Missiles / Launchers"
+      },
+      "printedRule": {
+        "baseCapacities": {
+          "light": 6,
+          "medium": 16,
+          "heavy": 30
+        },
+        "costIncreasePerExtraRoundPercent": 20,
+        "maxCapacityMultiplier": 2,
+        "additionalEp": null
+      },
+      "unresolved": "No separately printed EP or fixed price where noted; do not invent them"
+    },
+    {
+      "worksheetIndex": 88,
+      "requestedCatalogOrCensusId": "sotg-proton-launcher-capacity",
+      "disposition": "PDF_PROSE_REVIEWED",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "printedPage": 46,
+        "pdfPage1Based": 47,
+        "section": "Proton Torpedoes / Launchers"
+      },
+      "printedRule": {
+        "baseCapacity": 3,
+        "costIncreasePerExtraRoundPercent": 25,
+        "maxCapacity": 16,
+        "additionalEp": null
+      },
+      "unresolved": "No separately printed EP or fixed price where noted; do not invent them"
+    },
+    {
+      "worksheetIndex": 89,
+      "requestedCatalogOrCensusId": "sotg-shieldbuster-launcher-capacity",
+      "disposition": "PDF_PROSE_REVIEWED",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "printedPage": 46,
+        "pdfPage1Based": 47,
+        "section": "Shieldbuster Torpedoes / Launchers"
+      },
+      "printedRule": {
+        "baseCapacity": 4,
+        "costIncreasePerExtraRoundPercent": 25,
+        "maxCapacity": 8,
+        "additionalEp": null
+      },
+      "unresolved": "No separately printed EP or fixed price where noted; do not invent them"
+    },
+    {
+      "worksheetIndex": 90,
+      "requestedCatalogOrCensusId": "sotg-mine-launcher-capacity",
+      "disposition": "PDF_PROSE_REVIEWED",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "printedPage": 46,
+        "pdfPage1Based": 47,
+        "section": "Space Mines / Mine Launcher"
+      },
+      "printedRule": {
+        "baseCapacity": 6,
+        "costIncreasePerExtraRoundPercent": 25,
+        "maxCapacity": 12,
+        "additionalEp": null
+      },
+      "unresolved": "No separately printed EP or fixed price where noted; do not invent them"
+    },
+    {
+      "worksheetIndex": 91,
+      "requestedCatalogOrCensusId": "sotg-cargo-pod-detachable",
+      "disposition": "PDF_PROSE_REVIEWED",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "printedPage": 48,
+        "pdfPage1Based": 49,
+        "section": "Cargo Pods"
+      },
+      "printedRule": {
+        "costMultiplier": 5,
+        "function": "can act as escape pod",
+        "additionalEp": null
+      },
+      "unresolved": "No separately printed EP or fixed price where noted; do not invent them"
+    }
+  ],
+  "reviewedWorksheetSummary": {
+    "total": 91,
+    "byDisposition": {
+      "PDF_TABLE_CELLS_VERIFIED": 77,
+      "PDF_PROSE_REVIEWED_NO_INSTALL_PRICE_TABLE": 7,
+      "PDF_PRINTED_DASH_CONFIRMED": 1,
+      "PDF_PROSE_REVIEWED": 6
+    },
+    "fullyResolvedAllPrintedCells": 78
+  },
+  "sourceInterpretationFindings": [
+    {
+      "code": "SCUM_BAFFLED_DRIVE_MISCLASSIFIED",
+      "source": "Scum and Villainy, printed p.58 Table 2-10",
+      "finding": "Baffled drive IS explicitly a purchasable starship-system table row: EP 1, Military, Colossal or larger, 100000 credits base. Prior P6A census described it as statblock-only.",
+      "action": "Reclassify and reconcile; no auto-installation until mechanics certified."
+    },
+    {
+      "code": "SUPPLEMENT_PROSE_NOT_PRICE_TABLE",
+      "source": "Clone Wars Campaign Guide, printed p.162; Rebellion Era Campaign Guide, printed p.130",
+      "finding": "The reviewed weapon introductions supply effects and restrictions, and subsequent vehicle statblocks supply example damages, but these passages do not present a universal weapon cost+EP table.",
+      "action": "Preserve unstated EP/cost as unknown; a statblock example is not by itself a purchasable installable entry."
+    },
+    {
+      "code": "SOTG_PRINTED_PRICE_ANOMALIES",
+      "source": "Starships of the Galaxy, printed p.49 Table 3-7",
+      "finding": "Stygium cloak 100,000,000 base, hangar bay 10 base, concealed hangar bay 1,000 base are visually printed.",
+      "action": "Check published errata before updating production cost fields."
+    },
+    {
+      "code": "CONSTRUCTION_VARIANTS",
+      "source": "Starships of the Galaxy, printed pp.44,46,48",
+      "finding": "Launcher capacity expansion is a percentage per additional round with maximum capacity, not a stand-alone fixed priced product; detachable cargo pods have x5 cost.",
+      "action": "Model modifiers without inventing a second EP or base cost."
+    }
+  ]
+}

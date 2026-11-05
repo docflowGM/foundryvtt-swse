@@ -71,7 +71,11 @@ test('import wizard records only read-only diagnostics, not writable stock permi
   const authority=readFileSync(new URL('../scripts/domain/vehicles/vehicle-stock-attack-authority.js',import.meta.url),'utf8');
   assert.match(authority,/TRUSTED_STOCK_WEAPON_GROUP_COUNT = 0/);
 });
-test('VehicleImportEngine preserves full certified stock metadata before overlaying runtime projection',()=>{
+test('VehicleImportEngine retains source-only evidence without a legacy overlay',()=>{
   const code=readFileSync(new URL('../scripts/engine/import/vehicle-import-engine.js',import.meta.url),'utf8');
-  assert.match(code,/const normalizedSystem = \{ \.\.\.rawSystem, \.\.\.normalized \};/);
+  assert.match(code,/const universal=sourceActor\.flags\?\.swse\?\.universalVehicleSource;/);
+  assert.match(code,/system:duplicate\(system\),/);
+  assert.match(code,/'flags\.swse\.universalVehicleSource':duplicate\(universal\)/);
+  assert.match(code,/Array\.isArray\(system\?\.weapons\)&&system\.weapons\.length===0/);
+  assert.doesNotMatch(code,/normalizeVehicleImportData\(/);
 });

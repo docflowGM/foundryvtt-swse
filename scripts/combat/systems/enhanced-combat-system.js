@@ -1,3 +1,4 @@
+import { isVehicleManagedWeaponItem } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
 import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance, checkConcealmentHit, getFlankingBonus, getEffectiveCritRange } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
@@ -133,6 +134,8 @@ export class SWSECombat {
   }
 
   static async rollDamage(attacker, weapon, target = null, opts = {}) {
+    // Installed vehicle weapons take their damage from the certified installation (canonical rollDamage only).
+    if (isVehicleManagedWeaponItem(weapon)) { ui?.notifications?.warn?.(`${weapon.name}: roll vehicle weapon damage from the attack result.`); return null; }
     const dmgBonus = computeDamageBonus(attacker, weapon);
     const base = weapon.system?.damage ?? '1d6';
     const formula = `${base} + ${dmgBonus}`;

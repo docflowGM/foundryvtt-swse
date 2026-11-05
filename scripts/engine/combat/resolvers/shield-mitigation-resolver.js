@@ -19,6 +19,9 @@
  * - Lightsabers DO NOT ignore SR
  */
 
+/** A shieldbuster attack travels as a rule flag of the attack's workflow context (set by the vehicle weapon authority, never by a name). */
+export const isShieldbuster = (context) => (context?.workflowContext ?? context?.combatContext)?.ruleData?.shieldbuster === true;
+
 export class ShieldMitigationResolver {
   /**
    * Apply shield rating mitigation.
@@ -65,7 +68,8 @@ export class ShieldMitigationResolver {
     let srRemaining = srCurrent;
 
     if (damage > srCurrent) {
-      srDegraded = 5; // RAW: degradation is 5 SR per hit exceeding SR
+      // RAW: degradation is 5 SR per hit exceeding SR; a shieldbuster torpedo costs 10 instead (Starships of the Galaxy, Shieldbuster Torpedoes)
+      srDegraded = isShieldbuster(context) ? 10 : 5;
       srRemaining = Math.max(0, srCurrent - srDegraded);
     }
 

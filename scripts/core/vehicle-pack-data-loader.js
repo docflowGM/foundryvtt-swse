@@ -1,3 +1,4 @@
+import { getVehicleCompendiumIndexEntries } from '/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-compendium-index.js';
 import {UNIVERSAL_VEHICLE_PACK_NAMES,getUniversalVehiclePack} from '/systems/foundryvtt-swse/scripts/domain/vehicles/universal-vehicle-pack-registry.js';
 
 const EXPECTED_PUBLICATION_CLAIMS=429;
@@ -72,7 +73,7 @@ export class VehiclePackDataLoader {
         'system.vehiclePublishedCargo','system.vehiclePublishedConsumables',
         'system.vehicleMovementRaw','system.challengeLevel','system.cost'
       ]});
-      for(const doc of index){
+      for(const doc of getVehicleCompendiumIndexEntries(index)){
         const entry=normalizeIndexEntry(doc,name,pack);
         if(keys.has(entry.sourceEntryKey)||actorIds.has(entry.id))
           throw new Error('UNIVERSAL_VEHICLE_DUPLICATE_SOURCE_IDENTITY: '+entry.sourceEntryKey);

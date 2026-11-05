@@ -1,0 +1,104 @@
+{
+  "schema": "swse.vehicle.published-errata.v1",
+  "book": "Starships of the Galaxy",
+  "errata": "Starships of the Galaxy Errata 1.0 (Wizards of the Coast, 2008-01-29)",
+  "references": [
+    "https://www.scribd.com/document/716578084/Star-Wars-Saga-Edition-Starships-of-the-Galaxy-Errata",
+    "https://www.scribd.com/doc/40506092/Starships-of-the-Galaxy-Errata-1",
+    "https://rpg.fandom.com/wiki/Star_Wars_Saga_Edition_Official_Errata"
+  ],
+  "provenance": {
+    "status": "INDEPENDENTLY_VERIFIED",
+    "verificationHistory": [
+      {
+        "date": "2026-11-01",
+        "by": "Claude session",
+        "status": "NOT_VERIFIED_IN_SESSION",
+        "note": "corrections transcribed by the project owner; the errata hosts were not reachable from the session network"
+      },
+      {
+        "date": "2026-11-01",
+        "by": "project owner",
+        "status": "INDEPENDENTLY_VERIFIED",
+        "source": "https://www.scribd.com/document/716578084/Star-Wars-Saga-Edition-Starships-of-the-Galaxy-Errata",
+        "note": "the published 2008-01-29 errata confirm SOTG-E1-TABLE-3-5-FOOTNOTE, SOTG-E1-EXTENDED-RANGE-EP and SOTG-E1-STOCK-STRENGTH, and state the gravity well area and Y-wing corrections"
+      }
+    ]
+  },
+  "precedence": [
+    "published source",
+    "published errata",
+    "explicit project-owner ruling",
+    "implementation"
+  ],
+  "corrections": [
+    {
+      "id": "SOTG-E1-TABLE-3-5-FOOTNOTE",
+      "target": "Table 3-5 Weapon Systems, footnote (1)",
+      "printed": "Colossal or larger starships only",
+      "corrected": "Colossal (frigate) or larger",
+      "appliesTo": {
+        "table": "3-5",
+        "printedSizeRestriction": "Colossal or larger starships only"
+      }
+    },
+    {
+      "id": "SOTG-E1-EXTENDED-RANGE-EP",
+      "target": "Table 3-7 Starship Accessories, Extended range, Emplacement Points",
+      "printed": 2,
+      "corrected": 1,
+      "appliesTo": {
+        "table": "3-7",
+        "printedName": "Extended range",
+        "field": "emplacementPoints"
+      }
+    },
+    {
+      "id": "SOTG-E1-STOCK-STRENGTH",
+      "target": "Stock Ships table, Strength",
+      "frames": {
+        "heavy-freighter": {
+          "printed": 106,
+          "corrected": 56
+        },
+        "corvette": {
+          "printed": 110,
+          "corrected": 58
+        },
+        "frigate": {
+          "printed": 114,
+          "corrected": 60
+        },
+        "cruiser": {
+          "printed": 118,
+          "corrected": 94
+        },
+        "battlecruiser": {
+          "printed": 124,
+          "corrected": 100
+        }
+      }
+    }
+  ],
+  "reportedNotTranscribed": [],
+  "publicationCorrections": [
+    {
+      "id": "SOTG-E1-GRAVITY-WELL-AREA",
+      "target": "Interdictor cruiser (p. 100), gravity well projector area",
+      "printed": "4x4 squares (starship scale)",
+      "corrected": "3x3 squares (starship scale)",
+      "scope": "The errata entry names the Interdictor cruiser on p. 100. Whether it also changes the generic gravity well projector component prose (p. 45, 4x4) is not stated (V-P6A-07).",
+      "status": "APPLIED_TO_CANONICAL",
+      "amendment": "P6A-SOTG-ERRATA-1.0-PUBLICATION-001"
+    },
+    {
+      "id": "SOTG-E1-Y-WING-SHIELDS",
+      "target": "Y-wing models, pp. 158-159, shield rating",
+      "printed": "SR 10",
+      "corrected": "SR 25",
+      "scope": "The three Starships of the Galaxy Y-wing models on pp. 158-159. Separately published Y-wings (Core Rulebook p. 178, Clone Wars Campaign Guide p. 173) are not covered.",
+      "status": "APPLIED_TO_CANONICAL",
+      "amendment": "P6A-SOTG-ERRATA-1.0-PUBLICATION-001"
+    }
+  ]
+}

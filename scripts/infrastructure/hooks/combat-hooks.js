@@ -19,6 +19,7 @@ import { SpeciesRerollHandler } from "/systems/foundryvtt-swse/scripts/species/s
 import { NativeProjectileService } from "/systems/foundryvtt-swse/scripts/visual/native-projectile-service.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { EncounterUseTracker } from "/systems/foundryvtt-swse/scripts/engine/feats/encounter-use-tracker.js";
+import { isResponsibleGM } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-scene-state.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js";
 
@@ -94,6 +95,15 @@ export function registerCombatHooks() {
 
     // Phase 5D-I-C-B: control-bound recurring effects (Lightwhip / Garrote / Electronet) and tractor maintenance at the turn boundaries, through the one
     // existing combat turn hook (idempotent per control + effect + turn slot; no timers, no custom hooks)
+    // Space mines: a starship entering a mine's square sets it off (GM client; the registry's own updateToken dispatch, no custom hook)
+    HooksRegistry.register('updateToken', handleMineProximity, {
+        id: 'token-space-mine-proximity',
+        priority: 5,
+        description: 'Detonate proximity space mines when a starship enters their square',
+        category: 'combat',
+        enabled: true
+    });
+
     HooksRegistry.register('combatTurn', handleWeaponControlTurn, {
         id: 'combat-turn-weapon-control',
         priority: 2,
@@ -254,11 +264,27 @@ function handleCombatTurn(combat, updateData, updateOptions) {
     void postCombatBanner(combat);
 }
 
+async function handleMineProximity(tokenDoc, change, options) {
+    if (game?.user?.isGM !== true || !(('x' in (change ?? {})) || ('y' in (change ?? {})))) return;
+    try {
+        const { onTokenMoved } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-mine-service.js');
+        await onTokenMoved({ scene: tokenDoc?.parent ?? globalThis.canvas?.scene ?? null, tokenDoc, options });
+    } catch (err) {
+        SWSELogger.warn('[CombatHooks] Space mine proximity processing failed', err);
+    }
+}
+
 async function handleWeaponControlTurn(combat, updateData, updateOptions) {
     if (game?.user?.isGM !== true) return;
     try {
         const { handleControlTurnChange } = await import('/systems/foundryvtt-swse/scripts/engine/combat/weapon-control-effects.js');
         await handleControlTurnChange(combat, updateData, updateOptions);
+        // a starship that starts its turn in an active gravity-well interdiction field (same turn hook; GM client only)
+        const incoming = (updateData?.turn != null ? combat?.turns?.[updateData.turn] : null) ?? combat?.combatant ?? null;
+        if (incoming?.actor?.type === 'vehicle' && isResponsibleGM()) {
+            const { applyAtTurnStart } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-interdiction-service.js');
+            await applyAtTurnStart({ actor: incoming.actor, scene: combat?.scene ?? null, combat });
+        }
     } catch (err) {
         SWSELogger.warn('[CombatHooks] Weapon control turn processing failed', err);
     }

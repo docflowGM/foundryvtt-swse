@@ -4,7 +4,7 @@
     "name": "Autoblaster",
     "category": "Weapon",
     "weaponType": "Blaster",
-    "damage": "3d8x2",
+    "damage": null,
     "emplacementPoints": 0,
     "availability": "Restricted",
     "sizeRestriction": null,
@@ -12,7 +12,16 @@
     "costType": "multiplier",
     "costMultiplier": 2,
     "description": "Rapid-fire blaster weapon for anti-personnel use.",
-    "effect": "Autofire mode available"
+    "effect": "Autofire mode available",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "damage": {
+          "value": "3d8x2",
+          "correctedFrom": "Starships of the Galaxy: the table prints no damage for this entry"
+        }
+      }
+    }
   },
   {
     "id": "blaster-cannon-light",
@@ -26,7 +35,8 @@
     "cost": 1200,
     "costType": "flat",
     "description": "Standard light blaster weapon for small craft.",
-    "effect": "Light blaster cannon"
+    "effect": "Light blaster cannon",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "blaster-cannon-medium",
@@ -40,7 +50,8 @@
     "cost": 2500,
     "costType": "flat",
     "description": "Medium-power blaster for combat vessels.",
-    "effect": "Medium blaster cannon"
+    "effect": "Medium blaster cannon",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "blaster-cannon-heavy",
@@ -54,7 +65,8 @@
     "cost": 5500,
     "costType": "flat",
     "description": "Heavy blaster for military craft.",
-    "effect": "Heavy blaster cannon"
+    "effect": "Heavy blaster cannon",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "cannon-double",
@@ -69,7 +81,8 @@
     "costType": "multiplier",
     "costMultiplier": 3,
     "description": "Links two cannons together for increased damage.",
-    "effect": "+1d10 damage, requires base cannon"
+    "effect": "+1d10 damage, requires base cannon",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "cannon-quad",
@@ -84,7 +97,8 @@
     "costType": "multiplier",
     "costMultiplier": 5,
     "description": "Links four cannons for devastating firepower.",
-    "effect": "+2d10 damage, requires base cannon"
+    "effect": "+2d10 damage, requires base cannon",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "cannon-enhancement",
@@ -99,7 +113,8 @@
     "costType": "multiplier",
     "costMultiplier": 2,
     "description": "Military upgrades to improve cannon performance.",
-    "effect": "+1d10 damage, requires base cannon"
+    "effect": "+1d10 damage, requires base cannon",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "cannon-enhancement-advanced",
@@ -114,7 +129,8 @@
     "costType": "multiplier",
     "costMultiplier": 5,
     "description": "Advanced military cannon upgrades.",
-    "effect": "+2d10 damage, requires base cannon"
+    "effect": "+2d10 damage, requires base cannon",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "concussion-missile-launcher-light",
@@ -129,7 +145,8 @@
     "costType": "flat",
     "description": "Light concussion missile system.",
     "effect": "Fires light concussion missiles",
-    "ammunition": "concussion-missile-light"
+    "ammunition": "concussion-missile-light",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "concussion-missile-light",
@@ -143,7 +160,8 @@
     "cost": 500,
     "costType": "flat",
     "description": "Standard light concussion missile.",
-    "effect": "Guided weapon"
+    "effect": "Guided weapon",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "concussion-missile-launcher-medium",
@@ -158,7 +176,8 @@
     "costType": "flat",
     "description": "Medium concussion missile system.",
     "effect": "Fires medium concussion missiles",
-    "ammunition": "concussion-missile-medium"
+    "ammunition": "concussion-missile-medium",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "concussion-missile-medium",
@@ -172,7 +191,8 @@
     "cost": 750,
     "costType": "flat",
     "description": "Medium concussion missile with enhanced warhead.",
-    "effect": "Guided weapon"
+    "effect": "Guided weapon",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "concussion-missile-launcher-heavy",
@@ -187,7 +207,25 @@
     "costType": "flat",
     "description": "Capital ship missile launcher.",
     "effect": "Fires heavy concussion missiles",
-    "ammunition": "concussion-missile-heavy"
+    "ammunition": "concussion-missile-heavy",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal (Frigate) or Larger",
+          "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
+        }
+      },
+      "p6aHistory": [
+        {
+          "field": "sizeRestriction",
+          "from": "Colossal or Larger",
+          "to": "Colossal (Frigate) or Larger",
+          "authority": "PUBLISHED_ERRATA",
+          "basis": "Starships of the Galaxy p. 47 Table 3-5 [PUBLISHED_ERRATA SOTG-E1-TABLE-3-5-FOOTNOTE]"
+        }
+      ]
+    }
   },
   {
     "id": "concussion-missile-heavy",
@@ -197,11 +235,29 @@
     "damage": "9d10x5",
     "emplacementPoints": 0,
     "availability": "Military",
-    "sizeRestriction": null,
+    "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 2000,
     "costType": "flat",
     "description": "Heavy capital ship missile.",
-    "effect": "Capital scale guided weapon"
+    "effect": "Capital scale guided weapon",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": null,
+          "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
+        }
+      },
+      "p6aHistory": [
+        {
+          "field": "sizeRestriction",
+          "from": "Colossal or Larger",
+          "to": "Colossal (Frigate) or Larger",
+          "authority": "PUBLISHED_ERRATA",
+          "basis": "Starships of the Galaxy p. 47 Table 3-5 [PUBLISHED_ERRATA SOTG-E1-TABLE-3-5-FOOTNOTE]"
+        }
+      ]
+    }
   },
   {
     "id": "ion-cannon-light",
@@ -215,7 +271,8 @@
     "cost": 2000,
     "costType": "flat",
     "description": "Light ion weapon for disabling ships.",
-    "effect": "Ion damage disables systems"
+    "effect": "Ion damage disables systems",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "ion-cannon-medium",
@@ -229,7 +286,8 @@
     "cost": 3000,
     "costType": "flat",
     "description": "Medium ion cannon.",
-    "effect": "Ion damage disables systems"
+    "effect": "Ion damage disables systems",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "ion-cannon-heavy",
@@ -243,7 +301,25 @@
     "cost": 6000,
     "costType": "flat",
     "description": "Heavy capital ship ion cannon.",
-    "effect": "Capital scale ion damage"
+    "effect": "Capital scale ion damage",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal (Frigate) or Larger",
+          "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
+        }
+      },
+      "p6aHistory": [
+        {
+          "field": "sizeRestriction",
+          "from": "Colossal or Larger",
+          "to": "Colossal (Frigate) or Larger",
+          "authority": "PUBLISHED_ERRATA",
+          "basis": "Starships of the Galaxy p. 47 Table 3-5 [PUBLISHED_ERRATA SOTG-E1-TABLE-3-5-FOOTNOTE]"
+        }
+      ]
+    }
   },
   {
     "id": "laser-cannon-light",
@@ -257,7 +333,8 @@
     "cost": 1500,
     "costType": "flat",
     "description": "Standard light laser cannon.",
-    "effect": "Light laser cannon"
+    "effect": "Light laser cannon",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "laser-cannon-medium",
@@ -271,7 +348,8 @@
     "cost": 4000,
     "costType": "flat",
     "description": "Medium laser cannon for combat craft.",
-    "effect": "Medium laser cannon"
+    "effect": "Medium laser cannon",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "laser-cannon-heavy",
@@ -285,7 +363,8 @@
     "cost": 6000,
     "costType": "flat",
     "description": "Heavy military laser cannon.",
-    "effect": "Heavy laser cannon"
+    "effect": "Heavy laser cannon",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "proton-torpedo-launcher",
@@ -300,7 +379,8 @@
     "costType": "flat",
     "description": "Standard proton torpedo launcher.",
     "effect": "Fires proton torpedoes",
-    "ammunition": "proton-torpedo"
+    "ammunition": "proton-torpedo",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "proton-torpedo",
@@ -314,7 +394,8 @@
     "cost": 800,
     "costType": "flat",
     "description": "High-yield proton torpedo.",
-    "effect": "Guided high-damage weapon"
+    "effect": "Guided high-damage weapon",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "turbolaser-light",
@@ -328,7 +409,25 @@
     "cost": 5000,
     "costType": "flat",
     "description": "Light capital ship turbolaser.",
-    "effect": "Capital scale weapon"
+    "effect": "Capital scale weapon",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal (Frigate) or Larger",
+          "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
+        }
+      },
+      "p6aHistory": [
+        {
+          "field": "sizeRestriction",
+          "from": "Colossal or Larger",
+          "to": "Colossal (Frigate) or Larger",
+          "authority": "PUBLISHED_ERRATA",
+          "basis": "Starships of the Galaxy p. 47 Table 3-5 [PUBLISHED_ERRATA SOTG-E1-TABLE-3-5-FOOTNOTE]"
+        }
+      ]
+    }
   },
   {
     "id": "turbolaser-medium",
@@ -342,7 +441,25 @@
     "cost": 10000,
     "costType": "flat",
     "description": "Standard capital ship turbolaser.",
-    "effect": "Capital scale weapon"
+    "effect": "Capital scale weapon",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal (Frigate) or Larger",
+          "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
+        }
+      },
+      "p6aHistory": [
+        {
+          "field": "sizeRestriction",
+          "from": "Colossal or Larger",
+          "to": "Colossal (Frigate) or Larger",
+          "authority": "PUBLISHED_ERRATA",
+          "basis": "Starships of the Galaxy p. 47 Table 3-5 [PUBLISHED_ERRATA SOTG-E1-TABLE-3-5-FOOTNOTE]"
+        }
+      ]
+    }
   },
   {
     "id": "turbolaser-heavy",
@@ -356,7 +473,25 @@
     "cost": 20000,
     "costType": "flat",
     "description": "Heavy turbolaser for battleships.",
-    "effect": "Capital scale heavy weapon"
+    "effect": "Capital scale heavy weapon",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal (Frigate) or Larger",
+          "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
+        }
+      },
+      "p6aHistory": [
+        {
+          "field": "sizeRestriction",
+          "from": "Colossal or Larger",
+          "to": "Colossal (Frigate) or Larger",
+          "authority": "PUBLISHED_ERRATA",
+          "basis": "Starships of the Galaxy p. 47 Table 3-5 [PUBLISHED_ERRATA SOTG-E1-TABLE-3-5-FOOTNOTE]"
+        }
+      ]
+    }
   },
   {
     "id": "tractor-beam",
@@ -369,22 +504,67 @@
     "sizeRestriction": null,
     "cost": 10000,
     "costType": "flat",
-    "description": "Gravity beam to capture and hold other vessels.",
-    "effect": "Can grapple vessels, Pilot check to maintain"
+    "description": "Rules for tractor beams are on page 174 of the Core Rulebook. Tractor beams are nonstandard modifications for space transports and starfighters.",
+    "effect": "Rules for tractor beams are on page 174 of the Core Rulebook. Tractor beams are nonstandard modifications for space transports and starfighters.",
+    "legacy": {
+      "description": "Gravity beam to capture and hold other vessels.",
+      "effect": "Can grapple vessels, Pilot check to maintain"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        44,
+        48
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "point-defense",
     "name": "Point-Defense System",
     "category": "Weapon",
     "weaponType": "Defense",
-    "damage": "Special",
+    "damage": null,
     "emplacementPoints": 0,
     "availability": "Restricted",
-    "sizeRestriction": null,
+    "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 4000,
     "costType": "modifier",
-    "description": "Automated defense against missiles and fighters.",
-    "effect": "+2 to defend against missiles and torpedoes"
+    "description": "Only blaster cannons, laser cannons and light ion cannons can be point-defense weapons. The modification costs 4,000 credits per weapon with no emplacement point requirement beyond mounting the weapon; a point-defense weapon takes no penalty for attacking targets smaller than Colossal.",
+    "effect": "Only blaster cannons, laser cannons and light ion cannons can be point-defense weapons. The modification costs 4,000 credits per weapon with no emplacement point requirement beyond mounting the weapon; a point-defense weapon takes no penalty for attacking targets smaller than Colossal.",
+    "legacy": {
+      "description": "Automated defense against missiles and fighters.",
+      "effect": "+2 to defend against missiles and torpedoes",
+      "p6a": {
+        "sizeRestriction": {
+          "value": null,
+          "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
+        },
+        "damage": {
+          "value": "Special",
+          "correctedFrom": "Starships of the Galaxy p. 47 Table 3-5"
+        }
+      },
+      "p6aHistory": [
+        {
+          "field": "sizeRestriction",
+          "from": "Colossal or Larger",
+          "to": "Colossal (Frigate) or Larger",
+          "authority": "PUBLISHED_ERRATA",
+          "basis": "Starships of the Galaxy p. 47 Table 3-5 [PUBLISHED_ERRATA SOTG-E1-TABLE-3-5-FOOTNOTE]"
+        }
+      ]
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        44,
+        48
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "fire-linked-2",
@@ -399,7 +579,8 @@
     "costType": "multiplier",
     "costMultiplier": 2,
     "description": "Links 2 weapons to fire as one.",
-    "effect": "+1d10 damage, single attack roll"
+    "effect": "+1d10 damage, single attack roll",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "fire-linked-4",
@@ -414,7 +595,8 @@
     "costType": "multiplier",
     "costMultiplier": 4,
     "description": "Links 4 weapons to fire as one.",
-    "effect": "+2d10 damage, single attack roll"
+    "effect": "+2d10 damage, single attack roll",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "space-mine-launcher",
@@ -429,7 +611,8 @@
     "costType": "flat",
     "description": "Deploys proximity mines.",
     "effect": "Deploys space mines",
-    "ammunition": "space-mine-standard"
+    "ammunition": "space-mine-standard",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "space-mine-standard",
@@ -443,7 +626,8 @@
     "cost": 1000,
     "costType": "flat",
     "description": "Standard proximity mine.",
-    "effect": "Proximity detonation"
+    "effect": "Proximity detonation",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "ion-bomb-rack",
@@ -458,7 +642,8 @@
     "costType": "flat",
     "description": "Releases ion bombs on ground targets.",
     "effect": "Bombs ground targets",
-    "ammunition": "ion-bomb"
+    "ammunition": "ion-bomb",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "ion-bomb",
@@ -466,13 +651,33 @@
     "category": "Ammunition",
     "weaponType": "Bomb",
     "damage": "5d10 (Ion)",
-    "emplacementPoints": 0,
+    "emplacementPoints": null,
     "availability": "Military",
     "sizeRestriction": null,
     "cost": 500,
     "costType": "flat",
     "description": "Ion bomb for disabling ground installations.",
-    "effect": "Ion damage vs ground targets"
+    "effect": "Ion damage vs ground targets",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "emplacementPoints": {
+          "value": 0,
+          "correctedFrom": "Starships of the Galaxy p. 47 Table 3-5: printed dash: not stated, not zero (printed \"—\")"
+        }
+      },
+      "p6aHistory": [
+        {
+          "field": "installationKind",
+          "from": null,
+          "to": "consumable-ammunition",
+          "authority": "OWNER_RULING",
+          "basis": "V-P6A-06"
+        }
+      ]
+    },
+    "installationKind": "consumable-ammunition",
+    "emplacementPointsPrinted": "—"
   },
   {
     "id": "shieldbuster-torpedo-launcher",
@@ -487,7 +692,8 @@
     "costType": "flat",
     "description": "Specialized anti-shield torpedo system.",
     "effect": "Fires shieldbuster torpedoes",
-    "ammunition": "shieldbuster-torpedo"
+    "ammunition": "shieldbuster-torpedo",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "shieldbuster-torpedo",
@@ -500,8 +706,21 @@
     "sizeRestriction": null,
     "cost": 1000,
     "costType": "flat",
-    "description": "Anti-shield torpedo, double damage to SR.",
-    "effect": "Double damage to shields"
+    "description": "Against anything but shields it deals half damage. If an attack exceeds the target's SR, the target loses 10 points of SR (instead of the normal 5). Shields damaged this way can be recharged normally.",
+    "effect": "Against anything but shields it deals half damage. If an attack exceeds the target's SR, the target loses 10 points of SR (instead of the normal 5). Shields damaged this way can be recharged normally.",
+    "legacy": {
+      "description": "Anti-shield torpedo, double damage to SR.",
+      "effect": "Double damage to shields"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        44,
+        48
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "discord-missile-launcher",
@@ -511,12 +730,21 @@
     "damage": "See Ammunition",
     "emplacementPoints": 2,
     "availability": "Restricted",
-    "sizeRestriction": null,
+    "sizeRestriction": "Huge or Larger",
     "cost": 4000,
     "costType": "flat",
     "description": "Launches sensor-jamming missiles.",
     "effect": "Fires discord missiles",
-    "ammunition": "discord-missile"
+    "ammunition": "discord-missile",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": null,
+          "correctedFrom": "Threats of the Galaxy"
+        }
+      }
+    }
   },
   {
     "id": "discord-missile",
@@ -530,7 +758,8 @@
     "cost": 1000,
     "costType": "flat",
     "description": "Jamming missile that disrupts sensors and targeting.",
-    "effect": "-5 to Perception and attack rolls for 3 rounds"
+    "effect": "-5 to Perception and attack rolls for 3 rounds",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "gravity-mine-launcher",
@@ -545,21 +774,46 @@
     "costType": "flat",
     "description": "Deploys gravity well mines.",
     "effect": "Deploys gravity mines",
-    "ammunition": "gravity-mine-standard"
+    "ammunition": "gravity-mine-standard",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "gravity-mine-standard",
     "name": "Gravity Mine, Standard",
     "category": "Ammunition",
     "weaponType": "Mine",
-    "damage": "Special",
-    "emplacementPoints": 0,
+    "damage": null,
+    "emplacementPoints": null,
     "availability": "Military",
     "sizeRestriction": null,
     "cost": 1000,
     "costType": "flat",
     "description": "Mine that prevents hyperspace jumps in area.",
-    "effect": "Prevents hyperspace in 5 square radius"
+    "effect": "Prevents hyperspace in 5 square radius",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "emplacementPoints": {
+          "value": 0,
+          "correctedFrom": "Legacy Era Campaign Guide p. 191 Table Gravity Mines sidebar: printed dash: not stated, not zero (printed \"—\")"
+        },
+        "damage": {
+          "value": "Special",
+          "correctedFrom": "Legacy Era Campaign Guide p. 191 Table Gravity Mines sidebar (printed \"—\")"
+        }
+      },
+      "p6aHistory": [
+        {
+          "field": "installationKind",
+          "from": null,
+          "to": "consumable-ammunition",
+          "authority": "OWNER_RULING",
+          "basis": "V-P6A-06"
+        }
+      ]
+    },
+    "installationKind": "consumable-ammunition",
+    "emplacementPointsPrinted": "—"
   },
   {
     "id": "harpoon-gun",
@@ -573,7 +827,8 @@
     "cost": 200,
     "costType": "flat",
     "description": "Fires grappling harpoon to snare targets.",
-    "effect": "Grapple smaller vessels, -2 speed if hit"
+    "effect": "Grapple smaller vessels, -2 speed if hit",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "droid-jammer",
@@ -586,8 +841,21 @@
     "sizeRestriction": null,
     "cost": 8000,
     "costType": "flat",
-    "description": "Jams and disables droid systems.",
-    "effect": "Droids within 10 squares make DC 20 Will save or shut down"
+    "description": "While employed, attacks from the starship gain a +2 equipment bonus to hit automated craft (droid starfighters and tri-fighters) within a 5-square radius.",
+    "effect": "While employed, attacks from the starship gain a +2 equipment bonus to hit automated craft (droid starfighters and tri-fighters) within a 5-square radius.",
+    "legacy": {
+      "description": "Jams and disables droid systems.",
+      "effect": "Droids within 10 squares make DC 20 Will save or shut down"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        44,
+        48
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "gravity-well-projector",
@@ -600,8 +868,36 @@
     "sizeRestriction": "Colossal (Frigate) or Larger",
     "cost": 50000,
     "costType": "flat",
-    "description": "Creates gravity well preventing hyperspace.",
-    "effect": "Prevents hyperspace in 10 square radius"
+    "description": "Treated as an area attack: choose a 4x4-square (starship scale) area within range and make an attack roll against Reflex Defense 10. On a hit it creates a hyperspace interdiction field; a starship starting its turn in it may not activate its hyperdrive that turn.",
+    "effect": "Treated as an area attack: choose a 4x4-square (starship scale) area within range and make an attack roll against Reflex Defense 10. On a hit it creates a hyperspace interdiction field; a starship starting its turn in it may not activate its hyperdrive that turn.",
+    "legacy": {
+      "description": "Creates gravity well preventing hyperspace.",
+      "effect": "Prevents hyperspace in 10 square radius",
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal (Frigate) or Larger",
+          "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
+        }
+      },
+      "p6aHistory": [
+        {
+          "field": "sizeRestriction",
+          "from": "Colossal or Larger",
+          "to": "Colossal (Frigate) or Larger",
+          "authority": "PUBLISHED_ERRATA",
+          "basis": "Starships of the Galaxy p. 47 Table 3-5 [PUBLISHED_ERRATA SOTG-E1-TABLE-3-5-FOOTNOTE]"
+        }
+      ]
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        44,
+        48
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "docking-gun",
@@ -614,8 +910,21 @@
     "sizeRestriction": null,
     "cost": 1000,
     "costType": "modifier",
-    "description": "Weapon mounted on flexible docking arm.",
-    "effect": "Can fire at adjacent targets regardless of arc"
+    "description": "Any character-scale ranged weapon can be added as a docking gun; it counts as a heavy weapon, draws power from the ship, and has no effect on starship-scale combat. The cost is for the mount only; the gun is bought normally.",
+    "effect": "Any character-scale ranged weapon can be added as a docking gun; it counts as a heavy weapon, draws power from the ship, and has no effect on starship-scale combat. The cost is for the mount only; the gun is bought normally.",
+    "legacy": {
+      "description": "Weapon mounted on flexible docking arm.",
+      "effect": "Can fire at adjacent targets regardless of arc"
+    },
+    "effectVerification": "PRINTED_PROSE",
+    "effectSource": {
+      "book": "Starships of the Galaxy",
+      "printedPageRange": [
+        44,
+        48
+      ],
+      "basis": "paraphrase of the printed prose"
+    }
   },
   {
     "id": "fire-linked-optional",
@@ -629,7 +938,8 @@
     "cost": 1000,
     "costType": "modifier",
     "description": "Allows weapons to be fired linked or separately.",
-    "effect": "Choose to fire weapons together or separately each round"
+    "effect": "Choose to fire weapons together or separately each round",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "ion-cannon-hapan-triple",
@@ -643,7 +953,25 @@
     "cost": 12000,
     "costType": "flat",
     "description": "Illegal Hapan triple ion cannon design.",
-    "effect": "Capital scale ion damage, Hapan manufacture"
+    "effect": "Capital scale ion damage, Hapan manufacture",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal (Frigate) or Larger",
+          "correctedFrom": "Starships of the Galaxy: table footnote (1): \"Colossal or larger starships only\""
+        }
+      },
+      "p6aHistory": [
+        {
+          "field": "sizeRestriction",
+          "from": "Colossal or Larger",
+          "to": "Colossal (Frigate) or Larger",
+          "authority": "PUBLISHED_ERRATA",
+          "basis": "Starships of the Galaxy p. 47 Table 3-5 [PUBLISHED_ERRATA SOTG-E1-TABLE-3-5-FOOTNOTE]"
+        }
+      ]
+    }
   },
   {
     "id": "space-mine-launcher-heavy",
@@ -658,7 +986,25 @@
     "costType": "flat",
     "description": "Capital ship mine deployment system.",
     "effect": "Deploys heavy space mines",
-    "ammunition": "space-mine-heavy"
+    "ammunition": "space-mine-heavy",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal (Frigate) or Larger",
+          "correctedFrom": "Starships of the Galaxy: table footnote (1)"
+        }
+      },
+      "p6aHistory": [
+        {
+          "field": "sizeRestriction",
+          "from": "Colossal or Larger",
+          "to": "Colossal (Frigate) or Larger",
+          "authority": "PUBLISHED_ERRATA",
+          "basis": "Starships of the Galaxy p. 47 Table 3-5 [PUBLISHED_ERRATA SOTG-E1-TABLE-3-5-FOOTNOTE]"
+        }
+      ]
+    }
   },
   {
     "id": "space-mine-advanced",
@@ -672,7 +1018,8 @@
     "cost": 5000,
     "costType": "flat",
     "description": "Advanced proximity mine with enhanced warhead.",
-    "effect": "Proximity detonation, increased damage"
+    "effect": "Proximity detonation, increased damage",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "space-mine-heavy",
@@ -686,21 +1033,46 @@
     "cost": 5000,
     "costType": "flat",
     "description": "Capital scale proximity mine.",
-    "effect": "Capital scale proximity detonation"
+    "effect": "Capital scale proximity detonation",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "gravity-mine-magnetic",
     "name": "Gravity Mine, Magnetic",
     "category": "Ammunition",
     "weaponType": "Mine",
-    "damage": "Special",
-    "emplacementPoints": 0,
+    "damage": null,
+    "emplacementPoints": null,
     "availability": "Military",
     "sizeRestriction": null,
     "cost": 4000,
     "costType": "flat",
     "description": "Magnetic gravity mine that attaches to hulls.",
-    "effect": "Attaches to ship, prevents hyperspace"
+    "effect": "Attaches to ship, prevents hyperspace",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "emplacementPoints": {
+          "value": 0,
+          "correctedFrom": "Legacy Era Campaign Guide p. 191 Table Gravity Mines sidebar: printed dash: not stated, not zero (printed \"—\")"
+        },
+        "damage": {
+          "value": "Special",
+          "correctedFrom": "Legacy Era Campaign Guide p. 191 Table Gravity Mines sidebar (printed \"—\")"
+        }
+      },
+      "p6aHistory": [
+        {
+          "field": "installationKind",
+          "from": null,
+          "to": "consumable-ammunition",
+          "authority": "OWNER_RULING",
+          "basis": "V-P6A-06"
+        }
+      ]
+    },
+    "installationKind": "consumable-ammunition",
+    "emplacementPointsPrinted": "—"
   },
   {
     "id": "composite-beam-cannon",
@@ -708,13 +1080,30 @@
     "category": "Weapon",
     "weaponType": "Energy",
     "damage": "8d10",
-    "emplacementPoints": 3,
-    "availability": "Military",
+    "emplacementPoints": null,
+    "availability": null,
     "sizeRestriction": null,
-    "cost": 15000,
+    "cost": null,
     "costType": "flat",
     "description": "Experimental composite energy weapon.",
-    "effect": "Combined energy beam weapon"
+    "effect": "Combined energy beam weapon",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "emplacementPoints": {
+          "value": 3,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "availability": {
+          "value": "Military",
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "cost": {
+          "value": 15000,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        }
+      }
+    }
   },
   {
     "id": "energy-bomblet-generator",
@@ -728,7 +1117,8 @@
     "cost": 50000,
     "costType": "flat",
     "description": "Generates and deploys energy bomblets.",
-    "effect": "Area bombardment weapon"
+    "effect": "Area bombardment weapon",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "heavy-ordnance-launcher",
@@ -742,7 +1132,8 @@
     "cost": 40000,
     "costType": "flat",
     "description": "Multi-purpose heavy ordnance system.",
-    "effect": "Can fire various heavy ordnance types"
+    "effect": "Can fire various heavy ordnance types",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "ion-pulse-cannon",
@@ -756,7 +1147,8 @@
     "cost": 500000,
     "costType": "flat",
     "description": "Massive ion pulse weapon, extremely rare.",
-    "effect": "Massive area ion pulse, disables multiple targets"
+    "effect": "Massive area ion pulse, disables multiple targets",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "mass-driver-cannon-standard",
@@ -764,13 +1156,34 @@
     "category": "Weapon",
     "weaponType": "Kinetic",
     "damage": "6d10x2",
-    "emplacementPoints": 3,
-    "availability": "Military",
-    "sizeRestriction": "Colossal or Larger",
-    "cost": 8000,
+    "emplacementPoints": null,
+    "availability": null,
+    "sizeRestriction": "Gargantuan or Larger",
+    "cost": null,
     "costType": "flat",
     "description": "Magnetic accelerator cannon firing solid projectiles.",
-    "effect": "Kinetic weapon, bypasses some defenses"
+    "effect": "Kinetic weapon, bypasses some defenses",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal or Larger",
+          "correctedFrom": "Clone Wars Campaign Guide"
+        },
+        "emplacementPoints": {
+          "value": 3,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "availability": {
+          "value": "Military",
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "cost": {
+          "value": 8000,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        }
+      }
+    }
   },
   {
     "id": "mass-driver-cannon-heavy",
@@ -778,13 +1191,34 @@
     "category": "Weapon",
     "weaponType": "Kinetic",
     "damage": "7d10x2",
-    "emplacementPoints": 5,
-    "availability": "Military",
-    "sizeRestriction": "Colossal (Frigate) or Larger",
-    "cost": 15000,
+    "emplacementPoints": null,
+    "availability": null,
+    "sizeRestriction": "Gargantuan or Larger",
+    "cost": null,
     "costType": "flat",
     "description": "Heavy magnetic accelerator weapon.",
-    "effect": "Heavy kinetic weapon, bypasses some defenses"
+    "effect": "Heavy kinetic weapon, bypasses some defenses",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal (Frigate) or Larger",
+          "correctedFrom": "Clone Wars Campaign Guide"
+        },
+        "emplacementPoints": {
+          "value": 5,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "availability": {
+          "value": "Military",
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "cost": {
+          "value": 15000,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        }
+      }
+    }
   },
   {
     "id": "microtractor-pressor",
@@ -798,7 +1232,8 @@
     "cost": 5000,
     "costType": "flat",
     "description": "Precision tractor/pressor beam system.",
-    "effect": "Can manipulate small objects and missiles"
+    "effect": "Can manipulate small objects and missiles",
+    "effectVerification": "UNVERIFIED"
   },
   {
     "id": "proton-grenade-launcher",
@@ -806,14 +1241,31 @@
     "category": "Weapon",
     "weaponType": "Grenade",
     "damage": "See Ammunition",
-    "emplacementPoints": 1,
-    "availability": "Military",
+    "emplacementPoints": null,
+    "availability": null,
     "sizeRestriction": null,
-    "cost": 3000,
+    "cost": null,
     "costType": "flat",
     "description": "Launches proton grenades at ground targets.",
     "effect": "Fires proton grenades",
-    "ammunition": "proton-grenade"
+    "ammunition": "proton-grenade",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "emplacementPoints": {
+          "value": 1,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "availability": {
+          "value": "Military",
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "cost": {
+          "value": 3000,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        }
+      }
+    }
   },
   {
     "id": "proton-grenade",
@@ -821,13 +1273,30 @@
     "category": "Ammunition",
     "weaponType": "Grenade",
     "damage": "8d6",
-    "emplacementPoints": 0,
-    "availability": "Military",
+    "emplacementPoints": null,
+    "availability": null,
     "sizeRestriction": null,
-    "cost": 200,
+    "cost": null,
     "costType": "flat",
     "description": "Anti-personnel proton grenade.",
-    "effect": "Area damage vs ground targets"
+    "effect": "Area damage vs ground targets",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "emplacementPoints": {
+          "value": 0,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "availability": {
+          "value": "Military",
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "cost": {
+          "value": 200,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        }
+      }
+    }
   },
   {
     "id": "rail-cannon",
@@ -835,13 +1304,34 @@
     "category": "Weapon",
     "weaponType": "Kinetic",
     "damage": "5d10x5",
-    "emplacementPoints": 6,
-    "availability": "Military",
-    "sizeRestriction": "Colossal (Frigate) or Larger",
-    "cost": 25000,
+    "emplacementPoints": null,
+    "availability": null,
+    "sizeRestriction": "Gargantuan or Larger",
+    "cost": null,
     "costType": "flat",
     "description": "Electromagnetic rail gun for capital ships.",
-    "effect": "Capital scale kinetic weapon"
+    "effect": "Capital scale kinetic weapon",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "sizeRestriction": {
+          "value": "Colossal (Frigate) or Larger",
+          "correctedFrom": "Clone Wars Campaign Guide"
+        },
+        "emplacementPoints": {
+          "value": 6,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "availability": {
+          "value": "Military",
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "cost": {
+          "value": 25000,
+          "correctedFrom": "Clone Wars Campaign Guide p. 162 (Republic Vehicles / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        }
+      }
+    }
   },
   {
     "id": "anti-aircraft-flak-pod",
@@ -849,27 +1339,57 @@
     "category": "Weapon",
     "weaponType": "Flak",
     "damage": "5d10x5",
-    "emplacementPoints": 3,
-    "availability": "Military",
+    "emplacementPoints": null,
+    "availability": null,
     "sizeRestriction": "Colossal (Frigate) or Larger",
-    "cost": 12000,
+    "cost": null,
     "costType": "flat",
     "description": "Anti-aircraft flak battery.",
-    "effect": "+4 vs fighters and small craft"
+    "effect": "+4 vs fighters and small craft",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "emplacementPoints": {
+          "value": 3,
+          "correctedFrom": "Rebellion Era Campaign Guide p. 130 (Vehicles and Starships / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "availability": {
+          "value": "Military",
+          "correctedFrom": "Rebellion Era Campaign Guide p. 130 (Vehicles and Starships / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        },
+        "cost": {
+          "value": 12000,
+          "correctedFrom": "Rebellion Era Campaign Guide p. 130 (Vehicles and Starships / Weapon Systems): RULE_PROSE_PLUS_STATBLOCKS_NO_PURCHASE_TABLE"
+        }
+      }
+    }
   },
   {
     "id": "chaff-gun",
     "name": "Chaff Gun",
     "category": "Weapon",
     "weaponType": "Defense",
-    "damage": "Special",
+    "damage": null,
     "emplacementPoints": 1,
-    "availability": "Common",
+    "availability": null,
     "sizeRestriction": null,
     "cost": 2000,
     "costType": "flat",
     "description": "Deploys sensor-blocking chaff.",
-    "effect": "+4 to avoid guided weapons for 1 round"
+    "effect": "+4 to avoid guided weapons for 1 round",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "damage": {
+          "value": "Special",
+          "correctedFrom": "Galaxy At War"
+        },
+        "availability": {
+          "value": "Common",
+          "correctedFrom": "Galaxy At War: the source prints no value; catalog value has no source"
+        }
+      }
+    }
   },
   {
     "id": "defoliator-launcher",
@@ -878,13 +1398,22 @@
     "weaponType": "Special",
     "damage": "See Ammunition",
     "emplacementPoints": 2,
-    "availability": "Illegal",
+    "availability": null,
     "sizeRestriction": null,
     "cost": 15000,
     "costType": "flat",
     "description": "Launches defoliator weapons (banned by galactic law).",
     "effect": "Fires defoliator shells",
-    "ammunition": "defoliator-shell"
+    "ammunition": "defoliator-shell",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "availability": {
+          "value": "Illegal",
+          "correctedFrom": "Galaxy At War: the source prints no value; catalog value has no source"
+        }
+      }
+    }
   },
   {
     "id": "defoliator-shell",
@@ -892,12 +1421,36 @@
     "category": "Ammunition",
     "weaponType": "Special",
     "damage": "4d10x2",
-    "emplacementPoints": 0,
-    "availability": "Illegal",
+    "emplacementPoints": null,
+    "availability": null,
     "sizeRestriction": null,
     "cost": 3500,
     "costType": "flat",
     "description": "Banned chemical weapon that destroys organic matter.",
-    "effect": "Kills unprotected organic targets, droids immune"
+    "effect": "Kills unprotected organic targets, droids immune",
+    "effectVerification": "UNVERIFIED",
+    "legacy": {
+      "p6a": {
+        "availability": {
+          "value": "Illegal",
+          "correctedFrom": "Galaxy At War: the source prints no value; catalog value has no source"
+        },
+        "emplacementPoints": {
+          "value": 0,
+          "correctedFrom": "Galaxy at War p. 67 Table 2-7: printed dash: not stated, not zero (printed \"—\")"
+        }
+      },
+      "p6aHistory": [
+        {
+          "field": "installationKind",
+          "from": null,
+          "to": "consumable-ammunition",
+          "authority": "OWNER_RULING",
+          "basis": "V-P6A-06"
+        }
+      ]
+    },
+    "installationKind": "consumable-ammunition",
+    "emplacementPointsPrinted": "—"
   }
 ]

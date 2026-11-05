@@ -466,6 +466,8 @@ export class GMApprovalOperationsService {
     }
 
     const approval = approvals[index];
+    // Party Fund vehicle ammunition: the one governed settlement (revalidate, claim, debit the fund + deliver to the reserve, or restore)
+    if (['vehicle-ammunition-party-fund', 'vehicle-logistics-party-fund'].includes(approval.approvalKind)) return this._approveVehicleAmmunition(host, approval);
     const ownerActor = game.actors.get(approval.ownerActorId);
     const draftActor = game.actors.get(approval.draftActorId);
 
@@ -560,6 +562,7 @@ export class GMApprovalOperationsService {
       return false;
     }
 
+    if (['vehicle-ammunition-party-fund', 'vehicle-logistics-party-fund'].includes(approvals[index]?.approvalKind)) return this._denyVehicleAmmunition(host, approvals[index], reason);
     try {
       const denial = approvals[index];
       const ownerActor = game.actors.get(denial.ownerActorId);
@@ -584,6 +587,24 @@ export class GMApprovalOperationsService {
       ui?.notifications?.error?.(`Failed to deny: ${err.message}`);
       return false;
     }
+  }
+
+  static async _approveVehicleAmmunition(host, approval) {
+    const { VehicleAmmunitionPurchaseService } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-ammunition-purchase-service.js');
+    const r = await VehicleAmmunitionPurchaseService.approve({ requestId: approval.id });
+    await this._resetApprovalState(host);
+    if (r.success) ui?.notifications?.info?.(`Approved from the Party Fund: ${approval.draftData?.name}`);
+    else ui?.notifications?.error?.(`Not approved (${r.reason}): no credits were deducted${r.state === 'indeterminate' ? ' -- INDETERMINATE, reconcile by hand' : ''}.`);
+    return r.success === true;
+  }
+
+  static async _denyVehicleAmmunition(host, approval, reason = '') {
+    const { VehicleAmmunitionPurchaseService } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-ammunition-purchase-service.js');
+    const r = await VehicleAmmunitionPurchaseService.reject({ requestId: approval.id, reason });
+    await this._resetApprovalState(host);
+    if (r.success) ui?.notifications?.info?.(`Rejected: ${approval.draftData?.name}${reason ? ` — ${reason}` : ''}`);
+    else ui?.notifications?.error?.(`Could not reject (${r.reason}).`);
+    return r.success === true;
   }
 
   static async _approveStoreItemPurchase(host, index, approval, ownerActor) {

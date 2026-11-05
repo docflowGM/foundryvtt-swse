@@ -1396,6 +1396,16 @@ function parsePositiveCredits(amount) {
   return Number.isFinite(value) && value > 0 ? value : 0;
 }
 
+/**
+ * The Party Fund's existing state and ledger (world settings holonetPartyFundBalance / holonetPartyFundLedger, enabled by holonetPartyFundEnabled),
+ * exposed for other governed settlements (vehicle ammunition purchases). The same helpers the messenger's own charge / payout actions use: there is
+ * no second fund. Writes are world settings, so only a GM client can perform them.
+ */
+export const PartyFundAccess = Object.freeze({
+  isEnabled: () => isPartyFundEnabled(), balance: () => getPartyFundBalance(), ledger: () => getPartyFundLedger(),
+  setBalance: value => setPartyFundBalance(value), appendLedger: entry => appendPartyFundLedger(entry), setLedger: ledger => setPartyFundLedger(ledger)
+});
+
 export class HolonetMessengerService {
   /**
    * Trusted GM-authority check for socket-relayed requests.

@@ -56,6 +56,24 @@ export const RangeEngine = {
     }
   },
 
+  /**
+   * Load ONLY the vehicle weapon range table (Core Table 10-2) if it has not been loaded; idempotent. The vehicle attack
+   * path calls this so a vehicle attack never depends on init() having run. Returns the profiles, or null when they cannot be read.
+   */
+  async ensureVehicleProfiles() {
+    if (this._vehicleProfiles) return this._vehicleProfiles;
+    try {
+      const resp = await fetch("systems/foundryvtt-swse/data/vehicle-weapon-ranges.json");
+      if (!resp.ok) throw new Error(`Failed to load vehicle ranges: ${resp.status}`);
+      this._vehicleProfiles = await resp.json();
+      SWSELogger.debug(`[RangeEngine] Loaded ${this._vehicleProfiles.length} vehicle weapon profiles`);
+    } catch (err) {
+      SWSELogger.error("[RangeEngine] Vehicle range table could not be loaded", err);
+      return null;
+    }
+    return this._vehicleProfiles;
+  },
+
   /* ============================================
      PROFILE RESOLUTION
      ============================================ */

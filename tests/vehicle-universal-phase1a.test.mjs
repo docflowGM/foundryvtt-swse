@@ -32,7 +32,13 @@ test('provenance and physical page match exact primary PDF fingerprint',()=>{
 });
 test('seven new independent vehicle claims: 2 walkers, 3 speeders/tanks, 2 airspeeders',()=>{
  const rows=ledger.groundAndAirVehicles;
- const tally=Object.groupBy(rows,r=>r.classification.primaryCategory);
+ // GitHub's rolling validation uses Node 20; Object.groupBy is newer.
+ // Count the original Phase 1A categories without changing the source audit.
+ const tally=rows.reduce((groups,row)=>{
+  const key=row.classification.primaryCategory;
+  (groups[key]??=[]).push(row);
+  return groups;
+ },Object.create(null));
  assert.equal(tally.walker.length,2);
  assert.equal(tally.speeder.length,1);
  assert.equal(tally['speeder-bike'].length,1);

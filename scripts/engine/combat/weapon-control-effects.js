@@ -247,11 +247,11 @@ async function acquireTractor(rec, decl, ctx) {
   if (!t) return { applied: false, reason: 'no-tractor-declared' };
   const g = sizeGate({ targetSize: sizeOf(target), maxSize: t.maxSize });
   if (!g.ok) return { applied: false, reason: g.reason };
-  const a = await ctx.grappleBonusFor?.(attacker), d = await ctx.grappleBonusFor?.(target);
+  const a = Number.isFinite(t.controllerGrapple) ? t.controllerGrapple : await ctx.grappleBonusFor?.(attacker), d = await ctx.grappleBonusFor?.(target);
   if (!Number.isFinite(a) || !Number.isFinite(d)) return { applied: false, reason: 'grapple-bonus-unobserved' };
   const att = await rollTotal(`1d20 + ${a}`), def = await rollTotal(`1d20 + ${d}`);
   if (att < def) return { applied: false, reason: 'opposed-check-lost', result: { att, def } };
-  const { record, reused } = await establish(decl, rec, ctx, 'grabbed', { tractor: { maxSize: t.maxSize, moveSquares: t.move.squares, hurlSquares: t.hurl.squares, moved: null } });
+  const { record, reused } = await establish(decl, rec, ctx, 'grabbed', { tractor: { maxSize: t.maxSize, moveSquares: t.move.squares, hurlSquares: t.hurl.squares, ...(t.controllerGrapple != null ? { controllerGrapple: t.controllerGrapple } : {}), ...(t.rangeCheck ? { rangeCheck: t.rangeCheck } : {}), moved: null } });
   return { applied: true, result: { controlId: record.id, state: 'grabbed', tractor: true, reused } };
 }
 
@@ -366,6 +366,11 @@ export async function processControlTurnEvent({ actors = reachableActors(), poin
       if (!controller) { await GrappleStateEngine.clearState(target, { quiet: true }); ended.push({ id: control.id, reason: 'controller-removed' }); continue; }
       if (!weaponStillWielded(controller, control)) { await endControl(controller, target, 'weapon-removed'); ended.push({ id: control.id, reason: 'weapon-removed' }); continue; }
 
+      // a vehicle tractor beam's hold breaks automatically when the held vehicle is beyond the beam's range (Core, Tractor Beams)
+      if (control.tractor?.rangeCheck === 'vehicle-weapon-range') {
+        const { vehicleTractorInRange } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-tractor-beam.js');
+        if (!(await vehicleTractorInRange({ controller, target, control }))) { await endControl(controller, target, 'out-of-range'); ended.push({ id: control.id, reason: 'out-of-range' }); continue; }
+      }
       // tractor maintenance: an opposed grapple check at the start of the controller's turn (loss releases the object)
       if (control.tractor && point === 'start' && String(actorId) === String(control.controllerId)) {
         const mkey = `${control.id}:maintain:${slot.round}:${actorId}`;
@@ -374,7 +379,7 @@ export async function processControlTurnEvent({ actors = reachableActors(), poin
           await patchControl(target, effect, { processed });
           control.processed = processed;
           const { SWSEGrappling } = await import('/systems/foundryvtt-swse/scripts/combat/systems/grappling-system.js');
-          const a = await SWSEGrappling._rollGrappleBonus(controller, { mode: 'attackGrapple' }), d = await SWSEGrappling._rollGrappleBonus(target, { mode: 'resistGrapple' });
+          const a = Number.isFinite(control.tractor.controllerGrapple) ? control.tractor.controllerGrapple : await SWSEGrappling._rollGrappleBonus(controller, { mode: 'attackGrapple' }), d = await SWSEGrappling._rollGrappleBonus(target, { mode: 'resistGrapple' });
           const att = await rollTotal(`1d20 + ${a}`), def = await rollTotal(`1d20 + ${d}`);
           if (att < def) { await endControl(controller, target, 'maintenance-failed'); ended.push({ id: control.id, reason: 'maintenance-failed' }); continue; }
         }

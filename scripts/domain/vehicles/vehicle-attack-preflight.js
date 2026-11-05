@@ -9,6 +9,10 @@ import { classifyInstalledVehicleWeapon } from './vehicle-attack-provenance.js';
 import { resolveTrustedStockAttackGroup } from './vehicle-stock-attack-authority.js';
 import { authorizeVehicleArcEvidence } from './vehicle-evidence-runtime-gate.js';
 import { isTargetWithinVehicleArc } from './vehicle-firing-arc-geometry.js';
+import { STOCK_ARC_POLICY, getStockSilentArcPolicy } from './vehicle-stock-arc-policy.js';
+import { BATTERY_REASONS } from './vehicle-weapon-battery.js';
+import { resolveEncounterScale, resolveAreaAtScale } from './vehicle-encounter-scale.js';
+import { resolveVehicleWeaponAuthority } from './vehicle-weapon-damage.js';
 
 const block = reason => ({ok:false,reason,strictStockEnforcement:true});
 const nonempty = x => typeof x === 'string' && x.trim().length > 0;
@@ -21,6 +25,8 @@ export function classifyVehicleAttackPreflight({vehicle,weapon,sourceLookup=reso
   if (provenance.kind === 'UNRESOLVED') return block(provenance.reason);
   if (provenance.kind === 'SHIPYARD_MODIFICATION')
     return {ok:true,kind:'CUSTOM_MODIFICATION',provenance,sourceAuthority:'SHIPYARD_INSTALLATION_NOT_PUBLISHED_STOCK'};
+  if (provenance.kind === 'CERTIFIED_INSTALLATION')
+    return {ok:true,kind:'CERTIFIED_INSTALLATION',provenance,sourceAuthority:'P2_CERTIFIED_LEDGER_INSTALLATION'};
   const trusted = sourceLookup(vehicle,weapon);
   if (!trusted || trusted.bindingVerified !== true || trusted.sourceComplete !== true ||
       !nonempty(trusted.weaponGroupKey) || !nonempty(trusted.sourceEntryKey))
@@ -34,15 +40,56 @@ export function classifyVehicleAttackPreflight({vehicle,weapon,sourceLookup=reso
  * The present 318-book source review alone NEVER automatically authorizes a
  * stock attack. Future bound groups get the D02/D03 policy gates below.
  */
-export async function authorizeVehicleAttackBeforeCosts({vehicle,weapon,target,attackId,crewStationResolved,gmDecision=null}) {
+/** May this user fire a weapon of this vehicle (and, for a named gunner, act as that gunner)? GMs always may. */
+function userMayOperate(user, vehicle, operatorActor) {
+  if (!user) return false;
+  if (user.isGM === true) return true;
+  const owns = doc => doc?.isOwner === true || (typeof doc?.testUserPermission === 'function' && doc.testUserPermission(user, 'OWNER') === true);
+  return owns(vehicle) && (!operatorActor || owns(operatorActor));
+}
+
+export async function authorizeVehicleAttackBeforeCosts({vehicle,weapon,target,attackId,crewStationResolved,gmDecision=null,user=globalThis.game?.user ?? null,operatorActor=null,stockArcPolicy=getStockSilentArcPolicy()}) {
   const base = classifyVehicleAttackPreflight({vehicle,weapon});
   if (!base.ok) return base;
   if (base.kind==='CUSTOM_MODIFICATION') return base;
+  if (base.kind==='CERTIFIED_INSTALLATION') {
+    // P6B weapon slice: the acting user must be allowed to operate this vehicle (and the named gunner, if any).
+    if (!userMayOperate(user, vehicle, operatorActor)) return block('ATTACK_USER_NOT_AUTHORIZED');
+    // A certified mount still needs a target, a resolved crew station and a legal arc.
+    if (!target || !nonempty(target.id)) return block('TARGET_UNRESOLVED');
+    if (crewStationResolved !== true) return block('CREW_STATION_UNRESOLVED');
+    if (!nonempty(attackId) || !nonempty(vehicle?.id)) return block('ATTACK_SCOPE_UNRESOLVED');
+    // An aftermarket launcher's printed splash is an ORDINARY area: a single-target attack at starship scale, refused otherwise (same
+    // rule and same pre-cost position as the stock groups below).
+    const installed = resolveVehicleWeaponAuthority(weapon);
+    if (installed?.ok && installed.area) {
+      const scale = resolveEncounterScale({ attacker: vehicle, target, combat: globalThis.game?.combat ?? null });
+      const at = resolveAreaAtScale(installed.area, scale.scale);
+      if (at.mode === 'refused') return block(`INSTALLED_AREA_${at.reason}`);
+    }
+    if (!isTargetWithinVehicleArc(vehicle,target,base.provenance.mount.arc)) return block('TARGET_OUTSIDE_CERTIFIED_MOUNT_ARC');
+    return base;
+  }
 
   const source = base.source;
+  // Published stock weapons: the same operator permission applies as for installed weapons.
+  if (!userMayOperate(user, vehicle, operatorActor)) return block('ATTACK_USER_NOT_AUTHORIZED');
   if (!target || !nonempty(target.id)) return block('TARGET_UNRESOLVED');
   if (crewStationResolved !== true) return block('CREW_STATION_UNRESOLVED');
   if (!nonempty(attackId) || !nonempty(vehicle?.id)) return block('ATTACK_SCOPE_UNRESOLVED');
+  // FULL-BATTERY mode is run by the battery's generic (published) crew, whose printed total already contains the printed
+  // gunners' assistance. Named gunners would need an explicit roster of the assisting gunners; until that exists the staffing
+  // evidence is incomplete and the attack is refused rather than guessed (nothing is inferred from a displayed bonus). The
+  // independent-weapon mode carries no battery (source.battery is null) and accepts a named gunner like any single weapon.
+  if (source.battery && operatorActor) return block(BATTERY_REASONS.ASSIGNED_CREW_ROSTER_UNMODELED);
+  // An ORDINARY area (splash / burst radius) resolves as an attack on a single target at STARSHIP scale (Core, Vehicle Combat); at
+  // character scale it needs the multi-target area engine, which does not exist, so the attack is refused. The scale comes from
+  // the encounter's participants (vehicles only = starship scale), never from the weapon's name. Checked before any cost.
+  if (source.area) {
+    const scale = resolveEncounterScale({ attacker: vehicle, target, combat: globalThis.game?.combat ?? null });
+    const at = resolveAreaAtScale(source.area, scale.scale);
+    if (at.mode === 'refused') return block(`STOCK_AREA_${at.reason}`);
+  }
   const scope={vehicleId:vehicle.id,attackId,weaponGroupKey:source.weaponGroupKey,targetId:target.id};
   if (source.attackBonusEvidence?.state === 'PUBLISHED_CONFLICT') {
     // The computed vehicle INT math cannot consume a printed-flat override.
@@ -50,6 +97,11 @@ export async function authorizeVehicleAttackBeforeCosts({vehicle,weapon,target,a
     // reconciled; no GM choice may be silently treated as a flat modifier.
     return block('PUBLISHED_ATTACK_CONFLICT_REQUIRES_FORMULA_RECONCILIATION');
   }
+  // The source never states a stock weapon's firing arc. Under the 'unrestricted' policy (owner decision V-P6C-01) a
+  // source-silent arc restricts nothing; under the default policy only an explicit GM adjudication can allow the attack.
+  if (source.arcEvidence?.state==='SOURCE_SILENT_CONFIRMED' && stockArcPolicy===STOCK_ARC_POLICY.UNRESTRICTED)
+    return {ok:true,kind:'TRUSTED_STOCK',sourceEntryKey:source.sourceEntryKey,weaponGroupKey:source.weaponGroupKey,
+      operator:source.operator,arcAuthority:'POLICY_SOURCE_SILENT_UNRESTRICTED',receiptDocumentId:null};
   const arc=await authorizeVehicleArcEvidence({
     ...scope,sourceComplete:true,crewStationResolved:true,targetResolved:true,
     arcEvidence:source.arcEvidence?.state,arc:source.arcEvidence?.value,
@@ -60,5 +112,5 @@ export async function authorizeVehicleAttackBeforeCosts({vehicle,weapon,target,a
   const effectiveArc=arc.selectedArc ?? arc.arc;
   if (!isTargetWithinVehicleArc(vehicle,target,effectiveArc)) return block('TARGET_OUTSIDE_VERIFIED_FIRE_ARC');
   return {ok:true,kind:'TRUSTED_STOCK',sourceEntryKey:source.sourceEntryKey,
-    weaponGroupKey:source.weaponGroupKey,receiptDocumentId:arc.receiptDocumentId ?? null};
+    weaponGroupKey:source.weaponGroupKey,operator:source.operator,arcAuthority:arc.status,receiptDocumentId:arc.receiptDocumentId ?? null};
 }
