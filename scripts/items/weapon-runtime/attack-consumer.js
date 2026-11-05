@@ -17,6 +17,7 @@ import { extractSpecialMechanics, damageShapeFromMechanics, summarizeMechanics }
 import { resolveAttackShape } from './attack-shape.js';
 import { resolveAreaShape } from './area-shape.js';
 import { abilityKeysOfActor } from './ability-selector.js';
+import { canDeclareInfiltratorUnarmedStun } from '../../engine/combat/class-infiltrator-unarmed-stun.js';
 
 const LEGACY = Object.freeze({ source: 'legacy' });
 const SELECTION_KEYS = ['profileId', 'configurationId', 'modeId', 'payloadId', 'damageMode', 'endId'];
@@ -242,14 +243,22 @@ export function resolveCanonicalDamage(weapon, context = {}) {
   const loadedKey = context.loadedIdentityKey ?? form?.loadedIdentityKey ?? null;
   if (loadedKey && runtime0.resolved.operation?.damageTypeAndBurstDeterminedByGrenade === true) return delegateLoadedPayload(runtime0, loadedKey, context, form);
   const damageMode = effectiveDamageMode(runtime0, context.damageMode ?? form?.damageMode ?? null) ?? 'normal';
+  // A class-granted unarmed stun declaration uses the canonical NORMAL
+  // weapon damage shape (same unarmed dice), but stun damage type.
+  // Only an actually eligible Infiltrator can use this exception.
+  const infiltratorStun = damageMode === 'stun'
+    && canDeclareInfiltratorUnarmedStun(context.actor,weapon);
+  const profileMode = infiltratorStun ? 'normal' : damageMode;
   let runtime = runtime0;
-  let dp = resolveDamageProfile(runtime.resolved, runtime.profile, { damageMode, damageType: context.damageType ?? null });
+  let dp = resolveDamageProfile(runtime.resolved, runtime.profile, {
+    damageMode:profileMode, damageType:infiltratorStun ? null : context.damageType ?? null,
+  });
   // a form whose damage varies by payload with exactly one payload available has an unambiguous payload
   if (dp.components[0]?.requiresPayload && !ctx.payloadId) {
     const only = runtime.resolved.payloads;
     if (only.length === 1) {
       runtime = resolveAttackWeaponRuntime(weapon, { ...ctx, payloadId: only[0].id });
-      dp = resolveDamageProfile(runtime.resolved, runtime.profile, { damageMode, damageType: context.damageType ?? null });
+      dp = resolveDamageProfile(runtime.resolved, runtime.profile, { damageMode:profileMode, damageType:infiltratorStun ? null : context.damageType ?? null });
     } else {
       throw new WeaponRuntimeError(ERROR_CODES.PAYLOAD_REQUIRED, `${runtime.identityKey}/${runtime.profile.id} damage depends on a payload and none was selected`, { identityKey: runtime.identityKey, profileId: runtime.profile.id });
     }
@@ -278,11 +287,13 @@ export function resolveCanonicalDamage(weapon, context = {}) {
     stunCapability: runtime.profile.definition?.stun?.capability ?? null, payloadEffects: dp.specialEffects, drInteraction: dp.damageReductionInteraction, abilityInteractions: runtime.resolved.abilityInteractions, identityKey: runtime.identityKey ?? null,
   });
   return Object.freeze({
-    source: 'canonical', status, reason, base, damageMode: dp.damageMode,
-    runtime, selection: weaponFormRecord(runtime, dp.damageMode),
+    source: 'canonical', status, reason, base, damageMode: infiltratorStun ? 'stun' : dp.damageMode,
+    runtime, selection: weaponFormRecord(runtime, infiltratorStun ? 'stun' : dp.damageMode),
     componentKind: primary?.kind ?? null, payloadId: dp.payloadId,
-    damageTypes: Object.freeze(types), damageTypeMode: primary?.damageTypeMode ?? 'none', selectedDamageType: selectedType,
-    requiresDamageTypeSelection: primary?.requiresDamageTypeSelection === true,
+    damageTypes: Object.freeze(infiltratorStun ? ['stun'] : types),
+    damageTypeMode: infiltratorStun ? 'single' : primary?.damageTypeMode ?? 'none',
+    selectedDamageType: infiltratorStun ? 'stun' : selectedType,
+    requiresDamageTypeSelection: infiltratorStun ? false : primary?.requiresDamageTypeSelection === true,
     specialEffects: dp.specialEffects, area: dp.area,
     // Phase 5D-G: the selected form's (payload ?? profile) attack area shape
     areaShape: resolveAreaShape(dp.area, runtime.profile.definition?.attackResolution, { rateOfFire: runtime.profile.definition?.rateOfFire, operation: runtime.resolved.operation ?? null }),

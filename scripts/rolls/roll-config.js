@@ -17,6 +17,7 @@ import { isRangedWeapon as canonicalIsRangedWeapon, isMeleeWeapon as canonicalIs
 import { buildAttackForms, findAttackForm, attackFormSelection } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-form-options.js";
 import { WeaponRuntimeError } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
 import { shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { canDeclareInfiltratorUnarmedStun } from "/systems/foundryvtt-swse/scripts/engine/combat/class-infiltrator-unarmed-stun.js";
 import { canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
 import { createModifier, ModifierType, ModifierSource } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 
@@ -453,10 +454,10 @@ function weaponIsStunOnly(weapon = {}) {
   return !props.some(p => p.includes('lethal') || p.includes('stun setting'));
 }
 
-function buildDamageModeChoices(weapon = {}) {
+function buildDamageModeChoices(weapon = {}, actor = null) {
   if (!weapon) return [{ value: 'normal', label: 'Normal Damage', selected: true, disabled: false }];
   const baseType = weaponDamageTypeKey(weapon);
-  const stunCapable = weaponHasStunSetting(weapon);
+  const stunCapable = weaponHasStunSetting(weapon) || canDeclareInfiltratorUnarmedStun(actor,weapon);
   const stunOnly = weaponIsStunOnly(weapon);
   const choices = [];
 
@@ -1272,9 +1273,9 @@ export async function buildRollConfigModel(options = {}) {
     attackSelection,
     attackFormError,
     supportsAutofire: weaponSupportsAutofire(weapon),
-    hasStunSetting: weaponHasStunSetting(weapon),
+    hasStunSetting: weaponHasStunSetting(weapon) || canDeclareInfiltratorUnarmedStun(actor,weapon),
     stunOnly: weaponIsStunOnly(weapon),
-    damageModeChoices: buildDamageModeChoices(weapon),
+    damageModeChoices: buildDamageModeChoices(weapon,actor),
     // Math Integrity Freeze, Attack Bonus round 8 (Part 8, duplicate
     // audit): hasBurstFire/hasRapidShot/hasPowerAttack/hasFlurry were
     // removed. Each backed a hand-coded checkbox that duplicated an
