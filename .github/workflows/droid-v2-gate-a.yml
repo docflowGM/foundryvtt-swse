@@ -34,6 +34,7 @@ jobs:
           node tests/droid-source-review-gate.test.mjs
           node tests/droid-sgd-host002-arithmetic.test.mjs
           node tools/build-droid-component-source-status.mjs --check
+          node tools/audit-droid-source-field-ownership.mjs
       - name: Existing Garage and ownership checks
         run: |
           set -e
