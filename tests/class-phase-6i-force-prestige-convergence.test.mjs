@@ -210,3 +210,19 @@ test('all four prestige entry records retain core force, training and advanced p
   for(const name of ['Force Adept','Force Disciple','Jedi Knight','Imperial Knight'])
     assert.ok(data[name].skills.includes(training),name+' must require trained Use the Force');
 });
+
+test('Indomitable guards Adept Negotiator before any condition-track or effect mutation',()=>{
+  // Core printed p.40 explicitly marks both Adept Negotiator and Master
+  // Negotiator as Mind-Affecting, even though they are skill/talent effects.
+  const source=read('scripts/engine/talent/light-side-talent-mechanics.js');
+  const start=source.indexOf('static async completeAdeptNegotiatorSelection(');
+  const end=source.indexOf('static getPersuasionModifier(',start);
+  assert.ok(start>=0&&end>start);
+  const method=source.slice(start,end);
+  const gate=method.indexOf('resolveForceDiscipleIndomitable(targetActor, { mindAffecting: true })');
+  const mutation=method.indexOf('ActorEngine.applyTalentEffect(plan)');
+  const effect=method.indexOf('createEffectOnActor(targetActor,');
+  assert.ok(gate>=0&&mutation>gate&&effect>gate);
+  assert.match(method,/immune: true/);
+  assert.match(method,/stepsMovedBack: 0/);
+});
