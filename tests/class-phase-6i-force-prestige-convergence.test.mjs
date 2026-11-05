@@ -67,6 +67,14 @@ test('Force Disciple has one Prophet + Indomitable unlock, odd-level talents, se
 
 test('Indomitable never infers class ownership from a name on a feat or a conflicting class id',()=>{
   assert.equal(forceDiscipleClassLevel(actor([classItem('Force Disciple',2)])),2);
+  // Real ProgressionFinalizer serializes the canonical source ID, NOT the
+  // human-readable class slug. This must work in actual Foundry documents.
+  const canonical=actor([{type:'class',name:'Force Disciple',system:{classId:'ef6fe8fdbbd884b4',level:3}}]);
+  assert.equal(forceDiscipleClassLevel(canonical),3);
+  assert.equal(resolveForceDiscipleIndomitable(canonical,{mindAffecting:true}).immune,true);
+  const grant=planForceDiscipleProphetAward({actor:canonical,manifest:manifest(4,16)});
+  assert.equal(grant.allowed,true,grant.reason);
+
   assert.equal(forceDiscipleClassLevel(actor([{type:'feat',name:'Force Disciple',system:{level:5}}])),0);
   assert.equal(forceDiscipleClassLevel(actor([{type:'class',name:'Force Disciple',system:{classId:'jedi',level:5}}])),0);
   assert.equal(forceDiscipleClassLevel(actor([classItem('Force Disciple',2,{disabled:true})])),0);
