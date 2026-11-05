@@ -23,6 +23,7 @@ import { isLightsaberWeapon } from "/systems/foundryvtt-swse/scripts/engine/comb
 import { DamageTypeRules } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 import { wornArmorDamageTypeReductions } from "/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-effects.js";
 import { isNaturalOrUnarmedWeapon as canonicalIsNaturalOrUnarmedWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { eliteTrooperDamageReductionEntry, eliteTrooperDamageReduction } from "/systems/foundryvtt-swse/scripts/engine/combat/class-elite-trooper-dr.js";
 
 
 function normalizeKey(value) {
@@ -291,7 +292,7 @@ export class DamageReductionResolver {
     const derived = Number(actor.system?.derived?.damageReduction?.highestValue ?? actor.system?.derived?.damageReduction?.all ?? actor.system?.derived?.damageReduction?.value ?? 0);
     const actorDR = Number(actor.system?.damageReduction ?? 0);
     const itemDR = collectItemDamageReduction(actor, context).value;
-    return Math.max(derived || 0, actorDR || 0, itemDR || 0);
+    return Math.max(derived || 0, actorDR || 0, itemDR || 0, eliteTrooperDamageReduction(actor));
   }
 
   /**
@@ -329,6 +330,11 @@ export class DamageReductionResolver {
       const value = Number(base ?? 0) || 0;
       if (value > 0) entries.push({ value, exceptions: [], source: 'Actor DR' });
     }
+
+    // Elite Trooper's level-scaled DR is an ordinary highest-only DR entry;
+    // it must participate in the same bypass/exception calculation as other DR.
+    const eliteTrooperDR=eliteTrooperDamageReductionEntry(actor);
+    if(eliteTrooperDR) entries.push(eliteTrooperDR);
 
     for (const item of actorItems(actor)) {
       const rules = item?.system?.abilityMeta?.rules;

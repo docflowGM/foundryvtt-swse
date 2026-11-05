@@ -22,6 +22,7 @@ import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { MissingPrereqsTracker } from "/systems/foundryvtt-swse/scripts/governance/integrity/missing-prereqs-tracker.js";
 import { SeverityClassifier } from "/systems/foundryvtt-swse/scripts/governance/integrity/severity-classifier.js";
+import { isOfficerSharedTalentPrerequisiteWaived } from "/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-grant-plan.js";
 
 export class PrerequisiteIntegrityChecker {
 
@@ -157,6 +158,11 @@ export class PrerequisiteIntegrityChecker {
    * @private
    */
   static _shouldEvaluateItem(item) {
+    // The published Officer Share Talent ability specifically waives recipient
+    // talent prerequisites through encounter end. Only accept complete,
+    // internally consistent canonical grant provenance; an ordinary Item
+    // carrying a loose 'temporary' flag is NOT exempt.
+    if (isOfficerSharedTalentPrerequisiteWaived(item)) return false;
     // Skip items without types (shouldn't happen, but defensive)
     if (!item.type) return false;
 

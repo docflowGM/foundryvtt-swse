@@ -61,6 +61,11 @@ test('attack resolution reads scene Command Cover once, merges it by maximum wit
  const attacks=fs.readFileSync(path.join(root,'scripts/combat/rolls/attacks.js'),'utf8');
  assert.match(attacks,/import \{ sceneCommandCoverBonus \} from/);
  assert.match(attacks,/Math\.max\(commandCover, ordinaryCover\)/);
+ assert.match(attacks,/import \{ isSuppressCoverContext \} from/);
+ assert.match(attacks,/const suppressesCover = isSuppressCoverContext\(options\) \|\| isSuppressCoverContext\(ctx\)/);
+ assert.match(attacks,/defenseType === 'reflex' && !suppressesCover/);
+ assert.match(attacks,/if \(isSuppressCoverContext\(options\) \|\| isSuppressCoverContext\(options\.targetContext\)\) return base/);
+
  assert.match(attacks,/sceneCommandCoverBonus\(target, \{ tokenId: ctx\?\.tokenId/);
  assert.match(attacks,/const defenseValue = Number\.isFinite\(base\) \? base \+ adjustment : base/);
 });

@@ -8,6 +8,8 @@
  * Display names, an unverified embedded _id or a user-supplied tree label alone
  * are not sufficient authority.
  */
+import { isPermanentOfficerTalentItem } from './officer-owned-talent-identity.js';
+
 export const OFFICER_SHARE_TREE_NAMES = Object.freeze([
   'Influence', 'Inspiration', 'Commando', 'Military Tactics',
 ]);
@@ -43,7 +45,7 @@ export function eligibleOfficerShareTalents(actor, talentDB, treeDB) {
   const allowed = new Set(OFFICER_SHARE_TREE_NAMES.map(normalized));
   const found = new Map();
   for (const item of actorItems(actor)) {
-    if (String(item?.type || '').toLowerCase() !== 'talent') continue;
+    if (!isPermanentOfficerTalentItem(item)) continue;
     const id = embeddedTalentSourceId(item);
     if (!id) continue;
     const canonical = talentDB.get?.(id);

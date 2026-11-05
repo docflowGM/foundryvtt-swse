@@ -45,6 +45,8 @@ import {
   mergeLedgerIntoPending,
 } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 import { hasPrerequisites as classHasPrerequisites } from '/systems/foundryvtt-swse/scripts/data/prestige-prerequisites.js';
+import { DSPEngine } from '/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js';
+import { evaluateMasterPrivateerPiracy } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/master-privateer-piracy-rules.js';
 
 /**
  * Item domains that carry player-facing prerequisites and must be re-checked.
@@ -282,6 +284,16 @@ export async function validateFinalProgressionPrerequisites({
     const classResult = evaluateClassSelection(actor, classSelection, pending, details);
     if (classResult?.error) errors.push(classResult.error);
     if (classResult?.warning) warnings.push(classResult.warning);
+    // "Fallen" is a GM ruling, never inferred from a score or automatic
+    // finalization blockade. Preserve the printed rule in visible warnings.
+    const piracy=evaluateMasterPrivateerPiracy({
+      actor,className:entryName(classSelection),
+      darkSideScore:DSPEngine.getValue(actor),darkSideMax:DSPEngine.getMax(actor),
+    });
+    if (piracy.advisory) {
+      warnings.push(piracy.reason);
+      details.push({domain:'class',name:entryName(classSelection),advisory:piracy.reason});
+    }
   }
 
   // Item-domain prerequisites (feats, talents, Force domains, medical secrets, maneuvers).
