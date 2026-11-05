@@ -5,6 +5,8 @@
  * This module calculates numbers only. It does NOT certify an item's source
  * identity, grant an installation host, or authorize a transaction.
  */
+import { resolveDroidComponentSourceReview } from './droid-component-source-review.js';
+
 const SIZE_ORDER = ['fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'];
 const FACTORS = Object.freeze({
   fine:       Object.freeze({ price: 20, accessoryWeight: 0.1 }),
@@ -171,6 +173,26 @@ export function resolveDroidComponentQuote(input = {}) {
 }
 
 /**
+ * Numeric arithmetic and source-review presence are different gates.
+ * Returning OK here certifies NEITHER installation host NOR commerce.
+ */
+export function resolveSourceReviewedDroidQuote(input = {}) {
+  const review = resolveDroidComponentSourceReview(input.definition, {
+    operationPhase: input.operationPhase,
+    locomotionSlotOrdinal: input.locomotionSlotOrdinal,
+    restrictedLocomotion: input.restrictedLocomotion
+  });
+  if (review.decision === 'BLOCKED') {
+    return {
+      status: 'NEEDS_SOURCE_ADJUDICATION',
+      credits: null, kg: null,
+      blockingReason: review.blockingReason
+    };
+  }
+  return resolveDroidComponentQuote(input);
+}
+
+/**
  * Entry point for every chargen/follower/preview consumer of DROID_SYSTEMS.
  * Keep sourcePath derivation here; callers must never supply their own
  * competing price or accessory weight factors.
@@ -180,7 +202,8 @@ export function resolveDroidComponentQuote(input = {}) {
 export function resolveDroidBuilderQuote({
   definition, category, subcategory = null, size, speed = null,
   variant = null, appendageBaseCost = null, appendageBaseWeight = null,
-  baseLocomotionCost = null, selectedInstalledShieldRating = null
+  baseLocomotionCost = null, selectedInstalledShieldRating = null,
+  operationPhase = null, locomotionSlotOrdinal = null, restrictedLocomotion = null
 } = {}) {
   const group = category === 'enhancement' ? 'locomotionEnhancement' : category;
   const paths = {
@@ -195,9 +218,10 @@ export function resolveDroidBuilderQuote({
     : paths[group];
   if (!sourcePath) return invalid('Component source category is not recognized');
 
-  return resolveDroidComponentQuote({
+  return resolveSourceReviewedDroidQuote({
     definition, size, category: group === 'accessory' ? subcategory : group,
     sourcePath, speed, variant, appendageBaseCost,
-    appendageBaseWeight, baseLocomotionCost, selectedInstalledShieldRating
+    appendageBaseWeight, baseLocomotionCost, selectedInstalledShieldRating,
+    operationPhase, locomotionSlotOrdinal, restrictedLocomotion
   });
 }
