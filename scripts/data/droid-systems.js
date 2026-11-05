@@ -178,6 +178,8 @@ export const DROID_SYSTEMS = {
       description: 'Integrated gyroscope and hydraulic system grants +5 stability bonus to resist being knocked prone. Stacks with Extra Legs bonus.',
       requiredLocomotion: 'any',
       costFormula: (baseSpeed, costFactor) => Math.ceil(2 * costFactor * (baseSpeed * baseSpeed)),
+      // SGD-HOST-002: locomotion system mass, NOT accessory mass errata.
+      weightFormula: (costFactor) => 4 * costFactor,
       effects: ['Stability bonus +5 (stacks with Extra Legs)'],
       restrictions: ['None']
     }
