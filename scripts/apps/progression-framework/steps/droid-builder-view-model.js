@@ -641,7 +641,9 @@ export class DroidBuilderViewModelAdapter {
       subcategory: context.subcategory,
       size: context.size,
       droidSystems: context.droidState?.droidSystems,
-      speed
+      speed,
+      operationPhase: context.contextMode === 'garageModification'
+        ? 'POST_CREATION_INSTALL' : 'INITIAL_BUILD'
     });
     const quoteAllowed = quote.status === 'OK';
     // This grant belongs to the draft chassis, not the published list price.
