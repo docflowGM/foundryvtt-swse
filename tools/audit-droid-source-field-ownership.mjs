@@ -13,7 +13,7 @@ const FIELD_TREATMENT = Object.freeze({
   QUOTE_OR_SOURCE_GATE: [
     'id', 'name', 'cost', 'weight', 'costFormula', 'weightFormula',
     'costMultiplier', 'baseSpeed', 'speeds', 'rangeOptions', 'sizeMinimum',
-    'minSize', 'maxSize', 'costWithHigherDefense', 'costIncrement', 'weightIncrement'
+    'costWithHigherDefense', 'costIncrement', 'weightIncrement'
   ],
   // These are currently primarily explanatory/presentation data, NOT mechanics.
   PRESENTATION_NOT_PROOF_OF_RULE: [
@@ -29,8 +29,8 @@ const FIELD_TREATMENT = Object.freeze({
     'hpBonus', 'dtBonus', 'sr', 'requiredLocomotion', 'requiresLocomtion',
     'requiredSystems', 'requiresAppendage', 'dc',
     'damageType', 'canManipulate', 'canAttack', 'createsUnarmedAttack',
-    'createsRangedWeapon', 'weaponStats', 'unarmedDamageTable',
-    'isFree', 'damage', 'range', 'splash'
+    'createsRangedWeapon', 'weaponStats',
+    'isFree'
   ]
 });
 
