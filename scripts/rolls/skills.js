@@ -246,6 +246,17 @@ export async function rollSkill(actor, skillKey, options = {}) {
   const forcePointDieUpgrade = RebellionSpeciesSkillFeatRuntime.getForcePointDieUpgrade(actor, effectiveSkillKey, skillContext);
   if (forcePointDieUpgrade) skillContext.forcePointDieUpgrade = forcePointDieUpgrade;
 
+  const featSkillBonuses = SkillFeatResolver.getSkillCheckBonuses(actor, effectiveSkillKey, skillContext);
+  const equipmentSkill = await resolveEquipmentSkillModifiers(actor, effectiveSkillKey, skillContext);
+  // Shaper Lore is situational: the GM/player must identify this as a check
+  // regarding a biotech device. Never grant it to every check of this skill.
+  const shaperLore = shaperLoreBonus(actor,effectiveSkillKey,{
+    biotechDevice:options?.biotechDevice === true,
+  });
+  const skillCheckMode = String(options?.checkMode || (options?.take20 === true ? 'take20' : options?.take10 === true ? 'take10' : 'roll')).toLowerCase();
+  const skillTakeXValue = skillCheckMode === 'take20' ? 20 : skillCheckMode === 'take10' ? 10 : 10;
+  const skillIsTakeX = skillCheckMode === 'take10' || skillCheckMode === 'take20';
+
   // A real class-owned Master Saboteur rolls two d20s and retains the better
   // die. Use one canonical RollCore invocation so all normal modifiers,
   // equipment hooks, Force Point spending and the chat card apply ONCE.
@@ -257,16 +268,6 @@ export async function rollSkill(actor, skillKey, options = {}) {
   const masterSaboteurEvidence = masterSaboteurDice
     ? { source: 'Saboteur — Master Saboteur', application: saboteurUse.application, dice: '2d20kh1' }
     : null;
-  const featSkillBonuses = SkillFeatResolver.getSkillCheckBonuses(actor, effectiveSkillKey, skillContext);
-  const equipmentSkill = await resolveEquipmentSkillModifiers(actor, effectiveSkillKey, skillContext);
-  // Shaper Lore is situational: the GM/player must identify this as a check
-  // regarding a biotech device. Never grant it to every check of this skill.
-  const shaperLore = shaperLoreBonus(actor,effectiveSkillKey,{
-    biotechDevice:options?.biotechDevice === true,
-  });
-  const skillCheckMode = String(options?.checkMode || (options?.take20 === true ? 'take20' : options?.take10 === true ? 'take10' : 'roll')).toLowerCase();
-  const skillTakeXValue = skillCheckMode === 'take20' ? 20 : skillCheckMode === 'take10' ? 10 : 10;
-  const skillIsTakeX = skillCheckMode === 'take10' || skillCheckMode === 'take20';
 
   const domain = `skill.${effectiveSkillKey}`;
   const rollResult = await RollCore.execute({
