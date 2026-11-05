@@ -9,7 +9,11 @@ const doc=(id,type,name,cost)=>({
 });
 const listing=(id,type='equipment',cost=4000,availability='Restricted')=>({
  id,name:id,type,availability,cost,costStatus:'priced',
- doc:doc(id,type,id,cost),
+ sourcePack:'foundryvtt-swse.equipment',sourceUuid:`Compendium.foundryvtt-swse.equipment.${id}`,
+ doc:{...doc(id,type,id,cost),__storeSource:{
+   source:'compendium',pack:'foundryvtt-swse.equipment',
+   uuid:`Compendium.foundryvtt-swse.equipment.${id}`,
+ }},
 });
 const index={allItems:[
  listing('kit','equipment',4000),
@@ -60,6 +64,36 @@ test('Enforcer delivery denies unsupported equipment, unknown pricing, overspend
  assert.throws(()=>delivery({...opts,selected:[{id:'kit',quantity:1}],
   entries:[{...ledger[0],status:'delivered'}]}),/already resolved/);
 });
+test('Resources fail closed against world or ambiguous source entries even with valid pricing',()=>{
+ const options={actor:{id:'PC1'},entries:ledger,classLevel:2,
+   selected:[{id:'kit',quantity:1}],location:'Civilized Base',approvalUserId:'GM'};
+ const world={...listing('kit'),sourcePack:'world',sourceUuid:null};
+ const missing={...listing('kit'),sourceUuid:null};
+ const mismatch={...listing('kit'),sourceUuid:'Compendium.other.pack.kit'};
+ const copied=listing('kit');
+ const worldCopy={...copied,doc:{...copied.doc,__storeSource:{
+   source:'world',pack:null,uuid:null,
+ }}};
+ for(const entry of [world,missing,mismatch,worldCopy]){
+   const index={allItems:[entry]};
+   assert.deepEqual(eligible(index),[]);
+   assert.throws(()=>delivery({...options,index}),/not an eligible restricted\/military source item/);
+ }
+});
+test('Enforcer vehicle linkage keeps class grant provenance, while normal store default is unchanged',async()=>{
+ const fs=await import('node:fs');
+ const path=await import('node:path');
+ const url=await import('node:url');
+ const root=path.resolve(path.dirname(url.fileURLToPath(import.meta.url)),'..');
+ const service=fs.readFileSync(path.join(root,'scripts/engine/store/acquisition-service.js'),'utf8');
+ const delivery=fs.readFileSync(path.join(root,'scripts/engine/progression/utils/enforcer-equipment-delivery.js'),'utf8');
+ assert.match(service,/source: metadata\.source/);
+ assert.match(service,/source: link\.source/);
+ assert.match(service,/source = 'store'/); // default store purchase remains default
+ assert.match(delivery,/transactionContext:'enforcer-resources',source:'Enforcer Resources'/);
+ assert.match(delivery,/StoreAcquisitionService\.buildOwnerLinkPlan/);
+});
+
 test('GM may defer full untouched resources once, preserving next-level carry accounting',()=>{
  const result=planEnforcerEquipmentDeferral({entries:ledger,classLevel:2});
  assert.equal(result.current.status,'deferred-to-next-level');

@@ -1,14 +1,38 @@
 /** Foundry-independent talent Item provenance and shared-Item construction. */
+import { isPermanentOfficerTalentItem } from '../progression/utils/officer-owned-talent-identity.js';
 export const asItems=v=>Array.from(v?.contents||v||[]);
 const provenance=item=>item?.flags?.swse?.officerSharedTalent || null;
 const dayFromClock=time=>Number.isFinite(Number(time))?Math.floor(Number(time)/86400):null;
 const sourceId=item=>String(item?.flags?.core?.sourceId||item?.system?.sourceId||'');
+/**
+ * Recognize only a complete canonical, temporary Officer Share Talent grant.
+ * The grant's prerequisite waiver is published RAW; normal talents continue
+ * through the existing prerequisite integrity evaluator unchanged.
+ */
+export function isOfficerSharedTalentPrerequisiteWaived(item) {
+  const sys=item?.system,proof=item?.flags?.swse?.officerSharedTalent;
+  if(item?.type!=='talent' || sys?.sourceType!=='officer-share-talent'
+    || sys?.prerequisiteWaivedBy!=='officer.shareTalent'
+    || sys?.autoGranted!==true || sys?.temporary!==true
+    || proof?.temporary!==true || proof?.expires!=='end-of-encounter') return false;
+  for(const value of [proof.sourceOfficerId,proof.talentId,proof.encounterId]) {
+    if(typeof value!=='string' || !value.trim())return false;
+  }
+  return sys.talentSourceId===proof.talentId
+    && Number.isInteger(proof.officerLevel) && proof.officerLevel>=2
+    && Number.isInteger(proof.day);
+}
+
 const copied=x=>JSON.parse(JSON.stringify(x));
-const uniqueActors=(actors)=>Array.from(new Map(actors.map(a=>[a.id,a])).values());
+/** Preserve synthetic token actors separately from their world Actor source. */
+export function uniqueOfficerShareTalentActors(actors=[]) {
+  const key=actor=>String(actor?.uuid || actor?.id || '');
+  return Array.from(new Map(actors.filter(a=>key(a)).map(actor=>[key(actor),actor])).values());
+}
 
 export function ownOfficerTalentItem(officer,talentId) {
   const suffix=`.${talentId}`;
-  const matches=asItems(officer?.items).filter(item=>item.type==='talent' && (
+  const matches=asItems(officer?.items).filter(item=>isPermanentOfficerTalentItem(item) && (
     item.system?.canonicalId===talentId || item.system?.talentSourceId===talentId
     || sourceId(item).endsWith(suffix)));
   if(matches.length!==1)throw new Error('The selected canonical Talent Item is not uniquely owned by the Officer');

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {buildOfficerShareTalentGrant,ownOfficerTalentItem} from '../scripts/engine/combat/officer-share-talent-grant-plan.js';
+import {buildOfficerShareTalentGrant,ownOfficerTalentItem,isOfficerSharedTalentPrerequisiteWaived} from '../scripts/engine/combat/officer-share-talent-grant-plan.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -32,25 +32,62 @@ test('temporary Share Talent clones actual canonical talent and retains provenan
  assert.equal(result._id,undefined);
  assert.equal(item._id,'original');
 });
+test('only complete temporary Officer Share Talent provenance waives recipient prerequisites',()=>{
+ const item=buildOfficerShareTalentGrant({
+   officer,recipient,talent:officer.items[0],selection,encounterId:'enc',day:15,
+ });
+ assert.equal(isOfficerSharedTalentPrerequisiteWaived(item),true);
+ for(const edited of [
+   {...item,system:{...item.system,sourceType:'ordinary-talent'}},
+   {...item,system:{...item.system,prerequisiteWaivedBy:null}},
+   {...item,system:{...item.system,talentSourceId:'different'}},
+   {...item,system:{...item.system,temporary:false}},
+   {...item,flags:{swse:{officerSharedTalent:{...item.flags.swse.officerSharedTalent,encounterId:''}}}},
+   {...item,flags:{swse:{officerSharedTalent:{...item.flags.swse.officerSharedTalent,officerLevel:0}}}},
+   {...item,type:'feat'},
+ ]) assert.equal(isOfficerSharedTalentPrerequisiteWaived(edited),false);
+ const checker=fs.readFileSync(path.join(ROOT,'scripts/governance/integrity/prerequisite-integrity-checker.js'),'utf8');
+ assert.match(checker,/isOfficerSharedTalentPrerequisiteWaived\(item\)/);
+});
+
 test('never duplicate the same canonically owned talent for an ally',()=>{
  const withTalent={id:'B',items:[{type:'talent',system:{talentSourceId:'T123'}}]};
  assert.equal(buildOfficerShareTalentGrant({officer,recipient:withTalent,
   talent:officer.items[0],selection,encounterId:'enc',day:15}),null);
  assert.throws(()=>ownOfficerTalentItem({...officer,items:[]},'T123'),/not uniquely owned/);
 });
+test('a temporary borrowed talent cannot become the Officer source for another Share Talent',()=>{
+ const borrowed=buildOfficerShareTalentGrant({
+   officer,recipient,talent:officer.items[0],selection,encounterId:'enc',day:15,
+ });
+ const officerWithBorrowed={id:'officer2',items:[{
+   ...borrowed,id:'borrowed',toObject:()=>borrowed,
+ }]};
+ assert.throws(()=>ownOfficerTalentItem(officerWithBorrowed,'T123'),/not uniquely owned/);
+});
 test('encounter cleanup is registered and temporary talent items use ActorEngine, not direct Item mutations',()=>{
  const index=fs.readFileSync(path.join(ROOT,'index.js'),'utf8');
  const service=fs.readFileSync(path.join(ROOT,'scripts/engine/combat/officer-share-talent-service.js'),'utf8');
  const dialog=fs.readFileSync(path.join(ROOT,'scripts/apps/officer-share-talent-dialog.js'),'utf8');
+ const txn=fs.readFileSync(path.join(ROOT,'scripts/engine/combat/officer-share-talent-transaction.js'),'utf8');
  assert.match(index,/registerOfficerShareTalentCleanup\(\)/);
  assert.match(index,/officerShareTalent:\s*\{ open: openOfficerShareTalentAction/);
  assert.match(service,/Hooks\.on\('deleteCombat'/);
  assert.match(service,/Hooks\.on\('updateCombat'/);
  assert.match(service,/Hooks\.once\?\.\('ready'/);
- assert.match(service,/ActorEngine\.restoreSnapshotVerified\(/);
- assert.match(service,/transactional:true/);
- assert.match(service,/await combatant\.useAction\('standard'\)/);
- assert.match(service,/delete:\{items:expired\.map/);
+ assert.match(txn,/actorEngine\.restoreSnapshotVerified\(/);
+ assert.match(txn,/touched\.push\(entry\.actor\);\s*await actorEngine\.applyMutationPlan\(entry\.actor/);
+ assert.match(txn,/touched\.push\(officer\);\s*await actorEngine\.applyMutationPlan\(officer/);
+ assert.match(txn,/\[\.\.\.touched\]\.reverse\(\)/);
+ assert.match(txn,/transactional:true/);
+ assert.match(service,/ActionEconomyConsumption\.spend\(officer,'standard'/);
+ assert.match(service,/executeOfficerShareTalentTransaction\(/);
+ assert.match(txn,/spent\?\.committed!==true/);
+ assert.doesNotMatch(service,/combatant\.useAction\(/);
+
+ assert.match(service,/executeOfficerShareTalentExpiry\(/);
+ const cleanup=fs.readFileSync(path.join(ROOT,'scripts/engine/combat/officer-share-talent-cleanup-plan.js'),'utf8');
+ assert.match(cleanup,/delete:\{effects:plan\.effects,items:plan\.items\}/);
  assert.match(dialog,/confirmedSenses/);
  assert.match(dialog,/distanceSquares/);
 });
