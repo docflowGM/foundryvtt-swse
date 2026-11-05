@@ -370,14 +370,15 @@
       "2b9e43f710664b31"
     ],
     "feats": [
+      "Armor Proficiency (Light)",
       "Armor Proficiency (Medium)",
       "Force Sensitivity",
       "Weapon Proficiency (Lightsabers)"
     ],
     "other": [
-      "Sworn Defender of Fel Empire"
+      "Sworn Defender of Emperor Roan Fel"
     ],
-    "description": "BAB +7, Trained in Use the Force, Armor Proficiency (Medium), Force Sensitivity, Weapon Proficiency (Lightsabers), Sworn Defender of Fel Empire"
+    "description": "BAB +7, Trained in Use the Force, Armor Proficiency (Light), Armor Proficiency (Medium), Force Sensitivity, Weapon Proficiency (Lightsabers), Sworn Defender of Emperor Roan Fel"
   },
   "Shaper": {
     "level": 7,
