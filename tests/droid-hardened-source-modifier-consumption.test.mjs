@@ -3,9 +3,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
 import { DROID_SYSTEMS } from '../scripts/data/droid-systems.js';
-import { DROID_SIZE_PACKAGES } from '../scripts/engine/progression/droids/droid-trait-rules.js';
 
 registerFoundryPathLoader();
+const { DROID_SIZE_PACKAGES } = await import('../scripts/engine/progression/droids/droid-trait-rules.js');
 const { getDroidPartDefinition, hydrateDroidPart } =
   await import('../scripts/data/droid-part-schema.js');
 
