@@ -19,7 +19,9 @@ test('four Hardened Systems use single source hpBonus/dtBonus values', () => {
   for (const source of parts) {
     const definition = getDroidPartDefinition(source.id);
     assert.ok(definition);
-    assert.equal(definition.source, source);
+    assert.equal(definition.source.id, source.id);
+    assert.equal(definition.source.hpBonus, source.hpBonus);
+    assert.equal(definition.source.dtBonus, source.dtBonus);
     assert.equal(definition.slot, 'core.hardened');
     assert.deepEqual(definition.modifiers, [
       { target: 'hp.max', type: 'equipment', value: source.hpBonus },
@@ -32,7 +34,9 @@ test('four Hardened Systems use single source hpBonus/dtBonus values', () => {
 });
 
 test('one authored numeric source field change updates the hydrated modifier without an overlay fork', () => {
-  const source = DROID_SYSTEMS.accessories.hardenedsystems[0];
+  // SOURCE_INDEX is an immutable-at-import source catalog snapshot. Mutate
+  // that indexed test record only, and restore before this file completes.
+  const source = getDroidPartDefinition('hardened-systems-x2').source;
   const original = source.hpBonus;
   try {
     source.hpBonus = original + 7;
