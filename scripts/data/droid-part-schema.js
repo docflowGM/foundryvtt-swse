@@ -583,7 +583,12 @@ export function resolveDroidPartQuote(actor, part, options = {}) {
     selectedInstalledShieldRating: options.selectedInstalledShieldRating,
     operationPhase: options.operationPhase ?? 'POST_CREATION_INSTALL',
     locomotionSlotOrdinal: options.locomotionSlotOrdinal ?? null,
-    restrictedLocomotion: options.restrictedLocomotion ?? null
+    restrictedLocomotion: options.restrictedLocomotion ?? null,
+    droidSystems: actor?.system?.droidSystems ?? null,
+    // The postcreation installation ledger is the only authoritative source
+    // for additional installed systems; this is not a draft-grant fallback.
+    installedComponentIds: Object.keys(actor?.system?.installedSystems ?? {}),
+    selectedAppendage: options.selectedAppendage ?? null
   });
 }
 
