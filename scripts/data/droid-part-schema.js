@@ -29,7 +29,7 @@
  */
 
 import { DROID_SYSTEMS } from "/systems/foundryvtt-swse/scripts/data/droid-systems.js";
-import { getDroidPriceFactor, resolveDroidComponentQuote } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-component-quote-authority.js";
+import { getDroidPriceFactor, resolveSourceReviewedDroidQuote } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-component-quote-authority.js";
 
 export const DROID_PART_CATEGORIES = Object.freeze({
   PROCESSOR: 'processor',
@@ -570,7 +570,7 @@ export function resolveDroidPartQuote(actor, part, options = {}) {
   if (!def?.source) {
     return { status: 'BLOCKED', credits: null, kg: null, blockingReason: 'No canonical source definition for this droid component' };
   }
-  return resolveDroidComponentQuote({
+  return resolveSourceReviewedDroidQuote({
     definition: def.source,
     size: getActorDroidSize(actor, options.size),
     category: def.category,
@@ -579,7 +579,11 @@ export function resolveDroidPartQuote(actor, part, options = {}) {
     variant: options.variant,
     appendageBaseCost: options.appendageBaseCost,
     appendageBaseWeight: options.appendageBaseWeight,
-    baseLocomotionCost: options.baseLocomotionCost
+    baseLocomotionCost: options.baseLocomotionCost,
+    selectedInstalledShieldRating: options.selectedInstalledShieldRating,
+    operationPhase: options.operationPhase ?? 'POST_CREATION_INSTALL',
+    locomotionSlotOrdinal: options.locomotionSlotOrdinal ?? null,
+    restrictedLocomotion: options.restrictedLocomotion ?? null
   });
 }
 
