@@ -13,6 +13,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { getSwseFlag } from "/systems/foundryvtt-swse/scripts/utils/flags/swse-flags.js";
 import { targetSuppressesForceEffect } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
+import { resolveApexFearImmunity } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/apex-class-feature-access.js";
 
 export class ForcePowerEffectsEngine {
   /**
@@ -31,6 +32,21 @@ export class ForcePowerEffectsEngine {
 
     const powerName = powerItem.name;
     const target = options.target ?? options.targetActor ?? actor;
+
+    // Source-scoped Fearless entry gate. Only a caller that actually
+    // supplies a distinct affected target can use this check. Never infer
+    // that the caster is their own target because options omitted one,
+    // and never suppress a non-fear Force Power from a generic name match.
+    const explicitTarget = options.target ?? options.targetActor ?? null;
+    if (explicitTarget && target !== actor) {
+      const fearless = resolveApexFearImmunity(target, { sourceItem: powerItem });
+      if (fearless.immune) {
+        ui?.notifications?.info?.(`${target.name ?? 'Target'} is immune to fear effects (Fearless).`);
+        SWSELogger.log(`SWSE | Force Power Effects | Fearless suppressed ${powerName} on ${target.name ?? 'target'}.`);
+        return [];
+      }
+    }
+
     const forceSuppression = targetSuppressesForceEffect({
       target,
       sourceItem: powerItem,
