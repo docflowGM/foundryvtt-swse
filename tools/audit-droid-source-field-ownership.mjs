@@ -28,13 +28,13 @@ const FIELD_TREATMENT = Object.freeze({
   ],
   // Real hydrated modifiers consumed by ModifierEngine, derived from the
   // indexed DROID_SYSTEMS catalog rather than hard-coded overlay numbers.
-  SOURCE_TO_RUNTIME_MODIFIER: ['hpBonus', 'dtBonus'],
+  SOURCE_TO_RUNTIME_MODIFIER: ['hpBonus', 'dtBonus', 'multiplier'],
   // Must have a verified runtime behavior, or be explicitly blocked/retired,
   // before any claim that every authored source field is consumed.
   NEEDS_MECHANICAL_CONSUMER_PROOF: [
     'armorType', 'armorCheckPenalty', 'armorBonus', 'maxDexBonus',
     'runningSpeedMultiplier', 'specialBonus', 'tier',
-    'behavioralInhibitors', 'multiplier',
+    'behavioralInhibitors',
     'dc',
     'damageType', 'canManipulate', 'canAttack', 'createsUnarmedAttack',
     'createsRangedWeapon', 'weaponStats',
