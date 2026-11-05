@@ -24,6 +24,7 @@ import { createEffectOnActor } from "/systems/foundryvtt-swse/scripts/core/docum
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
+import { resolveForceDiscipleIndomitable } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/force-disciple-features.js";
 
 export class LightSideTalentMechanics {
 
@@ -1100,6 +1101,20 @@ export class LightSideTalentMechanics {
    * Complete Adept Negotiator - Roll Persuasion check and apply to Condition Track
    */
   static async completeAdeptNegotiatorSelection(actor, targetActor, persuasionRoll, targetWillDefense, useForceModifier) {
+    // Core p. 40: Adept Negotiator and Master Negotiator are both explicitly
+    // Mind-Affecting. The existing roll is already complete; prevent the
+    // condition-track transaction and ActiveEffect creation on an immune
+    // Force Disciple. A high Persuasion total never defeats Indomitable.
+    const indomitable = resolveForceDiscipleIndomitable(targetActor, { mindAffecting: true });
+    if (indomitable.immune) {
+      ui?.notifications?.info?.(`${targetActor.name ?? 'Target'} is immune to Mind-Affecting effects (Indomitable).`);
+      return {
+        success: true, checkSucceeds: false, immune: true,
+        immunitySource: indomitable.classFeature,
+        stepsMovedBack: 0, rollResult: Number(persuasionRoll?.total ?? 0),
+        targetWillDefense,
+      };
+    }
     // Determine if check succeeds
     const rollResult = persuasionRoll.total;
     const checkSucceeds = rollResult >= targetWillDefense;
