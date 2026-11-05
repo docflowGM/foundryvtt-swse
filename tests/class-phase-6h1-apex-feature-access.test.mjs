@@ -31,6 +31,15 @@ test('apex ownership reads actual class items, not thematic text or feat names',
   assert.equal(apexClassFeatureAccess(a,'jedi_master').allowed,false);
   const actual=actor([classItem('Jedi Master',2)]);
   assert.equal(apexClassLevel(actual,'jedi_master'),2);
+  const realJedi=actor([{type:'class',name:'Jedi Master',system:{classId:'07a64453f95e04f2',level:3}}]);
+  const realSith=actor([{type:'class',name:'Sith Lord',system:{classId:'2f7cfdc115c640a5',level:2}}],12);
+  const realApprentice=actor([{type:'class',name:'Sith Apprentice',system:{classId:'1ba03b2d00245906',level:2}}],12);
+  assert.equal(apexClassLevel(realJedi,'jedi_master'),3);
+  assert.equal(apexClassFeatureAccess(realJedi,'jedi_master').allowed,true);
+  assert.equal(apexClassLevel(realSith,'sith_lord'),2);
+  assert.equal(apexClassFeatureAccess(realSith,'sith_lord').allowed,true);
+  assert.equal(apexClassFeatureAccess(realApprentice,'sith_apprentice').allowed,true);
+
   assert.equal(apexClassFeatureAccess(actual,'jedi_master').allowed,true);
   const spoof=actor([{type:'class',name:'Jedi Master',system:{classId:'noble',level:5}}]);
   assert.equal(apexClassLevel(spoof,'jedi_master'),0);
