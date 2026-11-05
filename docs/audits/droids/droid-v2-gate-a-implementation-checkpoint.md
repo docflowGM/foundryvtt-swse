@@ -76,11 +76,11 @@ A first CI run at `fa4642f` passed the new focused quote/adapter tests and repor
 
 **Field-consumption reality:** `tools/audit-droid-source-field-ownership.mjs` enumerates the 84 current source definition records and each unique direct field on those records. The original inventory had **48 unique direct fields** (prior to normalizing the misspelled locomotion prerequisite). The latest catalog has **47 unique direct fields**:
 - **19** have active price/source/prerequisite-gate consumers (including shield SR for expansion quoting, not shield combat application).
-- **2** are projected from catalog fields into live hydrated modifier targets (`hpBonus`, `dtBonus`).
+- **3** source fields (`hpBonus`, `dtBonus`, `multiplier`) now drive or validate size-dependent Hardened Systems modifier projection.
 - **9** are principally presentation fields and do not establish rules execution.
-- **17** still require mechanical consumer proof or an explicit source-correct block/removal. These include armor bonuses/penalties, heavy-armor running speed, processor behavioral inhibitors, appendage attack capabilities and specialized weapon properties.
+- **16** still require mechanical consumer proof or an explicit source-correct block/removal. These include armor bonuses/penalties, heavy-armor running speed, processor behavioral inhibitors, appendage attack capabilities and specialized weapon properties.
 
-The audit CI intentionally rejects a newly introduced or renamed unclassified field. Its separate `--certify` mode **must fail** until the 17 still-unproved direct fields are independently proven. Nested rule payloads (`specialBonus`, `weaponStats` and others) need a subsequent field-level pass; do not treat the 47 top-level census as nested mechanical completion.
+The audit CI intentionally rejects a newly introduced or renamed unclassified field. Its separate `--certify` mode **must fail** until the 16 still-unproved direct fields are independently proven. Nested rule payloads (`specialBonus`, `weaponStats` and others) need a subsequent field-level pass; do not treat the 47 top-level census as nested mechanical completion.
 
 **Remaining hard blockers:** four-variant Translator Unit and other omitted canonical items; 23 source HOLD scenarios outside printed safe subsets; physical integrated/possessed/handheld host decisions; actual enforced legality/availability; inventory/encumbrance and condition/combat effect application; Store atomic asset+wallet transactions; full follower/PC/Garage/Store parity; live Foundry V13 validation. No legacy-actor migration is needed or planned.
 
@@ -91,10 +91,25 @@ The audit CI intentionally rejects a newly introduced or renamed unclassified fi
 
 - New `scripts/domain/droids/droid-component-prerequisites.js` enforces `sizeRestriction`, `requiredLocomotion`, `requiredSystems` and `requiresAppendage` from the published definition. It is called by `resolveSourceReviewedDroidQuote`, which in turn is used by PC/follower chargen, preview, Garage, and part hydration. A matching type of hand is NOT enough for appendage enhancements: the selected appendage must have a unique instance identity that matches the selected chassis. This is a rejection gate, not an installation license.
 - Fixed the misspelled catalog field `requiresLocomtion` to `requiredLocomotion`, removed its obsolete read fallbacks and retired the duplicate preview prerequisite engine. Generic species/chassis allowed-size rules are separate constraints.
-- `hardened-systems-x2` through `x5` retain the published numeric `hpBonus` and `dtBonus` only in `DROID_SYSTEMS`; `getDroidPartDefinition` derives `hp.max` and `defense.damageThreshold` modifier records from those values. `hydrateDroidPart` is the runtime producer consumed by `ModifierEngine`. The old hand-copied HP/DT modifier values were deleted.
+- `hardened-systems-x2` through `x5` retain the published numeric `hpBonus` and `dtBonus` only in `DROID_SYSTEMS`; `hydrateDroidPart` now derives size-dependent `hp.max` and `defense.damageThreshold` **delta** modifiers from those values, the tier `multiplier`, and existing `DROID_SIZE_PACKAGES` size adjustments. `ModifierEngine` consumes the hydrated modifiers. The old copied flat modifier values were deleted. The audited total bonus REPLACES the ordinary size bonus; only the extra amount may be added through the modifier engine.
 - During tests, existing `slug()` normalization was found to strip "Systems" from Hardened Systems identifiers, previously causing missed `core.hardened` overlay slots. Four explicit canonical keys repair this catalog/overlay identity mismatch for NEW droid builds. No historical actor migration is introduced.
-- `tests/droid-component-prerequisites.test.mjs` exercises the shared source gate against real source definitions and both Garage/builder quotation; `tests/droid-hardened-source-modifier-consumption.test.mjs` proves all four source-backed HP/DT modifiers and the ModifierEngine's exact hydration targets. The targeted CI runs both.
-- **Updated top-level field census:** 84 authored definitions, **47 distinct direct fields: 19 source/quote/prerequisite fields, 2 source-to-runtime modifier fields, 9 presentation fields, 17 still requiring mechanical proof.** Nested rule payloads and installation/commerce remain separate blocking work.
+- `tests/droid-component-prerequisites.test.mjs` exercises the shared source gate against real source definitions and both Garage/builder quotation; `tests/droid-hardened-source-modifier-consumption.test.mjs` verifies **all 16 Core-book Hardened tier/size delta expectations** against the certified MECH-002 by-size table, checks exact ModifierEngine hydration targets, and verifies malformed values and duplicate tiers fail closed. The targeted CI runs both.
+- **Updated top-level field census:** 84 authored definitions, **47 distinct direct fields: 19 source/quote/prerequisite fields, 3 source-to-runtime modifier fields, 9 presentation fields, 16 still requiring mechanical proof.** Nested rule payloads and installation/commerce remain separate blocking work.
 - **Remaining issue:** the `core.hardened` slot and source HP/DT derivation do not by themselves prove safe mutual exclusivity of Hardened System tiers or permission for Military equipment; the actual install/host and legal-purchaser gate must reject invalid states. `--certify` stays deliberately failing until all genuinely unproved fields are resolved.
 
 Source facts are cited in the frozen Core/SGD audit ledger. No source HOLD is promoted by this work, and none of the 26 V2 acceptance cases is declared fully executed in Foundry.
+
+
+### Hardened Systems source discrepancy corrected
+
+The printed Core Rulebook p. 193-194 and the audited `MECH-002` source record establish that Hardened Systems *replace* the droid's ordinary size HP/DT bonuses with tier-multiplied totals. For example:
+
+| Tier/size | Ordinary size HP/DT | Hardened total HP/DT | Additional runtime modifier |
+|---|---|---|---|
+| x2 / Large | +10 / +5 | +20 / +10 | +10 / +5 |
+| x3 / Huge | +20 / +10 | +60 / +30 | +40 / +20 |
+| x5 / Colossal | +100 / +50 | +500 / +250 | +400 / +200 |
+
+Applying `DROID_SYSTEMS.hpBonus`/`dtBonus` as flat modifiers would double-count Large values and undercount larger droids. Those fields are now checked as the Large-size *total* metadata, while `multiplier` and `DROID_SIZE_PACKAGES` produce the exact additional delta. All four tiers and all four legal sizes were checked, and the overlay no longer contains a duplicate fixed HP/DT table.
+
+Two different tiers cannot be added concurrently according to the certified internal-chassis source fact (`differentTierStacking: NOT_GRANTED`). The source prerequisite gate blocks installation of a different tier when one is present; hydration suppresses mutually conflicting tier modifiers if a bad in-memory configuration is encountered. This protects against both over-application and unsupported mixed-tier pricing. It is not yet a complete live Foundry actor-lifecycle certification.
