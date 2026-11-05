@@ -11,6 +11,7 @@ import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/en
 import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js';
 import { calculateMaxForcePointsForBuildPlan } from '/systems/foundryvtt-swse/scripts/data/force-points.js';
 import { buildLevelUpEventContext } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-event-context.js';
+import { planForceDiscipleProphetAward } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/force-disciple-features.js';
 
 function abilityMod(score) {
   return Math.floor(((Number(score) || 10) - 10) / 2);
@@ -372,6 +373,20 @@ export class ProgressionEconomyPlanBuilder {
       newMax: nextForcePointMax,
       timestamp: new Date().toISOString(),
     };
+
+    // Force Disciple Prophet: Level-up manifest + actual owned class state are
+    // both required. The baseline Destiny grant is NOT implemented anywhere
+    // else in this finalizer, so this writes the published TOTAL of two points
+    // (or one if the extra point is explicitly sacrificed for a GM vision).
+    // ActorEngine applies this fragment atomically with the level-up plan.
+    const entitlement = planSet['flags.swse.levelUpEntitlementManifest'] ?? null;
+    const prophet = planForceDiscipleProphetAward({
+      actor,
+      manifest: entitlement,
+      visionRequested: selections?.prophet?.visionRequested === true
+        || summary?.prophetVisionRequested === true,
+    });
+    if (prophet.allowed) Object.assign(set, prophet.updates);
 
     const explicitCreditDelta = Number(summary.creditDelta || 0) || 0;
     const canonicalWealthDelta = computeLevelupWealthCreditGrant(actor, selections, sessionState);
