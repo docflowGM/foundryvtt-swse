@@ -9,9 +9,9 @@ Every feat/weapon data file under `data/` and `packs/` is classified exactly onc
 | GENERATED_RUNTIME_INDEX | 1 |
 | GENERATED_COMPATIBILITY | 3 |
 | MIGRATION_ALIAS_ONLY | 2 |
-| HISTORICAL_AUDIT_EVIDENCE | 240 |
+| HISTORICAL_AUDIT_EVIDENCE | 368 |
 | DEAD_REMOVE | 0 |
-| OTHER_DOMAIN_DATA | 13 |
+| OTHER_DOMAIN_DATA | 26 |
 | REFERENCE_BEARING_DOMAIN_DATA | 14 |
 
 Dependency direction: audits (evidence) → canonical corpus → deterministic generators → Foundry packs, runtime registries, compatibility outputs. Nothing flows back.
@@ -29,6 +29,19 @@ Guardrail (enforced by `tools/verify-canonical-production.mjs`): neither class m
 |---|---|---|
 | `data/actor-weapon-ranges.json` | OTHER_DOMAIN_DATA | Vehicle / upgrade / range / class-feature data; not the personal weapon or feat corpus. |
 | `data/canonical/armor.json` | OTHER_DOMAIN_DATA | Canonical armor / equipment Item documents (tools/build-canonical-item-packs.mjs); not the feat or weapon corpus. |
+| `data/canonical/droids/source-books/clone.json` | OTHER_DOMAIN_DATA | Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data. |
+| `data/canonical/droids/source-books/core.json` | OTHER_DOMAIN_DATA | Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data. |
+| `data/canonical/droids/source-books/force.json` | OTHER_DOMAIN_DATA | Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data. |
+| `data/canonical/droids/source-books/gaw.json` | OTHER_DOMAIN_DATA | Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data. |
+| `data/canonical/droids/source-books/goi.json` | OTHER_DOMAIN_DATA | Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data. |
+| `data/canonical/droids/source-books/kotor.json` | OTHER_DOMAIN_DATA | Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data. |
+| `data/canonical/droids/source-books/legacy.json` | OTHER_DOMAIN_DATA | Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data. |
+| `data/canonical/droids/source-books/rebellion.json` | OTHER_DOMAIN_DATA | Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data. |
+| `data/canonical/droids/source-books/scum.json` | OTHER_DOMAIN_DATA | Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data. |
+| `data/canonical/droids/source-books/sgd.json` | OTHER_DOMAIN_DATA | Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data. |
+| `data/canonical/droids/source-books/sotg.json` | OTHER_DOMAIN_DATA | Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data. |
+| `data/canonical/droids/source-books/threats.json` | OTHER_DOMAIN_DATA | Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data. |
+| `data/canonical/droids/source-books/unknown.json` | OTHER_DOMAIN_DATA | Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data. |
 | `data/canonical/equipment.json` | OTHER_DOMAIN_DATA | Canonical armor / equipment Item documents (tools/build-canonical-item-packs.mjs); not the feat or weapon corpus. |
 | `data/canonical/feats.json` | CANONICAL_SSOT | The one operational authority for its domain. |
 | `data/canonical/talents.json` | CANONICAL_SSOT | The one operational authority for its domain. |
@@ -127,4 +140,4 @@ Guardrail (enforced by `tools/verify-canonical-production.mjs`): neither class m
 | `packs/weapons-simple.db` | GENERATED_PRODUCTION | tools/build-weapon-production.mjs from data/canonical/weapons.json |
 | `packs/weapons.db` | GENERATED_PRODUCTION | tools/build-weapon-production.mjs from data/canonical/weapons.json |
 
-Audit evidence files under `data/audits/` (192) are all HISTORICAL_AUDIT_EVIDENCE; listed individually in the JSON.
+Audit evidence files under `data/audits/` (320) are all HISTORICAL_AUDIT_EVIDENCE; listed individually in the JSON.

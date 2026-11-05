@@ -234,7 +234,11 @@ export class FollowerDroidBuilderStep extends DroidBuilderStep {
     const degree = String(draft.droid.droidDegree || '2nd-degree').toLowerCase();
     const droidSystems = draft.droid.droidSystems || {};
     const droidCredits = draft.droid.droidCredits || {};
-    const purchasedAppendages = (droidSystems.appendages || []).filter(system => !system?.isDefault && !system?.isGranted && Number(system?.cost || 0) > 0);
+    const selectedSpeed = droidSystems.locomotion?.speed;
+    const quotedSpeed = Number.isFinite(selectedSpeed) && selectedSpeed >= 0 ? selectedSpeed : null;
+    // An unquoted part cannot become a free grant or purchasable appendage.
+    const purchasedAppendages = (droidSystems.appendages || []).filter(system =>
+      !system?.isDefault && !system?.isGranted && Number.isFinite(system?.cost) && system.cost > 0);
     const optionalSystems = [
       ...purchasedAppendages,
       ...(droidSystems.accessories || []),
@@ -249,10 +253,10 @@ export class FollowerDroidBuilderStep extends DroidBuilderStep {
       ...(draft.droidConfig || {}),
       isDroid: true,
       droidDegree: degree,
-      size: draft.droid.droidSize || 'medium',
-      droidSize: draft.droid.droidSize || 'medium',
-      speed: droidSystems.locomotion?.speed || 6,
-      movement: { walk: droidSystems.locomotion?.speed || 6 },
+      size: draft.droid.droidSize ?? null,
+      droidSize: draft.droid.droidSize ?? null,
+      speed: quotedSpeed,
+      movement: { walk: quotedSpeed },
       // See the matching note in _seedFollowerDroidSession — degree-derived
       // is the sole ability rule; a stale draft.droidConfig.abilityChoice
       // is never trusted over it.
@@ -273,7 +277,7 @@ export class FollowerDroidBuilderStep extends DroidBuilderStep {
     return [
       droidSystems.processor,
       droidSystems.locomotion,
-      ...(droidSystems.appendages || []).filter(system => system?.isDefault || system?.isGranted || Number(system?.cost || 0) === 0)
+      ...(droidSystems.appendages || []).filter(system => system?.isDefault || system?.isGranted)
     ].filter(Boolean);
   }
 

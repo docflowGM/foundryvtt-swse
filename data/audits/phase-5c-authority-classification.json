@@ -18,9 +18,9 @@
   "GENERATED_RUNTIME_INDEX": 1,
   "GENERATED_COMPATIBILITY": 3,
   "MIGRATION_ALIAS_ONLY": 2,
-  "HISTORICAL_AUDIT_EVIDENCE": 240,
+  "HISTORICAL_AUDIT_EVIDENCE": 368,
   "DEAD_REMOVE": 0,
-  "OTHER_DOMAIN_DATA": 13,
+  "OTHER_DOMAIN_DATA": 26,
   "REFERENCE_BEARING_DOMAIN_DATA": 14
  },
  "unclassified": [],
@@ -82,6 +82,646 @@
   },
   {
    "path": "data/audits/archetype-phase-12b-semantic-curation.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/clone-census-identity.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/clone-field-evidence.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/clone-review-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/clone-source-mechanics-feat-scope-018-033.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/clone-source-mechanics-second-pass-closeout.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/clone-source-mechanics-sprint-001-005.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/clone-source-mechanics-sprint-006-010.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/clone-source-mechanics-sprint-011-017.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/clone-source-mechanics-sprint-018-033.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/clone-source-mechanics-sprint-034-040.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/clone-visual-field-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-122-identity-source-coverage.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-canonical-migration-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-core-cost-factor-audit.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-edit-families-source-facts-c2-001.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-keep-003-cross-app-fixtures.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-keep-source-facts-armor-and-uncovered-008.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-keep-source-facts-core-001.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-keep-source-facts-core-002.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-keep-source-facts-core-003.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-keep-source-facts-coverage-008.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-keep-source-facts-sgd-004.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-keep-source-facts-sgd-005.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-keep-source-facts-sgd-006.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-keep-source-facts-sgd-007.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-mechanical-certification-batch-001-acceptance.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-mechanical-certification-batch-001.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-mechanical-certification-batch-002-fixtures.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-mechanical-certification-batch-002.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-mechanical-certification-batch-003-fixtures.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-mechanical-certification-batch-003.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-mechanical-certification-batch-004-fixtures.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-mechanical-certification-batch-004.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-mechanical-certification-batch-005-fixtures.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-mechanical-certification-batch-005.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-mechanical-certification-ledger-delta-003.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-mechanical-certification-ledger-delta-004.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-mechanical-certification-ledger-delta-005.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-mechanical-certification-ledger.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-repo-only-source-screen-c3-001.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-source-fact-review-rollup.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-source-facts-sgd-sprint-001.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-source-facts-sprint-002.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/component-source-facts-sprint-003.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/core-census-identity.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/core-field-evidence.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/core-review-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/core-visual-field-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/droid-component-mechanical-hold-triage-001.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/droid-component-official-errata-authority-001.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/droid-component-sgd-errata-host-002-fixtures.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/droid-component-sgd-errata-host-002.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/droid-hydration-progress.local.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/droid-mechanical-hydration-queue.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/droid-progress-counter.local.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/droid-publication-census.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/droid-v2-component-migration-acceptance-001.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/force-census-identity.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/force-field-evidence.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/force-review-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/force-visual-field-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/gaw-census-identity.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/gaw-field-evidence.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/gaw-model-mechanics-boundary-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/gaw-review-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/gaw-systems-possessions-source-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/gaw-visual-field-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/goi-census-identity.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/goi-field-evidence.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/goi-review-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/goi-visual-field-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/kotor-census-identity.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/kotor-field-evidence.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/kotor-model-mechanics-boundary-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/kotor-review-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/kotor-systems-possessions-source-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/kotor-visual-field-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/legacy-census-identity.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/legacy-field-evidence.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/legacy-review-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/legacy-visual-field-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/rebellion-census-identity.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/rebellion-field-evidence.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/rebellion-review-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/rebellion-visual-field-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/scum-census-identity.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/scum-field-evidence.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/scum-review-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/scum-visual-field-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/sgd-field-evidence.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/sgd-mechanical-hydration-closeout.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/sgd-mechanical-sprint-001-015.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/sgd-mechanical-sprint-016-030.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/sgd-mechanical-sprint-031-045.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/sgd-review-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/sgd-source-mechanics-second-pass-closeout.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/sgd-source-mechanics-sprint-001-005.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/sgd-source-mechanics-sprint-006-010.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/sgd-source-mechanics-sprint-011-015.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/sgd-source-mechanics-sprint-016-020.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/sgd-source-mechanics-sprint-021-025.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/sgd-source-mechanics-sprint-026-030.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/sgd-source-mechanics-sprint-031-035.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/sgd-source-mechanics-sprint-036-040.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/sgd-source-mechanics-sprint-041-045.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/sgd-visual-field-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/sotg-census-identity.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/sotg-field-evidence.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/sotg-review-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/sotg-vehicle-source-evidence.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/sotg-visual-field-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/threats-census-identity.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/threats-field-evidence.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/threats-review-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/threats-source-mechanics-second-pass-closeout.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/threats-source-mechanics-sprint-001-006.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/threats-source-mechanics-sprint-007-012.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/threats-source-mechanics-sprint-013-018.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/threats-source-mechanics-sprint-019-024.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/threats-source-mechanics-sprint-025-029.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/threats-visual-field-review.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/two-book-kotor-gaw-mechanics-handoff.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/universal-droid-source-entry.blank.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/universal-droid-source-entry.schema.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/unknown-census-identity.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/unknown-field-evidence.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/unknown-review-backlog.json",
+   "class": "HISTORICAL_AUDIT_EVIDENCE",
+   "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
+  },
+  {
+   "path": "data/audits/droids/unknown-visual-field-review.json",
    "class": "HISTORICAL_AUDIT_EVIDENCE",
    "note": "Certified audit evidence; never read by runtime or generators except as one-time/consolidation provenance."
   },
@@ -994,6 +1634,71 @@
    "path": "data/canonical/armor.json",
    "class": "OTHER_DOMAIN_DATA",
    "note": "Canonical armor / equipment Item documents (tools/build-canonical-item-packs.mjs); not the feat or weapon corpus."
+  },
+  {
+   "path": "data/canonical/droids/source-books/clone.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data."
+  },
+  {
+   "path": "data/canonical/droids/source-books/core.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data."
+  },
+  {
+   "path": "data/canonical/droids/source-books/force.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data."
+  },
+  {
+   "path": "data/canonical/droids/source-books/gaw.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data."
+  },
+  {
+   "path": "data/canonical/droids/source-books/goi.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data."
+  },
+  {
+   "path": "data/canonical/droids/source-books/kotor.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data."
+  },
+  {
+   "path": "data/canonical/droids/source-books/legacy.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data."
+  },
+  {
+   "path": "data/canonical/droids/source-books/rebellion.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data."
+  },
+  {
+   "path": "data/canonical/droids/source-books/scum.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data."
+  },
+  {
+   "path": "data/canonical/droids/source-books/sgd.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data."
+  },
+  {
+   "path": "data/canonical/droids/source-books/sotg.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data."
+  },
+  {
+   "path": "data/canonical/droids/source-books/threats.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data."
+  },
+  {
+   "path": "data/canonical/droids/source-books/unknown.json",
+   "class": "OTHER_DOMAIN_DATA",
+   "note": "Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data."
   },
   {
    "path": "data/canonical/equipment.json",
