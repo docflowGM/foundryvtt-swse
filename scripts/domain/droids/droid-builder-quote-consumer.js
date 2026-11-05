@@ -19,6 +19,7 @@ export function quoteDroidBuilderSelection({
   definition, category, subcategory = null, size,
   droidSystems = null, speed = null, variant = null,
   appendageBaseCost = null, appendageBaseWeight = null,
+  selectedAppendage = null,
   operationPhase = 'INITIAL_BUILD'
 } = {}) {
   if (!definition || typeof definition !== 'object') {
@@ -37,7 +38,8 @@ export function quoteDroidBuilderSelection({
     const base = resolveDroidBuilderQuote({
       definition: baseDef, category: 'locomotion', size, speed: current.speed,
       operationPhase, locomotionSlotOrdinal: operationPhase === 'INITIAL_BUILD' ? 1 : null,
-      restrictedLocomotion: operationPhase === 'INITIAL_BUILD' ? false : null
+      restrictedLocomotion: operationPhase === 'INITIAL_BUILD' ? false : null,
+      droidSystems: installed
     });
     if (base.status !== 'OK') {
       return blocked('Base locomotion quote is unresolved');
@@ -58,6 +60,7 @@ export function quoteDroidBuilderSelection({
     speed: derivedSpeed, variant,
     appendageBaseCost, appendageBaseWeight, baseLocomotionCost,
     selectedInstalledShieldRating,
+    droidSystems: installed, selectedAppendage,
     operationPhase,
     locomotionSlotOrdinal: group === 'locomotion' && operationPhase === 'INITIAL_BUILD' ? 1 : null,
     restrictedLocomotion: group === 'locomotion' && operationPhase === 'INITIAL_BUILD' ? false : null
