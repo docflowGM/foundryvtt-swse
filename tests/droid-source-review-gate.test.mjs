@@ -43,11 +43,11 @@ test('normal first locomotion has narrow initial-build safe numeric subset, not 
 });
 
 test('source HOLD components fail closed even when numeric legacy definitions exist', () => {
-  const rocket = DROID_SYSTEMS.appendages.find(part => part.id === 'rocket-arm');
+  const rocket = DROID_SYSTEMS.appendageEnhancements.find(part => part.id === 'rocket-arm');
   assert.ok(rocket);
   assert.equal(resolveDroidComponentSourceReview(rocket).sourceDecision, 'HOLD');
   assert.equal(resolveDroidBuilderQuote({
-    definition: rocket, category: 'appendage', size: 'medium', operationPhase: 'INITIAL_BUILD'
+    definition: rocket, category: 'appendageEnhancement', size: 'medium', operationPhase: 'INITIAL_BUILD'
   }).status, 'NEEDS_SOURCE_ADJUDICATION');
 });
 
