@@ -28,7 +28,7 @@ test('four Hardened Systems use single source hpBonus/dtBonus values', () => {
       { target: 'defense.damageThreshold', type: 'equipment', value: source.dtBonus }
     ]);
     const hydrated = hydrateDroidPart({ id: source.id }, { actor: large });
-    assert.deepEqual(hydrated.modifiers, definition.modifiers);
+    assert.deepEqual(hydrated.modifiers, definition.modifiers.map(mod => ({ ...mod, active: true })));
     assert.equal(hydrated.quoteStatus, 'OK');
   }
 });
