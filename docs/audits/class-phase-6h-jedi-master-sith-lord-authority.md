@@ -40,3 +40,13 @@ The core prestige class is named **Sith Lord**, not "Sith Master". Both it and J
 - Do not treat thematic association with Sith as proof of class levels.
 - Document the printed rules and preserve the no-premature-runtime-certification policy. The change to the Serenity metadata is a correctness fix, **not** a functioning Serenity action.
 - Saboteur integration work is in a separate draft PR #1105; it is **not** part of the Phase 6H branch.
+
+## Phase 6H-1 implementation checkpoint (2026-11-05)
+
+- Added `scripts/engine/progression/utils/apex-class-feature-access.js`, a read-only central resolver. It requires an actually owned class Item with a positive level and canonical/legacy class identity, not a feat, talent, or a suggestive name.
+- Jedi Master class features remain active when owned. Sith Lord and Sith Apprentice feature access evaluates the **ongoing** printed DSP ≥ Wisdom rule through `DSPEngine.getValue()` and `SchemaAdapters.getAbilityScore()`, independently of GM house rules for **entry** thresholds; missing Wisdom provenance fails closed. Levels and choices are preserved.
+- The same resolver identifies Fearless for the two apex classes, with no Fearless grant to Sith Apprentice. It recognizes explicitly tagged Fear effects or a power named precisely `Fear`, never generic intimidation, mind-affecting-only effects, or names containing “fear”.
+- `ForcePowerEffectsEngine.applyPowerEffect()` now suppresses explicitly fear-sourced effects when a **distinct, explicitly supplied target actor** has Fearless. It does not infer a target from the caster fallback.
+- Added `tests/class-phase-6h1-apex-feature-access.test.mjs` for threshold restoration, class-spoof denial, source identification, fear boundary, and wiring.
+- **Runtime boundary:** the existing Force-power debuff builder is still a no-op and no all-sources fear application authority has been certified. This guard is only one verified entry point. Fearless is **not** fully runtime certified, and Serenity/Temptation remain STUB.
+- **Follow-up acceptance:** audit all fear-bearing active-effect, condition, skill and Force-power consumers for a single suppression policy; enforce Sith feature suspension at their actual action/derived-stat consumers, not by deleting class data. Exact-head CI and Foundry v13 still required.
