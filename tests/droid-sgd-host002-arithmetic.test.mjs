@@ -20,13 +20,19 @@ test('all 126 Core-errata SGD accessory arithmetic fixtures agree with one V2 re
     .filter(row => row.size === 'medium')
     .map(row => [row.component + ':' + row.variant, row.sourceArithmetic]));
   assert.equal(bases.size, 14, 'one independent medium base record per printed variant');
+  // These three accessories have explicitly fixed published credit prices.
+  // All others in this fixture group multiply printed credits by size.
+  const flatCreditProducts = new Set([
+    'Courier Compartments', 'Radiant Heat Element', 'Silence-Bubble Generator'
+  ]);
   for (const row of evidence.accessoryCategoryFixtures) {
     const base = bases.get(row.component + ':' + row.variant);
     assert.ok(base, row.caseId + ': expected medium source base');
     const decision = resolveDroidComponentQuote({
       definition: {
         id: 'source-arithmetic-fixture',
-        cost: factor => Math.ceil(base.credits * factor),
+        cost: flatCreditProducts.has(row.component)
+          ? base.credits : factor => Math.ceil(base.credits * factor),
         weight: factor => base.kg * factor
       },
       category: 'accessory',
