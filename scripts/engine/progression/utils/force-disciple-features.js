@@ -8,6 +8,11 @@
 
 const normalize = value => String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]/g,'');
 const DISCIPLE_ID = 'forcedisciple';
+// This 16-hex value is the unmodified canonical _id in packs/classes.db.
+// ProgressionFinalizer materializes clazz.id as system.classId; using the
+// human-readable slug alone would silently reject actual level-up actors.
+const DISCIPLE_SOURCE_ID = 'ef6fe8fdbbd884b4';
+const DISCIPLE_IDENTITIES = new Set([DISCIPLE_ID, DISCIPLE_SOURCE_ID]);
 
 function ownedClassItems(actor) {
   const items = actor?.items?.contents ?? actor?.items ?? [];
@@ -19,7 +24,7 @@ function ownedClassItems(actor) {
 function isDisciple(item) {
   const key = item?.system?.classId ?? item?.system?.class_id
     ?? item?.system?.class_name ?? item?.system?.className ?? item?.name;
-  return normalize(key) === DISCIPLE_ID;
+  return DISCIPLE_IDENTITIES.has(normalize(key));
 }
 
 export function forceDiscipleClassLevel(actor) {
