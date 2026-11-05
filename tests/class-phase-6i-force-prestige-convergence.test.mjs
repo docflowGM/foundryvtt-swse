@@ -181,3 +181,32 @@ test('Jedi Knight requires self-built lightsaber separately from Jedi tradition'
   assert.equal((entry.match(/severity: 'advisory'/g)??[]).length,2);
   assert.doesNotMatch(entry,/owning a lightsaber/i,'inventory possession is not equivalent to self-construction');
 });
+
+test('all four prestige entry records retain core force, training and advanced prerequisites',()=>{
+  const data=JSON.parse(read('data/prestige-class-prerequisites.json'));
+  const adept=data['Force Adept'];
+  assert.equal(adept.level,7);
+  assert.equal(adept.talents,3);
+  assert.deepEqual(adept.talentTrees,['Force']);
+  assert.ok(adept.feats.includes('Force Sensitivity'));
+
+  const disciple=data['Force Disciple'];
+  assert.equal(disciple.level,12);
+  assert.equal(disciple.talents,2);
+  assert.deepEqual(disciple.talentTrees,['Dark Side Devotee','Force Adept','Force Item']);
+  assert.ok(disciple.powers.includes('Farseeing'));
+  assert.equal(disciple.techniques,1);
+  assert.ok(disciple.feats.includes('Force Sensitivity'));
+
+  const knight=data['Jedi Knight'];
+  const imperial=data['Imperial Knight'];
+  assert.equal(knight.bab,7);
+  assert.equal(imperial.bab,7);
+  assert.ok(knight.feats.includes('Force Sensitivity'));
+  assert.ok(knight.feats.includes('Weapon Proficiency (Lightsabers)'));
+  assert.ok(imperial.feats.includes('Force Sensitivity'));
+  assert.ok(imperial.feats.includes('Weapon Proficiency (Lightsabers)'));
+  const training='2b9e43f710664b31';
+  for(const name of ['Force Adept','Force Disciple','Jedi Knight','Imperial Knight'])
+    assert.ok(data[name].skills.includes(training),name+' must require trained Use the Force');
+});
