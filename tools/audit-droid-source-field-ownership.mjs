@@ -16,7 +16,10 @@ const FIELD_TREATMENT = Object.freeze({
     'costWithHigherDefense', 'costIncrement', 'weightIncrement',
     // Source mechanical prerequisite gates are used by PC/follower builders
     // and Garage, not inferred from display descriptions.
-    'sizeRestriction', 'requiredLocomotion', 'requiredSystems', 'requiresAppendage'
+    'sizeRestriction', 'requiredLocomotion', 'requiredSystems', 'requiresAppendage',
+    // Shield generator SR is consumed by expansion's source price and mass;
+    // this is NOT proof of live shield-damage mitigation parity.
+    'sr'
   ],
   // These are currently primarily explanatory/presentation data, NOT mechanics.
   PRESENTATION_NOT_PROOF_OF_RULE: [
@@ -32,7 +35,7 @@ const FIELD_TREATMENT = Object.freeze({
     'armorType', 'armorCheckPenalty', 'armorBonus', 'maxDexBonus',
     'runningSpeedMultiplier', 'specialBonus', 'tier',
     'behavioralInhibitors', 'multiplier',
-    'sr', 'dc',
+    'dc',
     'damageType', 'canManipulate', 'canAttack', 'createsUnarmedAttack',
     'createsRangedWeapon', 'weaponStats',
     'isFree'
