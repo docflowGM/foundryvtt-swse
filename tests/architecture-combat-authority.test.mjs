@@ -182,3 +182,19 @@ test('BOMBS AND MINE REACTIONS: the ion bomb and the mine notice reactions reuse
   for (const needle of ['rollSkill', 'VehicleOperatingContextService.rollSensorCheck', "ActionEconomyConsumption.spend(who, 'reaction'", 'resolveVehicleCrewActor'])
     assert.ok(mines.includes(needle), `the mine notice reaction must use ${needle}`);
 });
+
+test('AMMUNITION PURCHASING: one workflow -- the shortcuts and the store context call VehicleAmmunitionPurchaseService; the Party Fund is the existing Holonet fund; delivery is the one ledger writer; no second wallet or ledger', () => {
+  const svc = strip(read('scripts/engine/vehicles/vehicle-ammunition-purchase-service.js'));
+  for (const needle of ['VehicleInstallationService.purchaseLauncherAmmunition', 'pendingCustomPurchases', 'VehicleAmmunitionService.deliverPurchased', 'PartyFundAccess', 'authorizePurchaser', 'isRecordedOwner'])
+    assert.ok(svc.includes(needle), `the purchase service must use ${needle}`);
+  assert.doesNotMatch(svc, /holonetPartyFund(Balance|Ledger|Enabled)|game\.settings/, 'the fund is reached only through PartyFundAccess (the messenger service\'s own helpers)');
+  assert.doesNotMatch(svc, /flags\.swse\.(vehicleAmmo|vehicleAmmunition)\b/, 'ammunition ledgers are written only by VehicleAmmunitionService');
+  const store = strip(read('scripts/apps/store/store-vehicle-ammunition.js'));
+  assert.ok(store.includes('VehicleAmmunitionPurchaseService'), 'the store context calls the one workflow');
+  assert.doesNotMatch(store, /TransactionEngine|ActorEngine|updateActor|setBalance/, 'the store context moves no credits itself');
+  const sheet = strip(read('scripts/sheets/v2/vehicle-sheet/vehicle-weapon-ops.js'));
+  assert.match(sheet, /deps\.openAmmunitionStore/, 'both buttons open the same store context');
+  assert.match(strip(read('scripts/holonet/subsystems/holonet-messenger-service.js')), /export const PartyFundAccess/, 'the fund helpers are the messenger service\'s own');
+  // the house rule reads through HouseRuleService only
+  assert.match(strip(read('scripts/engine/vehicles/vehicle-installation-service.js')), /HouseRuleService\.getBoolean\('initialVehicleAmmunitionIncluded'/);
+});

@@ -51,6 +51,14 @@
             {{/if}}
           </div>
 
+          {{#if mount.ammoOffer}}
+            <div class="swse-vehicle-weapon-ammo">
+              <span class="swse-vehicle-weapon-stat-label">Ammunition</span>
+              <span class="swse-vehicle-weapon-stat-value">{{mount.ammoOffer.stockLabel}} · {{mount.ammoOffer.priceLabel}}</span>
+              <button type="button" class="swse-vehicle-action-btn" data-weapon-action="buy-ammo" data-item-id="{{mount.weaponId}}" {{#unless mount.ammoOffer.canBuy}}disabled title="{{mount.ammoOffer.disabledReason}}"{{/unless}}>Buy Ammo</button>
+            </div>
+          {{/if}}
+
           {{#if mount.actions}}
             <div class="swse-vehicle-weapon-actions">
               {{#each mount.actions as |action|}}

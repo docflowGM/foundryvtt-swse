@@ -16,17 +16,19 @@ import {
   readJobs, planJobStart, planJobCheck, planJobRetry, planLogWorkDays, planGmCompleteJob, planGmInstantInstall
 } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-installation-jobs.js";
 import { makeUnusedEmplacementResolver } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-modification-rules.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 import { readCertifiedInstallations } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-installation-ledger.js";
 import { planInstalledWeaponItemSync } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-installed-weapon-items.js";
 import { readStockBatteryConfigs } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-battery-config.js";
 import { readStockAmmoConfigs } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-ammo-config.js";
-import { planStockWeaponItemSync } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-weapon-items.js";
+import { planStockWeaponItemSync, INITIAL_AMMO_ISSUED_FLAG } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-weapon-items.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 import { EFFECTS } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-modification-effects.js";
+import { offerFor, stockUnitPrice } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-ammunition-shop.js";
 import { VehicleAmmunitionService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-ammunition-service.js";
-import { AFTERMARKET_AMMO_FLAG, aftermarketFamily, emptyAftermarketLedger, planPurchase } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-ammunition-ledger.js";
+import { LEDGER_FLAG, AFTERMARKET_AMMO_FLAG, aftermarketFamily, emptyAftermarketLedger, planPurchase, planStockPurchase } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-ammunition-ledger.js";
 
 const CATALOG_FILES = ['accessories', 'defense-systems', 'movement-systems', 'weapon-systems'];
 
@@ -77,6 +79,11 @@ export class VehicleInstallationService {
   static #ownerAssociated(ownerActor, vehicle) {
     if (!ownerActor?.id) return false;
     if (globalThis.game?.user?.isGM === true) return true;
+    return this.isRecordedOwner(ownerActor, vehicle);
+  }
+  /** Is this character RECORDED as an owner of the vehicle (no GM override)? */
+  static isRecordedOwner(ownerActor, vehicle) {
+    if (!ownerActor?.id) return false;
     const s = vehicle.system ?? {};
     return [s.ownedByActorId, s.storeAcquisition?.ownerActorId, s.assetOwnership?.primaryOwnerActorId,
       vehicle.flags?.['foundryvtt-swse']?.storeAcquisition?.ownerActorId]
@@ -157,16 +164,23 @@ export class VehicleInstallationService {
     const src = this.#source(vehicle);
     if (src.error) return { success: false, synced: false, created: 0, deleted: 0, reasons: [src.error] };
     const { entries } = readCertifiedInstallations(src.flags, src.record.identity.sourceEntryKey);
+    // Owner house rule `initialVehicleAmmunitionIncluded` (world, default on): decides only what a NEW stock launcher Item is created with. A launcher that
+    // was already issued its initial ammunition (the vehicle flag below) never receives it again, and an existing ledger is never touched.
+    const included = HouseRuleService.getBoolean('initialVehicleAmmunitionIncluded', true) !== false;
+    const issued = new Set(Object.keys(vehicle?.flags?.swse?.[INITIAL_AMMO_ISSUED_FLAG] ?? {}));
     const plan = () => {
       const items = Array.from(vehicle.items ?? []);
-      const a = planInstalledWeaponItemSync({ items, entries }), b = stock ? planStockWeaponItemSync({ items, record: src.record, gmAmmo: readStockAmmoConfigs(vehicle), gmBattery: readStockBatteryConfigs(vehicle) }) : { create: [], deleteIds: [] };
-      return { create: [...a.create, ...b.create], deleteIds: [...a.deleteIds, ...b.deleteIds] };
+      const a = planInstalledWeaponItemSync({ items, entries }), b = stock ? planStockWeaponItemSync({ items, record: src.record, gmAmmo: readStockAmmoConfigs(vehicle), gmBattery: readStockBatteryConfigs(vehicle), included, issued }) : { create: [], deleteIds: [], issueKeys: [] };
+      return { create: [...a.create, ...b.create], deleteIds: [...a.deleteIds, ...b.deleteIds], issueKeys: b.issueKeys ?? [] };
     };
     const first = plan();
     let deleted = 0, created = 0;
     try {
       if (first.deleteIds.length) { await ActorEngine.deleteEmbeddedDocuments(vehicle, 'Item', first.deleteIds); deleted = first.deleteIds.length; }
       if (first.create.length) { await ActorEngine.createEmbeddedDocuments(vehicle, 'Item', first.create); created = first.create.length; }
+      // remember (once) which launchers have now been issued their initial ammunition, so a deleted Item is never a refill
+      const fresh = first.issueKeys.filter(k => !issued.has(k));
+      if (fresh.length) await ActorEngine.updateActor(vehicle, { [`flags.swse.${INITIAL_AMMO_ISSUED_FLAG}`]: { ...(vehicle?.flags?.swse?.[INITIAL_AMMO_ISSUED_FLAG] ?? {}), ...Object.fromEntries(fresh.map(k => [k, { policy: included ? 'included' : 'purchased', at: Date.now() }])) } });
     } catch (err) {
       return { success: false, synced: false, created, deleted, reasons: ['WEAPON_ITEM_SYNC_FAILED'], error: err?.message ?? String(err) };
     }
@@ -263,6 +277,47 @@ export class VehicleInstallationService {
         audit: { kind: 'vehicle-ammunition-purchase', installId, catalogId: entry.catalogId, ammunition: family.ammunition, units: plan.units, unitPrice: family.unitPrice }
       });
     } finally { clearLedgerWrite(vehicle.id); }
+    if (!tx.success) return { success: false, reasons: [/insufficient credits/i.test(tx.error ?? '') ? 'INSUFFICIENT_CREDITS' : 'TRANSACTION_FAILED'], error: tx.error };
+    return { success: true, transactionId: tx.transactionId, units: plan.units, cost: plan.cost, ledger: plan.ledger };
+  }
+
+  /** May this character buy for this vehicle (a GM, or a character recorded as one of its owners)? Used by every ammunition payment path. */
+  static authorizePurchaser({ ownerActor, vehicle }) {
+    return this.#ownerAssociated(ownerActor, vehicle) ? { ok: true } : { ok: false, reason: 'OWNER_VEHICLE_NOT_ASSOCIATED' };
+  }
+
+  /**
+   * THE ammunition purchase: both vehicle-sheet shortcuts and the store's vehicle-ammunition context call this one method with a launcher's stable key
+   * (`installed:<installId>` for an aftermarket installation, `stock:<itemId>` for a stock launcher). It buys SUBSEQUENT ammunition only: it never
+   * creates, resets or tops up a ledger, so repeated calls cannot produce free supplies. Credits and the ledger change in ONE TransactionEngine
+   * transaction (rolled back together); the ammunition arrives in the launcher's RESERVE and is never loaded here (the existing GM reload does that).
+   */
+  static async purchaseLauncherAmmunition({ ownerActor, vehicle, launcherKey, units }) {
+    const offer = offerFor(vehicle, launcherKey);
+    if (!offer) return { success: false, reasons: ['LAUNCHER_NOT_A_FINITE_AMMUNITION_WEAPON'] };
+    if (!offer.canBuy) return { success: false, reasons: [offer.disabledReason] };
+    if (offer.origin === 'aftermarket') return this.purchaseAmmunition({ ownerActor, vehicle, installId: offer.installId, units });
+    return this.#exclusive(vehicle, () => this.#purchaseStockAmmunition({ ownerActor, vehicle, itemId: offer.itemId, units }));
+  }
+  static async #purchaseStockAmmunition({ ownerActor, vehicle, itemId, units }) {
+    // (the weapon authority below has already verified the stock Item against its published record; only the payer needs checking here)
+    if (!this.#ownerAssociated(ownerActor, vehicle)) return { success: false, reasons: ['OWNER_VEHICLE_NOT_ASSOCIATED'] };
+    const item = Array.from(vehicle.items ?? []).find(i => i?.id === itemId);
+    const family = item ? VehicleAmmunitionService.familyOf(item) : null;
+    const price = family ? stockUnitPrice(family) : null;
+    if (!item || !family || family.origin === 'aftermarket') return { success: false, reasons: ['LAUNCHER_NOT_A_FINITE_AMMUNITION_WEAPON'] };
+    // read the ledger as it IS: a missing ledger is never initialized (and so never filled) by a purchase
+    const ledger = item.flags?.swse?.[LEDGER_FLAG] ?? item.getFlag?.('swse', LEDGER_FLAG) ?? null;
+    if (!ledger) return { success: false, reasons: ['AMMO_LEDGER_MISSING_OR_ALLOCATION_REQUIRED'] };
+    const plan = planStockPurchase(ledger, family, { units, unitPrice: price, by: globalThis.game?.user?.id ?? null });
+    if (!plan.ok) return { success: false, reasons: [plan.reason] };
+    let tx;
+    tx = await TransactionEngine.executeAssetCustomizationTransaction({
+      actor: ownerActor, assetActor: vehicle, cost: plan.cost, resaleCredit: 0,
+      assetMutationPlan: { update: { items: [{ _id: item.id, [`flags.swse.==${LEDGER_FLAG}`]: plan.ledger }] } },
+      reason: `Buy ${plan.units} x ${family.ammunition} for ${item.name}`,
+      audit: { kind: 'vehicle-ammunition-purchase', origin: 'stock', itemId: item.id, launcherId: family.launcherId, ammunition: family.ammunition, units: plan.units, unitPrice: price }
+    });
     if (!tx.success) return { success: false, reasons: [/insufficient credits/i.test(tx.error ?? '') ? 'INSUFFICIENT_CREDITS' : 'TRANSACTION_FAILED'], error: tx.error };
     return { success: true, transactionId: tx.transactionId, units: plan.units, cost: plan.cost, ledger: plan.ledger };
   }

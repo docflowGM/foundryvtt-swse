@@ -84,11 +84,59 @@ export function initialLedger(family, { launchers = family.launchers, loaded = n
     launchers, allocation, loaded: load, reserve: family.payload - load, expended: 0, receipts: {}, log: [] };
 }
 
+// ---------------------------------------------------------------------------------------------------------------------------------
+// INITIAL VEHICLE AMMUNITION (owner-approved project house rule `initialVehicleAmmunitionIncluded`, default on). A stock launcher is created ONCE
+// per managed Item: with the published payload at no charge (included), or empty so its initial ammunition is bought separately at the published
+// per-round price (purchased). Neither policy ever changes a ledger that exists; the GM may deliberately grant up to the published payload (an NPC
+// vehicle needs no credit transaction) and later purchases are priced from the certified launcher specification.
+// ---------------------------------------------------------------------------------------------------------------------------------
+export const INITIAL_AMMUNITION = Object.freeze({ INCLUDED: 'included', PURCHASED: 'purchased' });
+const stockLedgerBase = (ledger, family) => (ledger.initial === INITIAL_AMMUNITION.PURCHASED ? 0 : family.payload);
+
+/** A stock launcher that starts with NO ammunition (the house rule is off): everything it will hold is granted by the GM or bought. */
+export function purchasedInitialLedger(family) {
+  if (!family || !isInt(family.launchers) || family.launchers < 1) return null;
+  return { schema: LEDGER_SCHEMA, launcherId: family.launcherId, ammunition: family.ammunition, guided: family.guided, payload: 0, capacity: family.capacity,
+    launchers: family.launchers, allocation: family.allocation, initial: INITIAL_AMMUNITION.PURCHASED, granted: 0, bought: 0, loaded: 0, reserve: 0, expended: 0, receipts: {}, log: [] };
+}
+/** The ledger a NEW stock launcher Item is created with under the house rule's current state. */
+export const initialStockLedger = (family, included) => (included === false ? purchasedInitialLedger(family) : initialLedger(family));
+
+/** Buy `units` at `unitPrice`: payload and reserve rise together; nothing is loaded (the GM reload operation loads). */
+export function planStockPurchase(ledger, family, { units, unitPrice, by = null, now = Date.now() } = {}) {
+  if (!isInt(units) || units < 1) return fail('AMMO_PURCHASE_QUANTITY_INVALID');
+  if (!isInt(unitPrice) || unitPrice < 1) return fail('AMMO_UNIT_PRICE_NOT_PUBLISHED');
+  const v = validateLedger(ledger, family);
+  if (!v.ok) return v;
+  const cost = units * unitPrice;
+  return { ok: true, units, cost, ledger: { ...ledger, payload: ledger.payload + units, reserve: ledger.reserve + units, bought: (ledger.bought ?? 0) + units,
+    log: [...(ledger.log ?? []), { op: 'purchase', units, unitPrice, cost, by, at: now }].slice(-MAX_RECEIPTS) } };
+}
+
+/**
+ * GM operation: grant starting ammunition WITHOUT a credit transaction, only up to the published payload and only to a launcher that started
+ * without it. Defaults to the whole missing published payload. Never invents a quantity the source does not print.
+ */
+export function planGmGrant(ledger, family, { units = null, by = null, now = Date.now() } = {}) {
+  const v = validateLedger(ledger, family);
+  if (!v.ok) return v;
+  if (ledger.initial !== INITIAL_AMMUNITION.PURCHASED) return fail(AMMO_REASONS.ALLOCATION_INVALID);
+  const room = family.payload - (ledger.granted ?? 0);
+  const n = units === null ? room : units;
+  if (!isInt(n) || n < 1 || n > room) return fail(AMMO_REASONS.ALLOCATION_INVALID);
+  return { ok: true, units: n, ledger: { ...ledger, payload: ledger.payload + n, reserve: ledger.reserve + n, granted: (ledger.granted ?? 0) + n,
+    log: [...(ledger.log ?? []), { op: 'gm-grant', units: n, by, at: now }].slice(-MAX_RECEIPTS) } };
+}
+
 /** Is a stored ledger internally consistent AND the one the source family calls for? (Detects hand-edited ammunition.) */
 export function validateLedger(ledger, family) {
   if (!ledger || ledger.schema !== LEDGER_SCHEMA || !family) return fail(AMMO_REASONS.LEDGER_MISSING);
   for (const k of ['payload', 'capacity', 'launchers', 'loaded', 'reserve', 'expended']) if (!isInt(ledger[k])) return fail(AMMO_REASONS.LEDGER_INVALID);
-  if (ledger.payload !== family.payload || ledger.capacity !== family.capacity || ledger.launcherId !== family.launcherId) return fail(AMMO_REASONS.LEDGER_INVALID);
+  if (ledger.capacity !== family.capacity || ledger.launcherId !== family.launcherId) return fail(AMMO_REASONS.LEDGER_INVALID);
+  // the units that exist are the published payload (unless the vehicle started without it: house rule) plus what was granted by the GM or bought
+  if (ledger.payload !== stockLedgerBase(ledger, family) + (ledger.granted ?? 0) + (ledger.bought ?? 0)) return fail(AMMO_REASONS.LEDGER_INVALID);
+  if (!isInt(ledger.granted ?? 0) || !isInt(ledger.bought ?? 0)) return fail(AMMO_REASONS.LEDGER_INVALID);
+  if ((ledger.granted ?? 0) > family.payload) return fail(AMMO_REASONS.LEDGER_INVALID);
   if (ledger.launchers < 1 || ledger.loaded > ledger.capacity * ledger.launchers) return fail(AMMO_REASONS.LEDGER_INVALID);
   if (ledger.loaded + ledger.reserve + ledger.expended !== ledger.payload) return fail(AMMO_REASONS.LEDGER_INVALID);       // conservation
   if (family.allocation === 'single-launcher-verified' && ledger.launchers !== 1) return fail(AMMO_REASONS.LEDGER_INVALID);

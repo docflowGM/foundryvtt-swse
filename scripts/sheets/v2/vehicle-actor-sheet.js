@@ -9,6 +9,7 @@ import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRout
 import { ShellSurfaceRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellSurfaceRegistry.js";
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 import { VehicleOperatingContextService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-operating-context-service.js";
+import { openVehicleAmmunitionStore } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-ammunition-shortcuts.js";
 import { bindWeaponActions } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-weapon-ops.js";
 import { VehicleStockAmmoConfigService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-stock-ammo-config-service.js";
 import { askBatteryCount } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-stock-ammo-config-dialog.js";
@@ -817,7 +818,7 @@ export class SWSEV2VehicleSheet extends SWSEV2ActorSheetBase {
 
     // Shipyard installation work: governed service calls only (no direct ledger/jobs edits).
     if (this.actor) bindShipyardActions(root, this.actor, createDefaultShipyardDeps(VehicleInstallationService));
-    if (this.actor) bindWeaponActions(root, this.actor, { service: { fireMode: VehicleFireModeService, ammoConfig: VehicleStockAmmoConfigService }, notify: globalThis.ui.notifications, askAmmoConfig: askStockAmmoConfig, askInterdictionArea, askBatteryCount });
+    if (this.actor) bindWeaponActions(root, this.actor, { service: { fireMode: VehicleFireModeService, ammoConfig: VehicleStockAmmoConfigService }, notify: globalThis.ui.notifications, askAmmoConfig: askStockAmmoConfig, openAmmunitionStore: openVehicleAmmunitionStore, askInterdictionArea, askBatteryCount });
     if (this.actor) bindOperatingActions(root, this.actor, createDefaultOperatingDeps(VehicleOperatingContextService));
 
     root.querySelectorAll('[data-action="customize-vehicle"]').forEach(btn => {

@@ -1577,6 +1577,40 @@
       "impact": "A ship that moves THROUGH a mined square without ending its move there does not trigger it; the GM can detonate or remove mines manually.",
       "recommendedAction": "Use the movement path once the movement tracking authority exposes per-move waypoints.",
       "resolution": "Resolved (owner ruling V-P6C-15, 2026-11-05): a move's entered squares come from Foundry's recorded movement path (options._movement waypoints) when it establishes straight or exact-diagonal runs of whole cells; otherwise only the destination footprint is tested and the GM records a crossing explicitly (adjudicateEntry). A pending entry opens the notice-reaction window before any detonation; the atomic claim prevents duplicates. The recorded-path reader follows Foundry V13's movement data and is not live-verified."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-19"
+      ],
+      "options": [],
+      "id": "P6B-D-074",
+      "component": "GM reconciliation tool for an indeterminate Party Fund ammunition settlement",
+      "source": "project workflow (V-P6C-19)",
+      "status": "ENGINEERING_COMPLEXITY",
+      "severity": "MINOR",
+      "reason": "If a Party Fund debit succeeded, delivery failed and the fund restore could not be proven, the request is preserved as indeterminate and never retried; there is no one-click resolution.",
+      "missing": "A GM reconcile action (confirm delivered / confirm not delivered) that closes the request after the Party Fund ledger and the vehicle reserve are checked.",
+      "impact": "Rare; the GM reconciles by hand against the Party Fund ledger entry carrying the request id.",
+      "recommendedAction": "Add the reconcile action to the GM approvals surface if it ever occurs."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-18"
+      ],
+      "options": [],
+      "id": "P6B-D-075",
+      "component": "Stock launcher groups with a verified single launcher (initial ammunition rule has no canonical group yet)",
+      "source": "canonical records",
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "severity": "MINOR",
+      "reason": "No published stock group carries a verified single launcher, so every stock launcher is GM-configured and the initial-ammunition rule currently applies to GM allocations and to synthetic complete families.",
+      "missing": "A printed launcher count for stock launcher groups.",
+      "impact": "None for play: the GM allocates stock launchers deliberately; the rule applies automatically to any complete family.",
+      "recommendedAction": "Review the sources of the 18 allocation-required groups."
     }
   ]
 }

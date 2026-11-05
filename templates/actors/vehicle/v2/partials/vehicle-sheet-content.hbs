@@ -240,6 +240,9 @@
               actionBreakdown=actionEconomy.breakdown
               swiftMax=actionEconomy.state.swiftMax}}
         {{/if}}
+        {{#if vehiclePanels.weaponMountPanel.hasAmmoOffers}}
+          <div class="swse-vehicle-ammo-shortcut"><button type="button" class="swse-vehicle-action-btn" data-weapon-action="buy-ammo-all">Buy Ammunition</button></div>
+        {{/if}}
         {{#if vehiclePanels.weaponMountPanel}}
           {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-weapon-mount-panel.hbs" panel=vehiclePanels.weaponMountPanel}}
         {{/if}}

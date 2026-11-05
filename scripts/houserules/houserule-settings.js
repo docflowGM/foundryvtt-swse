@@ -1786,6 +1786,15 @@ export function registerHouseruleSettings() {
     default: false
   });
 
+  register('initialVehicleAmmunitionIncluded', {
+    name: 'Initial Vehicle Ammunition Included',
+    hint: 'On (default): a newly purchased or spawned stock vehicle starts with its published ammunition and payload at no extra charge. Off: the initial ammunition of newly created vehicles must be bought separately at the published per-round prices (the GM can allocate starting ammunition for NPC vehicles). Never refills or changes the ammunition of vehicles that already exist.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
   register('enableVehicleTurnController', {
     name: 'Enable Vehicle Turn Controller',
     hint: 'Phase-based crew action sequencing for vehicle combat turns (Commander → Pilot → Engineer → Shields → Gunner → Cleanup).',

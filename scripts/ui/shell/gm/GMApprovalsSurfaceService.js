@@ -647,7 +647,49 @@ function buildShipyardRequestCategories({ actor, approval, ownerActor, cost, cur
   }));
 }
 
+/** A Party Fund vehicle-ammunition request (approvalKind vehicle-ammunition-party-fund): read-only review; approval settles through VehicleAmmunitionPurchaseService. */
+function buildVehicleAmmunitionApprovalRequest(approval, index) {
+  const requester = game.actors.get(approval.ownerActorId) ?? null;
+  const vehicle = game.actors.get(approval.vehicleId) ?? null;
+  const submitted = approval.requestedAt ? new Date(approval.requestedAt).toLocaleString() : EMPTY;
+  const cost = numberOrNull(approval.costCredits) ?? 0;
+  const fundEnabled = game.settings?.get?.('foundryvtt-swse', 'holonetPartyFundEnabled') === true;
+  const fundBalance = numberOrNull(game.settings?.get?.('foundryvtt-swse', 'holonetPartyFundBalance')) ?? 0;
+  const state = approval.state ?? 'pending';
+  const categories = [
+    { id: 'request', label: 'Ammunition Request', icon: 'fa-solid fa-bullseye', rows: [
+      makeReadonlyRow('Requested By', requester?.name ?? approval.ownerActorName ?? 'Unknown'),
+      makeReadonlyRow('Vehicle', vehicle?.name ?? approval.vehicleName ?? 'Unknown'),
+      makeReadonlyRow('Launcher', approval.launcherName ?? approval.launcherKey ?? 'Unknown'),
+      makeReadonlyRow('Ammunition', `${approval.units} × ${approval.ammunitionLabel ?? approval.ammunitionId}`),
+      makeReadonlyRow('Submitted', submitted),
+      makeReadonlyRow('State', state)
+    ] },
+    { id: 'cost', label: 'Party Fund', icon: 'fa-solid fa-coins', rows: [
+      makeReadonlyRow('Payment Source', 'Party Fund (GM approval required)'),
+      makeReadonlyRow('Price Each', displayCredits(approval.unitPrice ?? 0)),
+      makeReadonlyRow('Total Requested', displayCredits(cost)),
+      makeReadonlyRow('Fund Balance', fundEnabled ? displayCredits(fundBalance) : 'Party Fund is disabled'),
+      makeReadonlyRow('Fund After', fundEnabled ? displayCredits(Math.max(0, fundBalance - cost)) : EMPTY)
+    ] }
+  ].map((category) => ({ ...category, rows: category.rows.map((row) => ({ ...row, fieldId: null, originalValue: row.value ?? row.displayValue ?? '' })) }));
+  return {
+    key: `custom:${index}`, stableKey: approval?.id ? `custom-id:${approval.id}` : '', sourceType: 'store-custom', actorId: requester?.id ?? null, requestIndex: index,
+    type: 'vehicle-ammunition', typeLabel: 'Party Fund Ammunition Purchase', title: approval.draftData?.name ?? 'Vehicle ammunition',
+    subtitle: `${requester?.name ?? approval.ownerActorName ?? 'Unknown'} · ${displayCredits(cost)}`, ownerLabel: requester?.name ?? approval.ownerActorName ?? 'Unknown',
+    costLabel: displayCredits(cost), submittedLabel: submitted, icon: 'fa-solid fa-rocket', tone: 'vehicle', categories,
+    warnings: [
+      ...(fundEnabled ? [] : ['The Party Fund is disabled: this request cannot be approved until it is re-enabled (or reject it).']),
+      ...(fundEnabled && fundBalance < cost ? [`The Party Fund has ${displayCredits(fundBalance)} but this request needs ${displayCredits(cost)}.`] : []),
+      ...(vehicle ? [] : ['The vehicle could not be found: approval will fail without moving any credits.']),
+      ...(state === 'settling' ? ['A settlement is in progress (or was interrupted). It will not be retried automatically.'] : []),
+      ...(state === 'indeterminate' ? ['INDETERMINATE: the Party Fund rollback could not be proven. Reconcile the Party Fund ledger and the vehicle reserve by hand.'] : [])
+    ]
+  };
+}
+
 function buildStoreApprovalRequest(approval, index) {
+  if (approval?.approvalKind === 'vehicle-ammunition-party-fund') return buildVehicleAmmunitionApprovalRequest(approval, index);
   if (approval?.type === 'store-item' || approval?.approvalKind === 'store-policy-item') return buildStoreItemApprovalRequest(approval, index);
 
   const draftActor = game.actors.get(approval.draftActorId) ?? null;

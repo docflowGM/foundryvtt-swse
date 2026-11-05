@@ -25,6 +25,7 @@
   <div class="store-scanline"></div>
 
   <div class="store-tabs">
+    {{#if vehicleAmmunition}}<button type="button" class="store-tab {{#if (eq currentView 'vehicle-ammunition')}}active{{/if}}" data-action="show-vehicle-ammunition"><span class="store-tab-glyph">⌖</span> Vehicle Ammunition</button>{{/if}}
     <button type="button" class="store-tab {{#if (eq currentView 'browse')}}active{{/if}}" data-action="show-browse">
       <span class="store-tab-glyph">⊞</span> {{localize 'SWSE.Store.Tabs.Browse'}}
     </button>
@@ -36,6 +37,52 @@
       <span class="store-tab-glyph">◎</span> {{localize 'SWSE.Store.Tabs.History'}}
     </button>
   </div>
+
+
+  {{#if (eq currentView 'vehicle-ammunition')}}
+  <section class="store-vehicle-ammunition">
+    {{#if vehicleAmmunition.unavailable}}
+      <p class="store-empty">{{vehicleAmmunition.message}}</p>
+    {{else}}
+      <h3>Buy Ammunition — {{vehicleAmmunition.vehicleName}}</h3>
+      <p class="muted">Only the ammunition used by this vehicle's launchers is listed. Purchases go to the launcher's reserve; loading is a separate step.</p>
+      {{#unless vehicleAmmunition.hasRows}}<p class="store-empty">This vehicle has no weapon that uses purchased ammunition.</p>{{/unless}}
+      <div class="store-vehicle-ammo-list">
+        {{#each vehicleAmmunition.rows as |row|}}
+          <div class="store-vehicle-ammo-row {{#if row.selected}}is-selected{{/if}}">
+            <div class="store-vehicle-ammo-info">
+              <strong>{{row.launcherName}}</strong>
+              <span>{{row.ammunitionLabel}} · {{row.priceLabel}}</span>
+              <small>{{row.stockLabel}}</small>
+            </div>
+            {{#if row.canBuy}}
+              <label>Quantity <input type="number" min="0" step="1" value="{{row.quantity}}" data-vehicle-ammo-qty="{{row.launcherKey}}"></label>
+              <span class="store-vehicle-ammo-line">{{row.lineTotal}} cr</span>
+            {{else}}
+              <span class="store-vehicle-ammo-disabled" title="{{row.disabledReason}}">Unavailable: {{row.disabledReason}}</span>
+            {{/if}}
+          </div>
+        {{/each}}
+      </div>
+      <div class="store-vehicle-ammo-total">Total: <strong>{{vehicleAmmunition.total}}</strong> credits</div>
+      {{#if vehicleAmmunition.showPaymentChoice}}
+        <fieldset class="store-vehicle-ammo-payment"><legend>Payment method</legend>
+          {{#each vehicleAmmunition.payments as |pay|}}
+            <label><input type="radio" name="vehicle-ammo-payment" data-vehicle-ammo-payment="{{pay.id}}" {{#if pay.selected}}checked{{/if}} {{#unless pay.available}}disabled{{/unless}}> {{pay.label}} <small>{{pay.note}}</small></label>
+          {{/each}}
+        </fieldset>
+      {{else}}
+        <p class="muted">Payment: Personal Credits. {{#each vehicleAmmunition.payments as |pay|}}{{pay.note}}{{/each}}</p>
+      {{/if}}
+      <p class="muted">{{vehicleAmmunition.notice}}</p>
+      {{#if vehicleAmmunition.insufficient}}<p class="store-error">Not enough credits for this basket.</p>{{/if}}
+      <div class="store-vehicle-ammo-actions">
+        <button type="button" class="holo-btn" data-action="vehicle-ammo-confirm" {{#unless vehicleAmmunition.canConfirm}}disabled{{/unless}}>{{vehicleAmmunition.confirmLabel}}</button>
+        <button type="button" class="holo-btn secondary" data-action="vehicle-ammo-cancel">Cancel</button>
+      </div>
+    {{/if}}
+  </section>
+  {{/if}}
 
   {{#if (eq currentView 'browse')}}
   <div class="store-filter-bar">

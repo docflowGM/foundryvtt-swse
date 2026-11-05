@@ -9,7 +9,7 @@
  */
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { resolveVehicleWeaponAuthority } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
-import { LEDGER_FLAG, AFTERMARKET_AMMO_FLAG, AMMO_REASONS, validateLedger, validateAftermarketLedger, emptyAftermarketLedger, initialLedger, planLaunch, planRefund, planGmReload, planGmAllocation, launchUnits } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-ammunition-ledger.js";
+import { LEDGER_FLAG, AFTERMARKET_AMMO_FLAG, AMMO_REASONS, validateLedger, validateAftermarketLedger, emptyAftermarketLedger, initialLedger, planLaunch, planRefund, planGmReload, planGmAllocation, planGmGrant, planPurchase, planStockPurchase, launchUnits } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-ammunition-ledger.js";
 import { authorizeFlagWrite, clearLedgerWrite } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-installation-ledger.js";
 
 const flagOf = weapon => weapon?.flags?.swse?.[LEDGER_FLAG] ?? weapon?.getFlag?.('swse', LEDGER_FLAG) ?? null;
@@ -98,6 +98,38 @@ export class VehicleAmmunitionService {
     if (!plan.ok) return plan;
     await write(vehicle, weapon, plan.ledger, r.family);
     return { ok: true, moved: plan.moved, ledger: plan.ledger };
+  }
+
+  /**
+   * Deliver PURCHASED ammunition into a launcher's reserve through the one ledger writer (the payment itself -- personal credits in the
+   * TransactionEngine, or a GM-approved Party Fund settlement -- is the caller's). Never initializes a missing ledger, never loads the launcher.
+   * @param {{units:number, unitPrice:number, source?:string}} p
+   */
+  static async deliverPurchased(vehicle, weapon, { units, unitPrice = null, source = 'purchase' } = {}) {
+    const family = this.familyOf(weapon);
+    if (!family) return refuse('AMMO_NOT_A_LAUNCHER');
+    const ledger = read(vehicle, weapon, family);
+    const plan = isAftermarket(family)
+      ? planPurchase(ledger ?? emptyAftermarketLedger(family), family, { units, by: source })
+      : (ledger ? planStockPurchase(ledger, family, { units, unitPrice, by: source }) : refuse(AMMO_REASONS.LEDGER_MISSING));
+    if (!plan.ok) return plan;
+    await write(vehicle, weapon, plan.ledger, family);
+    return { ok: true, units: plan.units, cost: plan.cost, ledger: plan.ledger };
+  }
+
+  /**
+   * GM operation (house rule initialVehicleAmmunitionIncluded off): deliberately allocate the PUBLISHED starting ammunition of a stock launcher that
+   * started without it -- no credit transaction (an NPC vehicle needs none), never above the published payload, never on a launcher that has it.
+   */
+  static async gmGrantStartingAmmunition(vehicle, weapon, { units = null, user = globalThis.game?.user ?? null } = {}) {
+    if (user?.isGM !== true) return refuse(AMMO_REASONS.GM_ONLY);
+    const family = this.familyOf(weapon);
+    if (!family || isAftermarket(family)) return refuse(AMMO_REASONS.ALLOCATION_INVALID);
+    const ledger = flagOf(weapon);
+    const plan = planGmGrant(ledger, family, { units, by: user?.id ?? null });
+    if (!plan.ok) return plan;
+    await write(vehicle, weapon, plan.ledger, family);
+    return { ok: true, units: plan.units, ledger: plan.ledger };
   }
 
   /** GM operation: certify the launcher count and what is loaded for a family the source does not allocate. */

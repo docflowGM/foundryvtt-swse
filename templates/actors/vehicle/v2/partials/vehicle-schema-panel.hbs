@@ -170,6 +170,16 @@
   {{/each}}
 </section>
 {{/if}}
+{{#if view.weaponOps.hasGrantRows}}
+<section class="swse-vehicle-panel swse-vehicle-ammo-grant-panel">
+  <header><h3>Starting ammunition (GM)</h3></header>
+  {{#each view.weaponOps.grantRows}}
+    <div class="swse-vehicle-ammo-grant"><strong>{{name}}</strong> started without its published ammunition.
+      <button type="button" data-weapon-action="ammo-grant" data-item-id="{{itemId}}">Grant {{room}} published round(s), no charge</button></div>
+  {{/each}}
+  <p><small>House rule "Initial Vehicle Ammunition Included" is off or this vehicle was created under it: the GM can allocate the published starting ammunition without a credit transaction (never more than the published payload). Players buy ammunition with the Buy Ammunition buttons on the Combat tab.</small></p>
+</section>
+{{/if}}
 {{#if view.weaponOps.hasBombRacks}}
 <section class="swse-vehicle-panel swse-vehicle-bomb-panel">
   <header><h3>Ion bombs</h3></header>

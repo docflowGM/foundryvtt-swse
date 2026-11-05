@@ -236,7 +236,7 @@ test('ITEM SYNC: one Item per executable MODE, idempotent; a battery\'s independ
   assert.deepEqual(plan.create.map(i => [i.name, i.flags.swse.vehicleStockWeapon.fireMode ?? 'single']).sort((a, b) => a[0].localeCompare(b[0])),
     [['laser cannon battery (single weapon)', 'independent-weapon'], ['quad laser cannon battery (single weapon)', 'independent-weapon'], ['turbolaser battery', 'full-battery'], ['turbolaser battery (single weapon)', 'independent-weapon']]);
   const made = plan.create.map((d, n) => ({ id: 'i' + n, ...structuredClone(d) }));
-  assert.deepEqual(planStockWeaponItemSync({ items: made, record: rec }), { create: [], deleteIds: [] }, 'already in sync');
+  assert.deepEqual(planStockWeaponItemSync({ items: made, record: rec }), { create: [], deleteIds: [], issueKeys: [] }, 'already in sync');
   // a flipped mode flag is a stale Item: replaced, not trusted
   const full = made.find(i => i.name === 'turbolaser battery');
   full.flags.swse.vehicleStockWeapon.fireMode = 'independent-weapon';

@@ -9,13 +9,13 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 | Category | Count |
 |---|---|
 | RULES_DECISION_REQUIRED | 8 |
-| SOURCE_EVIDENCE_MISSING | 8 |
-| ENGINEERING_COMPLEXITY | 24 |
+| SOURCE_EVIDENCE_MISSING | 9 |
+| ENGINEERING_COMPLEXITY | 25 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 4 |
 | DEPENDENCY_BLOCKED | 9 |
 
-Open items: 54. Resolved items: 19 (listed at the end).
+Open items: 56. Resolved items: 19 (listed at the end).
 
 ## Items (by severity)
 
@@ -75,6 +75,8 @@ Open items: 54. Resolved items: 19 (listed at the end).
 | P6B-D-057 | WEAPON-ECOSYSTEM | launcher capacity expansion and the remaining launcher kinds | RULES_DECISION_REQUIRED | MINOR | yes | V-P6A-03, V-P6C-06 |
 | P6B-D-058 | WEAPON-ECOSYSTEM | source-specific special weapons without a printed table row | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
 | P6B-D-070 | WEAPON-ECOSYSTEM | GM-configured stock launchers: groups with other blockers, battery launchers, configuration edit | ENGINEERING_COMPLEXITY | MINOR | no | V-P6C-06 |
+| P6B-D-074 | WEAPON-ECOSYSTEM | GM reconciliation tool for an indeterminate Party Fund ammunition settlement | ENGINEERING_COMPLEXITY | MINOR | no | V-P6C-19 |
+| P6B-D-075 | WEAPON-ECOSYSTEM | Stock launcher groups with a verified single launcher (initial ammunition rule has no canonical group yet) | SOURCE_EVIDENCE_MISSING | MINOR | no | V-P6C-18 |
 
 ## Details
 
@@ -623,6 +625,26 @@ Open items: 54. Resolved items: 19 (listed at the end).
 - **Owner ruling needed:** no (V-P6C-14)
 - **Impact:** The sheet shows the interdiction; a GM must honor it at the table until an activation action exists.
 - **Recommended action:** When a hyperdrive/astrogation activation flow is built, call isHyperdriveInterdicted (domain/vehicles/vehicle-interdiction-field.js) before any cost.
+
+### P6B-D-074 - GM reconciliation tool for an indeterminate Party Fund ammunition settlement
+
+- **Source:** project workflow (V-P6C-19)
+- **Category / severity:** ENGINEERING_COMPLEXITY / MINOR
+- **Reason:** If a Party Fund debit succeeded, delivery failed and the fund restore could not be proven, the request is preserved as indeterminate and never retried; there is no one-click resolution.
+- **Missing:** A GM reconcile action (confirm delivered / confirm not delivered) that closes the request after the Party Fund ledger and the vehicle reserve are checked.
+- **Owner ruling needed:** no (V-P6C-19)
+- **Impact:** Rare; the GM reconciles by hand against the Party Fund ledger entry carrying the request id.
+- **Recommended action:** Add the reconcile action to the GM approvals surface if it ever occurs.
+
+### P6B-D-075 - Stock launcher groups with a verified single launcher (initial ammunition rule has no canonical group yet)
+
+- **Source:** canonical records
+- **Category / severity:** SOURCE_EVIDENCE_MISSING / MINOR
+- **Reason:** No published stock group carries a verified single launcher, so every stock launcher is GM-configured and the initial-ammunition rule currently applies to GM allocations and to synthetic complete families.
+- **Missing:** A printed launcher count for stock launcher groups.
+- **Owner ruling needed:** no (V-P6C-18)
+- **Impact:** None for play: the GM allocates stock launchers deliberately; the rule applies automatically to any complete family.
+- **Recommended action:** Review the sources of the 18 allocation-required groups.
 
 ## Resolved items
 

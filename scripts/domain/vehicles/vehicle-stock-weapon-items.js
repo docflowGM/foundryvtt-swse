@@ -9,14 +9,19 @@
  */
 import { STOCK_WEAPON_FLAG } from './vehicle-weapon-damage.js';
 import { assessStockWeaponGroups, stockItemName, stockMountKey } from './vehicle-stock-weapon-groups.js';
-import { LEDGER_FLAG, initialLedger, validateLedger } from './vehicle-ammunition-ledger.js';
+import { LEDGER_FLAG, initialLedger, initialStockLedger, purchasedInitialLedger, validateLedger } from './vehicle-ammunition-ledger.js';
 
 const groupKeyOf = item => item?.flags?.swse?.[STOCK_WEAPON_FLAG]?.groupKey ?? null;
 const modeOf = item => item?.flags?.swse?.[STOCK_WEAPON_FLAG]?.fireMode ?? 'single';
 /** Item key: a group is one Item per executable MODE ('single' for an ordinary weapon; 'full-battery' / 'independent-weapon' for a printed battery). */
 const itemKey = (groupKey, mode) => `${groupKey}|${mode}`;
 
-export function buildStockWeaponItemData(record, group, mode = 'single') {
+/** The vehicle flag that remembers which managed stock launchers have already been issued their initial ammunition (never re-issued). */
+export const INITIAL_AMMO_ISSUED_FLAG = 'initialAmmunitionIssued';
+/** Flag-safe form of an item key (a flag object key must not contain a dot). */
+export const issuedKeyOf = k => String(k).replace(/\./g, '%2E');
+
+export function buildStockWeaponItemData(record, group, mode = 'single', { included = true } = {}) {
   const key = record.identity.sourceEntryKey;
   return {
     name: stockItemName(group, mode), type: 'weapon',
@@ -29,7 +34,9 @@ export function buildStockWeaponItemData(record, group, mode = 'single') {
     },
     flags: { swse: { [STOCK_WEAPON_FLAG]: { sourceEntryKey: key, groupKey: group.groupKey, ...(mode !== 'single' ? { fireMode: mode } : {}) },
       // a complete launcher family starts with its ledger (loaded = min(payload, capacity), the rest in reserve): ammunition is finite from the first shot
-      ...(group.ammunition ? { [LEDGER_FLAG]: group.ammunition.gmConfigured ? initialLedger(group.ammunition, { launchers: group.ammunition.launchers, loaded: group.ammunition.initialLoaded, allocation: 'gm-configured' }) : initialLedger(group.ammunition) } : {}) } }
+      // (owner house rule initialVehicleAmmunitionIncluded: included = the published payload at no charge; otherwise empty, bought separately.
+      // A GM-configured payload is the GM's deliberate allocation and does not depend on the rule.)
+      ...(group.ammunition ? { [LEDGER_FLAG]: group.ammunition.gmConfigured ? initialLedger(group.ammunition, { launchers: group.ammunition.launchers, loaded: group.ammunition.initialLoaded, allocation: 'gm-configured' }) : initialStockLedger(group.ammunition, included) } : {}) } }
   };
 }
 
@@ -54,9 +61,9 @@ export function executableModesOf(group) {
  * or removed; Items that are not stock-managed (no stock flag) are never touched.
  * @returns {{create: object[], deleteIds: string[]}}
  */
-export function planStockWeaponItemSync({ items = [], record, gmAmmo = null, gmBattery = null }) {
+export function planStockWeaponItemSync({ items = [], record, gmAmmo = null, gmBattery = null, included = true, issued = null }) {
   const wanted = new Map();
-  for (const g of assessStockWeaponGroups(record, { gmAmmo, gmBattery }).groups) for (const mode of executableModesOf(g)) wanted.set(itemKey(g.groupKey, mode), buildStockWeaponItemData(record, g, mode));
+  for (const g of assessStockWeaponGroups(record, { gmAmmo, gmBattery }).groups) for (const mode of executableModesOf(g)) wanted.set(itemKey(g.groupKey, mode), buildStockWeaponItemData(record, g, mode, { included }));
   const deleteIds = [], kept = new Set(), carried = new Map();
   const groups = new Map(assessStockWeaponGroups(record, { gmAmmo, gmBattery }).groups.map(g => [g.groupKey, g]));
   for (const item of items) {
@@ -75,7 +82,10 @@ export function planStockWeaponItemSync({ items = [], record, gmAmmo = null, gmB
   }
   const create = [...wanted.entries()].filter(([k]) => !kept.has(k)).map(([k, d]) => {
     if (carried.has(k)) d.flags.swse[LEDGER_FLAG] = carried.get(k);
+    // a launcher whose initial ammunition was already issued is never issued again (a deleted Item is not a refill): it comes back empty
+    else if (issued?.has?.(issuedKeyOf(k)) && d.flags.swse[LEDGER_FLAG]) d.flags.swse[LEDGER_FLAG] = purchasedInitialLedger(groups.get(d.flags.swse[STOCK_WEAPON_FLAG].groupKey)?.ammunition);
     return d;
   });
-  return { create, deleteIds };
+  // every managed launcher present after this sync has now been issued its initial ammunition (recorded once, by the caller)
+  return { create, deleteIds, issueKeys: [...wanted.keys()].filter(k => groups.get(k.split('|')[0])?.ammunition).map(issuedKeyOf) };
 }

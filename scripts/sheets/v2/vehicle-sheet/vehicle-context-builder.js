@@ -9,6 +9,7 @@
 import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
 import { getEffectiveVehicleDerived } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-published-derived.js";
 import { getVehicleRuntimeProjection, classifyVehicleActorRuntime } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
+import { attachAmmunitionShortcuts } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-ammunition-shortcuts.js";
 import { buildVehicleSchemaViewModel } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-schema-view-model.js";
 import { buildVehiclePublicationViewModel, buildPublishedCrewSummary, describeShield, SOURCE_UNKNOWN } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-publication-view-model.js";
 import { getStationSkillActions } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-skill-router.js";
@@ -1310,7 +1311,7 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
   const effectiveDerived = publicationView ? getEffectiveVehicleDerived(actor) : null;
   const defensesPanel = publicationView ? buildPublishedDefensesPanel(publicationView, effectiveDerived) : buildVehicleDefensesPanel(actor);
   const hpConditionPanel = publicationView ? buildPublishedHpPanel(actor, publicationView) : buildVehicleHpConditionPanel(actor);
-  const weaponMountPanel = buildVehicleWeaponMountPanel(actor);
+  const weaponMountPanel = attachAmmunitionShortcuts(buildVehicleWeaponMountPanel(actor), actor);
   const crewSummaryPanel = publicationView
     ? { title: 'Crew', ...buildPublishedCrewSummary(publicationView, actor?.system?.crewPositions) }
     : buildVehicleCrewSummaryPanel(actor);

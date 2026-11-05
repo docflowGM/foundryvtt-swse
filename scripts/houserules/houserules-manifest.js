@@ -2071,6 +2071,19 @@ export const HOUSERULE_MANIFEST = [
     config: true
   },
   {
+    key: 'initialVehicleAmmunitionIncluded',
+    name: 'Initial Vehicle Ammunition Included',
+    category: 'vehicles',
+    description: 'Newly created stock vehicles start with their published ammunition and payload at no extra charge (off: it must be bought separately). Owner-approved project house rule; never refills existing vehicles.',
+    type: 'boolean',
+    choices: null,
+    default: true,
+    status: 'wired',
+    tags: ['house-rule', 'vehicles', 'ammunition'],
+    presetVisible: false,
+    config: true
+  },
+  {
     key: 'enableVehicleTurnController',
     name: 'Enable Vehicle Turn Controller',
     category: 'vehicles',

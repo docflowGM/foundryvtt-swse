@@ -8,6 +8,7 @@ import { stockAmmoReadinessRows, stockBatteryReadinessRows } from "/systems/foun
 import * as mineService from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-mine-service.js";
 import { readMines } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-mine-service.js";
 import * as bombService from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-ion-bomb-service.js";
+import { VehicleAmmunitionService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-ammunition-service.js";
 import { readFields, interdictionAreaTarget, setActive, removeField } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-interdiction-service.js";
 import { readPersistedFireMode } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-fire-mode.js";
 
@@ -40,16 +41,27 @@ export function buildWeaponOpsView(actor, { isGM = false } = {}) {
   const mineLaunchers = items.filter(i => i?.type === 'weapon' && resolveVehicleWeaponAuthority(i)?.mine).map(i => ({ itemId: i.id, name: i.name, canDeploy: canAct && isGM }));
   // Ion bomb racks (V-P6C-16): the GM drops a bomb on the square directly beneath the ship
   const bombRacks = items.filter(i => i?.type === 'weapon' && resolveVehicleWeaponAuthority(i)?.ionBomb).map(i => ({ itemId: i.id, name: i.name, canDrop: canAct && isGM }));
+  // GM: grant the PUBLISHED starting ammunition to a stock launcher that started without it (house rule off): no credit transaction, never above the payload
+  const grantRows = isGM ? items.filter(i => i?.type === 'weapon').map(i => ({ i, f: VehicleAmmunitionService.familyOf(i), l: i?.flags?.swse?.vehicleAmmo })).filter(x => x.f && x.f.origin !== 'aftermarket' && x.l?.initial === 'purchased' && (x.l.granted ?? 0) < x.f.payload)
+    .map(x => ({ itemId: x.i.id, name: x.i.name, room: x.f.payload - (x.l.granted ?? 0) })) : [];
   const mines = isGM ? readMines(scene).map(m => ({ ...m, detectionLabel: Number.isFinite(m.detectionDc) ? `notice DC ${m.detectionDc}` : 'no stored notice DC', pendingList: Object.values(m.pending ?? {}).map(p => ({ ...p, name: globalThis.game?.actors?.get?.(p.actorId)?.name ?? p.actorId, status: p.noticed ? 'noticed' : (Object.keys(p.attempts ?? {}).length ? 'not noticed' : 'no reaction yet'), crossing: p.passedThrough && !p.pathTrusted })), squareLabel: `column ${m.square.col}, row ${m.square.row}`, typeLabel: m.type === 'heavy' ? 'Heavy mine' : 'Mine', isCommand: m.detonation === 'command', own: m.vehicleId === actor?.id })) : [];
   // printed batteries: certify the participating-weapon count to enable full-battery mode (GM)
   const batteryRows = isGM ? stockBatteryReadinessRows(actor).map(r => ({ ...r, stateLabel: r.configured ? `Full battery: ${r.weaponCount} weapons (GM-certified, not canonical)` : 'Independent weapon only: the source prints no weapon count' })) : [];
-  return { canAct, fireModes, hasFireModes: fireModes.length > 0, batteryRows, hasBatteryRows: batteryRows.length > 0, mineLaunchers, hasMineLaunchers: mineLaunchers.length > 0, bombRacks, hasBombRacks: bombRacks.length > 0, mines, hasMines: mines.length > 0, isGM, ammoRows, hasAmmoRows: ammoRows.length > 0, gravityWeapons, hasGravityWeapons: gravityWeapons.length > 0, fields, hasFields: fields.length > 0 };
+  return { canAct, fireModes, hasFireModes: fireModes.length > 0, batteryRows, hasBatteryRows: batteryRows.length > 0, mineLaunchers, hasMineLaunchers: mineLaunchers.length > 0, grantRows, hasGrantRows: grantRows.length > 0, bombRacks, hasBombRacks: bombRacks.length > 0, mines, hasMines: mines.length > 0, isGM, ammoRows, hasAmmoRows: ammoRows.length > 0, gravityWeapons, hasGravityWeapons: gravityWeapons.length > 0, fields, hasFields: fields.length > 0 };
 }
 
 export async function runWeaponAction({ action, itemId, vehicle, actorId = null }, deps) {
   const { service, notify } = deps;
   const weapon = vehicle?.items?.get?.(itemId) ?? [...(vehicle?.items ?? [])].find(i => i.id === itemId);
-  if (!weapon && !/^(ammo-config|battery-config|interdiction-|mine-(detonate|remove|notice|resolve|adjudicate))/.test(String(action))) { notify.warn('That weapon is no longer on the vehicle.'); return { ok: false, reason: 'WEAPON_NOT_FOUND' }; }
+  if (!weapon && !/^(ammo-config|battery-config|interdiction-|buy-ammo|mine-(detonate|remove|notice|resolve|adjudicate))/.test(String(action))) { notify.warn('That weapon is no longer on the vehicle.'); return { ok: false, reason: 'WEAPON_NOT_FOUND' }; }
+  if (action === 'buy-ammo-all' || action === 'buy-ammo') {
+    // both shortcuts open the same store context; the weapon button preselects that launcher (itemId = the launcher's Item id)
+    const { ammunitionOffers } = await import("/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-ammunition-shop.js");
+    const offer = action === 'buy-ammo' ? ammunitionOffers(vehicle).find(r => r.itemId === itemId) : null;
+    if (action === 'buy-ammo' && !offer) { notify.warn('That weapon does not use purchased ammunition.'); return { ok: false, reason: 'LAUNCHER_NOT_A_FINITE_AMMUNITION_WEAPON' }; }
+    const app = await deps.openAmmunitionStore?.(vehicle, { launcherKey: offer?.launcherKey ?? null });
+    return { ok: !!app, app };
+  }
   if (action === 'fire-mode-autofire' || action === 'fire-mode-single') {
     const mode = action === 'fire-mode-autofire' ? 'autofire' : 'single';
     const r = await (service.fireMode ?? service).setMode({ vehicle, weapon, mode });
@@ -77,6 +89,11 @@ export async function runWeaponAction({ action, itemId, vehicle, actorId = null 
     if (!input) return { success: false, reasons: ['CANCELLED'] };
     const r = await service.ammoConfig.configureBattery({ vehicle, groupKey, weaponCount: input.weaponCount, reason: input.reason });
     if (r.success) notify.info('Battery certified for full-battery mode (GM-certified, not canonical).'); else notify.warn(r.reasons?.join(', ') ?? 'refused');
+    return r;
+  }
+  if (action === 'ammo-grant') {
+    const r = await VehicleAmmunitionService.gmGrantStartingAmmunition(vehicle, weapon);
+    if (r.ok) notify.info(`Granted ${r.units} starting round(s) to ${weapon.name}'s reserve (no credits).`); else notify.warn(r.reason);
     return r;
   }
   if (action === 'ion-bomb-drop') {
