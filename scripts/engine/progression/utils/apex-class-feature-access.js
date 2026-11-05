@@ -16,6 +16,11 @@ const CLASS_KEYS = Object.freeze({
   jedimaster: 'jedi_master',
   sithlord: 'sith_lord',
   sithapprentice: 'sith_apprentice',
+  // ProgressionFinalizer stores clazz.id as an owned Class Item's classId;
+  // these 16-hex keys are the preserved _ids in packs/classes.db.
+  '07a64453f95e04f2': 'jedi_master',
+  '2f7cfdc115c640a5': 'sith_lord',
+  '1ba03b2d00245906': 'sith_apprentice',
 });
 const SITH_CLASSES = new Set(['sith_lord', 'sith_apprentice']);
 
