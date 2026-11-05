@@ -824,7 +824,7 @@ export class DroidBuilderViewModelAdapter {
     const appendageIds = new Set((systems.appendages || []).map(appendage => appendage.id));
     const accessoryIds = new Set((systems.accessories || []).map(accessory => accessory.id));
 
-    const requiredLocomotion = item.requiredLocomotion || item.requiresLocomotion || item.requiresLocomtion;
+    const requiredLocomotion = item.requiredLocomotion || item.requiresLocomotion;
     if (requiredLocomotion && requiredLocomotion !== 'any') {
       const allowed = Array.isArray(requiredLocomotion) ? requiredLocomotion : [requiredLocomotion];
       if (!locomotionId || !allowed.includes(locomotionId)) {
