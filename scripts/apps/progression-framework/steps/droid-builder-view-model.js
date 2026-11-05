@@ -10,7 +10,7 @@
  */
 
 import { DROID_SYSTEMS } from '../../../data/droid-systems.js';
-import { resolveDroidBuilderQuote } from '../../../domain/droids/droid-component-quote-authority.js';
+import { quoteDroidBuilderSelection } from '../../../domain/droids/droid-builder-quote-consumer.js';
 import {
   DROID_DEGREE_PACKAGES,
   DROID_SIZE_PACKAGES,
@@ -635,18 +635,13 @@ export class DroidBuilderViewModelAdapter {
 
   static #normalizeAvailableItem(item, context) {
     const speed = this.#calculateSpeed(item, context);
-    const installedShields = (context.droidState?.droidSystems?.accessories || [])
-      .map(accessory => DROID_SYSTEMS.accessories?.shields?.find(def => def.id === accessory.id)?.sr ?? null)
-      .filter(sr => Number.isInteger(sr));
-    const installedShieldSr = installedShields.length === 1 ? installedShields[0] : null;
-    const quote = resolveDroidBuilderQuote({
+    const quote = quoteDroidBuilderSelection({
       definition: item,
-      category: context.actionCategory === 'enhancement' ? context.groupId : context.actionCategory,
+      category: context.actionCategory,
       subcategory: context.subcategory,
       size: context.size,
-      speed,
-      baseLocomotionCost: context.droidState?.droidSystems?.locomotion?.cost ?? null,
-      selectedInstalledShieldRating: installedShieldSr,
+      droidSystems: context.droidState?.droidSystems,
+      speed
     });
     const quoteAllowed = quote.status === 'OK';
     // This grant belongs to the draft chassis, not the published list price.
