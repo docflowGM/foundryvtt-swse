@@ -124,3 +124,13 @@ test('real builder source delegates purchase, repricing and validator to quote a
   assert.doesNotMatch(builder, /_calculateAccessoryCost\(/);
   assert.doesNotMatch(vm, /#calculateAdjustedCost\(/);
 });
+
+test('follower draft does not manufacture six-square movement or free missing-price appendages', () => {
+  const follower = read('scripts/apps/progression-framework/steps/follower-steps/follower-droid-builder-step.js');
+  assert.match(follower, /Number\.isFinite\(selectedSpeed\) && selectedSpeed >= 0/);
+  assert.match(follower, /speed: quotedSpeed/);
+  assert.match(follower, /movement: \{ walk: quotedSpeed \}/);
+  assert.match(follower, /Number\.isFinite\(system\?\.cost\) && system\.cost > 0/);
+  assert.doesNotMatch(follower, /locomotion\?\.speed \|\| 6/);
+  assert.doesNotMatch(follower, /Number\(system\?\.cost \|\| 0\) === 0/);
+});
