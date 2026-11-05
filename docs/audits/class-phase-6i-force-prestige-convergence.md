@@ -37,13 +37,21 @@ Printed rule: each Force Disciple class level grants **two Destiny Points instea
 - The idempotence ledger lives at `flags.swse.forceDiscipleProphetAwards`, keyed by new Force Disciple class level (1–5), and travels in the same plan as the resource grant.
 - **Coverage boundary:** there is not yet a player-facing Prophet vision selection UI or GM vision/destiny adjudication screen. `selections.prophet.visionRequested` or `selections.survey.prophetVisionRequested` is an explicit programmatic selection; it must not silently auto-trigger. General Destiny Point rules for other classes are a separate cross-class gap. Prophet is **resource-grant integrated, vision interaction outstanding**.
 
-## Phase 6I-2 — Imperial Knight prerequisite correction
+## Phase 6I-2 — Jedi Knight prerequisite correction
+
+Core p. 218 requires **both** a self-built lightsaber and membership in the Jedi tradition. The repository previously recorded only membership and lightsaber proficiency; carrying or purchasing a lightsaber is not proof of having constructed one.
+
+- Added `Built Own Lightsaber` to the legacy prerequisite reference and a separate `must-have-built-own-lightsaber` `table_state` record in the structured prerequisite authority.
+- Preserved the independent `must-be-member-jedi` check. Both are **GM-advisory** until a construction-history authority can prove the event; no automatic inventory-based assumption or hard ban was added.
+- This closes the source-data omission in Phase 6B finding **6B-002**. It does not claim live GM approval mechanics are certified.
+
+## Phase 6I-3 — Imperial Knight prerequisite correction
 
 Legacy p. 43 requires both Armor Proficiency (Light) and Armor Proficiency (Medium), Force Sensitivity, lightsaber proficiency, BAB +7, trained Use the Force, and the oath as a **sworn defender of Emperor Roan Fel**. The repo formerly listed only Medium and described an oath to the Fel Empire generically.
 
 - Added the missing Light feat to `data/prestige-class-prerequisites.json` and `scripts/data/prestige-prerequisites.js`.
 - Corrected the printed oath wording. The existing stable `table_state` key `sworn-defender-fel-empire` was retained for compatibility. It remains **advisory/GM-adjudicated**, not guessed from faction tags.
-- The other three classes' prerequisite records were not mutated in this pass; they are included in the source/acceptance census.
+- Force Adept and Force Disciple prerequisite records were not mutated in this pass; they are included in the source/acceptance census.
 
 ## Tests / acceptance gates
 
