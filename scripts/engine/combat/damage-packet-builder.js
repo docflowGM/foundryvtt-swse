@@ -9,6 +9,7 @@ import { damageTypesFromContext } from "/systems/foundryvtt-swse/scripts/engine/
 import { buildDamageComponents } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-component-rules.js";
 import { enhanceWeaponDamagePacket } from "/systems/foundryvtt-swse/scripts/engine/combat/builders/weapon-damage-packet-builder.js";
 import { SkillFeatRuntime } from "/systems/foundryvtt-swse/scripts/engine/feats/skill-feat-runtime-patches.js";
+import { resolveSaboteurDestructive } from "/systems/foundryvtt-swse/scripts/engine/combat/class-saboteur-destructive.js";
 
 function idOf(doc) {
   return doc?.id ?? doc?._id ?? null;
@@ -315,7 +316,15 @@ export function buildDamagePacket({
   workflowContext = null,
   options = {}
 } = {}) {
-  const rawAmount = Math.max(0, asNumber(amount ?? roll?.total, 0));
+  // The damage packet is the shared pre-mitigation authority. Apply
+  // Destructive to the damage roll before any damage-type/target defenses,
+  // rather than doubling the target's post-DR hit point loss.
+  const baseRollAmount = Math.max(0, asNumber(amount ?? roll?.total, 0));
+  const destructive = resolveSaboteurDestructive({
+    attacker, target, targetCategory: getDamageTargetCategory(target),
+    unattendedTarget: options.unattendedTarget === true
+  });
+  const rawAmount = baseRollAmount * destructive.multiplier;
   const context = normalizeDamageWorkflowContext(workflowContext ?? options.combatContext ?? options.workflowContext ?? null, {
     ...options,
     actor: attacker,
@@ -340,7 +349,17 @@ export function buildDamagePacket({
     workflowContext: context,
     options
   });
-  return finalizeDamagePacketForTarget(weaponPacket, target);
+  const packet=finalizeDamagePacketForTarget(weaponPacket, target);
+  if (!destructive.applies) return packet;
+  return {
+    ...packet,
+    flags: {
+      ...(packet.flags ?? {}),
+      saboteurDestructiveApplied:true,
+      saboteurDestructiveMultiplier:2,
+      saboteurDestructiveBaseRoll:baseRollAmount
+    }
+  };
 }
 
 export function buildWeaponDamagePacket(args = {}) {
