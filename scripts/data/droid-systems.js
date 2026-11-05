@@ -149,7 +149,7 @@ export const DROID_SYSTEMS = {
       id: 'extra-legs',
       name: 'Extra Legs',
       description: 'Three or more legs instead of bipedal. Grants 50% higher carrying capacity and +5 stability bonus to resist being knocked prone.',
-      requiresLocomtion: 'walking',
+      requiredLocomotion: 'walking',
       costMultiplier: 2,
       effects: ['Carrying capacity +50%', 'Stability bonus +5'],
       restrictions: ['Requires Walking locomotion system']
