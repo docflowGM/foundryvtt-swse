@@ -6,6 +6,7 @@
  * predictable vocabulary for energy/sonic/force/typed damage context.
  */
 
+import { resolveForceDiscipleIndomitable } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/force-disciple-features.js";
 import { isRangedWeapon as canonicalIsRangedWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { negationExclusions } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-relations.js';
 import { shapeOfWeapon } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js';
@@ -622,7 +623,21 @@ export function isForceTypedDamageContext(packetOrContext = {}) {
 }
 
 export function targetSuppressesForceEffect({ target = null, sourceItem = null, context = {}, packet = null } = {}) {
-  if (!target || !isYuuzhanVongActor(target)) return { suppressed: false };
+  if (!target) return { suppressed: false };
+  // Indomitable is a descriptor immunity, independent of whether the origin
+  // was a Force power. Never infer Mind-Affecting merely from source names or
+  // from the fact that the actor is a Force-user.
+  const mind = resolveForceDiscipleIndomitable(target, {
+    ...context, ...(packet ?? {}), sourceItem
+  });
+  if (mind.immune) return {
+    suppressed: true,
+    reason: `${target.name ?? 'Target'} is immune to Mind-Affecting effects (Indomitable).`,
+    source: 'Force Disciple — Indomitable',
+    targetId: target.id ?? target._id ?? null,
+    targetName: target.name ?? '',
+  };
+  if (!isYuuzhanVongActor(target)) return { suppressed: false };
   const forceContext = isForceTypedDamageContext({ ...(packet ?? context ?? {}), sourceItem, item: sourceItem, forcePower: sourceItem?.type === 'force-power' || context?.forcePower === true });
   if (!forceContext) return { suppressed: false };
   return {
