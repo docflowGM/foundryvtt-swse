@@ -93,7 +93,6 @@ export const PRESTIGE_PREREQUISITES = {
         },
         requirements: [
             { type: 'bab', min: 7 },
-            { type: 'feat', key: 'armor-proficiency-light', name: 'Armor Proficiency (Light)' },
             { type: 'feat', key: 'armor-proficiency-medium', name: 'Armor Proficiency (Medium)' },
             { type: 'feat', key: 'martial-arts-i', name: 'Martial Arts I' },
             { type: 'or', conditions: [
@@ -544,6 +543,7 @@ export const PRESTIGE_PREREQUISITES = {
         requirements: [
             { type: 'bab', min: 7 },
             { type: 'skill', key: 'use_the_force', name: 'Use the Force', trained: true },
+            { type: 'feat', key: 'armor-proficiency-light', name: 'Armor Proficiency (Light)' },
             { type: 'feat', key: 'armor-proficiency-medium', name: 'Armor Proficiency (Medium)' },
             { type: 'force_sensitive', required: true },
             { type: 'feat', key: 'weapon-proficiency', name: 'Weapon Proficiency',
