@@ -143,3 +143,18 @@ test('Indomitable is routed at the existing Force-effect suppression boundary',(
   const power=read('scripts/engine/force/force-power-effects-engine.js');
   assert.match(power,/targetSuppressesForceEffect\(/);
 });
+
+test('Imperial Knight prerequisites require both armor proficiency feats and oath to Emperor Roan Fel',()=>{
+  const json=JSON.parse(read('data/prestige-class-prerequisites.json'));
+  const imperial=json['Imperial Knight'];
+  assert.deepEqual(imperial.feats.slice(0,2),['Armor Proficiency (Light)','Armor Proficiency (Medium)']);
+  assert.deepEqual(imperial.other,['Sworn Defender of Emperor Roan Fel']);
+  const source=read('scripts/data/prestige-prerequisites.js');
+  const j=source.indexOf("'Imperial Knight':");
+  const entry=source.slice(j,source.indexOf("'Shaper':",j));
+  assert.ok(j>=0);
+  assert.match(entry,/armor-proficiency-light/);
+  assert.match(entry,/armor-proficiency-medium/);
+  assert.match(entry,/Must be a sworn defender of Emperor Roan Fel/);
+  assert.match(entry,/severity: 'advisory'/,'oath must require GM adjudication rather than inferred membership');
+});
