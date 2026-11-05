@@ -157,11 +157,21 @@ ok('domain isolation: skill/force/force-power/initiative/ability roll models car
   );
   assert.match(
     source,
-    /const total = base \+ custom;/,
-    'the non-attack preview total must be exactly base + custom -- no situational contribution'
+    /const total = base \+ custom \+ classBonus;/,
+    'non-attack preview may include only the verified class skill bonus, not attack-context toggles'
+  );
+  assert.match(
+    source,
+    /const classBonus = model\?\.rollType === 'skill'/,
+    'only skill roll previews can receive the class-specific situational bonus'
+  );
+  assert.match(
+    source,
+    /shaperLoreBonus\(actor,model\.skillKey,/,
+    'the class bonus must come from the strict Shaper Lore rule, not arbitrary attack toggles'
   );
 }
-ok('the stale non-attack live-preview fallback arithmetic is removed from source; the non-attack preview total is exactly base + custom');
+ok('the stale attack-context preview arithmetic is removed; skill-only Shaper Lore may contribute without unlocking attack toggles');
 
 // ─── SECTION 3 — Higher Ground removed entirely ───────────────────────────
 
