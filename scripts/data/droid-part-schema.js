@@ -336,10 +336,12 @@ const RAW_OVERLAY = {
     description: 'Expands the Droid’s shield by one adjacent square so an adjacent Medium or smaller ally can use the Droid’s SR.',
     rules: { expandsShieldAdjacentSquares: 1 }
   },
-  'hardened-systems-x2': { category: DROID_PART_CATEGORIES.ACCESSORY, slot: 'core.hardened', modifiers: [{ target: 'hp.max', type: 'equipment', value: 20 }, { target: 'defense.damageThreshold', type: 'equipment', value: 10 }] },
-  'hardened-systems-x3': { category: DROID_PART_CATEGORIES.ACCESSORY, slot: 'core.hardened', modifiers: [{ target: 'hp.max', type: 'equipment', value: 30 }, { target: 'defense.damageThreshold', type: 'equipment', value: 15 }] },
-  'hardened-systems-x4': { category: DROID_PART_CATEGORIES.ACCESSORY, slot: 'core.hardened', modifiers: [{ target: 'hp.max', type: 'equipment', value: 40 }, { target: 'defense.damageThreshold', type: 'equipment', value: 20 }] },
-  'hardened-systems-x5': { category: DROID_PART_CATEGORIES.ACCESSORY, slot: 'core.hardened', modifiers: [{ target: 'hp.max', type: 'equipment', value: 50 }, { target: 'defense.damageThreshold', type: 'equipment', value: 25 }] },
+  // The published bonuses are only in DROID_SYSTEMS.hpBonus/dtBonus.
+  // getDroidPartDefinition() projects them into ModifierEngine's live targets.
+  'hardened-systems-x2': { category: DROID_PART_CATEGORIES.ACCESSORY, slot: 'core.hardened' },
+  'hardened-systems-x3': { category: DROID_PART_CATEGORIES.ACCESSORY, slot: 'core.hardened' },
+  'hardened-systems-x4': { category: DROID_PART_CATEGORIES.ACCESSORY, slot: 'core.hardened' },
+  'hardened-systems-x5': { category: DROID_PART_CATEGORIES.ACCESSORY, slot: 'core.hardened' },
   'taser': {
     category: DROID_PART_CATEGORIES.WEAPON,
     slot: 'accessory.weapon',
@@ -498,6 +500,22 @@ function firstFinite(...values) {
   return null;
 }
 
+/**
+ * Exactly one source of numeric HP and damage-threshold bonuses.
+ * ModifierEngine consumes hydrateDroidPart().modifiers, which are computed
+ * here from source fields, never from a second manually copied table.
+ */
+function hardenedSystemSourceModifiers(source) {
+  if (source?.sourcePath !== 'accessories.hardenedsystems') return null;
+  const hp = source.hpBonus;
+  const dt = source.dtBonus;
+  if (!Number.isFinite(hp) || !Number.isFinite(dt) || hp <= 0 || dt <= 0) return [];
+  return [
+    { target: 'hp.max', type: 'equipment', value: hp },
+    { target: 'defense.damageThreshold', type: 'equipment', value: dt }
+  ];
+}
+
 export function getDroidPartDefinition(value) {
   const key = canonicalPartId(value?.id ?? value?.name ?? value);
   if (!key) return null;
@@ -515,6 +533,7 @@ export function getDroidPartDefinition(value) {
   if (!source && !overlay) return null;
   const category = overlay?.category ?? sourceCategoryFromPath(source?.sourcePath);
   const slot = overlay?.slot ?? defaultSlotForCategory(category, source?.sourcePath);
+  const sourceModifiers = hardenedSystemSourceModifiers(source);
   return {
     id: key,
     name: source?.name ?? overlay?.weaponProfile?.name ?? labelize(key),
@@ -532,6 +551,9 @@ export function getDroidPartDefinition(value) {
     features: source?.features ?? [],
     restrictions: source?.restrictions ?? [],
     ...overlay,
+    // Source-derived hardened bonuses override presentation metadata; they
+    // cannot be hand-authored as a competing numeric engine.
+    ...(sourceModifiers !== null ? { modifiers: sourceModifiers } : {}),
     category,
     slot,
     source
