@@ -11,24 +11,29 @@
  * Permission: GM executes; user must affirm sight/hearing in encounter UI.
  */
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
+import { ActionEconomyConsumption } from '/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js';
 import { TalentDB } from '/systems/foundryvtt-swse/scripts/data/talent-db.js';
 import { TalentTreeDB } from '/systems/foundryvtt-swse/scripts/data/talent-tree-db.js';
 import { eligibleOfficerShareTalents, persistedOfficerShareTalents } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/officer-share-talent-authority.js';
 import { planOfficerShareTalentAction } from '/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-action-rules.js';
+import { resolveOfficerShareTalentScene } from '/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-scene.js';
+import { executeOfficerShareTalentExpiry } from '/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-cleanup-plan.js';
+import { executeOfficerShareTalentTransaction } from '/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-transaction.js';
 
 const locks=new Set();
 import {
-  asItems, ownOfficerTalentItem, buildOfficerShareTalentGrant
+  asItems, ownOfficerTalentItem, buildOfficerShareTalentGrant,
+  uniqueOfficerShareTalentActors
 } from '/systems/foundryvtt-swse/scripts/engine/combat/officer-share-talent-grant-plan.js';
 export {ownOfficerTalentItem, buildOfficerShareTalentGrant};
 
 const provenance=item=>item?.flags?.swse?.officerSharedTalent || null;
 const dayFromClock=time=>Number.isFinite(Number(time))?Math.floor(Number(time)/86400):null;
-const uniqueActors=(actors)=>Array.from(new Map(actors.map(a=>[a.id,a])).values());
+const uniqueActors=uniqueOfficerShareTalentActors;
 
 /** Strict GM runtime service. Returns successful delivery only after all legs commit. */
 export class OfficerShareTalentService {
-  static async activate({officer,talentId,combat,recipientActors,recipientProofs}={}) {
+  static async activate({officer,talentId,combat,recipientTokenIds,confirmedSenses=false,confirmedAllies=false}={}) {
     if(globalThis.game?.user?.isGM!==true)throw new Error('GM authorization is required to apply shared talent benefits');
     if(!officer?.id||!combat?.id||combat.started!==true)throw new Error('Share Talent requires an active encounter and Officer');
     if(locks.has(officer.id))throw new Error('Officer Share Talent already in progress');
@@ -44,15 +49,17 @@ export class OfficerShareTalentService {
       if(classes.length!==1)throw new Error('Unique Officer class level unavailable');
       const level=Number(classes[0].system?.level);
       const combatant=Array.from(combat.combatants||[]).find(c=>c.actor?.id===officer.id);
-      if(!combatant||combatant.hasAction?.('standard')!==true) {
-        throw new Error('Officer has no available standard action in the encounter');
+      if(!combatant||combat.combatant?.id!==combatant.id||combatant.canAct!==true
+        ||globalThis.game?.combat?.id!==combat.id) {
+        throw new Error('Officer is not able to act on the current encounter turn');
       }
       const day=dayFromClock(globalThis.game?.time?.worldTime);
       if(day===null)throw new Error('Current campaign day is unavailable');
       const previous=officer.flags?.swse?.classFeatures?.officer?.dailyShares||[];
       if(!Array.isArray(previous))throw new Error('Malformed Officer daily Share Talent usage');
-      const recipients=uniqueActors(Array.isArray(recipientActors)?recipientActors:[]);
-      if(recipients.length!==(recipientActors?.length||0))throw new Error('Duplicate recipient identities');
+      const {recipientActors:recipients,recipientProofs}=resolveOfficerShareTalentScene({
+        officer,combat,recipientTokenIds,confirmedSenses,confirmedAllies,
+      });
       const plan=planOfficerShareTalentAction({
         selections:persistedOfficerShareTalents(officer),
         usesToday:previous.filter(u=>u.day===day),talentId,officerLevel:level,
@@ -60,7 +67,7 @@ export class OfficerShareTalentService {
       });
       if(!plan.ok)throw new Error(plan.errors.join('; '));
       if(plan.plan.recipientActorIds.length!==recipients.length ||
-        !plan.plan.recipientActorIds.every(id=>recipients.some(r=>r?.id===id))){
+        !plan.plan.recipientActorIds.every(id=>recipients.some(r=>String(r?.uuid||r?.id)===id))){
         throw new Error('Recipient proof identities do not match chosen actors');
       }
       const owned=ownOfficerTalentItem(officer,talentId);
@@ -69,39 +76,26 @@ export class OfficerShareTalentService {
           officer,recipient,talent:owned,selection,encounterId:combat.id,day,
         }),
       }));
-      // Capture ALL actor states before any mutation; recover every affected
-      // actor if a later leg throws. No direct Item.create() outside ActorEngine.
-      const actors=uniqueActors([officer,...recipients]);
-      const snapshots=new Map();
-      for(const actor of actors)snapshots.set(actor.id,await ActorEngine.captureRecoverySnapshot(actor));
-      const changed=[];
-      try {
-        for(const entry of additions){
-          if(!entry.item)continue; // already owns this talent; no duplicate
-          await ActorEngine.applyMutationPlan(entry.actor,{
-            add:{items:[entry.item]},
-          },{source:'OfficerShareTalentService.activate.grant',transactional:true});
-          changed.push(entry.actor);
-        }
-        await ActorEngine.applyMutationPlan(officer,{
-          set:{'flags.swse.classFeatures.officer.dailyShares':[
-            ...previous.filter(p=>p.day===day),
-            {talentId,day,encounterId:combat.id,recipientActorIds:recipients.map(a=>a.id)},
-          ]},
-        },{source:'OfficerShareTalentService.activate.usage',transactional:true});
-        changed.push(officer);
-        await combatant.useAction('standard');
-      }catch(error){
-        const recovery=await Promise.allSettled([...changed].reverse().map(async actor=>{
-          const result=await ActorEngine.restoreSnapshotVerified(actor,snapshots.get(actor.id),'OfficerShareTalentService.rollback');
-          return {actorId:actor.id,verdict:result.verdict};
-        }));
-        if(recovery.some(r=>r.status!=='fulfilled'||r.value.verdict!=='EXACT')){
-          throw new Error(`Share Talent mutation INDETERMINATE; GM review required: ${error?.message||error}`);
-        }
-        throw error;
-      }
-      return {success:true,talentId,recipientActorIds:recipients.map(a=>a.id),
+      await executeOfficerShareTalentTransaction({
+        officer,additions,actorEngine:ActorEngine,
+        usage:[
+          ...previous.filter(p=>p.day===day),
+          {talentId,day,encounterId:combat.id,recipientActorIds:recipients.map(a=>String(a?.uuid||a?.id))},
+        ],
+        validateBeforeSpend:()=>{
+          // ActorEngine operations may have awaited other Foundry events;
+          // reject if the combat advanced to another turn before expenditure.
+          if(globalThis.game?.combat?.id!==combat.id || combat.started!==true
+            ||combat.combatant?.id!==combatant.id || combatant.canAct!==true) {
+            throw new Error('Officer Share Talent turn changed before action expenditure');
+          }
+        },
+        spendStandardAction:()=>ActionEconomyConsumption.spend(officer,'standard',{
+          source:'officer.shareTalent',actionName:'Officer Share Talent',
+          talentId,encounterId:combat.id,
+        },{notify:true}),
+      });
+      return {success:true,talentId,recipientActorIds:recipients.map(a=>String(a?.uuid||a?.id)),
         encounterId:combat.id,day,temporaryUntil:'end-of-encounter'};
     }finally{locks.delete(officer.id);}
   }
@@ -109,16 +103,15 @@ export class OfficerShareTalentService {
   static async expireEncounter(combatId,{actors=null}={}) {
     if(globalThis.game?.user?.isGM!==true)return {skipped:'GM required'};
     const all=actors||Array.from(globalThis.game?.actors||[]);
-    const outcome=[];
-    for(const actor of all){
-      const expired=asItems(actor.items).filter(item=>provenance(item)?.encounterId===combatId);
-      if(!expired.length)continue;
-      await ActorEngine.applyMutationPlan(actor,{
-        delete:{items:expired.map(x=>x.id||x._id)},
-      },{source:'OfficerShareTalentService.expireEncounter',transactional:true});
-      outcome.push({actorId:actor.id,removed:expired.length});
+    const report=await executeOfficerShareTalentExpiry({
+      actors:all,encounterId:combatId,
+      applyMutationPlan:(actor,plan,options)=>ActorEngine.applyMutationPlan(actor,plan,options),
+    });
+    if(!report.success){
+      const identities=report.failures.map(f=>f.actorUuid||f.actorId||'unknown').join(', ');
+      throw new Error(`Share Talent cleanup incomplete; GM review required for ${report.failures.length} actor(s): ${identities}`);
     }
-    return {expired:outcome};
+    return report;
   }
 }
 

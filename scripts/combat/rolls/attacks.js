@@ -31,6 +31,7 @@ import { resolveAttackDomain } from "/systems/foundryvtt-swse/scripts/engine/com
 import { GrappleStateEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-engine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { sceneCommandCoverBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/class-command-cover.js";
+import { isSuppressCoverContext } from "/systems/foundryvtt-swse/scripts/combat/combat-status.js";
 import { normalizeRangeBand } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/canonical-range.js";
 import { SIZE_RANK } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/condition-policy.js";
 import { WeaponRuntimeError, ERROR_CODES, reportWeaponRuntimeError } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
@@ -592,6 +593,7 @@ export function getTargetDefense(actor = null, defenseType = 'reflex', options =
   if (key === 'dc') return null;
   const base = getTargetDefenseValue(actor, key);
   if (!Number.isFinite(base) || key !== 'reflex') return base;
+  if (isSuppressCoverContext(options) || isSuppressCoverContext(options.targetContext)) return base;
   // Command Cover is contextual to CURRENT adjacent ally positions. Do not
   // alter or cache the actor's permanent derived Reflex Defense.
   const commandCover = sceneCommandCoverBonus(actor, { tokenId: options.tokenId ?? null });
@@ -602,9 +604,10 @@ export function getTargetDefense(actor = null, defenseType = 'reflex', options =
 export function resolveTargetContext(options = {}, fallbackTarget = null) {
   const ctx = options.targetContext ?? null;
   const mode = String(ctx?.mode || '').toLowerCase();
+  const suppressesCover = isSuppressCoverContext(options) || isSuppressCoverContext(ctx);
   if (mode === 'manual') {
     const value = Number(ctx?.defenseValue);
-    return { target: null, targetName: ctx?.label || 'Manual Target', defenseType: normalizeDefenseKey(ctx?.defenseType || 'reflex'), defenseValue: Number.isFinite(value) ? value + Number(ctx?.coverBonus || 0) : null, mode: 'manual', adjustment: 0 };
+    return { target: null, targetName: ctx?.label || 'Manual Target', defenseType: normalizeDefenseKey(ctx?.defenseType || 'reflex'), defenseValue: Number.isFinite(value) ? value + (suppressesCover ? 0 : Number(ctx?.coverBonus || 0)) : null, mode: 'manual', adjustment: 0 };
   }
   if (mode === 'none') {
     return { target: null, targetName: 'GM adjudication', defenseType: normalizeDefenseKey(ctx?.defenseType || 'reflex'), defenseValue: null, mode: 'none', adjustment: 0 };
@@ -612,10 +615,10 @@ export function resolveTargetContext(options = {}, fallbackTarget = null) {
   const target = fallbackTarget;
   const defenseType = normalizeDefenseKey(ctx?.defenseType || 'reflex');
   const base = getTargetDefenseValue(target, defenseType);
-  const commandCover = defenseType === 'reflex'
+  const commandCover = defenseType === 'reflex' && !suppressesCover
     ? sceneCommandCoverBonus(target, { tokenId: ctx?.tokenId || null })
     : 0;
-  const ordinaryCover = defenseType === 'reflex' ? Math.max(0, Number(ctx?.coverBonus || 0)) : 0;
+  const ordinaryCover = defenseType === 'reflex' && !suppressesCover ? Math.max(0, Number(ctx?.coverBonus || 0)) : 0;
   const coverBonus = Math.max(commandCover, ordinaryCover);
   // Purely additive, opt-in adjustment on top of the canonical target
   // defense value -- e.g. a Grab/Grapple-specific Reflex resistance bonus

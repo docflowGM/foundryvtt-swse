@@ -2,10 +2,25 @@
 const permittedAvailability = new Set(['restricted','military']);
 const assetTypes = new Set(['vehicle']); // Restricted/military vehicles, not droid minions.
 
+// Store V2 also indexes world documents. Resources grants must use published
+// compendium sources, not arbitrary GM/world entries with editable price tags.
+function isCompendiumSource(item) {
+  const pack = typeof item?.sourcePack === 'string' ? item.sourcePack.trim() : '';
+  const uuid = typeof item?.sourceUuid === 'string' ? item.sourceUuid.trim() : '';
+  const origin = item?.doc?.__storeSource;
+  // The loader marks the ACTUAL collection from which it read the document.
+  // Imported world copies may preserve flags.core.sourceId, so the derived
+  // StoreItem sourcePack/sourceUuid alone cannot certify compendium origin.
+  return !!pack && pack !== 'world' && uuid.startsWith(`Compendium.${pack}.`)
+    && origin?.source === 'compendium'
+    && origin.pack === pack && origin.uuid === uuid;
+}
+
 export function enforcerEligibleInventory(index, resolveSourceDocument) {
   if (typeof resolveSourceDocument !== 'function') throw new Error('Canonical source data resolver required');
   return Array.from(index?.allItems || []).filter(item =>
-    permittedAvailability.has(String(item?.availability || '').toLowerCase().trim())
+    isCompendiumSource(item)
+    && permittedAvailability.has(String(item?.availability || '').toLowerCase().trim())
     && Number.isSafeInteger(Number(item?.cost)) && Number(item.cost) > 0
     && item?.costStatus === 'priced'
     && !!resolveSourceDocument(item)

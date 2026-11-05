@@ -58,7 +58,7 @@ export function normalizeDefensiveMode(value, raw = {}) {
   return 'normal';
 }
 
-function isSuppressCoverContext(context = {}) {
+export function isSuppressCoverContext(context = {}) {
   return context?.suppressesCover === true
     || context?.ignoreCover === true
     || context?.attackOptions?.suppressesCover === true

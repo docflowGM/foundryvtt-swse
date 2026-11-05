@@ -3868,20 +3868,20 @@ function checkDarkSideScore(actor, requirement, className = null) {
     if (!actor) {return { met: true };}
 
     const darkSideScore = DSPEngine.getValue(actor);
-    let required = SchemaAdapters.getAbilityScore(actor, 'wis');
+    // Project rule: 1 DSP meets the numeric Sith Apprentice/Sith Lord gate.
+    // GM alone adjudicates membership and whether someone has narratively
+    // fallen. A Wisdom-sized DSP threshold must not silently reappear through
+    // a legacy world setting or a stale prerequisite record.
+    const sithClass = className === 'Sith Apprentice' || className === 'Sith Lord';
+    const numeric = typeof requirement === 'number' && Number.isFinite(requirement)
+        ? requirement : null;
+    const required = sithClass ? 1
+        : numeric !== null ? numeric : SchemaAdapters.getAbilityScore(actor, 'wis');
 
-    // Use house rule setting for Sith Apprentice or Sith Lord
-    if (className === 'Sith Apprentice') {
-        required = DSPEngine.getSithApprenticeMinimumDSP(actor);
-    } else if (className === 'Sith Lord') {
-        required = DSPEngine.getSithLordMinimumDSP(actor);
-    }
-
-    // Requirement: Dark Side Score must meet the minimum
     return {
         met: DSPEngine.meetsThreshold(actor, required),
         actual: darkSideScore,
-        required: required
+        required,
     };
 }
 

@@ -76,9 +76,9 @@ game.settings.register('foundryvtt-swse', 'performanceDiagnostics', {
 
   game.settings.register("foundryvtt-swse", "sithApprenticeMinimumDSP", {
     name: "Sith Apprentice Dark Side Score Requirement",
-    hint: "Determines the Dark Side Score requirement to qualify for Sith Apprentice prestige class.",
+    hint: "Legacy setting (inactive): Sith Apprentice now requires 1 DSP.",
     scope: "world",
-    config: true,
+    config: false,
     type: String,
     choices: {
       "minimum": "At least 1 (Dark Side Score)",
@@ -88,14 +88,14 @@ game.settings.register('foundryvtt-swse', 'performanceDiagnostics', {
       "75percent": "75% of Wisdom",
       "100percent": "100% of Wisdom (Default - Dark Side Score = Wisdom)"
     },
-    default: "100percent"
+    default: "minimum"
   });
 
   game.settings.register("foundryvtt-swse", "sithLordMinimumDSP", {
     name: "Sith Lord Dark Side Score Requirement",
-    hint: "Determines the Dark Side Score requirement to qualify for Sith Lord prestige class.",
+    hint: "Legacy setting (inactive): Sith Lord now requires 1 DSP.",
     scope: "world",
-    config: true,
+    config: false,
     type: String,
     choices: {
       "100percent": "100% of Wisdom (Default - Dark Side Score = Wisdom, RAW)",
@@ -105,7 +105,7 @@ game.settings.register('foundryvtt-swse', 'performanceDiagnostics', {
       "10percent": "10% of Wisdom",
       "minimum": "At least 1 (Dark Side Score)"
     },
-    default: "100percent"
+    default: "minimum"
   });
 
   // Dark Side Score edit-permission policy (Phase 3)

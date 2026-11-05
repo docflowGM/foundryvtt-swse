@@ -152,10 +152,10 @@
       "Weapon Proficiency (Lightsabers)"
     ],
     "other": [
-      "Dark Side Score Equal to Wisdom",
+      "Dark Side Score at least 1 (project house rule; GM adjudicates Sith membership)",
       "Member of The Sith"
     ],
-    "description": "Character Level 7, Trained in Use the Force, Force Sensitivity, Weapon Proficiency (Lightsabers), Dark Side Score Equal to Wisdom, Member of The Sith"
+    "description": "Character Level 7, Trained in Use the Force, Force Sensitivity, Weapon Proficiency (Lightsabers), Dark Side Score at least 1 (project house rule; GM adjudicates Sith membership), Member of The Sith"
   },
   "Sith Lord": {
     "level": 12,
@@ -168,10 +168,10 @@
     ],
     "techniques": 1,
     "other": [
-      "Dark Side Score Equal to Wisdom",
+      "Dark Side Score at least 1 (project house rule; GM adjudicates Sith membership)",
       "Member of The Sith"
     ],
-    "description": "Character Level 12, Trained in Use the Force, Force Sensitivity, Weapon Proficiency (Lightsabers), 1 Force Technique, Dark Side Score Equal to Wisdom, Member of The Sith"
+    "description": "Character Level 12, Trained in Use the Force, Force Sensitivity, Weapon Proficiency (Lightsabers), 1 Force Technique, Dark Side Score at least 1 (project house rule; GM adjudicates Sith membership), Member of The Sith"
   },
   "Corporate Agent": {
     "level": 7,

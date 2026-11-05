@@ -15,6 +15,7 @@ import { storeItemDocumentData } from '/systems/foundryvtt-swse/scripts/engine/s
 import { StoreAcquisitionService } from '/systems/foundryvtt-swse/scripts/engine/store/acquisition-service.js';
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { pendingEnforcerResources } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/enforcer-resources-entitlement.js';
+import { withEnforcerResourcesActorLock } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/enforcer-resources-transaction-guard.js';
 
 import {
   enforcerEligibleInventory as planEligibleInventory,
@@ -38,14 +39,19 @@ export class EnforcerEquipmentDelivery {
   }
   static async defer({actor,classLevel}={}) {
     if(globalThis.game?.user?.isGM!==true)throw new Error('Enforcer resource deferral requires a GM');
-    const plan=planEnforcerEquipmentDeferral({entries:pendingEnforcerResources(actor),classLevel});
-    await ActorEngine.applyMutationPlan(actor,{set:{'flags.swse.classFeatures.enforcer.resources':plan.entries}},
-      {source:'EnforcerEquipmentDelivery.defer',transactional:true});
-    return plan.current;
+    if(!actor?.isOwner)throw new Error('GM lacks ownership rights to recipient actor');
+    return withEnforcerResourcesActorLock(actor,async()=>{
+      // Read the ledger only INSIDE the shared decision lock.
+      const plan=planEnforcerEquipmentDeferral({entries:pendingEnforcerResources(actor),classLevel});
+      await ActorEngine.applyMutationPlan(actor,{set:{'flags.swse.classFeatures.enforcer.resources':plan.entries}},
+        {source:'EnforcerEquipmentDelivery.defer',transactional:true});
+      return plan.current;
+    });
   }
   static async deliver({actor,classLevel,selected,location}={}) {
     if(globalThis.game?.user?.isGM!==true)throw new Error('Enforcer equipment delivery requires a GM');
     if(!actor?.isOwner)throw new Error('GM lacks ownership rights to recipient actor');
+    return withEnforcerResourcesActorLock(actor,async()=>{
     const index=await this.getEligibleInventory();
     const plan=planEnforcerEquipmentDelivery({
       actor,entries:pendingEnforcerResources(actor),classLevel,selected,index,location,
@@ -66,5 +72,6 @@ export class EnforcerEquipmentDelivery {
       create:{actors:create},set,add:{items:plan.add},
     },{source:'EnforcerEquipmentDelivery.deliver',transactional:true});
     return {spent:plan.total,budget:plan.budget,delivered:plan.receipt};
+    });
   }
 }
