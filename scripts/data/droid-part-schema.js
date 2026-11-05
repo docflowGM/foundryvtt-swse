@@ -30,6 +30,7 @@
 
 import { DROID_SYSTEMS } from "/systems/foundryvtt-swse/scripts/data/droid-systems.js";
 import { getDroidPriceFactor, resolveSourceReviewedDroidQuote } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-component-quote-authority.js";
+import { DROID_SIZE_PACKAGES } from "/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-trait-rules.js";
 
 export const DROID_PART_CATEGORIES = Object.freeze({
   PROCESSOR: 'processor',
@@ -512,14 +513,30 @@ function firstFinite(...values) {
  * ModifierEngine consumes hydrateDroidPart().modifiers, which are computed
  * here from source fields, never from a second manually copied table.
  */
-function hardenedSystemSourceModifiers(source) {
+function hardenedSystemSourceModifiers(source, size, installedIds = new Set()) {
   if (source?.sourcePath !== 'accessories.hardenedsystems') return null;
-  const hp = source.hpBonus;
-  const dt = source.dtBonus;
-  if (!Number.isFinite(hp) || !Number.isFinite(dt) || hp <= 0 || dt <= 0) return [];
+  const multiplier = source.multiplier;
+  const baseline = DROID_SIZE_PACKAGES[String(size ?? '').toLowerCase()];
+  const large = DROID_SIZE_PACKAGES.large;
+  // Core pp. 187, 193-194: the published tier MULTIPLIES the normal
+  // size HP and DT. Since the ordinary size amount is already present in
+  // derived character statistics, modifiers contribute ONLY the difference.
+  // hpBonus/dtBonus in this source catalog represent the Large-size TOTAL;
+  // verify them rather than incorrectly adding that total a second time.
+  if (!Number.isInteger(multiplier) || multiplier < 2 || multiplier > 5
+      || source.hpBonus !== large.hitPointAdjustment * multiplier
+      || source.dtBonus !== large.damageThresholdBonus * multiplier
+      || !baseline || baseline.hitPointAdjustment <= 0 || baseline.damageThresholdBonus <= 0) {
+    return [];
+  }
+  const others = [...installedIds].filter(id =>
+    /^hardened-systems-x[2-5]$/.test(id) && id !== source.id);
+  if (others.length) return []; // Two distinct tiers are never additive.
+  const hpExtra = baseline.hitPointAdjustment * (multiplier - 1);
+  const dtExtra = baseline.damageThresholdBonus * (multiplier - 1);
   return [
-    { target: 'hp.max', type: 'equipment', value: hp },
-    { target: 'defense.damageThreshold', type: 'equipment', value: dt }
+    { target: 'hp.max', type: 'equipment', value: hpExtra },
+    { target: 'defense.damageThreshold', type: 'equipment', value: dtExtra }
   ];
 }
 
@@ -540,7 +557,6 @@ export function getDroidPartDefinition(value) {
   if (!source && !overlay) return null;
   const category = overlay?.category ?? sourceCategoryFromPath(source?.sourcePath);
   const slot = overlay?.slot ?? defaultSlotForCategory(category, source?.sourcePath);
-  const sourceModifiers = hardenedSystemSourceModifiers(source);
   return {
     id: key,
     name: source?.name ?? overlay?.weaponProfile?.name ?? labelize(key),
@@ -558,9 +574,6 @@ export function getDroidPartDefinition(value) {
     features: source?.features ?? [],
     restrictions: source?.restrictions ?? [],
     ...overlay,
-    // Source-derived hardened bonuses override presentation metadata; they
-    // cannot be hand-authored as a competing numeric engine.
-    ...(sourceModifiers !== null ? { modifiers: sourceModifiers } : {}),
     category,
     slot,
     source
@@ -649,7 +662,9 @@ export function hydrateDroidPart(part = {}, options = {}) {
   const def = getDroidPartDefinition(part.id ?? part.name ?? part.system?.droidPartId ?? part.flags?.swse?.droidPartId);
   const id = normalizeDroidPartId(part.id ?? part.name ?? def?.id ?? 'droid-part');
   const installedIds = new Set((options.installedIds ?? []).map(normalizeDroidPartId));
-  const modifiers = (def?.modifiers ?? []).map(mod => ({
+  const size = getActorDroidSize(options.actor ?? null, options.size ?? null);
+  const hardened = hardenedSystemSourceModifiers(def?.source, size, installedIds);
+  const modifiers = (hardened !== null ? hardened : (def?.modifiers ?? [])).map(mod => ({
     ...mod,
     active: !(Array.isArray(mod.requiresAllIds) && mod.requiresAllIds.some(req => !installedIds.has(normalizeDroidPartId(req))))
   }));
