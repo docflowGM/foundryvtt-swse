@@ -9,7 +9,7 @@ Every feat/weapon data file under `data/` and `packs/` is classified exactly onc
 | GENERATED_RUNTIME_INDEX | 1 |
 | GENERATED_COMPATIBILITY | 3 |
 | MIGRATION_ALIAS_ONLY | 2 |
-| HISTORICAL_AUDIT_EVIDENCE | 451 |
+| HISTORICAL_AUDIT_EVIDENCE | 452 |
 | DEAD_REMOVE | 0 |
 | OTHER_DOMAIN_DATA | 16 |
 | REFERENCE_BEARING_DOMAIN_DATA | 14 |
@@ -130,4 +130,4 @@ Guardrail (enforced by `tools/verify-canonical-production.mjs`): neither class m
 | `packs/weapons-simple.db` | GENERATED_PRODUCTION | tools/build-weapon-production.mjs from data/canonical/weapons.json |
 | `packs/weapons.db` | GENERATED_PRODUCTION | tools/build-weapon-production.mjs from data/canonical/weapons.json |
 
-Audit evidence files under `data/audits/` (403) are all HISTORICAL_AUDIT_EVIDENCE; listed individually in the JSON.
+Audit evidence files under `data/audits/` (404) are all HISTORICAL_AUDIT_EVIDENCE; listed individually in the JSON.
