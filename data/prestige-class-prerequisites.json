@@ -107,9 +107,10 @@
       "Weapon Proficiency (Lightsabers)"
     ],
     "other": [
+      "Built Own Lightsaber",
       "Member of The Jedi"
     ],
-    "description": "BAB +7, Trained in Use the Force, Force Sensitivity, Weapon Proficiency (Lightsabers), Member of The Jedi"
+    "description": "BAB +7, Trained in Use the Force, Force Sensitivity, Weapon Proficiency (Lightsabers), Built Own Lightsaber, Member of The Jedi"
   },
   "Jedi Master": {
     "level": 12,
