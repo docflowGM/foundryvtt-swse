@@ -43,3 +43,10 @@ Found and fixed in this pass:
 Remaining, not duplicate authorities: `vehicle-dogfighting.js` and `vehicle-collisions.js` are reachable subsystems; collisions deal damage through `DamageEngine.applyDamage`. Manual GM field edits on the vehicle sheet go through `ActorEngine.updateActor`.
 
 Live Foundry V13 verification: **pending** (no runtime available); nothing here certifies runtime behaviour.
+
+## Scene weapons, mine reactions and ion bombs (2026-11-05)
+
+- **Scene state** (mines, interdiction fields): `vehicle-scene-state.js` is the only Scene writer: key-level records, a per-scene lock for read-check-write claims, active-GM-only hooks.
+- **Mine detection (V-P6C-15):** stored `1d20 + 5` DC; entry opens a pending entry; notice reactions use `rollSkill` (pilot Perception) and `VehicleOperatingContextService.rollSensorCheck` (operator Use Computer) and spend a reaction through `ActionEconomyConsumption`; `resolveEntry` settles through the same atomic `claimMine`.
+- **Ion bombs (V-P6C-16):** `VehicleIonBombService.drop` uses `resolveVehicleAttackBonus` / `resolveAbstractCrewAttackBonus`, `resolveOperatorPayer`, `VehicleAmmunitionService`, `readVehicleEnvironment`, the shared damage packet (area flags, Evasion, ion) and `ActorEngine.applyDamage`.
+- **Autofire switch (V-P6C-17):** `VehicleFireModeService.setMode`; both directions priced only where SotG p. 45 prices them.

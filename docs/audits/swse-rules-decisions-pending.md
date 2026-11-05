@@ -1220,3 +1220,43 @@ Implemented as PUBLISHED_RULE (lock-on, Reflex 30 / 10 HP / -5, no second charge
 | Resolution | |
 
 - **Revision 40 (2026-11-04):** appended V-P6C-16.
+
+### V-P6C-15 - OWNER RULING (appended 2026-11-05; the question above is preserved)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-15 |
+| Status | `RESOLVED_PROJECT_INTERPRETATION` |
+| Resolution | The mine's printed Stealth bonus (+5, size included) forms its detection DC as a Stealth check `1d20 + 5`, rolled ONCE when the mine is deployed and persisted with the mine (never rerolled per observer). Before a ship enters the mined square its pilot may make a Perception check as a reaction and a system operator a Use Computer check as a reaction (using the ship's sensors); a success lets the pilot choose a different square, a failure leaves the normal trigger. Movement that cannot be intercepted before entry uses a GM-mediated reaction workflow: nothing detonates before the published reaction opportunity. Mine entry follows the move's RECORDED path (Foundry's movement data) when it establishes one; otherwise only the destination is tested and the GM records a crossing explicitly (P6B-D-073). |
+| Decision authority | Project owner |
+| Implementation | commit 705623c (`vehicle-space-mine.js`, `vehicle-mine-service.js`: `deploy`, `onTokenMoved`, `adjudicateEntry`, `attemptNotice`, `resolveEntry`; sheet mine panel; test p48) |
+| Engineering boundaries (not rules) | The reaction rolls use the existing skill-roll and sensor-check authorities and spend a reaction through ActionEconomyConsumption; there is no "system operator" crew station, so the operator is the crew actor the GM names (the selected token on the sheet); the recorded-path reader follows Foundry V13 movement data and is not live-verified. |
+
+- **Revision 41 (2026-11-05):** recorded the V-P6C-15 owner ruling.
+
+### V-P6C-16 - OWNER RULING (appended 2026-11-05; the question above is preserved)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-16 |
+| Status | `RESOLVED_PROJECT_INTERPRETATION` |
+| Resolution | An ion bomb may target the square directly beneath the deploying ship; this narrow reading is the project's ruling, not a rewrite of the printed rule. Atmosphere only, printed -5 attack, 5d10 ion damage, 10-square radius, four bombs per rack (the existing ammunition ledger), standard ion-damage and shared area-attack rules (full on a hit, half on a miss, existing Evasion interaction) for eligible targets. No Table 10-2 band, no distant or arbitrary target, no persistent field. If impact geometry cannot be established, the GM confirms an impact square inside the ship's footprint. |
+| Decision authority | Project owner |
+| Implementation | commit 705623c (`vehicle-ion-bomb.js`, `vehicle-ion-bomb-service.js`, `ion-bomb-rack` launcher; sheet panel; test p49) |
+| Engineering boundaries (not rules) | The 10 squares are counted in the Scene's grid squares with no scale conversion; the deploying ship is not a target of its own bomb; atmosphere is the existing GM-set vehicle environment (unknown never allows it). Stock statblock groups that print ion bombs are not wired to the service and stay refused. |
+
+- **Revision 42 (2026-11-05):** recorded the V-P6C-16 owner ruling.
+
+### V-P6C-17 - Autofire mode switch cost for double / quad / fire-linked cannons (OWNER CORRECTION)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-17 |
+| Rules domain | Vehicle weapons (autofire) |
+| Source | Starships of the Galaxy, printed p. 45 |
+| Confirmed behavior | A swift action is required to switch between normal and autofire modes for the listed double / quad and fire-linked cannons; the cost applies in both directions. |
+| Status | `RESOLVED_PUBLISHED_RULE` |
+| Resolution | The switch costs a swift action in both directions for aftermarket double / quad / fire-linked cannons, paid by the weapon's named operator; no other configuration is extended (an autoblaster and stock groups keep the one-way price of the Core "set to autofire"). Stock statblock groups are not classified by label as double/quad/fire-linked cannons. |
+| Implementation | commit 705623c (`VehicleFireModeService.setMode`, `autofireSwitchBothWays` on the weapon authority, test p38) |
+
+- **Revision 43 (2026-11-05):** recorded V-P6C-17.
