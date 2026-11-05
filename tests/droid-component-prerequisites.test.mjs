@@ -115,10 +115,31 @@ test('type-only appendage identity never proves physical host; only unique insta
 
 test('published source prerequisites do not claim a legal host or retail permission', () => {
   const passing = prerequisites({
-    definition: { id: 'hardened-systems-x2', sizeRestriction: 'large', availability: 'Military' },
+    definition: { id: 'sample-military-limited-part', sizeRestriction: 'large', availability: 'Military' },
     size: 'huge'
   });
   assert.deepEqual(passing, {
     status: 'PREREQUISITES_MET', blockingReason: null, blockingField: null
   });
+});
+
+test('Hardened Systems tiers are one internal system, not an additive stack', () => {
+  const second = DROID_SYSTEMS.accessories.hardenedsystems.find(x => x.id === 'hardened-systems-x3');
+  assert.equal(prerequisites({
+    definition: second, size: 'large',
+    installedComponentIds: ['hardened-systems-x2']
+  }).blockingField, 'multiplier');
+  assert.equal(prerequisites({
+    definition: second, size: 'large',
+    droidSystems: { accessories: [{ id: 'hardened-systems-x2' }] }
+  }).status, 'BLOCKED');
+  assert.equal(prerequisites({
+    definition: { ...second, multiplier: 2 }, size: 'large'
+  }).blockingField, 'multiplier', 'tier key and multiplier cannot disagree');
+  assert.equal(resolveDroidPartQuote({
+    type: 'droid', system: {
+      droidSystems: { size: 'large' },
+      installedSystems: { 'hardened-systems-x2': { installed: true } }
+    }
+  }, 'hardened-systems-x3').status, 'BLOCKED');
 });
