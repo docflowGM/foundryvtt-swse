@@ -20,7 +20,6 @@ import {
   getDroidSizePackage,
 } from '../../../engine/progression/droids/droid-trait-rules.js';
 
-const SIZE_ORDER = ['fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'];
 const CATEGORY_LABELS = {
   locomotion: 'Locomotion',
   processor: 'Processor',
@@ -743,12 +742,6 @@ export class DroidBuilderViewModelAdapter {
       reasons.push({ code: 'wrong-size', message: `Not compatible with ${this.#titleCase(context.size)} chassis size.` });
     }
 
-    if (this.#missingPrerequisites(item, context).length) {
-      for (const message of this.#missingPrerequisites(item, context)) {
-        reasons.push({ code: 'prerequisite-missing', message });
-      }
-    }
-
     if (this.#hasConflict(item, context)) {
       reasons.push({ code: 'conflict', message: 'Conflicts with an installed system.' });
     }
@@ -790,69 +783,13 @@ export class DroidBuilderViewModelAdapter {
     return allowedList.map(value => String(value).toLowerCase()).includes(String(degree).toLowerCase());
   }
 
+  // Chassis-profile allowedSizes is a profile rule, separate from the
+  // published component prerequisites already checked by source quotes.
   static #sizeAllows(item, size) {
-    if (item.sizeRestriction && !this.#sizeAtLeast(size, item.sizeRestriction)) return false;
-    if (item.sizeMinimum && !this.#sizeAtLeast(size, item.sizeMinimum)) return false;
-    if (item.minSize && !this.#sizeAtLeast(size, item.minSize)) return false;
-    if (item.maxSize && !this.#sizeAtMost(size, item.maxSize)) return false;
     const allowed = item.allowedSizes || item.sizeAllowed;
-    if (allowed) {
-      const allowedList = Array.isArray(allowed) ? allowed : [allowed];
-      return allowedList.map(value => String(value).toLowerCase()).includes(String(size).toLowerCase());
-    }
-    return true;
-  }
-
-  static #sizeAtLeast(size, minimum) {
-    const sizeIndex = SIZE_ORDER.indexOf(String(size).toLowerCase());
-    const minimumIndex = SIZE_ORDER.indexOf(String(minimum).toLowerCase());
-    if (sizeIndex < 0 || minimumIndex < 0) return true;
-    return sizeIndex >= minimumIndex;
-  }
-
-  static #sizeAtMost(size, maximum) {
-    const sizeIndex = SIZE_ORDER.indexOf(String(size).toLowerCase());
-    const maximumIndex = SIZE_ORDER.indexOf(String(maximum).toLowerCase());
-    if (sizeIndex < 0 || maximumIndex < 0) return true;
-    return sizeIndex <= maximumIndex;
-  }
-
-  static #missingPrerequisites(item, context) {
-    const messages = [];
-    const systems = context.droidState?.droidSystems || {};
-    const locomotionId = systems.locomotion?.id || null;
-    const appendageIds = new Set((systems.appendages || []).map(appendage => appendage.id));
-    const accessoryIds = new Set((systems.accessories || []).map(accessory => accessory.id));
-
-    const requiredLocomotion = item.requiredLocomotion || item.requiresLocomotion;
-    if (requiredLocomotion && requiredLocomotion !== 'any') {
-      const allowed = Array.isArray(requiredLocomotion) ? requiredLocomotion : [requiredLocomotion];
-      if (!locomotionId || !allowed.includes(locomotionId)) {
-        messages.push(`Requires ${allowed.map(value => this.#titleCase(value)).join(' or ')} locomotion.`);
-      }
-    }
-
-    const requiredAppendage = item.requiresAppendage || item.requiredAppendage;
-    if (requiredAppendage) {
-      const allowed = Array.isArray(requiredAppendage) ? requiredAppendage : [requiredAppendage];
-      if (!allowed.some(id => appendageIds.has(id))) {
-        messages.push(`Requires ${allowed.map(value => this.#titleCase(value)).join(' or ')} appendage.`);
-      }
-    }
-
-    const requiresAccessory = item.requiresAccessory || item.requiredAccessory;
-    if (requiresAccessory) {
-      const allowed = Array.isArray(requiresAccessory) ? requiresAccessory : [requiresAccessory];
-      if (!allowed.some(id => accessoryIds.has(id))) {
-        messages.push(`Requires ${allowed.map(value => this.#titleCase(value)).join(' or ')} accessory.`);
-      }
-    }
-
-    if (item.id === 'shield-expansion-module' && !Array.from(accessoryIds).some(id => id.includes('shield-generator'))) {
-      messages.push('Requires an installed shield generator.');
-    }
-
-    return messages;
+    if (!allowed) return true;
+    const values = Array.isArray(allowed) ? allowed : [allowed];
+    return values.map(v => String(v).toLowerCase()).includes(String(size).toLowerCase());
   }
 
   static #hasConflict(item, context) {
