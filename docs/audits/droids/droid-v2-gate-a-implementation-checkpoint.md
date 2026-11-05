@@ -60,3 +60,27 @@ A first CI run at `fa4642f` passed the new focused quote/adapter tests and repor
 5. Validate all 26 migration acceptances and 137 source expectations, followed by manual Foundry V13 behavior after merge.
 
 **Policy:** no actor compatibility layer, no competing SSOT, and no production authorization while source legality or a mechanical consumer is unresolved.
+
+
+## 2026-11-05 — Source review authority and field-consumer checkpoint
+
+**New source-review gate.** `scripts/data/generated-droid-component-source-status.js` is produced deterministically from `component-mechanical-certification-ledger.json` by `tools/build-droid-component-source-status.mjs`. The targeted CI performs `--check` to catch changes in either direction. It retains 122 exact published identities, 99 source PASS and 23 source HOLD. These are source facts, not application certifications.
+
+`scripts/domain/droids/droid-component-source-review.js` resolves known source identity, conditional holds, unrecognized definitions and false legacy aliases. The same source decision precedes numeric quoting from the PC/follower builder, preview and Garage's `droid-part-schema`. The five locomotion-composition HOLDs permit numeric calculation only for **explicit unrestricted first-system initial construction**; not additional or restricted locomotion and never post-creation by default. Other HOLDs remain blocked. This is **not yet** a host/slot/possession or retail authorization gate.
+
+**Translator mismatch:** Core's certified Translator Unit has four separately priced DC/weight tiers (DC20: 200 cr/1 kg; DC15: 500 cr/2 kg; DC10: 1,000 cr/4 kg; DC5: 2,000 cr/8 kg). The existing `basic-translator`, `advanced-translator` and `universal-translator` entries are not those four source tiers. They are blocked until a canonical variant model and real user selection are implemented. Do not restore old fixtures or silently map aliases to a cheaper tier. Existing Garage debit/resale regression tests now use the source-reviewed Plasteel Shell to preserve their financial/rollback coverage.
+
+**Shared quote consumer:** `scripts/domain/droids/droid-builder-quote-consumer.js` is called by the actual builder and preview. It derives selected locomotion MSRP for enhancements, actual selected speed, and an installed shield generator's SR. No duplicate price formula is supposed to survive in the view model. The direct Foundry `DroidBuilderStep` import is not runnable in a bare Node test due to the `ApplicationV2` shell dependency; the targeted tests exercise the pure production dependency service and live preview, and source-inspect the builder delegation. This must not be described as a Foundry UI runtime test.
+
+**SGD-HOST-002 verification:** `tests/droid-sgd-host002-arithmetic.test.mjs` executes **126 accessory source arithmetic examples + 9 locomotion exception examples** using the pure quote function, including the corrected mass for Gyroscopic Stabilizers. Three accessories (Courier Compartments, Radiant Heat Element, Silence-Bubble Generator) have fixed *credit* prices while their accessory *mass* scales; the fixtures prove this difference. The remaining **two physical-host exception cases** are asserted as unresolved evidence, **not** exercised Store/actor installation outcomes. Thus **135 arithmetic fixtures executed; zero live Foundry host certifications**.
+
+**Field-consumption reality:** `tools/audit-droid-source-field-ownership.mjs` enumerates the 84 current source definition records and each unique direct field on those records. The initial verified inventory finds **48 unique direct fields**:
+- **14** have an active quote/source-gate treatment (not necessarily every printed mechanical effect).
+- **9** are principally presentation fields, which must not be counted as rules execution.
+- **25** still require concrete mechanical consumer proof or an explicit source-correct block/removal. They include armor bonuses/penalties, heavy-armor running speed, processor behavioral inhibitors, size/dependency restrictions, appendage attack capabilities and specialized weapon properties.
+
+The audit CI intentionally rejects a newly introduced or renamed unclassified field. Its separate `--certify` mode **must fail** until the 25 uncertain direct fields are independently proven. Nested rule payloads (`specialBonus`, `weaponStats` and others) need a subsequent field-level pass; do not treat the 48 top-level census as nested mechanical completion.
+
+**Remaining hard blockers:** four-variant Translator Unit and other omitted canonical items; 23 source HOLD scenarios outside printed safe subsets; physical integrated/possessed/handheld host decisions; actual enforced legality/availability; inventory/encumbrance and condition/combat effect application; Store atomic asset+wallet transactions; full follower/PC/Garage/Store parity; live Foundry V13 validation. No legacy-actor migration is needed or planned.
+
+**CI boundary:** targeted `Droid V2 Gate A (targeted)` runs quote, source snapshot, source HOLD, live preview, old Garage wallet/rollback, and SGD-HOST-002 numerical tests. The broad rolling suite still contains an independently observed `phase-5c-canonical-production-negative.test.mjs` stale classification issue for audit data that predates this implementation; do not hide or waive this failing guard in order to merge.
