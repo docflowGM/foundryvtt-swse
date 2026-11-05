@@ -412,7 +412,14 @@ const DROID_PART_ALIASES = Object.freeze({
   'sr-20': 'sr20-shield-generator',
   'high-speed-cutting-torch': 'high-speed-cutting-torch-and-welder',
   'cutting-torch': 'high-speed-cutting-torch-and-welder',
-  'mini-self-destruct': 'miniaturized-self-destruct-system'
+  'mini-self-destruct': 'miniaturized-self-destruct-system',
+  // slug() removes the word "systems"; these are current canonical catalog
+  // identities, not legacy actor migrations. All four must find the same
+  // rules overlay and source index instead of losing their core.hardened slot.
+  'hardened-x2': 'hardened-systems-x2',
+  'hardened-x3': 'hardened-systems-x3',
+  'hardened-x4': 'hardened-systems-x4',
+  'hardened-x5': 'hardened-systems-x5'
 });
 
 function slug(value) {
