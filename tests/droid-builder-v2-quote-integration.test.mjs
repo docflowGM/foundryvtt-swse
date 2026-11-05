@@ -102,14 +102,14 @@ test('stationary zero speed is a valid published selection, not a fallback to si
   assert.equal(quote(stationary, s, 'locomotion', null, null).status, 'BLOCKED');
 });
 
-test('unresolved base and multiplier cannot silently become free enhancements', () => {
+test('HOLD enhancements stay blocked; source-certified gyro consumes actual speed and mass', () => {
   const s = state();
   const extraLegs = DROID_SYSTEMS.locomotionEnhancements.find(e => e.id === 'extra-legs');
-  assert.equal(quote(extraLegs, s, 'locomotionEnhancement').status, 'BLOCKED');
+  assert.notEqual(quote(extraLegs, s, 'locomotionEnhancement').status, 'OK');
   const gyro = DROID_SYSTEMS.locomotionEnhancements.find(e => e.id === 'gyroscopic-stabilizers');
-  assert.equal(quote(gyro, s, 'locomotionEnhancement').status, 'BLOCKED');
-  // The existing source has no published kg for either; a working price
-  // alone cannot authorize a complete purchase.
+  assert.deepEqual(quote(gyro, s, 'locomotionEnhancement'), {
+    status: 'OK', credits: 64, kg: 8, blockingReason: null
+  });
 });
 
 test('real builder source delegates purchase, repricing and validator to quote authority', () => {
