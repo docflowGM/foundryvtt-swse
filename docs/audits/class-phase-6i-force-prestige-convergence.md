@@ -25,7 +25,8 @@ Printed rule: immune to mind-affecting effects.
 - Added `forceDiscipleClassLevel`, `isExplicitMindAffecting`, and `resolveForceDiscipleIndomitable` in `scripts/engine/progression/utils/force-disciple-features.js`.
 - These use actual owned class Items and explicit Mind-Affecting descriptors; generic themes or item names do not imply an effect descriptor.
 - `targetSuppressesForceEffect` now checks Indomitable before the existing Yuuzhan Vong Force-immunity path. `ForcePowerEffectsEngine.applyPowerEffect` already consumes that suppression result. No direct mutation is introduced.
-- **Coverage boundary:** this is a verified Force-power effects seam, not all effect applications. Other mind-affecting feat/talent/skill/condition consumers require their own event routing or a truly common effect gate. The feature remains **partially implemented** until then.
+- Also wired `LightSideTalentMechanics.completeAdeptNegotiatorSelection`: Core p. 40 explicitly defines Adept Negotiator and Master Negotiator as Mind-Affecting. On an Indomitable target, skip the condition-track mutation and ActiveEffect creation even when the Persuasion check succeeded. A regression test asserts the gate is ahead of both mutation paths.
+- **Coverage boundary:** these are two verified Force-power/talent effects seams, not all effect applications. Other mind-affecting feat/talent/skill/condition consumers require their own event routing or a truly common effect gate. The feature remains **partially implemented** until then.
 
 ### Prophet
 
