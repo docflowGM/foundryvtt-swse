@@ -31,6 +31,8 @@ jobs:
           node tests/droid-component-quote-authority.test.mjs
           node tests/droid-part-source-quote-adapter.test.mjs
           node tests/droid-builder-v2-quote-integration.test.mjs
+          node tests/droid-source-review-gate.test.mjs
+          node tools/build-droid-component-source-status.mjs --check
       - name: Existing Garage and ownership checks
         run: |
           set -e
