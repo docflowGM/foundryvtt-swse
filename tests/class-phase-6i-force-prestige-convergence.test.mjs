@@ -42,7 +42,7 @@ test('Force Adept, Jedi Knight and Imperial Knight preserve printed talent/Force
     const c=classRow(name);
     assert.deepEqual(c.level_progression.map(r=>r.level),[1,2,3,4,5,6,7,8,9,10]);
     assert.deepEqual(c.level_progression.map(r=>r.bab),config.bab);
-    assert.equal(c.hit_die,config.hit);
+    assert.equal(c.hit_die ?? c.hitDie,config.hit);
     assert.deepEqual([c.defenses.fortitude,c.defenses.reflex,c.defenses.will],config.def);
     assert.deepEqual(featureLevels(name,'talent_choice'),[1,3,5,7,9]);
     assert.deepEqual(featureLevels(name,'force_technique_choice'),[2,4,6,8,10]);
@@ -55,7 +55,7 @@ test('Force Disciple has one Prophet + Indomitable unlock, odd-level talents, se
   assert.equal(c.level_progression.length,5);
   assert.deepEqual(c.level_progression.map(r=>r.bab),[0,1,2,3,3]);
   assert.deepEqual([c.defenses.fortitude,c.defenses.reflex,c.defenses.will],[3,3,6]);
-  assert.equal(c.hit_die,8);
+  assert.equal(c.hit_die ?? c.hitDie,8);
   assert.equal(c.force_point_base,7);
   assert.deepEqual(featureLevels('Force Disciple','talent_choice'),[1,3,5]);
   assert.deepEqual(featureLevels('Force Disciple','force_secret_choice'),[2,3,4,5]);
