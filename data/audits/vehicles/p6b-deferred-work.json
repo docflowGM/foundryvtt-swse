@@ -1575,7 +1575,8 @@
       "reason": "A proximity mine detonates for the destination footprint of a moved token; squares crossed during a multi-square move are not tested (a token update carries only its destination).",
       "missing": "A path (ruler/waypoints) for each move so every square entered can be tested in order.",
       "impact": "A ship that moves THROUGH a mined square without ending its move there does not trigger it; the GM can detonate or remove mines manually.",
-      "recommendedAction": "Use the movement path once the movement tracking authority exposes per-move waypoints."
+      "recommendedAction": "Use the movement path once the movement tracking authority exposes per-move waypoints.",
+      "resolution": "Resolved (owner ruling V-P6C-15, 2026-11-05): a move's entered squares come from Foundry's recorded movement path (options._movement waypoints) when it establishes straight or exact-diagonal runs of whole cells; otherwise only the destination footprint is tested and the GM records a crossing explicitly (adjudicateEntry). A pending entry opens the notice-reaction window before any detonation; the atomic claim prevents duplicates. The recorded-path reader follows Foundry V13's movement data and is not live-verified."
     }
   ]
 }

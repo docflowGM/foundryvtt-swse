@@ -102,6 +102,9 @@ const LAUNCHERS = Object.freeze({
   // mines". Standard and heavy mines only (the advanced mine has no launcher row). Deployment and detonation: vehicle-space-mine.js / VehicleMineService.
   'space-mine-launcher': { family: 'mine', mine: 'standard', guided: false, area: null, ammunition: { id: 'space-mine-standard', damage: '7d10x2', price: 1000 } },
   'space-mine-launcher-heavy': { family: 'mine', mine: 'heavy', guided: false, area: null, ammunition: { id: 'space-mine-heavy', damage: '6d10x5', price: 5000 } },
+  // Starships of the Galaxy, Ion Bombs (V-P6C-16): a rack of four 5d10 ion bombs, 500 credits each (Table 3-5). It has no Table 10-2 row: the bomb falls on the square beneath the ship
+  // (vehicle-ion-bomb.js / VehicleIonBombService); the generic launcher fields below do not make it an ordinary fired weapon.
+  'ion-bomb-rack': { family: 'bomb', ionBomb: true, guided: false, area: null, ammunition: { id: 'ion-bomb', damage: '5d10 (Ion)', price: 500 } },
   'shieldbuster-torpedo-launcher': { family: 'torpedo', shieldbuster: true, area: null, ammunition: { id: 'shieldbuster-torpedo', damage: '10d10x2', price: 1000 } }
 });
 // WE-PD (Complete Weapon Ecosystem): the POINT-DEFENSE weapon modification. It is an OPTION of a weapon installation, never a weapon and
@@ -175,7 +178,7 @@ export const EFFECTS = Object.freeze({
   ...Object.fromEntries(Object.entries(PLAIN_WEAPONS).map(([id, w]) => [id, { kind: 'weapon', family: w.family, rangeSlug: w.rangeSlug, damage: w.damage, ...(w.testFile ? { testFile: w.testFile } : {}), stackable: true, group: `weapon:${id}`, citation: CITE_WEAPON }])),
   ...Object.fromEntries(Object.entries(CONTROL_WEAPONS).map(([id, w]) => [id, { kind: 'weapon', family: 'control', control: w.control, rangeSlug: w.rangeSlug, damage: '', noDamage: true, testFile: CONTROL_TEST, stackable: true, group: `weapon:${id}`, citation: CITE_WEAPON }])),
   ...Object.fromEntries(Object.entries(LAUNCHERS).map(([id, l]) => [id, { kind: 'weapon', family: l.family, rangeSlug: 'missiles-torpedoes', damage: l.ammunition.damage,
-    ammunition: { ...l.ammunition, capacity: launcherStandardCapacity(id).standard }, guided: l.guided !== false, ...(l.mine ? { mine: l.mine, rangeSlug: null } : {}), ...(l.area === null ? {} : { area: { kind: 'splash', squares: 4 } }), ...(l.shieldbuster ? { shieldbuster: true } : {}), testFile: l.mine ? 'tests/vehicle-universal-phase4e-p45-space-mines.test.mjs' : WE_L1_TEST, stackable: true, group: `weapon:${id}`, citation: CITE_LAUNCHER }])),
+    ammunition: { ...l.ammunition, capacity: launcherStandardCapacity(id).standard }, guided: l.guided !== false, ...(l.mine ? { mine: l.mine, rangeSlug: null } : {}), ...(l.ionBomb ? { ionBomb: true, rangeSlug: null } : {}), ...(l.area === null ? {} : { area: { kind: 'splash', squares: 4 } }), ...(l.shieldbuster ? { shieldbuster: true } : {}), testFile: l.mine ? 'tests/vehicle-universal-phase4e-p45-space-mines.test.mjs' : l.ionBomb ? 'tests/vehicle-universal-phase4e-p49-ion-bombs.test.mjs' : WE_L1_TEST, stackable: true, group: `weapon:${id}`, citation: CITE_LAUNCHER }])),
   'point-defense': { kind: 'weapon-option', option: 'point-defense', label: 'Point-Defense', pointDefense: true, eligibleBases: POINT_DEFENSE_BASE_WEAPONS, extraCredits: 4000, extraEmplacementPoints: 0,
     rangeSlug: 'point-defense', testFile: WE_PD_TEST, stackable: true, group: 'weapon-option:point-defense',
     citation: 'Starships of the Galaxy, Weapon Systems: Point-Defense Weapon and Table 3-5 (p. 47, PDF-verified row); Core Rulebook p. 170' },

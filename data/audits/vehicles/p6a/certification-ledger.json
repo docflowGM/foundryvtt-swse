@@ -4,8 +4,8 @@
  "counts": {
   "sourceListed": 181,
   "sourceVerified": 174,
-  "mechanicSpecified": 83,
-  "operationallyIntegrated": 72
+  "mechanicSpecified": 84,
+  "operationallyIntegrated": 73
  },
  "rows": [
   {
@@ -1885,8 +1885,11 @@
     "book": "Starships of the Galaxy",
     "printedPage": 47
    },
-   "mechanicSpecified": null,
-   "operationallyIntegrated": null,
+   "mechanicSpecified": {
+    "effectKind": "weapon",
+    "test": "tests/vehicle-universal-phase4e-p49-ion-bombs.test.mjs"
+   },
+   "operationallyIntegrated": "OFFLINE_INTEGRATED_LIVE_PENDING",
    "reconciliation": "MATCHED_CANONICAL"
   },
   {

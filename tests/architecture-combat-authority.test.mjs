@@ -115,7 +115,7 @@ test('BOUNDARY: no vehicle module registers a combat-turn hook or owns a second 
   assert.doesNotMatch(tractor, /ActorEngine|updateEmbeddedDocuments|setFlag|Hooks\./, 'the tractor adapter holds no state and no hook');
 });
 
-test('ACTIONS: setting autofire spends exactly one swift action (the FireStateStore convention: only the costly form is priced); no-ops, switching back and refusals spend none; a failed write rolls the action back', async () => {
+test('ACTIONS: switching a double cannon between normal and autofire spends one swift action each way (SotG p. 45); no-ops and refusals spend none; a failed write rolls the action back', async () => {
   world();
   const { ActionEconomyConsumption } = await import('../scripts/engine/combat/action/action-economy-consumption.js');
   const { VehicleFireModeService } = await import('../scripts/engine/vehicles/vehicle-fire-mode-service.js');
@@ -138,10 +138,10 @@ test('ACTIONS: setting autofire spends exactly one swift action (the FireStateSt
     vehicle.isOwner = owned;
     assert.equal(spends.length, 1, 'refusals spend nothing');
     assert.equal((await VehicleFireModeService.setMode({ vehicle, weapon: dbl, mode: 'single' })).ok, true);
-    assert.equal(spends.length, 1, 'switching back to single fire is not priced');
+    assert.deepEqual(spends, ['swift', 'swift'], 'SotG p. 45: the double cannon pays a swift action to switch back to normal fire too');
     ActorEngine.updateActor = async () => { throw new Error('write failed'); };
     await assert.rejects(VehicleFireModeService.setMode({ vehicle, weapon: dbl, mode: 'autofire' }), /write failed/);
-    assert.deepEqual([spends.length, rollbacks], [2, ['swift']], 'the failed write rolled its action back');
+    assert.deepEqual([spends.length, rollbacks], [3, ['swift']], 'the failed write rolled its action back');
   } finally { ActionEconomyConsumption.spend = realSpend; ActorEngine.updateActor = realUpdate; }
 });
 
@@ -171,4 +171,14 @@ test('SCENE STATE: only vehicle-scene-state.js writes a Scene (key-level, under 
   assert.match(mines, /claimMine\(scene, mineId/, 'a mine is claimed under the lock before it resolves');
   assert.match(mines, /isResponsibleGM\(user\)/);
   assert.match(strip(read('scripts/infrastructure/hooks/combat-hooks.js')), /incoming\?\.actor\?\.type === 'vehicle' && isResponsibleGM\(\)/);
+});
+
+test('BOMBS AND MINE REACTIONS: the ion bomb and the mine notice reactions reuse the shared attack-bonus, action-economy, ammunition, sensor-check and damage authorities (no second engine)', () => {
+  const bomb = strip(read('scripts/engine/vehicles/vehicle-ion-bomb-service.js'));
+  for (const needle of ['resolveVehicleAttackBonus', 'resolveAbstractCrewAttackBonus', 'ActionEconomyConsumption.spend', 'VehicleAmmunitionService.spendLaunch', 'VehicleAmmunitionService.refundLaunch', 'finalizeDamagePacketForTarget', 'ActorEngine.applyDamage', 'readVehicleEnvironment', 'resolveOperatorPayer'])
+    assert.ok(bomb.includes(needle), `the ion bomb service must use ${needle}`);
+  assert.doesNotMatch(bomb, /\bgetProperty\(|\.hp\.value|ammunition\.loaded\s*[-+]?=/, 'no private damage or ammunition arithmetic');
+  const mines = strip(read('scripts/engine/vehicles/vehicle-mine-service.js'));
+  for (const needle of ['rollSkill', 'VehicleOperatingContextService.rollSensorCheck', "ActionEconomyConsumption.spend(who, 'reaction'", 'resolveVehicleCrewActor'])
+    assert.ok(mines.includes(needle), `the mine notice reaction must use ${needle}`);
 });

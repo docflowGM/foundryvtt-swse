@@ -2,8 +2,8 @@
  * Switching a vehicle weapon between single fire and autofire (Core, Autofire: a swift action). The switch is validated against the SAME
  * weapon authority the attack uses (an autofire-capable certified weapon), spends the swift action through ActionEconomyConsumption, and
  * persists the mode on the vehicle through ActorEngine; a failed write rolls the action back. The attack reads the persisted mode.
- * Same convention as FireStateStore's persistent stun setting: only the switch TO the published costly form (autofire) is priced; the source
- * states no cost for switching back, so none is invented.
+ * The switch TO autofire is a swift action (Core). Switching back is priced only where the source prices it: Starships of the Galaxy p. 45 requires
+ * a swift action to switch between normal and autofire for double / quad / fire-linked cannons (both directions); no other configuration is extended.
  */
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { ActionEconomyConsumption } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js";
@@ -50,7 +50,9 @@ export class VehicleFireModeService {
     const payer = who.payer;
     if (!(user && (user.isGM === true || vehicle.isOwner === true || payer?.isOwner === true))) return refuse(MODE_REASONS.NOT_AUTHORIZED);
     if (readPersistedFireMode(vehicle, weapon.id) === mode) return { ok: true, mode, unchanged: true };
-    const spend = mode === 'autofire' ? await ActionEconomyConsumption.spend(payer, 'swift', { actionName: 'Set to autofire', source: weapon.name }) : null;
+    // Priced: the switch TO autofire always (Core); the switch back only where the source prices it (SotG p. 45: double / quad / fire-linked cannons).
+    const priced = mode === 'autofire' || a.autofireSwitchBothWays === true;
+    const spend = priced ? await ActionEconomyConsumption.spend(payer, 'swift', { actionName: mode === 'autofire' ? 'Set to autofire' : 'Set to single fire', source: weapon.name }) : null;
     if (spend?.allowed === false) return refuse(MODE_REASONS.ACTION_UNAVAILABLE);
     try {
       await ActorEngine.updateActor(vehicle, { [`flags.swse.${FIRE_MODE_FLAG}.${weapon.id}`]: mode === 'autofire' ? 'autofire' : null });

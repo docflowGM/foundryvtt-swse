@@ -108,9 +108,10 @@ test('RESPONSIBLE GM: only the active GM client acts on a scene event', async ()
     const w = await launcher(); const { vehicle } = state(); const s = stubs(); globalThis.game.users = { activeGM: GM };
     try {
       await mines.deploy({ vehicle, weapon: w, scene, user: GM });
-      assert.deepEqual(await mines.onTokenMoved({ scene, tokenDoc: { ...tok(A, 3, 1), actor: A, parent: scene }, user: OTHER_GM }), [], 'the non-active GM does not detonate');
-      assert.equal(mines.readMines(scene).length, 1);
-      assert.equal((await mines.onTokenMoved({ scene, tokenDoc: { ...tok(A, 3, 1), actor: A, parent: scene }, user: GM })).length, 1);
+      const other = await mines.onTokenMoved({ scene, tokenDoc: { ...tok(A, 3, 1), actor: A, parent: scene }, user: OTHER_GM });
+      assert.deepEqual([other.detonated.length, other.pending.length], [0, 0], 'the non-active GM does nothing');
+      assert.deepEqual(Object.keys(mines.readMines(scene)[0].pending), []);
+      assert.equal((await mines.onTokenMoved({ scene, tokenDoc: { ...tok(A, 3, 1), actor: A, parent: scene }, user: GM })).pending.length, 1);
     } finally { s.restore(); }
   } finally { globalThis.game.users = prior; }
 });

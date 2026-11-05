@@ -4,6 +4,7 @@
  * Burst Fire: the named operator owns the feat; -5, +2 dice before the multiplier, not an area attack.
  */
 import test from 'node:test';
+import { readPersistedFireMode } from '../scripts/domain/vehicles/vehicle-fire-mode.js';
 import assert from 'node:assert/strict';
 import { world, install, state, shootD20, targetAt, log } from './helpers/vehicle-weapon-world.mjs';
 import fs from 'node:fs';
@@ -101,11 +102,37 @@ test('SHEET: the firing-mode view lists only autofire-capable weapons and the ac
   vehicle.items.contents ??= [...vehicle.items.values()];
   const view = buildWeaponOpsView(vehicle, { isGM: true });
   assert.deepEqual(view.fireModes.map(r => r.itemId), [dbl.id], 'a plain cannon has no mode switch');
-  assert.deepEqual([view.fireModes[0].mode, view.fireModes[0].canSwitchToAutofire, view.fireModes[0].canSwitchToSingle, view.fireModes[0].cost], ['single', true, false, 'Swift action to set autofire (switching back is free)']);
+  assert.deepEqual([view.fireModes[0].mode, view.fireModes[0].canSwitchToAutofire, view.fireModes[0].canSwitchToSingle, view.fireModes[0].cost], ['single', true, false, 'Swift action to switch between single fire and autofire (either direction)']);
   const said = [];
   const r = await runWeaponAction({ action: 'fire-mode-autofire', itemId: dbl.id, vehicle }, { service: VehicleFireModeService, notify: { info: m => said.push(m), warn: m => said.push('W ' + m) } });
   assert.equal(r.ok, true, said.join('|'));
   const after = buildWeaponOpsView(vehicle, { isGM: true }).fireModes[0];
   assert.deepEqual([after.mode, after.canSwitchToAutofire, after.canSwitchToSingle], ['autofire', false, true]);
   assert.equal(buildWeaponOpsView(vehicle, { isGM: false }).canAct, vehicle.isOwner === true);
+});
+
+test('SWITCH COST (SotG p. 45): double / quad / fire-linked cannons pay a swift action in BOTH directions; an autoblaster keeps the one-way price', async () => {
+  const { ActionEconomyConsumption } = await import('../scripts/engine/combat/action/action-economy-consumption.js');
+  const { resolveVehicleWeaponAuthority } = await import('../scripts/domain/vehicles/vehicle-weapon-damage.js');
+  world();
+  const dbl = await install('blaster-cannon-light', 'cannon-double');
+  const auto = await install('blaster-cannon-light', 'autoblaster', 'turret-2');
+  const { vehicle } = state();
+  assert.equal(resolveVehicleWeaponAuthority(dbl).autofireSwitchBothWays, true);
+  assert.equal(resolveVehicleWeaponAuthority(auto).autofireSwitchBothWays, undefined, 'an unrelated configuration is not extended without source support');
+  const spends = [], real = ActionEconomyConsumption.spend;
+  ActionEconomyConsumption.spend = async (a, type, o) => { spends.push([type, o.actionName]); return { allowed: true, rollback: async () => {} }; };
+  try {
+    for (const [w, expect] of [[dbl, [['swift', 'Set to autofire'], ['swift', 'Set to single fire']]], [auto, [['swift', 'Set to autofire']]]]) {
+      spends.length = 0;
+      assert.equal((await VehicleFireModeService.setMode({ vehicle, weapon: w, mode: 'autofire', user: { isGM: true } })).ok, true);
+      assert.equal((await VehicleFireModeService.setMode({ vehicle, weapon: w, mode: 'single', user: { isGM: true } })).ok, true);
+      assert.deepEqual(spends, expect, w.name);
+    }
+    // a refused swift action keeps the mode (no free switch back)
+    await VehicleFireModeService.setMode({ vehicle, weapon: dbl, mode: 'autofire', user: { isGM: true } });
+    ActionEconomyConsumption.spend = async () => ({ allowed: false });
+    assert.equal((await VehicleFireModeService.setMode({ vehicle, weapon: dbl, mode: 'single', user: { isGM: true } })).reason, 'FIRE_MODE_SWIFT_ACTION_UNAVAILABLE');
+    assert.equal(readPersistedFireMode(vehicle, dbl.id), 'autofire');
+  } finally { ActionEconomyConsumption.spend = real; }
 });

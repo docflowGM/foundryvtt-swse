@@ -10,12 +10,12 @@ Side bucket for P6B work that could not be implemented safely. Most items concer
 |---|---|
 | RULES_DECISION_REQUIRED | 8 |
 | SOURCE_EVIDENCE_MISSING | 8 |
-| ENGINEERING_COMPLEXITY | 25 |
+| ENGINEERING_COMPLEXITY | 24 |
 | LIVE_RUNTIME_PENDING | 1 |
 | NONCRITICAL_DEFECT | 4 |
 | DEPENDENCY_BLOCKED | 9 |
 
-Open items: 55. Resolved items: 18 (listed at the end).
+Open items: 54. Resolved items: 19 (listed at the end).
 
 ## Items (by severity)
 
@@ -75,7 +75,6 @@ Open items: 55. Resolved items: 18 (listed at the end).
 | P6B-D-057 | WEAPON-ECOSYSTEM | launcher capacity expansion and the remaining launcher kinds | RULES_DECISION_REQUIRED | MINOR | yes | V-P6A-03, V-P6C-06 |
 | P6B-D-058 | WEAPON-ECOSYSTEM | source-specific special weapons without a printed table row | SOURCE_EVIDENCE_MISSING | MINOR | no | - |
 | P6B-D-070 | WEAPON-ECOSYSTEM | GM-configured stock launchers: groups with other blockers, battery launchers, configuration edit | ENGINEERING_COMPLEXITY | MINOR | no | V-P6C-06 |
-| P6B-D-073 | WEAPON-ECOSYSTEM | Space mine path crossings | ENGINEERING_COMPLEXITY | MINOR | no | V-P6C-15 |
 
 ## Details
 
@@ -625,16 +624,6 @@ Open items: 55. Resolved items: 18 (listed at the end).
 - **Impact:** The sheet shows the interdiction; a GM must honor it at the table until an activation action exists.
 - **Recommended action:** When a hyperdrive/astrogation activation flow is built, call isHyperdriveInterdicted (domain/vehicles/vehicle-interdiction-field.js) before any cost.
 
-### P6B-D-073 - Space mine path crossings
-
-- **Source:** Starships of the Galaxy, Space Mines
-- **Category / severity:** ENGINEERING_COMPLEXITY / MINOR
-- **Reason:** A proximity mine detonates for the destination footprint of a moved token; squares crossed during a multi-square move are not tested (a token update carries only its destination).
-- **Missing:** A path (ruler/waypoints) for each move so every square entered can be tested in order.
-- **Owner ruling needed:** no (V-P6C-15)
-- **Impact:** A ship that moves THROUGH a mined square without ending its move there does not trigger it; the GM can detonate or remove mines manually.
-- **Recommended action:** Use the movement path once the movement tracking authority exposes per-move waypoints.
-
 ## Resolved items
 
 ### P6B-D-035 - published stock groups with capital-scale (x5 or other) multipliers (192 groups) and turbolasers
@@ -726,3 +715,8 @@ Open items: 55. Resolved items: 18 (listed at the end).
 
 - **Resolved:** Retired: SWSEVehicleWeapons (and the equally unreachable SWSEVehicleCore) were verified unreachable from index.js by static and dynamic import analysis, had no macro/pack/template references, and were deleted. The four pinned audits now assert their absence.
 - **Was:** A pre-refactor module that duplicates mechanics now owned by shared authorities (guided projectile follow-up, battery attack, firing arcs, range). It has no importers (its window global never registers) and its own header says it is unused. It is classified C (deprecated, unreferenced) but four pinned audits/tools (phase2-vehicle-attack-alignment, attack-outcome-wiring, phase2-legacy-facade-delegation, check-attack-outcome-ssot) read its source as a legacy facade, so it is not deleted inside this PR.
+
+### P6B-D-073 - Space mine path crossings
+
+- **Resolved:** Resolved (owner ruling V-P6C-15, 2026-11-05): a move's entered squares come from Foundry's recorded movement path (options._movement waypoints) when it establishes straight or exact-diagonal runs of whole cells; otherwise only the destination footprint is tested and the GM records a crossing explicitly (adjudicateEntry). A pending entry opens the notice-reaction window before any detonation; the atomic claim prevents duplicates. The recorded-path reader follows Foundry V13's movement data and is not live-verified.
+- **Was:** A proximity mine detonates for the destination footprint of a moved token; squares crossed during a multi-square move are not tested (a token update carries only its destination).

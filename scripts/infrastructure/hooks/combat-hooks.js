@@ -264,11 +264,11 @@ function handleCombatTurn(combat, updateData, updateOptions) {
     void postCombatBanner(combat);
 }
 
-async function handleMineProximity(tokenDoc, change) {
+async function handleMineProximity(tokenDoc, change, options) {
     if (game?.user?.isGM !== true || !(('x' in (change ?? {})) || ('y' in (change ?? {})))) return;
     try {
         const { onTokenMoved } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-mine-service.js');
-        await onTokenMoved({ scene: tokenDoc?.parent ?? globalThis.canvas?.scene ?? null, tokenDoc });
+        await onTokenMoved({ scene: tokenDoc?.parent ?? globalThis.canvas?.scene ?? null, tokenDoc, options });
     } catch (err) {
         SWSELogger.warn('[CombatHooks] Space mine proximity processing failed', err);
     }

@@ -2,10 +2,10 @@
  "schema": "swse.vehicle.p6a.readiness.v1",
  "counts": {
   "exposeAsReference": 181,
-  "installable": 75,
+  "installable": 76,
   "installableAsOption": 8,
-  "mechanicallyApplied": 72,
-  "combatUsable": 21
+  "mechanicallyApplied": 73,
+  "combatUsable": 22
  },
  "rows": [
   {
@@ -1155,13 +1155,12 @@
    "catalogId": "ion-bomb-rack",
    "name": "Ion Bomb Rack",
    "exposeAsReference": true,
-   "installable": false,
+   "installable": true,
    "installableAsOption": false,
-   "mechanicallyApplied": false,
-   "combatUsable": false,
+   "mechanicallyApplied": true,
+   "combatUsable": true,
    "reasons": [
-    "EFFECT_NOT_IMPLEMENTED",
-    "NO_EXECUTABLE_WEAPON_AUTHORITY_FROM_CATALOG"
+    "REQUIRES_CERTIFIED_MOUNT_OWNED_ITEM_AND_ATTACK_PREFLIGHT"
    ]
   },
   {

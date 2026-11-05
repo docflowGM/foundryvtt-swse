@@ -18,10 +18,11 @@ import { AttackOutcomeResolver } from "/systems/foundryvtt-swse/scripts/engine/c
 import { buildDamagePacket, finalizeDamagePacketForTarget, buildDamageApplyOptions } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
 import { resolveVehicleWeaponAuthority } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
 import { CAPITAL_SHIP_TARGETING_PENALTY, sizeRank } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-capital-penalty.js";
-import { MINE_FLAG, MINE_TYPES, MINE_REASONS, buildMine, isValidMine, squareOfToken, tokenOccupies, mineDamageFormula } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-space-mine.js";
+import { MINE_FLAG, MINE_TYPES, MINE_REASONS, MINE_STEALTH_BONUS, buildMine, isValidMine, squareOfToken, tokenOccupies, mineDamageFormula, moveEntersSquare } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-space-mine.js";
 import { readSceneMap, putSceneRecord, deleteSceneRecord, withSceneLock, tokenOnScene, isResponsibleGM, sceneGridSize } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-scene-state.js";
 import { VehicleAmmunitionService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-ammunition-service.js";
 import { resolveEncounterScale, ENCOUNTER_SCALE } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-encounter-scale.js";
+import { resolveVehicleCrewActor } from "/systems/foundryvtt-swse/scripts/engine/crew/vehicle-crew-actor-authority.js";
 import { resolveOperatorPayer } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-fire-mode-service.js";
 
 const refuse = (reason, extra = {}) => ({ ok: false, reason, ...extra });
@@ -44,6 +45,10 @@ export async function deploy({ vehicle, weapon, scene = globalThis.canvas?.scene
   if (!can.ok) return refuse(can.reason);
   const who = await resolveOperatorPayer(vehicle, a);
   if (who.reason) return refuse(who.reason);
+  // V-P6C-15: the mine's Stealth check (1d20 + 5), rolled ONCE here and kept with the mine -- never rerolled per observer
+  const stealth = await RollEngine.safeRoll(`1d20 + ${MINE_STEALTH_BONUS}`);
+  const stealthD20 = stealth?.dice?.[0]?.results?.[0]?.result ?? null;
+  if (!Number.isFinite(Number(stealth?.total)) || stealthD20 === null) return refuse(MINE_REASONS.NOTICE_ROLL_FAILED);
   const spend = await ActionEconomyConsumption.spend(who.payer, 'swift', { actionName: 'Deploy space mine', source: weapon.name });
   if (spend?.allowed === false) return refuse(MINE_REASONS.ACTION_UNAVAILABLE);
   const id = globalThis.foundry?.utils?.randomID?.() ?? `mine-${Date.now()}`;
@@ -51,7 +56,7 @@ export async function deploy({ vehicle, weapon, scene = globalThis.canvas?.scene
   try {
     ammo = await VehicleAmmunitionService.spendLaunch(vehicle, weapon, { attackId: id });
     if (!ammo.ok) { await spend?.rollback?.(); return refuse(ammo.reason); }
-    const mine = buildMine({ id, sceneId: scene.id, vehicleId: vehicle.id, weaponId: weapon.id, type: a.mine, square, detonation, iffExempt, by: user?.id ?? null });
+    const mine = buildMine({ id, sceneId: scene.id, vehicleId: vehicle.id, weaponId: weapon.id, type: a.mine, square, detonation, iffExempt, by: user?.id ?? null, detection: { dc: Number(stealth.total), d20: stealthD20 } });
     await withSceneLock(scene, MINE_FLAG, () => putSceneRecord(scene, MINE_FLAG, mine));
     return { ok: true, mine, paidBy: who.payer?.id ?? null };
   } catch (err) {
@@ -83,7 +88,7 @@ async function commandGunner(mine, vehicle, weapon) {
  * Detonate one mine: claim it (once), then resolve its area attack against every starship in its square. A COMMAND detonation is a standard
  * action of the gunner (printed), spent before the claim and rolled back when the mine turns out to be gone already.
  */
-export async function detonate({ scene, mineId, user = globalThis.game?.user ?? null, command = false, vehicle = null, weapon = null } = {}) {
+export async function detonate({ scene, mineId, user = globalThis.game?.user ?? null, command = false, vehicle = null, weapon = null, alsoTargets = [] } = {}) {
   if (!isGM(user)) return refuse(MINE_REASONS.GM_ONLY);
   const found = readMines(scene).find(m => m.id === mineId);
   if (!found) return refuse(MINE_REASONS.NOT_FOUND);
@@ -101,9 +106,10 @@ export async function detonate({ scene, mineId, user = globalThis.game?.user ?? 
   if (!mine) { await spend?.rollback?.(); return refuse(MINE_REASONS.NOT_FOUND); }
   const spec = MINE_TYPES[mine.type], formula = mineDamageFormula(mine.type), g = sceneGridSize(scene);
   const results = [];
-  for (const tok of Array.from(scene.tokens ?? [])) {
-    const target = tok?.actor;
-    if (!target || target.type !== 'vehicle' || !tokenOccupies(tok, g, mine.square)) continue;
+  // every ship in the square -- and a ship that ENTERED it on a move that carried it on (alsoTargets): the area attack is made on entry
+  const inSquare = Array.from(scene.tokens ?? []).filter(tok => tok?.actor?.type === 'vehicle' && tokenOccupies(tok, g, mine.square)).map(tok => tok.actor);
+  const targets = [...inSquare, ...alsoTargets.filter(a => a?.type === 'vehicle' && !inSquare.some(x => x.id === a.id))];
+  for (const target of targets) {
     const penalty = spec.capitalWeapon && (sizeRank(target.system?.size) ?? 99) < sizeRank('colossal') ? CAPITAL_SHIP_TARGETING_PENALTY : 0;
     const atk = await RollEngine.safeRoll(`1d20 + ${spec.attack + penalty}`);
     const d20 = atk?.dice?.[0]?.results?.[0]?.result ?? null;
@@ -119,17 +125,114 @@ export async function detonate({ scene, mineId, user = globalThis.game?.user ?? 
   return { ok: true, mine, results, paidBy };
 }
 
-/** A token has moved: a proximity mine in the square it now occupies detonates unless the ship is IFF-exempt. Only the active GM client acts. */
-export async function onTokenMoved({ scene, tokenDoc, user = globalThis.game?.user ?? null } = {}) {
+/** Add (or refresh) the pending-entry record of a ship that is about to enter a mine's square. Under the scene lock; one record per ship. */
+const patchPending = (scene, mineId, fn) => withSceneLock(scene, MINE_FLAG, async () => {
+  const mine = readMines(scene).find(m => m.id === mineId);
+  if (!mine) return null;
+  const next = { ...mine, pending: { ...(mine.pending ?? {}) } };
+  const r = fn(next.pending, mine);
+  if (r === false) return null;
+  await putSceneRecord(scene, MINE_FLAG, next);
+  return next;
+});
+
+/**
+ * A token has moved (the registry's updateToken, active GM only). For every proximity mine whose square the move ENTERED -- the destination
+ * footprint, or any square of the move's recorded path when Foundry's movement data establishes it -- an IFF-exempt ship is ignored, a mine with a
+ * detection DC OPENS A PENDING ENTRY (the pilot / system operator may react before the ship enters: attemptNotice, then resolveEntry), and a mine
+ * with no stored DC (deployed before V-P6C-15) detonates at once. Nothing detonates before the published reaction opportunity.
+ * @returns {Promise<{detonated:object[], pending:object[]}>}
+ */
+export async function onTokenMoved({ scene, tokenDoc, options = {}, user = globalThis.game?.user ?? null } = {}) {
+  const out = { detonated: [], pending: [] };
   const actor = tokenDoc?.actor;
-  if (!isResponsibleGM(user) || actor?.type !== 'vehicle' || !scene?.id) return [];
-  const fired = [];
+  if (!isResponsibleGM(user) || actor?.type !== 'vehicle' || !scene?.id) return out;
   for (const m of readMines(scene)) {
-    if (m.detonation !== 'proximity' || m.iffExempt.includes(actor.id) || !tokenOccupies(tokenDoc, sceneGridSize(scene), m.square)) continue;
-    const r = await detonate({ scene, mineId: m.id, user });
-    if (r.ok) fired.push(r);
+    if (m.detonation !== 'proximity' || m.iffExempt.includes(actor.id)) continue;
+    const move = moveEntersSquare(tokenDoc, options, sceneGridSize(scene), m.square);
+    if (!move.entered) continue;
+    if (!Number.isFinite(m.detectionDc)) { const r = await detonate({ scene, mineId: m.id, user, alsoTargets: [actor] }); if (r.ok) out.detonated.push(r); continue; }
+    const updated = await patchPending(scene, m.id, pend => { if (pend[actor.id]) return false; pend[actor.id] = { actorId: actor.id, tokenId: tokenDoc.id ?? null, atDestination: move.atDestination, passedThrough: move.passedThrough, pathTrusted: move.pathTrusted, noticed: false, attempts: {}, at: Date.now() }; });
+    if (updated) { out.pending.push({ mineId: m.id, actorId: actor.id, ...move }); globalThis.ui?.notifications?.warn?.(`${actor.name ?? 'A ship'} is about to enter a mined square: resolve the notice reactions, then resolve the entry on the vehicle sheet.`); }
   }
-  return fired;
+  return out;
+}
+
+/** GM adjudication when the move carries no trustworthy path: record that a ship entered (or is entering) the mine's square. */
+export async function adjudicateEntry({ scene, mineId, actor, user = globalThis.game?.user ?? null } = {}) {
+  if (!isGM(user)) return refuse(MINE_REASONS.GM_ONLY);
+  if (actor?.type !== 'vehicle') return refuse(MINE_REASONS.NOT_ABOUT_TO_ENTER);
+  const m = readMines(scene).find(x => x.id === mineId);
+  if (!m) return refuse(MINE_REASONS.NOT_FOUND);
+  if (!Number.isFinite(m.detectionDc)) return refuse(MINE_REASONS.NO_DETECTION_DC);
+  const updated = await patchPending(scene, mineId, pend => { if (pend[actor.id]) return false; pend[actor.id] = { actorId: actor.id, tokenId: null, atDestination: false, passedThrough: true, pathTrusted: false, noticed: false, attempts: {}, at: Date.now(), adjudicated: true }; });
+  return updated ? { ok: true } : refuse(MINE_REASONS.ALREADY_ATTEMPTED);
+}
+
+/**
+ * The notice reaction of a ship about to enter: the pilot's Perception, or a system operator's Use Computer (using the ship's sensors, the
+ * existing sensor-check authority), against the mine's stored DC. One reaction per kind per entry; each spends a reaction through the action
+ * economy authority. A success marks the entry noticed (the pilot may then choose another square); a failure leaves the normal trigger.
+ * @param {'pilot'|'operator'} kind  the pilot defaults to the crew assignment; the operator is the crew actor the GM names.
+ */
+// (loaded on demand: the skill roll authorities need the live game; only a notice reaction uses them)
+const rollNoticeCheck = async (kind, who, vehicle, user) => {
+  if (kind === 'pilot') {
+    const { rollSkill } = await import("/systems/foundryvtt-swse/scripts/rolls/skills.js");
+    return Number((await rollSkill(who, 'perception', { vehicleContext: { vehicleId: vehicle.id, vehicleName: vehicle.name, purpose: 'notice-space-mine' } }))?.total);
+  }
+  const { VehicleOperatingContextService } = await import("/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-operating-context-service.js");
+  return Number((await VehicleOperatingContextService.rollSensorCheck(vehicle, { crewActor: who, skill: 'useComputer', user }))?.result?.total);
+};
+
+export async function attemptNotice({ scene, mineId, vehicle, kind, crewActor = null, user = globalThis.game?.user ?? null, rollNotice = rollNoticeCheck } = {}) {
+  if (!['pilot', 'operator'].includes(kind)) return refuse(MINE_REASONS.CREW_REQUIRED);
+  const mine = readMines(scene).find(m => m.id === mineId);
+  if (!mine) return refuse(MINE_REASONS.NOT_FOUND);
+  if (!Number.isFinite(mine.detectionDc)) return refuse(MINE_REASONS.NO_DETECTION_DC);
+  const entry = mine.pending?.[vehicle?.id];
+  if (!entry) return refuse(MINE_REASONS.NOT_ABOUT_TO_ENTER);
+  if (entry.attempts?.[kind]) return refuse(MINE_REASONS.ALREADY_ATTEMPTED);
+  let who = crewActor;
+  if (!who && kind === 'pilot') { const c = await resolveVehicleCrewActor(vehicle, 'pilot'); who = c.source === 'actor' ? c.actor : null; }
+  if (!who || who.type === 'vehicle') return refuse(MINE_REASONS.CREW_REQUIRED);
+  if (!(user?.isGM === true || who.isOwner === true)) return refuse(MINE_REASONS.GM_ONLY);
+  const reaction = await ActionEconomyConsumption.spend(who, 'reaction', { actionName: kind === 'pilot' ? 'Notice space mine (Perception)' : 'Notice space mine (Use Computer)', source: mine.type });
+  if (reaction?.allowed === false) return refuse(MINE_REASONS.REACTION_UNAVAILABLE);
+  let total = null;
+  try {
+    total = await rollNotice(kind, who, vehicle, user);
+  } catch (err) { await reaction?.rollback?.(); throw err; }
+  if (!Number.isFinite(total)) { await reaction?.rollback?.(); return refuse(MINE_REASONS.NOTICE_ROLL_FAILED); }
+  const success = total >= mine.detectionDc;
+  const updated = await patchPending(scene, mineId, pend => {
+    const e = pend[vehicle.id]; if (!e || e.attempts?.[kind]) return false;
+    pend[vehicle.id] = { ...e, noticed: e.noticed || success, attempts: { ...e.attempts, [kind]: { by: who.id, total, success } } };
+  });
+  if (!updated) { await reaction?.rollback?.(); return refuse(MINE_REASONS.ALREADY_ATTEMPTED); }
+  return { ok: true, success, total, dc: mine.detectionDc, kind };
+}
+
+/**
+ * Settle a pending entry (GM). If the ship noticed the mine AND is not in the square (or never ended there), the mine does not trigger and the entry
+ * is cleared; otherwise the normal trigger runs through the atomic claim: the area attack on every ship in the square and on the entering ship.
+ * `outcome` lets the GM rule explicitly ('avoided' | 'triggered') when position cannot tell (a crossing without a trusted path).
+ */
+export async function resolveEntry({ scene, mineId, actor, outcome = 'auto', user = globalThis.game?.user ?? null } = {}) {
+  if (!isGM(user)) return refuse(MINE_REASONS.GM_ONLY);
+  const mine = readMines(scene).find(m => m.id === mineId);
+  if (!mine) return refuse(MINE_REASONS.NOT_FOUND);
+  const entry = mine.pending?.[actor?.id];
+  if (!entry) return refuse(MINE_REASONS.NO_ENTRY);
+  const tok = Array.from(scene.tokens ?? []).find(t => t?.actor?.id === actor.id);
+  const stillThere = !!tok && tokenOccupies(tok, sceneGridSize(scene), mine.square);
+  const avoided = outcome === 'avoided' || (outcome === 'auto' && entry.noticed === true && !stillThere);
+  if (avoided) {
+    await patchPending(scene, mineId, pend => { delete pend[actor.id]; });
+    return { ok: true, avoided: true };
+  }
+  const r = await detonate({ scene, mineId, user, alsoTargets: [actor] });
+  return r.ok ? { ...r, avoided: false } : r;
 }
 
 export async function removeMine({ scene, mineId, user = globalThis.game?.user ?? null } = {}) {

@@ -31,6 +31,9 @@ import { assessStockWeaponGroups, stockItemName, stockMountKey } from './vehicle
 import { expandBatteryDamage, BATTERY_REASONS } from './vehicle-weapon-battery.js';
 import { aftermarketFamily } from './vehicle-ammunition-ledger.js';
 
+/** Configurations whose printed text prices the switch between normal and autofire in both directions (Starships of the Galaxy, p. 45). */
+export const AUTOFIRE_SWITCH_BOTH_WAYS = Object.freeze(new Set(['cannon-double', 'cannon-quad', 'fire-linked-2', 'fire-linked-4']));
+
 export const INSTALLED_WEAPON_FLAG = 'vehicleInstalledWeapon';
 export const STOCK_WEAPON_FLAG = 'vehicleStockWeapon';
 
@@ -89,14 +92,16 @@ export function resolveCertifiedInstalledWeapon(weapon) {
   if (text(weapon.system.damage) !== effectiveWeaponDamage(spec, entry)) return { ok: false, reason: 'INSTALLED_WEAPON_ITEM_DAMAGE_DIVERGES_FROM_CERTIFIED_SPECIFICATION' };
   // An OPTION sealed into the entry (WE-PD) must still be a certified option of THIS base weapon; what it does is read from the
   // certified specification, not from the entry's own words.
-  let pointDefense = false, autofire = false;
+  let pointDefense = false, autofire = false, autofireBothWays = false;
   if (entry.option) {
     const ofx = EFFECTS[entry.option.catalogId];
     if (ofx?.kind !== 'weapon-option' || !ofx.eligibleBases.includes(entry.catalogId) || spec.ammunition) return { ok: false, reason: 'INSTALLED_WEAPON_OPTION_NOT_CERTIFIED' };
     pointDefense = ofx.pointDefense === true;
     autofire = (ofx.autofireBases ?? []).includes(entry.catalogId);
+    // SotG p. 45: double / quad / fire-linked cannons need a swift action to switch between normal and autofire modes -- in BOTH directions
+    autofireBothWays = autofire && AUTOFIRE_SWITCH_BOTH_WAYS.has(entry.option.catalogId);
   }
-  return { ok: true, entry, spec, mount: m, option: entry.option ?? null, pointDefense, autofire, damage: effectiveWeaponDamage(spec, entry), rangeSlug: pointDefense ? EFFECTS[entry.option.catalogId].rangeSlug : spec.rangeSlug ?? null };
+  return { ok: true, entry, spec, mount: m, option: entry.option ?? null, pointDefense, autofire, autofireBothWays, damage: effectiveWeaponDamage(spec, entry), rangeSlug: pointDefense ? EFFECTS[entry.option.catalogId].rangeSlug : spec.rangeSlug ?? null };
 }
 
 /**
@@ -156,9 +161,9 @@ export function resolveVehicleWeaponAuthority(weapon) {
   // An aftermarket LAUNCHER (WE-L1) is a finite-ammunition guided weapon: it carries its ammunition family and the printed splash,
   // derived from the certified specification and the sealed entry (never from the Item).
   const family = aftermarketFamily(i.spec, i.entry);
-  return { ok: true, origin: 'installed', operator: i.mount.operatorRole, rangeSlug: i.rangeSlug ?? null, damageRaw: i.damage, ...(i.autofire ? { autofireCapable: true } : {}), installed: i,
+  return { ok: true, origin: 'installed', operator: i.mount.operatorRole, rangeSlug: i.rangeSlug ?? null, damageRaw: i.damage, ...(i.autofire ? { autofireCapable: true } : {}), ...(i.autofireBothWays ? { autofireSwitchBothWays: true } : {}), installed: i,
     ...(family ? { ammunition: family } : {}), ...(i.spec.area ? { area: i.spec.area } : {}), ...(i.spec.shieldbuster === true ? { shieldbuster: true } : {}),
-    ...(i.spec.mine ? { mine: i.spec.mine } : {}), ...(i.spec.control === 'tractor-beam' ? { tractorBeam: true } : {}), ...(i.spec.control === 'gravity-well' ? { gravityWell: true } : {}) };
+    ...(i.spec.mine ? { mine: i.spec.mine } : {}), ...(i.spec.ionBomb ? { ionBomb: true } : {}), ...(i.spec.control === 'tractor-beam' ? { tractorBeam: true } : {}), ...(i.spec.control === 'gravity-well' ? { gravityWell: true } : {}) };
 }
 
 /**

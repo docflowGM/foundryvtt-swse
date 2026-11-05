@@ -170,6 +170,16 @@
   {{/each}}
 </section>
 {{/if}}
+{{#if view.weaponOps.hasBombRacks}}
+<section class="swse-vehicle-panel swse-vehicle-bomb-panel">
+  <header><h3>Ion bombs</h3></header>
+  {{#each view.weaponOps.bombRacks}}
+    <div class="swse-vehicle-bomb-rack"><strong>{{name}}</strong>
+      {{#if canDrop}}<button type="button" data-weapon-action="ion-bomb-drop" data-item-id="{{itemId}}">Drop an ion bomb on the square beneath the ship (standard action)</button>{{else}}<small>The GM drops bombs (they damage other actors).</small>{{/if}}</div>
+  {{/each}}
+  <p><small>Atmosphere only (the GM-set vehicle environment); -5 attack; 5d10 ion damage in a 10-square radius; only the square directly beneath the ship may be targeted (owner decision V-P6C-16). The 10 squares are the Scene's grid squares.</small></p>
+</section>
+{{/if}}
 {{#if view.weaponOps.hasMineLaunchers}}
 <section class="swse-vehicle-panel swse-vehicle-mine-panel">
   <header><h3>Space mines</h3></header>
@@ -180,9 +190,18 @@
   {{#each view.weaponOps.mines}}
     <div class="swse-vehicle-mine" data-mine-id="{{id}}">{{typeLabel}} at {{squareLabel}}{{#if isCommand}} — command-detonated{{/if}}
       {{#if isCommand}}<button type="button" data-weapon-action="mine-detonate" data-item-id="{{id}}">Detonate</button>{{/if}}
-      <button type="button" data-weapon-action="mine-remove" data-item-id="{{id}}">Remove</button></div>
+      <button type="button" data-weapon-action="mine-remove" data-item-id="{{id}}">Remove</button>
+      <small>({{detectionLabel}})</small>
+      <button type="button" data-weapon-action="mine-adjudicate" data-item-id="{{id}}">Record a crossing (selected ship)</button>
+      {{#each pendingList}}
+        <div class="swse-vehicle-mine-entry">{{name}} is entering this square — {{status}}{{#if crossing}} (path not recorded){{/if}}
+          <button type="button" data-weapon-action="mine-notice-pilot" data-item-id="{{../id}}" data-actor-id="{{actorId}}">Pilot: Perception</button>
+          <button type="button" data-weapon-action="mine-notice-operator" data-item-id="{{../id}}" data-actor-id="{{actorId}}">Operator (selected token): Use Computer</button>
+          <button type="button" data-weapon-action="mine-resolve" data-item-id="{{../id}}" data-actor-id="{{actorId}}">Resolve entry</button>
+        </div>
+      {{/each}}</div>
   {{/each}}
-  <p><small>A ship entering a mine's square sets it off. The reaction to notice a mine is not automated (decision V-P6C-15).</small></p>
+  <p><small>A ship entering a mine's square opens a reaction window: the pilot (Perception) and a system operator (Use Computer) may try to notice the mine against its stored DC (1d20 + 5 rolled at deployment; owner decision V-P6C-15), then the GM resolves the entry. A move without a recorded path is adjudicated by the GM.</small></p>
 </section>
 {{/if}}
 {{#if view.weaponOps.hasGravityWeapons}}

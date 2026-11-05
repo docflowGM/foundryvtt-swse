@@ -9,7 +9,7 @@
  *
  * Optional capacity EXPANSION is recorded but not usable: whether added capacity costs emplacement points, and which
  * cost the percentage applies to, is unresolved (V-P6A-03). Launchers without a printed capacity (discord missile,
- * ion bomb rack, proton grenade, defoliator, heavy ordnance) are unknown, never 0. Nothing here loads or expends
+ * proton grenade, defoliator, heavy ordnance) are unknown, never 0. Nothing here loads or expends
  * ammunition: those authorities do not exist yet. Pure data; no Foundry globals.
  */
 const SRC = Object.freeze({ book: 'Starships of the Galaxy', printedPageRange: [45, 46] });
@@ -24,6 +24,8 @@ export const LAUNCHER_CAPACITY = Object.freeze({
   'shieldbuster-torpedo-launcher': entry(4, 25, 8, 'Shieldbuster Torpedoes: Launchers'),
   'space-mine-launcher': entry(6, 25, 12, 'Space Mines: Mine Launcher ("All mine launchers hold six mines")'),
   'space-mine-launcher-heavy': entry(6, 25, 12, 'Space Mines: Mine Launcher ("All mine launchers hold six mines")'),
+  // "Ion bomb racks can hold up to four ion bombs" (SotG, Ion Bombs): four is also the maximum; no expansion is printed
+  'ion-bomb-rack': Object.freeze({ standard: 4, expansion: Object.freeze({ status: 'NOT_PRINTED', maximum: 4 }), source: Object.freeze({ ...SRC, section: 'Ion Bombs ("Ion bomb racks can hold up to four ion bombs")' }) }),
   'gravity-mine-launcher': entry(6, 25, 12, 'Space Mines: Mine Launcher ("All mine launchers hold six mines")')
 });
 

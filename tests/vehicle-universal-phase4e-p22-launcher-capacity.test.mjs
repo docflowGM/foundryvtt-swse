@@ -13,14 +13,14 @@ test('standard launcher capacities match the printed Starships of the Galaxy tex
   assert.match(ocr, /All mine launchers hold six mines\. Additional capacity may be added, increasing the cost by 25% per each additional mine \(up to a maximum of twelve mines\)/);
   const std = Object.fromEntries(Object.entries(LAUNCHER_CAPACITY).map(([k, v]) => [k, v.standard]));
   assert.deepEqual(std, { 'concussion-missile-launcher-light': 6, 'concussion-missile-launcher-medium': 16, 'concussion-missile-launcher-heavy': 30,
-    'proton-torpedo-launcher': 3, 'shieldbuster-torpedo-launcher': 4, 'space-mine-launcher': 6, 'space-mine-launcher-heavy': 6, 'gravity-mine-launcher': 6 });
+    'proton-torpedo-launcher': 3, 'shieldbuster-torpedo-launcher': 4, 'space-mine-launcher': 6, 'space-mine-launcher-heavy': 6, 'gravity-mine-launcher': 6, 'ion-bomb-rack': 4 });
   for (const id of Object.keys(LAUNCHER_CAPACITY)) assert.ok(weapons.some(w => w.id === id), id + ' is a catalog launcher');
 });
 
 test('expansion is recorded but deferred (V-P6A-03); unprinted launchers are unknown, never 0', () => {
-  for (const c of Object.values(LAUNCHER_CAPACITY)) assert.equal(c.expansion.status, 'DEFERRED_RULES_REVIEW');
+  for (const [id, c] of Object.entries(LAUNCHER_CAPACITY)) assert.equal(c.expansion.status, id === 'ion-bomb-rack' ? 'NOT_PRINTED' : 'DEFERRED_RULES_REVIEW');
   assert.deepEqual([LAUNCHER_CAPACITY['concussion-missile-launcher-medium'].expansion.maximum, LAUNCHER_CAPACITY['proton-torpedo-launcher'].expansion.maximum], [32, 16]);
-  for (const id of ['discord-missile-launcher', 'ion-bomb-rack', 'proton-grenade-launcher', 'defoliator-launcher', 'heavy-ordnance-launcher'])
+  for (const id of ['discord-missile-launcher', 'proton-grenade-launcher', 'defoliator-launcher', 'heavy-ordnance-launcher'])
     assert.deepEqual(launcherStandardCapacity(id), { known: false, reason: 'LAUNCHER_CAPACITY_NOT_PRINTED' });
 });
 
@@ -35,7 +35,7 @@ test('launchers and ammunition remain uninstallable and nothing expends ammuniti
   const { EFFECTS } = await import('../scripts/domain/vehicles/vehicle-modification-effects.js');
   // WE-L1 certified five launchers (proton torpedo; light, medium, heavy concussion; shieldbuster) with their consumable ammunition kept OUT of the
   // registry; every other launcher, rack, mine, bomb, shell and grenade stays closed
-  const certifiedLaunchers = new Set(['proton-torpedo-launcher', 'shieldbuster-torpedo-launcher', 'space-mine-launcher', 'space-mine-launcher-heavy', 'tractor-beam', 'gravity-well-projector', 'concussion-missile-launcher-light', 'concussion-missile-launcher-medium', 'concussion-missile-launcher-heavy']);
+  const certifiedLaunchers = new Set(['proton-torpedo-launcher', 'shieldbuster-torpedo-launcher', 'space-mine-launcher', 'space-mine-launcher-heavy', 'ion-bomb-rack', 'tractor-beam', 'gravity-well-projector', 'concussion-missile-launcher-light', 'concussion-missile-launcher-medium', 'concussion-missile-launcher-heavy']);
   for (const w of weapons.filter(x => /launcher|rack|missile|torpedo|mine|bomb|shell|grenade/.test(x.id))) assert.equal(EFFECTS[w.id] === undefined, !certifiedLaunchers.has(w.id), w.id);
   for (const w of weapons.filter(x => x.category === 'Ammunition')) assert.equal(EFFECTS[w.id], undefined, w.id + ' is a consumable, never an installation');
   const src = readFileSync('scripts/domain/vehicles/vehicle-launcher-capacity.js', 'utf8');

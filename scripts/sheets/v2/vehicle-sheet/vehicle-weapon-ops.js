@@ -7,6 +7,7 @@ import { resolveVehicleWeaponAuthority } from "/systems/foundryvtt-swse/scripts/
 import { stockAmmoReadinessRows, stockBatteryReadinessRows } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-ammo-readiness.js";
 import * as mineService from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-mine-service.js";
 import { readMines } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-mine-service.js";
+import * as bombService from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-ion-bomb-service.js";
 import { readFields, interdictionAreaTarget, setActive, removeField } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-interdiction-service.js";
 import { readPersistedFireMode } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-fire-mode.js";
 
@@ -23,7 +24,7 @@ export function buildWeaponOpsView(actor, { isGM = false } = {}) {
       itemId: item.id, name: item.name, mode, modeLabel: mode === 'autofire' ? 'Autofire' : 'Single fire',
       canSwitchToAutofire: canAct && mode !== 'autofire', canSwitchToSingle: canAct && mode === 'autofire',
       disabledReason: canAct ? '' : 'Only the vehicle\'s owner or the GM can change the firing mode.',
-      cost: 'Swift action to set autofire (switching back is free)', burstNote: 'Burst Fire: -5 attack, +2 dice; needs a named gunner who has the Burst Fire feat (set to autofire first).'
+      cost: a.autofireSwitchBothWays === true ? 'Swift action to switch between single fire and autofire (either direction)' : 'Swift action to set autofire (switching back is free)', burstNote: 'Burst Fire: -5 attack, +2 dice; needs a named gunner who has the Burst Fire feat (set to autofire first).'
     });
   }
   // GM launcher configuration: only launcher groups whose source leaves ammunition facts missing (or already configured) are listed
@@ -37,16 +38,18 @@ export function buildWeaponOpsView(actor, { isGM = false } = {}) {
   const fields = isGM ? readFields(scene).map(f => ({ ...f, areaLabel: `columns ${f.area.col}-${f.area.col + 3}, rows ${f.area.row}-${f.area.row + 3}`, stateLabel: f.active ? 'Active' : 'Inactive', toggleLabel: f.active ? 'Deactivate' : 'Activate', own: f.vehicleId === actor?.id })) : [];
   // Space mines: launcher rows and the mines deployed on this scene (GM controls; deployment writes the Scene)
   const mineLaunchers = items.filter(i => i?.type === 'weapon' && resolveVehicleWeaponAuthority(i)?.mine).map(i => ({ itemId: i.id, name: i.name, canDeploy: canAct && isGM }));
-  const mines = isGM ? readMines(scene).map(m => ({ ...m, squareLabel: `column ${m.square.col}, row ${m.square.row}`, typeLabel: m.type === 'heavy' ? 'Heavy mine' : 'Mine', isCommand: m.detonation === 'command', own: m.vehicleId === actor?.id })) : [];
+  // Ion bomb racks (V-P6C-16): the GM drops a bomb on the square directly beneath the ship
+  const bombRacks = items.filter(i => i?.type === 'weapon' && resolveVehicleWeaponAuthority(i)?.ionBomb).map(i => ({ itemId: i.id, name: i.name, canDrop: canAct && isGM }));
+  const mines = isGM ? readMines(scene).map(m => ({ ...m, detectionLabel: Number.isFinite(m.detectionDc) ? `notice DC ${m.detectionDc}` : 'no stored notice DC', pendingList: Object.values(m.pending ?? {}).map(p => ({ ...p, name: globalThis.game?.actors?.get?.(p.actorId)?.name ?? p.actorId, status: p.noticed ? 'noticed' : (Object.keys(p.attempts ?? {}).length ? 'not noticed' : 'no reaction yet'), crossing: p.passedThrough && !p.pathTrusted })), squareLabel: `column ${m.square.col}, row ${m.square.row}`, typeLabel: m.type === 'heavy' ? 'Heavy mine' : 'Mine', isCommand: m.detonation === 'command', own: m.vehicleId === actor?.id })) : [];
   // printed batteries: certify the participating-weapon count to enable full-battery mode (GM)
   const batteryRows = isGM ? stockBatteryReadinessRows(actor).map(r => ({ ...r, stateLabel: r.configured ? `Full battery: ${r.weaponCount} weapons (GM-certified, not canonical)` : 'Independent weapon only: the source prints no weapon count' })) : [];
-  return { canAct, fireModes, hasFireModes: fireModes.length > 0, batteryRows, hasBatteryRows: batteryRows.length > 0, mineLaunchers, hasMineLaunchers: mineLaunchers.length > 0, mines, hasMines: mines.length > 0, isGM, ammoRows, hasAmmoRows: ammoRows.length > 0, gravityWeapons, hasGravityWeapons: gravityWeapons.length > 0, fields, hasFields: fields.length > 0 };
+  return { canAct, fireModes, hasFireModes: fireModes.length > 0, batteryRows, hasBatteryRows: batteryRows.length > 0, mineLaunchers, hasMineLaunchers: mineLaunchers.length > 0, bombRacks, hasBombRacks: bombRacks.length > 0, mines, hasMines: mines.length > 0, isGM, ammoRows, hasAmmoRows: ammoRows.length > 0, gravityWeapons, hasGravityWeapons: gravityWeapons.length > 0, fields, hasFields: fields.length > 0 };
 }
 
-export async function runWeaponAction({ action, itemId, vehicle }, deps) {
+export async function runWeaponAction({ action, itemId, vehicle, actorId = null }, deps) {
   const { service, notify } = deps;
   const weapon = vehicle?.items?.get?.(itemId) ?? [...(vehicle?.items ?? [])].find(i => i.id === itemId);
-  if (!weapon && !/^(ammo-config|battery-config|interdiction-|mine-(detonate|remove))/.test(String(action))) { notify.warn('That weapon is no longer on the vehicle.'); return { ok: false, reason: 'WEAPON_NOT_FOUND' }; }
+  if (!weapon && !/^(ammo-config|battery-config|interdiction-|mine-(detonate|remove|notice|resolve|adjudicate))/.test(String(action))) { notify.warn('That weapon is no longer on the vehicle.'); return { ok: false, reason: 'WEAPON_NOT_FOUND' }; }
   if (action === 'fire-mode-autofire' || action === 'fire-mode-single') {
     const mode = action === 'fire-mode-autofire' ? 'autofire' : 'single';
     const r = await (service.fireMode ?? service).setMode({ vehicle, weapon, mode });
@@ -76,9 +79,28 @@ export async function runWeaponAction({ action, itemId, vehicle }, deps) {
     if (r.success) notify.info('Battery certified for full-battery mode (GM-certified, not canonical).'); else notify.warn(r.reasons?.join(', ') ?? 'refused');
     return r;
   }
+  if (action === 'ion-bomb-drop') {
+    const r = await bombService.drop({ vehicle, weapon });
+    if (r.ok) notify.info(`Ion bomb dropped at column ${r.square.col}, row ${r.square.row}: ${r.results.length} target(s) in the 10-square radius.`); else notify.warn(r.reason);
+    return r;
+  }
   if (action === 'mine-deploy') {
     const r = await mineService.deploy({ vehicle, weapon });
     if (r.ok) notify.info(`Mine deployed at column ${r.mine.square.col}, row ${r.mine.square.row} (swift action).`); else notify.warn(r.reason);
+    return r;
+  }
+  if (/^mine-(notice-pilot|notice-operator|resolve|adjudicate)$/.test(String(action))) {
+    // GM-mediated reaction workflow (V-P6C-15): the entering ship is named by the row; the operator is the crew actor whose token the GM has selected
+    const scene = globalThis.canvas?.scene, ship = globalThis.game?.actors?.get?.(actorId || globalThis.canvas?.tokens?.controlled?.[0]?.actor?.id) ?? null;
+    if (!ship) { notify.warn('That ship is no longer available.'); return { ok: false, reason: 'MINE_SHIP_NOT_FOUND' }; }
+    let r;
+    if (action === 'mine-resolve') r = await mineService.resolveEntry({ scene, mineId: itemId, actor: ship });
+    else if (action === 'mine-adjudicate') r = await mineService.adjudicateEntry({ scene, mineId: itemId, actor: ship });
+    else r = await mineService.attemptNotice({ scene, mineId: itemId, vehicle: ship, kind: action === 'mine-notice-pilot' ? 'pilot' : 'operator', crewActor: action === 'mine-notice-operator' ? (globalThis.canvas?.tokens?.controlled?.[0]?.actor ?? null) : null });
+    if (!r.ok) notify.warn(r.reason);
+    else if (action === 'mine-resolve') notify.info(r.avoided ? 'The mine was avoided.' : `The mine detonated: ${r.results.length} ship(s) attacked.`);
+    else if (action === 'mine-adjudicate') notify.info('Entry recorded: make the notice reactions, then resolve.');
+    else notify.info(r.success ? `Noticed the mine (${r.total} vs DC ${r.dc}): the pilot may choose another square.` : `Did not notice the mine (${r.total} vs DC ${r.dc}).`);
     return r;
   }
   if (action === 'mine-detonate' || action === 'mine-remove') {
@@ -115,7 +137,7 @@ export function bindWeaponActions(root, vehicle, deps) {
     btn.addEventListener('click', async ev => {
       ev.preventDefault();
       btn.disabled = true;
-      try { await runWeaponAction({ action: btn.dataset.weaponAction, itemId: btn.dataset.itemId, vehicle }, deps); }
+      try { await runWeaponAction({ action: btn.dataset.weaponAction, itemId: btn.dataset.itemId, actorId: btn.dataset.actorId ?? null, vehicle }, deps); }
       finally { btn.disabled = false; }
     });
   }

@@ -13,6 +13,10 @@ const mines = await import('../scripts/engine/vehicles/vehicle-mine-service.js')
 const { resolveVehicleWeaponAuthority } = await import('../scripts/domain/vehicles/vehicle-weapon-damage.js');
 const { MINE_REASONS, MINE_TYPES, squareOfToken, tokenOccupies, mineDamageFormula } = await import('../scripts/domain/vehicles/vehicle-space-mine.js');
 
+// A deployed mine rolls its Stealth check once (V-P6C-15): a deterministic default roll for the deployments in this file (the d20 is 10)
+RollEngine.safeRoll = async f => ({ total: 10 + Number(/\+\s*(-?\d+)/.exec(f)?.[1] ?? 0), formula: f, dice: [{ results: [{ result: 10 }] }] });
+const none = r => assert.deepEqual([r.detonated.length, r.pending.length], [0, 0]);
+
 const GM = { isGM: true, id: 'gm1' }, PLAYER = { isGM: false, id: 'p1' };
 const ship = (id, hp = 400, size = 'medium', reflex = 15) => ({ id, type: 'vehicle', name: id, system: { size, hp: { value: hp, max: 400 }, conditionTrack: { current: 0 }, derived: { defenses: { reflex: { total: reflex } }, damageThreshold: 999, damage: { threshold: 999, reduction: 0 }, hp: { value: hp, max: 400 }, shield: { current: 0, stored: false } } }, flags: { swse: {} }, effects: [], items: [], getFlag() { return undefined; }, setFlag: async () => {} });
 const tok = (actor, col, row, w = 1, h = 1) => ({ id: `t-${actor.id}`, actor, x: col * 100, y: row * 100, width: w, height: h });
@@ -103,14 +107,17 @@ test('DETONATION: entry sets off a proximity mine ONCE; every ship in the square
     // hit (20 >= 15): 30 x 2 = 60; B and C both in the square
     rolls([15, 15], 30);
     const enter = ship('E'); const moved = tok(enter, 3, 1); scene.tokens.push(moved);
-    assert.deepEqual(await mines.onTokenMoved({ scene, tokenDoc: { ...moved, actor: exempt, parent: scene }, user: GM }), [], 'an IFF-exempt ship does not set it off');
+    none(await mines.onTokenMoved({ scene, tokenDoc: { ...moved, actor: exempt, parent: scene }, user: GM }));
     assert.equal(mines.readMines(scene).length, 1);
-    assert.deepEqual(await mines.onTokenMoved({ scene, tokenDoc: { ...tok(away, 8, 8), parent: scene }, user: GM }), [], 'a ship elsewhere does not');
-    const fired = await mines.onTokenMoved({ scene, tokenDoc: { ...moved, parent: scene }, user: GM });
-    assert.equal(fired.length, 1);
+    none(await mines.onTokenMoved({ scene, tokenDoc: { ...tok(away, 8, 8), parent: scene }, user: GM }));
+    const entering = await mines.onTokenMoved({ scene, tokenDoc: { ...moved, parent: scene }, user: GM });
+    assert.deepEqual([entering.detonated.length, entering.pending.length], [0, 1], 'entry opens the reaction window; nothing detonates before it');
+    assert.equal(applied.length, 0);
+    const fired = await mines.resolveEntry({ scene, mineId: mine.id, actor: enter, user: GM });
+    assert.equal(fired.ok, true, JSON.stringify(fired));
     assert.deepEqual(applied.sort(), [['B', 60], ['C', 60], ['E', 60]], 'all three ships in the square take full damage');
     assert.equal(mines.readMines(scene).length, 0, 'the mine is gone');
-    assert.deepEqual(await mines.onTokenMoved({ scene, tokenDoc: { ...moved, parent: scene }, user: GM }), [], 'a discrete mine cannot detonate twice');
+    none(await mines.onTokenMoved({ scene, tokenDoc: { ...moved, parent: scene }, user: GM }));
     // miss (5+5=10 < 15): half; natural 1: nothing
     for (const [d20, expect] of [[5, 30], [1, null]]) {
       applied.length = 0; scene.tokens = [tok(B, 3, 1)];
@@ -128,7 +135,7 @@ test('DETONATION: entry sets off a proximity mine ONCE; every ship in the square
     assert.equal((await mines.detonate({ scene, mineId: prox.id, user: GM, command: true })).reason, MINE_REASONS.NOT_COMMAND);
     await mines.removeMine({ scene, mineId: prox.id, user: GM });
     const cmd = (await mines.deploy({ vehicle: state().vehicle, weapon: w, scene, user: GM, detonation: 'command' })).mine;
-    assert.deepEqual(await mines.onTokenMoved({ scene, tokenDoc: { ...tok(B, 3, 1), actor: B, parent: scene }, user: GM }), [], 'a command mine ignores proximity');
+    none(await mines.onTokenMoved({ scene, tokenDoc: { ...tok(B, 3, 1), actor: B, parent: scene }, user: GM }));
     assert.equal((await mines.detonate({ scene, mineId: cmd.id, user: GM, command: true })).ok, true);
   } finally { ActorEngine.applyDamage = realApply; ActorEngine.updateActor = realUpdate; RollEngine.safeRoll = realRoll; }
 });

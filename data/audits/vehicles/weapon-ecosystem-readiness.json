@@ -5,7 +5,7 @@
   "inventoryRows": 41,
   "catalogWeaponRows": 63,
   "catalogRowsCoveredByInventory": 63,
-  "aftermarketInstallableRows": 29,
+  "aftermarketInstallableRows": 30,
   "stockGroups": 846,
   "stockGroupsOwnedByAFamily": 801,
   "stockGroupsUnclassified": 45,
@@ -160,10 +160,6 @@
    "class": "SOURCE",
    "text": "Appears only inside vehicle statblocks (no weapon-systems entry in a sourcebook): not a purchasable component."
   },
-  "ION_BOMB_NOT_IMPLEMENTED": {
-   "class": "RULES_DEFERRED",
-   "text": "Register V-P6C-16 is awaiting an owner ruling (range and target of a dropped bomb). The shared launcher ledger, ion damage and area machinery are ready; ion bomb groups stay refused."
-  },
   "POINT_DEFENSE_NOT_IMPLEMENTED": {
    "class": "ENGINEERING",
    "text": "The point-defense modification is not implemented for this weapon."
@@ -204,17 +200,9 @@
    "class": "ENGINEERING",
    "text": "The 4x4 field, the attack against Reflex 10, the persistent scene record and the per-turn interdiction effect are implemented, and the sheet shows the interdiction; the system has NO hyperdrive activation action, so nothing yet REFUSES a jump (isHyperdriveInterdicted is the query that action must consult). Fields last until a GM ends them (V-P6C-14)."
   },
-  "MINE_NOTICE_RULING_PENDING": {
-   "class": "RULES_DEFERRED",
-   "text": "Register V-P6C-15 is awaiting an owner ruling: how the Stealth +5 forms the DC for the pilot / system-operator reaction to notice a mine."
-  },
   "ADVANCED_MINE_NOT_OFFERED": {
    "class": "DATA",
    "text": "The advanced mine (+10, 9d10x2) has no launcher row in the catalog and is not offered."
-  },
-  "MINE_PATH_CROSSING_NOT_MODELED": {
-   "class": "ENGINEERING",
-   "text": "Only the destination footprint of a moving token is tested against a mine square; squares crossed during a move are not."
   },
   "GRAVITY_MINE_NOT_IMPLEMENTED": {
    "class": "ENGINEERING",
@@ -223,6 +211,10 @@
   "NO_CERTIFIED_EFFECT": {
    "class": "SOURCE",
    "text": "The catalog row is SOURCE_VERIFIED only: no certified weapon specification, so it cannot be installed."
+  },
+  "STOCK_ION_BOMB_GROUPS_NOT_WIRED": {
+   "class": "ENGINEERING",
+   "text": "The aftermarket ion bomb rack drops bombs through the ion bomb service (V-P6C-16). Stock groups that print ion bombs are not wired to that service and stay refused by the stock gate."
   }
  },
  "rows": [
@@ -1304,7 +1296,8 @@
     ],
     "tests": [
      "tests/vehicle-universal-phase4e-p45-space-mines.test.mjs",
-     "tests/vehicle-universal-phase4e-p47-scene-state-corrections.test.mjs"
+     "tests/vehicle-universal-phase4e-p47-scene-state-corrections.test.mjs",
+     "tests/vehicle-universal-phase4e-p48-mine-detection.test.mjs"
     ]
    },
    "damageOrEffectExecution": "OFFLINE_TESTED:PERSISTENT_AREA_MINES",
@@ -1319,22 +1312,12 @@
    "overall": "NOT_FULLY_OPERATIONAL",
    "openBlockers": [
     {
-     "code": "MINE_NOTICE_RULING_PENDING",
-     "class": "RULES_DEFERRED",
-     "text": "Register V-P6C-15 is awaiting an owner ruling: how the Stealth +5 forms the DC for the pilot / system-operator reaction to notice a mine."
-    },
-    {
      "code": "ADVANCED_MINE_NOT_OFFERED",
      "class": "DATA",
      "text": "The advanced mine (+10, 9d10x2) has no launcher row in the catalog and is not offered."
-    },
-    {
-     "code": "MINE_PATH_CROSSING_NOT_MODELED",
-     "class": "ENGINEERING",
-     "text": "Only the destination footprint of a moving token is tested against a mine square; squares crossed during a move are not."
     }
    ],
-   "nextSlice": "deployment, proximity and command detonation done; notice reaction awaits V-P6C-15"
+   "nextSlice": "deployment, stored 1d20+5 detection DC, GM-mediated notice reactions, proximity/command detonation and recorded-path crossings done (V-P6C-15)"
   },
   {
    "id": "ion-bombs",
@@ -1357,15 +1340,15 @@
     "Table 3-5: bomb 5d10 ion, 500 credits; rack 1 EP, Military, 1,000 credits.",
     "Usable only in an atmosphere; attacks take a -5 penalty; may target the square directly beneath the ship; on impact a 10-square radius ion field deals 5d10 ion damage; a rack holds up to four bombs."
    ],
-   "sourceCertification": "SOURCE_VERIFIED",
+   "sourceCertification": "MECHANIC_SPECIFIED",
    "catalogRows": [
     {
      "id": "ion-bomb-rack",
      "category": "Weapon",
-     "certification": "SOURCE_VERIFIED",
+     "certification": "MECHANIC_SPECIFIED",
      "reconciliation": "MATCHED_CANONICAL",
-     "installable": false,
-     "testFile": null
+     "installable": true,
+     "testFile": "tests/vehicle-universal-phase4e-p49-ion-bombs.test.mjs"
     },
     {
      "id": "ion-bomb",
@@ -1384,15 +1367,25 @@
     "basis": "PARTITION: owned by this family"
    },
    "aftermarket": {
-    "status": "NOT_INSTALLABLE",
+    "status": "OFFLINE_TESTED_INSTALL_FIRE_REMOVE",
     "weaponRows": 1,
-    "installable": 0,
+    "installable": 1,
     "consumableRows": 1
    },
-   "attackExecution": "NOT_IMPLEMENTED",
-   "implemented": null,
-   "damageOrEffectExecution": "NOT_IMPLEMENTED",
-   "resourceTracking": "NOT_IMPLEMENTED",
+   "attackExecution": "OFFLINE_TESTED",
+   "implemented": {
+    "effect": "ION_FIELD_ON_IMPACT",
+    "modules": [
+     "scripts/engine/vehicles/vehicle-ion-bomb-service.js",
+     "scripts/domain/vehicles/vehicle-ion-bomb.js",
+     "scripts/domain/vehicles/vehicle-launcher-capacity.js"
+    ],
+    "tests": [
+     "tests/vehicle-universal-phase4e-p49-ion-bombs.test.mjs"
+    ]
+   },
+   "damageOrEffectExecution": "OFFLINE_TESTED:ION_FIELD_ON_IMPACT",
+   "resourceTracking": "AFTERMARKET_LEDGER_OFFLINE_TESTED",
    "rangeTable": {
     "slug": null,
     "status": "NO_PUBLISHED_RANGE_ROW"
@@ -1403,17 +1396,12 @@
    "overall": "NOT_FULLY_OPERATIONAL",
    "openBlockers": [
     {
-     "code": "ION_BOMB_NOT_IMPLEMENTED",
-     "class": "RULES_DEFERRED",
-     "text": "Register V-P6C-16 is awaiting an owner ruling (range and target of a dropped bomb). The shared launcher ledger, ion damage and area machinery are ready; ion bomb groups stay refused."
-    },
-    {
-     "code": "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE",
+     "code": "STOCK_ION_BOMB_GROUPS_NOT_WIRED",
      "class": "ENGINEERING",
-     "text": "This launcher or its ammunition has no certified effect: the Shipyard cannot sell or install it. (Installable launchers use the shared finite-ammunition ledger and lock-on projectile engine, P6C-3C/3D.)"
+     "text": "The aftermarket ion bomb rack drops bombs through the ion bomb service (V-P6C-16). Stock groups that print ion bombs are not wired to that service and stay refused by the stock gate."
     }
    ],
-   "nextSlice": "priority 8"
+   "nextSlice": "aftermarket rack done (V-P6C-16: square beneath the ship, atmosphere, -5, 5d10 ion, 10-square radius, four bombs)"
   },
   {
    "id": "tractor-beams",
@@ -3119,7 +3107,8 @@
    },
    "configurations": [],
    "evidence": {
-    "stock": "tests/vehicle-universal-phase4e-p38-autofire-burst.test.mjs"
+    "stock": "tests/vehicle-universal-phase4e-p38-autofire-burst.test.mjs",
+    "switchCost": "tests/vehicle-universal-phase4e-p38-autofire-burst.test.mjs"
    },
    "liveFoundryVerification": "NOT_VERIFIED",
    "overall": "OFFLINE_OPERATIONAL_LIVE_PENDING",

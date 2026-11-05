@@ -22,10 +22,6 @@
    "class": "SOURCE",
    "text": "Appears only inside vehicle statblocks (no weapon-systems entry in a sourcebook): not a purchasable component."
   },
-  "ION_BOMB_NOT_IMPLEMENTED": {
-   "class": "RULES_DEFERRED",
-   "text": "Register V-P6C-16 is awaiting an owner ruling (range and target of a dropped bomb). The shared launcher ledger, ion damage and area machinery are ready; ion bomb groups stay refused."
-  },
   "POINT_DEFENSE_NOT_IMPLEMENTED": {
    "class": "ENGINEERING",
    "text": "The point-defense modification is not implemented for this weapon."
@@ -66,17 +62,9 @@
    "class": "ENGINEERING",
    "text": "The 4x4 field, the attack against Reflex 10, the persistent scene record and the per-turn interdiction effect are implemented, and the sheet shows the interdiction; the system has NO hyperdrive activation action, so nothing yet REFUSES a jump (isHyperdriveInterdicted is the query that action must consult). Fields last until a GM ends them (V-P6C-14)."
   },
-  "MINE_NOTICE_RULING_PENDING": {
-   "class": "RULES_DEFERRED",
-   "text": "Register V-P6C-15 is awaiting an owner ruling: how the Stealth +5 forms the DC for the pilot / system-operator reaction to notice a mine."
-  },
   "ADVANCED_MINE_NOT_OFFERED": {
    "class": "DATA",
    "text": "The advanced mine (+10, 9d10x2) has no launcher row in the catalog and is not offered."
-  },
-  "MINE_PATH_CROSSING_NOT_MODELED": {
-   "class": "ENGINEERING",
-   "text": "Only the destination footprint of a moving token is tested against a mine square; squares crossed during a move are not."
   },
   "GRAVITY_MINE_NOT_IMPLEMENTED": {
    "class": "ENGINEERING",
@@ -85,6 +73,10 @@
   "NO_CERTIFIED_EFFECT": {
    "class": "SOURCE",
    "text": "The catalog row is SOURCE_VERIFIED only: no certified weapon specification, so it cannot be installed."
+  },
+  "STOCK_ION_BOMB_GROUPS_NOT_WIRED": {
+   "class": "ENGINEERING",
+   "text": "The aftermarket ion bomb rack drops bombs through the ion bomb service (V-P6C-16). Stock groups that print ion bombs are not wired to that service and stay refused by the stock gate."
   }
  },
  "rows": [
@@ -634,11 +626,9 @@
    "applicableConfigurations": [],
    "resources": "AFTERMARKET_LEDGER_OFFLINE_TESTED",
    "blockers": [
-    "MINE_NOTICE_RULING_PENDING",
-    "ADVANCED_MINE_NOT_OFFERED",
-    "MINE_PATH_CROSSING_NOT_MODELED"
+    "ADVANCED_MINE_NOT_OFFERED"
    ],
-   "nextSlice": "deployment, proximity and command detonation done; notice reaction awaits V-P6C-15",
+   "nextSlice": "deployment, stored 1d20+5 detection DC, GM-mediated notice reactions, proximity/command detonation and recorded-path crossings done (V-P6C-15)",
    "implemented": {
     "effect": "PERSISTENT_AREA_MINES",
     "modules": [
@@ -648,7 +638,8 @@
     ],
     "tests": [
      "tests/vehicle-universal-phase4e-p45-space-mines.test.mjs",
-     "tests/vehicle-universal-phase4e-p47-scene-state-corrections.test.mjs"
+     "tests/vehicle-universal-phase4e-p47-scene-state-corrections.test.mjs",
+     "tests/vehicle-universal-phase4e-p48-mine-detection.test.mjs"
     ]
    }
   },
@@ -682,12 +673,22 @@
     "Usable only in an atmosphere; attacks take a -5 penalty; may target the square directly beneath the ship; on impact a 10-square radius ion field deals 5d10 ion damage; a rack holds up to four bombs."
    ],
    "applicableConfigurations": [],
-   "resources": "NOT_IMPLEMENTED",
+   "resources": "AFTERMARKET_LEDGER_OFFLINE_TESTED",
    "blockers": [
-    "ION_BOMB_NOT_IMPLEMENTED",
-    "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE"
+    "STOCK_ION_BOMB_GROUPS_NOT_WIRED"
    ],
-   "nextSlice": "priority 8"
+   "nextSlice": "aftermarket rack done (V-P6C-16: square beneath the ship, atmosphere, -5, 5d10 ion, 10-square radius, four bombs)",
+   "implemented": {
+    "effect": "ION_FIELD_ON_IMPACT",
+    "modules": [
+     "scripts/engine/vehicles/vehicle-ion-bomb-service.js",
+     "scripts/domain/vehicles/vehicle-ion-bomb.js",
+     "scripts/domain/vehicles/vehicle-launcher-capacity.js"
+    ],
+    "tests": [
+     "tests/vehicle-universal-phase4e-p49-ion-bombs.test.mjs"
+    ]
+   }
   },
   {
    "id": "tractor-beams",
@@ -1545,7 +1546,8 @@
    "blockers": [],
    "nextSlice": "done (V-P6C-08); swift action to set autofire, resolved by CombatOptionResolver",
    "evidence": {
-    "stock": "tests/vehicle-universal-phase4e-p38-autofire-burst.test.mjs"
+    "stock": "tests/vehicle-universal-phase4e-p38-autofire-burst.test.mjs",
+    "switchCost": "tests/vehicle-universal-phase4e-p38-autofire-burst.test.mjs"
    }
   },
   {
