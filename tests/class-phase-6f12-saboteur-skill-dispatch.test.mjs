@@ -79,3 +79,18 @@ test('failed second swift spend refunds before any roll',async()=>{
   }),/not committed/);
   assert.deepEqual(log,['spend1','spend2','refund']);
 });
+
+test('Shaper Lore and Master Saboteur composition initializes the check mode before use', () => {
+  const code=read('scripts/rolls/skills.js');
+  const start=code.indexOf('export async function rollSkill(');
+  assert.ok(start>=0);
+  const text=code.slice(start);
+  const mode=text.indexOf('const skillCheckMode =');
+  const master=text.indexOf('const masterSaboteurDice =');
+  const roll=text.indexOf('const rollResult = await RollCore.execute(');
+  assert.ok(mode>=0 && master>mode && roll>master,
+    'Master Saboteur must not read skillCheckMode in its temporal dead zone');
+  assert.match(text,/shaperLoreBonus\(actor,effectiveSkillKey,/);
+  assert.match(text,/Shaper Lore \+\$\{shaperLore\}/);
+  assert.match(text,/Master Saboteur: rolled twice, kept the higher d20/);
+});
