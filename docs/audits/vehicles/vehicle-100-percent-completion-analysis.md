@@ -1011,4 +1011,6 @@ PROPOSED for the owner to accept, reorder or reject. Nothing below has been star
 
 ---
 
+**Follow-up:** the evidence-verification pass (`docs/audits/vehicles/vehicle-evidence-verification.md`) re-examines V100-01..05 against the text corpus and supersedes the unlock estimates of this docket where they differ.
+
 *End of report. Stopped at the owner decision gate; PR #1092 remains draft and unmerged.*

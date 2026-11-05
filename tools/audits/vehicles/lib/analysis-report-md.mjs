@@ -144,6 +144,7 @@ export function renderReport(a) {
     `2. **Offline functional after GM certification:** every group whose only blockers are open ammunition or battery facts (${f.gmCertificationOnly_notCanonical.groups} today) can run through the existing GM route, labelled non-canonical. Groups needing a mechanic or a source fact cannot be made functional by GM configuration alone.`,
     '3. **New implementation:** the engineering and source-research waves above; the unlock figures are upper bounds.',
     '4. **Live Foundry V13 verification:** 0 today; a separate milestone from every figure above.', '',
-    '---', '', '*End of report. Stopped at the owner decision gate; PR #1092 remains draft and unmerged.*', '');
+    '---', '', '**Follow-up:** the evidence-verification pass (`docs/audits/vehicles/vehicle-evidence-verification.md`) re-examines V100-01..05 against the text corpus and supersedes the unlock estimates of this docket where they differ.', '',
+    '*End of report. Stopped at the owner decision gate; PR #1092 remains draft and unmerged.*', '');
   return out.join('\n');
 }
