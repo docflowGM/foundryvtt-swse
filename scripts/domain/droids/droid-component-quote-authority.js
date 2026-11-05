@@ -6,8 +6,9 @@
  * identity, grant an installation host, or authorize a transaction.
  */
 import { resolveDroidComponentSourceReview } from './droid-component-source-review.js';
+import { DROID_SIZE_ORDER, evaluateDroidComponentPrerequisites } from './droid-component-prerequisites.js';
 
-const SIZE_ORDER = ['fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'];
+const SIZE_ORDER = DROID_SIZE_ORDER;
 const FACTORS = Object.freeze({
   fine:       Object.freeze({ price: 20, accessoryWeight: 0.1 }),
   diminutive: Object.freeze({ price: 10, accessoryWeight: 0.2 }),
@@ -189,6 +190,13 @@ export function resolveSourceReviewedDroidQuote(input = {}) {
       blockingReason: review.blockingReason
     };
   }
+  const prerequisites = evaluateDroidComponentPrerequisites(input);
+  if (prerequisites.status !== 'PREREQUISITES_MET') {
+    return {
+      status: 'BLOCKED', credits: null, kg: null,
+      blockingReason: prerequisites.blockingReason
+    };
+  }
   return resolveDroidComponentQuote(input);
 }
 
@@ -203,7 +211,8 @@ export function resolveDroidBuilderQuote({
   definition, category, subcategory = null, size, speed = null,
   variant = null, appendageBaseCost = null, appendageBaseWeight = null,
   baseLocomotionCost = null, selectedInstalledShieldRating = null,
-  operationPhase = null, locomotionSlotOrdinal = null, restrictedLocomotion = null
+  operationPhase = null, locomotionSlotOrdinal = null, restrictedLocomotion = null,
+  droidSystems = null, installedComponentIds = [], selectedAppendage = null
 } = {}) {
   const group = category === 'enhancement' ? 'locomotionEnhancement' : category;
   const paths = {
@@ -222,6 +231,7 @@ export function resolveDroidBuilderQuote({
     definition, size, category: group === 'accessory' ? subcategory : group,
     sourcePath, speed, variant, appendageBaseCost,
     appendageBaseWeight, baseLocomotionCost, selectedInstalledShieldRating,
-    operationPhase, locomotionSlotOrdinal, restrictedLocomotion
+    operationPhase, locomotionSlotOrdinal, restrictedLocomotion,
+    droidSystems, installedComponentIds, selectedAppendage
   });
 }
