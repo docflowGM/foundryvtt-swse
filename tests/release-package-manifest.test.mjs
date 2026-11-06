@@ -9,6 +9,12 @@ import { fileURLToPath } from 'node:url';
 // LevelDB compile itself (tools/release/build-packs.mjs, which reads every pack back) needs `npm ci --prefix tools/release`.
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const S = await import(path.join(ROOT, 'tools/release/pack-sources.mjs'));
+// Canonical vehicle Actor packs are GENERATED from the 429-record SSOT (tools/release/build-packs.mjs never reads their legacy packs/*.db); every other pack
+// still has a committed NeDB source. This is the vehicle authority's release contract, so the test follows it instead of requiring a stale source.
+const { UNIVERSAL_VEHICLE_PACK_NAMES } = await import(path.join(ROOT, 'scripts/domain/vehicles/universal-vehicle-pack-registry.js'));
+const { buildUniversalVehiclePackSources } = await import(path.join(ROOT, 'tools/build-universal-vehicle-pack-sources.mjs'));
+const GENERATED = new Set(UNIVERSAL_VEHICLE_PACK_NAMES);
+const vehicleSources = buildUniversalVehiclePackSources(ROOT).output;
 const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'system.json'), 'utf8'));
 let n = 0;
 const ok = (m) => console.log(`  [${++n}] ${m} OK`);
@@ -19,14 +25,16 @@ const ok = (m) => console.log(`  [${++n}] ${m} OK`);
   assert.equal(packs.length, manifest.packs.length);
   for (const p of packs) {
     assert.ok(!p.path.endsWith('.db'), `${p.name}: the manifest declares a LevelDB directory, never a .db file`);
-    assert.ok(fs.statSync(path.join(ROOT, p.source)).isFile(), `${p.name}: committed source ${p.source} exists`);
+    if (GENERATED.has(p.name)) assert.ok((vehicleSources.get(p.name) ?? []).length > 0, `${p.name}: generated from the canonical vehicle SSOT`);
+    else assert.ok(fs.statSync(path.join(ROOT, p.source)).isFile(), `${p.name}: committed source ${p.source} exists`);
   }
   const declared = new Set(packs.map((p) => path.basename(p.source)));
   const undeclared = fs.readdirSync(path.join(ROOT, 'packs')).filter((f) => f.endsWith('.db') && !declared.has(f));
-  assert.deepEqual(undeclared, ['vehicles-starships.db'], 'known undeclared source (not shipped); a new one must be declared or listed here deliberately');
+  // stale legacy vehicle sources are retained as history and are never read or shipped; any OTHER undeclared source must be declared or listed here deliberately
+  assert.deepEqual(undeclared.filter((f) => !/^vehicles[-.]/.test(f)), [], 'no undeclared non-vehicle source');
   assert.deepEqual(S.planPacks({ packs: [{ name: 'x', type: 'Item', path: 'packs/x.db' }] }).problems.length, 1, 'a .db manifest path is refused');
   assert.deepEqual(S.planPacks({ packs: [{ name: 'x', type: 'Scene', path: 'packs/x' }] }).problems.length, 1, 'an unmapped document type is refused');
-  ok(`every one of the ${packs.length} declared packs is a LevelDB directory path with a committed packs/<name>.db source`);
+  ok(`every one of the ${packs.length} declared packs is a LevelDB directory path with a committed packs/<name>.db source (canonical vehicle packs: generated from the SSOT)`);
 }
 {
   const text = [
@@ -72,7 +80,7 @@ const ok = (m) => console.log(`  [${++n}] ${m} OK`);
 {
   let docs = 0; let synthesized = 0; const synthPacks = new Set();
   for (const p of S.planPacks(manifest).packs) {
-    const replay = S.parseNedb(fs.readFileSync(path.join(ROOT, p.source), 'utf8'));
+    const replay = GENERATED.has(p.name) ? { docs: vehicleSources.get(p.name), problems: [] } : S.parseNedb(fs.readFileSync(path.join(ROOT, p.source), 'utf8'));
     assert.deepEqual(replay.problems, [], p.name);
     const prepared = S.prepareDocuments(replay.docs, p.collection);
     assert.deepEqual(prepared.problems, [], p.name);

@@ -28,7 +28,7 @@ const token = (x, y) => ({ center: { x, y }, document: { rotation: 0 } });
 
 function ship() {
   const d = structuredClone(docs.find(x => x.flags.swse.canonicalPublication.sourceEntryKey === XW));
-  return Object.assign(d, { id: 'veh1', isOwner: true, items: new Map(), getActiveTokens: () => [token(0, 0)], getRollData: () => ({}),
+  return Object.assign(d, { id: 'veh1', isOwner: true, items: new (class extends Map { [Symbol.iterator]() { return this.values(); } })(), getActiveTokens: () => [token(0, 0)], getRollData: () => ({}),
     toObject() { const { toObject, items, getActiveTokens, getRollData, ...r } = this; return structuredClone(r); } });
 }
 const plan = (a, id, mount = GM_MOUNT, installId = 'w1') => L.planVehicleInstallation({ record: recOf(a), flags: a.flags, catalogEntry: row(id), installId, availableCredits: 1e9, rules, mount, nonstandard: false });

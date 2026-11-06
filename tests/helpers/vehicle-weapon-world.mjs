@@ -47,6 +47,7 @@ export function world({ hull = 'fighter', credits = 500000 } = {}) {
   };
   const snaps = new Map();
   SnapshotManager.createSnapshot = async actor => { const t = snaps.size + 1; snaps.set(`${actor.id}:${t}`, { credits: actor.system?.credits }); return { timestamp: t }; };
+  SnapshotManager.getSnapshot = (_actor, ts) => ({ schemaVersion: 2, scope: 'full-actor', timestamp: ts });   // TI-2: recovery must be retrievable from the actor
   SnapshotManager.restoreSnapshot = async () => true;
   ActorEngine.createEmbeddedDocuments = async (_a, _n, data) => { for (const d of data) { const id = 'i' + (++seq); items.set(id, { id, ...structuredClone(d), actor: vehicle }); } };
   ActorEngine.deleteEmbeddedDocuments = async (_a, _n, ids) => { for (const id of ids) items.delete(id); };

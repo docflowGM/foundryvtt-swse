@@ -36,6 +36,7 @@ function world({ gm = false, credits = 10000, failAsset = false } = {}) {
   };
   const snaps = new Map();
   SnapshotManager.createSnapshot = async actor => { const t = snaps.size + 1; snaps.set(`${actor.id}:${t}`, { credits: actor.system?.credits, flags: structuredClone(src.flags) }); return { timestamp: t }; };
+  SnapshotManager.getSnapshot = (_actor, ts) => ({ schemaVersion: 2, scope: 'full-actor', timestamp: ts });   // TI-2: recovery must be retrievable from the actor
   SnapshotManager.restoreSnapshot = async (actor, ts) => { log.restores++; const s = snaps.get(`${actor.id}:${ts}`); if (s && actor.id === 'owner1') actor.system.credits = s.credits; if (s && actor.id === 'veh1') src.flags = s.flags; return true; };
   S.rules = rules;
 }

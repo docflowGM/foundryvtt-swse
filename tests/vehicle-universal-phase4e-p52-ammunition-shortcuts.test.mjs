@@ -65,6 +65,7 @@ ActorEngine.applyMutationPlan = async (actor, plan) => {
   if (plan.set?.['system.credits'] !== undefined) actor.system.credits = plan.set['system.credits'];
 };
 SnapshotManager.createSnapshot = async actor => { snaps.push({ actor, credits: actor.system?.credits, items: actor.items ? [...actor.items.values()].map(i => [i.id, structuredClone(i.flags)]) : null }); return { timestamp: snaps.length }; };
+SnapshotManager.getSnapshot = (_actor, ts) => ({ schemaVersion: 2, scope: 'full-actor', timestamp: ts });   // TI-2: recovery must be retrievable from the actor
 SnapshotManager.restoreSnapshot = async (actor, ref) => { const s = snaps[(typeof ref === 'number' ? ref : ref?.timestamp ?? snaps.length) - 1]; if (!s || s.actor.id !== actor.id) return false; if (actor.system) actor.system.credits = s.credits; for (const [id, flags] of s.items ?? []) if (actor.items.get(id)) actor.items.get(id).flags = flags; return true; };
 globalThis.ui = { notifications: { warn() {}, error() {}, info() {} } };
 globalThis.game.settings = globalThis.game.settings ?? { get: () => undefined };
@@ -228,6 +229,8 @@ test('GM APPROVALS SURFACE: the request is routed through the existing approve /
   const ops = readFileSync('scripts/ui/shell/gm/GMApprovalOperationsService.js', 'utf8');
   const surface = readFileSync('scripts/ui/shell/gm/GMApprovalsSurfaceService.js', 'utf8');
   assert.match(ops, /\['vehicle-ammunition-party-fund', 'vehicle-logistics-party-fund'\]\.includes\(approval\.approvalKind\)\) return this\._approveVehicleAmmunition/);
-  assert.match(ops, /\['vehicle-ammunition-party-fund', 'vehicle-logistics-party-fund'\]\.includes\(approvals\[index\]\?\.approvalKind\)\) return this\._denyVehicleAmmunition/);
+  // integration (main's TI-3 identity rule): the Party Fund request is resolved by its id first, a position alone never identifies it, then it settles through its own governed service
+  assert.match(ops, /\['vehicle-ammunition-party-fund', 'vehicle-logistics-party-fund'\]\.includes\(target\?\.approvalKind\)\) \{[\s\S]{0,400}return this\._denyVehicleAmmunition\(host, target, reason\)/);
+  assert.match(ops, /if \(!expectedId\) \{[\s\S]{0,260}cannot identify it/);
   assert.match(surface, /\['vehicle-ammunition-party-fund', 'vehicle-logistics-party-fund'\]\.includes\(approval\?\.approvalKind\)\) return buildVehicleAmmunitionApprovalRequest/);
 });

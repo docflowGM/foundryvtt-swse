@@ -70,6 +70,7 @@ ActorEngine.applyMutationPlan = async (actor, plan) => {
   if (plan.set?.['system.credits'] !== undefined) actor.system.credits = plan.set['system.credits'];
 };
 SnapshotManager.createSnapshot = async actor => { snaps.push({ actor, credits: actor.system?.credits, items: actor.items ? [...actor.items.values()].map(i => [i.id, structuredClone(i.flags)]) : null }); return { timestamp: snaps.length }; };
+SnapshotManager.getSnapshot = (_actor, ts) => ({ schemaVersion: 2, scope: 'full-actor', timestamp: ts });   // TI-2: recovery must be retrievable from the actor
 SnapshotManager.restoreSnapshot = async (actor, ref) => { const s = snaps[(typeof ref === 'number' ? ref : ref?.timestamp ?? snaps.length) - 1]; if (!s || s.actor.id !== actor.id) return false; if (actor.system) actor.system.credits = s.credits; for (const [id, flags] of s.items ?? []) if (actor.items.get(id)) actor.items.get(id).flags = flags; return true; };
 globalThis.ui = { notifications: { warn() {}, error() {}, info() {} } };
 globalThis.game.settings = globalThis.game.settings ?? { get: () => undefined };

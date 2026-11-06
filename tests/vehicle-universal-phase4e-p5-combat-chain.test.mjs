@@ -18,7 +18,10 @@ const mount = { mountKey: 'm1', arc: 'forward', operatorRole: 'pilot', evidence:
 // the cost pipeline would begin (it then fails on our stubs, which is irrelevant here).
 const warnings = [];
 globalThis.ui = { notifications: { warn: m => warnings.push(String(m)), error: m => warnings.push('ERR ' + m), info() {} } };
-const isDenial = () => warnings.some(m => /Vehicle attack blocked|Vehicle attack was blocked|Vehicle-mounted weapon requires/.test(m));
+// the vehicle gate's own refusals, or the shared attack-readiness gate's (a weapon that is not the actor's own Item is refused there before any cost)
+const isDenial = () => warnings.some(m => /Vehicle attack blocked|Vehicle attack was blocked|Vehicle-mounted weapon requires|cannot attack: /.test(m));
+// a Foundry document collection iterates its documents (a bare Map iterates [key, value] pairs)
+class Docs extends Map { [Symbol.iterator]() { return this.values(); } }
 let reachedCosts = 0;
 
 const token = (x, y) => ({ center: { x, y }, document: { rotation: 0 } });
@@ -30,7 +33,7 @@ function build({ executable = true, ledger = true, itemOver = {}, crew = null, i
   if (crew) a.system.crewPositions = crew;
   const weapon = { id: 'item1', name: 'Fixture Cannon', type: 'weapon', system: { vehicleMount: { installId: 'inst1', crewRole: 'pilot' }, ...itemOver } };
   if (itemsAsRow) a.system.weapons = [{ name: 'Fixture Cannon', sourceModificationId: 'm', crewRole: 'pilot' }];
-  const vehicle = { ...a, id: 'veh1', type: 'vehicle', isOwner: true, items: new Map(itemsAsRow ? [] : [[weapon.id, weapon]]), getActiveTokens: () => [token(0, 0)] };
+  const vehicle = { ...a, id: 'veh1', type: 'vehicle', isOwner: true, items: new Docs(itemsAsRow ? [] : [[weapon.id, weapon]]), getActiveTokens: () => [token(0, 0)] };
   weapon.actor = vehicle;
   return { vehicle, weapon: itemsAsRow ? { id: 'system-weapons-0', name: 'Fixture Cannon', system: {} } : weapon };
 }
@@ -49,7 +52,7 @@ test('forged system.weapons row never reaches ammo/action costs', async () => {
   const r = await fire(build({ itemsAsRow: true, ledger: false }));
   assert.equal(reachedCosts, 0);
   assert.equal(r.result ?? null, null);
-  assert.match(r.warnings.join('|'), /blocked|requires/);
+  assert.match(r.warnings.join('|'), /blocked|requires|cannot attack/);
 });
 
 test('weapon Item with no ledger installation is denied before costs', async () => {

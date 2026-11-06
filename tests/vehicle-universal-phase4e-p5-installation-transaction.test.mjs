@@ -38,6 +38,7 @@ function patchEngines({ failAsset = false } = {}) {
     if (plan.set?.['system.credits'] !== undefined) actor.system.credits = plan.set['system.credits'];
   };
   SnapshotManager.createSnapshot = async (actor) => { const s = { timestamp: log.snapshots.length + 1, credits: actor.system?.credits }; log.snapshots.push({ id: actor.id, ...s }); return s; };
+  SnapshotManager.getSnapshot = (_actor, ts) => ({ schemaVersion: 2, scope: 'full-actor', timestamp: ts });   // TI-2: recovery must be retrievable from the actor
   SnapshotManager.restoreSnapshot = async (actor, ts) => {
     log.restores.push(actor.id);
     const snap = log.snapshots.find(s => s.id === actor.id && s.timestamp === ts);
