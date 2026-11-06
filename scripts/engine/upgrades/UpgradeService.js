@@ -17,6 +17,8 @@ import { TransactionEngine } from '/systems/foundryvtt-swse/scripts/engine/store
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
+export const VEHICLE_WORKSHOP_REFUSAL = 'Vehicle systems cannot be installed or removed from the Upgrade Workshop. Use the Shipyard, which applies the published installation rules, cost and Emplacement Points.';
+
 const CATEGORY_LABELS = {
   weapons: 'Weapons',
   armor: 'Armor',
@@ -141,18 +143,11 @@ export class UpgradeService {
       });
     }
 
-    // Vehicle actors represent themselves as an upgradeable entity
-    if (actor.type === 'vehicle') {
-      records.push({
-        sourceType: 'vehicle-actor',
-        id: `vehicle-actor-${actor.id}`,
-        actorId: actor.id,
-        name: actor.name,
-        document: actor,
-        rawType: 'vehicle-actor',
-        system: actor.system
-      });
-    }
+    // Vehicle actors are NOT offered as an upgradeable entity here. A vehicle's
+    // installed systems are owned by VehicleInstallationService (sealed
+    // flags.swse.vehicleInstallations: job, EP, price, source certification);
+    // this workshop used to write a raw, unpaid system.installedSystems entry
+    // (SSOT audit finding N-01). Vehicle modification happens in the Shipyard.
 
     return records;
   }
@@ -631,12 +626,11 @@ export class UpgradeService {
       return { success: true };
     }
 
-    // Vehicle actor upgrade
+    // Vehicle actor upgrade: refused. Fail closed - no payer, price, EP, job or
+    // source check exists on this path; the Shipyard (VehicleInstallationService) is the only
+    // authority for installing vehicle systems. See SSOT audit finding N-01.
     if (itemId?.startsWith('vehicle-actor-')) {
-      const installedSystems = { ...(actor.system?.installedSystems ?? {}) };
-      installedSystems[upgradeId] = true;
-      await ActorEngine.applyMutationPlan(actor, { set: { 'system.installedSystems': installedSystems } });
-      return { success: true };
+      throw new Error(VEHICLE_WORKSHOP_REFUSAL);
     }
 
     // Standard item upgrade
@@ -733,16 +727,9 @@ export class UpgradeService {
       throw new Error(result.error || `Failed to remove ${identified?.id ?? targetId}`);
     }
 
-    // Vehicle actor system removal (unchanged — out of scope for droid
-    // authority consolidation).
+    // Vehicle removal: refused for the same reason as installation (no refund, job or ledger).
     if (itemId?.startsWith('vehicle-actor-')) {
-      const installedSystems = { ...(actor.system?.installedSystems ?? {}) };
-      const keys = Object.keys(installedSystems);
-      if (keys[upgradeIndex] !== undefined) {
-        delete installedSystems[keys[upgradeIndex]];
-        await ActorEngine.applyMutationPlan(actor, { set: { 'system.installedSystems': installedSystems } });
-      }
-      return { success: true };
+      throw new Error(VEHICLE_WORKSHOP_REFUSAL);
     }
 
     const item = actor.items.get(itemId);
