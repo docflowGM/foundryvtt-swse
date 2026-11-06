@@ -6,7 +6,7 @@
  * actors). The published base flags are never written. Replaces the canonical path that
  * VehicleFactory blocks with VEHICLE_FACTORY_CANONICAL_MODIFICATION_REQUIRES_CERTIFIED_P2_PATH.
  */
-import { isRecordedOwnerId } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-asset-owner.js';
+import { isRecordedOwnerId, resolveAssetOwner } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-asset-owner.js';
 import { classifyVehicleActorSource } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
 import {
   DEFAULT_VEHICLE_INSTALLATION_RULES, VEHICLE_INSTALLATION_FLAG_PATH,
@@ -79,6 +79,8 @@ export class VehicleInstallationService {
   /** The wallet actor must be the vehicle's recorded owner (or the user a GM). */
   static #ownerAssociated(ownerActor, vehicle) {
     if (!ownerActor?.id) return false;
+    // Contradictory current-ownership records block everyone (a GM repairs the data first); otherwise a GM may act.
+    if (resolveAssetOwner(vehicle).status === 'CONTRADICTORY') return false;
     if (globalThis.game?.user?.isGM === true) return true;
     return this.isRecordedOwner(ownerActor, vehicle);
   }

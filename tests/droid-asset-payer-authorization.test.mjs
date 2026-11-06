@@ -89,4 +89,30 @@ const cost = (droid) => computeDroidPartCost(droid, { id: PART });
   await assert.rejects(() => UpgradeService.applyUpgrade({ actor: s.droid, itemId: 'droid-actor-d1', upgradeId: PART }), /no longer exists/);
   assert.equal(s.droid.system.credits, 5000); assert.deepEqual(s.droid.system.installedSystems, {});
 }
+// ---- ownership inconsistency fixes (reviewer) -----------------------------------------------------------------
+{
+  const clash = { id: 'd', system: { ownedByActorId: 'a', npcProfile: { owner: { actorId: 'b' } } }, flags: {} };
+  // self-funding cannot bypass the contradiction rule; neither can a GM or a listed owner
+  assert.equal(own.authorizePayer(clash, { id: 'd' }).ok, false, 'self-funded customization is refused while ownership contradicts');
+  assert.equal(own.authorizePayer(clash, { id: 'd' }, { isGM: true }).ok, false);
+  assert.equal(own.authorizePayer(clash, { id: 'a' }).ok, false);
+  assert.equal(own.isRecordedOwnerId(clash, 'a'), false, 'no id is "the" owner when current-ownership records disagree');
+  assert.equal(own.isRecordedOwnerId(clash, 'b'), false);
+  // the original acquirer is a recorded owner but is NOT a contradiction with the current owner (transfers)
+  const transferred = { id: 'v', system: { ownedByActorId: 'new', storeAcquisition: { ownerActorId: 'buyer' } }, flags: {} };
+  assert.equal(own.resolveAssetOwner(transferred).status, 'RESOLVED');
+  assert.equal(own.resolveAssetOwner(transferred).ownerId, 'new');
+  assert.equal(own.isRecordedOwnerId(transferred, 'new'), true);
+  assert.equal(own.isRecordedOwnerId(transferred, 'buyer'), true, 'previous behavior preserved for the acquirer');
+  assert.equal(own.isRecordedOwnerId(transferred, 'stranger'), false);
+  // agreeing primary + assignment records are fine
+  assert.equal(own.resolveAssetOwner({ system: { ownedByActorId: 'a', assetOwnership: { primaryOwnerActorId: 'a' } } }).status, 'RESOLVED');
+  // the Vehicle service applies the same rule: contradiction blocks even a GM from the owner-association gate
+  const veh = (system) => ({ id: 'veh', name: 'V', type: 'vehicle', system, flags: {}, items: [] });
+  installFoundryShimGlobals({ game: { user: { isGM: true, id: 'gm' }, actors: { get: () => null }, users: [] } });
+  assert.equal(VehicleInstallationService.isRecordedOwner({ id: 'a' }, veh({ ownedByActorId: 'a', assetOwnership: { primaryOwnerActorId: 'b' } })), false);
+  assert.equal(VehicleInstallationService.isRecordedOwner({ id: 'new' }, veh({ ownedByActorId: 'new' })), true);
+  const src = (await import('node:fs')).readFileSync('scripts/engine/vehicles/vehicle-installation-service.js', 'utf8');
+  assert.match(src.slice(src.indexOf('static #ownerAssociated'), src.indexOf('static #ownerAssociated') + 500), /CONTRADICTORY'\) return false;[\s\S]*isGM === true\) return true/, 'contradiction is checked before the GM allowance');
+}
 console.log('Droid asset payer-authorization tests passed.');
