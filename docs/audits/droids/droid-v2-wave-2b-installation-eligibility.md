@@ -43,3 +43,29 @@ Display and preview agree for every catalog entry on three shapes (334 compariso
 - Embedded-Item evidence is "present, not confirmed". If integrated-equipment Items should satisfy prerequisites, say so; today they do not.
 - A disabled ledger part still counts as confirmed hardware for requirements (existing behavior preserved).
 - No new rules decision was required; DROID-RD-001..003 remain pending.
+
+## Review corrections (independent review of PR #1114, head `592d1d4`)
+
+### Verification record
+Exact-head GitHub CI on `592d1d4`: Rolling System Validation success (independently reported as 619 passed / 0 failed / 5 documented exclusions) and Droid V2 Gate A success. My own local full run for that head was interrupted (364 passes, 0 failures, no summary line) and is not claimed.
+
+### Corrections
+1. **Physical-host evidence.** `listConfirmedHostInstances` / `findConfirmedHostInstance` (droid-part-schema.js) are now the single definition of a host: a well-formed ledger instance, not `installed: false`, with a confirmed location token, not fitted to another host, whose part is a PHYSICAL appendage in the catalog, and only while the ledger and the `droidSystems` mirror agree about the physical appendages. Quote evidence (`confirmedAppendages`), host pricing (`deriveHostAppendageBase`) and the customization engine (`resolveHostForPart`) all use it.
+2. **Actor quote trust boundary.** `resolveDroidPartQuoteDetailed` is the post-creation path and no longer accepts authority claims.
+
+| Input | Authoritative source on the actor path | Caller value |
+|---|---|---|
+| size | the actor's own chassis size | ignored |
+| operationPhase | fixed `POST_CREATION_INSTALL` (the INITIAL_BUILD locomotion subset belongs to the draft builders, which use `resolveDroidBuilderQuote`) | ignored |
+| locomotionSlotOrdinal, restrictedLocomotion | not applicable post-creation (null) | ignored |
+| appendage base cost / mass | canonical quote of the verified ledger host (typed `requiresAppendage` only) | ignored |
+| baseLocomotionCost | canonical post-creation quote of the actor's current locomotion; locomotion prices are source-HOLD post-creation, so locomotion enhancements stay blocked | ignored |
+| selectedInstalledShieldRating | the single rated shield generator in CONFIRMED installed hardware; none / draft / several => null | ignored |
+| speed | purchase selection, validated by the quote authority (finite, non-negative) and by source review | accepted as a selection |
+| variant | purchase selection, must match an exact printed variant or the quote is refused | accepted as a selection |
+
+   No speed, rating, host or variant is fabricated; unsupported post-creation cases stay blocked.
+3. **Backup-processor evidence.** `hasBackupProcessorSlot` consulted `droidSystems.processorSlots.backup` / `backupProcessor` (display/stock fields). It now requires a CONFIRMED ledger record. A draft-only or mirror-only backup processor can no longer authorize a second primary processor in a post-creation transaction; the draft builders' initial-build handling is unaffected (they do not use this engine).
+
+### Tests added (groups 12-15 of `droid-wave2b-installation-eligibility`)
+Host negatives (installed:false, no location, identified non-appendage, fitted-to-other, unknown part, ledger/mirror disagreement both ways, removed host; engine agrees); forged operationPhase / ordinal / restricted flag / size / base costs / appendage bases change nothing and locomotion HOLDs stay held; shield rating derived from confirmed hardware only; mirror / blob backup records refused at display, preview and apply with zero mutation. Eight mutations were injected (one per correction) and each is caught. No published-source ruling was needed; DROID-RD-001..003 and every source HOLD are untouched.

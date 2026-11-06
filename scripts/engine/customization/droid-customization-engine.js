@@ -23,7 +23,7 @@
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/core/logger.js';
 import { DROID_SYSTEMS } from '/systems/foundryvtt-swse/scripts/data/droid-systems.js';
-import { computeDroidPartCost, getAllDroidPartDefinitions, getDroidCostFactor, getDroidPartDefinition, hydrateDroidPart, normalizeDroidPartId, resolveDroidPartQuoteDetailed } from '/systems/foundryvtt-swse/scripts/data/droid-part-schema.js';
+import { computeDroidPartCost, getAllDroidPartDefinitions, getDroidCostFactor, getDroidPartDefinition, hydrateDroidPart, normalizeDroidPartId, resolveDroidPartQuoteDetailed, collectInstalledComponentEvidence, findConfirmedHostInstance } from '/systems/foundryvtt-swse/scripts/data/droid-part-schema.js';
 import { evaluateInstallationEligibility } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installation-eligibility.js';
 import { resolveInstalledDroidComponents } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js';
 import {
@@ -114,9 +114,9 @@ function resolveHostForPart(actor, definition, hostInstanceId) {
   if (!hostId) {
     return { success: false, error: `Select the installed ${types.join(' or ')} appendage ${definition?.name ?? 'this component'} is fitted to.`, blockingReason: 'Host appendage required' };
   }
-  const host = findInstance(actor?.system?.installedSystems, hostId);
+  const host = findConfirmedHostInstance(actor, hostId);
   if (!host) {
-    return { success: false, error: 'The selected appendage is not installed on this droid.', blockingReason: 'Host appendage not installed' };
+    return { success: false, error: 'The selected appendage is not a confirmed, installed physical appendage on this droid.', blockingReason: 'Host appendage not installed' };
   }
   return {
     success: true,
@@ -126,8 +126,11 @@ function resolveHostForPart(actor, definition, hostInstanceId) {
 }
 
 function hasBackupProcessorSlot(actor) {
-  const ids = collectInstalledDroidPartIds(actor);
-  return ids.has('backup-processor') || Boolean(actor?.system?.droidSystems?.processorSlots?.backup || actor?.system?.droidSystems?.backupProcessor);
+  // Post-creation authority: the backup slot exists only if the installation
+  // LEDGER records a backup processor. A droidSystems mirror / stock-blob entry
+  // (processorSlots.backup, backupProcessor) is display data and never
+  // authorizes a second primary processor.
+  return collectInstalledComponentEvidence(actor).confirmedIds.includes('backup-processor');
 }
 
 function isPrimaryProcessor(def) {
@@ -767,7 +770,7 @@ export class DroidCustomizationEngine {
       droidSystems.processorSlots ??= {};
       if (primaryLike) {
         if (!droidSystems.processor?.id) droidSystems.processor = entry;
-        else if (hasBackupProcessorSlot(actor) || droidSystems.processorSlots?.backup || droidSystems.backupProcessor) {
+        else if (hasBackupProcessorSlot(actor)) {
           droidSystems.processorSlots.backup = { ...entry, active: false };
           droidSystems.backupProcessor = { ...entry, active: false };
         }

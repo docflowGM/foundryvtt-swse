@@ -27,7 +27,7 @@ installFoundryShimGlobals({ game: { user: { isGM: true, id: 'gm-1' }, actors: ma
 const { resetFakeActorEngine, fakeActorEngineCallLog } = await import('./helpers/foundry-shim/fakes/actor-engine.fake.mjs');
 const { DroidCustomizationEngine } = await import('../scripts/engine/customization/droid-customization-engine.js');
 const schema = await import('../scripts/data/droid-part-schema.js');
-const { collectInstalledComponentEvidence, deriveHostAppendageBase, resolveDroidPartQuoteDetailed, resolveDroidPartQuote } = schema;
+const { collectInstalledComponentEvidence, deriveHostAppendageBase, resolveDroidPartQuoteDetailed, resolveDroidPartQuote, listConfirmedHostInstances, deriveInstalledShieldRating } = schema;
 const { evaluateInstallationEligibility, unresolvedHostRequirement, ELIGIBILITY } = await import('../scripts/domain/droids/droid-installation-eligibility.js');
 const { evaluateDroidComponentPrerequisites } = await import('../scripts/domain/droids/droid-component-prerequisites.js');
 
@@ -226,6 +226,112 @@ const ledgerKey = e => `${e.id}--${e.instanceId}`;
   }
   assert.ok(compared > 100);
   ok(`no catalog entry is displayed compatible that the preview refuses (${compared} comparisons)`);
+}
+
+// ======================= Review corrections (Wave 2B) =======================
+
+// 12. Only a GENUINELY confirmed, installed physical appendage can be a host.
+{
+  const base = (over = {}) => ({ id: 'hand', instanceId: 'inst-aaaaaa01', locationId: 'appendage-slot-1', name: 'Hand', category: 'appendage', slot: 'appendage', ...over });
+  const build = (entry, extraMirror) => {
+    const mirror = [{ id: entry.id, instanceId: entry.instanceId, ...(entry.locationId ? { locationId: entry.locationId } : {}) }];
+    return makeDroid({ installedSystems: { [`${entry.id}--${entry.instanceId}`]: entry }, droidSystems: { appendages: extraMirror ?? mirror } });
+  };
+  const typed = { source: { requiresAppendage: ['hand', 'claw'] } };
+  const sel = { id: 'hand', instanceId: 'inst-aaaaaa01' };
+  const good = build(base());
+  assert.equal(deriveHostAppendageBase(good, typed, sel).status, 'OK', 'control: a confirmed hand is a host');
+  assert.equal(listConfirmedHostInstances(good).length, 1);
+  const cases = [
+    ['installed:false', build(base({ installed: false }))],
+    ['no confirmed location', build(base({ locationId: null }))],
+    ['identified NON-appendage record', build(base({ id: 'plasteel-shell', category: 'armor', slot: 'armor.shell' }))],
+    ['record fitted to another host', build(base({ hostInstanceId: 'inst-bbbbbb02' }))],
+    ['unknown part id', build(base({ id: 'not-a-real-part' }))]
+  ];
+  for (const [label, d] of cases) {
+    const id = d.system.installedSystems[Object.keys(d.system.installedSystems)[0]];
+    assert.equal(listConfirmedHostInstances(d).length, 0, `${label}: not a confirmed host`);
+    assert.equal(collectInstalledComponentEvidence(d).confirmedAppendages.length, 0, `${label}: not confirmed appendage evidence`);
+    assert.equal(deriveHostAppendageBase(d, typed, { id: id.id === 'hand' ? 'hand' : id.id, instanceId: 'inst-aaaaaa01' }).status, 'BLOCKED', `${label}: no host base`);
+  }
+  // ledger / mirror disagreement: no host is confirmed until reconciled
+  const lostMirror = build(base(), []);
+  assert.equal(listConfirmedHostInstances(lostMirror).length, 0);
+  assert.equal(deriveHostAppendageBase(lostMirror, typed, sel).status, 'BLOCKED');
+  const ghostMirror = build(base(), [{ id: 'hand', instanceId: 'inst-aaaaaa01', locationId: 'appendage-slot-1' }, { id: 'claw', instanceId: 'inst-ffffff09', locationId: 'appendage-slot-2' }]);
+  assert.equal(listConfirmedHostInstances(ghostMirror).length, 0);
+  // removed host
+  assert.equal(deriveHostAppendageBase(makeDroid(), typed, sel).status, 'BLOCKED');
+  // the engine agrees (same authority): fitting to an unconfirmed host is refused with the host reason
+  for (const [label, d] of cases) {
+    const p = DroidCustomizationEngine.previewDroidCustomization(d, { add: [{ id: 'climbing-claws', hostInstanceId: 'inst-aaaaaa01' }] });
+    assert.equal(p.success, false, label);
+    assert.ok(['Host appendage not installed', 'Inconsistent appendage records'].includes(p.blockingReason), `${label}: refused at host/record validation, before any price (got ${p.blockingReason})`);
+  }
+  ok('host evidence: installed:false / no location / non-appendage / fitted-to-other / unknown part / mirror disagreement / removed are never hosts; engine agrees');
+}
+
+// 13. Post-creation quotes cannot gain clearance from caller claims.
+{
+  const actor = makeDroid({ droidSystems: { locomotion: { id: 'walking', speed: 6 } } });
+  const forged = { operationPhase: 'INITIAL_BUILD', locomotionSlotOrdinal: 1, restrictedLocomotion: false, size: 'huge', baseLocomotionCost: 1, selectedInstalledShieldRating: 20, appendageBaseCost: 1, appendageBaseWeight: 1 };
+  const locomotion = schema.getAllDroidPartDefinitions().filter(d => String(d.sourcePath).toLowerCase().includes('locomotion'));
+  assert.ok(locomotion.length >= 8);
+  let held = 0;
+  for (const def of locomotion) {
+    const honest = resolveDroidPartQuote(actor, def.id, { speed: 6 });
+    const claimed = resolveDroidPartQuote(actor, def.id, { speed: 6, ...forged });
+    assert.deepEqual(claimed, honest, `${def.id}: forged context changes nothing`);
+    if (honest.status === 'NEEDS_SOURCE_ADJUDICATION') held += 1;
+  }
+  assert.ok(held >= 5, 'the source-HOLD locomotion records stay held post-creation (no INITIAL_BUILD claim)');
+  assert.equal(resolveDroidPartQuote(actor, 'walking', forged).status, 'NEEDS_SOURCE_ADJUDICATION');
+  // size comes from the actor only
+  const small = makeDroid({ droidSystems: { size: 'small' } });
+  assert.deepEqual(resolveDroidPartQuote(small, 'hand', { size: 'colossal' }), resolveDroidPartQuote(small, 'hand'));
+  assert.notEqual(resolveDroidPartQuote(small, 'hand').credits, resolveDroidPartQuote(makeDroid(), 'hand').credits, 'size matters, so the override test is meaningful');
+  ok('forged operationPhase / slot ordinal / restricted flag / size / base costs are ignored; locomotion HOLDs stay held');
+}
+
+// 14. Installed shield rating comes from confirmed hardware, never from the caller.
+{
+  const bare = makeDroid();
+  const claim = o => resolveDroidPartQuote(bare, 'shield-expansion-module', o);
+  assert.deepEqual(claim({ selectedInstalledShieldRating: 20 }), claim({}), 'a claimed rating on a droid with no generator changes nothing');
+  assert.notEqual(claim({ selectedInstalledShieldRating: 10 }).status, 'OK');
+  const withGen = makeDroid({ installedSystems: { 'sr10-shield-generator': { id: 'sr10-shield-generator', installed: true } } });
+  assert.equal(deriveInstalledShieldRating(collectInstalledComponentEvidence(withGen).confirmedIds), 10);
+  assert.deepEqual(resolveDroidPartQuote(withGen, 'shield-expansion-module', { selectedInstalledShieldRating: 20 }), resolveDroidPartQuote(withGen, 'shield-expansion-module', {}), 'the derived rating wins over a claim');
+  const draftGen = makeDroid({ droidSystems: { accessories: [{ id: 'sr10-shield-generator' }] } });
+  assert.equal(deriveInstalledShieldRating(collectInstalledComponentEvidence(draftGen).confirmedIds), null, 'a draft/mirror generator is not confirmed hardware');
+  const two = makeDroid({ installedSystems: { 'sr5-shield-generator': { id: 'sr5-shield-generator' }, 'sr10-shield-generator': { id: 'sr10-shield-generator' } } });
+  assert.equal(deriveInstalledShieldRating(collectInstalledComponentEvidence(two).confirmedIds), null, 'several generators are ambiguous, never guessed');
+  ok('installed shield rating: derived from confirmed hardware only; none / draft / several => no rating');
+}
+
+// 15. A mirror-only backup processor never authorizes a second primary processor.
+{
+  const primary = { processor: { id: 'basic-processor' } };
+  for (const [label, ds] of [
+    ['processorSlots.backup mirror', { ...primary, processorSlots: { backup: { id: 'backup-processor', active: false } } }],
+    ['backupProcessor mirror', { ...primary, backupProcessor: { id: 'backup-processor', active: false } }],
+    ['stock blob processorEnhancements', { ...primary, processorEnhancements: [{ id: 'backup-processor' }] }]
+  ]) {
+    const d = makeDroid({ droidSystems: ds });
+    const h = DroidCustomizationEngine.getAvailableSystems(d).systems.find(x => x.id === 'heuristic-processor');
+    assert.equal(h.compatible, false, `${label}: no backup slot`);
+    assert.ok(h.eligibility.reasons.some(r => r.code === 'PRIMARY_PROCESSOR_PRESENT'), label);
+    const p = DroidCustomizationEngine.previewDroidCustomization(d, { add: ['heuristic-processor'] });
+    assert.equal(p.success, false, `${label}: preview refuses`);
+    resetFakeActorEngine();
+    const r = await DroidCustomizationEngine.applyDroidCustomization(d, { add: ['heuristic-processor'] });
+    assert.equal(r.success, false, `${label}: apply refuses`);
+    assert.equal(fakeActorEngineCallLog.length, 0, `${label}: nothing mutated`);
+  }
+  const confirmed = makeDroid({ droidSystems: primary, installedSystems: { 'backup-processor': { id: 'backup-processor', installed: true } } });
+  assert.equal(DroidCustomizationEngine.getAvailableSystems(confirmed).systems.find(x => x.id === 'heuristic-processor').compatible, true, 'a LEDGER backup processor does');
+  ok('backup slot: mirror / blob records never authorize a second primary processor; a ledger record does');
 }
 
 console.log(`Droid Wave 2B installation eligibility tests passed (${n} groups).`);
