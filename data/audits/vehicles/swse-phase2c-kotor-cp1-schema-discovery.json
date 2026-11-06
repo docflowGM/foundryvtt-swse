@@ -1,0 +1,290 @@
+{
+  "schema": "swse.vehicle.phase2c.schema-discovery.v0.1",
+  "sourceBook": "Knights of the Old Republic Campaign Guide",
+  "mode": "DISCOVERY_ONLY_NOT_PRODUCTION",
+  "schemaFrozen": false,
+  "discoveries": [
+    {
+      "id": "kotor-cp1-stinger-census-page",
+      "ship": "S-100 Stinger",
+      "category": "SOURCE_PROVENANCE",
+      "sourcePrintedPages": [
+        95,
+        96
+      ],
+      "sourceDerivedIssue": "Phase1 statblock page 95 is an introduction; actual printed CL9 block begins p96. Preserve unchanged Phase1 identity/locator until independent page-map reconciliation.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-stinger-utility-droid",
+      "ship": "S-100 Stinger",
+      "category": "EQUIPMENT_CREW",
+      "sourcePrintedPages": [
+        96
+      ],
+      "sourceDerivedIssue": "Hyperdrive x2 uses 10-jump utility-droid memory; no full utility-droid station skills stated.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-stinger-missile-ammo",
+      "ship": "S-100 Stinger",
+      "category": "PAYLOAD",
+      "sourcePrintedPages": [
+        96
+      ],
+      "sourceDerivedIssue": "Eight proton torpedoes accompany a pilot-controlled alternative weapon group.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-star-saber-util-droid",
+      "ship": "Star Saber XC-01",
+      "category": "EQUIPMENT_CREW",
+      "sourcePrintedPages": [
+        96
+      ],
+      "sourceDerivedIssue": "10-jump memory utility droid is printed; independent crew contribution is not quantified.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-578-incomplete-manufacture",
+      "ship": "578-R Transport",
+      "category": "CONFIGURATION",
+      "sourcePrintedPages": [
+        98
+      ],
+      "sourceDerivedIssue": "Narrative reports missing motivators/inertial dampeners on defective factory units; stock published x3 hyperdrive should not be overwritten.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-578-shield-silence",
+      "ship": "578-R Transport",
+      "category": "SOURCE_SILENCE",
+      "sourcePrintedPages": [
+        98
+      ],
+      "sourceDerivedIssue": "No SR line; unknown/unstated is not zero or proven unshielded.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-gtype-assist-training",
+      "ship": "G-Type Shuttle",
+      "category": "CONDITIONAL_MODIFIER",
+      "sourcePrintedPages": [
+        98
+      ],
+      "sourceDerivedIssue": "Pilot +2 equipment bonus explicitly only if untrained in Pilot.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-gtype-escape-variant",
+      "ship": "G-Type Shuttle",
+      "category": "IN_ENTRY_VARIANT",
+      "sourcePrintedPages": [
+        98,
+        99
+      ],
+      "sourceDerivedIssue": "Escape configuration modifies existing statblock on p99, including SR, capacity and hyperdrive; not an independent Phase1 identity.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-gtype-stock-hyperdrive",
+      "ship": "G-Type Shuttle",
+      "category": "SOURCE_SILENCE",
+      "sourcePrintedPages": [
+        98,
+        99
+      ],
+      "sourceDerivedIssue": "The base p98 statblock has no hyperdrive field; the p99 escape variation includes x2 and x10 backup.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-lethisk-station-and-payload",
+      "ship": "Lethisk Freighter",
+      "category": "WEAPON_STATION_AND_AMMO",
+      "sourcePrintedPages": [
+        99
+      ],
+      "sourceDerivedIssue": "Gunner lasers and pilot missiles use separate attacks; light concussion missiles have printed payload 12.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-pelagia-minimum-crew",
+      "ship": "Pelagia Duplex",
+      "category": "CREW_CONFIGURATION",
+      "sourcePrintedPages": [
+        100
+      ],
+      "sourceDerivedIssue": "Crew5 expert stock; narrative says operable effectively with pilot and one other; requires operational crew stations and capacity logic.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-pelagia-two-cockpits",
+      "ship": "Pelagia Duplex",
+      "category": "WEAPON_HARDWARE",
+      "sourcePrintedPages": [
+        100
+      ],
+      "sourceDerivedIssue": "Two cockpits/two gunner pods and 2+2 printed cannons; spare mounting point count/arcs unspecified.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-pelagia-install-bonus",
+      "ship": "Pelagia Duplex",
+      "category": "CONDITIONAL_MODIFIER",
+      "sourcePrintedPages": [
+        100
+      ],
+      "sourceDerivedIssue": "+5 equipment only to Mechanics checks to install weapon systems, not global Mechanics.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-pelagia-hyperdrive-silent",
+      "ship": "Pelagia Duplex",
+      "category": "SOURCE_SILENCE",
+      "sourcePrintedPages": [
+        100
+      ],
+      "sourceDerivedIssue": "No hyperdrive entry printed; do not infer a speed multiplier.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-quartermaster-no-attacks",
+      "ship": "Quartermaster Carrier",
+      "category": "SOURCE_SILENCE",
+      "sourcePrintedPages": [
+        100
+      ],
+      "sourceDerivedIssue": "No statted weapons despite narrative minor defensive systems; weapon list empty due to absent printed attacks, not proof of no hardware.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-quartermaster-variable-carry",
+      "ship": "Quartermaster Carrier",
+      "category": "CONFIGURATION",
+      "sourcePrintedPages": [
+        100
+      ],
+      "sourceDerivedIssue": "Passengers 10 standard configuration; carried craft varies by mission.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-praetorian-tactical-fire",
+      "ship": "Praetorian Frigate",
+      "category": "AREA_SUPPORT_ACTION",
+      "sourcePrintedPages": [
+        101
+      ],
+      "sourceDerivedIssue": "Forgo attacks as standard action for 2-square-radius allied +1 Reflex and +10 Fortitude AND damage threshold.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-praetorian-battery-count",
+      "ship": "Praetorian Frigate",
+      "category": "BATTERY_TO_MOUNT",
+      "sourcePrintedPages": [
+        101
+      ],
+      "sourceDerivedIssue": "Three weapon group types each show 2 batteries; detailed gunners 4,3,3; physical mounts within each battery unspecified.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-praetorian-tractor",
+      "ship": "Praetorian Frigate",
+      "category": "TRACTOR_GRAPPLE",
+      "sourcePrintedPages": [
+        101
+      ],
+      "sourceDerivedIssue": "Tractor batteries printed attack +11, size target variant -9 and grapple +63; requires non-damage resolution.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-praetorian-small-target",
+      "ship": "Praetorian Frigate",
+      "category": "CONDITIONAL_ATTACK",
+      "sourcePrintedPages": [
+        101
+      ],
+      "sourceDerivedIssue": "-20 penalty on turret/tractor attacks against target smaller than Colossal is printed.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-baronial-identity",
+      "ship": "Baronial Yacht",
+      "category": "PUBLICATION_IDENTITY",
+      "sourcePrintedPages": [
+        143
+      ],
+      "sourceDerivedIssue": "Section title Jedi Covenant Shuttle; actual CL6 statblock is Baronial-class Yacht.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-baronial-model-variation",
+      "ship": "Baronial Yacht",
+      "category": "CONFIGURATION",
+      "sourcePrintedPages": [
+        143
+      ],
+      "sourceDerivedIssue": "Narrative indicates models vary, but gives no second full statblock.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-interdictor-tactical-fire",
+      "ship": "Interdictor Warship",
+      "category": "AREA_DEBUFF_ACTION",
+      "sourcePrintedPages": [
+        161
+      ],
+      "sourceDerivedIssue": "Standard action forgo all attacks; enemy starships in 2-square area -1 Reflex and -2 speed min1.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-interdictor-gravity-well",
+      "ship": "Interdictor Warship",
+      "category": "SPECIAL_AREA_WEAPON",
+      "sourcePrintedPages": [
+        161
+      ],
+      "sourceDerivedIssue": "Four projectors, +8 3x3 starship area, damage Special (SG45); SG45 effect must be resolved from source authority before automation.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-interdictor-batteries",
+      "ship": "Interdictor Warship",
+      "category": "BATTERY_TO_MOUNT",
+      "sourcePrintedPages": [
+        161
+      ],
+      "sourceDerivedIssue": "5/6/3 battery group counts and 4 gravity projectors explicitly printed but firing arcs and constituent mounts not.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-interdictor-tractor",
+      "ship": "Interdictor Warship",
+      "category": "TRACTOR_GRAPPLE",
+      "sourcePrintedPages": [
+        161
+      ],
+      "sourceDerivedIssue": "Tractor beam attacks +10 (-10 vs targets smaller than Colossal), non-damage grapple +61.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-interdictor-small-target",
+      "ship": "Interdictor Warship",
+      "category": "CONDITIONAL_ATTACK",
+      "sourcePrintedPages": [
+        161
+      ],
+      "sourceDerivedIssue": "-20 against smaller-than-Colossal applies on asterisked medium turbolaser and tractor attacks.",
+      "requiresFollowup": true
+    }
+  ],
+  "counts": {
+    "discoveryCases": 27,
+    "bookScopeReviewed": 10
+  },
+  "scopeGuardrails": [
+    "Only 10 KOTOR published entries reviewed; other 22 remain NOT_REVIEWED.",
+    "No production schema, compendium, actor, hydration or runtime changes.",
+    "Discovery is not approval of mechanic normalization or strict certification."
+  ]
+}

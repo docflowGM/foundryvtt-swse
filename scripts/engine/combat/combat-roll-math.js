@@ -52,6 +52,7 @@ import { infiltratorUnarmedStunDice } from "/systems/foundryvtt-swse/scripts/eng
 import { isPistolWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { trustySidearmDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/class-gunslinger-trusty-sidearm.js";
 import { collectSharedDamageDiceTerms } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-item-dice-contributions.js";
+import { resolveVehicleWeaponDamage } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
 import { canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
 import { criticalPostMultiplierDice } from "/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-effects.js";
 
@@ -1013,7 +1014,7 @@ function computeTypedDamageModifierPool(actor, weapon, context, optionModifiers)
  * }}
  */
 export function resolveDamageComposition(actor, weapon, context = {}) {
-  const bonus = resolveDamageBonus(actor, weapon, context);
+  let bonus = resolveDamageBonus(actor, weapon, context);
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, context);
   // Phase 5D-C: the canonical runtime supplies WHAT the selected attack form's base damage is (resolved once by the caller
   // and passed as context.canonicalDamage, or resolved here from the carried/explicit form ids); everything below -- die
@@ -1034,12 +1035,22 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
   // precedence: stock-statblock published formula (flat contract) > canonical selected-form damage > legacy Item-level damage
   // Phase 5D-E: AUTO damage mechanics of the selected canonical form (multiplier, critical die replacement / bonus formula, riders)
   // are consumed HERE, in the one composition -- never by a second damage engine. A stock-statblock flat contract is untouched.
+  // P6B: a weapon installed on a vehicle through the sealed Shipyard ledger uses the Core vehicle formula
+  // (weapon damage dice x damage multiplier) -- never the printed "NdMxK" string as dice, and no ability/half-level terms.
+  // P6C-2B: a published weapon battery's extra hits come from the attack outcome carried on the card (validated against the
+  // weapons actually participating inside resolveVehicleWeaponDamage); any other weapon refuses a non-zero value.
+  const batteryExtraHits = Number(context.batteryExtraHits ?? context.combatContext?.battery?.extraHits ?? context.workflowContext?.battery?.extraHits ?? 0);
+  const vehicleDamage = (canonicalBase === null && !bonus.flags?.stockDamageFormula) ? resolveVehicleWeaponDamage(weapon, { batteryExtraHits, fireModeExtraDice: Number(context.workflowContext?.vehicleFireMode?.extraDice ?? context.vehicleFireMode?.extraDice ?? 0) }) : null;
+  if (vehicleDamage && !vehicleDamage.ok)
+    throw new WeaponRuntimeError(ERROR_CODES.NO_ORDINARY_DAMAGE, `${weapon?.name ?? 'vehicle weapon'} has no ordinary damage roll (${vehicleDamage.reason})`, { reason: vehicleDamage.reason });
+  if (vehicleDamage) bonus = { total: 0, components: {}, flags: { damageBaseOnly: true, vehicleWeaponFormula: true }, typedModifierLedger: [] };
   const shape = (canonicalBase !== null && !bonus.flags?.stockDamageFormula) ? (canonicalDamage.damageShape ?? null) : null;
   let canonicalBaseForRoll = canonicalBase;
   if (shape && isCriticalRoll) {
     for (const r of shape.criticalDieReplacements) canonicalBaseForRoll = replaceBaseDieSize(canonicalBaseForRoll, r.fromDieSize, r.toDieSize);
   }
-  const base = bonus.flags?.stockDamageFormula ?? canonicalBaseForRoll ?? String(weapon?.system?.damage ?? weapon?.system?.damageFormula ?? '1d6');
+  const base = bonus.flags?.stockDamageFormula ?? canonicalBaseForRoll ?? vehicleDamage?.formula ?? String(weapon?.system?.damage ?? weapon?.system?.damageFormula ?? '1d6');
+  const weaponMultiplier = shape?.baseMultiplier ?? vehicleDamage?.multiplier ?? 1;
   const criticalDieStepIncreases = isCriticalRoll ? Number(optionModifiers.criticalDamageDieStepBonus || 0) : 0;
   const dieStepIncreases = Number(optionModifiers.damageDieStepIncreases || 0) + criticalDieStepIncreases;
   // Damage audit correction #1 "COLLAPSE damageExtraWeaponDice /
@@ -1097,7 +1108,8 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
     ...(dieStepIncreases !== 0 ? [{ id: 'die-step', label: 'Die-Size Step', value: dieStepIncreases, category: 'dieStep', applied: true, stage: PRE }] : []),
     ...(extraWeaponDice !== 0 ? [{ id: 'extra-weapon-dice', label: 'Extra Weapon Dice', value: extraWeaponDice, category: 'extraWeaponDice', applied: true, stage: PRE }] : []),
     ...(infiltratorDice ? [{ id: 'infiltrator-unarmed-stun', label: 'Unarmed Stun', value: infiltratorDice, category: 'classWeaponDice', applied: true, stage: PRE }] : []),
-    ...(shape && shape.baseMultiplier > 1 ? [{ id: 'weapon-multiplier', label: 'Weapon Damage Multiplier', value: shape.baseMultiplier, category: 'weaponMultiplier', applied: true, stage: DAMAGE_STAGE.WEAPON_MULTIPLIER }] : []),
+    ...(vehicleDamage?.battery ? [{ id: 'battery-extra-hit-dice', label: `Weapon battery: ${vehicleDamage.battery.extraHits} extra hit(s) of ${vehicleDamage.battery.participatingWeapons} weapons (Core p. 170)`, value: vehicleDamage.battery.extraDice, category: 'included', applied: false, stage: PRE }] : []),
+    ...(weaponMultiplier > 1 ? [{ id: 'weapon-multiplier', label: vehicleDamage ? 'Vehicle Weapon Damage Multiplier (Core)' : 'Weapon Damage Multiplier', value: weaponMultiplier, category: 'weaponMultiplier', applied: true, stage: DAMAGE_STAGE.WEAPON_MULTIPLIER }] : []),
     ...talentContributions.breakdown.map((label, index) => ({ id: `talent-dice-${index}`, label, value: talentContributions.bonusDice[index] ?? null, category: 'additionalDice', applied: true, stage: POST })),
     ...otherDiceTerms.map((term, index) => ({ id: `other-dice-${index}`, label: 'Force Item / Inquisition', value: term, category: 'additionalDice', applied: true, stage: POST })),
     ...(damageRangePenalty !== 0 ? [{ id: 'range-penalty-damage', label: 'Range Penalty (applies to damage)', value: damageRangePenalty, category: 'additive', sourceName: 'Range Penalty', applied: true, stage: PRE }] : []),
@@ -1116,7 +1128,7 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
       extraWeaponDice,
       dieStepIncreases,
       criticalDieStepIncreases,
-      baseMultiplier: shape?.baseMultiplier ?? 1,
+      baseMultiplier: weaponMultiplier,
       talentDice: talentContributions.bonusDice,
       talentBreakdown: talentContributions.breakdown,
       otherDiceTerms,
@@ -1125,7 +1137,7 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
       rerollWeaponDiceResults: Array.isArray(optionModifiers.flags?.weaponDiceRerollValues) ? optionModifiers.flags.weaponDiceRerollValues : []
     },
     critical: { isCritical: isCriticalRoll, multiplier, bonusFormula },
-    damageTypes: Array.isArray(context.damageTypes) ? context.damageTypes : [],
+    damageTypes: Array.isArray(context.damageTypes) && context.damageTypes.length ? context.damageTypes : (vehicleDamage?.damageType ? [vehicleDamage.damageType] : (Array.isArray(context.damageTypes) ? context.damageTypes : [])),
     riders: {
       onHit: optionModifiers.targetEffectsOnHit || [],
       onCritical: optionModifiers.targetEffectsOnCritical || [],

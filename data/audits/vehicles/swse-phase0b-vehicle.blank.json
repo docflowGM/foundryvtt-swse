@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+  "recordType": "vehicle-source-entry",
+  "identity": {
+    "sourceEntryKey": null,
+    "name": "(enter printed vehicle name)"
+  },
+  "publication": {
+    "book": "(enter sourcebook)",
+    "page": null
+  },
+  "classification": {},
+  "challenge": {},
+  "geometry": {},
+  "movement": {},
+  "hyperspace": {},
+  "defenses": {},
+  "durability": {},
+  "abilities": {},
+  "combat": {},
+  "armament": {},
+  "crew": {},
+  "capacity": {},
+  "systems": {},
+  "modifications": {},
+  "economics": {},
+  "text": {},
+  "exceptions": {},
+  "fieldStates": {},
+  "rules": {
+    "reviewStatus": "not-yet-reviewed"
+  }
+}

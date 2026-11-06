@@ -1,0 +1,2452 @@
+{
+  "schema": "swse.vehicle.universal.phase2f.scum-and-villainy.staged.v1",
+  "status": "PHASE2F_ALL_13_SOURCE_HYDRATED_STRICT_MOUNT_CERTIFICATION_PENDING",
+  "sourceBook": "Scum and Villainy",
+  "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+  "phase1Ledger": "data/audits/vehicles/swse-universal-phase1f-scum-and-villainy.json",
+  "historicalShipAuthority": "data/canonical/vehicles/ships.json",
+  "approvedSupplementalAuthority": "data/audits/vehicles/swse-phase2c-cp3-318-census-overlay.json",
+  "sourceFixtures": "data/audits/vehicles/swse-universal-phase2f-scum-and-villainy-fixtures.json",
+  "summary": {
+    "publicationRecords": 13,
+    "historicalSpacecraft": 11,
+    "previouslyApprovedHornet": 1,
+    "newStarForgeStation": 1,
+    "sourceAttackGroups": 24,
+    "strictPhysicalMountCertificationsNew": 0,
+    "sourceExceptionsPending": 3
+  },
+  "records": [
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "sav-c-wing-ugly-fighter",
+        "name": "C-wing Ugly Fighter"
+      },
+      "publication": {
+        "book": "Scum and Villainy",
+        "page": 66,
+        "printedTitle": "C-wing Ugly Fighter",
+        "printedTypeLine": "Gargantuan starfighter",
+        "entryNotes": "Physical PDF p67; SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "printedSize": "Gargantuan",
+        "size": "gargantuan"
+      },
+      "challenge": {
+        "cl": 8
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 4,
+        "characterScaleLengthSquares": 4,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "total (crew)"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 8,
+            "maxVelocityKmh": 650
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 2
+          }
+        ],
+        "maxVelocityKmh": 650,
+        "raw": "fly 8 squares (max 650 km/h); fly 2 starship-scale squares"
+      },
+      "hyperspace": {
+        "raw": "x2",
+        "capability": "equipped",
+        "primaryMultiplier": 2
+      },
+      "defenses": {
+        "reflex": 13,
+        "reflexFlatFooted": 12,
+        "fortitude": 23,
+        "armorBonus": 7,
+        "shieldRating": 30,
+        "damageReduction": 10
+      },
+      "durability": {
+        "hitPoints": 100,
+        "damageThreshold": 43
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 1,
+            "raw": "Initiative +1"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 5,
+            "raw": "Mechanics +5"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 5,
+            "raw": "Perception +5"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 1,
+            "raw": "Pilot +1"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 5,
+            "raw": "Use Computer +5"
+          }
+        ],
+        "str": 36,
+        "dex": 13,
+        "int": 16,
+        "con": null,
+        "initiativePrinted": 1,
+        "perceptionPrinted": 5
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 28,
+        "rangedAttackLine": "assault laser cannon +5 OR light ion cannons +3 OR proton torpedo launchers +3",
+        "attackOptions": [
+          "autofire (light ion cannons)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "sav-c-wing-ugly-fighter-attack-1",
+            "label": "assault laser cannon",
+            "mountKeys": [],
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "attackBonusPrinted": 5,
+            "specialNotes": "Damage 7d10x2; operator pilot; Source p66, metadata {\"hardwareCount\":\"SOURCE_SILENT_CONFIRMED\",\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\",\"attackGroupIndex\":1,\"sourceEvidenceStatus\":\"PDF_VISUALLY_REVIEWED\"}. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          },
+          {
+            "groupKey": "sav-c-wing-ugly-fighter-attack-2",
+            "label": "light ion cannons",
+            "mountKeys": [],
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "attackBonusPrinted": 3,
+            "specialNotes": "Damage 4d10x2 ion; operator gunner; Source p66, metadata {\"autofireAttackBonus\":-2,\"hardwareCount\":\"SOURCE_SILENT_CONFIRMED\",\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\",\"attackGroupIndex\":2,\"sourceEvidenceStatus\":\"PDF_VISUALLY_REVIEWED\"}. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          },
+          {
+            "groupKey": "sav-c-wing-ugly-fighter-attack-3",
+            "label": "proton torpedo launchers",
+            "mountKeys": [],
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "attackBonusPrinted": 3,
+            "specialNotes": "Damage 10d10x2; operator gunner; Source p66, metadata {\"hardwareCount\":\"SOURCE_SILENT_CONFIRMED\",\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\",\"attackGroupIndex\":3,\"sourceEvidenceStatus\":\"PDF_VISUALLY_REVIEWED\"}. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          }
+        ],
+        "carriedPayloads": [
+          {
+            "value": 8,
+            "unit": "proton torpedoes",
+            "raw": "8 proton torpedoes"
+          }
+        ]
+      },
+      "crew": {
+        "raw": "2 (normal)",
+        "crewCount": 2,
+        "crewQuality": "normal"
+      },
+      "capacity": {
+        "passengerCount": 2,
+        "cargo": {
+          "value": 450,
+          "unit": "kg",
+          "raw": "450 kg"
+        },
+        "consumables": {
+          "value": 2,
+          "unit": "weeks",
+          "raw": "2 weeks"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Restricted",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 110000,
+          "raw": "110,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "Historical canonical ship PDF-review source mechanically staged; independent physical mounts and arcs remain uncertified."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "sav-clutch-ugly-fighter",
+        "name": "Clutch Ugly Fighter"
+      },
+      "publication": {
+        "book": "Scum and Villainy",
+        "page": 67,
+        "printedTitle": "Clutch Ugly Fighter",
+        "printedTypeLine": "Huge starfighter",
+        "entryNotes": "Physical PDF p68; SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "printedSize": "Huge",
+        "size": "huge"
+      },
+      "challenge": {
+        "cl": 8
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 3,
+        "characterScaleLengthSquares": 3,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "total (crew)"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 16,
+            "maxVelocityKmh": 900
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 4
+          }
+        ],
+        "maxVelocityKmh": 900,
+        "raw": "fly 16 squares (max 900 km/h); fly 4 starship-scale squares"
+      },
+      "hyperspace": {
+        "raw": "none",
+        "capability": "unavailable"
+      },
+      "defenses": {
+        "reflex": 19,
+        "reflexFlatFooted": 11,
+        "fortitude": 24,
+        "armorBonus": 3,
+        "shieldRating": 15,
+        "damageReduction": 10
+      },
+      "durability": {
+        "hitPoints": 50,
+        "damageThreshold": 34
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 12,
+            "raw": "Initiative +12"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 12,
+            "raw": "Pilot +12"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
+          }
+        ],
+        "str": 38,
+        "dex": 26,
+        "int": 16,
+        "con": null,
+        "initiativePrinted": 12,
+        "perceptionPrinted": 6
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 26,
+        "rangedAttackLine": "laser cannons +7 OR ion cannons +7",
+        "attackOptions": [
+          "autofire (laser cannons)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "sav-clutch-ugly-fighter-attack-1",
+            "label": "laser cannons",
+            "mountKeys": [],
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "attackBonusPrinted": 7,
+            "specialNotes": "Damage 5d10x2; operator pilot; Source p67, metadata {\"autofireAttackBonus\":2,\"hardwareCount\":\"SOURCE_SILENT_CONFIRMED\",\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\",\"attackGroupIndex\":1,\"sourceEvidenceStatus\":\"PDF_VISUALLY_REVIEWED\"}. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          },
+          {
+            "groupKey": "sav-clutch-ugly-fighter-attack-2",
+            "label": "ion cannons",
+            "mountKeys": [],
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "attackBonusPrinted": 5,
+            "specialNotes": "Damage 3d10x2 ion; operator pilot; Source p67, metadata {\"hardwareCount\":\"SOURCE_SILENT_CONFIRMED\",\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\",\"attackGroupIndex\":2,\"sourceEvidenceStatus\":\"PDF_VISUALLY_REVIEWED\"}. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "1 (skilled)",
+        "crewCount": 1,
+        "crewQuality": "skilled"
+      },
+      "capacity": {
+        "passengerCount": 0,
+        "cargo": {
+          "value": 25,
+          "unit": "kg",
+          "raw": "25 kg"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "day",
+          "raw": "1 day"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Military",
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 45000,
+          "raw": "45,000 used"
+        }
+      },
+      "text": {
+        "sourceNotes": "Historical canonical ship PDF-review source mechanically staged; independent physical mounts and arcs remain uncertified."
+      },
+      "exceptions": {
+        "ambiguities": [
+          "{\"category\":\"SOURCE_ATTACK_BONUS_CONFLICT\",\"mainRanged\":\"ion cannons +7\",\"detailedWeapon\":\"ion cannons (pilot) Atk +5\",\"page\":67,\"resolution\":\"UNRESOLVED_KEEP_BOTH_PRINTED_VALUES\"}"
+        ],
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/economics/priceNew": "not-stated",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "sav-corellian-engineering-corporation-yt-1250-transport",
+        "name": "Corellian Engineering Corporation YT-1250 Transport"
+      },
+      "publication": {
+        "book": "Scum and Villainy",
+        "page": 64,
+        "printedTitle": "Corellian Engineering Corporation YT-1250 Transport",
+        "printedTypeLine": "Colossal space transport",
+        "entryNotes": "Physical PDF p65; SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "printedSize": "Colossal",
+        "size": "colossal"
+      },
+      "challenge": {
+        "cl": 7
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 12,
+        "characterScaleLengthSquares": 12,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "total (crew)"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 800
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 2
+          }
+        ],
+        "maxVelocityKmh": 800,
+        "raw": "fly 12 squares (max 800 km/h); fly 2 starship-scale squares"
+      },
+      "hyperspace": {
+        "raw": "x2 (backup x16), nav computer",
+        "capability": "equipped",
+        "primaryMultiplier": 2,
+        "backupMultiplier": 16,
+        "navComputer": "installed"
+      },
+      "defenses": {
+        "reflex": 14,
+        "reflexFlatFooted": 14,
+        "fortitude": 27,
+        "armorBonus": 14,
+        "shieldRating": 30,
+        "damageReduction": 15
+      },
+      "durability": {
+        "hitPoints": 120,
+        "damageThreshold": 77
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -5,
+            "raw": "Initiative -5"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 5,
+            "raw": "Mechanics +5"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 5,
+            "raw": "Perception +5"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -5,
+            "raw": "Pilot -5"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 5,
+            "raw": "Use Computer +5"
+          }
+        ],
+        "str": 44,
+        "dex": 10,
+        "int": 14,
+        "con": null,
+        "initiativePrinted": -5,
+        "perceptionPrinted": 5
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 37,
+        "rangedAttackLine": "2 double laser cannons +2",
+        "attackOptions": [
+          "autofire"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "sav-corellian-engineering-corporation-yt-1250-transport-attack-1",
+            "label": "double laser cannon",
+            "mountKeys": [],
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "attackBonusPrinted": 2,
+            "specialNotes": "Damage 4d10x2; operator gunner; Source p64, metadata {\"autofireAttackBonus\":-3,\"printedRangedMultiplicity\":2,\"hardwareCount\":\"SOURCE_SILENT_CONFIRMED\",\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\",\"attackGroupIndex\":1,\"sourceEvidenceStatus\":\"PDF_VISUALLY_REVIEWED\"}. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "2 (normal)",
+        "crewCount": 2,
+        "crewQuality": "normal"
+      },
+      "capacity": {
+        "passengerCount": 5,
+        "cargo": {
+          "value": 80,
+          "unit": "metric tons",
+          "raw": "80 metric tons"
+        },
+        "consumables": {
+          "value": 3,
+          "unit": "months",
+          "raw": "3 months"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 120000,
+          "raw": "120,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 30000,
+          "raw": "30,000 used"
+        }
+      },
+      "text": {
+        "sourceNotes": "Historical canonical ship PDF-review source mechanically staged; independent physical mounts and arcs remain uncertified."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "sav-corellian-engineering-corporation-yt-1930-transport",
+        "name": "Corellian Engineering Corporation YT-1930 Transport"
+      },
+      "publication": {
+        "book": "Scum and Villainy",
+        "page": 66,
+        "printedTitle": "Corellian Engineering Corporation YT-1930 Transport",
+        "printedTypeLine": "Colossal space transport",
+        "entryNotes": "Physical PDF p67; SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "printedSize": "Colossal",
+        "size": "colossal"
+      },
+      "challenge": {
+        "cl": 8
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 12,
+        "characterScaleLengthSquares": 12,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "total (crew)"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 950
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 3
+          }
+        ],
+        "maxVelocityKmh": 950,
+        "raw": "fly 12 squares (max 950 km/h); fly 3 starship-scale squares"
+      },
+      "hyperspace": {
+        "raw": "x2 (backup x12), navicomputer",
+        "capability": "equipped",
+        "primaryMultiplier": 2,
+        "backupMultiplier": 12
+      },
+      "defenses": {
+        "reflex": 14,
+        "reflexFlatFooted": 13,
+        "fortitude": 28,
+        "armorBonus": 13,
+        "shieldRating": 15,
+        "damageReduction": 15
+      },
+      "durability": {
+        "hitPoints": 150,
+        "damageThreshold": 78
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -3,
+            "raw": "Initiative -3"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -3,
+            "raw": "Pilot -3"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
+          }
+        ],
+        "str": 46,
+        "dex": 12,
+        "int": 12,
+        "con": null,
+        "initiativePrinted": -3,
+        "perceptionPrinted": 6
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 40,
+        "rangedAttackLine": "medium laser cannon +3"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "sav-corellian-engineering-corporation-yt-1930-transport-attack-1",
+            "label": "medium laser cannon",
+            "mountKeys": [],
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "attackBonusPrinted": 3,
+            "specialNotes": "Damage 4d10x2; operator copilot; Source p66, metadata {\"hardwareCount\":\"SOURCE_SILENT_CONFIRMED\",\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\",\"attackGroupIndex\":1,\"sourceEvidenceStatus\":\"PDF_VISUALLY_REVIEWED\"}. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "2",
+        "crewCount": 2
+      },
+      "capacity": {
+        "passengerCount": 6,
+        "cargo": {
+          "value": 200,
+          "unit": "tons",
+          "raw": "200 tons"
+        },
+        "consumables": {
+          "value": 4,
+          "unit": "months",
+          "raw": "4 months"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 135000,
+          "raw": "135,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 62000,
+          "raw": "62,000 used"
+        }
+      },
+      "text": {
+        "sourceNotes": "Historical canonical ship PDF-review source mechanically staged; independent physical mounts and arcs remain uncertified."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "sav-corelliaspace-gymsnor-3-light-freighter",
+        "name": "CorelliaSpace Gymsnor-3 Light Freighter"
+      },
+      "publication": {
+        "book": "Scum and Villainy",
+        "page": 62,
+        "printedTitle": "CorelliaSpace Gymsnor-3 Light Freighter",
+        "printedTypeLine": "Colossal space transport",
+        "entryNotes": "Physical PDF p63; SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "printedSize": "Colossal",
+        "size": "colossal"
+      },
+      "challenge": {
+        "cl": 7
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 12,
+        "characterScaleLengthSquares": 12,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "total (crew)"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 800
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 3
+          }
+        ],
+        "maxVelocityKmh": 800,
+        "raw": "fly 12 squares (max 800 km/h); fly 3 starship-scale squares"
+      },
+      "hyperspace": {
+        "raw": "x2, navicomputer",
+        "capability": "equipped",
+        "primaryMultiplier": 2
+      },
+      "defenses": {
+        "reflex": 13,
+        "reflexFlatFooted": 13,
+        "fortitude": 28,
+        "armorBonus": 13,
+        "shieldRating": 15,
+        "damageReduction": 15
+      },
+      "durability": {
+        "hitPoints": 150,
+        "damageThreshold": 78
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -4,
+            "raw": "Initiative -4"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -4,
+            "raw": "Pilot -4"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
+          }
+        ],
+        "str": 46,
+        "dex": 10,
+        "int": 15,
+        "con": null,
+        "initiativePrinted": -4,
+        "perceptionPrinted": 6
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 40,
+        "rangedAttackLine": "laser cannon +6"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "sav-corelliaspace-gymsnor-3-light-freighter-attack-1",
+            "label": "laser cannon",
+            "mountKeys": [],
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "attackBonusPrinted": 6,
+            "specialNotes": "Damage 4d10x2; operator pilot; Source p62, metadata {\"hardwareCount\":\"SOURCE_SILENT_CONFIRMED\",\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\",\"attackGroupIndex\":1,\"sourceEvidenceStatus\":\"PDF_VISUALLY_REVIEWED\"}. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "1 (skilled)",
+        "crewCount": 1,
+        "crewQuality": "skilled"
+      },
+      "capacity": {
+        "passengerCount": 4,
+        "cargo": {
+          "value": 95,
+          "unit": "tons",
+          "raw": "95 tons"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "month",
+          "raw": "1 month"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 38000,
+          "raw": "38,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 19000,
+          "raw": "19,000 used"
+        }
+      },
+      "text": {
+        "sourceNotes": "Historical canonical ship PDF-review source mechanically staged; independent physical mounts and arcs remain uncertified."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "sav-errant-venture",
+        "name": "Errant Venture"
+      },
+      "publication": {
+        "book": "Scum and Villainy",
+        "page": 128,
+        "printedTitle": "Errant Venture",
+        "printedTypeLine": "Colossal (cruiser) capital ship",
+        "entryNotes": "Physical PDF p129; SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedSize": "Colossal (cruiser)",
+        "size": "colossal",
+        "colossalSubtype": "cruiser"
+      },
+      "challenge": {
+        "cl": 19
+      },
+      "geometry": {
+        "starshipScaleWidthSquares": 2,
+        "starshipScaleLengthSquares": 2,
+        "coverCrew": "total (crew)"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 3
+          }
+        ],
+        "raw": "fly 3 starship-scale squares"
+      },
+      "hyperspace": {
+        "raw": "x2 (backup x12), navicomputer",
+        "capability": "equipped",
+        "primaryMultiplier": 2,
+        "backupMultiplier": 12
+      },
+      "defenses": {
+        "reflex": 18,
+        "reflexFlatFooted": 16,
+        "fortitude": 56,
+        "armorBonus": 16,
+        "shieldRating": 120,
+        "damageReduction": 20
+      },
+      "durability": {
+        "hitPoints": 2000,
+        "damageThreshold": 256
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 0,
+            "raw": "Initiative +0"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 8,
+            "raw": "Mechanics +8"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 8,
+            "raw": "Perception +8"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 0,
+            "raw": "Pilot +0"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 8,
+            "raw": "Use Computer +8"
+          }
+        ],
+        "str": 103,
+        "dex": 14,
+        "int": 18,
+        "con": null,
+        "initiativePrinted": 0,
+        "perceptionPrinted": 8
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 5,
+        "grappleBonusPrinted": 71,
+        "rangedAttackLine": "1 heavy turbolaser battery +13 AND 1 turbolaser battery +13 AND 2 point-defense laser batteries +17 AND 2 heavy ion cannon batteries +13 AND 2 tractor beams +9"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "sav-errant-venture-attack-1",
+            "label": "heavy turbolaser battery",
+            "mountKeys": [],
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "attackBonusPrinted": 13,
+            "specialNotes": "Damage 11d10x5; operator 3 gunners; Source p128, metadata {\"printedRangedMultiplicity\":1,\"printedSmallTargetAttackBonus\":-7,\"hardwareCount\":\"SOURCE_SILENT_CONFIRMED\",\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\",\"attackGroupIndex\":1,\"sourceEvidenceStatus\":\"PDF_VISUALLY_REVIEWED\"}. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          },
+          {
+            "groupKey": "sav-errant-venture-attack-2",
+            "label": "turbolaser battery",
+            "mountKeys": [],
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "attackBonusPrinted": 13,
+            "specialNotes": "Damage 8d10x5; operator 3 gunners; Source p128, metadata {\"printedRangedMultiplicity\":1,\"printedSmallTargetAttackBonus\":-7,\"hardwareCount\":\"SOURCE_SILENT_CONFIRMED\",\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\",\"attackGroupIndex\":2,\"sourceEvidenceStatus\":\"PDF_VISUALLY_REVIEWED\"}. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          },
+          {
+            "groupKey": "sav-errant-venture-attack-3",
+            "label": "point-defense laser battery",
+            "mountKeys": [],
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "attackBonusPrinted": 17,
+            "specialNotes": "Damage 3d10x2; operator 5 gunners; Source p128, metadata {\"printedRangedMultiplicity\":2,\"hardwareCount\":\"SOURCE_SILENT_CONFIRMED\",\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\",\"attackGroupIndex\":3,\"sourceEvidenceStatus\":\"PDF_VISUALLY_REVIEWED\"}. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          },
+          {
+            "groupKey": "sav-errant-venture-attack-4",
+            "label": "heavy ion cannon battery",
+            "mountKeys": [],
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "attackBonusPrinted": 13,
+            "specialNotes": "Damage 3d10x5 ion; operator 3 gunners; Source p128, metadata {\"printedRangedMultiplicity\":2,\"printedSmallTargetAttackBonus\":-7,\"hardwareCount\":\"SOURCE_SILENT_CONFIRMED\",\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\",\"attackGroupIndex\":4,\"sourceEvidenceStatus\":\"PDF_VISUALLY_REVIEWED\"}. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          },
+          {
+            "groupKey": "sav-errant-venture-attack-5",
+            "label": "tractor beam",
+            "mountKeys": [],
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "attackBonusPrinted": 9,
+            "specialNotes": "Damage —; operator 1 gunner; Source p128, metadata {\"printedRangedMultiplicity\":2,\"printedSmallTargetAttackBonus\":-11,\"printedGrappleBonus\":71,\"hardwareCount\":\"SOURCE_SILENT_CONFIRMED\",\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\",\"attackGroupIndex\":5,\"sourceEvidenceStatus\":\"PDF_VISUALLY_REVIEWED\"}. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "12,000 (expert)",
+        "crewCount": 12000,
+        "crewQuality": "expert"
+      },
+      "capacity": {
+        "passengerCount": 30000,
+        "passengerGroups": [
+          {
+            "group": "source qualifier",
+            "count": 30000,
+            "raw": "30,000"
+          }
+        ],
+        "cargo": {
+          "value": 50000,
+          "unit": "tons",
+          "raw": "50,000 tons"
+        },
+        "consumables": {
+          "value": 3,
+          "unit": "years",
+          "raw": "3 years"
+        },
+        "storageNotes": "Published carried craft: up to 144 starfighters, 30 light freighters or similar craft, 2 capital ships up to Colossal (frigate) size"
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Military",
+        "priceNew": {
+          "status": "not-for-sale",
+          "raw": "not for sale (black market value 50 million used)"
+        }
+      },
+      "text": {
+        "sourceNotes": "Historical canonical ship PDF-review source mechanically staged; independent physical mounts and arcs remain uncertified."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "sav-kaloth-style-battlecruiser",
+        "name": "Kaloth-style Battlecruiser"
+      },
+      "publication": {
+        "book": "Scum and Villainy",
+        "page": 126,
+        "printedTitle": "Kaloth-style Battlecruiser",
+        "printedTypeLine": "Colossal (frigate) capital ship",
+        "entryNotes": "Physical PDF p127; SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedSize": "Colossal (frigate)",
+        "size": "colossal",
+        "colossalSubtype": "frigate"
+      },
+      "challenge": {
+        "cl": 17
+      },
+      "geometry": {
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "total (crew)"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 3
+          }
+        ],
+        "raw": "fly 3 starship-scale squares"
+      },
+      "hyperspace": {
+        "raw": "x2 (backup x18), navicomputer",
+        "capability": "equipped",
+        "primaryMultiplier": 2,
+        "backupMultiplier": 18
+      },
+      "defenses": {
+        "reflex": 15,
+        "reflexFlatFooted": 13,
+        "fortitude": 36,
+        "armorBonus": 13,
+        "shieldRating": 150,
+        "damageReduction": 15
+      },
+      "durability": {
+        "hitPoints": 920,
+        "damageThreshold": 136
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -2,
+            "raw": "Initiative -2"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -2,
+            "raw": "Pilot -2"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
+          }
+        ],
+        "str": 62,
+        "dex": 14,
+        "int": 16,
+        "con": null,
+        "initiativePrinted": -2,
+        "perceptionPrinted": 6
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 48,
+        "rangedAttackLine": "4 double light turbolaser batteries +15 AND 4 point-defense medium laser cannon batteries +9 AND 2 tractor beams +15"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "sav-kaloth-style-battlecruiser-attack-1",
+            "label": "double light turbolaser battery",
+            "mountKeys": [],
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "attackBonusPrinted": 15,
+            "specialNotes": "Damage 4d10x5; operator 6 gunners; Source p126, metadata {\"printedRangedMultiplicity\":4,\"printedSmallTargetAttackBonus\":-5,\"hardwareCount\":\"SOURCE_SILENT_CONFIRMED\",\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\",\"attackGroupIndex\":1,\"sourceEvidenceStatus\":\"PDF_VISUALLY_REVIEWED\"}. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          },
+          {
+            "groupKey": "sav-kaloth-style-battlecruiser-attack-2",
+            "label": "point-defense medium laser cannon battery",
+            "mountKeys": [],
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "attackBonusPrinted": 9,
+            "specialNotes": "Damage 4d10x2; operator 3 gunners; Source p126, metadata {\"printedRangedMultiplicity\":4,\"hardwareCount\":\"SOURCE_SILENT_CONFIRMED\",\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\",\"attackGroupIndex\":2,\"sourceEvidenceStatus\":\"PDF_VISUALLY_REVIEWED\"}. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          },
+          {
+            "groupKey": "sav-kaloth-style-battlecruiser-attack-3",
+            "label": "tractor beam",
+            "mountKeys": [],
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "attackBonusPrinted": 15,
+            "specialNotes": "Damage —; operator 6 gunners; Source p126, metadata {\"printedRangedMultiplicity\":2,\"printedSmallTargetAttackBonus\":-5,\"printedGrappleBonus\":48,\"hardwareCount\":\"SOURCE_SILENT_CONFIRMED\",\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\",\"attackGroupIndex\":3,\"sourceEvidenceStatus\":\"PDF_VISUALLY_REVIEWED\"}. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "1,464",
+        "crewCount": 1464
+      },
+      "capacity": {
+        "passengerCount": 75,
+        "passengerGroups": [
+          {
+            "group": "source qualifier",
+            "count": 75,
+            "raw": "75 (troops)"
+          }
+        ],
+        "cargo": {
+          "value": 6540,
+          "unit": "tons",
+          "raw": "6,540 tons"
+        },
+        "consumables": {
+          "value": 6,
+          "unit": "months",
+          "raw": "6 months"
+        },
+        "storageNotes": "Published carried craft: 12 starfighters (typically uglies)"
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Illegal",
+        "priceNew": {
+          "status": "not-for-sale",
+          "raw": "not for sale, estimated value 1.3 million"
+        }
+      },
+      "text": {
+        "sourceNotes": "Historical canonical ship PDF-review source mechanically staged; independent physical mounts and arcs remain uncertified."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "sav-kazellis-corporation-light-freighter",
+        "name": "Kazellis Corporation Light Freighter"
+      },
+      "publication": {
+        "book": "Scum and Villainy",
+        "page": 62,
+        "printedTitle": "Kazellis Corporation Light Freighter",
+        "printedTypeLine": "Colossal space transport",
+        "entryNotes": "Physical PDF p63; SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "printedSize": "Colossal",
+        "size": "colossal"
+      },
+      "challenge": {
+        "cl": 8
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 12,
+        "characterScaleLengthSquares": 12,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "total (crew)"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 16,
+            "maxVelocityKmh": 1000
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 4
+          }
+        ],
+        "maxVelocityKmh": 1000,
+        "raw": "fly 16 squares (max 1,000 km/h); fly 4 starship-scale squares"
+      },
+      "hyperspace": {
+        "raw": "x2 (backup x12), navicomputer",
+        "capability": "equipped",
+        "primaryMultiplier": 2,
+        "backupMultiplier": 12
+      },
+      "defenses": {
+        "reflex": 16,
+        "reflexFlatFooted": 12,
+        "fortitude": 26,
+        "armorBonus": 12,
+        "shieldRating": 30,
+        "damageReduction": 15
+      },
+      "durability": {
+        "hitPoints": 120,
+        "damageThreshold": 76
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 0,
+            "raw": "Initiative +0"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 0,
+            "raw": "Pilot +0"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
+          }
+        ],
+        "str": 42,
+        "dex": 18,
+        "int": 14,
+        "con": null,
+        "initiativePrinted": 0,
+        "perceptionPrinted": 6
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 38,
+        "rangedAttackLine": "quad light laser cannon +6",
+        "attackOptions": [
+          "autofire (quad light laser cannon)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "sav-kazellis-corporation-light-freighter-attack-1",
+            "label": "quad light laser cannon",
+            "mountKeys": [],
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "attackBonusPrinted": 6,
+            "specialNotes": "Damage 4d10x2; operator pilot; Source p62, metadata {\"autofireAttackBonus\":1,\"hardwareCount\":\"SOURCE_SILENT_CONFIRMED\",\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\",\"attackGroupIndex\":1,\"sourceEvidenceStatus\":\"PDF_VISUALLY_REVIEWED\"}. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "1 (skilled)",
+        "crewCount": 1,
+        "crewQuality": "skilled"
+      },
+      "capacity": {
+        "passengerCount": 3,
+        "cargo": {
+          "value": 100,
+          "unit": "tons",
+          "raw": "100 tons"
+        },
+        "consumables": {
+          "value": 2,
+          "unit": "months",
+          "raw": "2 months"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 50000,
+          "raw": "50,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 23000,
+          "raw": "23,000 used"
+        }
+      },
+      "text": {
+        "sourceNotes": "Historical canonical ship PDF-review source mechanically staged; independent physical mounts and arcs remain uncertified."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "sav-surronian-conqueror-class-assault-ship",
+        "name": "Surronian Conqueror-class Assault Ship"
+      },
+      "publication": {
+        "book": "Scum and Villainy",
+        "page": 64,
+        "printedTitle": "Surronian Conqueror-class Assault Ship",
+        "printedTypeLine": "Colossal space transport",
+        "entryNotes": "Physical PDF p65; SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "printedSize": "Colossal",
+        "size": "colossal"
+      },
+      "challenge": {
+        "cl": 11
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 12,
+        "characterScaleLengthSquares": 12,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "total (crew)"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 16,
+            "maxVelocityKmh": 1000
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 5
+          }
+        ],
+        "maxVelocityKmh": 1000,
+        "raw": "fly 16 squares (max 1,000 km/h); fly 5 starship-scale squares"
+      },
+      "hyperspace": {
+        "raw": "x1 (backup x10), navicomputer",
+        "capability": "equipped",
+        "primaryMultiplier": 1,
+        "backupMultiplier": 10
+      },
+      "defenses": {
+        "reflex": 16,
+        "reflexFlatFooted": 12,
+        "fortitude": 26,
+        "armorBonus": 12,
+        "shieldRating": 30,
+        "damageReduction": 15
+      },
+      "durability": {
+        "hitPoints": 120,
+        "damageThreshold": 76
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 2,
+            "raw": "Initiative +2"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 8,
+            "raw": "Mechanics +8"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 8,
+            "raw": "Perception +8"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 2,
+            "raw": "Pilot +2"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 8,
+            "raw": "Use Computer +8"
+          }
+        ],
+        "str": 42,
+        "dex": 18,
+        "int": 16,
+        "con": null,
+        "initiativePrinted": 2,
+        "perceptionPrinted": 8
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 5,
+        "grappleBonusPrinted": 41,
+        "rangedAttackLine": "2 double medium laser cannons +8 and light ion cannon +10",
+        "attackOptions": [
+          "autofire (double laser cannons, ion cannons), fire-link (ion cannons)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "sav-surronian-conqueror-class-assault-ship-attack-1",
+            "label": "light ion cannon",
+            "mountKeys": [],
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "attackBonusPrinted": 10,
+            "specialNotes": "Damage 4d10x2 ion; operator pilot; Source p64, metadata {\"autofireAttackBonus\":5,\"hardwareCount\":\"SOURCE_SILENT_CONFIRMED\",\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\",\"attackGroupIndex\":1,\"sourceEvidenceStatus\":\"PDF_VISUALLY_REVIEWED\"}. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          },
+          {
+            "groupKey": "sav-surronian-conqueror-class-assault-ship-attack-2",
+            "label": "double medium laser cannon",
+            "mountKeys": [],
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "attackBonusPrinted": 8,
+            "specialNotes": "Damage 5d10x2; operator pilot or gunner; Source p64, metadata {\"autofireAttackBonus\":3,\"printedRangedMultiplicity\":2,\"hardwareCount\":\"SOURCE_SILENT_CONFIRMED\",\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\",\"attackGroupIndex\":2,\"sourceEvidenceStatus\":\"PDF_VISUALLY_REVIEWED\"}. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "3 (expert)",
+        "crewCount": 3,
+        "crewQuality": "expert"
+      },
+      "capacity": {
+        "passengerCount": 1,
+        "cargo": {
+          "value": 25,
+          "unit": "tons",
+          "raw": "25 tons"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "month",
+          "raw": "1 month"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Restricted",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 100500,
+          "raw": "100,500"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 46000,
+          "raw": "46,000 used"
+        }
+      },
+      "text": {
+        "sourceNotes": "Historical canonical ship PDF-review source mechanically staged; independent physical mounts and arcs remain uncertified."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "sav-x-tie-ugly-fighter",
+        "name": "X-TIE Ugly Fighter"
+      },
+      "publication": {
+        "book": "Scum and Villainy",
+        "page": 67,
+        "printedTitle": "X-TIE Ugly Fighter",
+        "printedTypeLine": "Gargantuan starfighter",
+        "entryNotes": "Physical PDF p68; SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "printedSize": "Gargantuan",
+        "size": "gargantuan"
+      },
+      "challenge": {
+        "cl": 9
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 4,
+        "characterScaleLengthSquares": 4,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "total (crew)"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 16,
+            "maxVelocityKmh": 1050
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 4
+          }
+        ],
+        "maxVelocityKmh": 1050,
+        "raw": "fly 16 squares (max 1,050 km/h); fly 4 starship-scale squares"
+      },
+      "hyperspace": {
+        "raw": "x1.5, 10-jump memory (astromech droid)",
+        "capability": "equipped",
+        "primaryMultiplier": 1.5
+      },
+      "defenses": {
+        "reflex": 15,
+        "reflexFlatFooted": 11,
+        "fortitude": 28,
+        "armorBonus": 6,
+        "damageReduction": 10
+      },
+      "durability": {
+        "hitPoints": 140,
+        "damageThreshold": 48
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 4,
+            "raw": "Initiative +4"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 5,
+            "raw": "Mechanics +5"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 5,
+            "raw": "Perception +5"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 4,
+            "raw": "Pilot +4"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 5,
+            "raw": "Use Computer +5"
+          }
+        ],
+        "str": 46,
+        "dex": 18,
+        "int": 14,
+        "con": null,
+        "initiativePrinted": 4,
+        "perceptionPrinted": 5
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 33,
+        "rangedAttackLine": "laser cannons +4",
+        "attackOptions": [
+          "autofire (laser cannons)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "sav-x-tie-ugly-fighter-attack-1",
+            "label": "laser cannons",
+            "mountKeys": [],
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "attackBonusPrinted": 4,
+            "specialNotes": "Damage 5d10x2; operator pilot; Source p67, metadata {\"autofireAttackBonus\":-1,\"hardwareCount\":\"SOURCE_SILENT_CONFIRMED\",\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\",\"attackGroupIndex\":1,\"sourceEvidenceStatus\":\"PDF_VISUALLY_REVIEWED\"}. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "1 plus astromech droid (normal)",
+        "crewCount": 1,
+        "crewQuality": "normal",
+        "crewDescriptor": "1 plus astromech droid (normal)"
+      },
+      "capacity": {
+        "passengerCount": 0,
+        "cargo": {
+          "value": 110,
+          "unit": "kg",
+          "raw": "110 kg"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "week",
+          "raw": "1 week"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Military",
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 60000,
+          "raw": "60,000 credits used"
+        }
+      },
+      "text": {
+        "sourceNotes": "Historical canonical ship PDF-review source mechanically staged; independent physical mounts and arcs remain uncertified."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/economics/priceNew": "not-stated",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "sav-y164-thalassian-slave-transport",
+        "name": "Y164 Thalassian Slave Transport"
+      },
+      "publication": {
+        "book": "Scum and Villainy",
+        "page": 127,
+        "printedTitle": "Y164 Thalassian Slave Transport",
+        "printedTypeLine": "Colossal (frigate) space transport",
+        "entryNotes": "Physical PDF p128; SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "printedSize": "Colossal (frigate)",
+        "size": "colossal",
+        "colossalSubtype": "frigate"
+      },
+      "challenge": {
+        "cl": 13
+      },
+      "geometry": {
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "total (crew)"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 1,
+            "raw": "fly 1 starship-scale square"
+          }
+        ],
+        "raw": "fly 1 starship-scale square"
+      },
+      "hyperspace": {
+        "raw": "x3 (backup x25), navicomputer",
+        "capability": "equipped",
+        "primaryMultiplier": 3,
+        "backupMultiplier": 25
+      },
+      "defenses": {
+        "reflex": 12,
+        "reflexFlatFooted": 11,
+        "fortitude": 34,
+        "armorBonus": 11,
+        "shieldRating": 100,
+        "damageReduction": 15
+      },
+      "durability": {
+        "hitPoints": 600,
+        "damageThreshold": 134
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -3,
+            "raw": "Initiative -3"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -3,
+            "raw": "Pilot -3"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
+          }
+        ],
+        "str": 58,
+        "dex": 12,
+        "int": 13,
+        "con": null,
+        "initiativePrinted": -3,
+        "perceptionPrinted": 6
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 46,
+        "rangedAttackLine": "2 quad light laser cannons +3",
+        "attackOptions": [
+          "autofire (quad light laser cannons)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "sav-y164-thalassian-slave-transport-attack-1",
+            "label": "quad light laser cannon",
+            "mountKeys": [],
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "attackBonusPrinted": 3,
+            "specialNotes": "Damage 5d10x2; operator gunner; Source p127, metadata {\"autofireAttackBonus\":-2,\"printedRangedMultiplicity\":2,\"hardwareCount\":\"SOURCE_SILENT_CONFIRMED\",\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\",\"attackGroupIndex\":1,\"sourceEvidenceStatus\":\"PDF_VISUALLY_REVIEWED\"}. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "15 (skilled)",
+        "crewCount": 15,
+        "crewQuality": "skilled"
+      },
+      "capacity": {
+        "passengerCount": 12400,
+        "passengerGroups": [
+          {
+            "group": "source qualifier",
+            "count": 12400,
+            "raw": "12,400 (slaves)"
+          }
+        ],
+        "cargo": {
+          "value": 10,
+          "unit": "tons",
+          "raw": "10 tons"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "month",
+          "raw": "1 month"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Illegal",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 245000,
+          "raw": "245,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 122000,
+          "raw": "122,000 used"
+        }
+      },
+      "text": {
+        "sourceNotes": "Historical canonical ship PDF-review source mechanically staged; independent physical mounts and arcs remain uncertified."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "sav-tenloss-corporation-hornet-class-interceptor",
+        "name": "Tenloss Corporation Hornet-class Interceptor"
+      },
+      "publication": {
+        "book": "Scum and Villainy",
+        "page": 125,
+        "printedTitle": "Tenloss Corporation Hornet-class Interceptor",
+        "printedTypeLine": "Gargantuan starfighter",
+        "entryNotes": "Physical PDF p126; SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "printedSize": "Gargantuan",
+        "size": "gargantuan"
+      },
+      "challenge": {
+        "cl": 12
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 4,
+        "characterScaleLengthSquares": 4,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "total (crew)"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 16,
+            "maxVelocityKmh": 1150
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 4
+          }
+        ],
+        "maxVelocityKmh": 1150
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 18,
+        "reflexFlatFooted": 11,
+        "fortitude": 21,
+        "armorBonus": 6,
+        "damageReduction": 10,
+        "shieldRating": 35
+      },
+      "durability": {
+        "hitPoints": 50,
+        "damageThreshold": 41
+      },
+      "abilities": {
+        "str": 32,
+        "dex": 24,
+        "con": null,
+        "int": 14,
+        "initiativePrinted": 8,
+        "perceptionPrinted": 6,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 8,
+            "raw": "initiative 8"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "mechanics 6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "perception 6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 8,
+            "raw": "pilot 8"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "useComputer 6"
+          }
+        ]
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 28,
+        "rangedAttackLine": "advanced heavy laser cannons +6 (see below)",
+        "attackOptions": [
+          "autofire (advanced heavy laser cannons)",
+          "fire-link (advanced heavy laser cannons)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "sav-tenloss-corporation-hornet-class-interceptor-attack-1",
+            "label": "advanced heavy laser cannons (default)",
+            "mountKeys": [],
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "attackBonusPrinted": 6,
+            "specialNotes": "Damage 10d10x2; operator pilot; Mutually exclusive default configuration; autofire +1. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          },
+          {
+            "groupKey": "sav-tenloss-corporation-hornet-class-interceptor-attack-2",
+            "label": "medium laser cannons (alternate)",
+            "mountKeys": [],
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "attackBonusPrinted": 6,
+            "specialNotes": "Damage 5d10x2; operator pilot; Mutually exclusive alternate configuration; autofire +1. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          }
+        ],
+        "notes": "Default heavy laser and alternate medium-laser configuration replace each other; one vehicle source record, neither group proves physical mount topology."
+      },
+      "crew": {
+        "crewCount": 1,
+        "raw": "1"
+      },
+      "capacity": {
+        "passengerCount": 0,
+        "cargo": {
+          "value": 80,
+          "unit": "kg",
+          "raw": "80 kg"
+        },
+        "consumables": {
+          "value": 5,
+          "unit": "days",
+          "raw": "5 days"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Illegal",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 75000
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 32000
+        }
+      },
+      "text": {
+        "sourceNotes": "Already-approved source supplemental amendment under 318 baseline; original PDF p125 visually rechecked.",
+        "mechanicalNotes": "Heavy laser +6 (+1 autofire) 10d10x2; alternative medium laser +6 (+1 autofire) 5d10x2. Default can overload on natural 1."
+      },
+      "exceptions": {
+        "specialRules": [
+          {
+            "key": "hornet-overload",
+            "label": "Heavy laser overload",
+            "category": "source-specific",
+            "summary": "On natural 1, default heavy lasers deal 6d10x2 damage to Hornet ignoring SR and destroy installed heavy laser cannons.",
+            "reference": "Scum and Villainy p125",
+            "implementationStatus": "requires-consumer",
+            "typedPredicateStatus": "pending"
+          },
+          {
+            "key": "hornet-alternative",
+            "label": "Medium-laser alternative",
+            "category": "source-specific",
+            "summary": "Replacing heavy laser cannons with medium lasers removes the default overload trait; distinct source weapon group.",
+            "reference": "Scum and Villainy p125",
+            "implementationStatus": "requires-consumer",
+            "typedPredicateStatus": "pending"
+          }
+        ],
+        "unmappedFacts": [
+          "Hyperdrive omitted in printed statblock; not equivalent to no hyperdrive.",
+          "Exact physical weapon count and arcs not printed."
+        ],
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/hyperspace/capability": "not-stated",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "sav-starforge-station",
+        "name": "StarForge Station"
+      },
+      "publication": {
+        "book": "Scum and Villainy",
+        "page": 130,
+        "printedTitle": "StarForge Station",
+        "printedTypeLine": "Colossal (station) space station",
+        "entryNotes": "Physical PDF p131; SHA-256 74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "space-station",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedSize": "Colossal (station)",
+        "size": "colossal",
+        "colossalSubtype": "station"
+      },
+      "challenge": {
+        "cl": 20
+      },
+      "geometry": {
+        "starshipScaleWidthSquares": 2,
+        "starshipScaleLengthSquares": 2,
+        "coverCrew": "total"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 1,
+            "raw": "fly 1 square (starship scale)"
+          }
+        ]
+      },
+      "hyperspace": {
+        "capability": "equipped",
+        "primaryMultiplier": 6,
+        "navComputer": "installed",
+        "raw": "x6, nav computer"
+      },
+      "defenses": {
+        "reflex": 16,
+        "reflexFlatFooted": 16,
+        "fortitude": 74,
+        "armorBonus": 16,
+        "damageReduction": 20,
+        "shieldRating": 200
+      },
+      "durability": {
+        "hitPoints": 3000,
+        "damageThreshold": 574
+      },
+      "abilities": {
+        "str": 138,
+        "dex": 10,
+        "con": null,
+        "int": 18,
+        "initiativePrinted": -4,
+        "perceptionPrinted": 6,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -5,
+            "raw": "Initiative -5"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 5,
+            "raw": "Mechanics +5"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 5,
+            "raw": "Perception +5"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -5,
+            "raw": "Pilot -5"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 5,
+            "raw": "Use Computer +5"
+          }
+        ]
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 99,
+        "rangedAttackLine": "5 turbolaser batteries +12*"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "sav-starforge-station-attack-1",
+            "label": "turbolaser battery (5 batteries printed)",
+            "mountKeys": [],
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "attackBonusPrinted": 12,
+            "specialNotes": "Damage 7d10x5; operator 5 gunners; Printed -20 against smaller-than-Colossal targets (effective -8). Printed five batteries are not certified physical mounts. Physical mounts, arcs, and executable attack bindings NOT CERTIFIED."
+          }
+        ],
+        "notes": "One source attack row, five described batteries. No physical mount topology or independently bound batteries certified."
+      },
+      "crew": {
+        "crewCount": 1850,
+        "crewQuality": "normal",
+        "raw": "1,850 (normal)"
+      },
+      "capacity": {
+        "passengerCount": 10000,
+        "cargo": {
+          "value": 25000000,
+          "unit": "tons",
+          "raw": "25,000,000 tons"
+        },
+        "consumables": {
+          "value": null,
+          "unit": "unlimited",
+          "raw": "unlimited"
+        },
+        "carriedCraft": [
+          {
+            "name": "starfighters",
+            "count": 600,
+            "raw": "600 starfighters"
+          },
+          {
+            "name": "space transports",
+            "count": 60,
+            "raw": "60 space transports"
+          },
+          {
+            "name": "ships up to Colossal (frigate) size",
+            "count": 12,
+            "raw": "up to a dozen ships of Colossal (frigate) size"
+          }
+        ]
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "unique",
+        "priceNew": {
+          "status": "not-for-sale",
+          "raw": "not available for sale"
+        }
+      },
+      "text": {
+        "sourceNotes": "Original PDF printed p130, physical p131 visually checked.",
+        "mechanicalNotes": "5 turbolaser batteries +12*, detailed Atk +12 (-8 against targets smaller than Colossal); Dmg 7d10x5. Source header and skills differ."
+      },
+      "exceptions": {
+        "specialRules": [
+          {
+            "key": "starforge-capital-weapon-penalty",
+            "label": "Small-target battery penalty",
+            "category": "source-specific",
+            "summary": "Printed -20 attacks against targets smaller than Colossal; turbolaser +12 becomes -8 against those targets.",
+            "reference": "Scum and Villainy p130",
+            "implementationStatus": "requires-consumer",
+            "typedPredicateStatus": "pending"
+          },
+          {
+            "key": "starforge-trade",
+            "label": "StarForge market effects",
+            "category": "source-specific",
+            "summary": "Station narrative describes higher-than-normal prices and checks influencing cargo availability; typed market consumer pending.",
+            "reference": "Scum and Villainy p130",
+            "implementationStatus": "requires-consumer",
+            "typedPredicateStatus": "pending"
+          },
+          {
+            "key": "starforge-shipyard",
+            "label": "StarForge shipyard",
+            "category": "source-specific",
+            "summary": "Functions as shipyard for up to Colossal (frigate) ships, with repair and modification constraints; executable consumer pending.",
+            "reference": "Scum and Villainy p130",
+            "implementationStatus": "requires-consumer",
+            "typedPredicateStatus": "pending"
+          }
+        ],
+        "ambiguities": [
+          "Init header -4 versus Skills Initiative -5; Senses header Perception +6 versus Skills Perception +5; both printed values preserved."
+        ],
+        "unmappedFacts": [
+          "No physical mount topology certified for five turbolaser batteries.",
+          "Trading and shipyard mechanics require future typed rule handlers."
+        ],
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    }
+  ],
+  "productionPacksChanged": false,
+  "generatedActorsChanged": false
+}

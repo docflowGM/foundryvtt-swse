@@ -1,0 +1,270 @@
+{
+  "schema": "swse.vehicle.phase2c.cp1.evidence-semantics-contract.v0.1",
+  "status": "DRAFT_DISCOVERY_ONLY_NOT_SCHEMA_FREEZE",
+  "baseline": {
+    "phase0bVehicleSchemaId": "swse.vehicle.phase0b.draft-0.5",
+    "phase1BlobSha": "21f2178eb6a610d3b52ecdc8549f93724c77fbc4",
+    "phase2bCommit": "b5851d6b4e7b50e5315b743b2247b2a1df07a047"
+  },
+  "canonicalStates": [
+    {
+      "state": "PRINTED_VALUE",
+      "meaning": "A number, text or fact is explicitly printed; never substitute computed crew math or another variant.",
+      "phase0bFieldStatesTranslation": "Field populated; no fieldStates status required (v0.5 lacks source-stated).",
+      "numericZeroAllowed": true,
+      "canonicalNullAllowed": false
+    },
+    {
+      "state": "EXPLICIT_NONE",
+      "meaning": "Source explicitly states equipment or capability is absent.",
+      "phase0bFieldStatesTranslation": "Null only if schema permits it, plus /pointer explicitly-none (or not-applicable if justified).",
+      "numericZeroAllowed": false,
+      "canonicalNullAllowed": true
+    },
+    {
+      "state": "SOURCE_SILENT_CONFIRMED",
+      "meaning": "Reviewed page and relevant adjacent rules; no published value found.",
+      "phase0bFieldStatesTranslation": "Omit nested unresolved value and record /pointer not-stated; never null or zero.",
+      "numericZeroAllowed": false,
+      "canonicalNullAllowed": false
+    },
+    {
+      "state": "PUBLISHED_CONFLICT",
+      "meaning": "At least two incompatible printed readings; preserve both with exact source locators.",
+      "phase0bFieldStatesTranslation": "Omit adjudicated value, record /pointer unclear-source. Store alternatives in evidence, not production field.",
+      "numericZeroAllowed": false,
+      "canonicalNullAllowed": false
+    },
+    {
+      "state": "NOT_REVIEWED",
+      "meaning": "No complete primary-source close read.",
+      "phase0bFieldStatesTranslation": "Omit value, fieldStates /pointer not-yet-reviewed; cannot certify.",
+      "numericZeroAllowed": false,
+      "canonicalNullAllowed": false
+    },
+    {
+      "state": "CONFIGURATION_CONDITIONAL",
+      "meaning": "Printed fact applies only to a mode, crew circumstance, or variant.",
+      "phase0bFieldStatesTranslation": "Retain condition-specific rule/variant record, not unconditional base property.",
+      "numericZeroAllowed": true,
+      "canonicalNullAllowed": false
+    }
+  ],
+  "crossCuttingAssertions": [
+    "An attack line or battery group is not evidence for physical weapon mount count or arcs.",
+    "Publisher silence after complete page review is positive evidence of silence, not an explicit equipment absence.",
+    "Explicit \"no hyperdrive\" and a statblock without Hyperdrive field are different states.",
+    "Printed source conflicts cannot be resolved by derived rules math or arbitrary preferred line.",
+    "Alternate configurations on a single statblock remain one source identity unless separately statblocked.",
+    "Mechanical certification requires full source-field/provenance reconciliation and mount/arc policy acceptance, not mere source review.",
+    "Source-silent physical topology can be represented with explicit evidence state but its acceptance for strict certification requires separate approved policy; this pilot authorizes none.",
+    "Phase0b schema is v0.5 draft, not frozen, and the historical Phase0B fixture/null gate remains red."
+  ],
+  "pressureFixtures": [
+    {
+      "caseId": "P2C-C01",
+      "book": "Unknown Regions",
+      "printedPage": 51,
+      "ship": "Deep-X Explorer",
+      "pointer": "/armament/weaponMounts",
+      "evidenceState": "PRINTED_VALUE",
+      "observation": "Two physically stated low-yield light blaster cannons and two required gunners; one detailed gunner attack profile is printed.",
+      "valueDisposition": "SOURCE_STATED_TWO_CANNONS_NOT_ONE_ATTACK_GROUP_PER_MOUNT",
+      "physicalMountCount": 2,
+      "attackGroupCount": 1,
+      "arcs": null,
+      "arcEvidenceState": "SOURCE_SILENT_CONFIRMED"
+    },
+    {
+      "caseId": "P2C-C02",
+      "book": "Scum and Villainy",
+      "printedPage": 125,
+      "ship": "Hornet-class Interceptor",
+      "pointer": "/armament/weaponMounts",
+      "evidenceState": "SOURCE_SILENT_CONFIRMED",
+      "observation": "Plural laser cannons; no number or firing arcs specified.",
+      "valueDisposition": "OMIT_UNPRINTED_HARDWARE_COUNT_AND_ARCS"
+    },
+    {
+      "caseId": "P2C-C03",
+      "book": "Scum and Villainy",
+      "printedPage": 125,
+      "ship": "Hornet-class Interceptor",
+      "pointer": "/armament/weaponOptions",
+      "evidenceState": "CONFIGURATION_CONDITIONAL",
+      "observation": "Advanced heavy laser configuration can explode on natural attack roll 1; alternate medium-laser configuration is a loadout of the same CL 12 statblock.",
+      "valueDisposition": "CONFIG_SPECIFIC_EVENT_NO_SECOND_PUBLICATION_KEY"
+    },
+    {
+      "caseId": "P2C-C04",
+      "book": "Unknown Regions",
+      "printedPage": 58,
+      "ship": "Star Seeder-class Colony Ship",
+      "pointer": "/armament/firingGroups/0/attackPenalty",
+      "evidenceState": "PUBLISHED_CONFLICT",
+      "observation": "-20 vs smaller than Colossal in footnote; -17 vs smaller than Capital in weapon detail.",
+      "readings": [
+        {
+          "value": -20,
+          "target": "smaller than Colossal",
+          "locator": "p58 footnote"
+        },
+        {
+          "value": -17,
+          "target": "smaller than Capital",
+          "locator": "p58 weapon row"
+        }
+      ],
+      "valueDisposition": "KEEP_BOTH_UNADJUDICATED"
+    },
+    {
+      "caseId": "P2C-C05",
+      "book": "Unknown Regions",
+      "printedPage": 58,
+      "ship": "Star Seeder-class Colony Ship",
+      "pointer": "/armament/firingGroups/1/attackPenalty",
+      "evidenceState": "PUBLISHED_CONFLICT",
+      "observation": "Separate tractor attack row has same category/modifier mismatch as turbolasers.",
+      "readings": [
+        {
+          "value": -20,
+          "target": "smaller than Colossal",
+          "locator": "p58 footnote"
+        },
+        {
+          "value": -17,
+          "target": "smaller than Capital",
+          "locator": "p58 tractor row"
+        }
+      ],
+      "valueDisposition": "KEEP_BOTH_UNADJUDICATED"
+    },
+    {
+      "caseId": "P2C-C06",
+      "book": "Unknown Regions",
+      "printedPage": 56,
+      "ship": "Preybird-class Starfighter",
+      "pointer": "/armament/firingGroups/0/autofireAttackBonus",
+      "evidenceState": "SOURCE_SILENT_CONFIRMED",
+      "observation": "Autofire attack option is printed, detailed autofire attack bonus is not.",
+      "valueDisposition": "OMIT_NOT_ZERO"
+    },
+    {
+      "caseId": "P2C-C07",
+      "book": "Starships of the Galaxy",
+      "printedPage": 154,
+      "ship": "Stock YT-1300 Transport",
+      "pointer": "/defenses/shieldRating",
+      "evidenceState": "SOURCE_SILENT_CONFIRMED",
+      "observation": "No printed shield rating, though DR is printed.",
+      "valueDisposition": "OMIT_NOT_ZERO_NOT_NONE"
+    },
+    {
+      "caseId": "P2C-C08",
+      "book": "Starships of the Galaxy",
+      "printedPage": 160,
+      "ship": "Stock Z-95 Headhunter",
+      "pointer": "/hyperspace",
+      "evidenceState": "EXPLICIT_NONE",
+      "observation": "Stock Z-95 explicitly lacks hyperdrive in source prose.",
+      "valueDisposition": "EXPLICITLY_NONE_ALLOWED_WITH_POSITIVE_PROVENANCE"
+    },
+    {
+      "caseId": "P2C-C09",
+      "book": "Knights of the Old Republic Campaign Guide",
+      "printedPage": 100,
+      "ship": "Quartermaster-class Supply Carrier",
+      "pointer": "/armament",
+      "evidenceState": "SOURCE_SILENT_CONFIRMED",
+      "observation": "No statted weapon attack groups while narrative refers to modest defenses; cannot assert installed armament is absent.",
+      "valueDisposition": "DO_NOT_SET_ARMAMENT_NULL"
+    },
+    {
+      "caseId": "P2C-C10",
+      "book": "Core Rulebook",
+      "printedPage": 180,
+      "ship": "Vulture-class Droid Starfighter",
+      "pointer": "/movement/speedModes",
+      "evidenceState": "CONFIGURATION_CONDITIONAL",
+      "observation": "Starfighter and walker movement modes on one printed ship.",
+      "valueDisposition": "ONE_PUBLICATION_ID_MULTIPLE_MODES"
+    },
+    {
+      "caseId": "P2C-C11",
+      "book": "Unknown Regions",
+      "printedPage": 155,
+      "ship": "Surfeik Cruiser",
+      "pointer": "/rules",
+      "evidenceState": "PRINTED_VALUE",
+      "observation": "Pseudograv field counters hyperdrive, not an energy damage weapon.",
+      "valueDisposition": "SEPARATE_TYPED_SPECIAL_RULE"
+    },
+    {
+      "caseId": "P2C-C12",
+      "book": "Scum and Villainy",
+      "printedPage": 67,
+      "ship": "Clutch Ugly Fighter",
+      "pointer": "/armament/firingGroups/1/attackBonus",
+      "evidenceState": "PUBLISHED_CONFLICT",
+      "observation": "Main ion attack line +7; detailed ion weapon row +5.",
+      "readings": [
+        {
+          "value": 7,
+          "locator": "p67 Ranged line"
+        },
+        {
+          "value": 5,
+          "locator": "p67 detailed weapon row"
+        }
+      ],
+      "valueDisposition": "KEEP_BOTH_UNADJUDICATED"
+    },
+    {
+      "caseId": "P2C-C13",
+      "book": "Galaxy at War",
+      "printedPage": 65,
+      "ship": "YU-410 Light Freighter",
+      "pointer": "/defenses/shieldRating",
+      "evidenceState": "PUBLISHED_CONFLICT",
+      "observation": "Durability section prints DR 15; DR 20, so second DR cannot silently be relabeled SR.",
+      "valueDisposition": "UNRESOLVED_SOURCE_LABELS"
+    },
+    {
+      "caseId": "P2C-C14",
+      "book": "Starships of the Galaxy",
+      "printedPage": 156,
+      "ship": "Millennium Falcon",
+      "pointer": "/classification",
+      "evidenceState": "CONFIGURATION_CONDITIONAL",
+      "observation": "Gargantuan starfighter targeting behavior applies only for specific combat interactions; printed ship remains Colossal.",
+      "valueDisposition": "CONDITIONAL_SCALE_RULE_NOT_SIZE_REWRITE"
+    },
+    {
+      "caseId": "P2C-C15",
+      "book": "Unknown Regions",
+      "printedPage": 52,
+      "ship": "Drexl-class Planetary Defender",
+      "pointer": "/hyperspace",
+      "evidenceState": "SOURCE_SILENT_CONFIRMED",
+      "observation": "No Hyperdrive printed. Do not assert explicitly unavailable.",
+      "valueDisposition": "OMIT_UNRESOLVED_HYPERDRIVE"
+    },
+    {
+      "caseId": "P2C-C16",
+      "book": "Unknown Regions",
+      "printedPage": 151,
+      "ship": "Royal Fortune Light Clipper",
+      "pointer": "/armament/weaponMounts",
+      "evidenceState": "PRINTED_VALUE",
+      "observation": "38 narrated lasers; 8 laser battery attack groups; relationship between physical barrels and batteries not established.",
+      "valueDisposition": "KEEP_PHYSICAL_COUNTS_SEPARATE_FROM_ATTACK_GROUPS",
+      "physicalMountCount": 38,
+      "attackGroupCount": 8,
+      "arcs": null,
+      "arcEvidenceState": "SOURCE_SILENT_CONFIRMED"
+    }
+  ],
+  "fixtureCount": 16,
+  "phase0bSchemaFrozen": false,
+  "strictCertificatesAwardedByThisFile": 0
+}

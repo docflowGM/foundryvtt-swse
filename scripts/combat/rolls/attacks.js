@@ -28,6 +28,25 @@ import { ModifierUtils } from "/systems/foundryvtt-swse/scripts/engine/effects/m
 import { AttackRollDiagnostics } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-roll-diagnostics.js";
 import { resolveVehicleAttackBonus, resolveAbstractCrewAttackBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle-attack-math.js";
 import { resolveAttackDomain } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-domain-router.js";
+import { authorizeVehicleAttackBeforeCosts } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-attack-preflight.js";
+import { resolveVehicleWeaponAuthority } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
+/** The seat a stock group is operated from: the requested seat when the statblock prints it among the operators, else its default seat. */
+const stockOperatorStation = (g, requested) => {
+  if (!g) return null;
+  const want = String(requested ?? '').trim().toLowerCase();
+  return want && (g.operatorStations ?? []).includes(want) ? want : g.operator ?? null;
+};
+import { burstFireOptionOf } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-fire-mode-service.js";
+import { resolveVehicleFireMode, requestedVehicleFireMode, readPersistedFireMode, MODE_REASONS } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-fire-mode.js";
+import { batteryMarginHits } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-battery.js";
+import { VehicleBatteryAidService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-battery-aid-service.js";
+import { VehicleAmmunitionService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-ammunition-service.js";
+import { resolveVehicleAttackRange, describeRangeRefusal } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle-attack-range.js";
+import { VehicleProjectileService } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-projectile-service.js";
+import { shouldCreateProjectile } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-guided-projectile.js";
+import { resolveTrustedStockAttackGroup } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-stock-attack-authority.js";
+import { classifyInstalledVehicleWeapon } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-attack-provenance.js";
+import { resolveVehicleCrewStationEvidence } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-crew-station-evidence.js";
 import { GrappleStateEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-engine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { sceneCommandCoverBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/class-command-cover.js";
@@ -709,6 +728,118 @@ export async function rollAttack(actor, weapon, options = {}) {
   }
   { const gate = checkAttackSourceReadiness(actor, weapon, rollOptions); if (!gate.ok) return refuseUnreadyAttack(weapon, gate); }
 
+  // Phase 2C, immediate strict stock mode (approved DENY): every vehicle-
+  // domain attack is checked BEFORE preparation, ammo, action costs or dice.
+  // Only a weapon proven installed through the vehicle shipyard is exempt
+  // from PUBLISHED STOCK provenance; this does not exempt its other weapons.
+  // Personal use of vehicle-class weapons retains the character domain.
+  const vehicleDomain = resolveAttackDomain({
+    actor, item: weapon, operator: rollOptions.operator ?? null,
+    vehicle: rollOptions.vehicleActor ?? null,
+    sourceContext: {
+      vehicleActor: rollOptions.vehicleActor ?? null,
+      abstractCrewQuality: rollOptions.abstractCrewQuality ?? null
+    }
+  });
+  const ownedVehicle = weapon?.actor?.type === 'vehicle' ? weapon.actor : null;
+  if (ownedVehicle && (!vehicleDomain.ok || vehicleDomain.domain === 'character' ||
+       vehicleDomain.normalizedContext?.vehicleActor !== ownedVehicle)) {
+    ui?.notifications?.warn?.('Vehicle-mounted weapon requires its actual vehicle and crew attack context.');
+    return null;
+  }
+  if (!vehicleDomain.ok && (actor.type === 'vehicle' || rollOptions.vehicleActor)) {
+    ui?.notifications?.warn?.('Vehicle attack was blocked: ' + vehicleDomain.reason);
+    return null;
+  }
+  // Finite ammunition and guided projectiles (P6C-3C/3D): a LAUNCH spends one unit of the launcher's ledger; the follow-up attack of a
+  // projectile that was already launched spends nothing, takes no action and keeps its target (Core, Missiles and Torpedoes).
+  let launcherAuth = null;
+  let followUp = null;
+  let vehicleRange = null;
+  let vehicleFireMode = { ok: true, mode: 'single' };
+  let requestedFireMode = 'single';
+  const launchAttackId = globalThis.foundry?.utils?.randomID?.() ?? `launch-${Date.now()}`;
+  let vehicleAmmoSpend = null;
+  const refundVehicleAmmo = async () => { if (vehicleAmmoSpend?.spent) await VehicleAmmunitionService.refundLaunch(vehicleAmmoSpend); };
+  if (vehicleDomain.ok && vehicleDomain.domain !== 'character') {
+    const vehicle = vehicleDomain.normalizedContext?.vehicleActor;
+    const target = getTargetActorFromOptions(rollOptions);
+    const attackId = globalThis.foundry?.utils?.randomID?.() ?? null;
+    // Crew eligibility must come from the installed weapon and the same
+    // assignment authority used by the crew sheet. Caller flags are never
+    // allowed to assert station resolution. Existing shipyard modifications
+    // retain their separate provenance path, not a fictitious stock binding.
+    const installedProvenance = classifyInstalledVehicleWeapon(vehicle, weapon);
+    const stationEvidence = (installedProvenance.kind === 'STOCK_CANDIDATE' || installedProvenance.kind === 'CERTIFIED_INSTALLATION')
+      ? await resolveVehicleCrewStationEvidence({
+          vehicle, weapon, domainResolution: vehicleDomain,
+          requestedCrewStation: rollOptions.crewStation ?? null,
+          // the station comes from the sealed mount (installed) or the verified source group (stock), never Item fields
+          certifiedStation: installedProvenance.kind === 'CERTIFIED_INSTALLATION' ? installedProvenance.mount?.operatorRole
+            : stockOperatorStation(resolveTrustedStockAttackGroup(vehicle, weapon), rollOptions.crewStation),
+          // a statblock-printed droid / automated operator has no crew seat to assign
+          automatedOperator: installedProvenance.kind === 'STOCK_CANDIDATE' && resolveTrustedStockAttackGroup(vehicle, weapon)?.automatedOperator === true
+        })
+      : { crewStationResolved: false };
+    // Autofire / Burst Fire of a vehicle-managed weapon: requested here, resolved after the range/scale authority below (WE-5)
+    // The mode is the weapon's persisted setting (a swift action, VehicleFireModeService); a request for autofire/burst on a weapon that is
+    // not set to autofire is refused, never silently switched for free.
+    if (installedProvenance.kind === 'STOCK_CANDIDATE' || installedProvenance.kind === 'CERTIFIED_INSTALLATION') {
+      const asked = requestedVehicleFireMode(rollOptions, optionActive(rollOptions, 'burstFire'));
+      const persisted = readPersistedFireMode(vehicle, weapon.id);
+      if (asked !== 'single' && persisted !== 'autofire') { ui?.notifications?.warn?.(`Vehicle attack blocked: ${MODE_REASONS.MODE_NOT_SET}.`); return null; }
+      requestedFireMode = persisted === 'autofire' ? (asked === 'burst' ? 'burst' : 'autofire') : 'single';
+    }
+    const sourceGate = await authorizeVehicleAttackBeforeCosts({
+      vehicle, weapon, target, attackId,
+      crewStationResolved: stationEvidence.crewStationResolved === true,
+      gmDecision: null,
+      user: globalThis.game?.user ?? null,
+      operatorActor: vehicleDomain.domain === 'vehicle-actor-gunner' ? (vehicleDomain.normalizedContext?.gunnerActor ?? null) : null
+    });
+    if (!sourceGate.ok) {
+      ui?.notifications?.warn?.('Vehicle attack blocked by strict stock-source evidence policy: ' + sourceGate.reason);
+      return null;
+    }
+    launcherAuth = resolveVehicleWeaponAuthority(weapon);
+    // WE-2 range authority (Core Table 10-2): the band comes from the distance between the actual tokens at the encounter's scale. An
+    // unresolved distance, table or scale and a target beyond long range are refused here, BEFORE any cost. The guided follow-up is not
+    // resolved again: it reuses the recorded launch bonus (which already carries the launch's range modifier).
+    if (launcherAuth?.ok && !rollOptions.guidedFollowUp) {
+      const range = await resolveVehicleAttackRange({ vehicle, weapon, target });
+      if (!range.ok) { ui?.notifications?.warn?.(`Vehicle attack blocked: ${describeRangeRefusal(range)}.`); return null; }
+      vehicleRange = range;
+    }
+    if (rollOptions.guidedFollowUp) {
+      // the SAME projectile's one return attack: only a guided launcher, the recorded target, the recorded launcher, its due turn
+      if (!launcherAuth?.ok || !launcherAuth.ammunition?.guided) { ui?.notifications?.warn?.('Vehicle attack blocked: this weapon launches no guided projectile.'); return null; }
+      const plan = VehicleProjectileService.plan(vehicle, rollOptions.guidedFollowUp, { launcherItemId: weapon.id, targetId: target?.id ?? null });
+      if (!plan.ok) { ui?.notifications?.warn?.('Vehicle attack blocked: ' + plan.reason); return null; }
+      followUp = { id: rollOptions.guidedFollowUp, ...plan };
+    } else if (launcherAuth?.ok && launcherAuth.ammunition) {
+      // a launch needs ammunition in the launcher's ledger: checked BEFORE any cost is paid; an empty or tampered ledger refuses
+      const can = await VehicleAmmunitionService.canLaunch(vehicle, weapon);
+      if (!can.ok) { ui?.notifications?.warn?.('Vehicle attack blocked: ' + can.reason); return null; }
+    }
+  }
+
+  if (requestedFireMode !== 'single') {
+    // WE-5: autofire / Burst Fire need an autofire-capable certified weapon, the named operator's Burst Fire feat and a scale that resolves the area
+    vehicleFireMode = resolveVehicleFireMode({ requested: requestedFireMode, authority: launcherAuth, operatorActor: vehicleDomain.normalizedContext?.gunnerActor ?? null, scale: vehicleRange?.scale ?? null,
+      burstOption: requestedFireMode === 'burst' ? burstFireOptionOf(vehicleDomain.normalizedContext?.gunnerActor ?? null, weapon) : null });
+    if (!vehicleFireMode.ok) { ui?.notifications?.warn?.(`Vehicle attack blocked: ${vehicleFireMode.reason}.`); return null; }
+    const { burstFire: _bf, ...restAttackOptions } = rollOptions.attackOptions ?? {};
+    rollOptions = { ...rollOptions, fireMode: vehicleFireMode.mode, ...(rollOptions.attackOptions ? { attackOptions: restAttackOptions } : {}),
+      situationalContributions: [...(Array.isArray(rollOptions.situationalContributions) ? rollOptions.situationalContributions : []), createModifier({
+        source: ModifierSource.ITEM, sourceId: `vehicle-${vehicleFireMode.mode}`, sourceName: `${weapon.name} (${vehicleFireMode.mode === 'burst' ? 'Burst Fire' : 'Autofire'})`,
+        target: 'global.attack', type: ModifierType.UNTYPED, value: vehicleFireMode.attackPenalty })] };
+  }
+  if (vehicleRange) {
+    // The calculated range REPLACES whatever the caller supplied: no band, distance or explicit penalty can move the attack.
+    const { rangeBand: _b, range: _r, distanceSquares: _d, rangePenalty: _p, ...rest } = rollOptions;
+    const { rangePenalty: _mp, ...modifiers } = rollOptions.modifiers ?? {};
+    rollOptions = { ...rest, ...(rollOptions.modifiers ? { modifiers } : {}), rangeBand: vehicleRange.band, distanceSquares: vehicleRange.squares, vehicleRange };
+  }
   // Phase 5D-A: canonical weapon/profile resolution is pure -- do it BEFORE any action-option or ammunition cost so an
   // unresolvable canonical identity/selection never spends anything (and needs no rollback).
   // Phase 5D-I-B: owned state selection (configuration / persistent setting / machine state), then the attack-of-opportunity choice
@@ -814,6 +945,15 @@ export async function rollAttack(actor, weapon, options = {}) {
     ui?.notifications?.error?.(ammoSpend.message || `${weapon.name} does not have enough ammunition.`);
     return null;
   }
+  if (launcherAuth?.ok && launcherAuth.ammunition && !followUp && ownedVehicle) {
+    vehicleAmmoSpend = await VehicleAmmunitionService.spendLaunch(ownedVehicle, weapon, { attackId: launchAttackId });
+    if (!vehicleAmmoSpend.ok) {
+      if (ammoSpend?.spent) await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
+      await actionOptionSpend?.rollback?.();
+      ui?.notifications?.error?.(`${weapon.name}: ammunition could not be spent (${vehicleAmmoSpend.reason}).`);
+      return null;
+    }
+  }
 
   // attack-domain-router.js decides which existing math authority this
   // attack belongs to (character / vehicle-actor-gunner / vehicle-abstract-
@@ -829,9 +969,12 @@ export async function rollAttack(actor, weapon, options = {}) {
     if (composition.attackBonusResolution?.error) {
       if (ammoSpend?.spent) await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
       await actionOptionSpend?.rollback?.();
+      await refundVehicleAmmo();
       ui?.notifications?.error?.(composition.reason === 'invalid-vehicle-actor'
         ? 'Vehicle attack could not be resolved: the vehicle actor is missing or invalid, so its Intelligence modifier cannot be sourced.'
-        : 'Vehicle attack could not be resolved: no valid gunner/operator actor.');
+        : String(composition.reason).startsWith('capital-ship-')
+          ? 'Vehicle attack could not be resolved: a capital-size ship needs the size of its target (and its own size) to apply the attack penalty against targets smaller than Colossal.'
+          : 'Vehicle attack could not be resolved: no valid gunner/operator actor.');
       return null;
     }
     if (composition.weaponRuntimeError) {
@@ -839,11 +982,24 @@ export async function rollAttack(actor, weapon, options = {}) {
       if (ammoSpend?.spent) await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
       reportWeaponRuntimeError(composition.weaponRuntimeError, { notify: false });
     }
+    await refundVehicleAmmo();
     await actionOptionSpend?.rollback?.();
     ui?.notifications?.error?.(composition.weaponRuntimeError
       ? `Attack could not be resolved: ${composition.weaponRuntimeError.message}`
       : 'Attack could not be resolved: no valid attack-domain context (' + composition.reason + ').');
     return null;
+  }
+  // The follow-up attack of a guided projectile uses the SAME attack bonus as the launch with a -5 penalty (Core, Missiles and Torpedoes):
+  // the recorded bonus, not a fresh composition, so a changed crew or modifier cannot rewrite it.
+  // (`composition` is the fresh per-attack result of computeFinalAttackComposition, so overriding it in place cannot leak to another attack.)
+  if (followUp) {
+    Object.assign(composition, {
+      atkBonus: followUp.attackBonus,
+      attackComponentLedger: [
+        { id: 'guided-launch-attack-bonus', label: 'Same attack bonus as the launch', value: followUp.baseBonus, category: 'guided', applied: true, sourceId: followUp.id, sourceName: 'Guided projectile (Core p. 173)' },
+        { id: 'guided-follow-up-penalty', label: 'Follow-up attack of a locked-on missile or torpedo', value: followUp.penalty, category: 'guided', applied: true, sourceId: followUp.id, sourceName: 'Guided projectile (Core p. 173)' }
+      ]
+    });
   }
   const { atkBonus, attackDomain, isVehicleAttack, attackBonusResolution, attackComponentLedger, sequencePenalty, domainResolution } = composition;
 
@@ -924,10 +1080,22 @@ export async function rollAttack(actor, weapon, options = {}) {
     critMultiplier
   });
 
+  // P6C-2B: a published weapon battery (Core p. 170) hits with one extra weapon per 3 points the attack beats the target's
+  // Reflex Defense, capped by the weapons actually participating. Computed once here from the roll and carried on the card;
+  // the damage authority re-validates it. Only a hit can produce extra hits; any other weapon has no battery outcome.
+  const vehicleWeaponAuthority = resolveVehicleWeaponAuthority(weapon);
+  let batteryOutcome = null;
+  if (vehicleWeaponAuthority?.ok && vehicleWeaponAuthority.battery) {
+    const m = batteryMarginHits({ attackTotal: roll.total, targetDefense: Number.isFinite(Number(targetReflex)) && (resolvedTarget.defenseType ?? 'reflex') === 'reflex' ? Number(targetReflex) : 0,
+      hit: isHit === true && Number.isFinite(Number(targetReflex)) && (resolvedTarget.defenseType ?? 'reflex') === 'reflex', participatingWeapons: vehicleWeaponAuthority.battery.participatingWeapons });
+    batteryOutcome = m.ok ? { extraHits: m.extraHits, participatingWeapons: vehicleWeaponAuthority.battery.participatingWeapons, margin: m.margin, attackTotal: roll.total, targetDefense: Number(targetReflex) } : null;
+  }
+
   const damageWorkflowContext = summarizeCombatWorkflowContext(workflowContext, {
     actor,
     weapon,
     target,
+    ...(batteryOutcome ? { battery: batteryOutcome } : {}),
     targetId: target?.id ?? null,
     targetName: resolvedTarget.targetName ?? target?.name ?? '',
     isCritical,
@@ -949,6 +1117,17 @@ export async function rollAttack(actor, weapon, options = {}) {
       ...(specialStage.ownedExtras ?? {}),
     } : undefined,
     ...(specialStage.areaShape?.isArea ? { isArea: true, ruleData: { areaAttack: true, ...(specialStage.areaShape.halfDamageOnMiss ? { halfDamageOnMiss: true } : {}) } } : {}),
+    // V-P6C-07 (project interpretation): an ordinary splash / area weapon resolved against ONE target at starship scale keeps the area-attack
+    // miss rule (Core Special Combat Rules: Area Attacks): a hit deals full damage and a miss deals HALF. The flag is only the miss rule: it is
+    // not the character-scale area (no Evasion / cover / critical semantics are added or removed by it).
+    ...((vehicleWeaponAuthority?.ok && vehicleWeaponAuthority.area) || vehicleFireMode.halfDamageOnMiss || vehicleWeaponAuthority?.tractorBeam || vehicleWeaponAuthority?.gravityWell || vehicleWeaponAuthority?.shieldbuster ? { ruleData: {
+      ...(((vehicleWeaponAuthority?.ok && vehicleWeaponAuthority.area) || vehicleFireMode.halfDamageOnMiss) ? { halfDamageOnMiss: true } : {}),
+      // a tractor beam deals no damage (Core, Tractor Beams): the shared disposition offers no damage roll
+      ...((vehicleWeaponAuthority?.tractorBeam || vehicleWeaponAuthority?.gravityWell) ? { noDamage: true } : {}),
+      // shieldbuster torpedoes (Starships of the Galaxy; V-P6C-13): read by the shared shield / mitigation stages
+      ...(vehicleWeaponAuthority?.shieldbuster ? { shieldbuster: true } : {}) } } : {}),
+    // the shared damage engine recognises autofire / burst fire by these attack tags (cover, packet rules)
+    ...(vehicleFireMode.mode !== 'single' ? { isAutofire: true, isBurstFire: vehicleFireMode.mode === 'burst', vehicleFireMode: { mode: vehicleFireMode.mode, extraDice: vehicleFireMode.extraDice } } : {}),
     // Phase 5D-E: carry the special-mechanic state (classified mechanics, stored answers, evaluated CT riders) to Damage/Apply
     special: (specialStage.mechanics.length || Object.keys({ ...specialStage.answers, ...(rollOptions.answers ?? {}) }).length) ? {
       mechanics: summarizeMechanics(specialStage.mechanics), answers: { ...specialStage.answers, ...(rollOptions.answers ?? {}) }, unresolved: specialStage.unresolved, drInteraction: specialStage.drIgnore ? 'ignore' : undefined,
@@ -1085,8 +1264,36 @@ export async function rollAttack(actor, weapon, options = {}) {
     workflowContext: damageWorkflowContext,
     actionId: attackResult.actionId
   };
+  // Vehicle tractor beam: on a hit the weapon-control engine takes over (opposed grapple -> grabbed; per-turn maintenance; release).
+  if (isHit && vehicleWeaponAuthority?.ok && vehicleWeaponAuthority.tractorBeam && weapon?.actor?.type === 'vehicle') {
+    // (loaded on demand: the control/grapple engines are only needed by a tractor beam)
+    const { applyVehicleTractorBeam } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-tractor-beam.js');
+    attackResult.tractorControl = await applyVehicleTractorBeam({ vehicle: weapon.actor, weapon, authority: vehicleWeaponAuthority, target, scale: vehicleRange?.scale ?? null, message: attackMessage, attackTotal: roll.total });
+    if (attackResult.tractorControl?.applied !== true) ui?.notifications?.info?.(`Tractor beam: ${attackResult.tractorControl?.reason ?? 'no hold established'}.`);
+  }
+  // Gravity well projector: on a hit the interdiction field is recorded on the scene (GM-managed persistence, V-P6C-14).
+  if (isHit && vehicleWeaponAuthority?.ok && vehicleWeaponAuthority.gravityWell && weapon?.actor?.type === 'vehicle') {
+    const { createFromHit } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-interdiction-service.js');
+    attackResult.interdiction = rollOptions.interdictionArea
+      ? await createFromHit({ vehicle: weapon.actor, weapon, authority: vehicleWeaponAuthority, area: rollOptions.interdictionArea, scale: vehicleRange?.scale ?? null, attackTotal: roll.total })
+      : { ok: false, reason: 'INTERDICTION_AREA_INVALID' };
+    if (attackResult.interdiction.ok !== true) ui?.notifications?.info?.(`Gravity well: ${attackResult.interdiction.reason}.`);
+  }
   attackResult.ammoSpend = ammoSpend;
   attackResult.actionOptionSpend = actionOptionSpend;
+
+  // Battery Aid Another is consumed ONCE, after the attack it benefited has been posted (the benefit is the ally's next attack roll,
+  // hit or miss). Idempotent; a failure before this point leaves the aid pending.
+  const aidEntry = (attackComponentLedger ?? []).find(e => e?.id === 'battery-aid' && e.applied !== false);
+  if (aidEntry && weapon?.actor?.type === 'vehicle') await VehicleBatteryAidService.consume(weapon.actor, weapon.id, aidEntry.sourceId);
+
+  // Guided projectiles (Core, Missiles and Torpedoes): an AIMED launch that MISSED leaves a projectile that may attack once more on the
+  // next turn; the follow-up attack resolves it (a hit ends its attack, a second miss self-destructs it). Neither costs ammunition.
+  if (followUp && ownedVehicle) await VehicleProjectileService.resolve(ownedVehicle, followUp.id, { hit: isHit === true });
+  else if (ownedVehicle && launcherAuth?.ok && launcherAuth.ammunition
+    && shouldCreateProjectile({ guided: launcherAuth.ammunition.guided, aimed: rollOptions.aim === true || rollOptions.isAiming === true || rollOptions.aimed === true, hit: isHit === null ? null : isHit }))
+    attackResult.guidedProjectile = await VehicleProjectileService.create(ownedVehicle, { launcherItemId: weapon.id, targetId: target?.id ?? null, attackBonus: atkBonus, attackId: launchAttackId });
+  attackResult.vehicleAmmoSpend = vehicleAmmoSpend && { spent: vehicleAmmoSpend.spent, attackId: launchAttackId };
 
   AttackRollDiagnostics.record({
     domain: 'combat.attack',
@@ -1124,6 +1331,7 @@ export async function rollAttack(actor, weapon, options = {}) {
     if (ammoSpend?.spent) {
       await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
     }
+    await refundVehicleAmmo();
     await actionOptionSpend?.rollback?.();
     if (fpCommitted) await fpTx.rollback();
     throw err;

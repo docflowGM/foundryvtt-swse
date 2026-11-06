@@ -30,7 +30,7 @@
  * - Used by: DamageEngine, CombatEngine, Talent effects
  */
 
-import { ShieldMitigationResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/resolvers/shield-mitigation-resolver.js";
+import { ShieldMitigationResolver, isShieldbuster } from "/systems/foundryvtt-swse/scripts/engine/combat/resolvers/shield-mitigation-resolver.js";
 import { DamageReductionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/resolvers/damage-reduction-resolver.js";
 import { TempHPResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/resolvers/temp-hp-resolver.js";
 import { resolveComponentMitigation } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-component-mitigation.js";
@@ -148,6 +148,16 @@ export class DamageMitigationManager {
       mitigation: immunityApplied,
       details: { immuneTo, types: immunityTypes, source: 'DamageTypeImmunity' }
     });
+
+    // ========================================================================
+    // STAGE 1.75: SHIELDBUSTER HULL HALVING (Starships of the Galaxy, Shieldbuster Torpedoes; owner interpretation V-P6C-13):
+    // the torpedo meets Shield Rating at full strength; what is left for the hull is halved; Damage Reduction follows.
+    // ========================================================================
+    if (isShieldbuster(context) && currentDamage > 0) {
+      const before = currentDamage;
+      currentDamage = Math.floor(currentDamage / 2);
+      breakdown.push({ stage: 'Shieldbuster hull halving', input: before, output: currentDamage, mitigation: before - currentDamage, details: { decision: 'V-P6C-13', source: 'shieldbuster' } });
+    }
 
     // ========================================================================
     // STAGE 2: DAMAGE REDUCTION

@@ -1,0 +1,529 @@
+{
+  "status": "ILLUSTRATIVE_SOURCE_BACKED_PARTIAL_RECORDS_NOT_CERTIFIED",
+  "purpose": "Same fixed schema applied to different book entries; SR difference retained without precedence ruling.",
+  "vehicles": [
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.3",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "phase0b-ywing-example-1",
+        "vehicleFamilyKey": null,
+        "variantKey": "phase0b-ywing-entry-1",
+        "name": "Koensayr Y-wing Starfighter",
+        "manufacturer": null,
+        "model": null,
+        "className": null,
+        "variantLabel": null,
+        "variantKind": null,
+        "baseVehicleKey": null,
+        "aliases": [],
+        "uniqueNamedVessel": null
+      },
+      "publication": {
+        "book": "Core Rulebook",
+        "page": null,
+        "statblockOrdinalOnPage": null,
+        "printedTitle": "Koensayr Y-wing Starfighter",
+        "printedTypeLine": null,
+        "edition": null,
+        "entryNotes": null,
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "starfighter",
+        "chassisType": null,
+        "mobilityDomains": [],
+        "combatScale": [],
+        "role": [],
+        "constructionType": null,
+        "printedSize": null,
+        "size": "gargantuan",
+        "colossalSubtype": null,
+        "sizeModifierPrinted": null,
+        "secondaryCategories": [],
+        "entityNature": null
+      },
+      "challenge": {
+        "cl": null,
+        "raw": null,
+        "notes": null
+      },
+      "geometry": {
+        "lengthMeters": null,
+        "widthMeters": null,
+        "heightMeters": null,
+        "characterScaleWidthSquares": null,
+        "characterScaleLengthSquares": null,
+        "starshipScaleWidthSquares": null,
+        "starshipScaleLengthSquares": null,
+        "reachSquares": null,
+        "coverCrew": null,
+        "coverPassengers": null,
+        "enclosure": null,
+        "exposedStations": [],
+        "notes": null,
+        "occupantCoverModifiers": []
+      },
+      "movement": {
+        "speedModes": [],
+        "maxVelocityKmh": null,
+        "sublightDrive": null,
+        "atmosphericCapability": null,
+        "spaceflightCapability": null,
+        "maximumAltitudeMeters": null,
+        "turningOrManeuverability": null,
+        "minimumSpeed": null,
+        "hoverCapability": null,
+        "specialMovement": [],
+        "raw": null
+      },
+      "hyperspace": {
+        "capability": null,
+        "primaryMultiplier": null,
+        "backupMultiplier": null,
+        "navComputer": null,
+        "jumpMemoryCount": null,
+        "astromechRequirement": null,
+        "routeConstraints": null,
+        "raw": null
+      },
+      "defenses": {
+        "reflex": null,
+        "reflexFlatFooted": null,
+        "fortitude": null,
+        "will": null,
+        "armorBonus": null,
+        "otherDefenseBonuses": [],
+        "vehicularCombatIncluded": null,
+        "damageReduction": null,
+        "shieldRating": 25,
+        "shieldType": null,
+        "shieldRecharge": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "shieldArcs": [],
+        "immunities": [],
+        "resistances": [],
+        "vulnerabilities": [],
+        "otherDefenses": []
+      },
+      "durability": {
+        "hitPoints": 120,
+        "damageThreshold": null,
+        "hardness": null,
+        "conditionTrackRules": [],
+        "criticalDamageRules": [],
+        "repairRules": [],
+        "failureModes": []
+      },
+      "abilities": {
+        "str": null,
+        "dex": null,
+        "con": null,
+        "int": null,
+        "wis": null,
+        "cha": null,
+        "initiativePrinted": null,
+        "perceptionPrinted": null,
+        "senses": [],
+        "skills": [],
+        "languages": []
+      },
+      "combat": {
+        "baseAttackBonusPrinted": null,
+        "grappleBonusPrinted": null,
+        "rangedAttackLine": null,
+        "meleeAttackLine": null,
+        "attackOptions": [],
+        "specialActions": [],
+        "feats": [],
+        "talents": [],
+        "tacticalFire": [],
+        "otherCombatRules": []
+      },
+      "armament": {
+        "weaponMounts": [],
+        "firingGroups": [],
+        "carriedPayloads": [],
+        "weaponOptions": [],
+        "unresolvedWeaponNames": [],
+        "notes": null,
+        "attackPatterns": []
+      },
+      "crew": {
+        "crewCount": null,
+        "minimumOperatingCrew": null,
+        "crewQuality": null,
+        "crewDescriptor": null,
+        "crewIsOptional": null,
+        "autonomy": null,
+        "stations": [],
+        "stockCrewSpecialRules": [],
+        "raw": null
+      },
+      "capacity": {
+        "passengerCount": null,
+        "passengerGroups": [],
+        "cargo": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "cargoMetricTons": null,
+        "consumables": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "carriedCraft": [],
+        "escapePods": null,
+        "dockingCapacity": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "towCapacity": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "lifeSupport": null,
+        "storageNotes": null,
+        "carriedCraftConfigurations": []
+      },
+      "systems": {
+        "installed": [],
+        "sensors": [],
+        "communications": [],
+        "tractorBeams": [],
+        "propulsion": [],
+        "power": [],
+        "environment": [],
+        "security": [],
+        "interfaces": [],
+        "miscellaneous": [],
+        "capabilityModeGroups": []
+      },
+      "modifications": {
+        "emplacementPointsTotal": null,
+        "emplacementPointsUsed": null,
+        "emplacementPointsRemaining": null,
+        "modificationSlotsTotal": null,
+        "modificationSlotsUsed": null,
+        "modificationSlotsRemaining": null,
+        "installed": [],
+        "templates": [],
+        "constraints": [],
+        "notes": null
+      },
+      "economics": {
+        "priceNew": {
+          "amountCredits": null,
+          "status": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "priceUsed": {
+          "amountCredits": null,
+          "status": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "availability": null,
+        "availabilityNotes": null,
+        "serviceOrMaintenanceCosts": [],
+        "acquisitionRestrictions": [],
+        "notes": null
+      },
+      "text": {
+        "summary": null,
+        "mechanicalNotes": null,
+        "sourceNotes": null,
+        "displayName": null,
+        "tags": []
+      },
+      "exceptions": {
+        "specialRules": [],
+        "unmappedFacts": [],
+        "ambiguities": [],
+        "transcriptionWarnings": [],
+        "manualReviewRequired": null
+      },
+      "fieldStates": {
+        "/publication/page": "not-yet-reviewed",
+        "/identity/vehicleFamilyKey": "not-yet-reviewed"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.3",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "phase0b-ywing-example-2",
+        "vehicleFamilyKey": null,
+        "variantKey": "phase0b-ywing-entry-2",
+        "name": "Koensayr BTL-S3 Y-wing",
+        "manufacturer": null,
+        "model": null,
+        "className": null,
+        "variantLabel": null,
+        "variantKind": null,
+        "baseVehicleKey": null,
+        "aliases": [],
+        "uniqueNamedVessel": null
+      },
+      "publication": {
+        "book": "Starships of the Galaxy",
+        "page": null,
+        "statblockOrdinalOnPage": null,
+        "printedTitle": "Koensayr BTL-S3 Y-wing",
+        "printedTypeLine": null,
+        "edition": null,
+        "entryNotes": null,
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "starfighter",
+        "chassisType": null,
+        "mobilityDomains": [],
+        "combatScale": [],
+        "role": [],
+        "constructionType": null,
+        "printedSize": null,
+        "size": "gargantuan",
+        "colossalSubtype": null,
+        "sizeModifierPrinted": null,
+        "secondaryCategories": [],
+        "entityNature": null
+      },
+      "challenge": {
+        "cl": 10,
+        "raw": null,
+        "notes": null
+      },
+      "geometry": {
+        "lengthMeters": null,
+        "widthMeters": null,
+        "heightMeters": null,
+        "characterScaleWidthSquares": null,
+        "characterScaleLengthSquares": null,
+        "starshipScaleWidthSquares": null,
+        "starshipScaleLengthSquares": null,
+        "reachSquares": null,
+        "coverCrew": null,
+        "coverPassengers": null,
+        "enclosure": null,
+        "exposedStations": [],
+        "notes": null,
+        "occupantCoverModifiers": []
+      },
+      "movement": {
+        "speedModes": [],
+        "maxVelocityKmh": null,
+        "sublightDrive": null,
+        "atmosphericCapability": null,
+        "spaceflightCapability": null,
+        "maximumAltitudeMeters": null,
+        "turningOrManeuverability": null,
+        "minimumSpeed": null,
+        "hoverCapability": null,
+        "specialMovement": [],
+        "raw": null
+      },
+      "hyperspace": {
+        "capability": null,
+        "primaryMultiplier": null,
+        "backupMultiplier": null,
+        "navComputer": null,
+        "jumpMemoryCount": null,
+        "astromechRequirement": null,
+        "routeConstraints": null,
+        "raw": null
+      },
+      "defenses": {
+        "reflex": null,
+        "reflexFlatFooted": null,
+        "fortitude": null,
+        "will": null,
+        "armorBonus": null,
+        "otherDefenseBonuses": [],
+        "vehicularCombatIncluded": null,
+        "damageReduction": null,
+        "shieldRating": 10,
+        "shieldType": null,
+        "shieldRecharge": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "shieldArcs": [],
+        "immunities": [],
+        "resistances": [],
+        "vulnerabilities": [],
+        "otherDefenses": []
+      },
+      "durability": {
+        "hitPoints": 120,
+        "damageThreshold": null,
+        "hardness": null,
+        "conditionTrackRules": [],
+        "criticalDamageRules": [],
+        "repairRules": [],
+        "failureModes": []
+      },
+      "abilities": {
+        "str": null,
+        "dex": null,
+        "con": null,
+        "int": null,
+        "wis": null,
+        "cha": null,
+        "initiativePrinted": null,
+        "perceptionPrinted": null,
+        "senses": [],
+        "skills": [],
+        "languages": []
+      },
+      "combat": {
+        "baseAttackBonusPrinted": null,
+        "grappleBonusPrinted": null,
+        "rangedAttackLine": null,
+        "meleeAttackLine": null,
+        "attackOptions": [],
+        "specialActions": [],
+        "feats": [],
+        "talents": [],
+        "tacticalFire": [],
+        "otherCombatRules": []
+      },
+      "armament": {
+        "weaponMounts": [],
+        "firingGroups": [],
+        "carriedPayloads": [],
+        "weaponOptions": [],
+        "unresolvedWeaponNames": [],
+        "notes": null,
+        "attackPatterns": []
+      },
+      "crew": {
+        "crewCount": null,
+        "minimumOperatingCrew": null,
+        "crewQuality": null,
+        "crewDescriptor": null,
+        "crewIsOptional": null,
+        "autonomy": null,
+        "stations": [],
+        "stockCrewSpecialRules": [],
+        "raw": null
+      },
+      "capacity": {
+        "passengerCount": null,
+        "passengerGroups": [],
+        "cargo": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "cargoMetricTons": null,
+        "consumables": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "carriedCraft": [],
+        "escapePods": null,
+        "dockingCapacity": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "towCapacity": {
+          "value": null,
+          "unit": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "lifeSupport": null,
+        "storageNotes": null,
+        "carriedCraftConfigurations": []
+      },
+      "systems": {
+        "installed": [],
+        "sensors": [],
+        "communications": [],
+        "tractorBeams": [],
+        "propulsion": [],
+        "power": [],
+        "environment": [],
+        "security": [],
+        "interfaces": [],
+        "miscellaneous": [],
+        "capabilityModeGroups": []
+      },
+      "modifications": {
+        "emplacementPointsTotal": null,
+        "emplacementPointsUsed": null,
+        "emplacementPointsRemaining": null,
+        "modificationSlotsTotal": null,
+        "modificationSlotsUsed": null,
+        "modificationSlotsRemaining": null,
+        "installed": [],
+        "templates": [],
+        "constraints": [],
+        "notes": null
+      },
+      "economics": {
+        "priceNew": {
+          "amountCredits": null,
+          "status": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "priceUsed": {
+          "amountCredits": null,
+          "status": null,
+          "raw": null,
+          "qualifier": null
+        },
+        "availability": null,
+        "availabilityNotes": null,
+        "serviceOrMaintenanceCosts": [],
+        "acquisitionRestrictions": [],
+        "notes": null
+      },
+      "text": {
+        "summary": null,
+        "mechanicalNotes": null,
+        "sourceNotes": null,
+        "displayName": null,
+        "tags": []
+      },
+      "exceptions": {
+        "specialRules": [],
+        "unmappedFacts": [],
+        "ambiguities": [],
+        "transcriptionWarnings": [],
+        "manualReviewRequired": null
+      },
+      "fieldStates": {
+        "/publication/page": "not-yet-reviewed",
+        "/identity/vehicleFamilyKey": "not-yet-reviewed"
+      }
+    }
+  ],
+  "schemaVersion": "swse.vehicle.phase0b.draft-0.3"
+}

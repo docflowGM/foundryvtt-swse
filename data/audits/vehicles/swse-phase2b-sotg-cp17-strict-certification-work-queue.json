@@ -1,0 +1,3810 @@
+{
+  "schema": "swse.vehicle.sotg.phase2b.cp17.strict-certification-work-queue.v1",
+  "sourceCommitSha": "318c635e07577f9d04f9e1707908bf4590528758",
+  "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+  "ledgerPath": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json",
+  "backlogPath": "data/audits/vehicles/swse-phase2b-sotg-cp16-book-source-closure-mount-backlog.json",
+  "baselinePath": "data/audits/vehicles/swse-phase2b-sotg-cp17-independent-baseline.json",
+  "policyStatus": "OWNER_ADJUDICATION_PENDING",
+  "certificationState": "NO_NEW_SHIPS_CERTIFIED",
+  "queueCount": 100,
+  "workItems": [
+    {
+      "priorityTrack": "P0_SOURCE_CONFLICT",
+      "cp16LedgerIndex": 3,
+      "sourceEntryKey": "sotg-advanced-v-19-torrent-starfighter",
+      "printedName": "Advanced V-19 Torrent Starfighter",
+      "printedStatblockStartPage": 59,
+      "reviewedPDFPages": [
+        59
+      ],
+      "fieldGroupExceptions": {
+        "initiativeSenses": "SOURCE_CONFLICT"
+      },
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [
+        "initiativeSenses"
+      ],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_CONFLICT",
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 1
+    },
+    {
+      "priorityTrack": "P0_SOURCE_CONFLICT",
+      "cp16LedgerIndex": 17,
+      "sourceEntryKey": "sotg-recusant-class-light-destroyer",
+      "printedName": "Recusant-class Light Destroyer",
+      "printedStatblockStartPage": 72,
+      "reviewedPDFPages": [
+        72
+      ],
+      "fieldGroupExceptions": {
+        "rangedAttack": "SOURCE_CONFLICT",
+        "weaponAttackProfile": "SOURCE_CONFLICT"
+      },
+      "mountGroupCount": 5,
+      "sourceConflictFieldGroups": [
+        "rangedAttack",
+        "weaponAttackProfile"
+      ],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_CONFLICT",
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 2
+    },
+    {
+      "priorityTrack": "P0_SOURCE_CONFLICT",
+      "cp16LedgerIndex": 42,
+      "sourceEntryKey": "sotg-kuat-drive-yards-pellaeon-class-star-destroyer",
+      "printedName": "Kuat Drive Yards Pellaeon-class Star Destroyer",
+      "printedStatblockStartPage": 99,
+      "reviewedPDFPages": [
+        99
+      ],
+      "fieldGroupExceptions": {
+        "defenses": "SOURCE_CONFLICT"
+      },
+      "mountGroupCount": 5,
+      "sourceConflictFieldGroups": [
+        "defenses"
+      ],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 3
+    },
+    {
+      "priorityTrack": "P0_SOURCE_CONFLICT",
+      "cp16LedgerIndex": 43,
+      "sourceEntryKey": "sotg-immobilizer-418-interdictor-class-heavy-cruiser",
+      "printedName": "Immobilizer 418 Interdictor-class Heavy Cruiser",
+      "printedStatblockStartPage": 100,
+      "reviewedPDFPages": [
+        100,
+        101
+      ],
+      "fieldGroupExceptions": {
+        "weaponAttackProfile": "SOURCE_CONFLICT"
+      },
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [
+        "weaponAttackProfile"
+      ],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 4
+    },
+    {
+      "priorityTrack": "P0_SOURCE_CONFLICT",
+      "cp16LedgerIndex": 47,
+      "sourceEntryKey": "sotg-junker-tye-wing",
+      "printedName": "Junker TYE-wing",
+      "printedStatblockStartPage": 104,
+      "reviewedPDFPages": [
+        104
+      ],
+      "fieldGroupExceptions": {
+        "initiativeSenses": "SOURCE_CONFLICT",
+        "skills": "SOURCE_CONFLICT",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [
+        "initiativeSenses",
+        "skills"
+      ],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 5
+    },
+    {
+      "priorityTrack": "P0_SOURCE_CONFLICT",
+      "cp16LedgerIndex": 48,
+      "sourceEntryKey": "sotg-koensayr-manufacturing-btl-58-k-wing",
+      "printedName": "Koensayr Manufacturing BTL-58 K-wing",
+      "printedStatblockStartPage": 105,
+      "reviewedPDFPages": [
+        105
+      ],
+      "fieldGroupExceptions": {
+        "initiativeSenses": "SOURCE_CONFLICT",
+        "skills": "SOURCE_CONFLICT",
+        "payload": "SOURCE_CONFLICT",
+        "weaponAttackProfile": "SOURCE_CONFLICT"
+      },
+      "mountGroupCount": 5,
+      "sourceConflictFieldGroups": [
+        "initiativeSenses",
+        "skills",
+        "payload",
+        "weaponAttackProfile"
+      ],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "firingArc": [
+          0,
+          2,
+          3,
+          4
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 6
+    },
+    {
+      "priorityTrack": "P0_SOURCE_CONFLICT",
+      "cp16LedgerIndex": 52,
+      "sourceEntryKey": "sotg-sienar-technologies-marauder-corvette",
+      "printedName": "Sienar Technologies Marauder Corvette",
+      "printedStatblockStartPage": 110,
+      "reviewedPDFPages": [
+        110
+      ],
+      "fieldGroupExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "weaponAttackProfile": "SOURCE_CONFLICT"
+      },
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [
+        "weaponAttackProfile"
+      ],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 7
+    },
+    {
+      "priorityTrack": "P0_SOURCE_CONFLICT",
+      "cp16LedgerIndex": 58,
+      "sourceEntryKey": "sotg-mon-calamari-star-defender",
+      "printedName": "Mon Calamari Star Defender",
+      "printedStatblockStartPage": 116,
+      "reviewedPDFPages": [
+        116,
+        117
+      ],
+      "fieldGroupExceptions": {
+        "printedTypeLine": "SOURCE_CONFLICT",
+        "payload": "SOURCE_CONFLICT",
+        "weaponAttackProfile": "SOURCE_CONFLICT"
+      },
+      "mountGroupCount": 6,
+      "sourceConflictFieldGroups": [
+        "printedTypeLine",
+        "payload",
+        "weaponAttackProfile"
+      ],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 8
+    },
+    {
+      "priorityTrack": "P0_SOURCE_CONFLICT",
+      "cp16LedgerIndex": 78,
+      "sourceEntryKey": "sotg-eclipse",
+      "printedName": "Eclipse",
+      "printedStatblockStartPage": 139,
+      "reviewedPDFPages": [
+        139
+      ],
+      "fieldGroupExceptions": {
+        "rangedAttack": "SOURCE_CONFLICT",
+        "weaponAttackProfile": "SOURCE_CONFLICT"
+      },
+      "mountGroupCount": 6,
+      "sourceConflictFieldGroups": [
+        "rangedAttack",
+        "weaponAttackProfile"
+      ],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "firingArc": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 9
+    },
+    {
+      "priorityTrack": "P0_SOURCE_CONFLICT",
+      "cp16LedgerIndex": 80,
+      "sourceEntryKey": "sotg-theta-class-shuttle",
+      "printedName": "Theta-class Shuttle",
+      "printedStatblockStartPage": 141,
+      "reviewedPDFPages": [
+        141
+      ],
+      "fieldGroupExceptions": {
+        "initiativeSenses": "SOURCE_CONFLICT",
+        "skills": "SOURCE_CONFLICT",
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [
+        "initiativeSenses",
+        "skills"
+      ],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 10
+    },
+    {
+      "priorityTrack": "P0_SOURCE_CONFLICT",
+      "cp16LedgerIndex": 82,
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-bomber",
+      "printedName": "Sienar Fleet Systems TIE Bomber",
+      "printedStatblockStartPage": 143,
+      "reviewedPDFPages": [
+        142,
+        143
+      ],
+      "fieldGroupExceptions": {
+        "initiativeSenses": "SOURCE_CONFLICT",
+        "skills": "SOURCE_CONFLICT",
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [
+        "initiativeSenses",
+        "skills"
+      ],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 11
+    },
+    {
+      "priorityTrack": "P0_SOURCE_CONFLICT",
+      "cp16LedgerIndex": 94,
+      "sourceEntryKey": "sotg-incom-t-65xj3-x-wing-starfighter",
+      "printedName": "Incom T-65XJ3 X-wing Starfighter",
+      "printedStatblockStartPage": 152,
+      "reviewedPDFPages": [
+        152,
+        153
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_CONFLICT"
+      },
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [
+        "payload"
+      ],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED",
+        "SOURCE_CONFLICT"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 12
+    },
+    {
+      "priorityTrack": "P1_LEGACY_MISSING_FIELDS",
+      "cp16LedgerIndex": 5,
+      "sourceEntryKey": "sotg-incom-subpro-arc-170-starfighter",
+      "printedName": "Incom/Subpro ARC-170 Starfighter",
+      "printedStatblockStartPage": 61,
+      "reviewedPDFPages": [
+        61
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {
+        "batteryCount": [
+          0,
+          1,
+          2
+        ]
+      },
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 13
+    },
+    {
+      "priorityTrack": "P1_LEGACY_MISSING_FIELDS",
+      "cp16LedgerIndex": 7,
+      "sourceEntryKey": "sotg-alliance-a-wing-starfighter",
+      "printedName": "Alliance A-wing Starfighter",
+      "printedStatblockStartPage": 63,
+      "reviewedPDFPages": [
+        63
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          2
+        ],
+        "firingArc": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {
+        "hardwareCount": [
+          1
+        ],
+        "firingArc": [
+          2
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2
+        ]
+      },
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED",
+        "SCHEMA_GAP"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 14
+    },
+    {
+      "priorityTrack": "P1_LEGACY_MISSING_FIELDS",
+      "cp16LedgerIndex": 9,
+      "sourceEntryKey": "sotg-baudo-class-star-yacht",
+      "printedName": "Baudo-class Star Yacht",
+      "printedStatblockStartPage": 65,
+      "reviewedPDFPages": [
+        65
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "firingArc": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "blockingFindingStatuses": [
+        "SOURCE_CONFLICT"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 15
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 0,
+      "sourceEntryKey": "sotg-rothana-heavy-engineering-acclamator-class-transgalactic-military-assault-ship",
+      "printedName": "Rothana Heavy Engineering Acclamator-class Transgalactic Military Assault Ship",
+      "printedStatblockStartPage": 56,
+      "reviewedPDFPages": [
+        56,
+        57
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 16
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 1,
+      "sourceEntryKey": "sotg-rothana-heavy-engineering-acclamator-ii-class-transgalactic-military-assault-ship",
+      "printedName": "Rothana Heavy Engineering Acclamator II-class Transgalactic Military Assault Ship",
+      "printedStatblockStartPage": 57,
+      "reviewedPDFPages": [
+        57
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 17
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 4,
+      "sourceEntryKey": "sotg-delta-7-aethersprite-light-interceptor",
+      "printedName": "Delta-7 Aethersprite Light Interceptor",
+      "printedStatblockStartPage": 60,
+      "reviewedPDFPages": [
+        60
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 18
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 6,
+      "sourceEntryKey": "sotg-archaic-heavy-cruiser",
+      "printedName": "Archaic Heavy Cruiser",
+      "printedStatblockStartPage": 62,
+      "reviewedPDFPages": [
+        62
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 19
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 8,
+      "sourceEntryKey": "sotg-banking-clan-munificent-class-frigate",
+      "printedName": "Banking Clan Munificent-class Frigate",
+      "printedStatblockStartPage": 64,
+      "reviewedPDFPages": [
+        64
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 5,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 20
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 10,
+      "sourceEntryKey": "sotg-slayn-korpil-b-wing-starfighter",
+      "printedName": "Slayn & Korpil B-wing Starfighter",
+      "printedStatblockStartPage": 66,
+      "reviewedPDFPages": [
+        66,
+        67
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 4,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 21
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 11,
+      "sourceEntryKey": "sotg-slayn-korpil-b-wing-shuttle",
+      "printedName": "Slayn & Korpil B-wing Shuttle",
+      "printedStatblockStartPage": 67,
+      "reviewedPDFPages": [
+        67
+      ],
+      "fieldGroupExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 22
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 12,
+      "sourceEntryKey": "sotg-slayn-korpil-b-wing-e2-starfighter",
+      "printedName": "Slayn & Korpil B-wing/E2 Starfighter",
+      "printedStatblockStartPage": 67,
+      "reviewedPDFPages": [
+        66,
+        67
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 23
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 13,
+      "sourceEntryKey": "sotg-damorian-manufacturing-s-carrack-class-light-cruiser",
+      "printedName": "Damorian Manufacturing's Carrack-class Light Cruiser",
+      "printedStatblockStartPage": 68,
+      "reviewedPDFPages": [
+        68
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 24
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 14,
+      "sourceEntryKey": "sotg-chiss-nssis-class-clawcraft",
+      "printedName": "Chiss Nssis-class Clawcraft",
+      "printedStatblockStartPage": 69,
+      "reviewedPDFPages": [
+        69
+      ],
+      "fieldGroupExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 25
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 15,
+      "sourceEntryKey": "sotg-koensayr-ilh-kk-citadel-class-cruiser",
+      "printedName": "Koensayr ILH-KK Citadel-Class Cruiser",
+      "printedStatblockStartPage": 70,
+      "reviewedPDFPages": [
+        70
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 4,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          2,
+          3
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 26
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 16,
+      "sourceEntryKey": "sotg-cloakshape-fighter",
+      "printedName": "CloakShape Fighter",
+      "printedStatblockStartPage": 71,
+      "reviewedPDFPages": [
+        71
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 27
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 18,
+      "sourceEntryKey": "sotg-coralskipper",
+      "printedName": "Coralskipper",
+      "printedStatblockStartPage": 73,
+      "reviewedPDFPages": [
+        73
+      ],
+      "fieldGroupExceptions": {
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 28
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 19,
+      "sourceEntryKey": "sotg-corellian-engineering-corporation-cr90-corvette",
+      "printedName": "Corellian Engineering Corporation CR90 Corvette",
+      "printedStatblockStartPage": 74,
+      "reviewedPDFPages": [
+        74,
+        75
+      ],
+      "fieldGroupExceptions": {
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 29
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 21,
+      "sourceEntryKey": "sotg-rendili-stardrive-dreadnaught-class-heavy-cruiser",
+      "printedName": "Rendili StarDrive Dreadnaught-class Heavy Cruiser",
+      "printedStatblockStartPage": 76,
+      "reviewedPDFPages": [
+        76,
+        77
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 30
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 22,
+      "sourceEntryKey": "sotg-outbound-flight",
+      "printedName": "Outbound Flight",
+      "printedStatblockStartPage": 77,
+      "reviewedPDFPages": [
+        77
+      ],
+      "fieldGroupExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 31
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 23,
+      "sourceEntryKey": "sotg-baktoid-armor-workshop-vulture-class-starfighter",
+      "printedName": "Baktoid Armor Workshop Vulture-class Starfighter",
+      "printedStatblockStartPage": 78,
+      "reviewedPDFPages": [
+        78,
+        79
+      ],
+      "fieldGroupExceptions": {
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 32
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 24,
+      "sourceEntryKey": "sotg-haor-chall-engineering-scarab-class-starfighter",
+      "printedName": "Haor Chall Engineering Scarab-class Starfighter",
+      "printedStatblockStartPage": 79,
+      "reviewedPDFPages": [
+        78,
+        79
+      ],
+      "fieldGroupExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 33
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 25,
+      "sourceEntryKey": "sotg-phlac-arphocc-automata-industries-droid-tri-fighter",
+      "printedName": "Phlac-Arphocc Automata Industries Droid Tri-Fighter",
+      "printedStatblockStartPage": 79,
+      "reviewedPDFPages": [
+        78,
+        79
+      ],
+      "fieldGroupExceptions": {
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 34
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 26,
+      "sourceEntryKey": "sotg-dynamic-class-freighter",
+      "printedName": "Dynamic-class Freighter",
+      "printedStatblockStartPage": 80,
+      "reviewedPDFPages": [
+        80,
+        81
+      ],
+      "fieldGroupExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 35
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 27,
+      "sourceEntryKey": "sotg-kuat-systems-engineering-eta-2-actis-interceptor",
+      "printedName": "Kuat Systems Engineering Eta-2 Actis Interceptor",
+      "printedStatblockStartPage": 82,
+      "reviewedPDFPages": [
+        82
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 36
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 28,
+      "sourceEntryKey": "sotg-freitek-inc-e-wing-starfighter-type-b",
+      "printedName": "FreiTek Inc. E-wing Starfighter, Type B",
+      "printedStatblockStartPage": 83,
+      "reviewedPDFPages": [
+        83
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 37
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 29,
+      "sourceEntryKey": "sotg-kuat-systems-engineering-firespray-31-patrol-craft",
+      "printedName": "Kuat Systems Engineering Firespray-31 Patrol Craft",
+      "printedStatblockStartPage": 84,
+      "reviewedPDFPages": [
+        84,
+        85
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 38
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 30,
+      "sourceEntryKey": "sotg-slave-i",
+      "printedName": "Slave I",
+      "printedStatblockStartPage": 85,
+      "reviewedPDFPages": [
+        85
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 6,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 39
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 31,
+      "sourceEntryKey": "sotg-territorial-defense-starfighter",
+      "printedName": "Territorial Defense Starfighter",
+      "printedStatblockStartPage": 86,
+      "reviewedPDFPages": [
+        86
+      ],
+      "fieldGroupExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 40
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 32,
+      "sourceEntryKey": "sotg-huppla-pasa-tisc-shipwrights-collective-ginivex-class-starfighter",
+      "printedName": "Huppla Pasa Tisc Shipwrights Collective Ginivex-class Starfighter",
+      "printedStatblockStartPage": 87,
+      "reviewedPDFPages": [
+        87
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 41
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 34,
+      "sourceEntryKey": "sotg-gozanti-cruiser",
+      "printedName": "Gozanti Cruiser",
+      "printedStatblockStartPage": 90,
+      "reviewedPDFPages": [
+        90,
+        91
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 42
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 35,
+      "sourceEntryKey": "sotg-krayt-s-honor",
+      "printedName": "Krayt's Honor",
+      "printedStatblockStartPage": 91,
+      "reviewedPDFPages": [
+        91
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 4,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          2,
+          3
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 43
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 36,
+      "sourceEntryKey": "sotg-corellian-gunship",
+      "printedName": "Corellian Gunship",
+      "printedStatblockStartPage": 92,
+      "reviewedPDFPages": [
+        92
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 44
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 37,
+      "sourceEntryKey": "sotg-hapan-battle-dragon",
+      "printedName": "Hapan Battle Dragon",
+      "printedStatblockStartPage": 93,
+      "reviewedPDFPages": [
+        93
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 6,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "batteryCount": [
+          3,
+          4,
+          5
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 45
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 38,
+      "sourceEntryKey": "sotg-hapes-nova-cruiser",
+      "printedName": "Hapes Nova Cruiser",
+      "printedStatblockStartPage": 94,
+      "reviewedPDFPages": [
+        94
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 46
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 39,
+      "sourceEntryKey": "sotg-telgorn-corp-gamma-class-assault-shuttle",
+      "printedName": "Telgorn Corp Gamma-class Assault Shuttle",
+      "printedStatblockStartPage": 95,
+      "reviewedPDFPages": [
+        95
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 47
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 40,
+      "sourceEntryKey": "sotg-kuat-drive-yards-imperial-ii-class-star-destroyer",
+      "printedName": "Kuat Drive Yards Imperial II-class Star Destroyer",
+      "printedStatblockStartPage": 96,
+      "reviewedPDFPages": [
+        96,
+        97
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 4,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 48
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 41,
+      "sourceEntryKey": "sotg-rendili-stardrive-victory-ii-class-star-destroyer",
+      "printedName": "Rendili StarDrive Victory II-class Star Destroyer",
+      "printedStatblockStartPage": 98,
+      "reviewedPDFPages": [
+        98
+      ],
+      "fieldGroupExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 4,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 49
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 44,
+      "sourceEntryKey": "sotg-vindicator-class-heavy-cruiser",
+      "printedName": "Vindicator-class Heavy Cruiser",
+      "printedStatblockStartPage": 101,
+      "reviewedPDFPages": [
+        101
+      ],
+      "fieldGroupExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 5,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 50
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 46,
+      "sourceEntryKey": "sotg-j-type-star-skiff",
+      "printedName": "J-Type Star Skiff",
+      "printedStatblockStartPage": 103,
+      "reviewedPDFPages": [
+        103
+      ],
+      "fieldGroupExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 51
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 49,
+      "sourceEntryKey": "sotg-sienar-fleet-systems-lambda-class-shuttle",
+      "printedName": "Sienar Fleet Systems Lambda-class Shuttle",
+      "printedStatblockStartPage": 106,
+      "reviewedPDFPages": [
+        106,
+        107
+      ],
+      "fieldGroupExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          1,
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 52
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 50,
+      "sourceEntryKey": "sotg-kuat-drive-yards-lancer-class-frigate",
+      "printedName": "Kuat Drive Yards Lancer-class Frigate",
+      "printedStatblockStartPage": 108,
+      "reviewedPDFPages": [
+        108
+      ],
+      "fieldGroupExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 53
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 51,
+      "sourceEntryKey": "sotg-feethan-ottraw-scalable-industries-mankvim-814-light-interceptor",
+      "printedName": "Feethan Ottraw Scalable Industries Mankvim-814 Light Interceptor",
+      "printedStatblockStartPage": 109,
+      "reviewedPDFPages": [
+        109
+      ],
+      "fieldGroupExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 54
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 53,
+      "sourceEntryKey": "sotg-gallofree-gr-75-medium-transport",
+      "printedName": "Gallofree GR-75 Medium Transport",
+      "printedStatblockStartPage": 111,
+      "reviewedPDFPages": [
+        111
+      ],
+      "fieldGroupExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 55
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 54,
+      "sourceEntryKey": "sotg-olanji-charubah-miy-til-fighter",
+      "printedName": "Olanji/Charubah Miy'til Fighter",
+      "printedStatblockStartPage": 112,
+      "reviewedPDFPages": [
+        112
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 56
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 55,
+      "sourceEntryKey": "sotg-olanji-charubah-miy-til-assault-bomber",
+      "printedName": "Olanji/Charubah Miy'til Assault Bomber",
+      "printedStatblockStartPage": 113,
+      "reviewedPDFPages": [
+        113
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 57
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 56,
+      "sourceEntryKey": "sotg-mon-calamari-mc80-star-cruiser",
+      "printedName": "Mon Calamari MC80 Star Cruiser",
+      "printedStatblockStartPage": 114,
+      "reviewedPDFPages": [
+        114,
+        115
+      ],
+      "fieldGroupExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 58
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 57,
+      "sourceEntryKey": "sotg-home-one",
+      "printedName": "Home One",
+      "printedStatblockStartPage": 115,
+      "reviewedPDFPages": [
+        115
+      ],
+      "fieldGroupExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 59
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 59,
+      "sourceEntryKey": "sotg-theed-palace-space-vessel-engineering-corps-n-1-royal-starfighter",
+      "printedName": "Theed Palace Space Vessel Engineering Corps N-1 Royal Starfighter",
+      "printedStatblockStartPage": 118,
+      "reviewedPDFPages": [
+        118
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 60
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 60,
+      "sourceEntryKey": "sotg-nebula-class-star-destroyer",
+      "printedName": "Nebula-class Star Destroyer",
+      "printedStatblockStartPage": 119,
+      "reviewedPDFPages": [
+        119
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 5,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 61
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 61,
+      "sourceEntryKey": "sotg-kuat-drive-yards-nebulon-b-frigate",
+      "printedName": "Kuat Drive Yards Nebulon-B Frigate",
+      "printedStatblockStartPage": 120,
+      "reviewedPDFPages": [
+        120
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 62
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 62,
+      "sourceEntryKey": "sotg-buuper-torsckil-abbey-devices-porax-38-starfighter",
+      "printedName": "Buuper Torsckil Abbey Devices Porax-38 Starfighter",
+      "printedStatblockStartPage": 121,
+      "reviewedPDFPages": [
+        121
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 63
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 63,
+      "sourceEntryKey": "sotg-predator-class-starfighter",
+      "printedName": "Predator-class Starfighter",
+      "printedStatblockStartPage": 122,
+      "reviewedPDFPages": [
+        122
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 64
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 64,
+      "sourceEntryKey": "sotg-rebel-assault-frigate-prototype",
+      "printedName": "Rebel Assault Frigate Prototype",
+      "printedStatblockStartPage": 123,
+      "reviewedPDFPages": [
+        123
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 65
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 65,
+      "sourceEntryKey": "sotg-rebel-assault-frigate-mk-i",
+      "printedName": "Rebel Assault Frigate Mk I",
+      "printedStatblockStartPage": 124,
+      "reviewedPDFPages": [
+        124,
+        125
+      ],
+      "fieldGroupExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 66
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 66,
+      "sourceEntryKey": "sotg-rebel-assault-frigate-mk-ii",
+      "printedName": "Rebel Assault Frigate Mk II",
+      "printedStatblockStartPage": 125,
+      "reviewedPDFPages": [
+        125
+      ],
+      "fieldGroupExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 67
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 68,
+      "sourceEntryKey": "sotg-sienar-fleet-systems-scimitar-assault-bomber",
+      "printedName": "Sienar Fleet Systems Scimitar Assault Bomber",
+      "printedStatblockStartPage": 127,
+      "reviewedPDFPages": [
+        127
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 68
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 69,
+      "sourceEntryKey": "sotg-modified-republic-sienar-systems-armored-star-courier",
+      "printedName": "Modified Republic Sienar Systems Armored Star Courier",
+      "printedStatblockStartPage": 128,
+      "reviewedPDFPages": [
+        128,
+        129
+      ],
+      "fieldGroupExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 69
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 70,
+      "sourceEntryKey": "sotg-sith-interceptor",
+      "printedName": "Sith Interceptor",
+      "printedStatblockStartPage": 130,
+      "reviewedPDFPages": [
+        130
+      ],
+      "fieldGroupExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 70
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 71,
+      "sourceEntryKey": "sotg-sienar-fleet-systems-gat-12h",
+      "printedName": "Sienar Fleet Systems GAT-12h",
+      "printedStatblockStartPage": 131,
+      "reviewedPDFPages": [
+        131
+      ],
+      "fieldGroupExceptions": {
+        "attackOptions": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 4,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 71
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 72,
+      "sourceEntryKey": "sotg-sorosuub-cutlass-9-patrol-fighter",
+      "printedName": "SoroSuub Cutlass-9 Patrol Fighter",
+      "printedStatblockStartPage": 132,
+      "reviewedPDFPages": [
+        132
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 72
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 73,
+      "sourceEntryKey": "sotg-kuat-drive-yards-star-galleon",
+      "printedName": "Kuat Drive Yards Star Galleon",
+      "printedStatblockStartPage": 133,
+      "reviewedPDFPages": [
+        133
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 73
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 74,
+      "sourceEntryKey": "sotg-mandalmotors-starviper-assault-fighter",
+      "printedName": "MandalMotors StarViper Assault Fighter",
+      "printedStatblockStartPage": 134,
+      "reviewedPDFPages": [
+        134
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 74
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 75,
+      "sourceEntryKey": "sotg-loronar-corporation-strike-class-medium-cruiser",
+      "printedName": "Loronar Corporation Strike-class Medium Cruiser",
+      "printedStatblockStartPage": 135,
+      "reviewedPDFPages": [
+        135
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 4,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 75
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 76,
+      "sourceEntryKey": "sotg-fondor-shipyards-super-star-destroyer",
+      "printedName": "Fondor Shipyards Super Star Destroyer",
+      "printedStatblockStartPage": 136,
+      "reviewedPDFPages": [
+        136,
+        137
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 5,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 76
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 77,
+      "sourceEntryKey": "sotg-lusankya",
+      "printedName": "Lusankya",
+      "printedStatblockStartPage": 138,
+      "reviewedPDFPages": [
+        138
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 6,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 77
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 79,
+      "sourceEntryKey": "sotg-ipv-1-system-patrol-craft",
+      "printedName": "IPV-1 System Patrol Craft",
+      "printedStatblockStartPage": 140,
+      "reviewedPDFPages": [
+        140
+      ],
+      "fieldGroupExceptions": {},
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 78
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 81,
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-in-fighter",
+      "printedName": "Sienar Fleet Systems TIE/In Fighter",
+      "printedStatblockStartPage": 142,
+      "reviewedPDFPages": [
+        142
+      ],
+      "fieldGroupExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 79
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 83,
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-advanced-x1",
+      "printedName": "Sienar Fleet Systems TIE Advanced x1",
+      "printedStatblockStartPage": 144,
+      "reviewedPDFPages": [
+        144
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 80
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 84,
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-interceptor",
+      "printedName": "Sienar Fleet Systems TIE Interceptor",
+      "printedStatblockStartPage": 144,
+      "reviewedPDFPages": [
+        144
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 81
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 85,
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-defender",
+      "printedName": "Sienar Fleet Systems TIE Defender",
+      "printedStatblockStartPage": 145,
+      "reviewedPDFPages": [
+        145
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 82
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 86,
+      "sourceEntryKey": "sotg-hoersch-kessel-drive-inc-lucrehulk-class-battleship",
+      "printedName": "Hoersch-Kessel Drive Inc. Lucrehulk-class Battleship",
+      "printedStatblockStartPage": 146,
+      "reviewedPDFPages": [
+        146,
+        147
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "cost": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 83
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 87,
+      "sourceEntryKey": "sotg-hoersch-kessel-drive-inc-lucrehulk-class-core-ship",
+      "printedName": "Hoersch-Kessel Drive Inc. Lucrehulk-class Core Ship",
+      "printedStatblockStartPage": 147,
+      "reviewedPDFPages": [
+        147
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED",
+        "cost": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 84
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 88,
+      "sourceEntryKey": "sotg-hoersch-kessel-drive-inc-lucrehulk-class-droid-control-ship",
+      "printedName": "Hoersch-Kessel Drive Inc. Lucrehulk-class Droid Control Ship",
+      "printedStatblockStartPage": 147,
+      "reviewedPDFPages": [
+        146,
+        147
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "cost": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 85
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 89,
+      "sourceEntryKey": "sotg-venator-class-star-destroyer",
+      "printedName": "Venator-class Star Destroyer",
+      "printedStatblockStartPage": 148,
+      "reviewedPDFPages": [
+        148
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "attackOptions": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 5,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "firingArc": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "batteryCount": [
+          4
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 86
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 90,
+      "sourceEntryKey": "sotg-v-19-torrent-starfighter",
+      "printedName": "V-19 Torrent Starfighter",
+      "printedStatblockStartPage": 149,
+      "reviewedPDFPages": [
+        149
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 87
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 91,
+      "sourceEntryKey": "sotg-kuat-systems-engineering-alpha-3-nimbus-v-wing-starfighter",
+      "printedName": "Kuat Systems Engineering Alpha-3 Nimbus V-wing Starfighter",
+      "printedStatblockStartPage": 150,
+      "reviewedPDFPages": [
+        150
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 88
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 92,
+      "sourceEntryKey": "sotg-x-83-twintail-starfighter",
+      "printedName": "X-83 TwinTail Starfighter",
+      "printedStatblockStartPage": 151,
+      "reviewedPDFPages": [
+        151
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 89
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 93,
+      "sourceEntryKey": "sotg-incom-t-65b-x-wing-starfighter",
+      "printedName": "Incom T-65B X-wing Starfighter",
+      "printedStatblockStartPage": 152,
+      "reviewedPDFPages": [
+        152
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 90
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 95,
+      "sourceEntryKey": "sotg-incom-t-65br-x-wing-starfighter",
+      "printedName": "Incom T-65BR X-wing Starfighter",
+      "printedStatblockStartPage": 153,
+      "reviewedPDFPages": [
+        153
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 91
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 96,
+      "sourceEntryKey": "sotg-corellian-yt-1300-transport",
+      "printedName": "Corellian YT-1300 Transport",
+      "printedStatblockStartPage": 154,
+      "reviewedPDFPages": [
+        154,
+        157
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 92
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 97,
+      "sourceEntryKey": "sotg-corellian-yt-2000",
+      "printedName": "Corellian YT-2000",
+      "printedStatblockStartPage": 155,
+      "reviewedPDFPages": [
+        155
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 93
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 98,
+      "sourceEntryKey": "sotg-corellian-yt-2400",
+      "printedName": "Corellian YT-2400",
+      "printedStatblockStartPage": 156,
+      "reviewedPDFPages": [
+        155,
+        156
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0
+        ],
+        "firingArc": [
+          0
+        ],
+        "batteryCount": [
+          0
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 94
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 99,
+      "sourceEntryKey": "sotg-millennium-falcon",
+      "printedName": "Millennium Falcon",
+      "printedStatblockStartPage": 156,
+      "reviewedPDFPages": [
+        156
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "cost": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          1
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 95
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 100,
+      "sourceEntryKey": "sotg-koensayr-btl-s3-y-wing",
+      "printedName": "Koensayr BTL-S3 Y-wing",
+      "printedStatblockStartPage": 158,
+      "reviewedPDFPages": [
+        158
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 96
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 101,
+      "sourceEntryKey": "sotg-koensayr-btl-a4-lp-longprobe",
+      "printedName": "Koensayr BTL-A4 LP \"Longprobe\"",
+      "printedStatblockStartPage": 159,
+      "reviewedPDFPages": [
+        158,
+        159
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 3,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1,
+          2
+        ],
+        "firingArc": [
+          0,
+          1,
+          2
+        ],
+        "batteryCount": [
+          0,
+          1,
+          2
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 97
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 102,
+      "sourceEntryKey": "sotg-koensayr-btl-s3-courier",
+      "printedName": "Koensayr BTL-S3 \"Courier\"",
+      "printedStatblockStartPage": 159,
+      "reviewedPDFPages": [
+        159
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 98
+    },
+    {
+      "priorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "cp16LedgerIndex": 103,
+      "sourceEntryKey": "sotg-incom-subpro-z-95-headhunter",
+      "printedName": "Incom/Subpro Z-95 Headhunter",
+      "printedStatblockStartPage": 160,
+      "reviewedPDFPages": [
+        160
+      ],
+      "fieldGroupExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 2,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {
+        "hardwareCount": [
+          0,
+          1
+        ],
+        "firingArc": [
+          0,
+          1
+        ],
+        "batteryCount": [
+          0,
+          1
+        ]
+      },
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 99
+    },
+    {
+      "priorityTrack": "P3_FIELD_SOURCE_SILENCE_OR_OTHER_GAP",
+      "cp16LedgerIndex": 45,
+      "sourceEntryKey": "sotg-rendili-star-drive-light-corvette",
+      "printedName": "Rendili Star Drive Light Corvette",
+      "printedStatblockStartPage": 102,
+      "reviewedPDFPages": [
+        102
+      ],
+      "fieldGroupExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "mountGroupCount": 1,
+      "sourceConflictFieldGroups": [],
+      "sourceSilentMountRowIndices": {},
+      "legacyMissingMountRowIndices": {},
+      "blockingFindingStatuses": [
+        "SOURCE_SILENT_CONFIRMED"
+      ],
+      "nextAction": "DETERMINE_SOURCE_SILENCE_VS_TRUE_MOUNT_CONFLICT_THEN_CERTIFY_REPRESENTABLE_FIELDS",
+      "certificationState": "UNCERTIFIED",
+      "workState": "QUEUED",
+      "certificationGranted": false,
+      "queuePosition": 100
+    }
+  ]
+}

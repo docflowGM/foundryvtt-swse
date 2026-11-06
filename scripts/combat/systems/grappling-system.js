@@ -6,6 +6,7 @@
  * ad-hoc ActiveEffect writes.
  */
 
+import { publishedVehicleGrappleBonus } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
 import { SWSERoll } from '../rolls/enhanced-rolls.js';
 import { createChatMessage } from '../../core/document-api-v13.js';
 import { SchemaAdapters } from '../../utils/schema-adapters.js';
@@ -825,6 +826,9 @@ export class SWSEGrappling {
   // grapple-rule bonuses and Grapple Resistance, both of which apply only in
   // specific opposed-check contexts and are not part of the static bonus.
   static async _rollGrappleBonus(actor, context = {}) {
+    // A published vehicle's grapple modifier is its PRINTED figure (Core: the vehicle's Grp), not a BAB/Strength computation.
+    const printed = publishedVehicleGrappleBonus(actor);
+    if (printed !== null) return printed;
     // Core (BAB + higher of STR/DEX + size + species) is the one piece
     // that's never typed and never stacks against anything -- read it
     // directly from DerivedCalculator's explicit breakdown

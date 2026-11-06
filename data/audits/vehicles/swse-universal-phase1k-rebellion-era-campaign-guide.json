@@ -1,0 +1,1979 @@
+{
+  "schema": "swse.vehicle.universal.phase1k.rebellion-era-campaign-guide.v1",
+  "status": "PHASE1_K_REBELLION_ERA_CAMPAIGN_GUIDE_ENUMERATION_AND_PROVENANCE_COMPLETE",
+  "sourceBook": "Rebellion Era Campaign Guide",
+  "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+  "sourceFiles": {
+    "pdf": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+    "text": "Rebellion Era Campaign Guide_djvu.txt"
+  },
+  "counts": {
+    "inheritedSpacecraftPublicationClaims": 35,
+    "newOtherVehiclePublicationClaims": 18,
+    "allBookVehiclePublicationClaims": 53,
+    "inheritedClassifications": {
+      "starfighter": 22,
+      "capital-ship": 5,
+      "space-transport": 8
+    },
+    "newVehicleClassifications": {
+      "ground-speeder": 9,
+      "airspeeder": 2,
+      "tracked-vehicle": 4,
+      "walker": 2,
+      "aerial-artillery": 1
+    },
+    "cumulativeKnownUniversalPublicationClaims": 411
+  },
+  "process": {
+    "discoveryMethod": "Searched all 577,344 bytes / 15,991 lines of source DJVU text for all vehicle type lines, ground/air/water variants, CL headings, and transportation references, including OCR-split two-column statblocks. Independently rendered and visually swept all 161 physical pages in nine labeled original-PDF contact sheets; performed close readable review of all 18 new source block starts. Verified original PDF SHA against 35-record historical book closure, then matched all inherited keys, names, types, and physical/printed pages directly.",
+    "entirePdfPageCount": 161,
+    "printedToPdfMapping": "Zero-based PDF index equals printed page; one-based physical PDF page equals printed +1.",
+    "primaryPdfPagesConfirmed": [
+      60,
+      61,
+      62,
+      110,
+      111,
+      112,
+      113,
+      131,
+      132,
+      133,
+      135,
+      153,
+      154
+    ],
+    "sectionCoverage": [
+      "Chapter IV: Vehicles and Starships, printed pp60-69 (civilian vehicles and nine original spacecraft)",
+      "Chapter VI: The Rebel Alliance, pp110-115 (Rebel ground vehicles and spacecraft)",
+      "Chapter VII: The Empire, pp131-139 (walker and ground artillery alongside Imperial starfighters/ships)",
+      "Chapter VIII: Fringe Factions, pp153-156 (Zann Consortium tank/transport and spacecraft)",
+      "Remaining introductory, equipment, chapter narrative, NPC/droid and index pages; full 161-page contact-sheet survey"
+    ],
+    "sourceDocumentTextSemantics": "Original PDF is entirely scanned and has zero searchable text; original page image is authority. DJVU text is only discovery layer and mixes column orders (particularly printed p135) and misrecognizes roman numerals and CL in several places.",
+    "exhaustivenessCaveat": "Full DJVU text plus visual page-by-page thumbnail sweep, with source high-resolution confirmation of candidates; unusually embedded image-only statblocks may require future review but none surfaced.",
+    "mechanicalTranscriptionNotAuthorizedThisPhase": true
+  },
+  "identityDecisions": [
+    {
+      "subject": "Bantha-II Cargo Skiff",
+      "printedPage": 60,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed independent vehicle-type and complete CL statblock; not represented by the inherited spacecraft-only census."
+    },
+    {
+      "subject": "Storm IV Twin-Pod Cloud Car",
+      "printedPage": 61,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed independent vehicle-type and complete CL statblock; not represented by the inherited spacecraft-only census."
+    },
+    {
+      "subject": "Talon I Combat Cloud Car",
+      "printedPage": 61,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed independent vehicle-type and complete CL statblock; not represented by the inherited spacecraft-only census."
+    },
+    {
+      "subject": "9000 Z004 Landspeeder",
+      "printedPage": 62,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed independent vehicle-type and complete CL statblock; not represented by the inherited spacecraft-only census."
+    },
+    {
+      "subject": "Air-2 Swoop",
+      "printedPage": 62,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed independent vehicle-type and complete CL statblock; not represented by the inherited spacecraft-only census."
+    },
+    {
+      "subject": "MPTL-2a Mobile Proton Torpedo Launcher",
+      "printedPage": 110,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed independent vehicle-type and complete CL statblock; not represented by the inherited spacecraft-only census."
+    },
+    {
+      "subject": "Gallofree HTT-26 Heavy Troop Transport",
+      "printedPage": 111,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed independent vehicle-type and complete CL statblock; not represented by the inherited spacecraft-only census."
+    },
+    {
+      "subject": "Ultra-Light Assault Vehicle (ULAV)",
+      "printedPage": 111,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed independent vehicle-type and complete CL statblock; not represented by the inherited spacecraft-only census."
+    },
+    {
+      "subject": "Mekuun Heavy Tracker",
+      "printedPage": 112,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed independent vehicle-type and complete CL statblock; not represented by the inherited spacecraft-only census."
+    },
+    {
+      "subject": "T2-B Repulsor Tank",
+      "printedPage": 112,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed independent vehicle-type and complete CL statblock; not represented by the inherited spacecraft-only census."
+    },
+    {
+      "subject": "T4-B Heavy Tank",
+      "printedPage": 113,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed independent vehicle-type and complete CL statblock; not represented by the inherited spacecraft-only census."
+    },
+    {
+      "subject": "AT-AA Anti-Aircraft Platform",
+      "printedPage": 131,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed independent vehicle-type and complete CL statblock; not represented by the inherited spacecraft-only census."
+    },
+    {
+      "subject": "AT-PT All-Terrain Personal Transport",
+      "printedPage": 132,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed independent vehicle-type and complete CL statblock; not represented by the inherited spacecraft-only census."
+    },
+    {
+      "subject": "Lancet Aerial Artillery",
+      "printedPage": 133,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed independent vehicle-type and complete CL statblock; not represented by the inherited spacecraft-only census."
+    },
+    {
+      "subject": "TIE ap-1 Mauler",
+      "printedPage": 135,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed independent vehicle-type and complete CL statblock; not represented by the inherited spacecraft-only census."
+    },
+    {
+      "subject": "TIE Crawler",
+      "printedPage": 135,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed independent vehicle-type and complete CL statblock; not represented by the inherited spacecraft-only census."
+    },
+    {
+      "subject": "Canderous-class Assault Tank",
+      "printedPage": 153,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed independent vehicle-type and complete CL statblock; not represented by the inherited spacecraft-only census."
+    },
+    {
+      "subject": "F9-TZ Transport",
+      "printedPage": 154,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed independent vehicle-type and complete CL statblock; not represented by the inherited spacecraft-only census."
+    },
+    {
+      "subject": "TIE Aggressor and TIE ap-1 Mauler/TIE Crawler on two-column page",
+      "printedPage": 135,
+      "status": "PRESERVE_THREE_DISTINCT_SOURCE_IDENTITIES",
+      "reason": "Printed p135 has a starfighter TIE Aggressor already included among historical 35, and two separately headed Huge ground vehicle (tracked) blocks: the Mauler and the Crawler. DJVU OCR interleaves these columns; no duplicate or missing vehicle permitted."
+    },
+    {
+      "subject": "9000 Z004 Landspeeder and Air-2 Swoop",
+      "printedPage": 62,
+      "status": "PRESERVE_DISTINCT_STATBLOCKS",
+      "reason": "Printed independently side by side with separate CL2 statblocks; Air-2 Swoop is not a cosmetic 9000 Z004 variant."
+    },
+    {
+      "subject": "Bantha-II alternate enclosed/aquatic/desert/cosmetic skiffs",
+      "printedPage": 60,
+      "status": "EXCLUDE_NARRATIVE_ONLY_VARIANTS",
+      "reason": "Story modifications to one Bantha-II statblock are not separately statted publication vehicle identities."
+    },
+    {
+      "subject": "MPTL-2a deployment/spotter modifiers",
+      "printedPage": 110,
+      "status": "EXCLUDE_CONFIGURATION_AS_NEW_VEHICLE",
+      "reason": "Immobile and mobile firing modes are one tracked launcher's rules, not separate vehicle identities."
+    },
+    {
+      "subject": "TIE ap-1 Mauler and TIE Crawler",
+      "printedPage": 135,
+      "status": "KEEP_TWO_INDEPENDENT_TRACKED_VEHICLES",
+      "reason": "Both have independent full type lines, CL7 and CL6 and differing printed profiles."
+    },
+    {
+      "subject": "Lancet Aerial Artillery",
+      "printedPage": 133,
+      "status": "PRESERVE_PRINTED_AIR_VEHICLE_AND_CL12",
+      "reason": "Printed type line is simply 'Gargantuan air vehicle', not '(airspeeder)'; the DJVU extract drops CL12 from the header."
+    },
+    {
+      "subject": "Rebel speeders, walker variations and shipboard craft mentioned in story and equipment",
+      "status": "EXCLUDE_EXTERNAL_REFERENCES_AND_UNSTATTED_CARRIED_CRAFT",
+      "reason": "Mentions of named vehicles, carried craft quantities, upgrades or variants without a new standalone printed statblock are not additional source publication claims."
+    },
+    {
+      "subject": "LV-38 Spotter/Probe Droid",
+      "printedPage": 110,
+      "status": "EXCLUDE_DROID_ACTOR_NOT_VEHICLE",
+      "reason": "Adjacent CL3 fourth-degree droid statblock has independent droid type, not a ground or aerial vehicle."
+    },
+    {
+      "subject": "Dark Trooper Phase I/II/III",
+      "printedPages": [
+        128,
+        129,
+        130
+      ],
+      "status": "EXCLUDE_DROID_ACTORS",
+      "reason": "Dark troopers have character/droid statistics, even when bulky or vehicle-like in illustration; not vehicle-type statblocks."
+    },
+    {
+      "subject": "Weaponry, modifications, vehicles from Core and other books",
+      "status": "EXCLUDE_NONINDEPENDENT_REFERENCES",
+      "reason": "No separately printed SWSE Saga vehicle-statblock identity can be inferred from cross-references, vehicle equipment or optional modifications."
+    }
+  ],
+  "existingSpacecraft": [
+    {
+      "sourceEntryKey": "re-g1-m4-c-dunelizard-fighter",
+      "printedName": "G1-M4-C Dunelizard Fighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 63,
+      "pdfPhysicalPage": 64,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            63
+          ],
+          "pdfIndexZeroBased": 63,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-ixiyen-class-fast-attack-craft",
+      "printedName": "Ixiyen-class Fast Attack Craft",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 64,
+      "pdfPhysicalPage": 65,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            64
+          ],
+          "pdfIndexZeroBased": 64,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-m12-l-kimogila-heavy-fighter",
+      "printedName": "M12-L Kimogila Heavy Fighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 64,
+      "pdfPhysicalPage": 65,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            64
+          ],
+          "pdfIndexZeroBased": 64,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-m22-t-krayt-gunship",
+      "printedName": "M22-T Krayt Gunship",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 65,
+      "pdfPhysicalPage": 66,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            65
+          ],
+          "pdfIndexZeroBased": 65,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-pinook-fighter",
+      "printedName": "Pinook Fighter",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Huge starfighter"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 66,
+      "pdfPhysicalPage": 67,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            66
+          ],
+          "pdfIndexZeroBased": 66,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-razor-class-fighter",
+      "printedName": "Razor-class Fighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 66,
+      "pdfPhysicalPage": 67,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            66
+          ],
+          "pdfIndexZeroBased": 66,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-mobquet-medium-transport",
+      "printedName": "Mobquet Medium Transport",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (frigate) capital ship"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 68,
+      "pdfPhysicalPage": 69,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            68
+          ],
+          "pdfIndexZeroBased": 68,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-corellian-yv-545",
+      "printedName": "Corellian YV-545",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 69,
+      "pdfPhysicalPage": 70,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            69
+          ],
+          "pdfIndexZeroBased": 69,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-ykl-37r-nova-courier",
+      "printedName": "YKL-37R Nova Courier",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 69,
+      "pdfPhysicalPage": 70,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            69
+          ],
+          "pdfIndexZeroBased": 69,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-corellian-engineering-corporation-ym-2800-limpet-ship",
+      "printedName": "Corellian Engineering Corporation YM-2800 Limpet Ship",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 114,
+      "pdfPhysicalPage": 115,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            114
+          ],
+          "pdfIndexZeroBased": 114,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-hoersch-kessel-t-wing-interceptor",
+      "printedName": "Hoersch-Kessel T-Wing Interceptor",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Huge starfighter"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 114,
+      "pdfPhysicalPage": 115,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            114
+          ],
+          "pdfIndexZeroBased": 114,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-incom-x4-gunship",
+      "printedName": "Incom X4 Gunship",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 115,
+      "pdfPhysicalPage": 116,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            115
+          ],
+          "pdfIndexZeroBased": 115,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-assassin-class-corvette",
+      "printedName": "Assassin-class Corvette",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (frigate) capital ship"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 130,
+      "pdfPhysicalPage": 131,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            130
+          ],
+          "pdfIndexZeroBased": 130,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-assault-gunboat",
+      "printedName": "Assault Gunboat",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 131,
+      "pdfPhysicalPage": 132,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            131
+          ],
+          "pdfIndexZeroBased": 131,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-imperial-cargo-ship",
+      "printedName": "Imperial Cargo Ship",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (cruiser) capital ship"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 132,
+      "pdfPhysicalPage": 133,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            132
+          ],
+          "pdfIndexZeroBased": 132,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-imperial-ii-class-frigate",
+      "printedName": "Imperial II-class Frigate",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (frigate) capital ship"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 133,
+      "pdfPhysicalPage": 134,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            133
+          ],
+          "pdfIndexZeroBased": 133,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-missile-boat",
+      "printedName": "Missile Boat",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 134,
+      "pdfPhysicalPage": 135,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            134
+          ],
+          "pdfIndexZeroBased": 134,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-royal-guard-starfighter",
+      "printedName": "Royal Guard Starfighter",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Huge starfighter"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 134,
+      "pdfPhysicalPage": 135,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            134
+          ],
+          "pdfIndexZeroBased": 134,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-tie-aggressor",
+      "printedName": "TIE Aggressor",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Huge starfighter"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 135,
+      "pdfPhysicalPage": 136,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            135
+          ],
+          "pdfIndexZeroBased": 135,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-tie-experimental-m2",
+      "printedName": "TIE Experimental M2",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Huge starfighter"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 136,
+      "pdfPhysicalPage": 137,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            136
+          ],
+          "pdfIndexZeroBased": 136,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-tie-experimental-m3",
+      "printedName": "TIE Experimental M3",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Huge starfighter"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 136,
+      "pdfPhysicalPage": 137,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            136
+          ],
+          "pdfIndexZeroBased": 136,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-tie-oppressor",
+      "printedName": "TIE Oppressor",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Huge starfighter"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 136,
+      "pdfPhysicalPage": 137,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            136
+          ],
+          "pdfIndexZeroBased": 136,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-tie-phantom",
+      "printedName": "TIE Phantom",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Huge starfighter"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 137,
+      "pdfPhysicalPage": 138,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            137
+          ],
+          "pdfIndexZeroBased": 137,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-tie-scout",
+      "printedName": "TIE Scout",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 138,
+      "pdfPhysicalPage": 139,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            138
+          ],
+          "pdfIndexZeroBased": 138,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-tie-shuttle",
+      "printedName": "TIE Shuttle",
+      "printedTypeLine": "Gargantuan space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan space transport"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 138,
+      "pdfPhysicalPage": 139,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            138
+          ],
+          "pdfIndexZeroBased": 138,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-vt-49-decimator",
+      "printedName": "VT-49 Decimator",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 139,
+      "pdfPhysicalPage": 140,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            139
+          ],
+          "pdfIndexZeroBased": 139,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-ye-4-gunship",
+      "printedName": "YE-4 Gunship",
+      "printedTypeLine": "Gargantuan space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan space transport"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 139,
+      "pdfPhysicalPage": 140,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            139
+          ],
+          "pdfIndexZeroBased": 139,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-aeg-77-vigo-gunship",
+      "printedName": "AEG-77 \"Vigo\" Gunship",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 146,
+      "pdfPhysicalPage": 147,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            146
+          ],
+          "pdfIndexZeroBased": 146,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-kihraxz-light-fighter",
+      "printedName": "Kihraxz Light Fighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 146,
+      "pdfPhysicalPage": 147,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            146
+          ],
+          "pdfIndexZeroBased": 146,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-supa-fighter",
+      "printedName": "Supa Fighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 147,
+      "pdfPhysicalPage": 148,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            147
+          ],
+          "pdfIndexZeroBased": 147,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-vaksai",
+      "printedName": "Vaksai",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 147,
+      "pdfPhysicalPage": 148,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            147
+          ],
+          "pdfIndexZeroBased": 147,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-rihkxyrk-assault-fighter",
+      "printedName": "Rihkxyrk Assault Fighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 148,
+      "pdfPhysicalPage": 149,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            148
+          ],
+          "pdfIndexZeroBased": 148,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-keldabe-class-battleship",
+      "printedName": "Keldabe-class Battleship",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (cruiser) capital ship"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 154,
+      "pdfPhysicalPage": 155,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            154
+          ],
+          "pdfIndexZeroBased": 154,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-ird-a-starfighter",
+      "printedName": "IRD-A Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 156,
+      "pdfPhysicalPage": 157,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            156
+          ],
+          "pdfIndexZeroBased": 156,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "re-ird-starfighter",
+      "printedName": "IRD Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 156,
+      "pdfPhysicalPage": 157,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-rebellion-era-cp3-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "sourceEvidence": {
+          "sourceBook": "Rebellion Era Campaign Guide",
+          "sourcePDF": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+          "printedPages": [
+            156
+          ],
+          "pdfIndexZeroBased": 156,
+          "originalHistoricalPdfCloseReview": true,
+          "textDiscoveryLayer": "Rebellion Era Campaign Guide_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    }
+  ],
+  "newVehicleEntries": [
+    {
+      "sourceEntryKey": "re-bantha-ii-cargo-skiff",
+      "printedName": "Bantha-II Cargo Skiff",
+      "printedTypeLine": "Huge ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "ground-speeder",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Huge ground vehicle (speeder)",
+        "secondaryCategories": [
+          "cargo-skiff"
+        ]
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 60,
+      "pdfPhysicalPage": 61,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "textSearchLayer": "Rebellion Era Campaign Guide_djvu.txt (discovery only; scanned source PDF is authoritative)",
+        "pdfVisualReviewMethod": "WHOLE_BOOK_CONTACT_SHEET_SURVEY_PLUS_FULL_PAGE_PRIMARY_PDF_CLOSE_READ",
+        "physicalPdfPage": 61,
+        "printedHeading": "Bantha-II Cargo Skiff",
+        "printedChallengeLevel": 3
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "re-storm-iv-twin-pod-cloud-car",
+      "printedName": "Storm IV Twin-Pod Cloud Car",
+      "printedTypeLine": "Gargantuan air vehicle (airspeeder)",
+      "classification": {
+        "primaryCategory": "airspeeder",
+        "mobilityDomains": [
+          "air",
+          "repulsorlift"
+        ],
+        "printedCategory": "Gargantuan air vehicle (airspeeder)",
+        "secondaryCategories": [
+          "cloud-car"
+        ]
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 61,
+      "pdfPhysicalPage": 62,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "textSearchLayer": "Rebellion Era Campaign Guide_djvu.txt (discovery only; scanned source PDF is authoritative)",
+        "pdfVisualReviewMethod": "WHOLE_BOOK_CONTACT_SHEET_SURVEY_PLUS_FULL_PAGE_PRIMARY_PDF_CLOSE_READ",
+        "physicalPdfPage": 62,
+        "printedHeading": "Storm IV Twin-Pod Cloud Car",
+        "printedChallengeLevel": 6
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "re-talon-i-combat-cloud-car",
+      "printedName": "Talon I Combat Cloud Car",
+      "printedTypeLine": "Gargantuan air vehicle (airspeeder)",
+      "classification": {
+        "primaryCategory": "airspeeder",
+        "mobilityDomains": [
+          "air",
+          "repulsorlift"
+        ],
+        "printedCategory": "Gargantuan air vehicle (airspeeder)",
+        "secondaryCategories": [
+          "combat-cloud-car"
+        ]
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 61,
+      "pdfPhysicalPage": 62,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "textSearchLayer": "Rebellion Era Campaign Guide_djvu.txt (discovery only; scanned source PDF is authoritative)",
+        "pdfVisualReviewMethod": "WHOLE_BOOK_CONTACT_SHEET_SURVEY_PLUS_FULL_PAGE_PRIMARY_PDF_CLOSE_READ",
+        "physicalPdfPage": 62,
+        "printedHeading": "Talon I Combat Cloud Car",
+        "printedChallengeLevel": 7
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "re-9000-z004-landspeeder",
+      "printedName": "9000 Z004 Landspeeder",
+      "printedTypeLine": "Large ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "ground-speeder",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Large ground vehicle (speeder)",
+        "secondaryCategories": [
+          "landspeeder"
+        ]
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 62,
+      "pdfPhysicalPage": 63,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "textSearchLayer": "Rebellion Era Campaign Guide_djvu.txt (discovery only; scanned source PDF is authoritative)",
+        "pdfVisualReviewMethod": "WHOLE_BOOK_CONTACT_SHEET_SURVEY_PLUS_FULL_PAGE_PRIMARY_PDF_CLOSE_READ",
+        "physicalPdfPage": 63,
+        "printedHeading": "9000 Z004 Landspeeder",
+        "printedChallengeLevel": 2
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "re-air-2-swoop",
+      "printedName": "Air-2 Swoop",
+      "printedTypeLine": "Large ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "ground-speeder",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Large ground vehicle (speeder)",
+        "secondaryCategories": [
+          "swoop"
+        ]
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 62,
+      "pdfPhysicalPage": 63,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "textSearchLayer": "Rebellion Era Campaign Guide_djvu.txt (discovery only; scanned source PDF is authoritative)",
+        "pdfVisualReviewMethod": "WHOLE_BOOK_CONTACT_SHEET_SURVEY_PLUS_FULL_PAGE_PRIMARY_PDF_CLOSE_READ",
+        "physicalPdfPage": 63,
+        "printedHeading": "Air-2 Swoop",
+        "printedChallengeLevel": 2
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "re-mptl-2a-mobile-proton-torpedo-launcher",
+      "printedName": "MPTL-2a Mobile Proton Torpedo Launcher",
+      "printedTypeLine": "Gargantuan ground vehicle (tracked)",
+      "classification": {
+        "primaryCategory": "tracked-vehicle",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Gargantuan ground vehicle (tracked)",
+        "secondaryCategories": [
+          "mobile-artillery"
+        ]
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 110,
+      "pdfPhysicalPage": 111,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "textSearchLayer": "Rebellion Era Campaign Guide_djvu.txt (discovery only; scanned source PDF is authoritative)",
+        "pdfVisualReviewMethod": "WHOLE_BOOK_CONTACT_SHEET_SURVEY_PLUS_FULL_PAGE_PRIMARY_PDF_CLOSE_READ",
+        "physicalPdfPage": 111,
+        "printedHeading": "MPTL-2a Mobile Proton Torpedo Launcher",
+        "printedChallengeLevel": 8
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "re-gallofree-htt-26-heavy-troop-transport",
+      "printedName": "Gallofree HTT-26 Heavy Troop Transport",
+      "printedTypeLine": "Gargantuan ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "ground-speeder",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Gargantuan ground vehicle (speeder)",
+        "secondaryCategories": [
+          "troop-transport"
+        ]
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 111,
+      "pdfPhysicalPage": 112,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "textSearchLayer": "Rebellion Era Campaign Guide_djvu.txt (discovery only; scanned source PDF is authoritative)",
+        "pdfVisualReviewMethod": "WHOLE_BOOK_CONTACT_SHEET_SURVEY_PLUS_FULL_PAGE_PRIMARY_PDF_CLOSE_READ",
+        "physicalPdfPage": 112,
+        "printedHeading": "Gallofree HTT-26 Heavy Troop Transport",
+        "printedChallengeLevel": 8
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "re-ultra-light-assault-vehicle-ulav",
+      "printedName": "Ultra-Light Assault Vehicle (ULAV)",
+      "printedTypeLine": "Huge ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "ground-speeder",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Huge ground vehicle (speeder)",
+        "secondaryCategories": [
+          "assault-vehicle"
+        ]
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 111,
+      "pdfPhysicalPage": 112,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "textSearchLayer": "Rebellion Era Campaign Guide_djvu.txt (discovery only; scanned source PDF is authoritative)",
+        "pdfVisualReviewMethod": "WHOLE_BOOK_CONTACT_SHEET_SURVEY_PLUS_FULL_PAGE_PRIMARY_PDF_CLOSE_READ",
+        "physicalPdfPage": 112,
+        "printedHeading": "Ultra-Light Assault Vehicle (ULAV)",
+        "printedChallengeLevel": 5
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "re-mekuun-heavy-tracker",
+      "printedName": "Mekuun Heavy Tracker",
+      "printedTypeLine": "Colossal ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "ground-speeder",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Colossal ground vehicle (speeder)",
+        "secondaryCategories": [
+          "mobile-command-vehicle"
+        ]
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 112,
+      "pdfPhysicalPage": 113,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "textSearchLayer": "Rebellion Era Campaign Guide_djvu.txt (discovery only; scanned source PDF is authoritative)",
+        "pdfVisualReviewMethod": "WHOLE_BOOK_CONTACT_SHEET_SURVEY_PLUS_FULL_PAGE_PRIMARY_PDF_CLOSE_READ",
+        "physicalPdfPage": 113,
+        "printedHeading": "Mekuun Heavy Tracker",
+        "printedChallengeLevel": 8
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "re-t2-b-repulsor-tank",
+      "printedName": "T2-B Repulsor Tank",
+      "printedTypeLine": "Huge ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "ground-speeder",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Huge ground vehicle (speeder)",
+        "secondaryCategories": [
+          "repulsorlift-tank"
+        ]
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 112,
+      "pdfPhysicalPage": 113,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "textSearchLayer": "Rebellion Era Campaign Guide_djvu.txt (discovery only; scanned source PDF is authoritative)",
+        "pdfVisualReviewMethod": "WHOLE_BOOK_CONTACT_SHEET_SURVEY_PLUS_FULL_PAGE_PRIMARY_PDF_CLOSE_READ",
+        "physicalPdfPage": 113,
+        "printedHeading": "T2-B Repulsor Tank",
+        "printedChallengeLevel": 7
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "re-t4-b-heavy-tank",
+      "printedName": "T4-B Heavy Tank",
+      "printedTypeLine": "Gargantuan ground vehicle (tracked)",
+      "classification": {
+        "primaryCategory": "tracked-vehicle",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Gargantuan ground vehicle (tracked)",
+        "secondaryCategories": [
+          "heavy-tank"
+        ]
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 113,
+      "pdfPhysicalPage": 114,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "textSearchLayer": "Rebellion Era Campaign Guide_djvu.txt (discovery only; scanned source PDF is authoritative)",
+        "pdfVisualReviewMethod": "WHOLE_BOOK_CONTACT_SHEET_SURVEY_PLUS_FULL_PAGE_PRIMARY_PDF_CLOSE_READ",
+        "physicalPdfPage": 114,
+        "printedHeading": "T4-B Heavy Tank",
+        "printedChallengeLevel": 12
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "re-at-aa-anti-aircraft-platform",
+      "printedName": "AT-AA Anti-Aircraft Platform",
+      "printedTypeLine": "Colossal ground vehicle (walker)",
+      "classification": {
+        "primaryCategory": "walker",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Colossal ground vehicle (walker)",
+        "secondaryCategories": [
+          "anti-aircraft-platform"
+        ]
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 131,
+      "pdfPhysicalPage": 132,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "textSearchLayer": "Rebellion Era Campaign Guide_djvu.txt (discovery only; scanned source PDF is authoritative)",
+        "pdfVisualReviewMethod": "WHOLE_BOOK_CONTACT_SHEET_SURVEY_PLUS_FULL_PAGE_PRIMARY_PDF_CLOSE_READ",
+        "physicalPdfPage": 132,
+        "printedHeading": "AT-AA Anti-Aircraft Platform",
+        "printedChallengeLevel": 10
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "re-at-pt-all-terrain-personal-transport",
+      "printedName": "AT-PT All-Terrain Personal Transport",
+      "printedTypeLine": "Large ground vehicle (walker)",
+      "classification": {
+        "primaryCategory": "walker",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Large ground vehicle (walker)",
+        "secondaryCategories": [
+          "personal-transport"
+        ]
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 132,
+      "pdfPhysicalPage": 133,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "textSearchLayer": "Rebellion Era Campaign Guide_djvu.txt (discovery only; scanned source PDF is authoritative)",
+        "pdfVisualReviewMethod": "WHOLE_BOOK_CONTACT_SHEET_SURVEY_PLUS_FULL_PAGE_PRIMARY_PDF_CLOSE_READ",
+        "physicalPdfPage": 133,
+        "printedHeading": "AT-PT All-Terrain Personal Transport",
+        "printedChallengeLevel": 6
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "re-lancet-aerial-artillery",
+      "printedName": "Lancet Aerial Artillery",
+      "printedTypeLine": "Gargantuan air vehicle",
+      "classification": {
+        "primaryCategory": "aerial-artillery",
+        "mobilityDomains": [
+          "air",
+          "repulsorlift"
+        ],
+        "printedCategory": "Gargantuan air vehicle",
+        "secondaryCategories": [
+          "artillery"
+        ]
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 133,
+      "pdfPhysicalPage": 134,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "textSearchLayer": "Rebellion Era Campaign Guide_djvu.txt (discovery only; scanned source PDF is authoritative)",
+        "pdfVisualReviewMethod": "WHOLE_BOOK_CONTACT_SHEET_SURVEY_PLUS_FULL_PAGE_PRIMARY_PDF_CLOSE_READ",
+        "physicalPdfPage": 134,
+        "printedHeading": "Lancet Aerial Artillery",
+        "printedChallengeLevel": 12
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "re-tie-ap-1-mauler",
+      "printedName": "TIE ap-1 Mauler",
+      "printedTypeLine": "Huge ground vehicle (tracked)",
+      "classification": {
+        "primaryCategory": "tracked-vehicle",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Huge ground vehicle (tracked)",
+        "secondaryCategories": [
+          "tracked-assault-vehicle"
+        ]
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 135,
+      "pdfPhysicalPage": 136,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "textSearchLayer": "Rebellion Era Campaign Guide_djvu.txt (discovery only; scanned source PDF is authoritative)",
+        "pdfVisualReviewMethod": "WHOLE_BOOK_CONTACT_SHEET_SURVEY_PLUS_FULL_PAGE_PRIMARY_PDF_CLOSE_READ",
+        "physicalPdfPage": 136,
+        "printedHeading": "TIE ap-1 Mauler",
+        "printedChallengeLevel": 7
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "re-tie-crawler",
+      "printedName": "TIE Crawler",
+      "printedTypeLine": "Huge ground vehicle (tracked)",
+      "classification": {
+        "primaryCategory": "tracked-vehicle",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Huge ground vehicle (tracked)",
+        "secondaryCategories": [
+          "tracked-assault-vehicle"
+        ]
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 135,
+      "pdfPhysicalPage": 136,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "textSearchLayer": "Rebellion Era Campaign Guide_djvu.txt (discovery only; scanned source PDF is authoritative)",
+        "pdfVisualReviewMethod": "WHOLE_BOOK_CONTACT_SHEET_SURVEY_PLUS_FULL_PAGE_PRIMARY_PDF_CLOSE_READ",
+        "physicalPdfPage": 136,
+        "printedHeading": "TIE Crawler",
+        "printedChallengeLevel": 6
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "re-canderous-class-assault-tank",
+      "printedName": "Canderous-class Assault Tank",
+      "printedTypeLine": "Gargantuan ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "ground-speeder",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Gargantuan ground vehicle (speeder)",
+        "secondaryCategories": [
+          "assault-tank"
+        ]
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 153,
+      "pdfPhysicalPage": 154,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "textSearchLayer": "Rebellion Era Campaign Guide_djvu.txt (discovery only; scanned source PDF is authoritative)",
+        "pdfVisualReviewMethod": "WHOLE_BOOK_CONTACT_SHEET_SURVEY_PLUS_FULL_PAGE_PRIMARY_PDF_CLOSE_READ",
+        "physicalPdfPage": 154,
+        "printedHeading": "Canderous-class Assault Tank",
+        "printedChallengeLevel": 10
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "re-f9-tz-transport",
+      "printedName": "F9-TZ Transport",
+      "printedTypeLine": "Gargantuan ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "ground-speeder",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Gargantuan ground vehicle (speeder)",
+        "secondaryCategories": [
+          "cloaked-troop-transport"
+        ]
+      },
+      "sourceBook": "Rebellion Era Campaign Guide",
+      "printedStatblockStartPage": 154,
+      "pdfPhysicalPage": 155,
+      "provenance": {
+        "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+        "sourceFile": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+        "textSearchLayer": "Rebellion Era Campaign Guide_djvu.txt (discovery only; scanned source PDF is authoritative)",
+        "pdfVisualReviewMethod": "WHOLE_BOOK_CONTACT_SHEET_SURVEY_PLUS_FULL_PAGE_PRIMARY_PDF_CLOSE_READ",
+        "physicalPdfPage": 155,
+        "printedHeading": "F9-TZ Transport",
+        "printedChallengeLevel": 8
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    }
+  ],
+  "mechanicsTransferredThisPhase": 0,
+  "productionPackFilesChanged": false,
+  "next": "Phase 1-L Threats of the Galaxy"
+}

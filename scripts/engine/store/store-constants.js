@@ -1,3 +1,5 @@
+import { UNIVERSAL_VEHICLE_PACK_NAMES } from '../../domain/vehicles/universal-vehicle-pack-registry.js';
+
 /**
  * scripts/engine/store/store-constants.js
  *
@@ -48,20 +50,10 @@ export const STORE_PACKS = {
   // Droids: current single-source
   DROIDS: 'foundryvtt-swse.droids',
 
-  // Vehicles: use subtype packs for store inventory
-  VEHICLE_PACKS: [
-    'foundryvtt-swse.vehicles-speeders',
-    'foundryvtt-swse.vehicles-airspeeders',
-    'foundryvtt-swse.vehicles-tracked',
-    'foundryvtt-swse.vehicles-walkers',
-    'foundryvtt-swse.vehicles-wheeled',
-    'foundryvtt-swse.vehicles-weapon-emplacements',
-    'foundryvtt-swse.vehicles-starfighters',
-    'foundryvtt-swse.vehicles-space-transports',
-    'foundryvtt-swse.vehicles-capital-ships',
-    'foundryvtt-swse.vehicles-stations'
-  ],
-  VEHICLES_CANONICAL: 'foundryvtt-swse.vehicles'
+  // Every vehicle Actor comes from exactly one canonical publication pack.
+  // No 316-ship/aggregate/old-emplacement fallbacks.
+  VEHICLE_PACKS: UNIVERSAL_VEHICLE_PACK_NAMES.map(name=>'foundryvtt-swse.'+name)
+
 };
 
 /**
@@ -83,5 +75,6 @@ export const STORE_RULES = {
 
   // Cache invalidation
   CACHE_KEY: 'swse-store-cache-v6',
+  LEGACY_CACHE_KEYS: ['swse-store-cache-v5'],
   CACHE_TTL: 1000 * 60 * 60 * 24  // 24 hours
 };

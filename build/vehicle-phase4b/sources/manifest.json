@@ -1,0 +1,109 @@
+{
+  "schema": "swse.vehicle.universal.phase4b.actor-source-manifest.v1",
+  "source": "data/canonical/vehicles/vehicles.json",
+  "sourceGitBlobSha1": "42d34583b6b6a6a69f8734852117c67a23b0f0b9",
+  "generatedFrom": "tools/build-universal-vehicle-pack-sources.mjs",
+  "certification": "SOURCE_ONLY",
+  "installedMountsPromoted": 0,
+  "executableStockAttacks": 0,
+  "total": 429,
+  "packs": {
+    "vehicles-starfighters": {
+      "documents": 132,
+      "categoryNames": [
+        "starfighter"
+      ],
+      "sha256": "4ed716257d0571f33e863803ab18d6006761c9c9f30b4756ed08bdd7925676a4"
+    },
+    "vehicles-space-transports": {
+      "documents": 101,
+      "categoryNames": [
+        "space-transport",
+        "escape-craft",
+        "drop-pod"
+      ],
+      "sha256": "250268f42901c2b04b8bfb8f2f83b586032f4dc72de9ed2d8cedaa0a6e6ad0d7"
+    },
+    "vehicles-capital-ships": {
+      "documents": 84,
+      "categoryNames": [
+        "capital-ship"
+      ],
+      "sha256": "1a54343bc792c870246269a1626b37495b799c7e0a6e8803f738514517b592ef"
+    },
+    "vehicles-stations": {
+      "documents": 8,
+      "categoryNames": [
+        "space-station"
+      ],
+      "sha256": "d63331213799dd27c7052380a990d2eb5d4d951caf64dcc268a86a8e09a8108c"
+    },
+    "vehicles-walkers": {
+      "documents": 15,
+      "categoryNames": [
+        "walker"
+      ],
+      "sha256": "1d815333054454218c24fe21e3998eac44fe3da4b4a6ecccd9743d23c5752069"
+    },
+    "vehicles-airspeeders": {
+      "documents": 20,
+      "categoryNames": [
+        "airspeeder",
+        "air-speeder-bike",
+        "medical-airspeeder",
+        "ornithopter",
+        "aerial-artillery"
+      ],
+      "sha256": "5ace84e4116bb666e7d5681f29fbad3d7491ce0808618375a827a7817a742d41"
+    },
+    "vehicles-speeders": {
+      "documents": 41,
+      "categoryNames": [
+        "speeder",
+        "speeder-bike",
+        "ground-speeder",
+        "ground-speeder-bike",
+        "heavy-ground-speeder",
+        "landspeeder",
+        "command-speeder",
+        "swoop",
+        "water-speeder"
+      ],
+      "sha256": "59bb5505694265041113f1280664a8e25c1a50aec436226c634dfc7d4f3d80df"
+    },
+    "vehicles-tracked": {
+      "documents": 10,
+      "categoryNames": [
+        "tracked-vehicle"
+      ],
+      "sha256": "95b394ea7214f60286cdff36e3ccf261f22e6bdfafacb09be1614d6a2007467b"
+    },
+    "vehicles-wheeled": {
+      "documents": 9,
+      "categoryNames": [
+        "wheeled-vehicle",
+        "wheeled-tank",
+        "wheeled-groundcar",
+        "wheeled-utility-vehicle",
+        "wheeled-assault-vehicle",
+        "wheel-bike"
+      ],
+      "sha256": "3546fcaf3cf9a85f6cb08d5fccd023993d5ae6b6cb1a3f6ec8738f24aebbf907"
+    },
+    "vehicles-ground-armor": {
+      "documents": 7,
+      "categoryNames": [
+        "repulsorlift-tank"
+      ],
+      "sha256": "a74f3b896451461ebc416d4d3c4c3fefe031e9006e52e7a2c4b6f4840a66e2dc"
+    },
+    "vehicles-hybrids": {
+      "documents": 2,
+      "categoryNames": [
+        "hybrid-vehicle-droid",
+        "vehicle-droid"
+      ],
+      "sha256": "39c587acc3673896b5b5fb2000214b99b24c38537deab68bd466899a94ec4fe1"
+    }
+  }
+}

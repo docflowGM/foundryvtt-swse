@@ -1,0 +1,170 @@
+{
+  "schema": "swse.vehicle.phase2c.cp1.identity-reconciliation.v0.1",
+  "mode": "SOURCE_EVIDENCE_ONLY_NO_PRODUCTION_MUTATION",
+  "baseline": {
+    "repository": "docflowGM/foundryvtt-swse",
+    "branch": "audit/vehicle-phase-0-1-canonical-foundation",
+    "phase2bBaselineCommit": "b5851d6b4e7b50e5315b743b2247b2a1df07a047",
+    "phase1ProvenanceBlobSha": "21f2178eb6a610d3b52ecdc8549f93724c77fbc4",
+    "immutablePublicationClaims": 316,
+    "newPublicationClaimsAdded": 0,
+    "correctedPublicationCensusApproved": false
+  },
+  "candidates": [
+    {
+      "candidateId": "P2C-ID-001",
+      "candidateKind": "UNENUMERATED_INDEPENDENT_PRINTED_STARSHIP_STATBLOCK",
+      "displayName": "Uulshos Manufacturing Deep-X Explorer",
+      "sourceBook": "Unknown Regions",
+      "printedPage": 51,
+      "pdfPhysicalPage": 52,
+      "pdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "printedStatblockExists": true,
+      "printedName": "Uulshos Manufacturing Deep-X Explorer",
+      "printedCL": 5,
+      "printedClassification": "Gargantuan starfighter",
+      "phase1SourceEntryKey": null,
+      "status": "PENDING_FORMAL_PHASE1_CENSUS_AMENDMENT",
+      "countingRule": "One independent statblock, one proposed additional publication claim, not yet part of fixed 316.",
+      "sourceFacts": {
+        "initiative": 4,
+        "perception": 5,
+        "reflex": 15,
+        "flatFootedReflex": 11,
+        "fortitude": 22,
+        "armor": 6,
+        "hitPoints": 60,
+        "damageReduction": 10,
+        "damageThreshold": 42,
+        "characterSpeedFlySquares": 12,
+        "starshipSpeedFlySquares": 3,
+        "maximumVelocityKmh": 1000,
+        "rangedLine": "2 light blaster cannons +3",
+        "attackGroups": 1,
+        "physicallyStatedCannons": 2,
+        "requiredGunnersForBothCannons": 2,
+        "crewCount": 3,
+        "passengers": 3,
+        "cargoTons": 50,
+        "consumablesMonths": 6,
+        "hyperdriveMultiplier": 1,
+        "backupHyperdriveMultiplier": 8,
+        "navicomputer": true,
+        "priceNewCredits": 135000,
+        "priceUsedCredits": 55000,
+        "attackProfile": [
+          {
+            "group": "light blaster cannon",
+            "operator": "gunner",
+            "attackBonus": 3,
+            "damage": "2d10x2"
+          }
+        ]
+      },
+      "mechanicalGaps": [
+        "Firing arcs and exact installed mount positions unprinted",
+        "Gunner assignment topology beyond two gunners not documented",
+        "No independent strict full-field certification"
+      ],
+      "sourceReviewState": "PDF_STATBLOCK_VISUALLY_VERIFIED",
+      "certificationState": "NOT_STRICTLY_CERTIFIED",
+      "phase1Disposition": "NOT_CHANGED"
+    },
+    {
+      "candidateId": "P2C-ID-002",
+      "candidateKind": "UNENUMERATED_INDEPENDENT_PRINTED_STARSHIP_STATBLOCK",
+      "displayName": "Tenloss Corporation Hornet-class Interceptor",
+      "sourceBook": "Scum and Villainy",
+      "printedPage": 125,
+      "pdfPhysicalPage": 126,
+      "pdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+      "printedStatblockExists": true,
+      "printedName": "Tenloss Corporation Hornet-class Interceptor",
+      "printedCL": 12,
+      "printedClassification": "Gargantuan starfighter",
+      "phase1SourceEntryKey": null,
+      "status": "PENDING_FORMAL_PHASE1_CENSUS_AMENDMENT",
+      "countingRule": "One published CL 12 block with one alternate loadout; alternate loadout does not create an extra statblock.",
+      "sourceFacts": {
+        "initiative": 8,
+        "perception": 6,
+        "reflex": 18,
+        "flatFootedReflex": 11,
+        "fortitude": 21,
+        "armor": 6,
+        "hitPoints": 50,
+        "damageReduction": 10,
+        "shieldRating": 35,
+        "damageThreshold": 41,
+        "characterSpeedFlySquares": 16,
+        "starshipSpeedFlySquares": 4,
+        "maximumVelocityKmh": 1150,
+        "baseAttack": 2,
+        "grapple": 28,
+        "crewCount": 1,
+        "passengers": 0,
+        "cargoKg": 80,
+        "consumablesDays": 5,
+        "availability": "Illegal",
+        "priceNewCredits": 75000,
+        "priceUsedCredits": 32000,
+        "configurations": [
+          {
+            "configurationId": "printed-default",
+            "label": "Advanced heavy laser cannons",
+            "weaponGroup": "advanced heavy laser cannons",
+            "operator": "pilot",
+            "attackBonus": 6,
+            "autofireAttackBonus": 1,
+            "damage": "10d10x2",
+            "attackModes": [
+              "autofire",
+              "fire-link"
+            ],
+            "malfunction": {
+              "naturalAttackRoll": 1,
+              "selfDamage": "6d10x2",
+              "ignoresShields": true,
+              "destroysCannons": true
+            }
+          },
+          {
+            "configurationId": "printed-alternate",
+            "label": "Medium laser cannons",
+            "weaponGroup": "medium laser cannons",
+            "operator": "pilot",
+            "attackBonus": 6,
+            "autofireAttackBonus": 1,
+            "damage": "5d10x2",
+            "attackModes": [
+              "autofire",
+              "fire-link"
+            ],
+            "malfunction": null
+          }
+        ]
+      },
+      "mechanicalGaps": [
+        "Printed plural cannons but no numeric physical mount count",
+        "Firing arcs and physical mount geometry unprinted",
+        "Self-damage rule is default-configuration-specific",
+        "No independent strict full-field certification"
+      ],
+      "sourceReviewState": "PDF_STATBLOCK_VISUALLY_VERIFIED",
+      "certificationState": "NOT_STRICTLY_CERTIFIED",
+      "phase1Disposition": "NOT_CHANGED"
+    }
+  ],
+  "candidateCount": 2,
+  "proposedFutureEnumeratedTotalIfBothIndependentlyApproved": 318,
+  "futureTotalIsNotApprovedCurrentCensus": true,
+  "excludedAdjacentNonShipCases": [
+    {
+      "name": "SRV-1 Scout and Retrieval Vehicle",
+      "sourceBook": "Unknown Regions",
+      "printedPage": 51,
+      "reason": "Ground vehicle, not part of the Phase 1 starship census."
+    }
+  ],
+  "nextAction": "Formally amend Phase1 provenance with additive entries only after independent review and key assignment; do not retroactively rewrite published 316-source-review ledger."
+}

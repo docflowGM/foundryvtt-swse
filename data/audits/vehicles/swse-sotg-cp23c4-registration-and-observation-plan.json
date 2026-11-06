@@ -1,0 +1,183 @@
+{
+  "schema": "swse.vehicle.sotg.cp23c4.registration-and-observation-plan.v1",
+  "phase": "CP23-C4A-GM-WORLD-OBSERVATION-LEDGER-AND-REGISTRATION-PLAN",
+  "stagedSourceManifest": {
+    "path": "data/audits/vehicles/swse-sotg-cp23c3-unregistered-native-stage.json",
+    "gitBlobSha": "6c3e3ded146a300c4d16af66b9db2cff7e88145e"
+  },
+  "stagePackName": "sotg-cp23c3-source-stage",
+  "sourceDocumentCount": 15,
+  "plannedSourcePack": {
+    "name": "sotg-canonical-stock-source",
+    "label": "SotG Canonical Source (Unarmed, Uncertified)",
+    "type": "Actor",
+    "path": "packs/sotg-canonical-stock-source",
+    "system": "foundryvtt-swse",
+    "ownership": {
+      "PLAYER": "NONE",
+      "TRUSTED": "NONE",
+      "ASSISTANT": "NONE",
+      "GAMEMASTER": "OWNER"
+    }
+  },
+  "deploymentStatus": "BLOCKED_PENDING_NATIVE_V13_RUNTIME_AND_PACK_AUTHORITY_REVIEW",
+  "registeredInSystemJson": false,
+  "released": false,
+  "compiledLevelDbCommitted": false,
+  "gmObservationLedger": {
+    "namespace": "foundryvtt-swse",
+    "key": "vehicleImportObservationsCP23C4",
+    "scope": "world",
+    "config": false,
+    "state": "UNVERIFIED_LEGACY_NATIVE_IMPORT",
+    "activeGmOnly": true,
+    "worldActorVerified": true,
+    "nativePackDocumentReferenceRequired": true,
+    "readBackRequired": true,
+    "receiptIssuerAvailable": false,
+    "crossClientAtomicCAS": false,
+    "observationCapacity": 200
+  },
+  "protection": {
+    "actorFlagsNeverProof": true,
+    "actorSourceKeyNeverProof": true,
+    "sourceNameNeverProof": true,
+    "unregisteredStageNeverProof": true,
+    "observationsNeverProof": true,
+    "zeroTrustedWeaponGroups": true
+  },
+  "verificationGatesBeforeRegisteredSourcePack": [
+    "REVIEW_CANONICAL_ACTOR_SCHEMA_IN_LIVE_FOUNDRY_V13",
+    "PIN_EXACT_COMPILED_LEVELDB_BYTES_AND_DOCUMENT_PROVENANCE",
+    "REVIEW_RELEASE_MANIFEST_AND_MIGRATION",
+    "DEFINE_SINGLE_GM_TRANSACTION_AND_WORLD_READBACK",
+    "VERIFY_PURE_MODIFIED_INVALIDATION_AND_ALL_MUTATION_PATHS",
+    "VALIDATE_NO_PHYSICAL_WEAPON_MOUNT_AUTOMATION"
+  ],
+  "authenticatedSourceInstallations": 0,
+  "verifiedGmReceiptsIssued": 0,
+  "physicalMountCertificationsAdded": 0,
+  "stockAttackPermissionsAdded": 0,
+  "stagedDocuments": [
+    {
+      "id": "sotgcp23b0000001",
+      "sourceEntryKey": "sotg-advanced-v-19-torrent-starfighter",
+      "decisionId": "SOTG-CP21-D01",
+      "sha": "72eec10edb798531f6e8711b46d8a75bf1035dca",
+      "weaponCount": 0,
+      "registered": false
+    },
+    {
+      "id": "sotgcp23b0000002",
+      "sourceEntryKey": "sotg-recusant-class-light-destroyer",
+      "decisionId": "SOTG-CP21-D02",
+      "sha": "193ca5d0ff1a89d290abc5716c182d620cf8b0d1",
+      "weaponCount": 0,
+      "registered": false
+    },
+    {
+      "id": "sotgcp23b0000003",
+      "sourceEntryKey": "sotg-kuat-drive-yards-pellaeon-class-star-destroyer",
+      "decisionId": "SOTG-CP21-D03",
+      "sha": "4245d90ae7fd1a629e913240b5c6c5ad86e954aa",
+      "weaponCount": 0,
+      "registered": false
+    },
+    {
+      "id": "sotgcp23b0000004",
+      "sourceEntryKey": "sotg-immobilizer-418-interdictor-class-heavy-cruiser",
+      "decisionId": "SOTG-CP21-D04",
+      "sha": "62f32141ff8b36006703266def4beaa913a17c77",
+      "weaponCount": 0,
+      "registered": false
+    },
+    {
+      "id": "sotgcp23b0000005",
+      "sourceEntryKey": "sotg-junker-tye-wing",
+      "decisionId": "SOTG-CP21-D05",
+      "sha": "499bfe5edfdcda87480d95c15c77a0b1ba2fec89",
+      "weaponCount": 0,
+      "registered": false
+    },
+    {
+      "id": "sotgcp23b0000006",
+      "sourceEntryKey": "sotg-koensayr-manufacturing-btl-58-k-wing",
+      "decisionId": "SOTG-CP21-D06",
+      "sha": "694e0a5c2023787b8e594081c4a315d4e8a1435d",
+      "weaponCount": 0,
+      "registered": false
+    },
+    {
+      "id": "sotgcp23b0000007",
+      "sourceEntryKey": "sotg-sienar-technologies-marauder-corvette",
+      "decisionId": "SOTG-CP21-D07",
+      "sha": "6a7ae7c74981001f97c858fb9f9e2390dcffac9c",
+      "weaponCount": 0,
+      "registered": false
+    },
+    {
+      "id": "sotgcp23b0000008",
+      "sourceEntryKey": "sotg-mon-calamari-star-defender",
+      "decisionId": "SOTG-CP21-D08",
+      "sha": "9578dec6592be81d1c7dca201784c12fd31edbd0",
+      "weaponCount": 0,
+      "registered": false
+    },
+    {
+      "id": "sotgcp23b0000009",
+      "sourceEntryKey": "sotg-eclipse",
+      "decisionId": "SOTG-CP21-D09",
+      "sha": "4350ce1710181a603116dbd3853c42eb8eed198c",
+      "weaponCount": 0,
+      "registered": false
+    },
+    {
+      "id": "sotgcp23b0000010",
+      "sourceEntryKey": "sotg-theta-class-shuttle",
+      "decisionId": "SOTG-CP21-D10",
+      "sha": "fa99f8854635f86b5f2d7247f4af0863543dd9fc",
+      "weaponCount": 0,
+      "registered": false
+    },
+    {
+      "id": "sotgcp23b0000011",
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-bomber",
+      "decisionId": "SOTG-CP21-D11",
+      "sha": "7e1e7441ab04e95087b530485a6a2847375be360",
+      "weaponCount": 0,
+      "registered": false
+    },
+    {
+      "id": "sotgcp23b0000012",
+      "sourceEntryKey": "sotg-incom-t-65xj3-x-wing-starfighter",
+      "decisionId": "SOTG-CP21-D12",
+      "sha": "60d1b8a32455a9039f0654c82bb009222f0d96e6",
+      "weaponCount": 0,
+      "registered": false
+    },
+    {
+      "id": "sotgcp23b0000013",
+      "sourceEntryKey": "sotg-incom-subpro-arc-170-starfighter",
+      "decisionId": "SOTG-CP21-D13",
+      "sha": "6f04ebda93c56bb924ca5eabf5fa8818f132adcf",
+      "weaponCount": 0,
+      "registered": false
+    },
+    {
+      "id": "sotgcp23b0000014",
+      "sourceEntryKey": "sotg-alliance-a-wing-starfighter",
+      "decisionId": "SOTG-CP21-D14",
+      "sha": "dd2938ea8f415f8cc84c0299271f3e3a323bb35a",
+      "weaponCount": 0,
+      "registered": false
+    },
+    {
+      "id": "sotgcp23b0000015",
+      "sourceEntryKey": "sotg-baudo-class-star-yacht",
+      "decisionId": "SOTG-CP21-D15",
+      "sha": "cbf934477321c605abf589f1818e9a87c1b14e34",
+      "weaponCount": 0,
+      "registered": false
+    }
+  ]
+}

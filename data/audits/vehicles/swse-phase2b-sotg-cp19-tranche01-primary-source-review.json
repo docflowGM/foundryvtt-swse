@@ -1,0 +1,709 @@
+{
+  "schema": "swse.vehicle.sotg.cp19.tranche01.primary-pdf-source-conflict-review.v1",
+  "sourceBook": "Starships of the Galaxy",
+  "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+  "sourceLedgerPath": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json",
+  "sourceLedgerBlobSha": "d08ca75b0b30e8b44896588edf3c5ce1cd335557",
+  "sourceQueuePath": "data/audits/vehicles/swse-phase2b-sotg-cp17-strict-certification-work-queue.json",
+  "sourceQueueBlobSha": "9c7df34eefa54f456721ee18c6ee684ec214dbf6",
+  "approvedPolicy": "SOTG-CP18-D01",
+  "trancheNumber": 1,
+  "trancheSize": 15,
+  "trancheSelection": "FIRST_15_CP17_WORK_QUEUE_POSITIONS",
+  "counts": {
+    "entriesVisuallyReviewed": 15,
+    "sourceConflictEntriesReviewed": 12,
+    "legacyMissingFieldEntriesReviewed": 3,
+    "originalSourceEntriesTotal": 104,
+    "remainingQueueNotYetReviewedInCp19": 85,
+    "unresolvedStrictMechanicalCertifications": 100,
+    "newSourceFidelityCertificates": 0,
+    "newPhysicalMountCertificates": 0,
+    "newRuntimeStockAttackAuthorities": 0
+  },
+  "originalPublishedSourceNotModified": true,
+  "cp16SourceLedgerMutated": false,
+  "productionHydrationAuthorized": false,
+  "universalSchemaFrozen": false,
+  "sourceReviewMethod": "19 individual visually rendered scanned PDF pages; original scanned PDF matched stored SHA256. OCR not used to adjudicate.",
+  "entries": [
+    {
+      "trancheIndex": 1,
+      "cp17QueuePosition": 1,
+      "sourceEntryKey": "sotg-advanced-v-19-torrent-starfighter",
+      "cp16LedgerIndex": 3,
+      "printedName": "Advanced V-19 Torrent Starfighter",
+      "statblockStartPage": 59,
+      "visualPdfPages": [
+        59
+      ],
+      "visualVerification": "RENDERED_ORIGINAL_SOURCE_PDF_PAGE_CLOSE_READ",
+      "disposition": "DUAL_PRINTED_VALUES_UNRESOLVED",
+      "publicationClaims": [
+        {
+          "location": "/initiative/header",
+          "printedPage": 59,
+          "observed": "Init +12"
+        },
+        {
+          "location": "/skills/initiative",
+          "printedPage": 59,
+          "observed": "Initiative +8"
+        }
+      ],
+      "finding": "The Advanced-template V-19 sample prints +12 in header and +8 in skill list. Retain both; do not reverse-engineer from Dexterity or base V-19.",
+      "earlierConflictFieldGroups": [
+        "initiativeSenses"
+      ],
+      "cp17PriorityTrack": "P0_SOURCE_CONFLICT",
+      "rowPageProvenance": {
+        "historicalMissingRowSourcePageKeys": [],
+        "sourcePrintedStatblockStartPageIsNotRowPageProvenance": true
+      },
+      "cp19ReviewComplete": true,
+      "canonicalConflictResolved": false,
+      "sourceFidelityCertified": false,
+      "newPhysicalMountCertificateGranted": false,
+      "stockRuntimeAttackAuthorityGranted": false,
+      "pending": "INDIVIDUAL_SOURCE_FIDELITY_AND_SCHEMA_REVIEW_OR_OWNER_ERRATA_ADJUDICATION"
+    },
+    {
+      "trancheIndex": 2,
+      "cp17QueuePosition": 2,
+      "sourceEntryKey": "sotg-recusant-class-light-destroyer",
+      "cp16LedgerIndex": 17,
+      "printedName": "Recusant-class Light Destroyer",
+      "statblockStartPage": 72,
+      "visualPdfPages": [
+        72
+      ],
+      "visualVerification": "RENDERED_ORIGINAL_SOURCE_PDF_PAGE_CLOSE_READ",
+      "disposition": "DUAL_ATTACK_PROFILE_VALUES_UNRESOLVED",
+      "publicationClaims": [
+        {
+          "location": "/ranged/pointDefenseLightLaserBattery",
+          "printedPage": 72,
+          "observed": "5 point-defense light laser cannon batteries +16"
+        },
+        {
+          "location": "/weaponTable/pointDefenseLightLaserBattery",
+          "printedPage": 72,
+          "observed": "Atk +14"
+        },
+        {
+          "location": "/ranged/pointDefenseDoubleLightLaserBattery",
+          "printedPage": 72,
+          "observed": "2 point-defense double light laser cannon batteries +14"
+        },
+        {
+          "location": "/weaponTable/pointDefenseDoubleLightLaserBattery",
+          "printedPage": 72,
+          "observed": "Atk +12"
+        }
+      ],
+      "finding": "Two separate weapon-family rows disagree between Ranged summary and row attacks. No source-authorized winner; retain weapon families and both values.",
+      "earlierConflictFieldGroups": [
+        "rangedAttack",
+        "weaponAttackProfile"
+      ],
+      "cp17PriorityTrack": "P0_SOURCE_CONFLICT",
+      "rowPageProvenance": {
+        "historicalMissingRowSourcePageKeys": [],
+        "sourcePrintedStatblockStartPageIsNotRowPageProvenance": true
+      },
+      "cp19ReviewComplete": true,
+      "canonicalConflictResolved": false,
+      "sourceFidelityCertified": false,
+      "newPhysicalMountCertificateGranted": false,
+      "stockRuntimeAttackAuthorityGranted": false,
+      "pending": "INDIVIDUAL_SOURCE_FIDELITY_AND_SCHEMA_REVIEW_OR_OWNER_ERRATA_ADJUDICATION"
+    },
+    {
+      "trancheIndex": 3,
+      "cp17QueuePosition": 3,
+      "sourceEntryKey": "sotg-kuat-drive-yards-pellaeon-class-star-destroyer",
+      "cp16LedgerIndex": 42,
+      "printedName": "Kuat Drive Yards Pellaeon-class Star Destroyer",
+      "statblockStartPage": 99,
+      "visualPdfPages": [
+        99
+      ],
+      "visualVerification": "RENDERED_ORIGINAL_SOURCE_PDF_PAGE_CLOSE_READ",
+      "disposition": "SELF_CONTRADICTORY_DEFENSE_LINE_UNRESOLVED",
+      "publicationClaims": [
+        {
+          "location": "/defenses/reflex",
+          "printedPage": 99,
+          "observed": "Ref 16"
+        },
+        {
+          "location": "/defenses/flatFooted",
+          "printedPage": 99,
+          "observed": "flat-footed 47"
+        }
+      ],
+      "finding": "Printed flat-footed 47 exceeds printed Reflex 16. Preserve 47 as literal; neither replace it by a plausible 14 nor treat it as an executable repaired value.",
+      "earlierConflictFieldGroups": [
+        "defenses"
+      ],
+      "cp17PriorityTrack": "P0_SOURCE_CONFLICT",
+      "rowPageProvenance": {
+        "historicalMissingRowSourcePageKeys": [],
+        "sourcePrintedStatblockStartPageIsNotRowPageProvenance": true
+      },
+      "cp19ReviewComplete": true,
+      "canonicalConflictResolved": false,
+      "sourceFidelityCertified": false,
+      "newPhysicalMountCertificateGranted": false,
+      "stockRuntimeAttackAuthorityGranted": false,
+      "pending": "INDIVIDUAL_SOURCE_FIDELITY_AND_SCHEMA_REVIEW_OR_OWNER_ERRATA_ADJUDICATION"
+    },
+    {
+      "trancheIndex": 4,
+      "cp17QueuePosition": 4,
+      "sourceEntryKey": "sotg-immobilizer-418-interdictor-class-heavy-cruiser",
+      "cp16LedgerIndex": 43,
+      "printedName": "Immobilizer 418 Interdictor-class Heavy Cruiser",
+      "statblockStartPage": 100,
+      "visualPdfPages": [
+        100,
+        101
+      ],
+      "visualVerification": "RENDERED_ORIGINAL_SOURCE_PDF_PAGE_CLOSE_READ",
+      "disposition": "WEAPON_ROW_VS_RULE_AREA_UNRESOLVED",
+      "publicationClaims": [
+        {
+          "location": "/weaponTable/gravityWellProjector/area",
+          "printedPage": 100,
+          "observed": "4x4 square starship-scale area attack"
+        },
+        {
+          "location": "/specialRule/gravityWellProjectors/area",
+          "printedPage": 101,
+          "observed": "3x3-square starship-scale area"
+        }
+      ],
+      "finding": "Printed weapon row says 4x4, boxed gravity-well projector rule says 3x3; preserve both with independent page/provenance and block selection of a canonical area.",
+      "earlierConflictFieldGroups": [
+        "weaponAttackProfile"
+      ],
+      "cp17PriorityTrack": "P0_SOURCE_CONFLICT",
+      "rowPageProvenance": {
+        "historicalMissingRowSourcePageKeys": [],
+        "sourcePrintedStatblockStartPageIsNotRowPageProvenance": true
+      },
+      "cp19ReviewComplete": true,
+      "canonicalConflictResolved": false,
+      "sourceFidelityCertified": false,
+      "newPhysicalMountCertificateGranted": false,
+      "stockRuntimeAttackAuthorityGranted": false,
+      "pending": "INDIVIDUAL_SOURCE_FIDELITY_AND_SCHEMA_REVIEW_OR_OWNER_ERRATA_ADJUDICATION"
+    },
+    {
+      "trancheIndex": 5,
+      "cp17QueuePosition": 5,
+      "sourceEntryKey": "sotg-junker-tye-wing",
+      "cp16LedgerIndex": 47,
+      "printedName": "Junker TYE-wing",
+      "statblockStartPage": 104,
+      "visualPdfPages": [
+        104
+      ],
+      "visualVerification": "RENDERED_ORIGINAL_SOURCE_PDF_PAGE_CLOSE_READ",
+      "disposition": "DUAL_PRINTED_VALUES_UNRESOLVED",
+      "publicationClaims": [
+        {
+          "location": "/initiative/header",
+          "printedPage": 104,
+          "observed": "Init +2"
+        },
+        {
+          "location": "/skills/initiative",
+          "printedPage": 104,
+          "observed": "Initiative +8"
+        }
+      ],
+      "finding": "Junker-template TYE-wing statblock prints +2 vs +8; sample and template are not separate ship identities.",
+      "earlierConflictFieldGroups": [
+        "initiativeSenses",
+        "skills"
+      ],
+      "cp17PriorityTrack": "P0_SOURCE_CONFLICT",
+      "rowPageProvenance": {
+        "historicalMissingRowSourcePageKeys": [],
+        "sourcePrintedStatblockStartPageIsNotRowPageProvenance": true
+      },
+      "cp19ReviewComplete": true,
+      "canonicalConflictResolved": false,
+      "sourceFidelityCertified": false,
+      "newPhysicalMountCertificateGranted": false,
+      "stockRuntimeAttackAuthorityGranted": false,
+      "pending": "INDIVIDUAL_SOURCE_FIDELITY_AND_SCHEMA_REVIEW_OR_OWNER_ERRATA_ADJUDICATION"
+    },
+    {
+      "trancheIndex": 6,
+      "cp17QueuePosition": 6,
+      "sourceEntryKey": "sotg-koensayr-manufacturing-btl-58-k-wing",
+      "cp16LedgerIndex": 48,
+      "printedName": "Koensayr Manufacturing BTL-58 K-wing",
+      "statblockStartPage": 105,
+      "visualPdfPages": [
+        105
+      ],
+      "visualVerification": "RENDERED_ORIGINAL_SOURCE_PDF_PAGE_CLOSE_READ",
+      "disposition": "INITIATIVE_AND_PAYLOAD_TERMINOLOGY_UNRESOLVED",
+      "publicationClaims": [
+        {
+          "location": "/initiative/header",
+          "printedPage": 105,
+          "observed": "Init +10"
+        },
+        {
+          "location": "/skills/initiative",
+          "printedPage": 105,
+          "observed": "Initiative +6"
+        },
+        {
+          "location": "/ranged/alternateOrdnance",
+          "printedPage": 105,
+          "observed": "shieldbuster torpedoes +7"
+        },
+        {
+          "location": "/weaponTable/alternateOrdnance",
+          "printedPage": 105,
+          "observed": "Shieldbuster torpedoes (gunner)"
+        },
+        {
+          "location": "/payload/thirdOrdnance",
+          "printedPage": 105,
+          "observed": "6 plasma torpedoes"
+        }
+      ],
+      "finding": "Initiative discrepancy is explicit. Payload 'plasma' may relate to weapon-table 'shieldbuster' but no equivalence is printed; OR attacks are alternatives, not all simultaneous. First-production unarmed mission configurations cannot be silently merged with the sample.",
+      "earlierConflictFieldGroups": [
+        "initiativeSenses",
+        "skills",
+        "payload",
+        "weaponAttackProfile"
+      ],
+      "cp17PriorityTrack": "P0_SOURCE_CONFLICT",
+      "rowPageProvenance": {
+        "historicalMissingRowSourcePageKeys": [],
+        "sourcePrintedStatblockStartPageIsNotRowPageProvenance": true
+      },
+      "cp19ReviewComplete": true,
+      "canonicalConflictResolved": false,
+      "sourceFidelityCertified": false,
+      "newPhysicalMountCertificateGranted": false,
+      "stockRuntimeAttackAuthorityGranted": false,
+      "pending": "INDIVIDUAL_SOURCE_FIDELITY_AND_SCHEMA_REVIEW_OR_OWNER_ERRATA_ADJUDICATION"
+    },
+    {
+      "trancheIndex": 7,
+      "cp17QueuePosition": 7,
+      "sourceEntryKey": "sotg-sienar-technologies-marauder-corvette",
+      "cp16LedgerIndex": 52,
+      "printedName": "Sienar Technologies Marauder Corvette",
+      "statblockStartPage": 110,
+      "visualPdfPages": [
+        110
+      ],
+      "visualVerification": "RENDERED_ORIGINAL_SOURCE_PDF_PAGE_CLOSE_READ",
+      "disposition": "TRACTOR_GROUP_LABEL_SCOPE_UNRESOLVED",
+      "publicationClaims": [
+        {
+          "location": "/ranged/tractor",
+          "printedPage": 110,
+          "observed": "tractor beam battery +8"
+        },
+        {
+          "location": "/weaponTable/tractor",
+          "printedPage": 110,
+          "observed": "Tractor beam (3 gunners)"
+        }
+      ],
+      "finding": "Summary calls a battery, detailed row omits battery and gives three gunners. Three gunners do not establish three physical projectors; the row's role/geometry remains unresolved.",
+      "earlierConflictFieldGroups": [
+        "weaponAttackProfile"
+      ],
+      "cp17PriorityTrack": "P0_SOURCE_CONFLICT",
+      "rowPageProvenance": {
+        "historicalMissingRowSourcePageKeys": [],
+        "sourcePrintedStatblockStartPageIsNotRowPageProvenance": true
+      },
+      "cp19ReviewComplete": true,
+      "canonicalConflictResolved": false,
+      "sourceFidelityCertified": false,
+      "newPhysicalMountCertificateGranted": false,
+      "stockRuntimeAttackAuthorityGranted": false,
+      "pending": "INDIVIDUAL_SOURCE_FIDELITY_AND_SCHEMA_REVIEW_OR_OWNER_ERRATA_ADJUDICATION"
+    },
+    {
+      "trancheIndex": 8,
+      "cp17QueuePosition": 8,
+      "sourceEntryKey": "sotg-mon-calamari-star-defender",
+      "cp16LedgerIndex": 58,
+      "printedName": "Mon Calamari Star Defender",
+      "statblockStartPage": 116,
+      "visualPdfPages": [
+        116,
+        117
+      ],
+      "visualVerification": "RENDERED_ORIGINAL_SOURCE_PDF_PAGE_CLOSE_READ",
+      "disposition": "CLASSIFICATION_AND_PAYLOAD_TERMINOLOGY_UNRESOLVED",
+      "publicationClaims": [
+        {
+          "location": "/printedType",
+          "printedPage": 116,
+          "observed": "Colossal (station) space station"
+        },
+        {
+          "location": "/movement",
+          "printedPage": 116,
+          "observed": "Speed fly 2 squares"
+        },
+        {
+          "location": "/prose/shipType",
+          "printedPage": 116,
+          "observed": "Viscount-class Star Defender warship"
+        },
+        {
+          "location": "/payload/missiles",
+          "printedPage": 116,
+          "observed": "6,000 medium concussion missiles"
+        },
+        {
+          "location": "/weaponTable/missileBattery",
+          "printedPage": 116,
+          "observed": "Heavy concussion missile battery"
+        }
+      ],
+      "finding": "The printed type says station although narrative and speed describe a mobile warship. Printed medium payload and heavy weapon batteries must not be silently unified; carried craft counts are not installed guns. P117 tactical aura does not repair these conflicts.",
+      "earlierConflictFieldGroups": [
+        "printedTypeLine",
+        "payload",
+        "weaponAttackProfile"
+      ],
+      "cp17PriorityTrack": "P0_SOURCE_CONFLICT",
+      "rowPageProvenance": {
+        "historicalMissingRowSourcePageKeys": [],
+        "sourcePrintedStatblockStartPageIsNotRowPageProvenance": true
+      },
+      "cp19ReviewComplete": true,
+      "canonicalConflictResolved": false,
+      "sourceFidelityCertified": false,
+      "newPhysicalMountCertificateGranted": false,
+      "stockRuntimeAttackAuthorityGranted": false,
+      "pending": "INDIVIDUAL_SOURCE_FIDELITY_AND_SCHEMA_REVIEW_OR_OWNER_ERRATA_ADJUDICATION"
+    },
+    {
+      "trancheIndex": 9,
+      "cp17QueuePosition": 9,
+      "sourceEntryKey": "sotg-eclipse",
+      "cp16LedgerIndex": 78,
+      "printedName": "Eclipse",
+      "statblockStartPage": 139,
+      "visualPdfPages": [
+        139
+      ],
+      "visualVerification": "RENDERED_ORIGINAL_SOURCE_PDF_PAGE_CLOSE_READ",
+      "disposition": "DUAL_SUPERLASER_ATTACK_VALUES_UNRESOLVED",
+      "publicationClaims": [
+        {
+          "location": "/ranged/superlaser",
+          "printedPage": 139,
+          "observed": "superlaser +7**"
+        },
+        {
+          "location": "/weaponTable/superlaser",
+          "printedPage": 139,
+          "observed": "Superlaser Atk +15"
+        }
+      ],
+      "finding": "Distinct printed attack values share the superlaser family; size-dependent penalties and axial alignment are separate rules, not a permitted inferred fix.",
+      "earlierConflictFieldGroups": [
+        "rangedAttack",
+        "weaponAttackProfile"
+      ],
+      "cp17PriorityTrack": "P0_SOURCE_CONFLICT",
+      "rowPageProvenance": {
+        "historicalMissingRowSourcePageKeys": [],
+        "sourcePrintedStatblockStartPageIsNotRowPageProvenance": true
+      },
+      "cp19ReviewComplete": true,
+      "canonicalConflictResolved": false,
+      "sourceFidelityCertified": false,
+      "newPhysicalMountCertificateGranted": false,
+      "stockRuntimeAttackAuthorityGranted": false,
+      "pending": "INDIVIDUAL_SOURCE_FIDELITY_AND_SCHEMA_REVIEW_OR_OWNER_ERRATA_ADJUDICATION"
+    },
+    {
+      "trancheIndex": 10,
+      "cp17QueuePosition": 10,
+      "sourceEntryKey": "sotg-theta-class-shuttle",
+      "cp16LedgerIndex": 80,
+      "printedName": "Theta-class Shuttle",
+      "statblockStartPage": 141,
+      "visualPdfPages": [
+        141
+      ],
+      "visualVerification": "RENDERED_ORIGINAL_SOURCE_PDF_PAGE_CLOSE_READ",
+      "disposition": "DUAL_PERCEPTION_VALUES_UNRESOLVED",
+      "publicationClaims": [
+        {
+          "location": "/senses/header",
+          "printedPage": 141,
+          "observed": "Senses Perception +5"
+        },
+        {
+          "location": "/skills/perception",
+          "printedPage": 141,
+          "observed": "Perception +6"
+        }
+      ],
+      "finding": "Header +5 and skills +6 both printed; luxury upgrades are configurable equipment, not a correction to perception.",
+      "earlierConflictFieldGroups": [
+        "initiativeSenses",
+        "skills"
+      ],
+      "cp17PriorityTrack": "P0_SOURCE_CONFLICT",
+      "rowPageProvenance": {
+        "historicalMissingRowSourcePageKeys": [],
+        "sourcePrintedStatblockStartPageIsNotRowPageProvenance": true
+      },
+      "cp19ReviewComplete": true,
+      "canonicalConflictResolved": false,
+      "sourceFidelityCertified": false,
+      "newPhysicalMountCertificateGranted": false,
+      "stockRuntimeAttackAuthorityGranted": false,
+      "pending": "INDIVIDUAL_SOURCE_FIDELITY_AND_SCHEMA_REVIEW_OR_OWNER_ERRATA_ADJUDICATION"
+    },
+    {
+      "trancheIndex": 11,
+      "cp17QueuePosition": 11,
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-bomber",
+      "cp16LedgerIndex": 82,
+      "printedName": "Sienar Fleet Systems TIE Bomber",
+      "statblockStartPage": 143,
+      "visualPdfPages": [
+        142,
+        143
+      ],
+      "visualVerification": "RENDERED_ORIGINAL_SOURCE_PDF_PAGE_CLOSE_READ",
+      "disposition": "DUAL_INITIATIVE_VALUES_UNRESOLVED",
+      "publicationClaims": [
+        {
+          "location": "/initiative/header",
+          "printedPage": 143,
+          "observed": "Init +7"
+        },
+        {
+          "location": "/skills/initiative",
+          "printedPage": 143,
+          "observed": "Initiative +4"
+        },
+        {
+          "location": "/narrative/laserHardware",
+          "printedPage": 142,
+          "observed": "two forward-mounted laser cannons"
+        }
+      ],
+      "finding": "Initiative values disagree; p142 explicitly states two forward lasers. Sixteen medium concussion missiles are the standard bomb-pod payload, while torpedoes/bombs/mines are mission substitutions, not simultaneous armament.",
+      "earlierConflictFieldGroups": [
+        "initiativeSenses",
+        "skills"
+      ],
+      "cp17PriorityTrack": "P0_SOURCE_CONFLICT",
+      "rowPageProvenance": {
+        "historicalMissingRowSourcePageKeys": [],
+        "sourcePrintedStatblockStartPageIsNotRowPageProvenance": true
+      },
+      "cp19ReviewComplete": true,
+      "canonicalConflictResolved": false,
+      "sourceFidelityCertified": false,
+      "newPhysicalMountCertificateGranted": false,
+      "stockRuntimeAttackAuthorityGranted": false,
+      "pending": "INDIVIDUAL_SOURCE_FIDELITY_AND_SCHEMA_REVIEW_OR_OWNER_ERRATA_ADJUDICATION"
+    },
+    {
+      "trancheIndex": 12,
+      "cp17QueuePosition": 12,
+      "sourceEntryKey": "sotg-incom-t-65xj3-x-wing-starfighter",
+      "cp16LedgerIndex": 94,
+      "printedName": "Incom T-65XJ3 X-wing Starfighter",
+      "statblockStartPage": 152,
+      "visualPdfPages": [
+        152,
+        153
+      ],
+      "visualVerification": "RENDERED_ORIGINAL_SOURCE_PDF_PAGE_CLOSE_READ",
+      "disposition": "TORPEDO_QUALIFIER_UNRESOLVED",
+      "publicationClaims": [
+        {
+          "location": "/narrative/ordnance",
+          "printedPage": 152,
+          "observed": "three proton torpedo tubes; four heavy proton torpedoes apiece"
+        },
+        {
+          "location": "/payload/torpedoes",
+          "printedPage": 153,
+          "observed": "12 proton torpedoes"
+        },
+        {
+          "location": "/weaponTable/torpedoes",
+          "printedPage": 153,
+          "observed": "Proton torpedoes (pilot)"
+        }
+      ],
+      "finding": "Three tubes and total quantity twelve agree; heavy-versus-unqualified proton torpedo label does not. Preserve both; no inferential ammunition type correction.",
+      "earlierConflictFieldGroups": [
+        "payload"
+      ],
+      "cp17PriorityTrack": "P0_SOURCE_CONFLICT",
+      "rowPageProvenance": {
+        "historicalMissingRowSourcePageKeys": [],
+        "sourcePrintedStatblockStartPageIsNotRowPageProvenance": true
+      },
+      "cp19ReviewComplete": true,
+      "canonicalConflictResolved": false,
+      "sourceFidelityCertified": false,
+      "newPhysicalMountCertificateGranted": false,
+      "stockRuntimeAttackAuthorityGranted": false,
+      "pending": "INDIVIDUAL_SOURCE_FIDELITY_AND_SCHEMA_REVIEW_OR_OWNER_ERRATA_ADJUDICATION"
+    },
+    {
+      "trancheIndex": 13,
+      "cp17QueuePosition": 13,
+      "sourceEntryKey": "sotg-incom-subpro-arc-170-starfighter",
+      "cp16LedgerIndex": 5,
+      "printedName": "Incom/Subpro ARC-170 Starfighter",
+      "statblockStartPage": 61,
+      "visualPdfPages": [
+        61
+      ],
+      "visualVerification": "RENDERED_ORIGINAL_SOURCE_PDF_PAGE_CLOSE_READ",
+      "disposition": "LEGACY_MISSING_WEAPON_KEYS_AND_PAGE_PROVENANCE",
+      "publicationClaims": [
+        {
+          "location": "/weaponTable/groups",
+          "printedPage": 61,
+          "observed": "Laser cannons (gunner), medium laser cannons (gunner), proton torpedoes (pilot)"
+        },
+        {
+          "location": "/crew",
+          "printedPage": 61,
+          "observed": "3 plus astromech droid"
+        },
+        {
+          "location": "/payload",
+          "printedPage": 61,
+          "observed": "6 proton torpedoes"
+        }
+      ],
+      "finding": "Three published attack families with distinct crew operators, but physical barrel counts, launcher count and firing arcs are not established. The historical group rows lack sourcePage and batteryCount keys; retain key absence rather than source-silent or zero.",
+      "earlierConflictFieldGroups": [],
+      "cp17PriorityTrack": "P1_LEGACY_MISSING_FIELDS",
+      "rowPageProvenance": {
+        "historicalMissingRowSourcePageKeys": [
+          0,
+          1,
+          2
+        ],
+        "sourcePrintedStatblockStartPageIsNotRowPageProvenance": true
+      },
+      "cp19ReviewComplete": true,
+      "canonicalConflictResolved": false,
+      "sourceFidelityCertified": false,
+      "newPhysicalMountCertificateGranted": false,
+      "stockRuntimeAttackAuthorityGranted": false,
+      "pending": "INDIVIDUAL_SOURCE_FIDELITY_AND_SCHEMA_REVIEW_OR_OWNER_ERRATA_ADJUDICATION"
+    },
+    {
+      "trancheIndex": 14,
+      "cp17QueuePosition": 14,
+      "sourceEntryKey": "sotg-alliance-a-wing-starfighter",
+      "cp16LedgerIndex": 7,
+      "printedName": "Alliance A-wing Starfighter",
+      "statblockStartPage": 63,
+      "visualPdfPages": [
+        63
+      ],
+      "visualVerification": "RENDERED_ORIGINAL_SOURCE_PDF_PAGE_CLOSE_READ",
+      "disposition": "LEGACY_MISSING_WEAPON_KEYS_AND_PAGE_PROVENANCE",
+      "publicationClaims": [
+        {
+          "location": "/weaponTable/groups",
+          "printedPage": 63,
+          "observed": "Laser cannons (pilot), medium concussion missiles (pilot), Jammer (pilot)"
+        },
+        {
+          "location": "/narrative/earlyConfiguration",
+          "printedPage": 63,
+          "observed": "earliest A-wings armed only with lasers and jammers"
+        },
+        {
+          "location": "/narrative/laterConfiguration",
+          "printedPage": 63,
+          "observed": "missile launchers later added and standard by New Republic"
+        }
+      ],
+      "finding": "Jammer is a non-damaging system, not a third physical weapon barrel group. The historical rows have missing sourcePage and missing hardware/arc/battery keys. Treat early unarmed-missile and later equipped states separately.",
+      "earlierConflictFieldGroups": [],
+      "cp17PriorityTrack": "P1_LEGACY_MISSING_FIELDS",
+      "rowPageProvenance": {
+        "historicalMissingRowSourcePageKeys": [
+          0,
+          1,
+          2
+        ],
+        "sourcePrintedStatblockStartPageIsNotRowPageProvenance": true
+      },
+      "cp19ReviewComplete": true,
+      "canonicalConflictResolved": false,
+      "sourceFidelityCertified": false,
+      "newPhysicalMountCertificateGranted": false,
+      "stockRuntimeAttackAuthorityGranted": false,
+      "pending": "INDIVIDUAL_SOURCE_FIDELITY_AND_SCHEMA_REVIEW_OR_OWNER_ERRATA_ADJUDICATION"
+    },
+    {
+      "trancheIndex": 15,
+      "cp17QueuePosition": 15,
+      "sourceEntryKey": "sotg-baudo-class-star-yacht",
+      "cp16LedgerIndex": 9,
+      "printedName": "Baudo-class Star Yacht",
+      "statblockStartPage": 65,
+      "visualPdfPages": [
+        65
+      ],
+      "visualVerification": "RENDERED_ORIGINAL_SOURCE_PDF_PAGE_CLOSE_READ",
+      "disposition": "NARRATIVE_SINGULAR_VS_TABLE_PLURAL_AND_LEGACY_KEYS",
+      "publicationClaims": [
+        {
+          "location": "/narrative/laserCount",
+          "printedPage": 65,
+          "observed": "only a single laser cannon"
+        },
+        {
+          "location": "/weaponTable/laserFamily",
+          "printedPage": 65,
+          "observed": "Light laser cannons (gunner)"
+        }
+      ],
+      "finding": "The prose explicitly describes a single laser cannon while the Ranged/table name is plural. Preserve the source's count claim and label independently; do not infer a battery, multiple barrels, or a mount arc. Original sourcePage/batteryCount/firingArc row fields are historically incomplete.",
+      "earlierConflictFieldGroups": [],
+      "cp17PriorityTrack": "P1_LEGACY_MISSING_FIELDS",
+      "rowPageProvenance": {
+        "historicalMissingRowSourcePageKeys": [
+          0
+        ],
+        "sourcePrintedStatblockStartPageIsNotRowPageProvenance": true
+      },
+      "cp19ReviewComplete": true,
+      "canonicalConflictResolved": false,
+      "sourceFidelityCertified": false,
+      "newPhysicalMountCertificateGranted": false,
+      "stockRuntimeAttackAuthorityGranted": false,
+      "pending": "INDIVIDUAL_SOURCE_FIDELITY_AND_SCHEMA_REVIEW_OR_OWNER_ERRATA_ADJUDICATION"
+    }
+  ]
+}

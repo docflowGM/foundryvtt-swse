@@ -9,9 +9,9 @@ Every feat/weapon data file under `data/` and `packs/` is classified exactly onc
 | GENERATED_RUNTIME_INDEX | 1 |
 | GENERATED_COMPATIBILITY | 3 |
 | MIGRATION_ALIAS_ONLY | 2 |
-| HISTORICAL_AUDIT_EVIDENCE | 240 |
+| HISTORICAL_AUDIT_EVIDENCE | 457 |
 | DEAD_REMOVE | 0 |
-| OTHER_DOMAIN_DATA | 13 |
+| OTHER_DOMAIN_DATA | 18 |
 | REFERENCE_BEARING_DOMAIN_DATA | 14 |
 
 Dependency direction: audits (evidence) → canonical corpus → deterministic generators → Foundry packs, runtime registries, compatibility outputs. Nothing flows back.
@@ -32,6 +32,11 @@ Guardrail (enforced by `tools/verify-canonical-production.mjs`): neither class m
 | `data/canonical/equipment.json` | OTHER_DOMAIN_DATA | Canonical armor / equipment Item documents (tools/build-canonical-item-packs.mjs); not the feat or weapon corpus. |
 | `data/canonical/feats.json` | CANONICAL_SSOT | The one operational authority for its domain. |
 | `data/canonical/talents.json` | CANONICAL_SSOT | The one operational authority for its domain. |
+| `data/canonical/vehicles/construction/stock-frames.json` | OTHER_DOMAIN_DATA | Universal vehicle publication SSOT, its manifest, the retired ship ledger, and the certified starship construction data (stock frames, unused emplacement points); vehicle domain, not the personal weapon or feat corpus. |
+| `data/canonical/vehicles/construction/unused-emplacement-points.json` | OTHER_DOMAIN_DATA | Universal vehicle publication SSOT, its manifest, the retired ship ledger, and the certified starship construction data (stock frames, unused emplacement points); vehicle domain, not the personal weapon or feat corpus. |
+| `data/canonical/vehicles/ships.json` | OTHER_DOMAIN_DATA | Universal vehicle publication SSOT, its manifest, the retired ship ledger, and the certified starship construction data (stock frames, unused emplacement points); vehicle domain, not the personal weapon or feat corpus. |
+| `data/canonical/vehicles/vehicles.json` | OTHER_DOMAIN_DATA | Universal vehicle publication SSOT, its manifest, the retired ship ledger, and the certified starship construction data (stock frames, unused emplacement points); vehicle domain, not the personal weapon or feat corpus. |
+| `data/canonical/vehicles/vehicles.manifest.json` | OTHER_DOMAIN_DATA | Universal vehicle publication SSOT, its manifest, the retired ship ledger, and the certified starship construction data (stock frames, unused emplacement points); vehicle domain, not the personal weapon or feat corpus. |
 | `data/canonical/weapons.json` | CANONICAL_SSOT | The one operational authority for its domain. |
 | `data/combat/damage-profiles.vehicle-weapon.json` | OTHER_DOMAIN_DATA | Vehicle / upgrade / range / class-feature data; not the personal weapon or feat corpus. |
 | `data/combat/damage-profiles.weapon.json` | OTHER_DOMAIN_DATA | Vehicle / upgrade / range / class-feature data; not the personal weapon or feat corpus. |
@@ -127,4 +132,4 @@ Guardrail (enforced by `tools/verify-canonical-production.mjs`): neither class m
 | `packs/weapons-simple.db` | GENERATED_PRODUCTION | tools/build-weapon-production.mjs from data/canonical/weapons.json |
 | `packs/weapons.db` | GENERATED_PRODUCTION | tools/build-weapon-production.mjs from data/canonical/weapons.json |
 
-Audit evidence files under `data/audits/` (192) are all HISTORICAL_AUDIT_EVIDENCE; listed individually in the JSON.
+Audit evidence files under `data/audits/` (409) are all HISTORICAL_AUDIT_EVIDENCE; listed individually in the JSON.

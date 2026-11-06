@@ -11,6 +11,7 @@
  */
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { classifyVehicleActorSource, getVehicleRuntimeProjection } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
 
 function clone(value) {
   if (value === undefined || value === null) return value;
@@ -153,7 +154,18 @@ export class VehicleFactory {
    * Public actor-data builder for approval drafts and store purchases.
    */
   static buildVehicleActorData(buildSpec) {
-    if (buildSpec?.stockShip) return this._buildStockShipActorData(buildSpec);
+    if (buildSpec?.stockShip) {
+      // The old JSON ship frame must not impersonate a canonical Actor.
+      // P2 will replace this path with an authorized source + modification flow.
+      const assessment = classifyVehicleActorSource({
+        type: 'vehicle',
+        system: buildSpec.stockShip?.system ?? {},
+        flags: buildSpec.stockShip?.flags ?? {}
+      });
+      if (assessment.kind !== 'custom')
+        throw new Error('VEHICLE_FACTORY_CANONICAL_STOCK_FRAME_REBUILD_FORBIDDEN');
+      return this._buildStockShipActorData(buildSpec);
+    }
     return this._buildVehicleActorData(buildSpec);
   }
 
@@ -171,6 +183,11 @@ export class VehicleFactory {
     if (!vehicleActor || vehicleActor.type !== 'vehicle') {
       throw new Error('VehicleFactory: existing vehicle actor required for modification mutation plan');
     }
+    const sourceAssessment = classifyVehicleActorSource(vehicleActor, undefined, { mode: 'runtime' });
+    if (sourceAssessment.kind === 'invalid-canonical')
+      throw new Error('VEHICLE_FACTORY_UNTRUSTED_CANONICAL_ACTOR');
+    if (sourceAssessment.kind === 'canonical')
+      throw new Error('VEHICLE_FACTORY_CANONICAL_MODIFICATION_REQUIRES_CERTIFIED_P2_PATH');
 
     const stockShip = clone(buildSpec.stockShip || vehicleActor.system?.modificationData?.stockShip || vehicleActor.system?.stockShip || {});
     const modifications = buildModificationSummary(buildSpec.modifications || []);
@@ -377,8 +394,37 @@ export class VehicleFactory {
     const condition = buildSpec.condition || 'new';
 
     const source = template?.doc || template?.template || template;
-    const templateObj = source?.toObject ? source.toObject(false) : clone(source || {});
+    // Foundry V13 toObject(false) can expose prepared/derived values rather
+    // than the recorded source payload. Canonical authority is the raw Actor
+    // document; computed sheet fields must never replace publication facts.
+    const templateObj = source?.toObject ? source.toObject(true) : clone(source || {});
     const templateSystem = templateObj.system || template?.system || {};
+
+    // Universal source-backed Actors must pass through as complete certified
+    // source-shaped documents. NEVER synthesize hull=50, speed=12, SR=0,
+    // 10+armor defenses, weapon mounts, or a cost.new object for these records.
+    const sourceAssessment = classifyVehicleActorSource({ ...templateObj, type: 'vehicle' });
+    if (sourceAssessment.kind === 'invalid-canonical')
+      throw new Error('VEHICLE_FACTORY_UNTRUSTED_CANONICAL_TEMPLATE: ' + sourceAssessment.errors.join(','));
+    if (sourceAssessment.kind === 'canonical') {
+      if (Array.isArray(buildSpec.modifications) && buildSpec.modifications.length)
+        throw new Error('VEHICLE_FACTORY_CANONICAL_MODIFICATION_REQUIRES_CERTIFIED_P2_PATH');
+      const published = getVehicleRuntimeProjection({ ...templateObj, type: 'vehicle' });
+      if (published.source.sourceEntryKey !== templateSystem.vehicleSourceEntryKey)
+        throw new Error('VEHICLE_FACTORY_CANONICAL_IDENTITY_DRIFT');
+      const created = clone(templateObj);
+      created.type = 'vehicle';
+      created.name = buildSpec.name || (condition === 'used'
+        ? '(Used) ' + templateObj.name : templateObj.name);
+      created.system = clone(templateSystem);
+      created.flags = clone(templateObj.flags);
+      created.items = [];
+      delete created._id;
+      delete created.id;
+      // Store/Shipyard must use the published source identity, not a
+      // world Actor _id or a name lookup. The new Actor gets its own _id.
+      return created;
+    }
 
     // Preserve full stock ship/vehicle fidelity from the compendium/world actor:
     // embedded weapons, effects, token defaults, and vehicle-specific system

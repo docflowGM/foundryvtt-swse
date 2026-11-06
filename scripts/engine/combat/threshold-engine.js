@@ -325,6 +325,14 @@ export class ThresholdEngine {
       // Standard: worsen by 1 CT step
       let ctShift = 1;
 
+      // Ion (Core pp. 159-160, owner-verified): ion damage whose FULL (unhalved) amount reaches the threshold moves a droid,
+      // vehicle, electronic device or cybernetic creature two steps. The caller passes isIon only for a target the ion rules
+      // apply to; an Ion Shielding style cap is applied afterwards by the damage resolution, so the two do not stack.
+      if (isIon) {
+        ctShift = Math.max(ctShift, ION_THRESHOLD_CT_STEPS);
+        result.ionThreshold = true;
+      }
+
       // Double threshold penalty
       if (this.enabled && this._setting('doubleThresholdPenalty') && damage >= 2 * dt) {
         ctShift = 2;
@@ -353,8 +361,7 @@ export class ThresholdEngine {
       if (normalSteps > 0) result.addCTShift(normalSteps, false, 'threshold');
     }
 
-    // Ion-specific: DT check uses original (not halved) damage
-    // This is handled by the caller passing the correct damage value.
+    // Ion: the DT check uses the original (not halved) damage -- the caller passes that value (thresholdDamageOverride).
 
     // Eliminate instant death
     if (this.enabled && this._setting('eliminateInstantDeath')) {
@@ -716,6 +723,9 @@ export class ThresholdEngine {
 /* -------------------------------------------------------------------------- */
 /*  THRESHOLD RESULT DATA CLASS                                               */
 /* -------------------------------------------------------------------------- */
+
+/** Condition-track steps an ion hit that reaches the damage threshold costs a susceptible target (Core pp. 159-160). */
+export const ION_THRESHOLD_CT_STEPS = 2;
 
 export class ThresholdResult {
   /**

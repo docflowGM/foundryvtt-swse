@@ -1,0 +1,398 @@
+{
+  "schema": "swse.vehicle.universal.phase1h.galaxy-of-intrigue.v1",
+  "status": "PHASE1_H_GALAXY_OF_INTRIGUE_ENUMERATION_AND_PROVENANCE_COMPLETE",
+  "sourceBook": "Galaxy of Intrigue",
+  "sourcePdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+  "sourceFiles": {
+    "pdf": "Galaxy of Intrigue.pdf",
+    "text": "Galaxy of Intrigue_djvu.txt"
+  },
+  "counts": {
+    "inheritedSpacecraftPublicationClaims": 6,
+    "newOtherVehiclePublicationClaims": 2,
+    "allBookVehiclePublicationClaims": 8,
+    "inheritedClassifications": {
+      "starfighter": 3,
+      "space-transport": 2,
+      "capital-ship": 1
+    },
+    "newVehicleClassifications": {
+      "landspeeder": 2
+    },
+    "cumulativeKnownUniversalPublicationClaims": 383
+  },
+  "process": {
+    "discoveryMethod": "Independently searched selectable text in all 226 physical source-PDF pages for vehicle type lines, Crew/Carried Craft/Hyperdrive/Fighting Space statblock markers, and ground/air/ship keywords. Compared full DjVu text. Rendered 12 labeled whole-book page contact sheets, visually inspected the two new ground vehicle statblocks at high resolution on printed p71/PDF physical p72, and preserved six earlier PDF close-reviewed ship statblocks (including adventure p186).",
+    "bookSectionsSwept": [
+      "Introduction and Chapter I: Heroes of Intrigue",
+      "Chapter II: Skill Challenges",
+      "Chapter III: Equipment (vehicles pp68–71 and droids pp72–76)",
+      "Chapter IV: Intrigue Campaigns",
+      "Chapter V: Organizations",
+      "Chapter VI: Nyriaan, World of Intrigue",
+      "Chapter VII: Mini-Adventures (including the modified Lambda p186)",
+      "Chapter VIII: Deluge adventure and encounter appendices through p222",
+      "Index"
+    ],
+    "primaryPdfPagesConfirmed": [
+      71
+    ],
+    "inheritedSourcePagesConfirmed": [
+      68,
+      69,
+      70,
+      71,
+      186
+    ],
+    "physicalPdfPageRule": "One-based PDF physical ordinal = printed page +1 for indexed statblocks.",
+    "exhaustivenessCaveat": "PDF text is accessible and all 226 pages were systematically scanned for typed vehicle blocks; contact sheets and focused original-source render corroborate. An unusually presented statblock obscured from text and thumbnails could require future amendment.",
+    "mechanicalTranscriptionNotAuthorizedThisPhase": true
+  },
+  "identityDecisions": [
+    {
+      "subject": "Corona Limited Luxury Groundspeeder",
+      "printedPage": 71,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed CL 4 Huge ground vehicle (speeder), complete independent vehicle statistics."
+    },
+    {
+      "subject": "SoroSuub JG-8 Luxury Landspeeder",
+      "printedPage": 71,
+      "status": "INCLUDE_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Printed CL 2 Large ground vehicle (speeder); movement 'fly' does not override printed ground classification."
+    },
+    {
+      "subject": "Corona Limited 500 colors",
+      "printedPage": 71,
+      "status": "EXCLUDE_NONSTATBLOCK_COSMETIC_VARIANTS",
+      "reason": "Narrative marketing colors are not independently statted vehicle variants."
+    },
+    {
+      "subject": "Modified Sienar Fleet Systems Lambda-class Shuttle",
+      "printedPage": 186,
+      "status": "PRESERVE_INHERITED_ADVENTURE_SHIP",
+      "reason": "Full printed adventure ship statblock is already one of the six inherited ship claims; do not count as a new seventh spacecraft."
+    },
+    {
+      "subject": "SoroSuub X-34 Landspeeders in Taris chase",
+      "printedPage": 168,
+      "status": "EXCLUDE_EXTERNAL_STATS_REFERENCE",
+      "reason": "Mini-adventure explicitly refers to the Core Rulebook's printed X-34 statistics instead of publishing a new independent vehicle block."
+    },
+    {
+      "subject": "Nyriaan and Locus speeder chases",
+      "printedPages": [
+        195,
+        196,
+        197,
+        206
+      ],
+      "status": "EXCLUDE_NARRATIVE_ONLY",
+      "reason": "Taxis, unmarked speeders, pursuit vehicles and map markers have no new complete vehicle statistics in this source."
+    },
+    {
+      "subject": "Droid NPCs and hovering/flying droids",
+      "printedPages": [
+        72,
+        73,
+        74,
+        75,
+        208
+      ],
+      "status": "EXCLUDE_NONVEHICLE_DROID_ACTORS",
+      "reason": "Droid statblock type lines specify droid class and degree, not a vehicle; their flying or repulsorlift locomotion does not turn them into vehicle Actors."
+    },
+    {
+      "subject": "Capital ships, transports, and freighters described in skill challenges/adventures",
+      "status": "EXCLUDE_REFERENCE_ONLY",
+      "reason": "Ship mentions and operational/environmental rules are not publication-specific vehicle statblocks unless an independent vehicle-type statblock is printed."
+    }
+  ],
+  "existingSpacecraft": [
+    {
+      "sourceEntryKey": "goi-modified-incom-a-24-sleuth",
+      "printedName": "Modified Incom A-24 Sleuth",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Galaxy of Intrigue",
+      "printedStatblockStartPage": 69,
+      "pdfPhysicalPage": 70,
+      "provenance": {
+        "sourcePdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+        "sourceFile": "Galaxy of Intrigue.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-galaxy-of-intrigue-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Galaxy of Intrigue",
+          "sourcePDF": "Galaxy of Intrigue.pdf",
+          "printedPages": [
+            69
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed book page; physical one-based PDF page equals printed +1",
+          "phase1PrintedPage": 69,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+          "navigationOnlyTxtFile": "Galaxy of Intrigue_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "goi-modified-sienar-fleet-systems-lambda-class-shuttle",
+      "printedName": "Modified Sienar Fleet Systems Lambda-class Shuttle",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Galaxy of Intrigue",
+      "printedStatblockStartPage": 186,
+      "pdfPhysicalPage": 187,
+      "provenance": {
+        "sourcePdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+        "sourceFile": "Galaxy of Intrigue.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-galaxy-of-intrigue-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Galaxy of Intrigue",
+          "sourcePDF": "Galaxy of Intrigue.pdf",
+          "printedPages": [
+            186
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed book page; physical one-based PDF page equals printed +1",
+          "phase1PrintedPage": 186,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+          "navigationOnlyTxtFile": "Galaxy of Intrigue_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "goi-ptv-2100-incarcerator",
+      "printedName": "PTV-2100 Incarcerator",
+      "printedTypeLine": "Colossal (frigate) space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ]
+      },
+      "sourceBook": "Galaxy of Intrigue",
+      "printedStatblockStartPage": 68,
+      "pdfPhysicalPage": 69,
+      "provenance": {
+        "sourcePdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+        "sourceFile": "Galaxy of Intrigue.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-galaxy-of-intrigue-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Galaxy of Intrigue",
+          "sourcePDF": "Galaxy of Intrigue.pdf",
+          "printedPages": [
+            68
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed book page; physical one-based PDF page equals printed +1",
+          "phase1PrintedPage": 68,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+          "navigationOnlyTxtFile": "Galaxy of Intrigue_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "goi-republic-engineering-corporation-ferret-class-reconnaissance-vessel",
+      "printedName": "Republic Engineering Corporation Ferret-class Reconnaissance Vessel",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Galaxy of Intrigue",
+      "printedStatblockStartPage": 69,
+      "pdfPhysicalPage": 70,
+      "provenance": {
+        "sourcePdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+        "sourceFile": "Galaxy of Intrigue.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-galaxy-of-intrigue-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Galaxy of Intrigue",
+          "sourcePDF": "Galaxy of Intrigue.pdf",
+          "printedPages": [
+            69
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed book page; physical one-based PDF page equals printed +1",
+          "phase1PrintedPage": 69,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+          "navigationOnlyTxtFile": "Galaxy of Intrigue_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "goi-republic-engineering-corporation-prowler-class-reconnaissance-vessel",
+      "printedName": "Republic Engineering Corporation Prowler-class Reconnaissance Vessel",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Galaxy of Intrigue",
+      "printedStatblockStartPage": 70,
+      "pdfPhysicalPage": 71,
+      "provenance": {
+        "sourcePdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+        "sourceFile": "Galaxy of Intrigue.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-galaxy-of-intrigue-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Galaxy of Intrigue",
+          "sourcePDF": "Galaxy of Intrigue.pdf",
+          "printedPages": [
+            70
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed book page; physical one-based PDF page equals printed +1",
+          "phase1PrintedPage": 70,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+          "navigationOnlyTxtFile": "Galaxy of Intrigue_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "goi-sabaoth-frigate-spy-ship",
+      "printedName": "Sabaoth Frigate Spy Ship",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ]
+      },
+      "sourceBook": "Galaxy of Intrigue",
+      "printedStatblockStartPage": 71,
+      "pdfPhysicalPage": 72,
+      "provenance": {
+        "sourcePdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+        "sourceFile": "Galaxy of Intrigue.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-galaxy-of-intrigue-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Galaxy of Intrigue",
+          "sourcePDF": "Galaxy of Intrigue.pdf",
+          "printedPages": [
+            71
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed book page; physical one-based PDF page equals printed +1",
+          "phase1PrintedPage": 71,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+          "navigationOnlyTxtFile": "Galaxy of Intrigue_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    }
+  ],
+  "newVehicleEntries": [
+    {
+      "sourceEntryKey": "goi-corona-limited-luxury-groundspeeder",
+      "printedName": "Corona Limited Luxury Groundspeeder",
+      "printedTypeLine": "Huge ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "landspeeder",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Huge ground vehicle (speeder)",
+        "secondaryCategories": [
+          "luxury-passenger-speeder"
+        ]
+      },
+      "sourceBook": "Galaxy of Intrigue",
+      "printedStatblockStartPage": 71,
+      "pdfPhysicalPage": 72,
+      "sourceSection": "Chapter III: Equipment > Vehicles > Ground Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+        "sourceFile": "Galaxy of Intrigue.pdf",
+        "textSearchLayer": "Galaxy of Intrigue_djvu.txt (navigation and discovery; original PDF is authority)",
+        "pdfReviewMethod": "FULL_BOOK_TEXT_SEARCH_PLUS_226_PAGE_RENDERED_CONTACT_SHEET_SWEEP_AND_PRINTED_P71_HIGH_RES_SOURCE_VERIFICATION",
+        "physicalPdfPage": 72,
+        "printedHeading": "Corona Limited Luxury Groundspeeder",
+        "printedChallengeLevel": 4,
+        "sourceNote": "One printed stock-model groundspeeder statblock, with 500 cosmetic color variants in accompanying prose; 500 colors are not independent identities."
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "goi-sorosuub-jg-8-luxury-landspeeder",
+      "printedName": "SoroSuub JG-8 Luxury Landspeeder",
+      "printedTypeLine": "Large ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "landspeeder",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Large ground vehicle (speeder)",
+        "secondaryCategories": [
+          "luxury-passenger-speeder"
+        ]
+      },
+      "sourceBook": "Galaxy of Intrigue",
+      "printedStatblockStartPage": 71,
+      "pdfPhysicalPage": 72,
+      "sourceSection": "Chapter III: Equipment > Vehicles > Ground Vehicles",
+      "provenance": {
+        "sourcePdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+        "sourceFile": "Galaxy of Intrigue.pdf",
+        "textSearchLayer": "Galaxy of Intrigue_djvu.txt (navigation and discovery; original PDF is authority)",
+        "pdfReviewMethod": "FULL_BOOK_TEXT_SEARCH_PLUS_226_PAGE_RENDERED_CONTACT_SHEET_SWEEP_AND_PRINTED_P71_HIGH_RES_SOURCE_VERIFICATION",
+        "physicalPdfPage": 72,
+        "printedHeading": "SoroSuub JG-8 Luxury Landspeeder",
+        "printedChallengeLevel": 2,
+        "sourceNote": "Printed ground vehicle (speeder) despite fly speed in its movement entry; one independent statblock."
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    }
+  ],
+  "mechanicsTransferredThisPhase": 0,
+  "productionPackFilesChanged": false,
+  "next": "Phase 1-I Jedi Academy Training Manual"
+}

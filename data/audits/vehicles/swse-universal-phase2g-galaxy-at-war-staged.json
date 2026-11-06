@@ -1,0 +1,2166 @@
+{
+  "schema": "swse.vehicle.universal.phase2g.galaxy-at-war.staged.v1",
+  "status": "PHASE2G_ALL_11_SOURCE_HYDRATED_MOUNT_CERTIFICATION_PENDING",
+  "sourceBook": "Galaxy at War",
+  "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+  "phase1Ledger": "data/audits/vehicles/swse-universal-phase1g-galaxy-at-war.json",
+  "historicalShipAuthority": "data/canonical/vehicles/ships.json",
+  "sourceFixtures": "data/audits/vehicles/swse-universal-phase2g-galaxy-at-war-fixtures.json",
+  "summary": {
+    "publicationRecords": 11,
+    "historicalShips": 5,
+    "newVehicles": 6,
+    "sourceAttackGroups": 17,
+    "newSourceAttackGroups": 4,
+    "strictPhysicalMountCertificationsNew": 0
+  },
+  "records": [
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "gaw-corona-class-armed-transport",
+        "name": "Corona-class Armed Transport"
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "page": 67,
+        "printedTitle": "Corona-class Armed Transport",
+        "printedTypeLine": "Colossal (frigate) capital ship",
+        "entryNotes": "Source PDF physical p68; SHA-256 9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "size": "colossal",
+        "printedSize": "Colossal (frigate)",
+        "colossalSubtype": "frigate"
+      },
+      "challenge": {
+        "cl": 17
+      },
+      "geometry": {
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "total (crew)"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 3
+          }
+        ],
+        "raw": "Speed fly 3 squares (starship scale)"
+      },
+      "hyperspace": {
+        "raw": "Hyperdrive x1, navicomputer",
+        "capability": "equipped",
+        "primaryMultiplier": 1,
+        "navComputer": "installed"
+      },
+      "defenses": {
+        "reflex": 15,
+        "reflexFlatFooted": 11,
+        "fortitude": 35,
+        "armorBonus": 11,
+        "damageReduction": 15,
+        "shieldRating": 60
+      },
+      "durability": {
+        "hitPoints": 750,
+        "damageThreshold": 135
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 0,
+            "raw": "Initiative +0"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 0,
+            "raw": "Pilot +0"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
+          }
+        ],
+        "initiativePrinted": 0,
+        "perceptionPrinted": 6,
+        "str": 60,
+        "dex": 18,
+        "int": 14,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 47,
+        "rangedAttackLine": "2 medium turbolaser batteries +10° (see below) and 4 heavy ion cannon batteries +10° (see below) and 4 point-defense medium laser cannon batteries +6 (see below) and tractor beam battery +10* (see below)"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "gaw-corona-class-armed-transport-source-attack-1",
+            "label": "medium turbolaser battery",
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "mountKeys": [],
+            "attackBonusPrinted": 10,
+            "specialNotes": "Printed operator 4 gunners; damage 5d10x5; printed p67; additional printed evidence {\"printedMultiplicity\":2,\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"physicalMountCount\":\"NOT_CERTIFIED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\"}. Physical mounts, arcs and executable weapon bindings NOT certified."
+          },
+          {
+            "groupKey": "gaw-corona-class-armed-transport-source-attack-2",
+            "label": "heavy ion cannon battery",
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "mountKeys": [],
+            "attackBonusPrinted": 10,
+            "specialNotes": "Printed operator 4 gunners; damage 4d10x5 ion; printed p67; additional printed evidence {\"printedMultiplicity\":4,\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"physicalMountCount\":\"NOT_CERTIFIED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\"}. Physical mounts, arcs and executable weapon bindings NOT certified."
+          },
+          {
+            "groupKey": "gaw-corona-class-armed-transport-source-attack-3",
+            "label": "point-defense medium laser cannon battery",
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "mountKeys": [],
+            "attackBonusPrinted": 6,
+            "specialNotes": "Printed operator 2 gunners; damage 4d10x2; printed p67; additional printed evidence {\"printedMultiplicity\":4,\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"physicalMountCount\":\"NOT_CERTIFIED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\"}. Physical mounts, arcs and executable weapon bindings NOT certified."
+          },
+          {
+            "groupKey": "gaw-corona-class-armed-transport-source-attack-4",
+            "label": "tractor beam battery",
+            "groupKind": "weapon-battery",
+            "batteryMembershipStatus": "printed",
+            "mountKeys": [],
+            "attackBonusPrinted": 10,
+            "specialNotes": "Printed operator 4 gunners; damage grapple +47; printed p67; additional printed evidence {\"printedMultiplicity\":1,\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"physicalMountCount\":\"NOT_CERTIFIED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\"}. Physical mounts, arcs and executable weapon bindings NOT certified."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "64",
+        "crewCount": 64
+      },
+      "capacity": {
+        "passengerCount": 200,
+        "cargo": {
+          "value": 450,
+          "unit": "tons",
+          "raw": "450 tons"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "year",
+          "raw": "1 year"
+        },
+        "carriedCraft": [
+          {
+            "name": "attack shuttles",
+            "count": 6,
+            "raw": "6 attack shuttles"
+          },
+          {
+            "name": "speeder tanks",
+            "count": 12,
+            "raw": "12 speeder tanks"
+          }
+        ]
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Restricted",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 3700000,
+          "raw": "Cost 3.7 million (2.0 million used)"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 2000000,
+          "raw": "Cost 3.7 million (2.0 million used)"
+        }
+      },
+      "text": {
+        "sourceNotes": "Historical previously PDF-reviewed ship source with direct supplemental review for exceptions, source page 67. No physical mount identity certification."
+      },
+      "exceptions": {
+        "unmappedFacts": [
+          "Reviewed source nuance: OCR displays '3,7 million', but printed scan reads '3.7 million' (3,700,000 credits); provenance correction is explicit.",
+          "Reviewed source nuance: -20 to attacks against targets smaller than Colossal size."
+        ],
+        "specialRules": [
+          {
+            "key": "corona-small-target-penalty",
+            "label": "Capital battery target-size penalty",
+            "category": "source-specific",
+            "summary": "Published -20 attack penalty against targets smaller than Colossal; applies per source footnote.",
+            "reference": "Galaxy at War p67",
+            "implementationStatus": "requires-consumer",
+            "typedPredicateStatus": "pending"
+          }
+        ],
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "gaw-imperial-landing-craft",
+        "name": "Imperial Landing Craft"
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "page": 64,
+        "printedTitle": "Imperial Landing Craft",
+        "printedTypeLine": "Colossal space transport",
+        "entryNotes": "Source PDF physical p65; SHA-256 9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "size": "colossal",
+        "printedSize": "Colossal"
+      },
+      "challenge": {
+        "cl": 13
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 12,
+        "characterScaleLengthSquares": 12,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "total (crew)"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 800
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 4
+          }
+        ],
+        "maxVelocityKmh": 800,
+        "raw": "Speed fly 12 squares (max. velocity 800 km/h), fly 4 squares (starship scale)"
+      },
+      "hyperspace": {
+        "raw": "Hyperdrive x1, navicomputer",
+        "capability": "equipped",
+        "primaryMultiplier": 1,
+        "navComputer": "installed"
+      },
+      "defenses": {
+        "reflex": 14,
+        "reflexFlatFooted": 12,
+        "fortitude": 27,
+        "armorBonus": 12,
+        "damageReduction": 15,
+        "shieldRating": 40
+      },
+      "durability": {
+        "hitPoints": 140,
+        "damageThreshold": 77
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 0,
+            "raw": "Initiative +0"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 8,
+            "raw": "Mechanics +8"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 8,
+            "raw": "Perception +8"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 0,
+            "raw": "Pilot +0"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 8,
+            "raw": "Use Computer +8"
+          }
+        ],
+        "initiativePrinted": 0,
+        "perceptionPrinted": 8,
+        "str": 44,
+        "dex": 14,
+        "int": 16,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 5,
+        "grappleBonusPrinted": 42,
+        "rangedAttackLine": "double medium laser cannons +10 (see below) and 4 antipersonnel heavy blaster cannons +8 (see below)",
+        "attackOptions": [
+          "autofire (double medium laser cannons, antipersonnel heavy"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "gaw-imperial-landing-craft-source-attack-1",
+            "label": "double medium laser cannons",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 10,
+            "specialNotes": "Printed operator pilot; damage 5d10x2; printed p64; additional printed evidence {\"printedMultiplicity\":1,\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"physicalMountCount\":\"NOT_CERTIFIED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\"}. Physical mounts, arcs and executable weapon bindings NOT certified."
+          },
+          {
+            "groupKey": "gaw-imperial-landing-craft-source-attack-2",
+            "label": "antipersonnel heavy blaster cannons",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 8,
+            "specialNotes": "Printed operator gunner; damage 5d10x2; printed p64; additional printed evidence {\"printedMultiplicity\":4,\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"physicalMountCount\":\"NOT_CERTIFIED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\"}. Physical mounts, arcs and executable weapon bindings NOT certified."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "8 (expert)",
+        "crewCount": 8,
+        "crewQuality": "expert"
+      },
+      "capacity": {
+        "passengerCount": 120,
+        "passengerGroups": [
+          {
+            "group": "printed complement",
+            "count": 120,
+            "raw": "120 troops"
+          }
+        ],
+        "cargo": {
+          "value": 130,
+          "unit": "tons",
+          "raw": "130 tons"
+        },
+        "consumables": {
+          "value": 6,
+          "unit": "months",
+          "raw": "6 months"
+        },
+        "carriedCraft": [
+          {
+            "name": "speeder bikes",
+            "count": 12,
+            "raw": "12 speeder bikes"
+          },
+          {
+            "name": "LAVr QH-7 Chariot command speeders",
+            "count": 2,
+            "raw": "2 LAVr QH-7 Chariot command speeders"
+          },
+          {
+            "name": "PX-4 mobile command base",
+            "count": 1,
+            "raw": "1 PX-4 mobile command base"
+          }
+        ]
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Military",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 290000,
+          "raw": "290,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "Historical previously PDF-reviewed ship source with direct supplemental review for exceptions, source page 64. No physical mount identity certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "gaw-koensayr-ilh-kk-citadel-class-cruiser",
+        "name": "Koensayr ILH-KK Citadel-class Cruiser"
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "page": 192,
+        "printedTitle": "Koensayr ILH-KK Citadel-class Cruiser",
+        "printedTypeLine": "Colossal space transport",
+        "entryNotes": "Source PDF physical p193; SHA-256 9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "size": "colossal",
+        "printedSize": "Colossal"
+      },
+      "challenge": {
+        "cl": 7
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 12,
+        "characterScaleLengthSquares": 12,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "total"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 830
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 3
+          }
+        ],
+        "maxVelocityKmh": 830
+      },
+      "hyperspace": {
+        "capability": "equipped",
+        "primaryMultiplier": 2,
+        "navComputer": "installed",
+        "raw": "x2, navicomputer"
+      },
+      "defenses": {
+        "reflex": 15,
+        "reflexFlatFooted": 14,
+        "fortitude": 26,
+        "armorBonus": 14,
+        "damageReduction": 15,
+        "shieldRating": 30
+      },
+      "durability": {
+        "hitPoints": 120,
+        "damageThreshold": 76
+      },
+      "abilities": {
+        "str": 42,
+        "dex": 12,
+        "con": null,
+        "int": 12,
+        "initiativePrinted": -4,
+        "perceptionPrinted": 5,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -4,
+            "raw": "Initiative -4"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 5,
+            "raw": "Mechanics 5"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 5,
+            "raw": "Perception 5"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -4,
+            "raw": "Pilot -4"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 5,
+            "raw": "Use Computer 5"
+          }
+        ]
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 36,
+        "rangedAttackLine": "laser cannons +1 AND 2 ion cannons +1 AND medium concussion missiles +3 OR laser cannons +1 AND 2 ion cannons +1 AND tractor beam +3",
+        "attackOptions": [
+          "autofire (laser cannons)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "gaw-koensayr-ilh-kk-citadel-class-cruiser-source-attack-1",
+            "label": "laser cannons",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 1,
+            "specialNotes": "Printed operator gunner; damage 5d10x2; printed p192; additional printed evidence {\"printedMultiplicity\":1,\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"physicalMountCount\":\"NOT_CERTIFIED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\"}. Physical mounts, arcs and executable weapon bindings NOT certified."
+          },
+          {
+            "groupKey": "gaw-koensayr-ilh-kk-citadel-class-cruiser-source-attack-2",
+            "label": "ion cannons",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 1,
+            "specialNotes": "Printed operator gunner; damage 5d10x2 ion; printed p192; additional printed evidence {\"printedMultiplicity\":2,\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"physicalMountCount\":\"NOT_CERTIFIED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\"}. Physical mounts, arcs and executable weapon bindings NOT certified."
+          },
+          {
+            "groupKey": "gaw-koensayr-ilh-kk-citadel-class-cruiser-source-attack-3",
+            "label": "medium concussion missiles",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 3,
+            "specialNotes": "Printed operator pilot; damage 8d10x2, 4-square splash; printed p192; additional printed evidence {\"printedMultiplicity\":1,\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"physicalMountCount\":\"NOT_CERTIFIED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\"}. Physical mounts, arcs and executable weapon bindings NOT certified."
+          },
+          {
+            "groupKey": "gaw-koensayr-ilh-kk-citadel-class-cruiser-source-attack-4",
+            "label": "tractor beam",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 1,
+            "specialNotes": "Printed operator pilot; damage grapple +36; printed p192; additional printed evidence {\"printedMultiplicity\":1,\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"physicalMountCount\":\"NOT_CERTIFIED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\"}. Physical mounts, arcs and executable weapon bindings NOT certified."
+          }
+        ],
+        "carriedPayloads": [
+          {
+            "value": 12,
+            "unit": "medium concussion missiles",
+            "raw": "12 medium concussion missiles"
+          }
+        ]
+      },
+      "crew": {
+        "crewCount": 3,
+        "crewQuality": "normal",
+        "raw": "3 (normal)"
+      },
+      "capacity": {
+        "passengerCount": 14,
+        "cargo": {
+          "value": 50,
+          "unit": "tons",
+          "raw": "50 tons"
+        },
+        "consumables": {
+          "value": 6,
+          "unit": "months",
+          "raw": "6 months"
+        },
+        "carriedCraft": [
+          {
+            "name": "starfighters",
+            "count": 2,
+            "raw": "2 starfighters (currently none)"
+          }
+        ],
+        "storageNotes": "Currently none aboard; source capacity 2 starfighters."
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 205000
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 120000
+        }
+      },
+      "text": {
+        "sourceNotes": "Historical previously PDF-reviewed ship source with direct supplemental review for exceptions, source page 192. No physical mount identity certification."
+      },
+      "exceptions": {
+        "ambiguities": [
+          "Ranged summary tractor beam +3, detailed tractor beam Atk +1; both preserved.",
+          "Source footnote calls this baseline Citadel-class from Starships of the Galaxy; this exact printed entry remains its own book claim."
+        ],
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "gaw-penumbra-class-attack-shuttle",
+        "name": "Penumbra-class Attack Shuttle"
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "page": 65,
+        "printedTitle": "Penumbra-class Attack Shuttle",
+        "printedTypeLine": "Colossal space transport",
+        "entryNotes": "Source PDF physical p66; SHA-256 9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "size": "colossal",
+        "printedSize": "Colossal"
+      },
+      "challenge": {
+        "cl": 9
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 12,
+        "characterScaleLengthSquares": 12,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "total (crew)"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 16,
+            "maxVelocityKmh": 1175
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 4
+          }
+        ],
+        "maxVelocityKmh": 1175,
+        "raw": "Speed fly 16 squares (max. velocity 1,175 km/h), fly 4 squares (starship scale)"
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 17,
+        "reflexFlatFooted": 12,
+        "fortitude": 25,
+        "armorBonus": 12,
+        "damageReduction": 15,
+        "shieldRating": 20
+      },
+      "durability": {
+        "hitPoints": 110,
+        "damageThreshold": 75
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 1,
+            "raw": "Initiative +1"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 1,
+            "raw": "Pilot +1"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
+          }
+        ],
+        "initiativePrinted": 1,
+        "perceptionPrinted": 6,
+        "str": 40,
+        "dex": 20,
+        "int": 14,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 37,
+        "rangedAttackLine": "medium laser cannons +6 (see below) and medium concussion missiles +4 (see below)",
+        "attackOptions": [
+          "autofire (medium laser cannons), fire-link (medium laser"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "gaw-penumbra-class-attack-shuttle-source-attack-1",
+            "label": "medium laser cannons",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 6,
+            "specialNotes": "Printed operator pilot; damage 5d10x2; printed p65; additional printed evidence {\"printedMultiplicity\":1,\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"physicalMountCount\":\"NOT_CERTIFIED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\"}. Physical mounts, arcs and executable weapon bindings NOT certified."
+          },
+          {
+            "groupKey": "gaw-penumbra-class-attack-shuttle-source-attack-2",
+            "label": "medium concussion missiles",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 4,
+            "specialNotes": "Printed operator copilot; damage 10d10x2; printed p65; additional printed evidence {\"printedMultiplicity\":1,\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"physicalMountCount\":\"NOT_CERTIFIED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\"}. Physical mounts, arcs and executable weapon bindings NOT certified."
+          }
+        ],
+        "carriedPayloads": [
+          {
+            "value": 12,
+            "unit": "concussion missiles",
+            "raw": "12 concussion missiles"
+          }
+        ]
+      },
+      "crew": {
+        "raw": "3",
+        "crewCount": 3
+      },
+      "capacity": {
+        "passengerCount": 10,
+        "cargo": {
+          "value": 20,
+          "unit": "tons",
+          "raw": "20 tons"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "month",
+          "raw": "1 month"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Restricted",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 250000,
+          "raw": "250,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 135000,
+          "raw": "135,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "Historical previously PDF-reviewed ship source with direct supplemental review for exceptions, source page 65. No physical mount identity certification."
+      },
+      "exceptions": {
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/hyperspace/capability": "not-stated",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "gaw-yu-410-light-freighter",
+        "name": "YU-410 Light Freighter"
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "page": 65,
+        "printedTitle": "YU-410 Light Freighter",
+        "printedTypeLine": "Colossal space transport",
+        "entryNotes": "Source PDF physical p66; SHA-256 9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "size": "colossal",
+        "printedSize": "Colossal"
+      },
+      "challenge": {
+        "cl": 7
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 12,
+        "characterScaleLengthSquares": 12,
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1,
+        "coverCrew": "total"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 800
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 2
+          }
+        ],
+        "maxVelocityKmh": 800,
+        "raw": "Speed fly 12 squares (max. velocity 800 km/h), fly 2 squares (starship scale)"
+      },
+      "hyperspace": {
+        "raw": "Hyperdrive x2 (backup x12), navicomputer",
+        "capability": "equipped",
+        "primaryMultiplier": 2,
+        "backupMultiplier": 12,
+        "navComputer": "installed"
+      },
+      "defenses": {
+        "reflex": 12,
+        "reflexFlatFooted": 12,
+        "fortitude": 26,
+        "armorBonus": 12,
+        "damageReduction": 15
+      },
+      "durability": {
+        "hitPoints": 120,
+        "damageThreshold": 76
+      },
+      "abilities": {
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": -2,
+            "raw": "Initiative -2"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 5,
+            "raw": "Mechanics +5"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 5,
+            "raw": "Perception +5"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 5,
+            "raw": "Use Computer +5"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": -5,
+            "raw": "Pilot -5"
+          }
+        ],
+        "initiativePrinted": -5,
+        "perceptionPrinted": 5,
+        "str": 42,
+        "dex": 10,
+        "int": 14,
+        "con": null
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 36,
+        "rangedAttackLine": "double laser cannons +2 (see below)",
+        "attackOptions": [
+          "autofire (double laser cannons)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "gaw-yu-410-light-freighter-source-attack-1",
+            "label": "double laser cannons",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 2,
+            "specialNotes": "Printed operator gunner; damage 5d10x2; printed p65; additional printed evidence {\"printedMultiplicity\":1,\"firingArc\":\"SOURCE_SILENT_CONFIRMED\",\"physicalMountCount\":\"NOT_CERTIFIED\",\"batteryComposition\":\"SOURCE_SILENT_CONFIRMED\"}. Physical mounts, arcs and executable weapon bindings NOT certified."
+          }
+        ]
+      },
+      "crew": {
+        "raw": "4 (normal)",
+        "crewCount": 4,
+        "crewQuality": "normal"
+      },
+      "capacity": {
+        "passengerCount": 12,
+        "cargo": {
+          "value": 250,
+          "unit": "tons",
+          "raw": "250 tons"
+        },
+        "consumables": {
+          "value": 2,
+          "unit": "months",
+          "raw": "2 months"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 110000,
+          "raw": "110,000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 30000,
+          "raw": "30,000"
+        }
+      },
+      "text": {
+        "sourceNotes": "Historical previously PDF-reviewed ship source with direct supplemental review for exceptions, source page 65. No physical mount identity certification."
+      },
+      "exceptions": {
+        "ambiguities": [
+          "{\"category\":\"PRINTED_DURABILITY_LABEL_CONFLICT\",\"page\":65,\"mainRanged\":\"hp 120; DR 15; DR 20; Threshold 76\",\"detailedWeapon\":\"Shield description appears in narrative; statblock labels both values DR\",\"resolution\":\"UNRESOLVED_KEEP_PRINTED_TERMS\"}",
+          "Two DR values 15 and 20 appear in printed hp line, with no explicit SR label; do not set shield rating from the second DR value."
+        ],
+        "unmappedFacts": [
+          "Reviewed source nuance: Source explicitly reads 'hp 120; DR 15; DR 20; Threshold 76', despite adjacent narrative referencing shields.",
+          "Reviewed source nuance: Retain first DR 15 as printed and the second DR 20 as unresolved; do NOT silently map second to SR 20.",
+          "Reviewed source nuance: Source header Initiative -5 differs from printed Skills Initiative -2, preserve both.",
+          "YU-410 narrative grants +5 to Stealth when hiding items in cargo compartments; typed rule consumer pending."
+        ],
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed",
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "gaw-freeco-speeder",
+        "name": "Freeco Speeder"
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "page": 62,
+        "printedTitle": "Freeco Speeder",
+        "printedTypeLine": "Huge ground vehicle (speeder)",
+        "entryNotes": "Source PDF physical p63; SHA-256 9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "speeder-bike",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "size": "huge",
+        "printedSize": "Huge",
+        "secondaryCategories": [
+          "enclosed",
+          "cold-environment"
+        ]
+      },
+      "challenge": {
+        "cl": 6
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 3,
+        "characterScaleLengthSquares": 3,
+        "coverCrew": "total (crew)"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "repulsorlift",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 550
+          }
+        ],
+        "maxVelocityKmh": 550
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 17,
+        "reflexFlatFooted": 11,
+        "fortitude": 21,
+        "armorBonus": 3,
+        "damageReduction": 5
+      },
+      "durability": {
+        "hitPoints": 55,
+        "damageThreshold": 31
+      },
+      "abilities": {
+        "str": 33,
+        "dex": 22,
+        "con": null,
+        "int": 16,
+        "initiativePrinted": 10,
+        "perceptionPrinted": 6,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 10,
+            "raw": "Initiative +10"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 10,
+            "raw": "Pilot +10"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
+          }
+        ]
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 23,
+        "rangedAttackLine": "dual laser cannons +7",
+        "attackOptions": [
+          "autofire (dual laser cannons)"
+        ]
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "gaw-freeco-speeder-source-attack-1",
+            "label": "dual laser cannons",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 7,
+            "specialNotes": "Printed operator pilot; damage 5d10; printed p62; additional printed evidence {\"auto\":2}. Physical mounts, arcs and executable weapon bindings NOT certified. Source detailed attack +2 autofire."
+          }
+        ],
+        "notes": "Source printed group evidence only; no physical mounts/arcs certified."
+      },
+      "crew": {
+        "raw": "1 (skilled)",
+        "crewCount": 1,
+        "crewQuality": "skilled"
+      },
+      "capacity": {
+        "passengerCount": 0,
+        "cargo": {
+          "value": 30,
+          "unit": "kg",
+          "raw": "30 kg"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "week",
+          "raw": "1 week"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Military",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 14700,
+          "raw": "14700"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 7400,
+          "raw": "7400"
+        }
+      },
+      "text": {
+        "mechanicalNotes": "Printed narrative: low maximum operating altitude, poor rough terrain ability, protection against ranged attacks; no numerical altitude or terrain rule inferred.",
+        "sourceNotes": "Direct scan visually verified: printed p62, physical PDF p63; source hash 9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a."
+      },
+      "exceptions": {
+        "specialRules": [
+          {
+            "key": "gaw-freeco-speeder-special-1",
+            "label": "Published special condition",
+            "category": "source-specific",
+            "summary": "Printed narrative: low maximum operating altitude, poor rough terrain ability, protection against ranged attacks; no numerical altitude or terrain rule inferred.",
+            "reference": "Galaxy at War p62",
+            "implementationStatus": "requires-consumer",
+            "typedPredicateStatus": "pending"
+          }
+        ],
+        "unmappedFacts": [
+          "Pending typed-source handling: Printed narrative: low maximum operating altitude, poor rough terrain ability, protection against ranged attacks; no numerical altitude or terrain rule inferred."
+        ],
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/hyperspace/capability": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed",
+        "/capacity/carriedCraft": "explicitly-none"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "gaw-shelter-speeder",
+        "name": "Shelter Speeder"
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "page": 63,
+        "printedTitle": "Shelter Speeder",
+        "printedTypeLine": "Huge air vehicle",
+        "entryNotes": "Source PDF physical p64; SHA-256 9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "medical-airspeeder",
+        "mobilityDomains": [
+          "air"
+        ],
+        "size": "huge",
+        "printedSize": "Huge",
+        "secondaryCategories": [
+          "medical",
+          "sealed-environment"
+        ]
+      },
+      "challenge": {
+        "cl": 4
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 3,
+        "characterScaleLengthSquares": 3,
+        "coverCrew": "total (crew)",
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 8,
+            "maxVelocityKmh": 280
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 2
+          }
+        ],
+        "maxVelocityKmh": 280
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 12,
+        "reflexFlatFooted": 11,
+        "fortitude": 22,
+        "armorBonus": 3,
+        "damageReduction": 5
+      },
+      "durability": {
+        "hitPoints": 60,
+        "damageThreshold": 32
+      },
+      "abilities": {
+        "str": 34,
+        "dex": 12,
+        "con": null,
+        "int": 14,
+        "initiativePrinted": 4,
+        "perceptionPrinted": 5,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 4,
+            "raw": "Initiative +4"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 5,
+            "raw": "Mechanics +5"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 5,
+            "raw": "Perception +5"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 4,
+            "raw": "Pilot +4"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 4,
+            "raw": "Use Computer +4"
+          }
+        ]
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 22
+      },
+      "armament": {
+        "firingGroups": [],
+        "notes": "Unarmed printed stock vehicle; no weapon mount inferred."
+      },
+      "crew": {
+        "raw": "2 (normal)",
+        "crewCount": 2,
+        "crewQuality": "normal"
+      },
+      "capacity": {
+        "passengerCount": 4,
+        "cargo": {
+          "value": 10,
+          "unit": "tons",
+          "raw": "10 tons"
+        },
+        "consumables": {
+          "value": 1,
+          "unit": "week",
+          "raw": "1 week"
+        },
+        "carriedCraft": [
+          {
+            "name": "speeder bike",
+            "count": 1,
+            "raw": "1 speeder bike"
+          }
+        ],
+        "passengerGroups": [
+          {
+            "group": "plus 2 patients",
+            "count": 2,
+            "raw": "plus 2 patients"
+          }
+        ]
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 41000,
+          "raw": "41000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 26000,
+          "raw": "26000"
+        }
+      },
+      "text": {
+        "mechanicalNotes": "Occupants protected from airborne hazards (including inhaled poisons and disease) and exterior radiation; +5 equipment bonus to Fortitude against airborne disease/poison if not already affected.",
+        "sourceNotes": "Direct scan visually verified: printed p63, physical PDF p64; source hash 9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a."
+      },
+      "exceptions": {
+        "specialRules": [
+          {
+            "key": "gaw-shelter-speeder-special-1",
+            "label": "Published special condition",
+            "category": "source-specific",
+            "summary": "Occupants protected from airborne hazards (including inhaled poisons and disease) and exterior radiation; +5 equipment bonus to Fortitude against airborne disease/poison if not already affected.",
+            "reference": "Galaxy at War p63",
+            "implementationStatus": "requires-consumer",
+            "typedPredicateStatus": "pending"
+          }
+        ],
+        "unmappedFacts": [
+          "Pending typed-source handling: Occupants protected from airborne hazards (including inhaled poisons and disease) and exterior radiation; +5 equipment bonus to Fortitude against airborne disease/poison if not already affected."
+        ],
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/hyperspace/capability": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "explicitly-none",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "gaw-wlo-5-speeder-tank",
+        "name": "WLO-5 Speeder Tank"
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "page": 63,
+        "printedTitle": "WLO-5 Speeder Tank",
+        "printedTypeLine": "Gargantuan ground vehicle (speeder)",
+        "entryNotes": "Source PDF physical p64; SHA-256 9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "repulsorlift-tank",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "size": "gargantuan",
+        "printedSize": "Gargantuan",
+        "secondaryCategories": [
+          "tank"
+        ]
+      },
+      "challenge": {
+        "cl": 6
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 4,
+        "characterScaleLengthSquares": 4,
+        "coverCrew": "total (crew), +5 gunner"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "repulsorlift",
+            "scale": "character",
+            "squaresPerMove": 8,
+            "maxVelocityKmh": 110
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 3
+          }
+        ],
+        "maxVelocityKmh": 110
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 15,
+        "reflexFlatFooted": 13,
+        "fortitude": 28,
+        "armorBonus": 8,
+        "damageReduction": 15
+      },
+      "durability": {
+        "hitPoints": 150,
+        "damageThreshold": 48
+      },
+      "abilities": {
+        "str": 46,
+        "dex": 14,
+        "con": null,
+        "int": 14,
+        "initiativePrinted": 3,
+        "perceptionPrinted": 6,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 3,
+            "raw": "Initiative +3"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 6,
+            "raw": "Mechanics +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 6,
+            "raw": "Perception +6"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 3,
+            "raw": "Pilot +3"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 6,
+            "raw": "Use Computer +6"
+          }
+        ]
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 35,
+        "rangedAttackLine": "heavy laser cannon +6"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "gaw-wlo-5-speeder-tank-source-attack-1",
+            "label": "heavy laser cannon",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 6,
+            "specialNotes": "Printed operator 2 gunners; damage 6d10x2, 2-square splash; printed p63; additional printed evidence {}. Physical mounts, arcs and executable weapon bindings NOT certified."
+          }
+        ],
+        "notes": "Source printed group evidence only; no physical mounts/arcs certified."
+      },
+      "crew": {
+        "raw": "3 (skilled)",
+        "crewCount": 3,
+        "crewQuality": "skilled"
+      },
+      "capacity": {
+        "passengerCount": 4,
+        "cargo": {
+          "value": 150,
+          "unit": "kg",
+          "raw": "150 kg"
+        },
+        "consumables": {
+          "value": 2,
+          "unit": "weeks",
+          "raw": "2 weeks"
+        },
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Military",
+        "priceNew": {
+          "status": "ambiguous",
+          "raw": "115,00 credits"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 65000,
+          "raw": "65000"
+        }
+      },
+      "text": {
+        "mechanicalNotes": "Printed Cost '115,00 credits' lacks a digit versus 65,000 used: do not invent 115,000 or 11,500; unresolved price. Printed tank sensor targeting / exposed gunner: gunner gains +5 cover, vehicle gives +5 equipment bonus to Mechanics checks to repair or modify; pirate-added extra cannons are optional, not stock.",
+        "sourceNotes": "Direct scan visually verified: printed p63, physical PDF p64; source hash 9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a."
+      },
+      "exceptions": {
+        "transcriptionWarnings": [
+          "Original print Cost 115,00 credits; price cannot be read as valid unambiguous amount."
+        ],
+        "specialRules": [
+          {
+            "key": "gaw-wlo-5-speeder-tank-special-1",
+            "label": "Published special condition",
+            "category": "source-specific",
+            "summary": "Printed Cost '115,00 credits' lacks a digit versus 65,000 used: do not invent 115,000 or 11,500; unresolved price.",
+            "reference": "Galaxy at War p63",
+            "implementationStatus": "requires-consumer",
+            "typedPredicateStatus": "pending"
+          },
+          {
+            "key": "gaw-wlo-5-speeder-tank-special-2",
+            "label": "Published special condition",
+            "category": "source-specific",
+            "summary": "Printed tank sensor targeting / exposed gunner: gunner gains +5 cover, vehicle gives +5 equipment bonus to Mechanics checks to repair or modify; pirate-added extra cannons are optional, not stock.",
+            "reference": "Galaxy at War p63",
+            "implementationStatus": "requires-consumer",
+            "typedPredicateStatus": "pending"
+          }
+        ],
+        "unmappedFacts": [
+          "Pending typed-source handling: Printed Cost '115,00 credits' lacks a digit versus 65,000 used: do not invent 115,000 or 11,500; unresolved price.",
+          "Pending typed-source handling: Printed tank sensor targeting / exposed gunner: gunner gains +5 cover, vehicle gives +5 equipment bonus to Mechanics checks to repair or modify; pirate-added extra cannons are optional, not stock."
+        ],
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/hyperspace/capability": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed",
+        "/capacity/carriedCraft": "explicitly-none"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "gaw-drop-pod",
+        "name": "Drop Pod"
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "page": 64,
+        "printedTitle": "Drop Pod",
+        "printedTypeLine": "Gargantuan air vehicle",
+        "entryNotes": "Source PDF physical p65; SHA-256 9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "drop-pod",
+        "mobilityDomains": [
+          "air",
+          "orbital-descent"
+        ],
+        "size": "gargantuan",
+        "printedSize": "Gargantuan",
+        "secondaryCategories": [
+          "carried-vehicle-deployment",
+          "expendable"
+        ]
+      },
+      "challenge": {
+        "cl": 2
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 4,
+        "characterScaleLengthSquares": 4,
+        "coverCrew": "total",
+        "starshipScaleWidthSquares": 1,
+        "starshipScaleLengthSquares": 1
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "flying",
+            "scale": "character",
+            "squaresPerMove": 12,
+            "maxVelocityKmh": 600
+          },
+          {
+            "mode": "starship-flight",
+            "scale": "starship",
+            "squaresPerMove": 3
+          }
+        ],
+        "maxVelocityKmh": 600
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 11,
+        "reflexFlatFooted": 11,
+        "fortitude": 22,
+        "armorBonus": 6,
+        "damageReduction": 10
+      },
+      "durability": {
+        "hitPoints": 60,
+        "damageThreshold": 42
+      },
+      "abilities": {
+        "str": 34,
+        "dex": 10,
+        "con": null,
+        "int": 12,
+        "initiativePrinted": 0,
+        "perceptionPrinted": 5,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 0,
+            "raw": "Initiative +0"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 5,
+            "raw": "Mechanics +5"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 5,
+            "raw": "Perception +5"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 0,
+            "raw": "Pilot +0"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 5,
+            "raw": "Use Computer +5"
+          }
+        ]
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 27
+      },
+      "armament": {
+        "firingGroups": [],
+        "notes": "Unarmed printed stock vehicle; no weapon mount inferred."
+      },
+      "crew": {
+        "raw": "0 (droid brain)",
+        "crewCount": 0,
+        "autonomy": "droid-brain",
+        "crewDescriptor": "0 (droid brain)"
+      },
+      "capacity": {
+        "passengerCount": 0,
+        "cargo": {
+          "value": 2,
+          "unit": "tons",
+          "raw": "2 tons"
+        },
+        "consumables": null,
+        "carriedCraft": [
+          {
+            "name": "Gargantuan (or smaller) vehicle",
+            "count": 1,
+            "raw": "1 Gargantuan (or smaller) vehicle"
+          }
+        ]
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 17000,
+          "raw": "17000"
+        }
+      },
+      "text": {
+        "mechanicalNotes": "Disposable drop pod: self-destructive bolts release contained vehicle after landing; no people travel in pod as passengers; droid brain manages orbital descent. Character and starship scale flying speed are both printed. Neither is proof of installed hyperdrive.",
+        "sourceNotes": "Direct scan visually verified: printed p64, physical PDF p65; source hash 9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a."
+      },
+      "exceptions": {
+        "specialRules": [
+          {
+            "key": "gaw-drop-pod-special-1",
+            "label": "Published special condition",
+            "category": "source-specific",
+            "summary": "Disposable drop pod: self-destructive bolts release contained vehicle after landing; no people travel in pod as passengers; droid brain manages orbital descent.",
+            "reference": "Galaxy at War p64",
+            "implementationStatus": "requires-consumer",
+            "typedPredicateStatus": "pending"
+          },
+          {
+            "key": "gaw-drop-pod-special-2",
+            "label": "Published special condition",
+            "category": "source-specific",
+            "summary": "Character and starship scale flying speed are both printed. Neither is proof of installed hyperdrive.",
+            "reference": "Galaxy at War p64",
+            "implementationStatus": "requires-consumer",
+            "typedPredicateStatus": "pending"
+          }
+        ],
+        "unmappedFacts": [
+          "Pending typed-source handling: Disposable drop pod: self-destructive bolts release contained vehicle after landing; no people travel in pod as passengers; droid brain manages orbital descent.",
+          "Pending typed-source handling: Character and starship scale flying speed are both printed. Neither is proof of installed hyperdrive."
+        ],
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/hyperspace/capability": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "explicitly-none",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed",
+        "/capacity/consumables": "explicitly-none"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "gaw-t8-loading-vehicle",
+        "name": "T8 Loading Vehicle"
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "page": 179,
+        "printedTitle": "T8 Loading Vehicle",
+        "printedTypeLine": "Large ground vehicle (wheeled)",
+        "entryNotes": "Source PDF physical p180; SHA-256 9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "wheeled-utility-vehicle",
+        "mobilityDomains": [
+          "ground",
+          "ground-wheeled"
+        ],
+        "size": "large",
+        "printedSize": "Large",
+        "secondaryCategories": [
+          "cargo-handling",
+          "unarmed"
+        ]
+      },
+      "challenge": {
+        "cl": 1
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 2,
+        "characterScaleLengthSquares": 2,
+        "coverCrew": "+5"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "wheeled",
+            "scale": "character",
+            "squaresPerMove": 6,
+            "maxVelocityKmh": 90
+          }
+        ],
+        "maxVelocityKmh": 90
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 10,
+        "reflexFlatFooted": 10,
+        "fortitude": 18,
+        "armorBonus": 1,
+        "damageReduction": 5
+      },
+      "durability": {
+        "hitPoints": 60,
+        "damageThreshold": 23
+      },
+      "abilities": {
+        "str": 26,
+        "dex": 10,
+        "con": null,
+        "int": 10,
+        "initiativePrinted": 4,
+        "perceptionPrinted": 5,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 4,
+            "raw": "Initiative +4"
+          },
+          {
+            "name": "Mechanics",
+            "printedModifier": 5,
+            "raw": "Mechanics +5"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 5,
+            "raw": "Perception +5"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 4,
+            "raw": "Pilot +4"
+          },
+          {
+            "name": "Use Computer",
+            "printedModifier": 5,
+            "raw": "Use Computer +5"
+          }
+        ]
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 0,
+        "grappleBonusPrinted": 13
+      },
+      "armament": {
+        "firingGroups": [],
+        "notes": "Unarmed printed stock vehicle; no weapon mount inferred."
+      },
+      "crew": {
+        "raw": "1 (normal)",
+        "crewCount": 1,
+        "crewQuality": "normal"
+      },
+      "capacity": {
+        "passengerCount": 0,
+        "cargo": {
+          "value": 50,
+          "unit": "kg",
+          "raw": "50 kg"
+        },
+        "consumables": null,
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Licensed",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 5000,
+          "raw": "5000"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 1000,
+          "raw": "1000"
+        }
+      },
+      "text": {
+        "mechanicalNotes": "Wheeled cargo loader with forward forks, not a speeder; printed unarmed.",
+        "sourceNotes": "Direct scan visually verified: printed p179, physical PDF p180; source hash 9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a."
+      },
+      "exceptions": {
+        "specialRules": [
+          {
+            "key": "gaw-t8-loading-vehicle-special-1",
+            "label": "Published special condition",
+            "category": "source-specific",
+            "summary": "Wheeled cargo loader with forward forks, not a speeder; printed unarmed.",
+            "reference": "Galaxy at War p179",
+            "implementationStatus": "requires-consumer",
+            "typedPredicateStatus": "pending"
+          }
+        ],
+        "unmappedFacts": [
+          "Pending typed-source handling: Wheeled cargo loader with forward forks, not a speeder; printed unarmed."
+        ],
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/hyperspace/capability": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "explicitly-none",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/capacity/consumables": "explicitly-none"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    },
+    {
+      "schemaVersion": "swse.vehicle.phase0b.draft-0.5",
+      "recordType": "vehicle-source-entry",
+      "identity": {
+        "sourceEntryKey": "gaw-ground-armored-tank",
+        "name": "Ground Armored Tank"
+      },
+      "publication": {
+        "book": "Galaxy at War",
+        "page": 216,
+        "printedTitle": "Ground Armored Tank",
+        "printedTypeLine": "Huge ground vehicle (speeder)",
+        "entryNotes": "Source PDF physical p217; SHA-256 9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+        "sourceRepresentations": [
+          "vehicle"
+        ]
+      },
+      "classification": {
+        "primaryCategory": "repulsorlift-tank",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "size": "huge",
+        "printedSize": "Huge",
+        "secondaryCategories": [
+          "tank",
+          "droid-brain-controlled"
+        ]
+      },
+      "challenge": {
+        "cl": 10
+      },
+      "geometry": {
+        "characterScaleWidthSquares": 3,
+        "characterScaleLengthSquares": 3,
+        "coverCrew": "total"
+      },
+      "movement": {
+        "speedModes": [
+          {
+            "mode": "repulsorlift",
+            "scale": "character",
+            "squaresPerMove": 8,
+            "maxVelocityKmh": 130
+          }
+        ],
+        "maxVelocityKmh": 130
+      },
+      "hyperspace": {},
+      "defenses": {
+        "reflex": 17,
+        "reflexFlatFooted": 14,
+        "fortitude": 23,
+        "armorBonus": 6,
+        "damageReduction": 10,
+        "vehicularCombatIncluded": true
+      },
+      "durability": {
+        "hitPoints": 175,
+        "damageThreshold": 33
+      },
+      "abilities": {
+        "str": 36,
+        "dex": 17,
+        "con": null,
+        "int": 14,
+        "initiativePrinted": 6,
+        "perceptionPrinted": 5,
+        "skills": [
+          {
+            "name": "Initiative",
+            "printedModifier": 6,
+            "raw": "Initiative +6"
+          },
+          {
+            "name": "Perception",
+            "printedModifier": 5,
+            "raw": "Perception +5"
+          },
+          {
+            "name": "Pilot",
+            "printedModifier": 6,
+            "raw": "Pilot +6"
+          }
+        ]
+      },
+      "combat": {
+        "baseAttackBonusPrinted": 2,
+        "grappleBonusPrinted": 25,
+        "rangedAttackLine": "medium laser cannons +6 OR missile launchers +6"
+      },
+      "armament": {
+        "firingGroups": [
+          {
+            "groupKey": "gaw-ground-armored-tank-source-attack-1",
+            "label": "medium laser cannons",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 6,
+            "specialNotes": "Printed operator pilot; damage 4d10x2; printed p216; additional printed evidence {}. Physical mounts, arcs and executable weapon bindings NOT certified."
+          },
+          {
+            "groupKey": "gaw-ground-armored-tank-source-attack-2",
+            "label": "missile launchers",
+            "groupKind": "unknown",
+            "batteryMembershipStatus": "not-stated",
+            "mountKeys": [],
+            "attackBonusPrinted": 6,
+            "specialNotes": "Printed operator pilot; damage 8d6, 4-square splash; printed p216; additional printed evidence {}. Physical mounts, arcs and executable weapon bindings NOT certified."
+          }
+        ],
+        "notes": "Source printed group evidence only; no physical mounts/arcs certified.",
+        "carriedPayloads": [
+          {
+            "value": 24,
+            "unit": "missiles",
+            "raw": "24 missiles"
+          }
+        ]
+      },
+      "crew": {
+        "raw": "droid brain (expert)",
+        "autonomy": "droid-brain",
+        "crewQuality": "expert",
+        "crewDescriptor": "droid brain (expert)"
+      },
+      "capacity": {
+        "passengerCount": 0,
+        "cargo": null,
+        "consumables": null,
+        "carriedCraft": []
+      },
+      "systems": {},
+      "modifications": {},
+      "economics": {
+        "availability": "Military",
+        "priceNew": {
+          "status": "priced",
+          "amountCredits": 17500,
+          "raw": "17500"
+        },
+        "priceUsed": {
+          "status": "priced",
+          "amountCredits": 11000,
+          "raw": "11000"
+        }
+      },
+      "text": {
+        "mechanicalNotes": "Shock and Awe (Fire Effect): standard action, forgo all attacks; affect all squares in a 6-square radius. An enemy in the area moves an additional -1 condition-track step if damaged by a successful attack meeting/exceeding its damage threshold. Four encounter GAT units are one printed CL10 statblock, not four publication identities.",
+        "sourceNotes": "Direct scan visually verified: printed p216, physical PDF p217; source hash 9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a."
+      },
+      "exceptions": {
+        "specialRules": [
+          {
+            "key": "gaw-ground-armored-tank-special-1",
+            "label": "Published special condition",
+            "category": "source-specific",
+            "summary": "Shock and Awe (Fire Effect): standard action, forgo all attacks; affect all squares in a 6-square radius. An enemy in the area moves an additional -1 condition-track step if damaged by a successful attack meeting/exceeding its damage threshold.",
+            "reference": "Galaxy at War p216",
+            "implementationStatus": "requires-consumer",
+            "typedPredicateStatus": "pending"
+          },
+          {
+            "key": "gaw-ground-armored-tank-special-2",
+            "label": "Published special condition",
+            "category": "source-specific",
+            "summary": "Four encounter GAT units are one printed CL10 statblock, not four publication identities.",
+            "reference": "Galaxy at War p216",
+            "implementationStatus": "requires-consumer",
+            "typedPredicateStatus": "pending"
+          }
+        ],
+        "unmappedFacts": [
+          "Pending typed-source handling: Shock and Awe (Fire Effect): standard action, forgo all attacks; affect all squares in a 6-square radius. An enemy in the area moves an additional -1 condition-track step if damaged by a successful attack meeting/exceeding its damage threshold.",
+          "Pending typed-source handling: Four encounter GAT units are one printed CL10 statblock, not four publication identities."
+        ],
+        "manualReviewRequired": true
+      },
+      "fieldStates": {
+        "/defenses/shieldRating": "not-stated",
+        "/hyperspace/capability": "not-stated",
+        "/abilities/con": "explicitly-none",
+        "/armament/weaponMounts": "not-yet-reviewed",
+        "/armament/firingArcs": "not-stated",
+        "/rules/strictMechanicalCertification": "not-yet-reviewed",
+        "/capacity/carriedCraft": "explicitly-none",
+        "/capacity/consumables": "explicitly-none",
+        "/capacity/cargo": "explicitly-none"
+      },
+      "rules": {
+        "reviewStatus": "partial-source-probe"
+      }
+    }
+  ],
+  "productionPacksChanged": false,
+  "generatedActorsChanged": false
+}

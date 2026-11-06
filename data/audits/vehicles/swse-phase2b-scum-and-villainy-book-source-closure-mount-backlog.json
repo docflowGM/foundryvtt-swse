@@ -1,0 +1,370 @@
+{
+  "schema": "swse.vehicle.phase2b.weapon-mount-backlog.v0.1",
+  "sourceBook": "Scum and Villainy",
+  "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+  "counts": {
+    "publicationShipClaims": 11,
+    "primaryPdfCloseReads": 11,
+    "primaryPdfCloseReadsOutstanding": 0,
+    "strictFullFieldAndPhysicalWeaponMountCertificates": 0,
+    "strictCertificatesOutstanding": 11,
+    "attackGroupRowsReviewed": 21,
+    "sourceConflictRecordCount": 1,
+    "phase1PageMappingDiscrepancyCount": 0
+  },
+  "records": [
+    {
+      "sourceEntryKey": "sav-c-wing-ugly-fighter",
+      "printedName": "C-wing Ugly Fighter",
+      "printedPage": 66,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "assault laser cannon",
+          "station": "pilot",
+          "attackBonus": 5,
+          "damage": "7d10x2",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 66
+        },
+        {
+          "label": "light ion cannons",
+          "station": "gunner",
+          "attackBonus": 3,
+          "damage": "4d10x2 ion",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 66
+        },
+        {
+          "label": "proton torpedo launchers",
+          "station": "gunner",
+          "attackBonus": 3,
+          "damage": "10d10x2",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 66
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery decomposition not proven from the source layout."
+      ]
+    },
+    {
+      "sourceEntryKey": "sav-clutch-ugly-fighter",
+      "printedName": "Clutch Ugly Fighter",
+      "printedPage": 67,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 7,
+          "damage": "5d10x2",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 67
+        },
+        {
+          "label": "ion cannons",
+          "station": "pilot",
+          "attackBonus": 5,
+          "damage": "3d10x2 ion",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 67
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery decomposition not proven from the source layout."
+      ]
+    },
+    {
+      "sourceEntryKey": "sav-corellian-engineering-corporation-yt-1250-transport",
+      "printedName": "Corellian Engineering Corporation YT-1250 Transport",
+      "printedPage": 64,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "double laser cannon",
+          "station": "gunner",
+          "attackBonus": 2,
+          "damage": "4d10x2",
+          "printedMultiplicity": 2,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 64
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery decomposition not proven from the source layout."
+      ]
+    },
+    {
+      "sourceEntryKey": "sav-corellian-engineering-corporation-yt-1930-transport",
+      "printedName": "Corellian Engineering Corporation YT-1930 Transport",
+      "printedPage": 66,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "medium laser cannon",
+          "station": "copilot",
+          "attackBonus": 3,
+          "damage": "4d10x2",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 66
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery decomposition not proven from the source layout."
+      ]
+    },
+    {
+      "sourceEntryKey": "sav-corelliaspace-gymsnor-3-light-freighter",
+      "printedName": "CorelliaSpace Gymsnor-3 Light Freighter",
+      "printedPage": 62,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannon",
+          "station": "pilot",
+          "attackBonus": 6,
+          "damage": "4d10x2",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 62
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery decomposition not proven from the source layout."
+      ]
+    },
+    {
+      "sourceEntryKey": "sav-errant-venture",
+      "printedName": "Errant Venture",
+      "printedPage": 128,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "heavy turbolaser battery",
+          "station": "3 gunners",
+          "attackBonus": 13,
+          "damage": "11d10x5",
+          "printedMultiplicity": 1,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 128
+        },
+        {
+          "label": "turbolaser battery",
+          "station": "3 gunners",
+          "attackBonus": 13,
+          "damage": "8d10x5",
+          "printedMultiplicity": 1,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 128
+        },
+        {
+          "label": "point-defense laser battery",
+          "station": "5 gunners",
+          "attackBonus": 17,
+          "damage": "3d10x2",
+          "printedMultiplicity": 2,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 128
+        },
+        {
+          "label": "heavy ion cannon battery",
+          "station": "3 gunners",
+          "attackBonus": 13,
+          "damage": "3d10x5 ion",
+          "printedMultiplicity": 2,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 128
+        },
+        {
+          "label": "tractor beam",
+          "station": "1 gunner",
+          "attackBonus": 9,
+          "damage": "—",
+          "printedMultiplicity": 2,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 128
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery decomposition not proven from the source layout."
+      ]
+    },
+    {
+      "sourceEntryKey": "sav-kaloth-style-battlecruiser",
+      "printedName": "Kaloth-style Battlecruiser",
+      "printedPage": 126,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "double light turbolaser battery",
+          "station": "6 gunners",
+          "attackBonus": 15,
+          "damage": "4d10x5",
+          "printedMultiplicity": 4,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 126
+        },
+        {
+          "label": "point-defense medium laser cannon battery",
+          "station": "3 gunners",
+          "attackBonus": 9,
+          "damage": "4d10x2",
+          "printedMultiplicity": 4,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 126
+        },
+        {
+          "label": "tractor beam",
+          "station": "6 gunners",
+          "attackBonus": 15,
+          "damage": "—",
+          "printedMultiplicity": 2,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 126
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery decomposition not proven from the source layout."
+      ]
+    },
+    {
+      "sourceEntryKey": "sav-kazellis-corporation-light-freighter",
+      "printedName": "Kazellis Corporation Light Freighter",
+      "printedPage": 62,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "quad light laser cannon",
+          "station": "pilot",
+          "attackBonus": 6,
+          "damage": "4d10x2",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 62
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery decomposition not proven from the source layout."
+      ]
+    },
+    {
+      "sourceEntryKey": "sav-surronian-conqueror-class-assault-ship",
+      "printedName": "Surronian Conqueror-class Assault Ship",
+      "printedPage": 64,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "light ion cannon",
+          "station": "pilot",
+          "attackBonus": 10,
+          "damage": "4d10x2 ion",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 64
+        },
+        {
+          "label": "double medium laser cannon",
+          "station": "pilot or gunner",
+          "attackBonus": 8,
+          "damage": "5d10x2",
+          "printedMultiplicity": 2,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 64
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery decomposition not proven from the source layout."
+      ]
+    },
+    {
+      "sourceEntryKey": "sav-x-tie-ugly-fighter",
+      "printedName": "X-TIE Ugly Fighter",
+      "printedPage": 67,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 4,
+          "damage": "5d10x2",
+          "printedMultiplicity": null,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 67
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery decomposition not proven from the source layout."
+      ]
+    },
+    {
+      "sourceEntryKey": "sav-y164-thalassian-slave-transport",
+      "printedName": "Y164 Thalassian Slave Transport",
+      "printedPage": 127,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "quad light laser cannon",
+          "station": "gunner",
+          "attackBonus": 3,
+          "damage": "5d10x2",
+          "printedMultiplicity": 2,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 127
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery decomposition not proven from the source layout."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3226 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "swse.vehicle.phase0b.draft-0.5",
+  "title": "SWSE Phase 0-B — universal vehicle source-entry record (draft v0.5)",
+  "description": "Universal fixed top-level groups with sparse nested values and nullable verified-absent capabilities; provenance and variants remain separate. Source certification is separate from JSON Schema validation.",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": "swse.vehicle.phase0b.draft-0.5"
+    },
+    "recordType": {
+      "const": "vehicle-source-entry"
+    },
+    "identity": {
+      "type": "object",
+      "description": "Publication-entry identity remains distinct from underlying chassis and configuration",
+      "properties": {
+        "sourceEntryKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Unique ID for this particular book/printed statblock entry; do not use ship name alone"
+        },
+        "vehicleFamilyKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Shared family/design lineage key, nullable until Phase 1 identity reconciliation"
+        },
+        "variantKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Stable variant key distinct from common family ID"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Published heading/name"
+        },
+        "manufacturer": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Manufacturer where given"
+        },
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Exact model code e.g. BTL-S3"
+        },
+        "className": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Class text e.g. frigate or T-65B"
+        },
+        "variantLabel": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Published variant/loadout/individual identifier"
+        },
+        "variantKind": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "stock, named-ship, modified, alternate-loadout, revision, era, unknown"
+        },
+        "baseVehicleKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Explicit parent vehicle identity if confirmed; never automatic from name"
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Name alias"
+          },
+          "description": "Alternative names from source"
+        },
+        "uniqueNamedVessel": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True for specific vessel such as Millennium Falcon"
+        }
+      },
+      "required": [
+        "sourceEntryKey",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "publication": {
+      "type": "object",
+      "description": "Source locator, not yet an adjudicated provenance ledger",
+      "properties": {
+        "book": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Full book title"
+        },
+        "page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed sourcebook page, not PDF index"
+        },
+        "statblockOrdinalOnPage": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Ordinal when multiple statblocks share printed page"
+        },
+        "printedTitle": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Book heading exactly or normalized only for transcription issues"
+        },
+        "printedTypeLine": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Classification/size line"
+        },
+        "edition": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "SWSE, errata revision if known"
+        },
+        "entryNotes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Editorial notes, OCR exceptions; not a provenance adjudication"
+        },
+        "sourceRepresentations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "vehicle",
+              "droid",
+              "other"
+            ]
+          },
+          "uniqueItems": true,
+          "description": "Multiple printed statblocks for the same entry, retained without absorbing droid rules into vehicle rules"
+        }
+      },
+      "required": [
+        "book"
+      ],
+      "additionalProperties": false
+    },
+    "classification": {
+      "type": "object",
+      "description": "Typed classification and raw classification kept separate",
+      "properties": {
+        "primaryCategory": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "ground-vehicle, airspeeder, starfighter, space-transport, capital-ship, space-station, fixed-emplacement, watercraft, other"
+        },
+        "chassisType": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "walker, tracked, wheeled, speeder, shuttle, cruiser, freighter, station, etc."
+        },
+        "mobilityDomains": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "ground, atmosphere, space, water, underwater, stationary"
+          },
+          "description": "Multiple operating environments"
+        },
+        "combatScale": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "character, starship"
+          },
+          "description": "Scales in which source supplies operation"
+        },
+        "role": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Transport, assault, capital, scout, carrier, medical, etc."
+          },
+          "description": "Roles from printed identification"
+        },
+        "constructionType": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "mechanical, organic-living, hybrid, unknown"
+        },
+        "printedSize": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Complete published size including parenthetical subgroup"
+        },
+        "size": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "fine, diminutive, tiny, small, medium, large, huge, gargantuan, colossal"
+        },
+        "colossalSubtype": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "frigate, cruiser, station or other original subtype if given"
+        },
+        "sizeModifierPrinted": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Only if explicitly printed or tabulated as source claim"
+        },
+        "secondaryCategories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Other co-published categories, never eliminated through primary-category selection"
+        },
+        "entityNature": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Droid, living vessel, conventional vehicle, or other source-supported entity nature; not synonymous with operating category"
+        }
+      },
+      "additionalProperties": false
+    },
+    "challenge": {
+      "type": "object",
+      "description": "Published CL is a label, not authority for replacement calculations",
+      "properties": {
+        "cl": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published challenge level; do not recalculate to reflect perceived balance"
+        },
+        "raw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed CL text"
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Source qualification"
+        }
+      },
+      "additionalProperties": false
+    },
+    "geometry": {
+      "type": "object",
+      "description": "Combat fighting space, size and cover are independent. Enclosure is not derived blindly from cover.",
+      "properties": {
+        "lengthMeters": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Printed dimensional length"
+        },
+        "widthMeters": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Printed width"
+        },
+        "heightMeters": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Printed height"
+        },
+        "characterScaleWidthSquares": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Published character-scale fighting-space width"
+        },
+        "characterScaleLengthSquares": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Published character-scale fighting-space length"
+        },
+        "starshipScaleWidthSquares": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Starship-scale fighting-space width"
+        },
+        "starshipScaleLengthSquares": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Starship-scale fighting-space length"
+        },
+        "reachSquares": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Character scale reach where given"
+        },
+        "coverCrew": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "none, normal, improved, total, mixed or raw qualifier"
+        },
+        "coverPassengers": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Passenger cover; may differ from crew"
+        },
+        "enclosure": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "enclosed, open, partially-enclosed, mixed, unknown"
+        },
+        "exposedStations": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Crew position, riding position"
+          },
+          "description": "Positions without full enclosure"
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Special combat occupancy rules"
+        },
+        "occupantCoverModifiers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/occupantCoverModifier"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "movement": {
+      "type": "object",
+      "description": "Movement supports any number of modes and both tactical scales",
+      "properties": {
+        "speedModes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/speed"
+          },
+          "description": "All published character and starship movement modes"
+        },
+        "maxVelocityKmh": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Published universal top speed if statline lists one"
+        },
+        "sublightDrive": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Drive type/rating when printed; no invented conversion"
+        },
+        "atmosphericCapability": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "capable, incapable, limited, unknown"
+        },
+        "spaceflightCapability": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "capable, incapable, limited, unknown"
+        },
+        "maximumAltitudeMeters": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Published operational ceiling, if any"
+        },
+        "turningOrManeuverability": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Source-specific restriction or rating"
+        },
+        "minimumSpeed": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Published forced minimum speed, if any"
+        },
+        "hoverCapability": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Confirmed can hover, false only if printed explicitly"
+        },
+        "specialMovement": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rule"
+          },
+          "description": "Movement powers: SLAM, unusual drives, etc."
+        },
+        "raw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Short published full Speed line"
+        }
+      },
+      "additionalProperties": false
+    },
+    "hyperspace": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Null only for verified non-hyperdrive/inapplicable craft. Populated object for drive or nav information; sparse object when still under review.",
+      "properties": {
+        "capability": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "equipped, unavailable, optional, external, unknown",
+          "enum": [
+            "equipped",
+            "optional",
+            "external",
+            "unavailable",
+            "unknown",
+            null
+          ]
+        },
+        "primaryMultiplier": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Published hyperdrive x rating"
+        },
+        "backupMultiplier": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Published backup x rating"
+        },
+        "navComputer": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "installed, none, astromech, jump-memory, biological, external, other, unknown"
+        },
+        "jumpMemoryCount": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of preprogrammed jumps, if printed"
+        },
+        "astromechRequirement": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "R2, utility droid, optional or mandatory if specified"
+        },
+        "routeConstraints": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Known limitation or source specific rule"
+        },
+        "raw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed Hyperdrive + navicomputer text"
+        }
+      },
+      "additionalProperties": false
+    },
+    "defenses": {
+      "type": "object",
+      "description": "Exact published defenses, including shield and special defenses",
+      "properties": {
+        "reflex": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published Reflex Defense"
+        },
+        "reflexFlatFooted": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published flat-footed Reflex"
+        },
+        "fortitude": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published Fortitude Defense"
+        },
+        "will": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published Will Defense when printed"
+        },
+        "armorBonus": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed armor contribution"
+        },
+        "otherDefenseBonuses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rule"
+          },
+          "description": "Vehicular Combat and special conditionals"
+        },
+        "vehicularCombatIncluded": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Indicates named VC modifier in statblock if present"
+        },
+        "damageReduction": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published DR; null not equivalent to DR 0"
+        },
+        "shieldRating": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published shield rating; positive or zero are numeric values. Null only for verified absence, with /defenses/shieldRating status explicitly-none or not-applicable when certified. Omit during transcription if not yet resolved."
+        },
+        "shieldType": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Conventional, organic/dovin-basal, directional, unusual"
+        },
+        "shieldRecharge": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/quantity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Null means confirmed absent; omit if unreviewed."
+        },
+        "shieldArcs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/system"
+          },
+          "description": "Special printed shield arcs/segments"
+        },
+        "immunities": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Immunity"
+          },
+          "description": "Source-specified immunities"
+        },
+        "resistances": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rule"
+          },
+          "description": "Special defenses and typed resistances"
+        },
+        "vulnerabilities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rule"
+          },
+          "description": "Ion vulnerability, weaknesses"
+        },
+        "otherDefenses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rule"
+          },
+          "description": "Special defenses not mapped above"
+        }
+      },
+      "additionalProperties": false
+    },
+    "durability": {
+      "type": "object",
+      "description": "Statblock durability separate from encounter mutable values",
+      "properties": {
+        "hitPoints": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published hp baseline; NOT current runtime actor HP"
+        },
+        "damageThreshold": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published threshold"
+        },
+        "hardness": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Object rules hardness, if ever explicit; not assumed to equal DR"
+        },
+        "conditionTrackRules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rule"
+          },
+          "description": "Special threshold/track rules"
+        },
+        "criticalDamageRules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rule"
+          },
+          "description": "Critical/subsystem vulnerability rules"
+        },
+        "repairRules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rule"
+          },
+          "description": "Repair/damage-control rules specific to design"
+        },
+        "failureModes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rule"
+          },
+          "description": "Special destruction/disabled/ion behavior"
+        }
+      },
+      "additionalProperties": false
+    },
+    "abilities": {
+      "type": "object",
+      "description": "Vehicle ability scores and stock-crew skill outcomes; do not infer unspecified scores",
+      "properties": {
+        "str": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published vehicle STR"
+        },
+        "dex": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published vehicle DEX"
+        },
+        "con": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published CON; may be expressly dash"
+        },
+        "int": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published vehicle INT"
+        },
+        "wis": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published WIS"
+        },
+        "cha": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published CHA"
+        },
+        "initiativePrinted": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published Initiative bonus"
+        },
+        "perceptionPrinted": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published Perception bonus"
+        },
+        "senses": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Sense or special detection trait"
+          },
+          "description": "Published senses"
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/skill"
+          },
+          "description": "All published Skills line values"
+        },
+        "languages": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Language"
+          },
+          "description": "If statblock actually includes languages"
+        }
+      },
+      "additionalProperties": false
+    },
+    "combat": {
+      "type": "object",
+      "description": "Published combat summary; crew-derived figures must not become immutable weapon math",
+      "properties": {
+        "baseAttackBonusPrinted": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published crew/sample Base Atk value"
+        },
+        "grappleBonusPrinted": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published Grp value"
+        },
+        "rangedAttackLine": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Short source Ranged line, including AND/OR choices"
+        },
+        "meleeAttackLine": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Melee line when present"
+        },
+        "attackOptions": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Autofire, Burst Fire or other options"
+          },
+          "description": "Attack Options list"
+        },
+        "specialActions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rule"
+          },
+          "description": "Special action definitions if printed"
+        },
+        "feats": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Feat name"
+          },
+          "description": "Printed source-specific crew/vehicle feat references"
+        },
+        "talents": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Talent name"
+          },
+          "description": "Printed source-specific references"
+        },
+        "tacticalFire": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rule"
+          },
+          "description": "Capital/space-station tactical fire effects"
+        },
+        "otherCombatRules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rule"
+          },
+          "description": "Combat exceptions not otherwise accommodated"
+        }
+      },
+      "additionalProperties": false
+    },
+    "armament": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Null only when verified unarmed; populated object only if source weapon claims exist; sparse object during unresolved transcription. Weapon mount detail fields are optional until source-established.",
+      "properties": {
+        "weaponMounts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/weaponMount"
+          },
+          "description": "Every physical weapon or firing station entry from source",
+          "minItems": 1
+        },
+        "firingGroups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fireGroup"
+          },
+          "description": "AND/OR attack declarations, linked weapons, batteries"
+        },
+        "carriedPayloads": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/quantity"
+          },
+          "description": "Missile/torpedo/rocket complement or other ordnance"
+        },
+        "weaponOptions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rule"
+          },
+          "description": "Special firing restrictions/capabilities"
+        },
+        "unresolvedWeaponNames": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Unresolved printed weapon label"
+          },
+          "description": "No generic stand-in allowed"
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Weapon listing reconciliation notes"
+        },
+        "attackPatterns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/attackPattern"
+          },
+          "description": "Source attack expression alternatives; preserves AND/OR groupings"
+        }
+      },
+      "additionalProperties": false
+    },
+    "crew": {
+      "type": "object",
+      "description": "Default printed crew and crew-operated stations, not current actor links",
+      "properties": {
+        "crewCount": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published crew complement"
+        },
+        "minimumOperatingCrew": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Minimum effective crew if printed"
+        },
+        "crewQuality": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "untrained, normal, skilled, expert, ace, heroic, custom, other"
+        },
+        "crewDescriptor": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed modifiers or distribution such as 1 pilot plus two gunners"
+        },
+        "crewIsOptional": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Vehicle autonomous or controlled remotely if stated"
+        },
+        "autonomy": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "crewed, autonomous, remote-controlled, biological-operator, other, unknown"
+        },
+        "stations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/station"
+          },
+          "description": "Crew roles and controls"
+        },
+        "stockCrewSpecialRules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rule"
+          },
+          "description": "Crew-specific or command rules"
+        },
+        "raw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed Crew field"
+        }
+      },
+      "additionalProperties": false
+    },
+    "capacity": {
+      "type": "object",
+      "description": "Passengers, cargo, consumables and carried craft; preserve printed units",
+      "properties": {
+        "passengerCount": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Numeric passenger capacity if unqualified"
+        },
+        "passengerGroups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/passengerGroup"
+          },
+          "description": "Passenger roles and constraints"
+        },
+        "cargo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/quantity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Null means confirmed absent; omit if unreviewed."
+        },
+        "cargoMetricTons": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Standardized metric tonnes only when verified conversion; never replace published original"
+        },
+        "consumables": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/quantity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Null means confirmed absent; omit if unreviewed."
+        },
+        "carriedCraft": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/carriedCraft"
+          },
+          "description": "Statblock carried craft with quantities"
+        },
+        "escapePods": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published escape pod number"
+        },
+        "dockingCapacity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/quantity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Null means confirmed absent; omit if unreviewed."
+        },
+        "towCapacity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/quantity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Null means confirmed absent; omit if unreviewed."
+        },
+        "lifeSupport": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Capacity/absence/requirements"
+        },
+        "storageNotes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Special cargo/passenger tradeoffs"
+        },
+        "carriedCraftConfigurations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/craftConfiguration"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "systems": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Installed starship/vehicle systems, including unusual technology Nullable only on confirmed absence/inapplicability; unverified is a sparse object and must remain uncertified.",
+      "properties": {
+        "installed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/system"
+          },
+          "description": "All nonweapon installed systems from publication"
+        },
+        "sensors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/system"
+          },
+          "description": "Dedicated sensor and detection packages"
+        },
+        "communications": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/system"
+          },
+          "description": "Communications and jammers"
+        },
+        "tractorBeams": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/system"
+          },
+          "description": "Nonweapon-mode tractor equipment, if source describes it this way"
+        },
+        "propulsion": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/system"
+          },
+          "description": "Engine/sublight/SLAM components"
+        },
+        "power": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/system"
+          },
+          "description": "Power generation/allocation"
+        },
+        "environment": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/system"
+          },
+          "description": "Life-support, airlocks, environmental protection"
+        },
+        "security": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/system"
+          },
+          "description": "Cloaking/security/detection countermeasures"
+        },
+        "interfaces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/system"
+          },
+          "description": "Astromech sockets, droid brains, computer interfaces"
+        },
+        "miscellaneous": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/system"
+          },
+          "description": "Other systems"
+        },
+        "capabilityModeGroups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/capabilityModeGroup"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "modifications": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Both emplacement points and other modification slots (not assumed synonyms) Nullable only on confirmed absence/inapplicability; unverified is a sparse object and must remain uncertified.",
+      "properties": {
+        "emplacementPointsTotal": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed base total, if given"
+        },
+        "emplacementPointsUsed": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed used points, if given"
+        },
+        "emplacementPointsRemaining": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed remaining points, not automatically inferred here"
+        },
+        "modificationSlotsTotal": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Source-defined slots, when applicable"
+        },
+        "modificationSlotsUsed": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Slots consumed, when printed"
+        },
+        "modificationSlotsRemaining": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Remaining slots when printed"
+        },
+        "installed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/modification"
+          },
+          "description": "Published permanent changes and packages"
+        },
+        "templates": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Template name"
+          },
+          "description": "e.g. junker, advanced or other source-defined templates"
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rule"
+          },
+          "description": "Size/cost/restrictions on modification"
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Source notes; do not infer emplacement points from later-size defaults"
+        }
+      },
+      "additionalProperties": false
+    },
+    "economics": {
+      "type": "object",
+      "description": "Separate new vs used and priced vs not-for-sale",
+      "properties": {
+        "priceNew": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/price"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Null means confirmed absent; omit if unreviewed."
+        },
+        "priceUsed": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/price"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Null means confirmed absent; omit if unreviewed."
+        },
+        "availability": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Licensed, Restricted, Military, Illegal, Rare, Unique, etc."
+        },
+        "availabilityNotes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Market or source qualifications"
+        },
+        "serviceOrMaintenanceCosts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/quantity"
+          },
+          "description": "If source explicitly gives operating costs"
+        },
+        "acquisitionRestrictions": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Restriction"
+          },
+          "description": "License/availability conditions"
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Do not fill a new price from commentary on hypothetical market value"
+        }
+      },
+      "additionalProperties": false
+    },
+    "text": {
+      "type": "object",
+      "description": "Derived descriptions distinguish player summary from authority",
+      "properties": {
+        "summary": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Short original player-facing summary, not a copied publication paragraph"
+        },
+        "mechanicalNotes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Brief mechanical overview assembled from certified data"
+        },
+        "sourceNotes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Concise transcriber remarks, not long verbatim source passages"
+        },
+        "displayName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "UI display override if needed"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Search tag"
+          },
+          "description": "Friendly filters"
+        }
+      },
+      "additionalProperties": false
+    },
+    "exceptions": {
+      "type": "object",
+      "description": "Catch-all for unusual rules; not a license to quietly skip data",
+      "properties": {
+        "specialRules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rule"
+          },
+          "description": "Rare mechanics outside normal domains"
+        },
+        "unmappedFacts": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Source claim not yet modeled"
+          },
+          "description": "Every unmapped printed field blocks certification, not discarded"
+        },
+        "ambiguities": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Ambiguous or OCR-degraded value"
+          },
+          "description": "Unresolved questions"
+        },
+        "transcriptionWarnings": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Warning"
+          },
+          "description": "Readability issues in TXT requiring visual PDF review"
+        },
+        "manualReviewRequired": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether an editor must inspect ambiguous material"
+        }
+      },
+      "additionalProperties": false
+    },
+    "fieldStates": {
+      "type": "object",
+      "description": "Sparse JSON-pointer source-status ledger. Only use null to represent verified absence or inapplicability; for a certified record record a corresponding explicitly-none/not-applicable status for each null-valued capability or shieldRating. Omit untranscribed nested properties and record not-stated/unclear-source as needed. Draft records may be incomplete but cannot be source-certified.",
+      "propertyNames": {
+        "pattern": "^/"
+      },
+      "additionalProperties": {
+        "enum": [
+          "not-stated",
+          "not-applicable",
+          "explicitly-none",
+          "unclear-source",
+          "not-yet-reviewed"
+        ]
+      }
+    },
+    "rules": {
+      "type": "object",
+      "description": "Separate vehicle-specific rule claims from universal vehicle combat rules.",
+      "properties": {
+        "conditionalMechanics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/conditionalRule"
+          },
+          "description": "Only vehicle-specific conditional facts, never copies of universal rules."
+        },
+        "globalRuleReferences": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "References to independently sourced global rules, not duplicated formulas."
+        },
+        "reviewStatus": {
+          "type": "string",
+          "enum": [
+            "not-yet-reviewed",
+            "partial-source-probe",
+            "ready-for-certification",
+            "certified"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "reviewStatus"
+      ]
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "recordType",
+    "identity",
+    "publication",
+    "classification",
+    "challenge",
+    "geometry",
+    "movement",
+    "hyperspace",
+    "defenses",
+    "durability",
+    "abilities",
+    "combat",
+    "armament",
+    "crew",
+    "capacity",
+    "systems",
+    "modifications",
+    "economics",
+    "text",
+    "exceptions",
+    "fieldStates",
+    "rules"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "quantity": {
+      "type": "object",
+      "description": "Value/unit pair; preserve source units and do not assume ton equivalences",
+      "properties": {
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Published or normalized numerical value, never inferred without marking derivation"
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Physical unit, e.g. kg, metric-ton, m, days, months, years, credits, squares, km/h"
+        },
+        "raw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Short printed source field, preserving unusual qualifiers"
+        },
+        "qualifier": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "e.g. approximately, each, external, up to, carried"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "additionalProperties": false
+    },
+    "skill": {
+      "type": "object",
+      "description": "Skill bonus as published on this statblock",
+      "properties": {
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Skill name"
+        },
+        "printedModifier": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published signed bonus"
+        },
+        "governingAbility": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "When specified"
+        },
+        "attribution": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "vehicle-crew derived, computer, autonomous, or unspecified"
+        },
+        "conditions": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Restrictions/skill mode"
+        },
+        "raw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Short printed skill notation"
+        }
+      },
+      "additionalProperties": false
+    },
+    "rule": {
+      "type": "object",
+      "description": "Exceptional or specialized printed mechanic; no invented effect",
+      "properties": {
+        "key": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Stable proposed mechanic identifier"
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Rule/ability name"
+        },
+        "category": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "rule family, e.g. special-system, weakness, aura, mobility, attack, action"
+        },
+        "summary": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Short original paraphrase only; no full-book rules copied"
+        },
+        "activation": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Activation trigger/time"
+        },
+        "resource": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Cost or consumption expression"
+        },
+        "effect": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Mechanical effect represented in future typed schema"
+        },
+        "limits": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Conditions/restrictions"
+        },
+        "reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Book page or other publication pointer when established"
+        },
+        "implementationStatus": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "unclassified, structured, requires-consumer, unsupported"
+        },
+        "effects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/operationEffect"
+          }
+        },
+        "actionLimitPerTurn": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published action use limit if present, never inferred"
+        },
+        "typedPredicateStatus": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "pending, complete, not-required. A condition string does NOT count as machine-executable"
+        }
+      },
+      "additionalProperties": false
+    },
+    "speed": {
+      "type": "object",
+      "description": "One speed mode; multiple modes may coexist",
+      "properties": {
+        "mode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "walking, tracked, wheeled, repulsorlift, flying, swimming, hovering, burrowing, starship-flight, other"
+        },
+        "scale": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "character or starship",
+          "enum": [
+            "character",
+            "starship",
+            null
+          ]
+        },
+        "squaresPerMove": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Printed speed in squares"
+        },
+        "maxVelocityKmh": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Maximum listed velocity, if any"
+        },
+        "altitudeMeters": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Maximum operating altitude, if stated"
+        },
+        "terrainRestrictions": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Conditions for speed mode"
+        },
+        "raw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Short printed speed clause"
+        }
+      },
+      "required": [
+        "mode",
+        "scale"
+      ],
+      "additionalProperties": false
+    },
+    "station": {
+      "type": "object",
+      "description": "Crew station / control relationship",
+      "properties": {
+        "stationKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Stable role key for this statblock"
+        },
+        "role": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "pilot, copilot, gunner, commander, engineer, system-operator, other"
+        },
+        "count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of stations for role"
+        },
+        "minimumCrew": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Minimum operators when stated"
+        },
+        "skill": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Relevant operating skill if printed"
+        },
+        "controls": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "System or installed weapon mount key"
+          },
+          "description": "Controlled functions"
+        },
+        "restrictions": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Unusual staffing or assistance requirements"
+        }
+      },
+      "required": [
+        "stationKey",
+        "role"
+      ],
+      "additionalProperties": false
+    },
+    "passengerGroup": {
+      "type": "object",
+      "description": "One passenger capacity group",
+      "properties": {
+        "group": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "troops, prisoners, droids, passengers, external riders, etc."
+        },
+        "count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Printed number"
+        },
+        "conditions": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Restrictions"
+        },
+        "raw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed passenger clause"
+        }
+      },
+      "additionalProperties": false
+    },
+    "carriedCraft": {
+      "type": "object",
+      "description": "Carried craft allocation",
+      "properties": {
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Carried craft or vehicle"
+        },
+        "count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published count"
+        },
+        "category": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Ship, walker, speeder, escape pod, unspecified"
+        },
+        "raw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Original shorthand"
+        }
+      },
+      "additionalProperties": false
+    },
+    "weaponMount": {
+      "type": "object",
+      "description": "Published armament/statline group on this vehicle; do not equate a battery, attack count and physical mount.",
+      "properties": {
+        "mountKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Unique physical mount key within this vehicle source entry"
+        },
+        "weaponDefinitionKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Separate canonical weapon authority key; null until identity certified"
+        },
+        "printedName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Source weapon name; always preserve exact model/descriptor"
+        },
+        "weaponCount": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of individual weapons installed; distinct from batteries/mount count"
+        },
+        "mountCount": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Physical mounting count when discernible"
+        },
+        "configuration": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Single, double, quad, linked, battery, other printed configuration"
+        },
+        "location": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Physical location on vehicle, if given"
+        },
+        "firingArc": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Front, rear, port, starboard, dorsal, turret, all, other or null"
+        },
+        "mountType": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "fixed, turret, swivel, external, internal, other or null"
+        },
+        "fireLinked": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Weapon fire linking status when established"
+        },
+        "batteryGroupKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Battery membership identifier, if battery"
+        },
+        "gunnerStationKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Only a certified actual crew station key; NEVER place generic pilot/gunner text here"
+        },
+        "gunnerCount": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Crew needed for weapon/battery as published"
+        },
+        "firingScale": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "character, starship, dual, other"
+        },
+        "attackBonusPrinted": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Published ATK bonus, not gunner intrinsic bonus"
+        },
+        "attackBonusAutofirePrinted": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Autofire alternate attack bonus if shown"
+        },
+        "damagePrinted": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Damage dice/special as published; parser must not guess"
+        },
+        "damageMultiplierPrinted": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "x2/x5/x10 if actually in source"
+        },
+        "damageTypePrinted": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Ion/stun/other if specified"
+        },
+        "rangePrinted": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Ranges or relative range class from source"
+        },
+        "criticalPrinted": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Critical effect/range when specified"
+        },
+        "attackModes": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "autofire, single, area, tractor, etc."
+          },
+          "description": "Published attack capabilities"
+        },
+        "ammo": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/quantity"
+          },
+          "description": "Per-mount missiles/torpedoes/shots if stated"
+        },
+        "payloadNames": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Payload identity or descriptive name"
+          },
+          "description": "Payload references"
+        },
+        "alternateFireGroupKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Firing mode group used in the Ranged OR/AND attack line"
+        },
+        "specialRules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rule"
+          },
+          "description": "Special weapon behavior"
+        },
+        "raw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Short printed weapon statline"
+        },
+        "resolutionStatus": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "unresolved, printed-only, matched-canonical, source-verified"
+        },
+        "conditionalAttackModifiers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/conditionalModifier"
+          }
+        },
+        "firingCountPrinted": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Count explicitly in ranged attack declaration, not inferred to physical mounts"
+        },
+        "operatorRolePrinted": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Literal pilot/gunner/copilot role; not a resolved crew station identifier"
+        },
+        "batteryCountPrinted": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of batteries explicitly counted in attack line, not barrels or physical mounts"
+        },
+        "targetSizeRuleKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "A global source rule reference (not an inferred penalty)."
+        }
+      },
+      "required": [
+        "mountKey",
+        "printedName"
+      ],
+      "additionalProperties": false
+    },
+    "fireGroup": {
+      "type": "object",
+      "description": "Published Ranged attack option grouping",
+      "properties": {
+        "groupKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Stable local group name"
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Print-facing attack choice or battery group"
+        },
+        "operator": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "and, or, battery, single, simultaneous, special"
+        },
+        "mountKeys": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Mount key"
+          },
+          "description": "Participating mounts"
+        },
+        "attackBonusPrinted": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Group printed attack modifier if any"
+        },
+        "specialNotes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "OR/AND alternatives, crew coordination, battery attack bonuses"
+        },
+        "groupKind": {
+          "type": "string",
+          "enum": [
+            "ordinary",
+            "weapon-battery",
+            "fire-linked",
+            "alternate-loadout",
+            "unknown"
+          ]
+        },
+        "globalModeKeys": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "batteryMembershipStatus": {
+          "type": "string",
+          "enum": [
+            "printed",
+            "not-stated",
+            "unresolved",
+            "not-applicable"
+          ]
+        },
+        "weaponsPerBattery": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 6,
+          "description": "Physical weapons in ONE battery, not number of batteries in source ranged line. Null until established."
+        },
+        "supportingGunners": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 5,
+          "description": "Aiding gunners confirmed for this specific attack, NOT inferred from crew size."
+        }
+      },
+      "required": [
+        "groupKey",
+        "mountKeys"
+      ],
+      "additionalProperties": false
+    },
+    "system": {
+      "type": "object",
+      "description": "Installed nonweapon system",
+      "properties": {
+        "systemKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Registry key after later reconciliation"
+        },
+        "printedName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Named installed equipment"
+        },
+        "category": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "sensors, computer, life-support, propulsion, tractor, shield, stealth, docking, communications, other"
+        },
+        "quantity": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Number of installed components if printed"
+        },
+        "rating": {
+          "$ref": "#/$defs/quantity"
+        },
+        "functionSummary": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Concise printed mechanic summary"
+        },
+        "status": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "installed, optional, specified-absent, unverified"
+        },
+        "raw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Short printed line"
+        }
+      },
+      "required": [
+        "printedName"
+      ],
+      "additionalProperties": false
+    },
+    "modification": {
+      "type": "object",
+      "description": "Published modification or template on this vehicle",
+      "properties": {
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Published modification, template, upgrade or replacement"
+        },
+        "category": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "modification type"
+        },
+        "emplacementPoints": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Points consumed if printed"
+        },
+        "slotsConsumed": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Slots consumed if printed"
+        },
+        "isNonstandard": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Nonstandard per source, if stated"
+        },
+        "installed": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Part of published source configuration"
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Brief mechanical details"
+        }
+      },
+      "additionalProperties": false
+    },
+    "price": {
+      "type": "object",
+      "description": "New/used price distinguished from text describing not for sale",
+      "properties": {
+        "amountCredits": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Published price in credits"
+        },
+        "status": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "priced, not-for-sale, no-price-stated, estimated, variable, unavailable, ambiguous"
+        },
+        "raw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed amount or phrase"
+        },
+        "qualifier": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Excludes weapons, black-market, approximate, etc."
+        }
+      },
+      "additionalProperties": false
+    },
+    "operationEffect": {
+      "type": "object",
+      "description": "Canonical structured mechanical effect; consumer mapping occurs in Phase 4",
+      "properties": {
+        "effectKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Stable local id"
+        },
+        "operation": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "add, set, prohibit, reroll, redirect, grant-option, reduce, replace or source-specific pending ontology"
+        },
+        "target": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "vehicle, attacker, target, gunner, master, shield, incomingAttack, incomingDamage, position"
+        },
+        "path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Semantic canonical path; do not silently treat it as a Foundry system path"
+        },
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Numeric magnitude, null if not numeric"
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "squares, SR, dice, bonus, steps, etc"
+        },
+        "condition": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Source condition in source terms, awaiting typed predicate certification"
+        },
+        "duration": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Immediate, turn, encounter, etc, only when established"
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "One short description of special interpretation"
+        }
+      },
+      "additionalProperties": false
+    },
+    "capabilityMode": {
+      "type": "object",
+      "description": "One of a mutually exclusive published operational mode set",
+      "properties": {
+        "modeKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "effects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/operationEffect"
+          }
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        }
+      },
+      "additionalProperties": false
+    },
+    "capabilityModeGroup": {
+      "type": "object",
+      "description": "Source-defined mutually exclusive modes such as coralskipper dovin basal uses",
+      "properties": {
+        "groupKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "exclusive": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "activation": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Action type and frequency"
+        },
+        "modes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/capabilityMode"
+          }
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        }
+      },
+      "additionalProperties": false
+    },
+    "conditionalModifier": {
+      "type": "object",
+      "description": "Printed conditional mechanical modifier",
+      "properties": {
+        "stat": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Stat or attack component affected"
+        },
+        "amount": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": ""
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "when": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Published condition, kept explicit"
+        },
+        "scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Attack, target, turn, etc"
+        },
+        "raw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        }
+      },
+      "additionalProperties": false
+    },
+    "attackPattern": {
+      "type": "object",
+      "description": "A source-listed allowed attack combination, retaining grouping and alternatives",
+      "properties": {
+        "patternKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "attackType": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "ranged, melee, mixed, special"
+        },
+        "mountKeys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "combine": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "AND/OR/single within this alternative"
+        },
+        "alternativesGroup": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Exclusive group for different Ranged/Attack options"
+        },
+        "raw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Brief source attack selection line"
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "patternKey",
+        "mountKeys"
+      ],
+      "additionalProperties": false
+    },
+    "craftConfiguration": {
+      "type": "object",
+      "description": "A mutually exclusive published carried-craft capacity choice",
+      "properties": {
+        "optionKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "exclusiveGroup": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Only one option within group fits at a time if printed as OR"
+        },
+        "craft": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/carriedCraft"
+          }
+        },
+        "raw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        }
+      },
+      "additionalProperties": false
+    },
+    "occupantCoverModifier": {
+      "type": "object",
+      "description": "Separate role-specific cover modifier",
+      "properties": {
+        "occupantRole": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Named occupant e.g. astromech; do not modify pilot/passenger cover globally"
+        },
+        "coverKind": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "cover, concealment or other printed measure"
+        },
+        "bonusPrinted": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Specific bonus if printed"
+        },
+        "condition": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Published condition e.g. astromech installed"
+        },
+        "raw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Short printed cover claim"
+        }
+      },
+      "additionalProperties": false
+    },
+    "conditionAst": {
+      "description": "Typed rule predicate; unresolved nodes deliberately fail the certification gate, but remain schema-valid for draft transcription.",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Explicit atomic claim with a defined context vocabulary",
+          "properties": {
+            "node": {
+              "const": "atom"
+            },
+            "subject": {
+              "type": "string",
+              "enum": [
+                "attacker",
+                "defender",
+                "vehicle",
+                "pilot",
+                "gunner",
+                "operator",
+                "weapon",
+                "mount",
+                "crew",
+                "target",
+                "action",
+                "position",
+                "environment",
+                "encounter"
+              ]
+            },
+            "attribute": {
+              "type": "string",
+              "enum": [
+                "size",
+                "category",
+                "scale",
+                "isPointDefense",
+                "mode",
+                "isFiring",
+                "startingTurnInsideArea",
+                "currentShieldRating",
+                "movesThisTurn",
+                "attackMargin",
+                "attackHit",
+                "operatorRole",
+                "ammoCount",
+                "linkedLauncherCount",
+                "conditions",
+                "shieldActive",
+                "isVehicle",
+                "fireLinkActive",
+                "roundPhase",
+                "turnStart",
+                "vehicleCondition"
+              ]
+            },
+            "operator": {
+              "type": "string",
+              "enum": [
+                "eq",
+                "ne",
+                "lt",
+                "lte",
+                "gt",
+                "gte",
+                "in",
+                "contains",
+                "true",
+                "false"
+              ]
+            },
+            "value": {
+              "oneOf": [
+                {
+                  "type": [
+                    "string",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ]
+                },
+                {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": [
+                      "string",
+                      "integer",
+                      "number",
+                      "boolean"
+                    ]
+                  }
+                }
+              ]
+            },
+            "scale": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "enum": [
+                "character",
+                "starship",
+                "neither",
+                null
+              ]
+            },
+            "status": {
+              "const": "structured"
+            }
+          },
+          "required": [
+            "node",
+            "subject",
+            "attribute",
+            "operator",
+            "value",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "All conditions must hold",
+          "properties": {
+            "node": {
+              "const": "all"
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/conditionAst"
+              },
+              "minItems": 1
+            },
+            "status": {
+              "const": "structured"
+            }
+          },
+          "required": [
+            "node",
+            "children",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "At least one condition holds",
+          "properties": {
+            "node": {
+              "const": "any"
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/conditionAst"
+              },
+              "minItems": 1
+            },
+            "status": {
+              "const": "structured"
+            }
+          },
+          "required": [
+            "node",
+            "children",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "Logical negation",
+          "properties": {
+            "node": {
+              "const": "not"
+            },
+            "child": {
+              "$ref": "#/$defs/conditionAst"
+            },
+            "status": {
+              "const": "structured"
+            }
+          },
+          "required": [
+            "node",
+            "child",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "Preserve unresolved condition, never evaluate it as true",
+          "properties": {
+            "node": {
+              "const": "unresolved"
+            },
+            "printedCondition": {
+              "type": "string",
+              "minLength": 1
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "status": {
+              "const": "requires-ontology"
+            }
+          },
+          "required": [
+            "node",
+            "printedCondition",
+            "reason",
+            "status"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "semanticEffect": {
+      "type": "object",
+      "description": "A typed effect with timing and no implied Foundry consumer",
+      "properties": {
+        "effectKey": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "modify-attack",
+            "modify-damage-dice",
+            "modify-defense",
+            "alter-shield",
+            "deny-action",
+            "modify-movement",
+            "consume-ammunition",
+            "area-attack",
+            "add-effect",
+            "resolve-grapple",
+            "grant-action",
+            "suppress-hyperdrive",
+            "other"
+          ]
+        },
+        "targetPath": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Semantic authority path, NOT a Foundry system property."
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "add",
+            "subtract",
+            "set",
+            "prohibit",
+            "multiply",
+            "choose",
+            "consume",
+            "resolve",
+            "other"
+          ]
+        },
+        "value": {
+          "type": [
+            "number",
+            "integer",
+            "string",
+            "boolean",
+            "null"
+          ]
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "timing": {
+          "type": "string",
+          "enum": [
+            "before-roll",
+            "after-roll",
+            "before-damage-multiplier",
+            "after-damage-multiplier",
+            "on-hit",
+            "on-miss",
+            "turn-start",
+            "turn-end",
+            "attack-setup",
+            "immediate",
+            "other"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "source-structured",
+            "needs-ontology",
+            "unresolved"
+          ]
+        },
+        "sourceSummary": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "effectKey",
+        "kind",
+        "targetPath",
+        "operation"
+      ],
+      "additionalProperties": false
+    },
+    "conditionalRule": {
+      "type": "object",
+      "description": "Source condition and effects; schema correctness does not imply executable runtime behavior.",
+      "properties": {
+        "ruleKey": {
+          "type": "string",
+          "minLength": 1
+        },
+        "family": {
+          "type": "string",
+          "enum": [
+            "battery-salvo",
+            "battery-proximity",
+            "target-size",
+            "fire-link",
+            "shield",
+            "movement",
+            "crew",
+            "organic",
+            "weapon-special",
+            "scale",
+            "other"
+          ]
+        },
+        "trigger": {
+          "type": "string",
+          "enum": [
+            "on-attack",
+            "on-hit",
+            "on-miss",
+            "turn-start",
+            "turn-end",
+            "when-moving",
+            "when-selecting-mode",
+            "passive",
+            "other"
+          ]
+        },
+        "condition": {
+          "$ref": "#/$defs/conditionAst"
+        },
+        "effects": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/semanticEffect"
+          }
+        },
+        "printedRuleSummary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authorityState": {
+          "type": "string",
+          "enum": [
+            "source-sample",
+            "pending-primary-verification",
+            "certified"
+          ]
+        },
+        "consumerStatus": {
+          "type": "string",
+          "enum": [
+            "schema-only",
+            "future-consumer",
+            "executed-and-verified"
+          ]
+        }
+      },
+      "required": [
+        "ruleKey",
+        "condition",
+        "effects"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

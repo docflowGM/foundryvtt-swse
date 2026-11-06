@@ -1,0 +1,555 @@
+{
+  "schema": "swse.vehicle.universal.phase1f.scum-and-villainy.v1",
+  "status": "PHASE1_F_SCUM_AND_VILLAINY_ENUMERATION_AND_PROVENANCE_COMPLETE",
+  "sourceBook": "Scum and Villainy",
+  "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+  "sourceFiles": {
+    "pdf": "SAGA EDITION - Scum and Villainy.pdf",
+    "text": "Scum and Villainy_djvu.txt"
+  },
+  "counts": {
+    "inheritedExistingShipPublicationClaims": 11,
+    "approvedSupplementalStarfighterAlreadyCountedIn318Baseline": 1,
+    "newOtherVehiclePublicationClaims": 1,
+    "allBookVehiclePublicationClaims": 13,
+    "inheritedClassifications": {
+      "starfighter": 3,
+      "space-transport": 6,
+      "capital-ship": 2
+    },
+    "addedTypes": {
+      "starfighter-from-prior-amendment": 1,
+      "space-station-new-discovery": 1
+    },
+    "cumulativeKnownUniversalPublicationClaims": 375
+  },
+  "process": {
+    "discoveryMethod": "Independently inspected book-wide source PDF as 15 labeled contact sheets spanning all 225 physical pages; focused high-resolution source renders on ship statblock cluster printed pp62-67 and faction/organization vehicle statblock cluster printed pp125-130, with explicit inspection of other candidate statblock panels. Degraded DJVU TXT checked as navigation only, not authoritative proof of negative search results.",
+    "bookSectionsSwept": [
+      "Chapter I: Character Options pp4-36",
+      "Chapter II: Outlaw Tech pp37-67",
+      "Chapter III: Fringe Campaigns pp68-103",
+      "Chapter IV: Fringe Elements pp104-131",
+      "Chapter V: Point Nadir pp132-158",
+      "Chapter VI: Mini-Adventures pp159-191",
+      "Chapter VII: The Fell Star pp192-221"
+    ],
+    "visualReviewScope": "All 225 PDF pages reviewed at contact-sheet scale for likely vehicle statblocks; StarForge Station and Hornet pages individually viewed at higher resolution. Inherited 11 vehicle statblocks retain Phase2B close-read checks.",
+    "physicalPdfPageRule": "One-based physical PDF ordinal equals printed page +1 for indexed vehicle pages in this book.",
+    "exhaustivenessCaveat": "Whole-book page-thumbnail scan and targeted high-resolution page checks, plus degraded OCR. Very small or image-obscured vehicle statblocks could still require a later supplemental amendment.",
+    "mechanicalTranscriptionNotAuthorizedThisPhase": true
+  },
+  "identityDecisions": [
+    {
+      "subject": "Tenloss Corporation Hornet-class Interceptor",
+      "printedPage": 125,
+      "status": "REUSE_EXISTING_APPROVED_CENSUS_AMENDMENT",
+      "reason": "Complete printed Gargantuan starfighter statblock, independently PDF checked; already part of approved 318 spacecraft claim baseline, not a new +1 discovery."
+    },
+    {
+      "subject": "StarForge Station",
+      "printedPage": 130,
+      "status": "ADD_NEW_PUBLICATION_VEHICLE_STATBLOCK",
+      "reason": "Printed complete CL20 Colossal (station) space station block (defenses, hp, speed, weapons, crew, hyperdrive, cargo); independent of 11 historical ships and earlier Hornet amendment."
+    },
+    {
+      "subject": "Point Nadir",
+      "printedPage": 136,
+      "status": "EXCLUDE_NONSTATBLOCK",
+      "reason": "Spaceport gazetteer description and installation geography; no independent complete Actor-style vehicle statblock printed."
+    },
+    {
+      "subject": "Spaceport support droids",
+      "printedPage": 97,
+      "status": "EXCLUDE_DROID_NPC_STATBLOCKS",
+      "reason": "Droid/crew supporting characters, not printed vehicle-type statblocks."
+    },
+    {
+      "subject": "Swoop gangs and ground speeders",
+      "status": "EXCLUDE_NARRATIVE_ONLY",
+      "reason": "Nonstatblock encounters and descriptive vehicles; no distinct published complete ground speeder or walker vehicle block confirmed in PDF visual sweep."
+    },
+    {
+      "subject": "Outlaw starship mod tables and ugly-fighter rules",
+      "printedPages": [
+        40,
+        46,
+        60,
+        67
+      ],
+      "status": "EXCLUDE_NONVEHICLE_RECIPE",
+      "reason": "Rules, equipment and customization tables are not standalone named vehicle statblocks; the three Ugly fighter statblocks on printed pp66-67 already inherited."
+    },
+    {
+      "subject": "StarForge Station versus Rakatan Star Forge",
+      "printedPage": 129,
+      "status": "DISTINCT_PUBLICATION_IDENTITY",
+      "reason": "Printed sidebar states that this StarForge Station is unrelated to the ancient Rakatan Star Forge. Keep its published station name and identity, do not merge."
+    }
+  ],
+  "existingSpacecraft": [
+    {
+      "sourceEntryKey": "sav-c-wing-ugly-fighter",
+      "printedName": "C-wing Ugly Fighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Scum and Villainy",
+      "printedStatblockStartPage": 66,
+      "pdfPhysicalPage": 67,
+      "provenance": {
+        "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceFile": "SAGA EDITION - Scum and Villainy.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-scum-and-villainy-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Scum and Villainy",
+          "sourcePDF": "SAGA EDITION - Scum and Villainy.pdf",
+          "printedPages": [
+            66
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed book page; physical ordinal = printed page+1",
+          "phase1PrintedPage": 66,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+          "navigationOnlyTxtFile": "Scum and Villainy_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sav-clutch-ugly-fighter",
+      "printedName": "Clutch Ugly Fighter",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Scum and Villainy",
+      "printedStatblockStartPage": 67,
+      "pdfPhysicalPage": 68,
+      "provenance": {
+        "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceFile": "SAGA EDITION - Scum and Villainy.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-scum-and-villainy-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Scum and Villainy",
+          "sourcePDF": "SAGA EDITION - Scum and Villainy.pdf",
+          "printedPages": [
+            67
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed book page; physical ordinal = printed page+1",
+          "phase1PrintedPage": 67,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+          "navigationOnlyTxtFile": "Scum and Villainy_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sav-corellian-engineering-corporation-yt-1250-transport",
+      "printedName": "Corellian Engineering Corporation YT-1250 Transport",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Scum and Villainy",
+      "printedStatblockStartPage": 64,
+      "pdfPhysicalPage": 65,
+      "provenance": {
+        "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceFile": "SAGA EDITION - Scum and Villainy.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-scum-and-villainy-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Scum and Villainy",
+          "sourcePDF": "SAGA EDITION - Scum and Villainy.pdf",
+          "printedPages": [
+            64
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed book page; physical ordinal = printed page+1",
+          "phase1PrintedPage": 64,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+          "navigationOnlyTxtFile": "Scum and Villainy_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sav-corellian-engineering-corporation-yt-1930-transport",
+      "printedName": "Corellian Engineering Corporation YT-1930 Transport",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Scum and Villainy",
+      "printedStatblockStartPage": 66,
+      "pdfPhysicalPage": 67,
+      "provenance": {
+        "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceFile": "SAGA EDITION - Scum and Villainy.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-scum-and-villainy-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Scum and Villainy",
+          "sourcePDF": "SAGA EDITION - Scum and Villainy.pdf",
+          "printedPages": [
+            66
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed book page; physical ordinal = printed page+1",
+          "phase1PrintedPage": 66,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+          "navigationOnlyTxtFile": "Scum and Villainy_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sav-corelliaspace-gymsnor-3-light-freighter",
+      "printedName": "CorelliaSpace Gymsnor-3 Light Freighter",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Scum and Villainy",
+      "printedStatblockStartPage": 62,
+      "pdfPhysicalPage": 63,
+      "provenance": {
+        "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceFile": "SAGA EDITION - Scum and Villainy.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-scum-and-villainy-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Scum and Villainy",
+          "sourcePDF": "SAGA EDITION - Scum and Villainy.pdf",
+          "printedPages": [
+            62
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed book page; physical ordinal = printed page+1",
+          "phase1PrintedPage": 62,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+          "navigationOnlyTxtFile": "Scum and Villainy_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sav-errant-venture",
+      "printedName": "Errant Venture",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ]
+      },
+      "sourceBook": "Scum and Villainy",
+      "printedStatblockStartPage": 128,
+      "pdfPhysicalPage": 129,
+      "provenance": {
+        "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceFile": "SAGA EDITION - Scum and Villainy.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-scum-and-villainy-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Scum and Villainy",
+          "sourcePDF": "SAGA EDITION - Scum and Villainy.pdf",
+          "printedPages": [
+            128
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed book page; physical ordinal = printed page+1",
+          "phase1PrintedPage": 128,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+          "navigationOnlyTxtFile": "Scum and Villainy_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sav-kaloth-style-battlecruiser",
+      "printedName": "Kaloth-style Battlecruiser",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ]
+      },
+      "sourceBook": "Scum and Villainy",
+      "printedStatblockStartPage": 126,
+      "pdfPhysicalPage": 127,
+      "provenance": {
+        "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceFile": "SAGA EDITION - Scum and Villainy.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-scum-and-villainy-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Scum and Villainy",
+          "sourcePDF": "SAGA EDITION - Scum and Villainy.pdf",
+          "printedPages": [
+            126
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed book page; physical ordinal = printed page+1",
+          "phase1PrintedPage": 126,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+          "navigationOnlyTxtFile": "Scum and Villainy_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sav-kazellis-corporation-light-freighter",
+      "printedName": "Kazellis Corporation Light Freighter",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Scum and Villainy",
+      "printedStatblockStartPage": 62,
+      "pdfPhysicalPage": 63,
+      "provenance": {
+        "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceFile": "SAGA EDITION - Scum and Villainy.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-scum-and-villainy-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Scum and Villainy",
+          "sourcePDF": "SAGA EDITION - Scum and Villainy.pdf",
+          "printedPages": [
+            62
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed book page; physical ordinal = printed page+1",
+          "phase1PrintedPage": 62,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+          "navigationOnlyTxtFile": "Scum and Villainy_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sav-surronian-conqueror-class-assault-ship",
+      "printedName": "Surronian Conqueror-class Assault Ship",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Scum and Villainy",
+      "printedStatblockStartPage": 64,
+      "pdfPhysicalPage": 65,
+      "provenance": {
+        "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceFile": "SAGA EDITION - Scum and Villainy.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-scum-and-villainy-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Scum and Villainy",
+          "sourcePDF": "SAGA EDITION - Scum and Villainy.pdf",
+          "printedPages": [
+            64
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed book page; physical ordinal = printed page+1",
+          "phase1PrintedPage": 64,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+          "navigationOnlyTxtFile": "Scum and Villainy_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sav-x-tie-ugly-fighter",
+      "printedName": "X-TIE Ugly Fighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Scum and Villainy",
+      "printedStatblockStartPage": 67,
+      "pdfPhysicalPage": 68,
+      "provenance": {
+        "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceFile": "SAGA EDITION - Scum and Villainy.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-scum-and-villainy-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Scum and Villainy",
+          "sourcePDF": "SAGA EDITION - Scum and Villainy.pdf",
+          "printedPages": [
+            67
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed book page; physical ordinal = printed page+1",
+          "phase1PrintedPage": 67,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+          "navigationOnlyTxtFile": "Scum and Villainy_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sav-y164-thalassian-slave-transport",
+      "printedName": "Y164 Thalassian Slave Transport",
+      "printedTypeLine": "Colossal (frigate) space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ]
+      },
+      "sourceBook": "Scum and Villainy",
+      "printedStatblockStartPage": 127,
+      "pdfPhysicalPage": 128,
+      "provenance": {
+        "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceFile": "SAGA EDITION - Scum and Villainy.pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-scum-and-villainy-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Scum and Villainy",
+          "sourcePDF": "SAGA EDITION - Scum and Villainy.pdf",
+          "printedPages": [
+            127
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF index equals printed book page; physical ordinal = printed page+1",
+          "phase1PrintedPage": 127,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+          "navigationOnlyTxtFile": "Scum and Villainy_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    }
+  ],
+  "approvedSupplementalSpacecraft": [
+    {
+      "sourceEntryKey": "sav-tenloss-corporation-hornet-class-interceptor",
+      "printedName": "Tenloss Corporation Hornet-class Interceptor",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "secondaryCategories": [],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Scum and Villainy",
+      "printedStatblockStartPage": 125,
+      "pdfPhysicalPage": 126,
+      "provenance": {
+        "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceFile": "SAGA EDITION - Scum and Villainy.pdf",
+        "publishedSection": "Tenloss Criminal Syndicate",
+        "pageEvidence": "DIRECT_PRIMARY_PDF_VISUAL_PAGE_125",
+        "historicalSupplementalAuthority": "data/audits/vehicles/swse-phase2c-cp3-318-census-overlay.json"
+      },
+      "reviewStatus": "APPROVED_SUPPLEMENTAL_SOURCE_PDF_VERIFIED",
+      "existingCanonicalShip": false,
+      "amendmentStatus": "APPROVED_318_BASELINE_ALREADY_COUNTED",
+      "hydrationStatus": "SUPPLEMENTAL_SOURCE_REVIEW_COMPLETE_NOT_YET_IN_316_SHIP_PACK"
+    }
+  ],
+  "newVehicleEntries": [
+    {
+      "sourceEntryKey": "sav-starforge-station",
+      "printedName": "StarForge Station",
+      "printedTypeLine": "Colossal (station) space station",
+      "classification": {
+        "primaryCategory": "space-station",
+        "mobilityDomains": [
+          "space"
+        ],
+        "secondaryCategories": [
+          "fixed-installation",
+          "shipyard"
+        ],
+        "printedCategory": "Colossal (station) space station",
+        "entityNature": "space-station",
+        "statblockActorType": "vehicle"
+      },
+      "sourceBook": "Scum and Villainy",
+      "printedStatblockStartPage": 130,
+      "pdfPhysicalPage": 131,
+      "sourceSection": "Chapter IV: Fringe Elements > Organizations > Locales > StarForge Station",
+      "provenance": {
+        "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+        "sourceFile": "SAGA EDITION - Scum and Villainy.pdf",
+        "textSearchLayer": "Scum and Villainy_djvu.txt (OCR too degraded for trusted discovery)",
+        "pdfReviewMethod": "WHOLE_BOOK_CONTACT_SHEET_PLUS_PRIMARY_PDF_PAGE_RENDER",
+        "physicalPdfPage": 131,
+        "printedHeading": "StarForge Station",
+        "printedChallengeLevel": 20
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    }
+  ],
+  "mechanicsTransferredThisPhase": 0,
+  "productionPackFilesChanged": false,
+  "next": "Phase 1-G Galaxy at War"
+}

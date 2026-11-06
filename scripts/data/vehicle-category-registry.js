@@ -1,3 +1,5 @@
+import { UNIVERSAL_VEHICLE_PACKS } from '../domain/vehicles/universal-vehicle-pack-registry.js';
+
 /**
  * Vehicle Category Registry
  *
@@ -71,7 +73,16 @@ export const VEHICLE_CATEGORIES = {
     domain: 'starship',
     label: 'Space Station',
     description: 'Orbital station or space platform'
-  }
+  },
+  // Published source categories are derived from the same deterministic
+  // taxonomy as the Actor packs. No separate hand-authored pack mapping.
+  ...Object.fromEntries(UNIVERSAL_VEHICLE_PACKS.flatMap(pack=>
+    pack.categories.map(category=>[category,{
+      domain:pack.family==='starship'?'starship':pack.family==='hybrid'?'hybrid':'planetary',
+      label:category.split('-').map(word=>word.charAt(0).toUpperCase()+word.slice(1)).join(' '),
+      description:pack.label
+    }])
+  ))
 };
 
 /**

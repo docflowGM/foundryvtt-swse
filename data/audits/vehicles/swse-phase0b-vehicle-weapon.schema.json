@@ -1,0 +1,1642 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "swse.vehicle-weapon.phase0b.draft-0.5",
+  "title": "SWSE Phase 0-B — vehicle weapon definition (draft v0.5)",
+  "description": "Sourcebook-derived reusable intrinsic weapons; separate from mounts, gunner attack modifiers, fire groups, and mutable owned ammunition. Phase 0-B research only. v0.5 uses sparse optional nested profile data, not placeholder null substructures.",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": "swse.vehicle-weapon.phase0b.draft-0.5"
+    },
+    "weaponKey": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Stable canonical weapon identity key"
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Canonical weapon name"
+    },
+    "sourceEntries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "description": "Source claim",
+        "properties": {
+          "book": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Published source book"
+          },
+          "page": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Published printed page"
+          },
+          "printedName": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Weapon name in this source"
+          }
+        },
+        "required": [
+          "book",
+          "page",
+          "printedName"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Weapon sources"
+    },
+    "weaponClass": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Starfighter weapon, capital weapon, vehicle antipersonnel, tractor, energy, projectile, organic or other"
+    },
+    "proficiency": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Published proficiency/operator requirement, if any"
+    },
+    "targetScale": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "character, vehicle, starship"
+      },
+      "description": "Valid target/attack scales"
+    },
+    "attackProfiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "description": "One executable canonical profile",
+        "properties": {
+          "profileKey": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Stable mode identity"
+          },
+          "label": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Normal/ion/autofire/tractor/area/etc."
+          },
+          "attackResolution": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Attack against reflex/fortitude/other, or opposed check"
+          },
+          "baseDamage": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Canonical dice expression if one exists"
+          },
+          "multiplier": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Damage multiplier tied to attack scale"
+          },
+          "damageTypes": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Type"
+            },
+            "description": "energy/ion/etc."
+          },
+          "critical": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Critical handling"
+          },
+          "area": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Shape and size"
+          },
+          "range": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Range category"
+          },
+          "resourceCost": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Shots/missiles/energy consumed"
+          },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Constraint"
+            },
+            "description": "Prerequisites"
+          },
+          "specialRules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/rule"
+            },
+            "description": "Riders or special operations"
+          }
+        },
+        "required": [
+          "profileKey",
+          "label",
+          "attackResolution",
+          "baseDamage",
+          "multiplier",
+          "damageTypes",
+          "critical",
+          "area",
+          "range",
+          "resourceCost",
+          "requirements",
+          "specialRules"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Attack profiles; stable selector identity; not mount-specific"
+    },
+    "payloadProfiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "description": "Payload profile",
+        "properties": {
+          "payloadKey": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Canonical payload identity"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Name"
+          },
+          "damage": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Payload-owned damage expression"
+          },
+          "damageTypes": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Damage type"
+            },
+            "description": "Types"
+          },
+          "effect": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Area/ion/other effect"
+          },
+          "specialRules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/rule"
+            },
+            "description": "Payload effects"
+          }
+        },
+        "required": [
+          "payloadKey",
+          "name",
+          "damage",
+          "damageTypes",
+          "effect",
+          "specialRules"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Payloads own effects if projectile-dependent"
+    },
+    "operation": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/rule"
+      },
+      "description": "Special weapon rules incl. ion, autofire, battery, tractor, fire linking"
+    },
+    "ammunition": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/quantity"
+      },
+      "description": "Magazine/power/ammunition capacities, if published"
+    },
+    "notes": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Do not flatten crew/installation bonuses into this authority"
+    },
+    "definitionKind": {
+      "type": "string",
+      "enum": [
+        "intrinsic-weapon",
+        "payload",
+        "delivery-platform",
+        "special-emitter",
+        "deployable"
+      ]
+    },
+    "authorityStatus": {
+      "type": "string",
+      "enum": [
+        "source-sample",
+        "partially-structured",
+        "verified-authority"
+      ]
+    },
+    "profilesTyped": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "description": "",
+        "properties": {
+          "profileKey": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": ""
+          },
+          "label": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": ""
+          },
+          "typed": {
+            "$ref": "#/$defs/profileTyped"
+          }
+        },
+        "required": [
+          "profileKey",
+          "label",
+          "typed"
+        ],
+        "additionalProperties": false
+      },
+      "description": "One or more attack/control payload selections, with typed mechanics"
+    },
+    "configurationStates": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/configState"
+      }
+    },
+    "intrinsicRules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/mechanicRule"
+      }
+    },
+    "compatiblePayloadKeys": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Known payload identities; empty does not assert compatibility never exists"
+    },
+    "deliveryMechanism": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Launcher, mine-layer, beam projector, integral emitter, etc, when printed"
+    },
+    "fieldStates": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "enum": [
+          "source-stated",
+          "not-stated",
+          "not-applicable",
+          "unresolved",
+          "explicitly-none"
+        ]
+      }
+    },
+    "baseWeaponKey": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Identity link for published variants or modifications, no field-level source precedence"
+    },
+    "installationConstraints": {
+      "type": "object",
+      "description": "Published intrinsic equipment constraints, not the number installed in a given ship",
+      "properties": {
+        "emplacementPoints": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": ""
+        },
+        "costCredits": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": ""
+        },
+        "availability": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "minimumVehicleSize": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "installationScale": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "restrictionNotes": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "source-stated",
+            "partially-stated",
+            "not-stated",
+            "unresolved"
+          ]
+        }
+      },
+      "required": [
+        "emplacementPoints",
+        "costCredits",
+        "availability",
+        "minimumVehicleSize",
+        "installationScale",
+        "restrictionNotes",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "identityStatus": {
+      "type": "string",
+      "enum": [
+        "printed-identity",
+        "composed-sample",
+        "unreconciled"
+      ]
+    },
+    "conditionalMechanics": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/conditionalRule"
+      },
+      "description": "Intrinsic conditional weapon rules; not installation or global battery rules."
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "weaponKey",
+    "name",
+    "sourceEntries",
+    "definitionKind",
+    "authorityStatus",
+    "identityStatus"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "quantity": {
+      "type": "object",
+      "description": "Value/unit pair; preserve source units and do not assume ton equivalences",
+      "properties": {
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Published or normalized numerical value, never inferred without marking derivation"
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Physical unit, e.g. kg, metric-ton, m, days, months, years, credits, squares, km/h"
+        },
+        "raw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Short printed source field, preserving unusual qualifiers"
+        },
+        "qualifier": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "e.g. approximately, each, external, up to, carried"
+        }
+      },
+      "additionalProperties": false
+    },
+    "rule": {
+      "type": "object",
+      "description": "Exceptional or specialized printed mechanic; no invented effect",
+      "properties": {
+        "key": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Stable proposed mechanic identifier"
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Rule/ability name"
+        },
+        "category": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "rule family, e.g. special-system, weakness, aura, mobility, attack, action"
+        },
+        "summary": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Short original paraphrase only; no full-book rules copied"
+        },
+        "activation": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Activation trigger/time"
+        },
+        "resource": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Cost or consumption expression"
+        },
+        "effect": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Mechanical effect represented in future typed schema"
+        },
+        "limits": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Conditions/restrictions"
+        },
+        "reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Book page or other publication pointer when established"
+        },
+        "implementationStatus": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "unclassified, structured, requires-consumer, unsupported"
+        }
+      },
+      "additionalProperties": false
+    },
+    "predicate": {
+      "type": "object",
+      "description": "Predicate with explicit status; no free-text automatic execution",
+      "properties": {
+        "subject": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "attribute": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "operator": {
+          "type": "string",
+          "enum": [
+            "equals",
+            "not-equals",
+            "less-than",
+            "less-than-or-equal",
+            "greater-than",
+            "greater-than-or-equal",
+            "in-area",
+            "begins-turn-in-area",
+            "on-hit",
+            "on-miss",
+            "at-start-of-turn",
+            "other",
+            "pending"
+          ]
+        },
+        "value": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "null"
+          ]
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "structured",
+            "requires-ontology",
+            "unresolved"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "effect": {
+      "type": "object",
+      "description": "",
+      "properties": {
+        "effectKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "damage",
+            "modify-roll",
+            "penetrate-dr-sr",
+            "suppress-hyperdrive",
+            "apply-condition",
+            "grapple",
+            "pull",
+            "hold",
+            "shield-change",
+            "deploy-object",
+            "damage-on-enter",
+            "damage-adjustment",
+            "attack-restriction",
+            "mode-change",
+            "other"
+          ]
+        },
+        "target": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": ""
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "predicate": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/predicate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "resolutionStatus": {
+          "type": "string",
+          "enum": [
+            "typed",
+            "needs-consumer",
+            "unresolved"
+          ]
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "conditionAst": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/conditionAst"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "damageModel": {
+      "type": "object",
+      "description": "Intrinsic damage and ownership, not installed attack-roll bonus",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "dice",
+            "none",
+            "payload-derived",
+            "conditional",
+            "special",
+            "not-stated"
+          ]
+        },
+        "dice": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "multiplier": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": ""
+        },
+        "types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": ""
+        },
+        "sourceOwner": {
+          "type": "string",
+          "enum": [
+            "weapon",
+            "payload",
+            "installation",
+            "none",
+            "unresolved"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "source-stated",
+            "not-stated",
+            "unresolved"
+          ]
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "additionalProperties": false
+    },
+    "areaModel": {
+      "type": "object",
+      "description": "No 4-square-radius guess when source says 4-square splash radius",
+      "properties": {
+        "shape": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "splash",
+            "burst",
+            "line",
+            "cone",
+            "square",
+            "single-square",
+            "none",
+            null
+          ]
+        },
+        "widthSquares": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": ""
+        },
+        "heightSquares": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": ""
+        },
+        "radiusSquares": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": ""
+        },
+        "scale": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "character",
+            "starship",
+            "both",
+            null
+          ]
+        },
+        "onMiss": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "source-stated",
+            "not-stated",
+            "unresolved"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "resolutionModel": {
+      "type": "object",
+      "description": "Printed installation gunner bonus is excluded",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "attack-vs-defense",
+            "attack-vs-fixed",
+            "attack-then-opposed",
+            "automated-attack",
+            "no-attack",
+            "other"
+          ]
+        },
+        "defense": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "targetNumber": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": ""
+        },
+        "followup": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "attackBonusIntrinsic": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": ""
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "source-stated",
+            "not-stated",
+            "unresolved"
+          ]
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "additionalProperties": false
+    },
+    "resourceModel": {
+      "type": "object",
+      "description": "Capacity definition independent of current shots remaining",
+      "properties": {
+        "resourceFamily": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "capacity": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": ""
+        },
+        "capacityUnit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "consumesPerUse": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": ""
+        },
+        "consumptionRule": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "reloadAction": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "source-stated",
+            "not-stated",
+            "unresolved",
+            "not-applicable"
+          ]
+        },
+        "stockOwner": {
+          "type": "string",
+          "enum": [
+            "weapon",
+            "launcher",
+            "installed-magazine",
+            "payload",
+            "vehicle-inventory",
+            "infinite",
+            "unresolved",
+            "not-applicable"
+          ],
+          "description": "Canonical source of maximum ammunition capacity; current count remains runtime-only."
+        },
+        "expenditureBasis": {
+          "type": "string",
+          "enum": [
+            "fixed-per-attack",
+            "per-linked-launcher",
+            "per-fired-payload",
+            "none",
+            "unresolved"
+          ],
+          "description": "Do not silently use one shot for all linked weapons."
+        }
+      },
+      "required": [
+        "resourceFamily"
+      ],
+      "additionalProperties": false
+    },
+    "profileTyped": {
+      "type": "object",
+      "description": "Structured, immutable intrinsic weapon behavior",
+      "properties": {
+        "profileKind": {
+          "type": "string",
+          "enum": [
+            "damage-attack",
+            "control-attack",
+            "area-control",
+            "mine-trigger",
+            "nonattack-utility",
+            "delivery",
+            "other"
+          ]
+        },
+        "resolution": {
+          "$ref": "#/$defs/resolutionModel"
+        },
+        "damage": {
+          "$ref": "#/$defs/damageModel"
+        },
+        "area": {
+          "$ref": "#/$defs/areaModel"
+        },
+        "resource": {
+          "$ref": "#/$defs/resourceModel"
+        },
+        "effects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/effect"
+          }
+        },
+        "specialConditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/predicate"
+          }
+        },
+        "executionStatus": {
+          "type": "string",
+          "enum": [
+            "source-structured",
+            "partially-structured",
+            "unresolved"
+          ]
+        },
+        "conditionAst": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/conditionAst"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Typed precondition for selecting the attack profile, or null with unresolved status."
+        }
+      },
+      "required": [
+        "profileKind"
+      ],
+      "additionalProperties": false
+    },
+    "configState": {
+      "type": "object",
+      "description": "Configurations on installed weapons, not a separate battery entity",
+      "properties": {
+        "stateKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "fire-link",
+            "barrel-configuration",
+            "power-setting",
+            "payload-selection",
+            "operating-mode",
+            "other"
+          ]
+        },
+        "linkedCount": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": ""
+        },
+        "damageBonusDice": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "capacityMultiplier": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": ""
+        },
+        "consumptionRule": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "switchAction": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "enabledProfiles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": ""
+        },
+        "installationOnly": {
+          "type": "boolean"
+        },
+        "sourceStatus": {
+          "type": "string",
+          "enum": [
+            "source-stated",
+            "sample-composition",
+            "unresolved"
+          ]
+        }
+      },
+      "required": [
+        "stateKey"
+      ],
+      "additionalProperties": false
+    },
+    "mechanicRule": {
+      "type": "object",
+      "description": "Named reusable rule composition, distinct from local mount",
+      "properties": {
+        "mechanicKey": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "family": {
+          "type": "string",
+          "enum": [
+            "battery-salvo",
+            "battery-proximity",
+            "autofire",
+            "fire-link",
+            "target-size",
+            "ion",
+            "penetration",
+            "splash",
+            "tractor",
+            "mine",
+            "interdiction",
+            "other"
+          ]
+        },
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": ""
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "targetCondition": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/predicate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        },
+        "executionStatus": {
+          "type": "string",
+          "enum": [
+            "source-structured",
+            "needs-consumer",
+            "unresolved"
+          ]
+        },
+        "sourceSummary": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": ""
+        }
+      },
+      "additionalProperties": false
+    },
+    "conditionAst": {
+      "description": "Typed rule predicate; unresolved nodes deliberately fail the certification gate, but remain schema-valid for draft transcription.",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Explicit atomic claim with a defined context vocabulary",
+          "properties": {
+            "node": {
+              "const": "atom"
+            },
+            "subject": {
+              "type": "string",
+              "enum": [
+                "attacker",
+                "defender",
+                "vehicle",
+                "pilot",
+                "gunner",
+                "operator",
+                "weapon",
+                "mount",
+                "crew",
+                "target",
+                "action",
+                "position",
+                "environment",
+                "encounter"
+              ]
+            },
+            "attribute": {
+              "type": "string",
+              "enum": [
+                "size",
+                "category",
+                "scale",
+                "isPointDefense",
+                "mode",
+                "isFiring",
+                "startingTurnInsideArea",
+                "currentShieldRating",
+                "movesThisTurn",
+                "attackMargin",
+                "attackHit",
+                "operatorRole",
+                "ammoCount",
+                "linkedLauncherCount",
+                "conditions",
+                "shieldActive",
+                "isVehicle",
+                "fireLinkActive",
+                "roundPhase",
+                "turnStart",
+                "vehicleCondition"
+              ]
+            },
+            "operator": {
+              "type": "string",
+              "enum": [
+                "eq",
+                "ne",
+                "lt",
+                "lte",
+                "gt",
+                "gte",
+                "in",
+                "contains",
+                "true",
+                "false"
+              ]
+            },
+            "value": {
+              "oneOf": [
+                {
+                  "type": [
+                    "string",
+                    "integer",
+                    "number",
+                    "boolean",
+                    "null"
+                  ]
+                },
+                {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": [
+                      "string",
+                      "integer",
+                      "number",
+                      "boolean"
+                    ]
+                  }
+                }
+              ]
+            },
+            "scale": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "enum": [
+                "character",
+                "starship",
+                "neither",
+                null
+              ]
+            },
+            "status": {
+              "const": "structured"
+            }
+          },
+          "required": [
+            "node",
+            "subject",
+            "attribute",
+            "operator",
+            "value",
+            "scale",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "All conditions must hold",
+          "properties": {
+            "node": {
+              "const": "all"
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/conditionAst"
+              },
+              "minItems": 1
+            },
+            "status": {
+              "const": "structured"
+            }
+          },
+          "required": [
+            "node",
+            "children",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "At least one condition holds",
+          "properties": {
+            "node": {
+              "const": "any"
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/conditionAst"
+              },
+              "minItems": 1
+            },
+            "status": {
+              "const": "structured"
+            }
+          },
+          "required": [
+            "node",
+            "children",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "Logical negation",
+          "properties": {
+            "node": {
+              "const": "not"
+            },
+            "child": {
+              "$ref": "#/$defs/conditionAst"
+            },
+            "status": {
+              "const": "structured"
+            }
+          },
+          "required": [
+            "node",
+            "child",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "Preserve unresolved condition, never evaluate it as true",
+          "properties": {
+            "node": {
+              "const": "unresolved"
+            },
+            "printedCondition": {
+              "type": "string",
+              "minLength": 1
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "status": {
+              "const": "requires-ontology"
+            }
+          },
+          "required": [
+            "node",
+            "printedCondition",
+            "reason",
+            "status"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "semanticEffect": {
+      "type": "object",
+      "description": "A typed effect with timing and no implied Foundry consumer",
+      "properties": {
+        "effectKey": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "modify-attack",
+            "modify-damage-dice",
+            "modify-defense",
+            "alter-shield",
+            "deny-action",
+            "modify-movement",
+            "consume-ammunition",
+            "area-attack",
+            "add-effect",
+            "resolve-grapple",
+            "grant-action",
+            "suppress-hyperdrive",
+            "other"
+          ]
+        },
+        "targetPath": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Semantic authority path, NOT a Foundry system property."
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "add",
+            "subtract",
+            "set",
+            "prohibit",
+            "multiply",
+            "choose",
+            "consume",
+            "resolve",
+            "other"
+          ]
+        },
+        "value": {
+          "type": [
+            "number",
+            "integer",
+            "string",
+            "boolean",
+            "null"
+          ]
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "timing": {
+          "type": "string",
+          "enum": [
+            "before-roll",
+            "after-roll",
+            "before-damage-multiplier",
+            "after-damage-multiplier",
+            "on-hit",
+            "on-miss",
+            "turn-start",
+            "turn-end",
+            "attack-setup",
+            "immediate",
+            "other"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "source-structured",
+            "needs-ontology",
+            "unresolved"
+          ]
+        },
+        "sourceSummary": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "conditionalRule": {
+      "type": "object",
+      "description": "Source condition and effects; schema correctness does not imply executable runtime behavior.",
+      "properties": {
+        "ruleKey": {
+          "type": "string",
+          "minLength": 1
+        },
+        "family": {
+          "type": "string",
+          "enum": [
+            "battery-salvo",
+            "battery-proximity",
+            "target-size",
+            "fire-link",
+            "shield",
+            "movement",
+            "crew",
+            "organic",
+            "weapon-special",
+            "scale",
+            "other"
+          ]
+        },
+        "trigger": {
+          "type": "string",
+          "enum": [
+            "on-attack",
+            "on-hit",
+            "on-miss",
+            "turn-start",
+            "turn-end",
+            "when-moving",
+            "when-selecting-mode",
+            "passive",
+            "other"
+          ]
+        },
+        "condition": {
+          "$ref": "#/$defs/conditionAst"
+        },
+        "effects": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/semanticEffect"
+          }
+        },
+        "printedRuleSummary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authorityState": {
+          "type": "string",
+          "enum": [
+            "source-sample",
+            "pending-primary-verification",
+            "certified"
+          ]
+        },
+        "consumerStatus": {
+          "type": "string",
+          "enum": [
+            "schema-only",
+            "future-consumer",
+            "executed-and-verified"
+          ]
+        }
+      },
+      "required": [
+        "ruleKey",
+        "condition",
+        "effects"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$comment": "Legacy draft attackProfiles fields remain nonexecuting evidence. Only profilesTyped may become runtime authority after certification."
+}

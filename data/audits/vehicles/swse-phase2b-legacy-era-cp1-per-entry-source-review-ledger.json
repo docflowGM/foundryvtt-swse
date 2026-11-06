@@ -1,0 +1,2997 @@
+{
+  "schema": "swse.vehicle.legacy-era.phase2b.cp1.primary-source-review.v1",
+  "sourceBook": "Legacy Era Campaign Guide",
+  "sourcePdfSha256": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+  "phase1ProvenanceBlobSha": "21f2178eb6a610d3b52ecdc8549f93724c77fbc4",
+  "branchAtInitialization": "audit/vehicle-phase-0-1-canonical-foundation",
+  "branchHeadAtInitialization": "e7236c21513e221a36b8b0a87f0932aa908159d0",
+  "countPolicy": "39 original Phase 1 publication identities and printed-page references retained. First 10 in ascending printed statblock page and identity order reviewed (pp83-91); others explicitly NOT_REVIEWED. Source review is NOT strict mechanical certification.",
+  "stateSemantics": [
+    "PDF_VERIFIED",
+    "SOURCE_SILENT_CONFIRMED",
+    "SOURCE_CONFLICT_PRESERVED",
+    "NARRATIVE_CONFIRMED_ABSENT",
+    "NOT_REVIEWED"
+  ],
+  "fieldGroups": [
+    "printedTypeLine",
+    "challenge",
+    "initiativeSenses",
+    "defenses",
+    "durability",
+    "speed",
+    "rangedAttack",
+    "meleeAttack",
+    "fightingSpace",
+    "baseAttack",
+    "attackOptions",
+    "abilities",
+    "skills",
+    "crew",
+    "capacity",
+    "payload",
+    "hyperdrive",
+    "cost",
+    "weaponAttackProfile"
+  ],
+  "counts": {
+    "publicationShipClaims": 39,
+    "primaryPdfCloseReads": 10,
+    "primaryPdfCloseReadsOutstanding": 29,
+    "strictFullFieldAndPhysicalWeaponMountCertificates": 0,
+    "strictCertificatesOutstanding": 39,
+    "attackGroupRowsReviewed": 12,
+    "sourceConflictRecordCount": 1
+  },
+  "checkpoint1": {
+    "printedPages": [
+      82,
+      83,
+      84,
+      85,
+      86,
+      87,
+      88,
+      89,
+      90,
+      91
+    ],
+    "extraContextPages": [
+      81,
+      92
+    ],
+    "sourceEntriesReviewed": [
+      "le-besh-type-personal-starfighter",
+      "le-phoebos-class-starfighter",
+      "le-r-28-starfighter",
+      "le-x-83-twintail-starfighter",
+      "le-gladius-class-light-freighter",
+      "le-gpe-7300-space-transport",
+      "le-helot-class-medium-transport",
+      "le-j-1-shuttle",
+      "le-mc-24a-light-shuttle",
+      "le-yx-1980-space-transport"
+    ],
+    "policy": "10 records exactly; YZ-2500 p91 deferred despite sharing a printed page with YX-1980; stock/modeled/named variants not merged."
+  },
+  "entries": [
+    {
+      "sourceEntryKey": "le-besh-type-personal-starfighter",
+      "printedName": "Besh-Type Personal Starfighter",
+      "printedStatblockStartPage": 83,
+      "phase1SectionStartPage": 82,
+      "phase1PdfPhysicalPage": 84,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        83
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Attack-group rows do not establish complete physical hardware/mount counts, battery composition or firing arcs; no silent reconstruction permitted."
+        }
+      ],
+      "printedFacts": {
+        "type": "Gargantuan starfighter",
+        "cl": 8,
+        "initiative": 4,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 16,
+          "flatFootedReflex": 13,
+          "fortitude": 30,
+          "armorBonus": 8,
+          "vehicularCombat": true,
+          "shieldRating": 20
+        },
+        "durability": {
+          "hitPoints": 180,
+          "damageReduction": 10,
+          "threshold": 50
+        },
+        "movement": {
+          "characterScaleFlySquares": 12,
+          "maximumVelocityKmH": 970,
+          "starshipScaleFlySquares": 3
+        },
+        "combat": {
+          "ranged": "light laser cannons +8",
+          "baseAttackBonus": 2,
+          "grappleBonus": 37,
+          "attackOptions": [
+            "autofire (light laser cannons)",
+            "fire-link (light laser cannons)"
+          ]
+        },
+        "fightingSpace": {
+          "squares": "4x4 or 1 starship-scale square",
+          "cover": "total (crew)"
+        },
+        "abilities": {
+          "strength": 50,
+          "dexterity": 16,
+          "constitution": "—",
+          "intelligence": 18
+        },
+        "skills": {
+          "initiative": 4,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": 4,
+          "useComputer": 6
+        },
+        "crew": "1 (skilled)",
+        "passengers": "none",
+        "cargo": "60 kg",
+        "consumables": "2 weeks",
+        "carriedCraft": "none",
+        "hyperdrive": "x2; navicomputer",
+        "economics": "Restricted; 105,000 credits (65,000 used)",
+        "supplementalPrintedFacts": {}
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "light laser cannons",
+          "station": "pilot",
+          "attackBonus": 8,
+          "autofireAttackBonus": 3,
+          "damage": "5d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePage": 83
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            83
+          ],
+          "finding": "Narrative says moderately powerful fire-linked laser cannons at tips of folding S-foils; no full physical mount count or firing arcs given."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            83
+          ],
+          "finding": "B-wing-derived design has shifted central cockpit and folding S-foils; do not merge with stock B-wing."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "printedPages": [
+          83
+        ],
+        "statblockLocation": "printed p.83",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page",
+        "reviewScope": "Visual close-read against original scan; TXT only navigation"
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      }
+    },
+    {
+      "sourceEntryKey": "le-phoebos-class-starfighter",
+      "printedName": "Phoebos-class Starfighter",
+      "printedStatblockStartPage": 84,
+      "phase1SectionStartPage": 83,
+      "phase1PdfPhysicalPage": 85,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        84
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Attack-group rows do not establish complete physical hardware/mount counts, battery composition or firing arcs; no silent reconstruction permitted."
+        }
+      ],
+      "printedFacts": {
+        "type": "Huge starfighter",
+        "cl": 8,
+        "initiative": 11,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 18,
+          "flatFootedReflex": 11,
+          "fortitude": 24,
+          "armorBonus": 3,
+          "vehicularCombat": true,
+          "shieldRating": 30
+        },
+        "durability": {
+          "hitPoints": 90,
+          "damageReduction": 10,
+          "threshold": 34
+        },
+        "movement": {
+          "characterScaleFlySquares": 16,
+          "maximumVelocityKmH": 1350,
+          "starshipScaleFlySquares": 6
+        },
+        "combat": {
+          "ranged": "double light laser cannons +7",
+          "baseAttackBonus": 2,
+          "grappleBonus": 26,
+          "attackOptions": [
+            "autofire (double light laser cannons)"
+          ]
+        },
+        "fightingSpace": {
+          "squares": "3x3 or 1 starship-scale square",
+          "cover": "total (crew)"
+        },
+        "abilities": {
+          "strength": 38,
+          "dexterity": 24,
+          "constitution": "—",
+          "intelligence": 16
+        },
+        "skills": {
+          "initiative": 11,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": 11,
+          "useComputer": 11
+        },
+        "crew": "1 (skilled)",
+        "passengers": "1",
+        "cargo": "80 kg",
+        "consumables": "1 week",
+        "carriedCraft": "none",
+        "hyperdrive": "x0.5",
+        "economics": "Licensed; 190,000 credits (100,000 used)",
+        "supplementalPrintedFacts": {}
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "double light laser cannons",
+          "station": "pilot",
+          "attackBonus": 7,
+          "autofireAttackBonus": 2,
+          "damage": "4d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePage": 84
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            84
+          ],
+          "finding": "Civilian sport designation contrasts with actual shields and laser weapons; do not model as unarmed."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            84
+          ],
+          "finding": "Published manufacturer tracking/Holonet security upgrades appear in narrative, with no numerical system rule established."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "printedPages": [
+          84
+        ],
+        "statblockLocation": "printed p.84",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page",
+        "reviewScope": "Visual close-read against original scan; TXT only navigation"
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      }
+    },
+    {
+      "sourceEntryKey": "le-r-28-starfighter",
+      "printedName": "R-28 Starfighter",
+      "printedStatblockStartPage": 85,
+      "phase1SectionStartPage": 84,
+      "phase1PdfPhysicalPage": 86,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        85
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Attack-group rows do not establish complete physical hardware/mount counts, battery composition or firing arcs; no silent reconstruction permitted."
+        }
+      ],
+      "printedFacts": {
+        "type": "Gargantuan starfighter",
+        "cl": 10,
+        "initiative": 6,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 18,
+          "flatFootedReflex": 13,
+          "fortitude": 28,
+          "armorBonus": 8,
+          "vehicularCombat": true,
+          "shieldRating": 30
+        },
+        "durability": {
+          "hitPoints": 150,
+          "damageReduction": 10,
+          "threshold": 48
+        },
+        "movement": {
+          "characterScaleFlySquares": 16,
+          "maximumVelocityKmH": 1050,
+          "starshipScaleFlySquares": 4
+        },
+        "combat": {
+          "ranged": "medium laser cannons +7 OR medium ion cannons +7",
+          "baseAttackBonus": 2,
+          "grappleBonus": 35,
+          "attackOptions": [
+            "autofire (medium laser cannons, medium ion cannons)",
+            "fire-link (medium laser cannons, medium ion cannons)"
+          ]
+        },
+        "fightingSpace": {
+          "squares": "4x4 or 1 starship-scale square",
+          "cover": "total (crew)"
+        },
+        "abilities": {
+          "strength": 46,
+          "dexterity": 20,
+          "constitution": "—",
+          "intelligence": 16
+        },
+        "skills": {
+          "initiative": 6,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": 6,
+          "useComputer": 6
+        },
+        "crew": "1",
+        "passengers": "none",
+        "cargo": "50 kg",
+        "consumables": "5 days",
+        "carriedCraft": "none",
+        "hyperdrive": "x2",
+        "economics": "Restricted; 120,000 credits (55,000 used)",
+        "supplementalPrintedFacts": {}
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "medium laser cannons",
+          "station": "pilot",
+          "attackBonus": 7,
+          "autofireAttackBonus": 2,
+          "damage": "5d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePage": 85
+        },
+        {
+          "weaponLabel": "medium ion cannons",
+          "station": "pilot",
+          "attackBonus": 7,
+          "autofireAttackBonus": 2,
+          "damage": "6d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePage": 85
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            85
+          ],
+          "finding": "Narrative explicitly calls fire-linked ion cannons less lethal and says some of the weapons are made with nonlethal munitions; do not convert ion attacks into standard laser damage."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            85
+          ],
+          "finding": "R-28 is distinct from X-83; shared Incom development not a license to merge their hardware."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "printedPages": [
+          85
+        ],
+        "statblockLocation": "printed p.85",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page",
+        "reviewScope": "Visual close-read against original scan; TXT only navigation"
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      }
+    },
+    {
+      "sourceEntryKey": "le-x-83-twintail-starfighter",
+      "printedName": "X-83 TwinTail Starfighter",
+      "printedStatblockStartPage": 86,
+      "phase1SectionStartPage": 85,
+      "phase1PdfPhysicalPage": 87,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        86
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Attack-group rows do not establish complete physical hardware/mount counts, battery composition or firing arcs; no silent reconstruction permitted."
+        }
+      ],
+      "printedFacts": {
+        "type": "Gargantuan starfighter",
+        "cl": 12,
+        "initiative": 8,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 20,
+          "flatFootedReflex": 13,
+          "fortitude": 29,
+          "armorBonus": 8,
+          "vehicularCombat": true,
+          "shieldRating": 30
+        },
+        "durability": {
+          "hitPoints": 170,
+          "damageReduction": 10,
+          "threshold": 49
+        },
+        "movement": {
+          "characterScaleFlySquares": 16,
+          "maximumVelocityKmH": 1200,
+          "starshipScaleFlySquares": 5
+        },
+        "combat": {
+          "ranged": "enhanced heavy laser cannons +7 OR proton torpedoes +7",
+          "baseAttackBonus": 2,
+          "grappleBonus": 36,
+          "attackOptions": [
+            "autofire (enhanced heavy laser cannons)",
+            "fire-link (enhanced heavy laser cannons, proton torpedoes)"
+          ]
+        },
+        "fightingSpace": {
+          "squares": "4x4 or 1 starship-scale square",
+          "cover": "total (crew); +5 (astromech droid)"
+        },
+        "abilities": {
+          "strength": 48,
+          "dexterity": 24,
+          "constitution": "—",
+          "intelligence": 16
+        },
+        "skills": {
+          "initiative": 8,
+          "mechanics": 6,
+          "mechanicsWithAstromech": 13,
+          "perception": 6,
+          "pilot": 8,
+          "useComputer": 6,
+          "useComputerWithAstromech": 13
+        },
+        "crew": "1 plus astromech droid (skilled)",
+        "passengers": "none",
+        "cargo": "70 kg",
+        "consumables": "6 days",
+        "carriedCraft": "none",
+        "hyperdrive": "x1; 10-jump memory (astromech droid)",
+        "economics": "Restricted; 160,000 credits (75,000 used)",
+        "payload": "16 proton torpedoes",
+        "supplementalPrintedFacts": {}
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "enhanced heavy laser cannons",
+          "station": "pilot",
+          "attackBonus": 7,
+          "autofireAttackBonus": 2,
+          "damage": "8d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePage": 86
+        },
+        {
+          "weaponLabel": "proton torpedoes",
+          "station": "pilot",
+          "attackBonus": 7,
+          "autofireAttackBonus": null,
+          "damage": "10d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePage": 86
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            86
+          ],
+          "finding": "Printed +13 Mechanics and Use Computer skill values apply IF the ship has an astromech; do not apply automatically if absent."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            86
+          ],
+          "finding": "Astromech is integrated/hardwired into main computer in prose; +5 cover for astromech appears separately in fighting-space line."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            86
+          ],
+          "finding": "Payload is 16 proton torpedoes; that is not launcher count."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            86
+          ],
+          "finding": "The X-83 appearing as carried craft of J-1 is not a new publication ship record."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "printedPages": [
+          86
+        ],
+        "statblockLocation": "printed p.86",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page",
+        "reviewScope": "Visual close-read against original scan; TXT only navigation"
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      }
+    },
+    {
+      "sourceEntryKey": "le-gladius-class-light-freighter",
+      "printedName": "Gladius-class Light Freighter",
+      "printedStatblockStartPage": 87,
+      "phase1SectionStartPage": 86,
+      "phase1PdfPhysicalPage": 88,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        87
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Attack-group rows do not establish complete physical hardware/mount counts, battery composition or firing arcs; no silent reconstruction permitted."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal space transport",
+        "cl": 9,
+        "initiative": 0,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 16,
+          "flatFootedReflex": 12,
+          "fortitude": 27,
+          "armorBonus": 12,
+          "vehicularCombat": false,
+          "shieldRating": 30
+        },
+        "durability": {
+          "hitPoints": 140,
+          "damageReduction": 10,
+          "threshold": 77
+        },
+        "movement": {
+          "characterScaleFlySquares": 12,
+          "maximumVelocityKmH": 950,
+          "starshipScaleFlySquares": 3
+        },
+        "combat": {
+          "ranged": "advanced heavy quad laser cannons +7",
+          "baseAttackBonus": 2,
+          "grappleBonus": 39,
+          "attackOptions": [
+            "autofire (advanced heavy quad laser cannons)"
+          ]
+        },
+        "fightingSpace": {
+          "squares": "12x12 or 1 starship-scale square",
+          "cover": "total (crew)"
+        },
+        "abilities": {
+          "strength": 44,
+          "dexterity": 18,
+          "constitution": "—",
+          "intelligence": 16
+        },
+        "skills": {
+          "initiative": 0,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": 0,
+          "useComputer": 6
+        },
+        "crew": "1 (skilled)",
+        "passengers": "2",
+        "cargo": "50 tons",
+        "consumables": "2 months",
+        "carriedCraft": "none",
+        "hyperdrive": "x1; navicomputer",
+        "economics": "Restricted; 190,000 credits (105,000 used)",
+        "supplementalPrintedFacts": {
+          "physicalLocation": "dorsal-mounted",
+          "physicalLocationSourcePage": 86
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "advanced heavy quad laser cannons",
+          "station": "pilot",
+          "attackBonus": 7,
+          "autofireAttackBonus": 2,
+          "damage": "9d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePage": 87
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            87
+          ],
+          "finding": "Narrative says dorsal-mounted quad laser cannon; preserve dorsal location without inventing 4 independent laser mounts."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            87
+          ],
+          "finding": "The Raider is a named Gladius used by bounty hunter Jor Torlin, but no separate Raider statblock appears in this 10-entry tranche."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "printedPages": [
+          87
+        ],
+        "statblockLocation": "printed p.87",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page",
+        "reviewScope": "Visual close-read against original scan; TXT only navigation"
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      }
+    },
+    {
+      "sourceEntryKey": "le-gpe-7300-space-transport",
+      "printedName": "GPE-7300 Space Transport",
+      "printedStatblockStartPage": 87,
+      "phase1SectionStartPage": 87,
+      "phase1PdfPhysicalPage": 88,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        87
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Attack-group rows do not establish complete physical hardware/mount counts, battery composition or firing arcs; no silent reconstruction permitted."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal space transport",
+        "cl": 7,
+        "initiative": -2,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 15,
+          "flatFootedReflex": 13,
+          "fortitude": 28,
+          "armorBonus": 13,
+          "vehicularCombat": false,
+          "shieldRating": 20
+        },
+        "durability": {
+          "hitPoints": 160,
+          "damageReduction": 15,
+          "threshold": 78
+        },
+        "movement": {
+          "characterScaleFlySquares": 16,
+          "maximumVelocityKmH": 1050,
+          "starshipScaleFlySquares": 4
+        },
+        "combat": {
+          "ranged": "heavy laser cannons +7",
+          "baseAttackBonus": 2,
+          "grappleBonus": 40,
+          "attackOptions": [
+            "autofire (heavy laser cannons)",
+            "fire-link (heavy laser cannons)"
+          ]
+        },
+        "fightingSpace": {
+          "squares": "12x12 or 1 starship-scale square",
+          "cover": "total (crew)"
+        },
+        "abilities": {
+          "strength": 47,
+          "dexterity": 14,
+          "constitution": "—",
+          "intelligence": 16
+        },
+        "skills": {
+          "initiative": -2,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": -2,
+          "useComputer": 6
+        },
+        "crew": "1 (skilled)",
+        "passengers": "4",
+        "cargo": "45 tons",
+        "consumables": "1 month",
+        "carriedCraft": "none",
+        "hyperdrive": "x2; navicomputer",
+        "economics": "Licensed; 165,000 credits (90,000 used)"
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "heavy laser cannons",
+          "station": "pilot",
+          "attackBonus": 7,
+          "autofireAttackBonus": 2,
+          "damage": "6d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePage": 87
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            87
+          ],
+          "finding": "Printed narrative describes ventral oversized engines, vertical landing orientation and cockpit angled 90 degrees; no weapon arc or ventral laser mounting can be inferred."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            87
+          ],
+          "finding": "Azlyn Rae owns a GPE-7300; publication entry is the stock transport, not a separate named personal-statblock variant."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "printedPages": [
+          87
+        ],
+        "statblockLocation": "printed p.87",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page",
+        "reviewScope": "Visual close-read against original scan; TXT only navigation"
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      }
+    },
+    {
+      "sourceEntryKey": "le-helot-class-medium-transport",
+      "printedName": "Helot-class Medium Transport",
+      "printedStatblockStartPage": 88,
+      "phase1SectionStartPage": 88,
+      "phase1PdfPhysicalPage": 89,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        88
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Attack-group rows do not establish complete physical hardware/mount counts, battery composition or firing arcs; no silent reconstruction permitted."
+        },
+        {
+          "status": "NARRATIVE_CONFIRMED_ABSENT",
+          "issue": "Stock shields explicitly absent in narrative; do not fabricate SR."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal space transport",
+        "cl": 7,
+        "initiative": -4,
+        "sensesPerception": 5,
+        "defenses": {
+          "reflex": 15,
+          "flatFootedReflex": 14,
+          "fortitude": 30,
+          "armorBonus": 14,
+          "vehicularCombat": false,
+          "shieldRating": null
+        },
+        "durability": {
+          "hitPoints": 180,
+          "damageReduction": 15,
+          "threshold": 80
+        },
+        "movement": {
+          "characterScaleFlySquares": 12,
+          "maximumVelocityKmH": 850,
+          "starshipScaleFlySquares": 3
+        },
+        "combat": {
+          "ranged": "medium laser cannons +6",
+          "baseAttackBonus": 0,
+          "grappleBonus": 40,
+          "attackOptions": [
+            "autofire (medium laser cannons)",
+            "fire-link (medium laser cannons)"
+          ]
+        },
+        "fightingSpace": {
+          "squares": "12x12 or 1 starship-scale square",
+          "cover": "total (crew)"
+        },
+        "abilities": {
+          "strength": 50,
+          "dexterity": 12,
+          "constitution": "—",
+          "intelligence": 14
+        },
+        "skills": {
+          "initiative": -4,
+          "mechanics": 5,
+          "perception": 5,
+          "pilot": -4,
+          "useComputer": 5
+        },
+        "crew": "2 (normal)",
+        "passengers": "6",
+        "cargo": "100 tons",
+        "consumables": "3 months",
+        "carriedCraft": "none",
+        "hyperdrive": "x2 (backup x10); navicomputer",
+        "economics": "Licensed; 105,000 credits (45,000 used)"
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "medium laser cannons",
+          "station": "copilot",
+          "attackBonus": 6,
+          "autofireAttackBonus": 1,
+          "damage": "5d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePage": 88
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            88
+          ],
+          "finding": "The prose explicitly says the stock Helot model does not have shields; this is affirmatively shieldless, not an accidental omitted SR field."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            88
+          ],
+          "finding": "The Mynock owned by Cade Skywalker is a Helot-class transport, but separate named The Mynock publication statblock occurs later (p220); do not merge."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "printedPages": [
+          88
+        ],
+        "statblockLocation": "printed p.88",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page",
+        "reviewScope": "Visual close-read against original scan; TXT only navigation"
+      },
+      "sourceFieldStates": {
+        "shieldRating": "NARRATIVE_CONFIRMED_ABSENT",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      }
+    },
+    {
+      "sourceEntryKey": "le-j-1-shuttle",
+      "printedName": "J-1 Shuttle",
+      "printedStatblockStartPage": 89,
+      "phase1SectionStartPage": 88,
+      "phase1PdfPhysicalPage": 90,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        88,
+        89
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "SOURCE_CONFLICT_PRESERVED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Attack-group rows do not establish complete physical hardware/mount counts, battery composition or firing arcs; no silent reconstruction permitted."
+        },
+        {
+          "status": "SOURCE_CONFLICT_PRESERVED",
+          "issue": "Printed +4 main ranged vs +6 weapon-detail attack bonus."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal space transport",
+        "cl": 8,
+        "initiative": -2,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 14,
+          "flatFootedReflex": 12,
+          "fortitude": 25,
+          "armorBonus": 12,
+          "vehicularCombat": false,
+          "shieldRating": 25
+        },
+        "durability": {
+          "hitPoints": 110,
+          "damageReduction": 10,
+          "threshold": 75
+        },
+        "movement": {
+          "characterScaleFlySquares": 12,
+          "maximumVelocityKmH": 850,
+          "starshipScaleFlySquares": 4
+        },
+        "combat": {
+          "ranged": "double laser cannons +4 (MAIN RANGED LINE)",
+          "baseAttackBonus": 2,
+          "grappleBonus": 37,
+          "attackOptions": []
+        },
+        "fightingSpace": {
+          "squares": "8x8 or 1 starship-scale square",
+          "cover": "total (crew)"
+        },
+        "abilities": {
+          "strength": 40,
+          "dexterity": 14,
+          "constitution": "—",
+          "intelligence": 14
+        },
+        "skills": {
+          "initiative": -2,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": -2,
+          "useComputer": 6
+        },
+        "crew": "2 (skilled)",
+        "passengers": "20",
+        "cargo": "90 tons",
+        "consumables": "2 months",
+        "carriedCraft": "1 X-83 TwinTail starfighter",
+        "hyperdrive": "x2; navicomputer",
+        "economics": "Restricted; 220,000 credits (100,000 used)",
+        "supplementalPrintedFacts": {
+          "printedMainRangedAttack": 4,
+          "printedWeaponRowAttack": 6,
+          "printedWeaponRowAutofire": 1,
+          "attackOptionsLineAbsent": true
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "double laser cannons",
+          "station": "pilot",
+          "attackBonus": 6,
+          "autofireAttackBonus": 1,
+          "damage": "2d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePage": 89
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "SOURCE_CONFLICT_PRESERVED",
+          "sourcePrintedPages": [
+            89,
+            88
+          ],
+          "finding": "SOURCE CONFLICT: main Ranged line says double laser cannons +4 while shaded weapon row gives Atk +6 (+1 autofire). Preserve both printed values; no canonical repair authorized."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            89,
+            88
+          ],
+          "finding": "Narrative says most Jedi shuttles are unarmed but some retrofitted during Sith-Imperial War; the published J-1 statblock IS armed."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            89,
+            88
+          ],
+          "finding": "X-83 listed as carried craft is a cargo/craft link, not a new identity."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "printedPages": [
+          88,
+          89
+        ],
+        "statblockLocation": "printed p.89",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page",
+        "reviewScope": "Visual close-read against original scan; TXT only navigation"
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      }
+    },
+    {
+      "sourceEntryKey": "le-mc-24a-light-shuttle",
+      "printedName": "MC-24a Light Shuttle",
+      "printedStatblockStartPage": 89,
+      "phase1SectionStartPage": 89,
+      "phase1PdfPhysicalPage": 90,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        89
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Attack-group rows do not establish complete physical hardware/mount counts, battery composition or firing arcs; no silent reconstruction permitted."
+        },
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "No printed hyperdrive line. Do not treat an omitted field as proof of hardware absence."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal space transport",
+        "cl": 6,
+        "initiative": -1,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 15,
+          "flatFootedReflex": 12,
+          "fortitude": 24,
+          "armorBonus": 12,
+          "vehicularCombat": false,
+          "shieldRating": 20
+        },
+        "durability": {
+          "hitPoints": 100,
+          "damageReduction": 15,
+          "threshold": 74
+        },
+        "movement": {
+          "characterScaleFlySquares": 16,
+          "maximumVelocityKmH": 1030,
+          "starshipScaleFlySquares": 4
+        },
+        "combat": {
+          "ranged": "light laser cannons +6",
+          "baseAttackBonus": 2,
+          "grappleBonus": 36,
+          "attackOptions": []
+        },
+        "fightingSpace": {
+          "squares": "12x12 or 1 starship-scale square",
+          "cover": "total (crew)"
+        },
+        "abilities": {
+          "strength": 39,
+          "dexterity": 16,
+          "constitution": "—",
+          "intelligence": 14
+        },
+        "skills": {
+          "initiative": -1,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": -1,
+          "useComputer": 6
+        },
+        "crew": "2 (skilled)",
+        "passengers": "6",
+        "cargo": "10 tons",
+        "consumables": "2 days",
+        "carriedCraft": "none",
+        "hyperdrive": null,
+        "economics": "Licensed; 90,000 credits (50,000 used)",
+        "supplementalPrintedFacts": {
+          "specialShieldRecovery": "10 SR points when taking the recharge shields action",
+          "hyperdriveLinePrinted": false
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "light laser cannons",
+          "station": "pilot",
+          "attackBonus": 6,
+          "autofireAttackBonus": null,
+          "damage": "3d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePage": 89
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            89
+          ],
+          "finding": "The starship is described as a short-range shuttle; the printed statblock contains NO hyperdrive line, which is source-silent—not a certified x0 or no-drive hardware fact."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            89
+          ],
+          "finding": "Printed asterisk on SR 20: recovers 10 points of shield rating when taking recharge shields action; unlike ordinary shield recharge, do not omit this special value."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "printedPages": [
+          89
+        ],
+        "statblockLocation": "printed p.89",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page",
+        "reviewScope": "Visual close-read against original scan; TXT only navigation"
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "SOURCE_SILENT_CONFIRMED"
+      }
+    },
+    {
+      "sourceEntryKey": "le-yx-1980-space-transport",
+      "printedName": "YX-1980 Space Transport",
+      "printedStatblockStartPage": 91,
+      "phase1SectionStartPage": 89,
+      "phase1PdfPhysicalPage": 92,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        90,
+        91
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Attack-group rows do not establish complete physical hardware/mount counts, battery composition or firing arcs; no silent reconstruction permitted."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal space transport",
+        "cl": 8,
+        "initiative": 0,
+        "sensesPerception": 5,
+        "defenses": {
+          "reflex": 18,
+          "flatFootedReflex": 13,
+          "fortitude": 28,
+          "armorBonus": 13,
+          "vehicularCombat": false,
+          "shieldRating": 40
+        },
+        "durability": {
+          "hitPoints": 150,
+          "damageReduction": 15,
+          "threshold": 88
+        },
+        "movement": {
+          "characterScaleFlySquares": 12,
+          "maximumVelocityKmH": 950,
+          "starshipScaleFlySquares": 3
+        },
+        "combat": {
+          "ranged": "medium laser cannons +3",
+          "baseAttackBonus": 2,
+          "grappleBonus": 38,
+          "attackOptions": []
+        },
+        "fightingSpace": {
+          "squares": "12x12 or 1 starship-scale square",
+          "cover": "total (crew)"
+        },
+        "abilities": {
+          "strength": 46,
+          "dexterity": 20,
+          "constitution": "—",
+          "intelligence": 16
+        },
+        "skills": {
+          "initiative": 0,
+          "mechanics": 5,
+          "perception": 5,
+          "pilot": 0,
+          "useComputer": 5
+        },
+        "crew": "2 (normal)",
+        "passengers": "6",
+        "cargo": "110 tons",
+        "consumables": "2 months",
+        "carriedCraft": "none",
+        "hyperdrive": "x2 (backup x10); navicomputer",
+        "economics": "Licensed; 150,000 credits (80,000 used)",
+        "supplementalPrintedFacts": {
+          "mechanicsInstallUpgradePenalty": -5,
+          "deckPlanPrintedPage": 90
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "medium laser cannons",
+          "station": "copilot",
+          "attackBonus": 3,
+          "autofireAttackBonus": null,
+          "damage": "4d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePage": 91
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            91,
+            90
+          ],
+          "finding": "PDF p90 contains a numbered deck plan with two engine compartments, multiple cargo bays, cabins and controls; it is not a rules source for hardpoint positions or laser firing arc."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            91,
+            90
+          ],
+          "finding": "Printed p91 narrative: Mechanics checks to install or upgrade the ship's systems take a -5 penalty because systems are distributed across the hull."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            91,
+            90
+          ],
+          "finding": "The Grinning Liar is a named YX-1980 used by Kee and Chak and has its own publication statblock on p219; do not merge into stock model."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "printedPages": [
+          90,
+          91
+        ],
+        "statblockLocation": "printed p.91",
+        "pdfPageIndexSemantics": "Zero-based PDF index equals printed page",
+        "reviewScope": "Visual close-read against original scan; TXT only navigation"
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      }
+    },
+    {
+      "sourceEntryKey": "le-yz-2500-heavy-transport",
+      "printedName": "YZ-2500 Heavy Transport",
+      "printedStatblockStartPage": 91,
+      "phase1SectionStartPage": 91,
+      "phase1PdfPhysicalPage": 92,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-bb-2-starfire-fighter-bomber",
+      "printedName": "BB-2 Starfire Fighter/Bomber",
+      "printedStatblockStartPage": 142,
+      "phase1SectionStartPage": 141,
+      "phase1PdfPhysicalPage": 143,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-cf9-crossfire-starfighter",
+      "printedName": "CF9 Crossfire Starfighter",
+      "printedStatblockStartPage": 143,
+      "phase1SectionStartPage": 142,
+      "phase1PdfPhysicalPage": 144,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-i4-ionizer-starfighter",
+      "printedName": "I4 Ionizer Starfighter",
+      "printedStatblockStartPage": 143,
+      "phase1SectionStartPage": 143,
+      "phase1PdfPhysicalPage": 144,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-jumpstar-hpf-starfighter",
+      "printedName": "Jumpstar HPF Starfighter",
+      "printedStatblockStartPage": 144,
+      "phase1SectionStartPage": 144,
+      "phase1PdfPhysicalPage": 145,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-rc-2-twilight-scoutship",
+      "printedName": "RC-2 Twilight Scoutship",
+      "printedStatblockStartPage": 145,
+      "phase1SectionStartPage": 144,
+      "phase1PdfPhysicalPage": 146,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-crix-class-assault-shuttle",
+      "printedName": "Crix-class Assault Shuttle",
+      "printedStatblockStartPage": 146,
+      "phase1SectionStartPage": 146,
+      "phase1PdfPhysicalPage": 147,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-crix-class-diplomatic-courier-shuttle",
+      "printedName": "Crix-class Diplomatic Courier Shuttle",
+      "printedStatblockStartPage": 146,
+      "phase1SectionStartPage": 145,
+      "phase1PdfPhysicalPage": 147,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-mt-dropship",
+      "printedName": "MT Dropship",
+      "printedStatblockStartPage": 147,
+      "phase1SectionStartPage": 146,
+      "phase1PdfPhysicalPage": 148,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-scarlet-star-modified-yt-2400-transport",
+      "printedName": "Scarlet Star (Modified YT-2400 Transport)",
+      "printedStatblockStartPage": 147,
+      "phase1SectionStartPage": 147,
+      "phase1PdfPhysicalPage": 148,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-sabertooth-class-assault-rescue-vessel",
+      "printedName": "Sabertooth-class Assault & Rescue Vessel",
+      "printedStatblockStartPage": 148,
+      "phase1SectionStartPage": 147,
+      "phase1PdfPhysicalPage": 149,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-shashore-class-frigate",
+      "printedName": "ShaShore-class Frigate",
+      "printedStatblockStartPage": 148,
+      "phase1SectionStartPage": 148,
+      "phase1PdfPhysicalPage": 149,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-indomitable-scythe-class-battle-cruiser",
+      "printedName": "Indomitable (Scythe-class Battle Cruiser)",
+      "printedStatblockStartPage": 150,
+      "phase1SectionStartPage": 150,
+      "phase1PdfPhysicalPage": 151,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-scythe-class-battle-cruiser",
+      "printedName": "Scythe-class Battle Cruiser",
+      "printedStatblockStartPage": 150,
+      "phase1SectionStartPage": 149,
+      "phase1PdfPhysicalPage": 151,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-tri-scythe-class-frigate",
+      "printedName": "Tri-Scythe-class Frigate",
+      "printedStatblockStartPage": 151,
+      "phase1SectionStartPage": 151,
+      "phase1PdfPhysicalPage": 152,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-spinward-class-tender",
+      "printedName": "Spinward-class Tender",
+      "printedStatblockStartPage": 152,
+      "phase1SectionStartPage": 152,
+      "phase1PdfPhysicalPage": 153,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-fury-class-starfighter",
+      "printedName": "Fury-class Starfighter",
+      "printedStatblockStartPage": 186,
+      "phase1SectionStartPage": 185,
+      "phase1PdfPhysicalPage": 187,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-predator-class-starfighter",
+      "printedName": "Predator-class Starfighter",
+      "printedStatblockStartPage": 186,
+      "phase1SectionStartPage": 186,
+      "phase1PdfPhysicalPage": 187,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-neutralizer-class-bomber",
+      "printedName": "Neutralizer-class Bomber",
+      "printedStatblockStartPage": 187,
+      "phase1SectionStartPage": 187,
+      "phase1PdfPhysicalPage": 188,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-nune-class-imperial-shuttle",
+      "printedName": "Nune-class Imperial Shuttle",
+      "printedStatblockStartPage": 188,
+      "phase1SectionStartPage": 187,
+      "phase1PdfPhysicalPage": 189,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-sigma-class-long-range-shuttle",
+      "printedName": "Sigma-class Long-Range Shuttle",
+      "printedStatblockStartPage": 188,
+      "phase1SectionStartPage": 188,
+      "phase1PdfPhysicalPage": 189,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-ardent-class-fast-frigate",
+      "printedName": "Ardent-class Fast Frigate",
+      "printedStatblockStartPage": 189,
+      "phase1SectionStartPage": 189,
+      "phase1PdfPhysicalPage": 190,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-pellaeon-class-star-destroyer",
+      "printedName": "Pellaeon-class Star Destroyer",
+      "printedStatblockStartPage": 190,
+      "phase1SectionStartPage": 189,
+      "phase1PdfPhysicalPage": 191,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-imperious-class-star-destroyer",
+      "printedName": "Imperious-class Star Destroyer",
+      "printedStatblockStartPage": 191,
+      "phase1SectionStartPage": 190,
+      "phase1PdfPhysicalPage": 192,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-crimson-axe",
+      "printedName": "Crimson Axe",
+      "printedStatblockStartPage": 200,
+      "phase1SectionStartPage": 200,
+      "phase1PdfPhysicalPage": 201,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-a519-invader-close-support-starfighter",
+      "printedName": "A519 Invader Close Support Starfighter",
+      "printedStatblockStartPage": 218,
+      "phase1SectionStartPage": 217,
+      "phase1PdfPhysicalPage": 219,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-nemesis-class-patrol-ship",
+      "printedName": "Nemesis-class Patrol Ship",
+      "printedStatblockStartPage": 218,
+      "phase1SectionStartPage": 218,
+      "phase1PdfPhysicalPage": 219,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-the-grinning-liar",
+      "printedName": "The Grinning Liar",
+      "printedStatblockStartPage": 219,
+      "phase1SectionStartPage": 219,
+      "phase1PdfPhysicalPage": 220,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    },
+    {
+      "sourceEntryKey": "le-the-mynock",
+      "printedName": "The Mynock",
+      "printedStatblockStartPage": 220,
+      "phase1SectionStartPage": 219,
+      "phase1PdfPhysicalPage": 221,
+      "endPageReviewStatus": "NOT_REVIEWED",
+      "reviewedPDFPages": [],
+      "fieldGroups": {
+        "printedTypeLine": "NOT_REVIEWED",
+        "challenge": "NOT_REVIEWED",
+        "initiativeSenses": "NOT_REVIEWED",
+        "defenses": "NOT_REVIEWED",
+        "durability": "NOT_REVIEWED",
+        "speed": "NOT_REVIEWED",
+        "rangedAttack": "NOT_REVIEWED",
+        "meleeAttack": "NOT_REVIEWED",
+        "fightingSpace": "NOT_REVIEWED",
+        "baseAttack": "NOT_REVIEWED",
+        "attackOptions": "NOT_REVIEWED",
+        "abilities": "NOT_REVIEWED",
+        "skills": "NOT_REVIEWED",
+        "crew": "NOT_REVIEWED",
+        "capacity": "NOT_REVIEWED",
+        "payload": "NOT_REVIEWED",
+        "hyperdrive": "NOT_REVIEWED",
+        "cost": "NOT_REVIEWED",
+        "weaponAttackProfile": "NOT_REVIEWED"
+      },
+      "narrativeMechanicsStatus": "NOT_REVIEWED",
+      "weaponMountReconciliationStatus": "NOT_REVIEWED",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "NOT_REVIEWED",
+          "issue": "Retained original Phase 1 publication identity only; primary PDF close-read pending."
+        }
+      ],
+      "printedFacts": null,
+      "mountAndFiringGroups": [],
+      "configurationAndRuleFindings": [],
+      "sourceEvidence": {
+        "source": "Legacy Era Campaign Guide original scanned PDF",
+        "reviewScope": "NOT_REVIEWED"
+      },
+      "sourceFieldStates": {}
+    }
+  ]
+}

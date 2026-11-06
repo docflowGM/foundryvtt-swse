@@ -1,0 +1,257 @@
+{
+  "schema": "swse.vehicle.phase2c.cp3.supplemental-census.v1",
+  "censusPolicy": "APPROVED_SUPPLEMENTAL_APPEND_ONLY",
+  "immutablePhase1": {
+    "path": "data/audits/vehicles/swse-phase1-vehicle-provenance.json",
+    "gitBlobSha": "21f2178eb6a610d3b52ecdc8549f93724c77fbc4",
+    "historicalCount": 316,
+    "phase2bClosureCommit": "b5851d6b4e7b50e5315b743b2247b2a1df07a047"
+  },
+  "supplementalCount": 2,
+  "amendedClaimCount": 318,
+  "sourceEntryKeysAreGloballyUnique": true,
+  "supersedesHistoricalCountForFutureReconciliation": true,
+  "historicalPhase2B316ReviewPreserved": true,
+  "existing316EntriesModified": 0,
+  "supplementalSourceReviewsCount": 2,
+  "totalSourceReviewedClaimsInCorrectedScope": 318,
+  "claimKind": "PUBLISHED_STATBLOCK_NOT_PRODUCTION_ACTOR",
+  "supplementalEntries": [
+    {
+      "sourceEntryKey": "ur-uulshos-manufacturing-deep-x-explorer",
+      "candidateId": "P2C-ID-001",
+      "sourceBook": "Unknown Regions",
+      "printedName": "Uulshos Manufacturing Deep-X Explorer",
+      "heading": "Deep-X Explorer",
+      "printedStatblockPage": 51,
+      "pdfPhysicalPage": 52,
+      "pdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+      "printedCL": 5,
+      "printedTypeLine": "Gargantuan starfighter",
+      "sourceReviewState": "SOURCE_COMPLETE_PRINTED_FACTS",
+      "certification": {
+        "sourceComplete": true,
+        "operationallyCertified": false,
+        "strictMechanicalCertified": false
+      },
+      "printedFacts": {
+        "initiative": 4,
+        "perception": 5,
+        "reflex": 15,
+        "flatFootedReflex": 11,
+        "fortitude": 22,
+        "armorBonus": 6,
+        "hp": 60,
+        "dr": 10,
+        "dt": 42,
+        "flyCharacterSquares": 12,
+        "flyStarshipSquares": 3,
+        "maxKmh": 1000,
+        "rangedSummary": "2 light blaster cannons +3",
+        "fightingSpace": "4x4 squares or 1 square (starship scale)",
+        "cover": "total (crew)",
+        "baseAttack": 0,
+        "grapple": 27,
+        "str": 34,
+        "dex": 18,
+        "con": "—",
+        "int": 16,
+        "skills": {
+          "initiative": 4,
+          "mechanics": 5,
+          "perception": 5,
+          "pilot": 4,
+          "useComputer": 5
+        },
+        "crew": "3 (normal)",
+        "passengers": 3,
+        "cargo": "50 tons",
+        "consumables": "6 months",
+        "carriedCraft": "none",
+        "hyperdrive": "x1 (backup x8), navicomputer",
+        "availability": "Licensed",
+        "newPriceCredits": 135000,
+        "usedPriceCredits": 55000
+      },
+      "attacks": [
+        {
+          "attackGroupKey": "ur-deepx-light-blaster",
+          "sourceGroupCount": 1,
+          "printedWeaponCount": 2,
+          "printedGunRequirement": 2,
+          "operatorRole": "gunner",
+          "attackBonus": 3,
+          "damage": "2d10x2",
+          "arcEvidenceState": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountTopology": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "configurationVariants": [],
+      "sourceSilences": [
+        "Individual cannon arc",
+        "Mount positioning",
+        "Unique gunner-to-cannon assignment"
+      ],
+      "adjacentExclusions": [
+        {
+          "name": "SRV-1 Scout and Retrieval Vehicle",
+          "classification": "Huge ground vehicle (tracked)",
+          "page": 51
+        }
+      ],
+      "reviewEvidence": {
+        "medium": "PRIMARY_PDF_VISUAL_PAGE",
+        "primaryPages": [
+          51
+        ],
+        "sourceRef": "Unknown Regions, p. 51",
+        "rawLinesCompared": [
+          "Title + CL",
+          "Defense/HP/speed",
+          "Attack & gunner detail",
+          "Crew/capacity/economics",
+          "Hyperdrive/skill/abilities"
+        ],
+        "reviewedSourceBeyondStatblock": true
+      }
+    },
+    {
+      "sourceEntryKey": "sav-tenloss-corporation-hornet-class-interceptor",
+      "candidateId": "P2C-ID-002",
+      "sourceBook": "Scum and Villainy",
+      "printedName": "Tenloss Corporation Hornet-class Interceptor",
+      "heading": "Hornet-class Interceptor",
+      "printedStatblockPage": 125,
+      "pdfPhysicalPage": 126,
+      "pdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+      "printedCL": 12,
+      "printedTypeLine": "Gargantuan starfighter",
+      "sourceReviewState": "SOURCE_COMPLETE_PRINTED_FACTS",
+      "certification": {
+        "sourceComplete": true,
+        "operationallyCertified": false,
+        "strictMechanicalCertified": false
+      },
+      "printedFacts": {
+        "initiative": 8,
+        "perception": 6,
+        "reflex": 18,
+        "flatFootedReflex": 11,
+        "fortitude": 21,
+        "armorBonus": 6,
+        "hp": 50,
+        "dr": 10,
+        "sr": 35,
+        "dt": 41,
+        "flyCharacterSquares": 16,
+        "flyStarshipSquares": 4,
+        "maxKmh": 1150,
+        "rangedSummary": "advanced heavy laser cannons +6 (see below)",
+        "fightingSpace": "4x4 squares or 1 square (starship scale)",
+        "cover": "total (crew)",
+        "baseAttack": 2,
+        "grapple": 28,
+        "str": 32,
+        "dex": 24,
+        "con": "—",
+        "int": 14,
+        "skills": {
+          "initiative": 8,
+          "mechanics": 6,
+          "perception": 6,
+          "pilot": 8,
+          "useComputer": 6
+        },
+        "crew": "1",
+        "passengers": "none",
+        "cargo": "80 kg",
+        "consumables": "5 days",
+        "carriedCraft": "none",
+        "hyperdrive": {
+          "evidenceState": "SOURCE_SILENT_CONFIRMED",
+          "valueSupplied": false
+        },
+        "availability": "Illegal",
+        "newPriceCredits": 75000,
+        "usedPriceCredits": 32000
+      },
+      "attacks": [
+        {
+          "attackGroupKey": "sav-hornet-heavy-laser",
+          "configuration": "default",
+          "sourceGroupCount": 1,
+          "printedWeaponCount": null,
+          "operatorRole": "pilot",
+          "attackBonus": 6,
+          "autofireAttackBonus": 1,
+          "damage": "10d10x2",
+          "arcEvidenceState": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountTopology": "SOURCE_SILENT_CONFIRMED"
+        },
+        {
+          "attackGroupKey": "sav-hornet-medium-laser",
+          "configuration": "alternate",
+          "sourceGroupCount": 1,
+          "printedWeaponCount": null,
+          "operatorRole": "pilot",
+          "attackBonus": 6,
+          "autofireAttackBonus": 1,
+          "damage": "5d10x2",
+          "arcEvidenceState": "SOURCE_SILENT_CONFIRMED",
+          "physicalMountTopology": "SOURCE_SILENT_CONFIRMED"
+        }
+      ],
+      "configurationVariants": [
+        {
+          "configurationKey": "default",
+          "installedAttackGroupKey": "sav-hornet-heavy-laser",
+          "attackModes": [
+            "autofire",
+            "fire-link"
+          ],
+          "onNaturalOne": {
+            "damageToOwnShip": "6d10x2",
+            "ignoresShieldRating": true,
+            "destroysCannons": true
+          }
+        },
+        {
+          "configurationKey": "alternate",
+          "installedAttackGroupKey": "sav-hornet-medium-laser",
+          "attackModes": [
+            "autofire",
+            "fire-link"
+          ],
+          "onNaturalOne": null
+        }
+      ],
+      "sourceSilences": [
+        "Hyperdrive (field omitted, not explicit no-hyperdrive)",
+        "Exact number/positions of cannon barrels",
+        "Firing arcs"
+      ],
+      "reviewEvidence": {
+        "medium": "PRIMARY_PDF_VISUAL_PAGE",
+        "primaryPages": [
+          125
+        ],
+        "sourceRef": "Scum and Villainy, p. 125",
+        "rawLinesCompared": [
+          "Title + CL",
+          "Defense/HP/speed",
+          "Default and alternate attack group details",
+          "Overload on natural 1 only for default",
+          "Crew/capacity/economics"
+        ],
+        "reviewedSourceBeyondStatblock": true
+      }
+    }
+  ],
+  "guardrails": [
+    "Both PDF fingerprints verified from original attachments",
+    "No payload counts converted into launcher counts",
+    "No silent production hydration",
+    "Narrative variant/configuration does not become another published identity",
+    "Source-complete is not operational or strict mechanical certification"
+  ]
+}

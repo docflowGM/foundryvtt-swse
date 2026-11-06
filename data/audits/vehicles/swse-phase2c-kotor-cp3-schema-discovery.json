@@ -1,0 +1,869 @@
+{
+  "schema": "swse.vehicle.phase2c.schema-discovery.v0.1",
+  "sourceBook": "Knights of the Old Republic Campaign Guide",
+  "mode": "DISCOVERY_ONLY_NOT_PRODUCTION",
+  "schemaFrozen": false,
+  "discoveries": [
+    {
+      "id": "kotor-cp1-stinger-census-page",
+      "ship": "S-100 Stinger",
+      "category": "SOURCE_PROVENANCE",
+      "sourcePrintedPages": [
+        95,
+        96
+      ],
+      "sourceDerivedIssue": "Phase1 statblock page 95 is an introduction; actual printed CL9 block begins p96. Preserve unchanged Phase1 identity/locator until independent page-map reconciliation.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-stinger-utility-droid",
+      "ship": "S-100 Stinger",
+      "category": "EQUIPMENT_CREW",
+      "sourcePrintedPages": [
+        96
+      ],
+      "sourceDerivedIssue": "Hyperdrive x2 uses 10-jump utility-droid memory; no full utility-droid station skills stated.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-stinger-missile-ammo",
+      "ship": "S-100 Stinger",
+      "category": "PAYLOAD",
+      "sourcePrintedPages": [
+        96
+      ],
+      "sourceDerivedIssue": "Eight proton torpedoes accompany a pilot-controlled alternative weapon group.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-star-saber-util-droid",
+      "ship": "Star Saber XC-01",
+      "category": "EQUIPMENT_CREW",
+      "sourcePrintedPages": [
+        96
+      ],
+      "sourceDerivedIssue": "10-jump memory utility droid is printed; independent crew contribution is not quantified.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-578-incomplete-manufacture",
+      "ship": "578-R Transport",
+      "category": "CONFIGURATION",
+      "sourcePrintedPages": [
+        98
+      ],
+      "sourceDerivedIssue": "Narrative reports missing motivators/inertial dampeners on defective factory units; stock published x3 hyperdrive should not be overwritten.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-578-shield-silence",
+      "ship": "578-R Transport",
+      "category": "SOURCE_SILENCE",
+      "sourcePrintedPages": [
+        98
+      ],
+      "sourceDerivedIssue": "No SR line; unknown/unstated is not zero or proven unshielded.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-gtype-assist-training",
+      "ship": "G-Type Shuttle",
+      "category": "CONDITIONAL_MODIFIER",
+      "sourcePrintedPages": [
+        98
+      ],
+      "sourceDerivedIssue": "Pilot +2 equipment bonus explicitly only if untrained in Pilot.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-gtype-escape-variant",
+      "ship": "G-Type Shuttle",
+      "category": "IN_ENTRY_VARIANT",
+      "sourcePrintedPages": [
+        98,
+        99
+      ],
+      "sourceDerivedIssue": "Escape configuration modifies existing statblock on p99, including SR, capacity and hyperdrive; not an independent Phase1 identity.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-gtype-stock-hyperdrive",
+      "ship": "G-Type Shuttle",
+      "category": "SOURCE_SILENCE",
+      "sourcePrintedPages": [
+        98,
+        99
+      ],
+      "sourceDerivedIssue": "The base p98 statblock has no hyperdrive field; the p99 escape variation includes x2 and x10 backup.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-lethisk-station-and-payload",
+      "ship": "Lethisk Freighter",
+      "category": "WEAPON_STATION_AND_AMMO",
+      "sourcePrintedPages": [
+        99
+      ],
+      "sourceDerivedIssue": "Gunner lasers and pilot missiles use separate attacks; light concussion missiles have printed payload 12.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-pelagia-minimum-crew",
+      "ship": "Pelagia Duplex",
+      "category": "CREW_CONFIGURATION",
+      "sourcePrintedPages": [
+        100
+      ],
+      "sourceDerivedIssue": "Crew5 expert stock; narrative says operable effectively with pilot and one other; requires operational crew stations and capacity logic.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-pelagia-two-cockpits",
+      "ship": "Pelagia Duplex",
+      "category": "WEAPON_HARDWARE",
+      "sourcePrintedPages": [
+        100
+      ],
+      "sourceDerivedIssue": "Two cockpits/two gunner pods and 2+2 printed cannons; spare mounting point count/arcs unspecified.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-pelagia-install-bonus",
+      "ship": "Pelagia Duplex",
+      "category": "CONDITIONAL_MODIFIER",
+      "sourcePrintedPages": [
+        100
+      ],
+      "sourceDerivedIssue": "+5 equipment only to Mechanics checks to install weapon systems, not global Mechanics.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-pelagia-hyperdrive-silent",
+      "ship": "Pelagia Duplex",
+      "category": "SOURCE_SILENCE",
+      "sourcePrintedPages": [
+        100
+      ],
+      "sourceDerivedIssue": "No hyperdrive entry printed; do not infer a speed multiplier.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-quartermaster-no-attacks",
+      "ship": "Quartermaster Carrier",
+      "category": "SOURCE_SILENCE",
+      "sourcePrintedPages": [
+        100
+      ],
+      "sourceDerivedIssue": "No statted weapons despite narrative minor defensive systems; weapon list empty due to absent printed attacks, not proof of no hardware.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-quartermaster-variable-carry",
+      "ship": "Quartermaster Carrier",
+      "category": "CONFIGURATION",
+      "sourcePrintedPages": [
+        100
+      ],
+      "sourceDerivedIssue": "Passengers 10 standard configuration; carried craft varies by mission.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-praetorian-tactical-fire",
+      "ship": "Praetorian Frigate",
+      "category": "AREA_SUPPORT_ACTION",
+      "sourcePrintedPages": [
+        101
+      ],
+      "sourceDerivedIssue": "Forgo attacks as standard action for 2-square-radius allied +1 Reflex and +10 Fortitude AND damage threshold.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-praetorian-battery-count",
+      "ship": "Praetorian Frigate",
+      "category": "BATTERY_TO_MOUNT",
+      "sourcePrintedPages": [
+        101
+      ],
+      "sourceDerivedIssue": "Three weapon group types each show 2 batteries; detailed gunners 4,3,3; physical mounts within each battery unspecified.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-praetorian-tractor",
+      "ship": "Praetorian Frigate",
+      "category": "TRACTOR_GRAPPLE",
+      "sourcePrintedPages": [
+        101
+      ],
+      "sourceDerivedIssue": "Tractor batteries printed attack +11, size target variant -9 and grapple +63; requires non-damage resolution.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-praetorian-small-target",
+      "ship": "Praetorian Frigate",
+      "category": "CONDITIONAL_ATTACK",
+      "sourcePrintedPages": [
+        101
+      ],
+      "sourceDerivedIssue": "-20 penalty on turret/tractor attacks against target smaller than Colossal is printed.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-baronial-identity",
+      "ship": "Baronial Yacht",
+      "category": "PUBLICATION_IDENTITY",
+      "sourcePrintedPages": [
+        143
+      ],
+      "sourceDerivedIssue": "Section title Jedi Covenant Shuttle; actual CL6 statblock is Baronial-class Yacht.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-baronial-model-variation",
+      "ship": "Baronial Yacht",
+      "category": "CONFIGURATION",
+      "sourcePrintedPages": [
+        143
+      ],
+      "sourceDerivedIssue": "Narrative indicates models vary, but gives no second full statblock.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-interdictor-tactical-fire",
+      "ship": "Interdictor Warship",
+      "category": "AREA_DEBUFF_ACTION",
+      "sourcePrintedPages": [
+        161
+      ],
+      "sourceDerivedIssue": "Standard action forgo all attacks; enemy starships in 2-square area -1 Reflex and -2 speed min1.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-interdictor-gravity-well",
+      "ship": "Interdictor Warship",
+      "category": "SPECIAL_AREA_WEAPON",
+      "sourcePrintedPages": [
+        161
+      ],
+      "sourceDerivedIssue": "Four projectors, +8 3x3 starship area, damage Special (SG45); SG45 effect must be resolved from source authority before automation.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-interdictor-batteries",
+      "ship": "Interdictor Warship",
+      "category": "BATTERY_TO_MOUNT",
+      "sourcePrintedPages": [
+        161
+      ],
+      "sourceDerivedIssue": "5/6/3 battery group counts and 4 gravity projectors explicitly printed but firing arcs and constituent mounts not.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-interdictor-tractor",
+      "ship": "Interdictor Warship",
+      "category": "TRACTOR_GRAPPLE",
+      "sourcePrintedPages": [
+        161
+      ],
+      "sourceDerivedIssue": "Tractor beam attacks +10 (-10 vs targets smaller than Colossal), non-damage grapple +61.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp1-interdictor-small-target",
+      "ship": "Interdictor Warship",
+      "category": "CONDITIONAL_ATTACK",
+      "sourcePrintedPages": [
+        161
+      ],
+      "sourceDerivedIssue": "-20 against smaller-than-Colossal applies on asterisked medium turbolaser and tractor attacks.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-centurion-tactical-fire",
+      "ship": "Centurion Battlecruiser",
+      "category": "AREA_SUPPORT_ACTION",
+      "sourcePrintedPages": [
+        162,
+        163
+      ],
+      "sourceDerivedIssue": "Standard action forgo all attacks; 2-square area; only allied Colossal (frigate)+ ships versus enemy Colossal (frigate)+ ships gain +1 damage die with vehicle weapons.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-centurion-battery-map",
+      "ship": "Centurion Battlecruiser",
+      "category": "BATTERY_TO_MOUNT",
+      "sourcePrintedPages": [
+        163
+      ],
+      "sourceDerivedIssue": "Six medium turbolaser, six heavy ion, six point-defense light laser, three tractor batteries printed, but each battery constituent count/arc unknown.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-centurion-ionic-weapons",
+      "ship": "Centurion Battlecruiser",
+      "category": "ION_ATTACK",
+      "sourcePrintedPages": [
+        163
+      ],
+      "sourceDerivedIssue": "Heavy ion batteries deal 3d10x5 ion, not ordinary kinetic damage; optional -20 smaller-than-Colossal penalty.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-centurion-crew-craft",
+      "ship": "Centurion Battlecruiser",
+      "category": "LARGE_CAPACITY",
+      "sourcePrintedPages": [
+        163
+      ],
+      "sourceDerivedIssue": "Crew 31,452, troops 7,400, cargo 32,000 tons, and 96 carried Sith interceptors; preserve distinct passenger and carried craft domains.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-derriphan-weapon-name",
+      "ship": "Derriphan Battleship",
+      "category": "SOURCE_CONFLICT",
+      "sourcePrintedPages": [
+        163
+      ],
+      "sourceDerivedIssue": "Ranged text names point-defense medium blaster cannon battery but detail names point-defense laser cannon battery; do not overwrite one.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-derriphan-shield",
+      "ship": "Derriphan Battleship",
+      "category": "SOURCE_SILENCE",
+      "sourcePrintedPages": [
+        163
+      ],
+      "sourceDerivedIssue": "No numerical SR in the printed statblock. Narrative says lack of shielding; record as source silence with narrative evidence, not invented numeric SR=0.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-derriphan-tactical-fire",
+      "ship": "Derriphan Battleship",
+      "category": "AREA_SUPPORT_ACTION",
+      "sourcePrintedPages": [
+        163
+      ],
+      "sourceDerivedIssue": "Standard action forgo all attacks; boost allied missile/torpedo attacks against enemies in adjacent squares by one damage die.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-derriphan-missiles",
+      "ship": "Derriphan Battleship",
+      "category": "AMMUNITION",
+      "sourcePrintedPages": [
+        163
+      ],
+      "sourceDerivedIssue": "Payload 60 concussion missiles shared with named heavy concussion missile battery; number of actual launchers not specified.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-herald-shuttle-config",
+      "ship": "Herald Shuttle",
+      "category": "IN_ENTRY_VARIANT",
+      "sourcePrintedPages": [
+        164
+      ],
+      "sourceDerivedIssue": "Shuttle-only model passengers 10, cargo 15 tons and estimated value 222,500 vs base 5/70 tons/120,000. Do not create a new Phase1 identity.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-herald-crew-stations",
+      "ship": "Herald Shuttle",
+      "category": "WEAPON_STATION",
+      "sourcePrintedPages": [
+        164
+      ],
+      "sourceDerivedIssue": "Pilot controls light turbolasers, copilot controls point defense; complete independent firing arcs still unspecified.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-sith-interceptor-hyperdrive",
+      "ship": "Sith Interceptor",
+      "category": "SOURCE_SILENCE",
+      "sourcePrintedPages": [
+        164
+      ],
+      "sourceDerivedIssue": "No printed hyperdrive or numeric SR; minimal life support and environmental suit recommendation narrative does not create numeric equipment fields.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-sith-interceptor-expendable",
+      "ship": "Sith Interceptor",
+      "category": "CAMPAIGN_EQUIPMENT",
+      "sourcePrintedPages": [
+        164
+      ],
+      "sourceDerivedIssue": "Only one day consumables; narrative recommends environmental suits in case of ejection.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-chela-linked-missiles",
+      "ship": "Chela Starfighter",
+      "category": "FIRE_LINK_PAYLOAD",
+      "sourcePrintedPages": [
+        181
+      ],
+      "sourceDerivedIssue": "Fire-link specifically names concussion missiles, with 12 missiles and 4-square splash; independent tubes and fire-link ammunition consumption not sourced.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-aurek-linked-lasers",
+      "ship": "Aurek Strikefighter",
+      "category": "FIRE_LINK_ATTACK",
+      "sourcePrintedPages": [
+        181
+      ],
+      "sourceDerivedIssue": "Aurek fire-link applies to heavy lasers, not its proton torpedoes; both attacks are pilot operated.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-aurek-splash",
+      "ship": "Aurek Strikefighter",
+      "category": "SPLASH_DAMAGE",
+      "sourcePrintedPages": [
+        180,
+        181
+      ],
+      "sourceDerivedIssue": "Proton torpedoes 9d10x2 with 4-square splash and payload 6; wing position narrative provides no modifier.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-conductor-cx-cxb",
+      "ship": "Conductor Landing Craft",
+      "category": "CONFIGURATION",
+      "sourcePrintedPages": [
+        181,
+        182
+      ],
+      "sourceDerivedIssue": "CX additional fuel; CXB greater cargo/shipboard stowage variation described with no distinct numerical statblock.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-conductor-extra-droids",
+      "ship": "Conductor Landing Craft",
+      "category": "PASSENGER_PAYLOAD",
+      "sourcePrintedPages": [
+        182
+      ],
+      "sourceDerivedIssue": "Passengers 5 plus 2 bulk-loader droids; droids must not silently count as standard passenger slots or gunner crew.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-conductor-no-sr",
+      "ship": "Conductor Landing Craft",
+      "category": "SOURCE_SILENCE",
+      "sourcePrintedPages": [
+        182
+      ],
+      "sourceDerivedIssue": "No SR line printed in Conductor block; source absence is not certified zero.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-ministry-initiative",
+      "ship": "Ministry Shuttle",
+      "category": "SOURCE_CONFLICT",
+      "sourcePrintedPages": [
+        182
+      ],
+      "sourceDerivedIssue": "Header Init -1 but Skills Initiative +0, both printed p182. Cannot resolve by choosing one.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-ministry-cannon-names",
+      "ship": "Ministry Shuttle",
+      "category": "WEAPON_NAMING_DISCREPANCY",
+      "sourcePrintedPages": [
+        182
+      ],
+      "sourceDerivedIssue": "Ranged medium laser cannons vs detail double laser cannons; possible caliber/config compatibility, but exact combined designation is not printed.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-ministry-no-hyperdrive",
+      "ship": "Ministry Shuttle",
+      "category": "NARRATIVE_MECHANIC",
+      "sourcePrintedPages": [
+        182
+      ],
+      "sourceDerivedIssue": "Narrative explicitly says orbital shuttles lack hyperdrives; treat as narrative-established absence rather than missing multiplier.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-ministry-shielded-variants",
+      "ship": "Ministry Shuttle",
+      "category": "CONFIGURATION",
+      "sourcePrintedPages": [
+        182
+      ],
+      "sourceDerivedIssue": "Prose references stronger shield versions for Flashpoint Station, without alternate printed values.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-foray-tactical-fire",
+      "ship": "Foray Blockade Runner",
+      "category": "AREA_SUPPORT_ACTION",
+      "sourcePrintedPages": [
+        183
+      ],
+      "sourceDerivedIssue": "Forego attacks as standard action; adjacent squares: +5 Pilot checks for allies resisting dogfight or escaping; no unconditional +5 Pilot bonus.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-foray-battery-count",
+      "ship": "Foray Blockade Runner",
+      "category": "BATTERY_TO_MOUNT",
+      "sourcePrintedPages": [
+        183
+      ],
+      "sourceDerivedIssue": "Ranged line identifies 2 medium turbolaser batteries, detail states 5 gunners for group; individual physical mounts/arcs not printed.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-foray-crew-range",
+      "ship": "Foray Blockade Runner",
+      "category": "CREW_CONFIGURATION",
+      "sourcePrintedPages": [
+        183
+      ],
+      "sourceDerivedIssue": "Crew 40 to 100 (skilled), not a single constant count.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-kt400-war-droid-carriage",
+      "ship": "KT400 Droid Carrier",
+      "category": "PASSENGER_DEPLOYMENT",
+      "sourcePrintedPages": [
+        183
+      ],
+      "sourceDerivedIssue": "400 bipedal droid passenger load can discharge in <5 min; launch/deploy behavior has no explicit finer-grained action mechanics.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp2-kt400-pilot-modifier",
+      "ship": "KT400 Droid Carrier",
+      "category": "PRINTED_VALUE_PRESERVE",
+      "sourcePrintedPages": [
+        183
+      ],
+      "sourceDerivedIssue": "Pilot -6 and Initiative -4 appear in the statblock; do not recalculate.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-hammerhead-link",
+      "ship": "Hammerhead",
+      "category": "CONDITIONAL_SKILL_OVERRIDE",
+      "sourcePrintedPages": [
+        184
+      ],
+      "sourceDerivedIssue": "Synchronized Systems: standard action + comms + within 10 squares + normal condition; then substitute Use Computer +12; drop on range/condition/operator termination.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-hammerhead-2def",
+      "ship": "Hammerhead",
+      "category": "AREA_SUPPORT_ACTION",
+      "sourcePrintedPages": [
+        184
+      ],
+      "sourceDerivedIssue": "2-square Tactical Fire changes attack rolls vs either Reflex or Fortitude (commander choice), not generic all-defense bonus.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-hammerhead-mounts",
+      "ship": "Hammerhead",
+      "category": "BATTERY_MOUNT",
+      "sourcePrintedPages": [
+        184
+      ],
+      "sourceDerivedIssue": "Four double light turbo, two medium turbo, two point-defense light laser, one tractor battery; arcs and constituent turret counts not supplied.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-inexp-tactical-move",
+      "ship": "Inexpugnable",
+      "category": "AREA_SUPPORT_ACTION",
+      "sourcePrintedPages": [
+        185
+      ],
+      "sourceDerivedIssue": "Allied ships within 2 squares may move 1 square at start of their own turns, granted by standard action forgoing all attacks.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-inexp-controller",
+      "ship": "Inexpugnable",
+      "category": "FLEET_SYNC",
+      "sourcePrintedPages": [
+        184,
+        185
+      ],
+      "sourceDerivedIssue": "Hammerheads linked in normal condition and within 10 squares may use Inexpugnable Use Computer +12; narrative up to 64 coordinations not automated as mechanical limit.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-inexp-hangar",
+      "ship": "Inexpugnable",
+      "category": "CRAFT_CARRIAGE",
+      "sourcePrintedPages": [
+        185
+      ],
+      "sourceDerivedIssue": "Carries named fighter/transport classes with separate counts; protect crew vs passengers vs carried craft.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-davaab-linked",
+      "ship": "Davaab",
+      "category": "WEAPON_ACTION_MODE",
+      "sourcePrintedPages": [
+        204
+      ],
+      "sourceDerivedIssue": "Laser OR missile attack, autofire and fire-link apply only to laser; missiles 3 payload 4-square splash.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-davaab-variants",
+      "ship": "Davaab",
+      "category": "UNQUANTIFIED_VARIANT",
+      "sourcePrintedPages": [
+        204
+      ],
+      "sourceDerivedIssue": "Stock Neo-Crusader design differs from earlier modified fighters; no separate complete variant statblock.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-shaadlar-missile-atk",
+      "ship": "Shaadlar",
+      "category": "SOURCE_CONFLICT",
+      "sourcePrintedPages": [
+        205
+      ],
+      "sourceDerivedIssue": "Main Ranged missile +14 but detailed missile +10.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-shaadlar-missile-caliber",
+      "ship": "Shaadlar",
+      "category": "SOURCE_CONFLICT",
+      "sourcePrintedPages": [
+        205
+      ],
+      "sourceDerivedIssue": "Payload 50 medium concussion missiles but weapon row says point-defense light concussion missile battery.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-shaadlar-bombardment",
+      "ship": "Shaadlar",
+      "category": "CONFIGURATION",
+      "sourcePrintedPages": [
+        204,
+        205
+      ],
+      "sourceDerivedIssue": "Ground bombardment missile batteries may be configured for space targets; no numerical alternate statblock.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-teroch-station",
+      "ship": "Teroch",
+      "category": "CREW_STATION",
+      "sourcePrintedPages": [
+        205
+      ],
+      "sourceDerivedIssue": "Colossal space transport has gunner-operated double laser cannons (not pilot by inference).",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-teroch-speeds",
+      "ship": "Teroch",
+      "category": "MOVEMENT",
+      "sourcePrintedPages": [
+        205
+      ],
+      "sourceDerivedIssue": "Separate character-scale 14 and starship-scale 3 fly squares, 1000 km/h stated.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-jehavey-tactical",
+      "ship": "Jehaveyir",
+      "category": "AREA_DEBUFF",
+      "sourcePrintedPages": [
+        205
+      ],
+      "sourceDerivedIssue": "Forgo all attacks standard action; all enemy ships adjacent suffer -1 Reflex and Fortitude.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-jehavey-no-battery-count",
+      "ship": "Jehaveyir",
+      "category": "SOURCE_SILENCE",
+      "sourcePrintedPages": [
+        206
+      ],
+      "sourceDerivedIssue": "Three named bank types but not multiplicity or arcs; cannot derive counts from narrative plural.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-kyramud-attack-run",
+      "ship": "Kyramud",
+      "category": "TACTICAL_ATTACK_RUN",
+      "sourcePrintedPages": [
+        206
+      ],
+      "sourceDerivedIssue": "Tactical Fire +2 circumstance attack bonus to allies making attack runs against targets in 2-square radius only.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-kyramud-ion",
+      "ship": "Kyramud",
+      "category": "ION_ATTACK",
+      "sourcePrintedPages": [
+        206
+      ],
+      "sourceDerivedIssue": "Point-defense medium ion batteries 4d10x2 ion, not ordinary damage; 4 attack groups as separate mounts unresolved.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-kandosii-missile-lock",
+      "ship": "Kandosii",
+      "category": "MISSILE_LOCK",
+      "sourcePrintedPages": [
+        207
+      ],
+      "sourceDerivedIssue": "Missile/torpedo attack successful in 2-square area grants +1 attack and avoids secondary missile attack penalty with locked target.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-kandosii-fission",
+      "ship": "Kandosii",
+      "category": "OPTIONAL_ARMAMENT",
+      "sourcePrintedPages": [
+        206,
+        207
+      ],
+      "sourceDerivedIssue": "Fission warheads mentioned in narrative, not default equipment, do not auto-apply to 120 missiles.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-ebon-small-target",
+      "ship": "Ebon Hawk",
+      "category": "SIZE_EXCEPTION",
+      "sourcePrintedPages": [
+        220
+      ],
+      "sourceDerivedIssue": "Colossal* transport counts as Gargantuan starfighter for capital ship weapon targeting, dogfight, maneuvers only.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-ebon-grapple",
+      "ship": "Ebon Hawk",
+      "category": "SUSPICIOUS_PRINTED_VALUE",
+      "sourcePrintedPages": [
+        220
+      ],
+      "sourceDerivedIssue": "Grp +6 printed despite Strength 44/Colossal; preserve literal unless confirmed erratum, do not autocorrect.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-ebon-docking",
+      "ship": "Ebon Hawk",
+      "category": "CHARACTER_SCALE_WEAPON",
+      "sourcePrintedPages": [
+        220
+      ],
+      "sourceDerivedIssue": "Copilot docking gun blaster cannon +5, 3d12 is character-scale-only, not starship-scale mount.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-chaos-ram",
+      "ship": "CX-133",
+      "category": "COLLISION_DAMAGE",
+      "sourcePrintedPages": [
+        220
+      ],
+      "sourceDerivedIssue": "Volatile fighter deals 8d6 instead of 4d6 in collision; not same as normal weapon damage or self-destruct effect.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-chaos-absent-hyper",
+      "ship": "CX-133",
+      "category": "SOURCE_SILENCE",
+      "sourcePrintedPages": [
+        220
+      ],
+      "sourceDerivedIssue": "No numerical hyperdrive or SR printed; do not assign a default.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-supremacy-reroute",
+      "ship": "Supremacy",
+      "category": "ACTION_ECONOMY",
+      "sourcePrintedPages": [
+        221
+      ],
+      "sourceDerivedIssue": "Tactical Fire enables allied engineers within 2-square radius to reroute power with one swift action; nonstacking.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-supremacy-space",
+      "ship": "Supremacy",
+      "category": "PRINTED_GEOMETRY",
+      "sourcePrintedPages": [
+        221
+      ],
+      "sourceDerivedIssue": "Printed Fighting Space is 2 squares starship scale, not 2x2 or radius=2.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-starscape-reciprocal-light",
+      "ship": "Starscape",
+      "category": "SOURCE_CONFLICT",
+      "sourcePrintedPages": [
+        222
+      ],
+      "sourceDerivedIssue": "Main Ranged light laser attack +10, detail +8.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-starscape-reciprocal-medium",
+      "ship": "Starscape",
+      "category": "SOURCE_CONFLICT",
+      "sourcePrintedPages": [
+        222
+      ],
+      "sourceDerivedIssue": "Main Ranged medium laser attack +8, detail +10.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-starscape-cloak",
+      "ship": "Starscape",
+      "category": "CLOAKING",
+      "sourcePrintedPages": [
+        222
+      ],
+      "sourceDerivedIssue": "Stygium cloak grants total concealment; detect with -10 notice penalty, notice does not negate concealment.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "kotor-cp3-starscape-minefield",
+      "ship": "Starscape",
+      "category": "NARRATIVE_ONLY_WEAPON",
+      "sourcePrintedPages": [
+        221,
+        222
+      ],
+      "sourceDerivedIssue": "Prose mentions minefield but statblock has no mine weapon group/ammunition/procedure.",
+      "requiresFollowup": true
+    }
+  ],
+  "counts": {
+    "discoveryCases": 84,
+    "bookScopeReviewed": 32
+  },
+  "scopeGuardrails": [
+    "All 32 KOTOR publication identities have now received a PDF statblock close-read; strict mechanical certificates remain 0/32.",
+    "First 54 CP1 and CP2 discovery objects are untouched and in original order.",
+    "Schema discovery cases are advisory only and not promoted to production.",
+    "All 7 source conflict rows preserved without arbitrary numeric or identity correction.",
+    "No production compendium, Foundry actor/ship, hydration, runtime or Phase0B fixture mutation."
+  ]
+}

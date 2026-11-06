@@ -1,0 +1,256 @@
+{
+  "schema": "swse.vehicle.p6b.readiness-manifest.v1",
+  "baselineCommit": "P6A final stabilization checkpoint",
+  "statusVocabulary": [
+    "SOURCE_VERIFIED",
+    "MECHANIC_SPECIFIED",
+    "OPERATIONALLY_INTEGRATED",
+    "LIVE_RUNTIME_VERIFIED",
+    "LIVE_RUNTIME_PENDING",
+    "DEFERRED_RULES_REVIEW"
+  ],
+  "baselineCounts": {
+    "catalogRecords": 187,
+    "reconciledMatches": 174,
+    "unresolvedSource": 7,
+    "notInstallableOptions": 6,
+    "sourceVerified": 174,
+    "mechanicSpecified": 39,
+    "operationallyIntegratedOffline": 39,
+    "liveRuntimeVerified": 0,
+    "installable": 39,
+    "combatAuthorizedWeapons": 0,
+    "p6aOverlaySourceVerified": 118,
+    "note": "overlay was 115 at checkpoint 2; +3 after V-P6A-05 adopted the printed prices of cloaking device (stygium), hangar bay and concealed hangar bay"
+  },
+  "workstreams": [
+    {
+      "id": "P6B-1",
+      "title": "Deferred movement/defense effects",
+      "scope": [
+        "reinforced-bulkheads-10/20/30 (V-P6-01 rounding)",
+        "sublight-drive-1..6 (V-P6-02 replacement, military-only)",
+        "jamming-suite, jamming-array, regenerating-shields, combat-thrusters, navicomputer x3, sublight-accelerator (roll/action integration, V-P6-05)"
+      ],
+      "count": 17,
+      "blockers": {
+        "rulings": [
+          "V-P6-01",
+          "V-P6-02"
+        ],
+        "engineering": [
+          "vehicle Pilot/Use Computer roll integration",
+          "recharge-shields action integration"
+        ]
+      },
+      "gate": "ruling recorded or published rule unambiguous; effect in vehicle-modification-effects.js; certification generator marks MECHANIC_SPECIFIED; regression tests"
+    },
+    {
+      "id": "P6B-2",
+      "title": "Weapon systems",
+      "scope": "38 SOURCE_VERIFIED weapons + 9 ammunition + 4 consumable ammunition (V-P6A-06)",
+      "dependsOn": [
+        "mount certification (V-P2-04 arcs unruled)",
+        "attack gate CERTIFIED_INSTALLATION path",
+        "ammunition quantity/loading model"
+      ],
+      "rules": [
+        "V-P6A-01 triple cannon",
+        "V-P6A-02 armor-piercing missiles",
+        "V-P6A-03 launcher capacity",
+        "V-P6A-07 gravity well scope"
+      ],
+      "gate": "no executable attack until a sealed ledger entry with a certified mount and an owned weapon Item pass the existing attack preflight; combatAuthorizedWeapons stays 0 until then"
+    },
+    {
+      "id": "P6B-3",
+      "title": "Accessories and special systems",
+      "scope": "62 SOURCE_VERIFIED accessories + 5 Scum and Villainy defense rows",
+      "order": [
+        "static-stat accessories (cargo pods: Dex -2 / cargo; sensor array computer bonuses)",
+        "capacity accessories (hangar bay units, passenger conversion, cryogenic chambers)",
+        "action-based (cargo jettison, droid repair team, slave circuits, transponders, cloaking device)"
+      ],
+      "gate": "published effect encoded and tested; conditional effects exposed, not auto-applied, until their state exists"
+    },
+    {
+      "id": "P6B-4",
+      "title": "Effective statistics and runtime consumers",
+      "scope": [
+        "extend getEffectiveVehicleDerived to new effect kinds",
+        "Pilot check consumer (none exists today)",
+        "atmosphere state for conditional movement"
+      ]
+    },
+    {
+      "id": "P6B-5",
+      "title": "Custom starship compatibility",
+      "scope": [
+        "Installation Work panel for custom-built ships",
+        "construction systems from the same certified effects",
+        "re-check of custom ships built on the five errata-corrected frames"
+      ]
+    },
+    {
+      "id": "P6B-6",
+      "title": "Live Foundry V13 verification",
+      "scope": [
+        "P6A migration checklist (docs/audits/vehicles/p6a-errata-migration.md)",
+        "installation jobs, construction projects, shield pool, sheet, Asset Bay"
+      ],
+      "status": "LIVE_RUNTIME_PENDING"
+    }
+  ],
+  "implementationOrder": [
+    "P6B-4 consumers needed by the next effects",
+    "P6B-1 rows whose rulings exist",
+    "P6B-3 static accessories",
+    "P6B-2 weapons (after mount/arc ruling and ammunition model)",
+    "P6B-3 action-based accessories",
+    "P6B-5",
+    "P6B-6 throughout"
+  ],
+  "invariants": [
+    "no unresolved mechanic becomes installable",
+    "no catalog certification grants weapon firing authority",
+    "the 429 publication records change only through approved amendments",
+    "effective = published + certified ledger, recomputed"
+  ],
+  "checkpoints": [
+    {
+      "id": "P6B-0",
+      "status": "OFFLINE_COMPLETE_LIVE_PENDING",
+      "delivered": [
+        "manual-restore persisted-state verification (verifyManualRestoreState)",
+        "vehicle operating context: GM-set environment atmosphere|space|unknown with audit trail and GM-only write guard",
+        "atmospheric thrusters applied in derived speed only in an explicit atmosphere",
+        "vehicle Pilot check: crew Actor = canonical rollSkill + vehicle size (Table 10-1) + effective Dex modifier; generic crew = printed Pilot + certified Dex delta",
+        "one Table 10-1 size authority shared with combat Initiative",
+        "legacy rollCrewSkill fixed (it called a non-existent SWSERoll.rollSkillCheck)"
+      ],
+      "countChanges": {
+        "operationallyIntegratedOffline": {
+          "from": 37,
+          "to": 39,
+          "identities": [
+            "atmospheric-thrusters",
+            "atmospheric-thrusters-advanced"
+          ],
+          "reason": "applied through the P6B-0 environment authority"
+        }
+      }
+    },
+    {
+      "id": "P6B-1",
+      "status": "OFFLINE_COMPLETE_LIVE_PENDING",
+      "delivered": [
+        "regenerating shields: the recharge shields action (ActorEngine.rechargeShields) restores 10 instead of 5, up to the maximum",
+        "SubLight Accelerator Motor: +5 equipment bonus on Pilot checks to increase speed (+10 with all-out movement) through vehiclePilotCheck",
+        "navicomputer (+5) and advanced navicomputer (+10) on Use Computer astrogation checks via VehicleOperatingContextService.rollAstrogationCheck; a hull printed with an installed navicomputer carries the standard +5; same-check equipment bonuses keep the highest",
+        "Effective Statistics panel rows for the recharge amount and check equipment bonuses"
+      ],
+      "countChanges": {
+        "mechanicSpecified": {
+          "from": 39,
+          "to": 43
+        },
+        "operationallyIntegratedOffline": {
+          "from": 39,
+          "to": 43
+        },
+        "installable": {
+          "from": 39,
+          "to": 43
+        },
+        "identities": [
+          "regenerating-shields",
+          "sublight-accelerator",
+          "navicomputer",
+          "navicomputer-advanced"
+        ],
+        "reason": "P6B-1 effects with runtime consumers and offline tests (p18)"
+      },
+      "deferred": [
+        "reinforced-bulkheads-10/20/30",
+        "sublight-drive-1..6",
+        "jamming-suite",
+        "jamming-array",
+        "combat-thrusters",
+        "navicomputer-limited"
+      ],
+      "deferredRegister": "data/audits/vehicles/p6b-deferred-work.json"
+    },
+    {
+      "id": "P6B-2",
+      "status": "OFFLINE_COMPLETE_LIVE_PENDING",
+      "delivered": [
+        "cargo pods (light/medium): +cost modifier x 1/5 tons cargo, Dexterity -2 each through Reflex/Initiative/Pilot, refused below Dexterity 1; stackable; heavy pod keeps its printed size restriction",
+        "Dexterity changes accumulate on the score (jets and pods), not on separately rounded modifiers",
+        "sensor arrays +2/+4/+6 Intelligence (effective score shown; no consumer yet)",
+        "sensor enhancement package +5 on Perception/Use Computer sensor checks via VehicleOperatingContextService.rollSensorCheck",
+        "extended range +10% consumables (minimum 1 day) per installation on days-printed hulls",
+        "hangar bays / concealed hangar bays (cost modifier/50 units) and cryogenic chambers (cost modifier/5) capacities; fractional capacities refused",
+        "P6A certification overlay may now carry MECHANIC_SPECIFIED for registered, tested effects"
+      ],
+      "countChanges": {
+        "mechanicSpecified": {
+          "from": 43,
+          "to": 54
+        },
+        "installable": {
+          "from": 43,
+          "to": 54
+        },
+        "operationallyIntegratedOffline": {
+          "from": 43,
+          "to": 51
+        },
+        "identities": [
+          "cargo-pod-light",
+          "cargo-pod-medium",
+          "cargo-pod-heavy",
+          "sensor-array-2",
+          "sensor-array-4",
+          "sensor-array-6",
+          "sensor-enhancement",
+          "extended-range",
+          "cryogenic-chambers",
+          "hangar-bay",
+          "hangar-bay-concealed"
+        ],
+        "reason": "P6B-2 accessories; sensor arrays are specified/installable but not applied (no Intelligence consumer)"
+      },
+      "deferredRegister": "data/audits/vehicles/p6b-deferred-work.json"
+    },
+    {
+      "id": "P6B-3",
+      "status": "OFFLINE_COMPLETE_LIVE_PENDING",
+      "delivered": [
+        "custom-starship compatibility: getEffectiveVehicleDerived/getEffectiveVehicleSource accept an APPROVED, digest-verified construction record; frame abilities from the stock-frame table, entries from the sealed construction ledger",
+        "custom ships now apply certified effects in play (derived Reflex, Initiative, shield pool, recharge amount, Pilot/astrogation/sensor bonuses) instead of showing them on the sheet only",
+        "custom-ship Pilot check: construction Pilot for generic crew; crew Actor + frame size + effective Dex",
+        "construction planner record carries frame Intelligence (sensor arrays plannable on custom designs)",
+        "sheet installed-system labels no longer claim \"applied in play\" for atmospheric (conditional) or sensor-array (no consumer) effects",
+        "weapon infrastructure: deliberately not built (unreachable while no weapon is installable and execution is closed); guard test keeps weapons, launchers and ammunition closed"
+      ],
+      "countChanges": {
+        "note": "no catalog count change; custom ships gain the existing 54 specified effects where the frame provides the basis"
+      },
+      "deferredRegister": "data/audits/vehicles/p6b-deferred-work.json"
+    }
+  ],
+  "currentCounts": {
+    "catalogRecords": 187,
+    "reconciledMatches": 174,
+    "unresolvedSource": 7,
+    "notInstallableOptions": 6,
+    "sourceVerified": 174,
+    "mechanicSpecified": 54,
+    "operationallyIntegratedOffline": 51,
+    "liveRuntimeVerified": 0,
+    "installable": 54,
+    "combatAuthorizedWeapons": 0,
+    "p6aOverlaySourceVerified": 118,
+    "note": "after P6B-2"
+  }
+}

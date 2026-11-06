@@ -1,0 +1,36 @@
+{
+  "schema": "swse.vehicle.phase2c.cp5.gunnery-integrity-status.v0.1",
+  "referenceBranch": "audit/vehicle-phase-0-1-canonical-foundation",
+  "basisCommit": "fa130a431d09e8669e2a8b376603ad4afd7553de",
+  "phase": "2C",
+  "checkpoint": 5,
+  "publishedFormula": "d20 + gunner BAB + vehicle INT modifier + range modifier (+ applicable other modifiers)",
+  "approvedDecisions": [
+    "P2C-D01",
+    "P2C-D02",
+    "P2C-D03"
+  ],
+  "changes": [
+    "NPC flat attack fallback fails closed because it cannot be decomposed into gunner BAB and vehicle INT",
+    "Imported vehicle-mounted weapons no longer claim a Dex attack authority",
+    "Statblock pseudo-weapon no longer invents +0 or 1d10 for missing source",
+    "Vehicle context and edit panels no longer invent +0 or Forward when source is silent",
+    "Vehicle import normalization no longer synthesizes Forward/+0/1d10/Close for source-silent weapon fields",
+    "Vehicle panel leaves unpublished damage and physical weapon count unset"
+  ],
+  "runtimeAttackAuthority": "scripts/engine/combat/vehicle-attack-math.js",
+  "liveAttackEntry": "scripts/combat/rolls/attacks.js via scripts/sheets/v2/vehicle-sheet/crew-skill-router.js",
+  "runtimeAttackEvidenceGateFullyWired": false,
+  "whyNotFullyWired": "The original 318 publication-specific review ledgers are audit evidence, not a trusted runtime producer binding for each installed weapon and fire group. Treating player-editable mounted-item flags as certified provenance would violate the approved rules authority.",
+  "requiredNext": [
+    "Implement a trusted immutable sourceEntryKey + fire-group resolution layer rather than trusting actor-provided evidence flags",
+    "Require exact crew station and target when evaluating arc-dependent attacks",
+    "Run evidence/geometry/GM receipt preflight before any ammunition or action spend",
+    "Keep Target Sense maneuver substitution as a separate sourced exception, not a generic Dexterity fallback",
+    "Decide how to activate strict evidence blocking for legacy vehicles before a trusted source binding exists"
+  ],
+  "strictMechanicalCertificationsAdded": 0,
+  "productionCompendiaChanged": false,
+  "fullRepositoryTestsExecuted": false,
+  "status": "PARTIAL_INTEGRATION_PENDING_TRUSTED_SOURCE_BINDING"
+}

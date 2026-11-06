@@ -1,0 +1,64 @@
+name: Vehicle Phase 2C CP9 Validation
+on:
+  push:
+    branches:
+      - audit/vehicle-phase-0-1-canonical-foundation
+    paths:
+      - 'scripts/actors/vehicle/vehicle-precreate-hooks.js'
+      - 'scripts/engine/import/vehicle-weapon-import-normalizer.js'
+      - 'scripts/engine/import/vehicle-import-normalizer.js'
+      - 'scripts/domain/vehicles/**'
+      - 'scripts/engine/crew/**'
+      - 'scripts/combat/rolls/attacks.js'
+      - 'tests/phase2c_cp8*'
+      - 'tests/phase2c_cp9*'
+      - 'packs/vehicles-space-transports.db'
+      - 'packs/vehicles-capital-ships.db'
+      - 'tools/audits/vehicles/**'
+      - '.github/workflows/vehicle-phase2c-cp9.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cp9-import-and-source-parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: CP8/9 stock data and importer regressions
+        run: |
+          node --test tests/phase2c_cp9a_vehicle_import_boundaries.test.mjs
+          node --test tests/phase2c_cp9b_native_pack_builder.test.mjs
+          node --test tests/phase2c_cp9b_runtime_pack_probe.test.mjs
+          node --test tests/phase2c_cp9c_actor_provenance_probe.test.mjs
+          node --test tests/phase2c_cp9a_pack_delivery.test.mjs
+          node tools/audits/vehicles/audit_phase2c_cp9_pack_delivery.mjs --repo-root .
+          node --test tests/phase2c_cp8_vehicle_weapon_import_roundtrip.test.mjs
+          node --test tests/phase2c_cp8_vehicle_import_source_fields.test.mjs
+          node --test tests/phase2c_cp8_crew_station_evidence.test.mjs
+          node --test tests/phase2c_cp8_remediation_manifest.test.mjs
+          node --test tests/phase2c_cp8_post_hydration.test.mjs
+          node --test tests/phase2c-vehicle-stock-vs-custom-gate.test.mjs
+          node --test tests/phase2c-vehicle-live-roll-guard.test.mjs
+          node tests/phase3-vehicle-operator-resolution.test.mjs
+          node tools/audits/vehicles/verify_phase2c_cp8_post_hydration.mjs --repo-root .
+      - name: Install pinned official Foundry pack compiler (isolated)
+        run: |
+          mkdir -p "${RUNNER_TEMP}/swse-cli"
+          npm install --no-save --prefix "${RUNNER_TEMP}/swse-cli" @foundryvtt/foundryvtt-cli@3.0.5
+      - name: Compile two source vehicle packs and assert round-trip parity
+        run: |
+          node tools/audits/vehicles/build_phase2c_cp9b_native_packs.mjs --repo-root . --cli-root "${RUNNER_TEMP}/swse-cli/node_modules" --out "${RUNNER_TEMP}/swse-native-packs"
+      - name: Upload certified native pack artifacts (not a full system release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: swse-cp9b-native-vehicle-packs
+          path: ${{ runner.temp }}/swse-native-packs/
+          retention-days: 7
+      - name: Syntax gate
+        run: |
+          node --check scripts/engine/import/vehicle-weapon-import-normalizer.js
+          node --check scripts/actors/vehicle/vehicle-precreate-hooks.js
+          node --check scripts/domain/vehicles/vehicle-stock-attack-authority.js

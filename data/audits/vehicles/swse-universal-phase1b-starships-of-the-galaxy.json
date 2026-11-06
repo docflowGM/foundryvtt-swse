@@ -1,0 +1,2782 @@
+{
+  "schema": "swse.vehicle.universal.phase1b.starships-of-the-galaxy.v1",
+  "status": "PHASE1_B_SOTG_IDENTIFIED_SOURCE_ENTRIES_COMPLETE",
+  "sourceBook": "Starships of the Galaxy",
+  "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+  "sourceFiles": {
+    "pdf": "SAGA EDITION - Starships of the Galaxy.pdf",
+    "text": "Starships of the Galaxy_djvu.txt"
+  },
+  "counts": {
+    "existingShipPublicationEntries": 104,
+    "newVehicleEntries": 1,
+    "allBookVehicleStatblockEntries": 105,
+    "inheritedClassification": {
+      "capital-ship": 36,
+      "starfighter": 44,
+      "space-transport": 20,
+      "space-station": 4
+    },
+    "inheritedHybridStarfighterWalkers": 1,
+    "newEscapeCraft": 1,
+    "cumulativeKnownUniversalPublicationEntries": 326
+  },
+  "process": {
+    "textSurvey": "Whole source TXT independently searched for vehicle-type lines, challenge-level statblocks, walkers, speeders, airspeeders, escape pods, stations, lifeboats, and chassis/stock-ship tables.",
+    "primaryPdf": "Book PDF SHA-256 checked; missing Escape Pod visually read at physical PDF page 51 / printed p50; 104 existing source close-reads reused from printed pp 56-160.",
+    "duplicateReview": "Compare all enumerated records against historical 104-claim SotG provenance and canonical JSON; maintain single hybrid and same-book publication identity.",
+    "visualReviewScope": "Escape Pod page rendered and manually checked; other 104 inherit previous PDF checks. No claim every printed page individually re-rendered.",
+    "discoveryGapCaveat": "Independent searchable TXT survey plus targeted PDF validation; an OCR-missing standalone entry on an unreviewed page is possible and should be amended when discovered."
+  },
+  "candidateDispositions": [
+    {
+      "candidate": "Escape Pod",
+      "printedPage": 50,
+      "status": "ADD_NEW_PUBLISHED_VEHICLE_STATBLOCK",
+      "reason": "Full separate heading, printed type line, defenses, HP, movement, crew, cost in starship modification rules; missing from original 104."
+    },
+    {
+      "candidate": "Small Lifeboats",
+      "printedPage": 50,
+      "status": "EXCLUDE_INDEPENDENT_STATBLOCK",
+      "reason": "Descriptive modular escape system; no standalone complete vehicle statblock."
+    },
+    {
+      "candidate": "Large Lifeboats",
+      "printedPage": 50,
+      "status": "EXCLUDE_INDEPENDENT_STATBLOCK",
+      "reason": "Descriptive modular escape system; no standalone complete vehicle statblock."
+    },
+    {
+      "candidate": "Stock Ship Types tables",
+      "printedPages": [
+        52,
+        53
+      ],
+      "status": "EXCLUDE_INDEPENDENT_STATBLOCK",
+      "reason": "Generic build/chassis templates and economic tables; not standalone named vehicle statblocks."
+    },
+    {
+      "candidate": "4 station-class vessels printed 'space station'",
+      "status": "INHERITED_WITH_PRINTED_TYPE_PRESERVED",
+      "reason": "Existing ship records; four station-typed hulls remain distinct, not duplicated as ground installations."
+    },
+    {
+      "candidate": "Vulture-class flying/walking starfighter",
+      "status": "INHERITED_HYBRID_SINGLE_IDENTITY",
+      "reason": "Already counted as starfighter with walker secondary mobility; do not add second ground claim."
+    }
+  ],
+  "newVehicleEntries": [
+    {
+      "sourceEntryKey": "sotg-escape-pod",
+      "printedName": "Escape Pod",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "escape-craft",
+        "printedCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 50,
+      "pdfPhysicalPage": 51,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "textSearchLayer": "Starships of the Galaxy_djvu.txt",
+        "printedHeading": "Escape Pod",
+        "printedSection": "Escape Pods",
+        "chapter": "Starship Modifications",
+        "pdfVisualCheck": "RENDERED_PDF_PHYSICAL_PAGE_51_CONFIRMED"
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED_2026_10_20",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    }
+  ],
+  "existingStarships": [
+    {
+      "sourceEntryKey": "sotg-rothana-heavy-engineering-acclamator-class-transgalactic-military-assault-ship",
+      "printedName": "Rothana Heavy Engineering Acclamator-class Transgalactic Military Assault Ship",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 56,
+      "pdfPhysicalPage": 57,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-rothana-heavy-engineering-acclamator-ii-class-transgalactic-military-assault-ship",
+      "printedName": "Rothana Heavy Engineering Acclamator II-class Transgalactic Military Assault Ship",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 57,
+      "pdfPhysicalPage": 58,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-engineering-corporation-action-vi-bulk-transport",
+      "printedName": "Corellian Engineering Corporation Action VI Bulk Transport",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 58,
+      "pdfPhysicalPage": 59,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-advanced-v-19-torrent-starfighter",
+      "printedName": "Advanced V-19 Torrent Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 59,
+      "pdfPhysicalPage": 60,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-delta-7-aethersprite-light-interceptor",
+      "printedName": "Delta-7 Aethersprite Light Interceptor",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 60,
+      "pdfPhysicalPage": 61,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-incom-subpro-arc-170-starfighter",
+      "printedName": "Incom/Subpro ARC-170 Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 61,
+      "pdfPhysicalPage": 62,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-archaic-heavy-cruiser",
+      "printedName": "Archaic Heavy Cruiser",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 62,
+      "pdfPhysicalPage": 63,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-alliance-a-wing-starfighter",
+      "printedName": "Alliance A-wing Starfighter",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 63,
+      "pdfPhysicalPage": 64,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-banking-clan-munificent-class-frigate",
+      "printedName": "Banking Clan Munificent-class Frigate",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 64,
+      "pdfPhysicalPage": 65,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-baudo-class-star-yacht",
+      "printedName": "Baudo-class Star Yacht",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 65,
+      "pdfPhysicalPage": 66,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-slayn-korpil-b-wing-starfighter",
+      "printedName": "Slayn & Korpil B-wing Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 66,
+      "pdfPhysicalPage": 67,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-slayn-korpil-b-wing-shuttle",
+      "printedName": "Slayn & Korpil B-wing Shuttle",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 67,
+      "pdfPhysicalPage": 68,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-slayn-korpil-b-wing-e2-starfighter",
+      "printedName": "Slayn & Korpil B-wing/E2 Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 67,
+      "pdfPhysicalPage": 68,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-damorian-manufacturing-s-carrack-class-light-cruiser",
+      "printedName": "Damorian Manufacturing's Carrack-class Light Cruiser",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 68,
+      "pdfPhysicalPage": 69,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-chiss-nssis-class-clawcraft",
+      "printedName": "Chiss Nssis-class Clawcraft",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 69,
+      "pdfPhysicalPage": 70,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-koensayr-ilh-kk-citadel-class-cruiser",
+      "printedName": "Koensayr ILH-KK Citadel-Class Cruiser",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 70,
+      "pdfPhysicalPage": 71,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-cloakshape-fighter",
+      "printedName": "CloakShape Fighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 71,
+      "pdfPhysicalPage": 72,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-recusant-class-light-destroyer",
+      "printedName": "Recusant-class Light Destroyer",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 72,
+      "pdfPhysicalPage": 73,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-coralskipper",
+      "printedName": "Coralskipper",
+      "printedTypeLine": "Gargantuan living starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 73,
+      "pdfPhysicalPage": 74,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-engineering-corporation-cr90-corvette",
+      "printedName": "Corellian Engineering Corporation CR90 Corvette",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 74,
+      "pdfPhysicalPage": 75,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-engineering-corporation-cr70-corvette",
+      "printedName": "Corellian Engineering Corporation CR70 Corvette",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 75,
+      "pdfPhysicalPage": 76,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-rendili-stardrive-dreadnaught-class-heavy-cruiser",
+      "printedName": "Rendili StarDrive Dreadnaught-class Heavy Cruiser",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 76,
+      "pdfPhysicalPage": 77,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-outbound-flight",
+      "printedName": "Outbound Flight",
+      "printedTypeLine": "Colossal (station) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 77,
+      "pdfPhysicalPage": 78,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-baktoid-armor-workshop-vulture-class-starfighter",
+      "printedName": "Baktoid Armor Workshop Vulture-class Starfighter",
+      "printedTypeLine": "Huge starfighter/ground vehicle (walker)",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [
+          "walker"
+        ],
+        "mobilityDomains": [
+          "space",
+          "atmosphere",
+          "ground-walker"
+        ],
+        "hybrid": true
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 78,
+      "pdfPhysicalPage": 79,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-haor-chall-engineering-scarab-class-starfighter",
+      "printedName": "Haor Chall Engineering Scarab-class Starfighter",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 79,
+      "pdfPhysicalPage": 80,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-phlac-arphocc-automata-industries-droid-tri-fighter",
+      "printedName": "Phlac-Arphocc Automata Industries Droid Tri-Fighter",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 79,
+      "pdfPhysicalPage": 80,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-dynamic-class-freighter",
+      "printedName": "Dynamic-class Freighter",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 80,
+      "pdfPhysicalPage": 81,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-kuat-systems-engineering-eta-2-actis-interceptor",
+      "printedName": "Kuat Systems Engineering Eta-2 Actis Interceptor",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 82,
+      "pdfPhysicalPage": 83,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-freitek-inc-e-wing-starfighter-type-b",
+      "printedName": "FreiTek Inc. E-wing Starfighter, Type B",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 83,
+      "pdfPhysicalPage": 84,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-kuat-systems-engineering-firespray-31-patrol-craft",
+      "printedName": "Kuat Systems Engineering Firespray-31 Patrol Craft",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 84,
+      "pdfPhysicalPage": 85,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-slave-i",
+      "printedName": "Slave I",
+      "printedTypeLine": "Colossal* space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 85,
+      "pdfPhysicalPage": 86,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-territorial-defense-starfighter",
+      "printedName": "Territorial Defense Starfighter",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 86,
+      "pdfPhysicalPage": 87,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-huppla-pasa-tisc-shipwrights-collective-ginivex-class-starfighter",
+      "printedName": "Huppla Pasa Tisc Shipwrights Collective Ginivex-class Starfighter",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 87,
+      "pdfPhysicalPage": 88,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-ghtroc-industries-class-720-freighter",
+      "printedName": "Ghtroc Industries Class 720 Freighter",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 88,
+      "pdfPhysicalPage": 89,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-gozanti-cruiser",
+      "printedName": "Gozanti Cruiser",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 90,
+      "pdfPhysicalPage": 91,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-krayt-s-honor",
+      "printedName": "Krayt's Honor",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 91,
+      "pdfPhysicalPage": 92,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-gunship",
+      "printedName": "Corellian Gunship",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 92,
+      "pdfPhysicalPage": 93,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-hapan-battle-dragon",
+      "printedName": "Hapan Battle Dragon",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 93,
+      "pdfPhysicalPage": 94,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-hapes-nova-cruiser",
+      "printedName": "Hapes Nova Cruiser",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 94,
+      "pdfPhysicalPage": 95,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-telgorn-corp-gamma-class-assault-shuttle",
+      "printedName": "Telgorn Corp Gamma-class Assault Shuttle",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 95,
+      "pdfPhysicalPage": 96,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-kuat-drive-yards-imperial-ii-class-star-destroyer",
+      "printedName": "Kuat Drive Yards Imperial II-class Star Destroyer",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 96,
+      "pdfPhysicalPage": 97,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-rendili-stardrive-victory-ii-class-star-destroyer",
+      "printedName": "Rendili StarDrive Victory II-class Star Destroyer",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 98,
+      "pdfPhysicalPage": 99,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-kuat-drive-yards-pellaeon-class-star-destroyer",
+      "printedName": "Kuat Drive Yards Pellaeon-class Star Destroyer",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 99,
+      "pdfPhysicalPage": 100,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-immobilizer-418-interdictor-class-heavy-cruiser",
+      "printedName": "Immobilizer 418 Interdictor-class Heavy Cruiser",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 100,
+      "pdfPhysicalPage": 101,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-vindicator-class-heavy-cruiser",
+      "printedName": "Vindicator-class Heavy Cruiser",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 101,
+      "pdfPhysicalPage": 102,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-rendili-star-drive-light-corvette",
+      "printedName": "Rendili Star Drive Light Corvette",
+      "printedTypeLine": "Colossal (frigate) space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 102,
+      "pdfPhysicalPage": 103,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-j-type-star-skiff",
+      "printedName": "J-Type Star Skiff",
+      "printedTypeLine": "Colossal* space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 103,
+      "pdfPhysicalPage": 104,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-junker-tye-wing",
+      "printedName": "Junker TYE-wing",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 104,
+      "pdfPhysicalPage": 105,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-koensayr-manufacturing-btl-58-k-wing",
+      "printedName": "Koensayr Manufacturing BTL-58 K-wing",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 105,
+      "pdfPhysicalPage": 106,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-sienar-fleet-systems-lambda-class-shuttle",
+      "printedName": "Sienar Fleet Systems Lambda-class Shuttle",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 106,
+      "pdfPhysicalPage": 107,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-kuat-drive-yards-lancer-class-frigate",
+      "printedName": "Kuat Drive Yards Lancer-class Frigate",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 108,
+      "pdfPhysicalPage": 109,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-feethan-ottraw-scalable-industries-mankvim-814-light-interceptor",
+      "printedName": "Feethan Ottraw Scalable Industries Mankvim-814 Light Interceptor",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 109,
+      "pdfPhysicalPage": 110,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-sienar-technologies-marauder-corvette",
+      "printedName": "Sienar Technologies Marauder Corvette",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 110,
+      "pdfPhysicalPage": 111,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-gallofree-gr-75-medium-transport",
+      "printedName": "Gallofree GR-75 Medium Transport",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 111,
+      "pdfPhysicalPage": 112,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-olanji-charubah-miy-til-fighter",
+      "printedName": "Olanji/Charubah Miy'til Fighter",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 112,
+      "pdfPhysicalPage": 113,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-olanji-charubah-miy-til-assault-bomber",
+      "printedName": "Olanji/Charubah Miy'til Assault Bomber",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 113,
+      "pdfPhysicalPage": 114,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-mon-calamari-mc80-star-cruiser",
+      "printedName": "Mon Calamari MC80 Star Cruiser",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 114,
+      "pdfPhysicalPage": 115,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-home-one",
+      "printedName": "Home One",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 115,
+      "pdfPhysicalPage": 116,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-mon-calamari-star-defender",
+      "printedName": "Mon Calamari Star Defender",
+      "printedTypeLine": "Colossal (station) space station [printed]",
+      "classification": {
+        "primaryCategory": "space-station",
+        "secondaryCategories": [
+          "capital-ship"
+        ],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 116,
+      "pdfPhysicalPage": 117,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-theed-palace-space-vessel-engineering-corps-n-1-royal-starfighter",
+      "printedName": "Theed Palace Space Vessel Engineering Corps N-1 Royal Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 118,
+      "pdfPhysicalPage": 119,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-nebula-class-star-destroyer",
+      "printedName": "Nebula-class Star Destroyer",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 119,
+      "pdfPhysicalPage": 120,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-kuat-drive-yards-nebulon-b-frigate",
+      "printedName": "Kuat Drive Yards Nebulon-B Frigate",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 120,
+      "pdfPhysicalPage": 121,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-buuper-torsckil-abbey-devices-porax-38-starfighter",
+      "printedName": "Buuper Torsckil Abbey Devices Porax-38 Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 121,
+      "pdfPhysicalPage": 122,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-predator-class-starfighter",
+      "printedName": "Predator-class Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 122,
+      "pdfPhysicalPage": 123,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-rebel-assault-frigate-prototype",
+      "printedName": "Rebel Assault Frigate Prototype",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 123,
+      "pdfPhysicalPage": 124,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-rebel-assault-frigate-mk-i",
+      "printedName": "Rebel Assault Frigate Mk I",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 124,
+      "pdfPhysicalPage": 125,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-rebel-assault-frigate-mk-ii",
+      "printedName": "Rebel Assault Frigate Mk II",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 125,
+      "pdfPhysicalPage": 126,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-engineering-corporation-consular-class-cruiser",
+      "printedName": "Corellian Engineering Corporation Consular-class Cruiser",
+      "printedTypeLine": "Colossal (frigate) space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 126,
+      "pdfPhysicalPage": 127,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-sienar-fleet-systems-scimitar-assault-bomber",
+      "printedName": "Sienar Fleet Systems Scimitar Assault Bomber",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 127,
+      "pdfPhysicalPage": 128,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-modified-republic-sienar-systems-armored-star-courier",
+      "printedName": "Modified Republic Sienar Systems Armored Star Courier",
+      "printedTypeLine": "Colossal* space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 128,
+      "pdfPhysicalPage": 129,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-sith-interceptor",
+      "printedName": "Sith Interceptor",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 130,
+      "pdfPhysicalPage": 131,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-sienar-fleet-systems-gat-12h",
+      "printedName": "Sienar Fleet Systems GAT-12h",
+      "printedTypeLine": "Colossal* space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 131,
+      "pdfPhysicalPage": 132,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-sorosuub-cutlass-9-patrol-fighter",
+      "printedName": "SoroSuub Cutlass-9 Patrol Fighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 132,
+      "pdfPhysicalPage": 133,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-kuat-drive-yards-star-galleon",
+      "printedName": "Kuat Drive Yards Star Galleon",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 133,
+      "pdfPhysicalPage": 134,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-mandalmotors-starviper-assault-fighter",
+      "printedName": "MandalMotors StarViper Assault Fighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 134,
+      "pdfPhysicalPage": 135,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-loronar-corporation-strike-class-medium-cruiser",
+      "printedName": "Loronar Corporation Strike-class Medium Cruiser",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 135,
+      "pdfPhysicalPage": 136,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-fondor-shipyards-super-star-destroyer",
+      "printedName": "Fondor Shipyards Super Star Destroyer",
+      "printedTypeLine": "Colossal (station) space station [printed]",
+      "classification": {
+        "primaryCategory": "space-station",
+        "secondaryCategories": [
+          "capital-ship"
+        ],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 136,
+      "pdfPhysicalPage": 137,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-lusankya",
+      "printedName": "Lusankya",
+      "printedTypeLine": "Colossal (station) space station [printed]",
+      "classification": {
+        "primaryCategory": "space-station",
+        "secondaryCategories": [
+          "capital-ship"
+        ],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 138,
+      "pdfPhysicalPage": 139,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-eclipse",
+      "printedName": "Eclipse",
+      "printedTypeLine": "Colossal (station) space station [printed]",
+      "classification": {
+        "primaryCategory": "space-station",
+        "secondaryCategories": [
+          "capital-ship"
+        ],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 139,
+      "pdfPhysicalPage": 140,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-ipv-1-system-patrol-craft",
+      "printedName": "IPV-1 System Patrol Craft",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 140,
+      "pdfPhysicalPage": 141,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-theta-class-shuttle",
+      "printedName": "Theta-class Shuttle",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 141,
+      "pdfPhysicalPage": 142,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-in-fighter",
+      "printedName": "Sienar Fleet Systems TIE/In Fighter",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 142,
+      "pdfPhysicalPage": 143,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-bomber",
+      "printedName": "Sienar Fleet Systems TIE Bomber",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 143,
+      "pdfPhysicalPage": 144,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-advanced-x1",
+      "printedName": "Sienar Fleet Systems TIE Advanced x1",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 144,
+      "pdfPhysicalPage": 145,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-interceptor",
+      "printedName": "Sienar Fleet Systems TIE Interceptor",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 144,
+      "pdfPhysicalPage": 145,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-defender",
+      "printedName": "Sienar Fleet Systems TIE Defender",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 145,
+      "pdfPhysicalPage": 146,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-hoersch-kessel-drive-inc-lucrehulk-class-battleship",
+      "printedName": "Hoersch-Kessel Drive Inc. Lucrehulk-class Battleship",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 146,
+      "pdfPhysicalPage": 147,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-hoersch-kessel-drive-inc-lucrehulk-class-core-ship",
+      "printedName": "Hoersch-Kessel Drive Inc. Lucrehulk-class Core Ship",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 147,
+      "pdfPhysicalPage": 148,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-hoersch-kessel-drive-inc-lucrehulk-class-droid-control-ship",
+      "printedName": "Hoersch-Kessel Drive Inc. Lucrehulk-class Droid Control Ship",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 147,
+      "pdfPhysicalPage": 148,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-venator-class-star-destroyer",
+      "printedName": "Venator-class Star Destroyer",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 148,
+      "pdfPhysicalPage": 149,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-v-19-torrent-starfighter",
+      "printedName": "V-19 Torrent Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 149,
+      "pdfPhysicalPage": 150,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-kuat-systems-engineering-alpha-3-nimbus-v-wing-starfighter",
+      "printedName": "Kuat Systems Engineering Alpha-3 Nimbus V-wing Starfighter",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 150,
+      "pdfPhysicalPage": 151,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-x-83-twintail-starfighter",
+      "printedName": "X-83 TwinTail Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 151,
+      "pdfPhysicalPage": 152,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-incom-t-65b-x-wing-starfighter",
+      "printedName": "Incom T-65B X-wing Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 152,
+      "pdfPhysicalPage": 153,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-incom-t-65xj3-x-wing-starfighter",
+      "printedName": "Incom T-65XJ3 X-wing Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 152,
+      "pdfPhysicalPage": 153,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-incom-t-65br-x-wing-starfighter",
+      "printedName": "Incom T-65BR X-wing Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 153,
+      "pdfPhysicalPage": 154,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-yt-1300-transport",
+      "printedName": "Corellian YT-1300 Transport",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 154,
+      "pdfPhysicalPage": 155,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-yt-2000",
+      "printedName": "Corellian YT-2000",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 155,
+      "pdfPhysicalPage": 156,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-yt-2400",
+      "printedName": "Corellian YT-2400",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 156,
+      "pdfPhysicalPage": 157,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-millennium-falcon",
+      "printedName": "Millennium Falcon",
+      "printedTypeLine": "Colossal* space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 156,
+      "pdfPhysicalPage": 157,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-koensayr-btl-s3-y-wing",
+      "printedName": "Koensayr BTL-S3 Y-wing",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 158,
+      "pdfPhysicalPage": 159,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-koensayr-btl-a4-lp-longprobe",
+      "printedName": "Koensayr BTL-A4 LP \"Longprobe\"",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 159,
+      "pdfPhysicalPage": 160,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-koensayr-btl-s3-courier",
+      "printedName": "Koensayr BTL-S3 \"Courier\"",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 159,
+      "pdfPhysicalPage": 160,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "sotg-incom-subpro-z-95-headhunter",
+      "printedName": "Incom/Subpro Z-95 Headhunter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "secondaryCategories": [],
+        "mobilityDomains": [
+          "space",
+          "atmosphere"
+        ],
+        "hybrid": false
+      },
+      "sourceBook": "Starships of the Galaxy",
+      "printedStatblockStartPage": 160,
+      "pdfPhysicalPage": 161,
+      "provenance": {
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+        "sourceFile": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "sourceCatalog": "data/canonical/vehicles/ships.json",
+        "sourceReview": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    }
+  ],
+  "mechanicsTransferredThisPhase": 0,
+  "productionPackFilesChanged": false,
+  "next": "Phase 1-C Clone Wars Campaign Guide universal vehicle enumeration"
+}

@@ -1,0 +1,837 @@
+{
+  "schema": "swse.vehicle.sotg.cp23.source-pack-reconciliation.v1",
+  "phase": "CP23-RECONCILIATION_PREFLIGHT",
+  "sourceCatalogBlobSha": "44952f95d2101ca6f683885d07167c1ad65289c2",
+  "ownerApprovedCount": 15,
+  "sourceIdentityCount": 15,
+  "legacyCandidateCount": 13,
+  "unmappedSourceCount": 2,
+  "reconciledSourceCount": 0,
+  "originalVehiclePackSources": [
+    {
+      "packName": "vehicles-starfighters",
+      "sourcePath": "packs/vehicles-starfighters.db",
+      "sourceGitBlob": "46e982f935a1a14b45bb860c3685c08f0cb42c95",
+      "documentCount": 85
+    },
+    {
+      "packName": "vehicles-capital-ships",
+      "sourcePath": "packs/vehicles-capital-ships.db",
+      "sourceGitBlob": "8f333b91b684e90f50384dd61a39e5fa80b27994",
+      "documentCount": 63
+    },
+    {
+      "packName": "vehicles-space-transports",
+      "sourcePath": "packs/vehicles-space-transports.db",
+      "sourceGitBlob": "65f516504a7ecfa007924e8161c3a876954f13d3",
+      "documentCount": 108
+    }
+  ],
+  "trustedPhysicalWeaponGroupsAdded": 0,
+  "stockRuntimeAttackPermissionsAdded": 0,
+  "legacyPacksEdited": false,
+  "foundryActorImportsExecuted": false,
+  "records": [
+    {
+      "queuePosition": 1,
+      "decisionId": "SOTG-CP21-D01",
+      "sourceEntryKey": "sotg-advanced-v-19-torrent-starfighter",
+      "printedName": "Advanced V-19 Torrent Starfighter",
+      "printedPage": 59,
+      "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+      "expected": {
+        "initiative": 12,
+        "reflexDefense": 23,
+        "flatFootedReflex": 12,
+        "sourceAttackGroupCount": 2
+      },
+      "candidate": {
+        "packName": "vehicles-starfighters",
+        "documentId": "0320533019f46bf9",
+        "legacyName": "Advanced V-19 Torrent Starfighter",
+        "sourcebook": "",
+        "page": null,
+        "stockSourceEntryKey": null,
+        "legacyAttackRowCount": 0
+      },
+      "scalarComparisons": [
+        {
+          "field": "initiative",
+          "approvedSourceValue": 12,
+          "legacyValue": "+5",
+          "state": "LEGACY_VALUE_DIFFERS_OR_MISSING"
+        },
+        {
+          "field": "reflexDefense",
+          "approvedSourceValue": 23,
+          "legacyValue": 23,
+          "state": "MATCH"
+        },
+        {
+          "field": "flatFootedReflex",
+          "approvedSourceValue": 12,
+          "legacyValue": 12,
+          "state": "MATCH"
+        }
+      ],
+      "attackRows": {
+        "publishedAttackGroupCount": 2,
+        "legacyInstalledRowCount": 0,
+        "countsEquivalent": false,
+        "reason": "SOURCE_ATTACK_GROUPS_DO_NOT_PROVE_INSTALLED_PHYSICAL_MOUNTS"
+      },
+      "blockers": [
+        "LEGACY_DOCUMENT_HAS_NO_CANONICAL_SOURCE_BINDING",
+        "PHYSICAL_GROUP_MAPPING_NOT_CERTIFIED",
+        "REAL_FOUNDRY_V13_IMPORT_PROVENANCE_NOT_CERTIFIED"
+      ],
+      "status": "REQUIRES_AUTHENTICATED_SOURCE_REBUILD",
+      "compendiumMutationAllowed": false,
+      "foundryRuntimeStockAttackTrusted": false
+    },
+    {
+      "queuePosition": 2,
+      "decisionId": "SOTG-CP21-D02",
+      "sourceEntryKey": "sotg-recusant-class-light-destroyer",
+      "printedName": "Recusant-class Light Destroyer",
+      "printedPage": 72,
+      "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+      "expected": {
+        "initiative": -2,
+        "reflexDefense": 14,
+        "flatFootedReflex": 12,
+        "sourceAttackGroupCount": 5
+      },
+      "candidate": {
+        "packName": "vehicles-capital-ships",
+        "documentId": "4a12db341764d71c",
+        "legacyName": "Recusant-Class Light Destroyer",
+        "sourcebook": "",
+        "page": null,
+        "stockSourceEntryKey": null,
+        "legacyAttackRowCount": 5
+      },
+      "scalarComparisons": [
+        {
+          "field": "initiative",
+          "approvedSourceValue": -2,
+          "legacyValue": "+1",
+          "state": "LEGACY_VALUE_DIFFERS_OR_MISSING"
+        },
+        {
+          "field": "reflexDefense",
+          "approvedSourceValue": 14,
+          "legacyValue": 14,
+          "state": "MATCH"
+        },
+        {
+          "field": "flatFootedReflex",
+          "approvedSourceValue": 12,
+          "legacyValue": 12,
+          "state": "MATCH"
+        }
+      ],
+      "attackRows": {
+        "publishedAttackGroupCount": 5,
+        "legacyInstalledRowCount": 5,
+        "countsEquivalent": false,
+        "reason": "SOURCE_ATTACK_GROUPS_DO_NOT_PROVE_INSTALLED_PHYSICAL_MOUNTS"
+      },
+      "blockers": [
+        "LEGACY_DOCUMENT_HAS_NO_CANONICAL_SOURCE_BINDING",
+        "PHYSICAL_GROUP_MAPPING_NOT_CERTIFIED",
+        "REAL_FOUNDRY_V13_IMPORT_PROVENANCE_NOT_CERTIFIED"
+      ],
+      "status": "REQUIRES_AUTHENTICATED_SOURCE_REBUILD",
+      "compendiumMutationAllowed": false,
+      "foundryRuntimeStockAttackTrusted": false
+    },
+    {
+      "queuePosition": 3,
+      "decisionId": "SOTG-CP21-D03",
+      "sourceEntryKey": "sotg-kuat-drive-yards-pellaeon-class-star-destroyer",
+      "printedName": "Kuat Drive Yards Pellaeon-class Star Destroyer",
+      "printedPage": 99,
+      "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+      "expected": {
+        "initiative": -2,
+        "reflexDefense": 16,
+        "flatFootedReflex": 14,
+        "sourceAttackGroupCount": 5
+      },
+      "candidate": {
+        "packName": "vehicles-capital-ships",
+        "documentId": "9d7f42e1fb7dcda9",
+        "legacyName": "Pellaeon-Class Star Destroyer",
+        "sourcebook": "",
+        "page": null,
+        "stockSourceEntryKey": null,
+        "legacyAttackRowCount": 5
+      },
+      "scalarComparisons": [
+        {
+          "field": "initiative",
+          "approvedSourceValue": -2,
+          "legacyValue": "+0",
+          "state": "LEGACY_VALUE_DIFFERS_OR_MISSING"
+        },
+        {
+          "field": "reflexDefense",
+          "approvedSourceValue": 16,
+          "legacyValue": 16,
+          "state": "MATCH"
+        },
+        {
+          "field": "flatFootedReflex",
+          "approvedSourceValue": 14,
+          "legacyValue": 14,
+          "state": "MATCH"
+        }
+      ],
+      "attackRows": {
+        "publishedAttackGroupCount": 5,
+        "legacyInstalledRowCount": 5,
+        "countsEquivalent": false,
+        "reason": "SOURCE_ATTACK_GROUPS_DO_NOT_PROVE_INSTALLED_PHYSICAL_MOUNTS"
+      },
+      "blockers": [
+        "LEGACY_DOCUMENT_HAS_NO_CANONICAL_SOURCE_BINDING",
+        "PHYSICAL_GROUP_MAPPING_NOT_CERTIFIED",
+        "REAL_FOUNDRY_V13_IMPORT_PROVENANCE_NOT_CERTIFIED"
+      ],
+      "status": "REQUIRES_AUTHENTICATED_SOURCE_REBUILD",
+      "compendiumMutationAllowed": false,
+      "foundryRuntimeStockAttackTrusted": false
+    },
+    {
+      "queuePosition": 4,
+      "decisionId": "SOTG-CP21-D04",
+      "sourceEntryKey": "sotg-immobilizer-418-interdictor-class-heavy-cruiser",
+      "printedName": "Immobilizer 418 Interdictor-class Heavy Cruiser",
+      "printedPage": 100,
+      "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+      "expected": {
+        "initiative": -2,
+        "reflexDefense": 17,
+        "flatFootedReflex": 15,
+        "sourceAttackGroupCount": 2
+      },
+      "candidate": {
+        "packName": "vehicles-capital-ships",
+        "documentId": "c1728af79988eab9",
+        "legacyName": "Immobilizer 418 Interdictor-Class Heavy Cruiser",
+        "sourcebook": "",
+        "page": null,
+        "stockSourceEntryKey": null,
+        "legacyAttackRowCount": 0
+      },
+      "scalarComparisons": [
+        {
+          "field": "initiative",
+          "approvedSourceValue": -2,
+          "legacyValue": "+0",
+          "state": "LEGACY_VALUE_DIFFERS_OR_MISSING"
+        },
+        {
+          "field": "reflexDefense",
+          "approvedSourceValue": 17,
+          "legacyValue": 10,
+          "state": "LEGACY_VALUE_DIFFERS_OR_MISSING"
+        },
+        {
+          "field": "flatFootedReflex",
+          "approvedSourceValue": 15,
+          "legacyValue": 10,
+          "state": "LEGACY_VALUE_DIFFERS_OR_MISSING"
+        }
+      ],
+      "attackRows": {
+        "publishedAttackGroupCount": 2,
+        "legacyInstalledRowCount": 0,
+        "countsEquivalent": false,
+        "reason": "SOURCE_ATTACK_GROUPS_DO_NOT_PROVE_INSTALLED_PHYSICAL_MOUNTS"
+      },
+      "blockers": [
+        "LEGACY_DOCUMENT_HAS_NO_CANONICAL_SOURCE_BINDING",
+        "PHYSICAL_GROUP_MAPPING_NOT_CERTIFIED",
+        "REAL_FOUNDRY_V13_IMPORT_PROVENANCE_NOT_CERTIFIED"
+      ],
+      "status": "REQUIRES_AUTHENTICATED_SOURCE_REBUILD",
+      "compendiumMutationAllowed": false,
+      "foundryRuntimeStockAttackTrusted": false
+    },
+    {
+      "queuePosition": 5,
+      "decisionId": "SOTG-CP21-D05",
+      "sourceEntryKey": "sotg-junker-tye-wing",
+      "printedName": "Junker TYE-wing",
+      "printedPage": 104,
+      "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+      "expected": {
+        "initiative": 2,
+        "reflexDefense": 14,
+        "flatFootedReflex": 11,
+        "sourceAttackGroupCount": 1
+      },
+      "candidate": {
+        "packName": "vehicles-starfighters",
+        "documentId": "6b2f0741da3cdda3",
+        "legacyName": "Junker TYE-Wing",
+        "sourcebook": "",
+        "page": null,
+        "stockSourceEntryKey": null,
+        "legacyAttackRowCount": 0
+      },
+      "scalarComparisons": [
+        {
+          "field": "initiative",
+          "approvedSourceValue": 2,
+          "legacyValue": "+5",
+          "state": "LEGACY_VALUE_DIFFERS_OR_MISSING"
+        },
+        {
+          "field": "reflexDefense",
+          "approvedSourceValue": 14,
+          "legacyValue": 14,
+          "state": "MATCH"
+        },
+        {
+          "field": "flatFootedReflex",
+          "approvedSourceValue": 11,
+          "legacyValue": 11,
+          "state": "MATCH"
+        }
+      ],
+      "attackRows": {
+        "publishedAttackGroupCount": 1,
+        "legacyInstalledRowCount": 0,
+        "countsEquivalent": false,
+        "reason": "SOURCE_ATTACK_GROUPS_DO_NOT_PROVE_INSTALLED_PHYSICAL_MOUNTS"
+      },
+      "blockers": [
+        "LEGACY_DOCUMENT_HAS_NO_CANONICAL_SOURCE_BINDING",
+        "PHYSICAL_GROUP_MAPPING_NOT_CERTIFIED",
+        "REAL_FOUNDRY_V13_IMPORT_PROVENANCE_NOT_CERTIFIED"
+      ],
+      "status": "REQUIRES_AUTHENTICATED_SOURCE_REBUILD",
+      "compendiumMutationAllowed": false,
+      "foundryRuntimeStockAttackTrusted": false
+    },
+    {
+      "queuePosition": 6,
+      "decisionId": "SOTG-CP21-D06",
+      "sourceEntryKey": "sotg-koensayr-manufacturing-btl-58-k-wing",
+      "printedName": "Koensayr Manufacturing BTL-58 K-wing",
+      "printedPage": 105,
+      "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+      "expected": {
+        "initiative": 6,
+        "reflexDefense": 18,
+        "flatFootedReflex": 13,
+        "sourceAttackGroupCount": 5
+      },
+      "candidate": {
+        "packName": "vehicles-starfighters",
+        "documentId": "e757ca9a96c28a41",
+        "legacyName": "K-Wing Assault Starfighter",
+        "sourcebook": "",
+        "page": null,
+        "stockSourceEntryKey": null,
+        "legacyAttackRowCount": 0
+      },
+      "scalarComparisons": [
+        {
+          "field": "initiative",
+          "approvedSourceValue": 6,
+          "legacyValue": "+5",
+          "state": "LEGACY_VALUE_DIFFERS_OR_MISSING"
+        },
+        {
+          "field": "reflexDefense",
+          "approvedSourceValue": 18,
+          "legacyValue": 18,
+          "state": "MATCH"
+        },
+        {
+          "field": "flatFootedReflex",
+          "approvedSourceValue": 13,
+          "legacyValue": 13,
+          "state": "MATCH"
+        }
+      ],
+      "attackRows": {
+        "publishedAttackGroupCount": 5,
+        "legacyInstalledRowCount": 0,
+        "countsEquivalent": false,
+        "reason": "SOURCE_ATTACK_GROUPS_DO_NOT_PROVE_INSTALLED_PHYSICAL_MOUNTS"
+      },
+      "blockers": [
+        "LEGACY_DOCUMENT_HAS_NO_CANONICAL_SOURCE_BINDING",
+        "PHYSICAL_GROUP_MAPPING_NOT_CERTIFIED",
+        "REAL_FOUNDRY_V13_IMPORT_PROVENANCE_NOT_CERTIFIED"
+      ],
+      "status": "REQUIRES_AUTHENTICATED_SOURCE_REBUILD",
+      "compendiumMutationAllowed": false,
+      "foundryRuntimeStockAttackTrusted": false
+    },
+    {
+      "queuePosition": 7,
+      "decisionId": "SOTG-CP21-D07",
+      "sourceEntryKey": "sotg-sienar-technologies-marauder-corvette",
+      "printedName": "Sienar Technologies Marauder Corvette",
+      "printedPage": 110,
+      "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+      "expected": {
+        "initiative": -3,
+        "reflexDefense": 14,
+        "flatFootedReflex": 12,
+        "sourceAttackGroupCount": 2
+      },
+      "candidate": null,
+      "scalarComparisons": [],
+      "attackRows": {
+        "publishedAttackGroupCount": 2,
+        "legacyInstalledRowCount": null,
+        "countsEquivalent": false,
+        "reason": "SOURCE_ATTACK_GROUPS_DO_NOT_PROVE_INSTALLED_PHYSICAL_MOUNTS"
+      },
+      "blockers": [
+        "NO_EXACT_LEGACY_PACK_DOCUMENT_CANDIDATE",
+        "PHYSICAL_GROUP_MAPPING_NOT_CERTIFIED",
+        "REAL_FOUNDRY_V13_IMPORT_PROVENANCE_NOT_CERTIFIED"
+      ],
+      "status": "NO_LEGACY_PACK_CANDIDATE",
+      "compendiumMutationAllowed": false,
+      "foundryRuntimeStockAttackTrusted": false
+    },
+    {
+      "queuePosition": 8,
+      "decisionId": "SOTG-CP21-D08",
+      "sourceEntryKey": "sotg-mon-calamari-star-defender",
+      "printedName": "Mon Calamari Star Defender",
+      "printedPage": 116,
+      "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+      "expected": {
+        "initiative": -3,
+        "reflexDefense": 20,
+        "flatFootedReflex": 19,
+        "sourceAttackGroupCount": 6
+      },
+      "candidate": null,
+      "scalarComparisons": [],
+      "attackRows": {
+        "publishedAttackGroupCount": 6,
+        "legacyInstalledRowCount": null,
+        "countsEquivalent": false,
+        "reason": "SOURCE_ATTACK_GROUPS_DO_NOT_PROVE_INSTALLED_PHYSICAL_MOUNTS"
+      },
+      "blockers": [
+        "NO_EXACT_LEGACY_PACK_DOCUMENT_CANDIDATE",
+        "PHYSICAL_GROUP_MAPPING_NOT_CERTIFIED",
+        "REAL_FOUNDRY_V13_IMPORT_PROVENANCE_NOT_CERTIFIED"
+      ],
+      "status": "NO_LEGACY_PACK_CANDIDATE",
+      "compendiumMutationAllowed": false,
+      "foundryRuntimeStockAttackTrusted": false
+    },
+    {
+      "queuePosition": 9,
+      "decisionId": "SOTG-CP21-D09",
+      "sourceEntryKey": "sotg-eclipse",
+      "printedName": "Eclipse",
+      "printedPage": 139,
+      "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+      "expected": {
+        "initiative": -4,
+        "reflexDefense": 20,
+        "flatFootedReflex": 20,
+        "sourceAttackGroupCount": 6
+      },
+      "candidate": {
+        "packName": "vehicles-capital-ships",
+        "documentId": "bd0c972f8a5599ab",
+        "legacyName": "Eclipse-Class Star Dreadnought",
+        "sourcebook": "",
+        "page": null,
+        "stockSourceEntryKey": null,
+        "legacyAttackRowCount": 6
+      },
+      "scalarComparisons": [
+        {
+          "field": "initiative",
+          "approvedSourceValue": -4,
+          "legacyValue": "+0",
+          "state": "LEGACY_VALUE_DIFFERS_OR_MISSING"
+        },
+        {
+          "field": "reflexDefense",
+          "approvedSourceValue": 20,
+          "legacyValue": 20,
+          "state": "MATCH"
+        },
+        {
+          "field": "flatFootedReflex",
+          "approvedSourceValue": 20,
+          "legacyValue": 20,
+          "state": "MATCH"
+        }
+      ],
+      "attackRows": {
+        "publishedAttackGroupCount": 6,
+        "legacyInstalledRowCount": 6,
+        "countsEquivalent": false,
+        "reason": "SOURCE_ATTACK_GROUPS_DO_NOT_PROVE_INSTALLED_PHYSICAL_MOUNTS"
+      },
+      "blockers": [
+        "LEGACY_DOCUMENT_HAS_NO_CANONICAL_SOURCE_BINDING",
+        "PHYSICAL_GROUP_MAPPING_NOT_CERTIFIED",
+        "REAL_FOUNDRY_V13_IMPORT_PROVENANCE_NOT_CERTIFIED"
+      ],
+      "status": "REQUIRES_AUTHENTICATED_SOURCE_REBUILD",
+      "compendiumMutationAllowed": false,
+      "foundryRuntimeStockAttackTrusted": false
+    },
+    {
+      "queuePosition": 10,
+      "decisionId": "SOTG-CP21-D10",
+      "sourceEntryKey": "sotg-theta-class-shuttle",
+      "printedName": "Theta-class Shuttle",
+      "printedPage": 141,
+      "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+      "expected": {
+        "initiative": 5,
+        "reflexDefense": 15,
+        "flatFootedReflex": 12,
+        "sourceAttackGroupCount": 2
+      },
+      "candidate": {
+        "packName": "vehicles-space-transports",
+        "documentId": "fa1f202bc57c3636",
+        "legacyName": "Theta-Class Shuttle",
+        "sourcebook": "",
+        "page": null,
+        "stockSourceEntryKey": null,
+        "legacyAttackRowCount": 0
+      },
+      "scalarComparisons": [
+        {
+          "field": "initiative",
+          "approvedSourceValue": 5,
+          "legacyValue": "+4",
+          "state": "LEGACY_VALUE_DIFFERS_OR_MISSING"
+        },
+        {
+          "field": "reflexDefense",
+          "approvedSourceValue": 15,
+          "legacyValue": 15,
+          "state": "MATCH"
+        },
+        {
+          "field": "flatFootedReflex",
+          "approvedSourceValue": 12,
+          "legacyValue": 12,
+          "state": "MATCH"
+        }
+      ],
+      "attackRows": {
+        "publishedAttackGroupCount": 2,
+        "legacyInstalledRowCount": 0,
+        "countsEquivalent": false,
+        "reason": "SOURCE_ATTACK_GROUPS_DO_NOT_PROVE_INSTALLED_PHYSICAL_MOUNTS"
+      },
+      "blockers": [
+        "LEGACY_DOCUMENT_HAS_NO_CANONICAL_SOURCE_BINDING",
+        "PHYSICAL_GROUP_MAPPING_NOT_CERTIFIED",
+        "REAL_FOUNDRY_V13_IMPORT_PROVENANCE_NOT_CERTIFIED"
+      ],
+      "status": "REQUIRES_AUTHENTICATED_SOURCE_REBUILD",
+      "compendiumMutationAllowed": false,
+      "foundryRuntimeStockAttackTrusted": false
+    },
+    {
+      "queuePosition": 11,
+      "decisionId": "SOTG-CP21-D11",
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-bomber",
+      "printedName": "Sienar Fleet Systems TIE Bomber",
+      "printedPage": 143,
+      "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+      "expected": {
+        "initiative": 4,
+        "reflexDefense": 15,
+        "flatFootedReflex": 12,
+        "sourceAttackGroupCount": 2
+      },
+      "candidate": {
+        "packName": "vehicles-starfighters",
+        "documentId": "2ec63b561379cc09",
+        "legacyName": "TIE Bomber",
+        "sourcebook": "",
+        "page": null,
+        "stockSourceEntryKey": null,
+        "legacyAttackRowCount": 0
+      },
+      "scalarComparisons": [
+        {
+          "field": "initiative",
+          "approvedSourceValue": 4,
+          "legacyValue": "+4",
+          "state": "MATCH"
+        },
+        {
+          "field": "reflexDefense",
+          "approvedSourceValue": 15,
+          "legacyValue": 15,
+          "state": "MATCH"
+        },
+        {
+          "field": "flatFootedReflex",
+          "approvedSourceValue": 12,
+          "legacyValue": 12,
+          "state": "MATCH"
+        }
+      ],
+      "attackRows": {
+        "publishedAttackGroupCount": 2,
+        "legacyInstalledRowCount": 0,
+        "countsEquivalent": false,
+        "reason": "SOURCE_ATTACK_GROUPS_DO_NOT_PROVE_INSTALLED_PHYSICAL_MOUNTS"
+      },
+      "blockers": [
+        "LEGACY_DOCUMENT_HAS_NO_CANONICAL_SOURCE_BINDING",
+        "PHYSICAL_GROUP_MAPPING_NOT_CERTIFIED",
+        "REAL_FOUNDRY_V13_IMPORT_PROVENANCE_NOT_CERTIFIED"
+      ],
+      "status": "REQUIRES_AUTHENTICATED_SOURCE_REBUILD",
+      "compendiumMutationAllowed": false,
+      "foundryRuntimeStockAttackTrusted": false
+    },
+    {
+      "queuePosition": 12,
+      "decisionId": "SOTG-CP21-D12",
+      "sourceEntryKey": "sotg-incom-t-65xj3-x-wing-starfighter",
+      "printedName": "Incom T-65XJ3 X-wing Starfighter",
+      "printedPage": 152,
+      "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+      "expected": {
+        "initiative": 9,
+        "reflexDefense": 21,
+        "flatFootedReflex": 13,
+        "sourceAttackGroupCount": 2
+      },
+      "candidate": {
+        "packName": "vehicles-starfighters",
+        "documentId": "622924c83d0c90be",
+        "legacyName": "T-65XJ3 X-Wing Starfighter",
+        "sourcebook": "",
+        "page": null,
+        "stockSourceEntryKey": null,
+        "legacyAttackRowCount": 0
+      },
+      "scalarComparisons": [
+        {
+          "field": "initiative",
+          "approvedSourceValue": 9,
+          "legacyValue": "+5",
+          "state": "LEGACY_VALUE_DIFFERS_OR_MISSING"
+        },
+        {
+          "field": "reflexDefense",
+          "approvedSourceValue": 21,
+          "legacyValue": 21,
+          "state": "MATCH"
+        },
+        {
+          "field": "flatFootedReflex",
+          "approvedSourceValue": 13,
+          "legacyValue": 13,
+          "state": "MATCH"
+        }
+      ],
+      "attackRows": {
+        "publishedAttackGroupCount": 2,
+        "legacyInstalledRowCount": 0,
+        "countsEquivalent": false,
+        "reason": "SOURCE_ATTACK_GROUPS_DO_NOT_PROVE_INSTALLED_PHYSICAL_MOUNTS"
+      },
+      "blockers": [
+        "LEGACY_DOCUMENT_HAS_NO_CANONICAL_SOURCE_BINDING",
+        "PHYSICAL_GROUP_MAPPING_NOT_CERTIFIED",
+        "REAL_FOUNDRY_V13_IMPORT_PROVENANCE_NOT_CERTIFIED"
+      ],
+      "status": "REQUIRES_AUTHENTICATED_SOURCE_REBUILD",
+      "compendiumMutationAllowed": false,
+      "foundryRuntimeStockAttackTrusted": false
+    },
+    {
+      "queuePosition": 13,
+      "decisionId": "SOTG-CP21-D13",
+      "sourceEntryKey": "sotg-incom-subpro-arc-170-starfighter",
+      "printedName": "Incom/Subpro ARC-170 Starfighter",
+      "printedPage": 61,
+      "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+      "expected": {
+        "initiative": 5,
+        "reflexDefense": 17,
+        "flatFootedReflex": 13,
+        "sourceAttackGroupCount": 3
+      },
+      "candidate": {
+        "packName": "vehicles-starfighters",
+        "documentId": "a9b019928bcb59bc",
+        "legacyName": "ARC-170 Starfighter",
+        "sourcebook": "",
+        "page": null,
+        "stockSourceEntryKey": null,
+        "legacyAttackRowCount": 0
+      },
+      "scalarComparisons": [
+        {
+          "field": "initiative",
+          "approvedSourceValue": 5,
+          "legacyValue": "+5",
+          "state": "MATCH"
+        },
+        {
+          "field": "reflexDefense",
+          "approvedSourceValue": 17,
+          "legacyValue": 17,
+          "state": "MATCH"
+        },
+        {
+          "field": "flatFootedReflex",
+          "approvedSourceValue": 13,
+          "legacyValue": 13,
+          "state": "MATCH"
+        }
+      ],
+      "attackRows": {
+        "publishedAttackGroupCount": 3,
+        "legacyInstalledRowCount": 0,
+        "countsEquivalent": false,
+        "reason": "SOURCE_ATTACK_GROUPS_DO_NOT_PROVE_INSTALLED_PHYSICAL_MOUNTS"
+      },
+      "blockers": [
+        "LEGACY_DOCUMENT_HAS_NO_CANONICAL_SOURCE_BINDING",
+        "PHYSICAL_GROUP_MAPPING_NOT_CERTIFIED",
+        "REAL_FOUNDRY_V13_IMPORT_PROVENANCE_NOT_CERTIFIED"
+      ],
+      "status": "REQUIRES_AUTHENTICATED_SOURCE_REBUILD",
+      "compendiumMutationAllowed": false,
+      "foundryRuntimeStockAttackTrusted": false
+    },
+    {
+      "queuePosition": 14,
+      "decisionId": "SOTG-CP21-D14",
+      "sourceEntryKey": "sotg-alliance-a-wing-starfighter",
+      "printedName": "Alliance A-wing Starfighter",
+      "printedPage": 63,
+      "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+      "expected": {
+        "initiative": 12,
+        "reflexDefense": 19,
+        "flatFootedReflex": 11,
+        "sourceAttackGroupCount": 3
+      },
+      "candidate": {
+        "packName": "vehicles-starfighters",
+        "documentId": "9a8e2af942c66079",
+        "legacyName": "A-Wing Starfighter",
+        "sourcebook": "",
+        "page": null,
+        "stockSourceEntryKey": null,
+        "legacyAttackRowCount": 0
+      },
+      "scalarComparisons": [
+        {
+          "field": "initiative",
+          "approvedSourceValue": 12,
+          "legacyValue": "+5",
+          "state": "LEGACY_VALUE_DIFFERS_OR_MISSING"
+        },
+        {
+          "field": "reflexDefense",
+          "approvedSourceValue": 19,
+          "legacyValue": 19,
+          "state": "MATCH"
+        },
+        {
+          "field": "flatFootedReflex",
+          "approvedSourceValue": 11,
+          "legacyValue": 11,
+          "state": "MATCH"
+        }
+      ],
+      "attackRows": {
+        "publishedAttackGroupCount": 3,
+        "legacyInstalledRowCount": 0,
+        "countsEquivalent": false,
+        "reason": "SOURCE_ATTACK_GROUPS_DO_NOT_PROVE_INSTALLED_PHYSICAL_MOUNTS"
+      },
+      "blockers": [
+        "LEGACY_DOCUMENT_HAS_NO_CANONICAL_SOURCE_BINDING",
+        "PHYSICAL_GROUP_MAPPING_NOT_CERTIFIED",
+        "REAL_FOUNDRY_V13_IMPORT_PROVENANCE_NOT_CERTIFIED"
+      ],
+      "status": "REQUIRES_AUTHENTICATED_SOURCE_REBUILD",
+      "compendiumMutationAllowed": false,
+      "foundryRuntimeStockAttackTrusted": false
+    },
+    {
+      "queuePosition": 15,
+      "decisionId": "SOTG-CP21-D15",
+      "sourceEntryKey": "sotg-baudo-class-star-yacht",
+      "printedName": "Baudo-class Star Yacht",
+      "printedPage": 65,
+      "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+      "expected": {
+        "initiative": -3,
+        "reflexDefense": 13,
+        "flatFootedReflex": 11,
+        "sourceAttackGroupCount": 1
+      },
+      "candidate": {
+        "packName": "vehicles-space-transports",
+        "documentId": "fd61d4e5c62bc61e",
+        "legacyName": "Baudo-Class Star Yacht",
+        "sourcebook": "",
+        "page": null,
+        "stockSourceEntryKey": null,
+        "legacyAttackRowCount": 0
+      },
+      "scalarComparisons": [
+        {
+          "field": "initiative",
+          "approvedSourceValue": -3,
+          "legacyValue": "+3",
+          "state": "LEGACY_VALUE_DIFFERS_OR_MISSING"
+        },
+        {
+          "field": "reflexDefense",
+          "approvedSourceValue": 13,
+          "legacyValue": 13,
+          "state": "MATCH"
+        },
+        {
+          "field": "flatFootedReflex",
+          "approvedSourceValue": 11,
+          "legacyValue": 11,
+          "state": "MATCH"
+        }
+      ],
+      "attackRows": {
+        "publishedAttackGroupCount": 1,
+        "legacyInstalledRowCount": 0,
+        "countsEquivalent": false,
+        "reason": "SOURCE_ATTACK_GROUPS_DO_NOT_PROVE_INSTALLED_PHYSICAL_MOUNTS"
+      },
+      "blockers": [
+        "LEGACY_DOCUMENT_HAS_NO_CANONICAL_SOURCE_BINDING",
+        "PHYSICAL_GROUP_MAPPING_NOT_CERTIFIED",
+        "REAL_FOUNDRY_V13_IMPORT_PROVENANCE_NOT_CERTIFIED"
+      ],
+      "status": "REQUIRES_AUTHENTICATED_SOURCE_REBUILD",
+      "compendiumMutationAllowed": false,
+      "foundryRuntimeStockAttackTrusted": false
+    }
+  ]
+}

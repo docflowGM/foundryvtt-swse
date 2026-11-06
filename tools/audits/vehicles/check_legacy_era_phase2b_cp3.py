@@ -1,0 +1,23 @@
+#!/usr/bin/env python3
+"""Legacy Era 30/39 primary-PDF review CP3 structural regression, audit only."""
+import pathlib, json, hashlib, argparse, zipfile
+ROOT=pathlib.Path(__file__).resolve().parents[3]; D=ROOT/'data/audits/vehicles'
+SHA='344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d'
+def ck(a,msg):
+ if not a:raise AssertionError(msg)
+def main(a):
+ l=json.loads((D/'swse-phase2b-legacy-era-cp3-per-entry-source-review-ledger.json').read_text()); b=json.loads((D/'swse-phase2b-legacy-era-cp3-weapon-mount-backlog.json').read_text()); s=json.loads((D/'swse-phase2c-legacy-era-cp3-schema-discovery.json').read_text()); es=l['entries']; keys=[e['sourceEntryKey'] for e in es]; I={e['sourceEntryKey']:e for e in es}
+ ck(len(es)==39 and len(set(keys))==39,'39 unique original Phase1 keys');ck([e['endPageReviewStatus'] for e in es]==['PDF_VERIFIED']*30+['NOT_REVIEWED']*9,'Exactly 30 read and 9 pending');ck(l['counts']['primaryPdfCloseReads']==30 and l['counts']['primaryPdfCloseReadsOutstanding']==9 and l['counts']['strictFullFieldAndPhysicalWeaponMountCertificates']==0,'Source/mount certificate counts');ck(all(not e['fullFieldCertified'] and not e['fullWeaponMountReconciled'] for e in es),'No full mech certification');ck(all(e['printedFacts'] is None and not e['mountAndFiringGroups'] for e in es[30:]),'No fabricated pending record'); ck([e['printedStatblockStartPage'] for e in es[20:30]]==[148,148,150,150,151,152,186,186,187,188],'Pages/order mismatch')
+ n=sum(len(e['mountAndFiringGroups']) for e in es);ck(n==65==l['counts']['attackGroupRowsReviewed']==b['counts']['weaponAttackGroups'],'65 attack rows');ck(len(b['entries'])==39,'Backlog count');ck(len(s['cases'])==54 and not s['productionMutationAuthorized'] and not s['schemaFrozen'] and all(not x['productionMutationAuthorized'] for x in s['cases']),'Discovery-only cases count/guard');ck(l['counts']['sourceConflictRecordCount']==4,'Conflict count')
+ for key,f in [('le-j-1-shuttle','rangedAttack'),('le-bb-2-starfire-fighter-bomber','crew'),('le-i4-ionizer-starfighter','initiativeSenses'),('le-scarlet-star-modified-yt-2400-transport','initiativeSenses')]:ck(I[key]['fieldGroups'][f]=='SOURCE_CONFLICT_PRESERVED','Prior conflict changed '+key)
+ ck(I['le-sabertooth-class-assault-rescue-vessel']['printedFacts']['supplementalPrintedFacts']['tacticalFire']['bonusDamageDice']==1,'Sabertooth tactic');ck(len(I['le-shashore-class-frigate']['printedFacts']['supplementalPrintedFacts']['bladeConfigurations'])==3,'ShaShore blades');ck(I['le-indomitable-scythe-class-battle-cruiser']['printedFacts']['cl']==23 and I['le-scythe-class-battle-cruiser']['printedFacts']['cl']==22,'Indomitable/Scythe identity collapse');ck(I['le-tri-scythe-class-frigate']['printedFacts']['supplementalPrintedFacts']['tacticalFire']['damageBonus']==4,'Tri-Scythe flat damage');ck(I['le-spinward-class-tender']['printedFacts']['supplementalPrintedFacts']['listedTractorCombatAttack']==False,'Spinward invented tractor');ck(len(I['le-nune-class-imperial-shuttle']['mountAndFiringGroups'])==3,'Nune groups');ck(all(w['hardwareCount']=='SOURCE_SILENT_CONFIRMED' and w['firingArc']=='SOURCE_SILENT_CONFIRMED' for e in es[:30] for w in e['mountAndFiringGroups']),'Invented physical mounts/arc')
+ if a.cp2_zip:
+  with zipfile.ZipFile(a.cp2_zip) as z:old=json.loads(z.read(next(k for k in z.namelist() if k.endswith('cp2-per-entry-source-review-ledger.json'))))
+  ck(es[:20]==old['entries'][:20],'Any CP1/CP2 reviewed record altered');ck(keys==[e['sourceEntryKey'] for e in old['entries']],'Original ordering changed');print('PASS: all 20 CP1+CP2 reviewed records unchanged')
+ if a.phase1:
+  p=json.loads(pathlib.Path(a.phase1).read_text());book=next(x for x in p['books'] if x['book']=='Legacy Era Campaign Guide');exp={x['sourceEntryKey']:(x['shipName'],x['printedStatblockPage'],x['pdfPhysicalPage']) for x in book['entries']};got={x['sourceEntryKey']:(x['printedName'],x['printedStatblockStartPage'],x['phase1PdfPhysicalPage']) for x in es};ck(exp==got,'Phase1 identities/pages altered');print('PASS: all 39 original Phase1 names, pages, keys unchanged')
+ elif a.require_phase1:raise AssertionError('Cannot --require-phase1 without --phase1')
+ if a.source_pdf:ck(hashlib.sha256(pathlib.Path(a.source_pdf).read_bytes()).hexdigest()==SHA,'Source PDF mismatch');print('PASS: scanned PDF SHA-256')
+ print('PASS: 30/39 source reviews, 9 pending, 65 attack rows, 54 schema cases, 4 conflicts and 0 strict certificates')
+if __name__=='__main__':
+ p=argparse.ArgumentParser();p.add_argument('--cp2-zip');p.add_argument('--source-pdf');p.add_argument('--phase1');p.add_argument('--require-phase1',action='store_true');main(p.parse_args())

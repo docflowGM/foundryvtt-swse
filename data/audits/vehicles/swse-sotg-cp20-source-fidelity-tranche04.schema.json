@@ -1,0 +1,396 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "swse.vehicle.sotg.cp20.source-fidelity-tranche04.audit-only.schema.v1",
+  "title": "Starships of the Galaxy CP20 publication-fidelity certificates - audit only",
+  "description": "Audit-only fidelity certificates for CP20 Tranche 04, queue 61-75. No machine-usable weapon permission.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "book",
+    "sha256",
+    "policyId",
+    "branch",
+    "authorityBlobs",
+    "correctionPath",
+    "tranche",
+    "counts",
+    "certificates",
+    "auditOnly",
+    "rawSourceLedgerImmutable",
+    "v06SchemaFrozen",
+    "productionChangesMade"
+  ],
+  "properties": {
+    "schema": {
+      "const": "swse.vehicle.sotg.cp20.source-fidelity-batch04.v1"
+    },
+    "book": {
+      "const": "Starships of the Galaxy"
+    },
+    "sha256": {
+      "const": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0"
+    },
+    "policyId": {
+      "const": "SOTG-CP18-D01"
+    },
+    "branch": {
+      "const": "audit/sotg-strict-certification-cp17"
+    },
+    "authorityBlobs": {
+      "type": "object",
+      "required": [
+        "l",
+        "q",
+        "o",
+        "t",
+        "c",
+        "prior",
+        "s"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "l": {
+          "$ref": "#/$defs/blob"
+        },
+        "q": {
+          "$ref": "#/$defs/blob"
+        },
+        "o": {
+          "$ref": "#/$defs/blob"
+        },
+        "t": {
+          "$ref": "#/$defs/blob"
+        },
+        "c": {
+          "$ref": "#/$defs/blob"
+        },
+        "prior": {
+          "$ref": "#/$defs/blob"
+        },
+        "s": {
+          "$ref": "#/$defs/blob"
+        }
+      }
+    },
+    "correctionPath": {
+      "const": "data/audits/vehicles/swse-sotg-cp20-controlled-source-corrections.json"
+    },
+    "tranche": {
+      "type": "object",
+      "required": [
+        "queueFrom",
+        "queueTo",
+        "count"
+      ],
+      "properties": {
+        "queueFrom": {
+          "const": 61
+        },
+        "queueTo": {
+          "const": 75
+        },
+        "count": {
+          "const": 15
+        }
+      },
+      "additionalProperties": false
+    },
+    "counts": {
+      "type": "object",
+      "required": [
+        "newSourceFidelityCertificates",
+        "remainingSourceFidelityUncertified",
+        "unchangedStrictMechanicalBacklog",
+        "unchangedPriorPhysicalStrictCertificates",
+        "brandNewPhysicalMountCertificates",
+        "newAutomatedStockAttackPermissions",
+        "provenanceRestoredWithoutMutatingOldLedger"
+      ],
+      "properties": {
+        "newSourceFidelityCertificates": {
+          "const": 15
+        },
+        "remainingSourceFidelityUncertified": {
+          "const": 40
+        },
+        "unchangedStrictMechanicalBacklog": {
+          "const": 100
+        },
+        "unchangedPriorPhysicalStrictCertificates": {
+          "const": 4
+        },
+        "brandNewPhysicalMountCertificates": {
+          "const": 0
+        },
+        "newAutomatedStockAttackPermissions": {
+          "const": 0
+        },
+        "provenanceRestoredWithoutMutatingOldLedger": {
+          "const": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "certificates": {
+      "type": "array",
+      "minItems": 15,
+      "maxItems": 15,
+      "items": {
+        "$ref": "#/$defs/certificate"
+      }
+    },
+    "auditOnly": {
+      "const": true
+    },
+    "rawSourceLedgerImmutable": {
+      "const": true
+    },
+    "v06SchemaFrozen": {
+      "const": false
+    },
+    "productionChangesMade": {
+      "const": false
+    }
+  },
+  "$defs": {
+    "blob": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "sha": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        }
+      }
+    },
+    "rowPage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rowIndex",
+        "originalRowPageStored",
+        "sourcePage",
+        "supplementalSourcePageEvidence",
+        "sourceSilent"
+      ],
+      "properties": {
+        "rowIndex": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "originalRowPageStored": {
+          "type": "boolean"
+        },
+        "sourcePage": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "supplementalSourcePageEvidence": {
+          "type": "boolean"
+        },
+        "sourceSilent": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "hardwareCount",
+              "firingArc",
+              "batteryCount"
+            ]
+          }
+        }
+      }
+    },
+    "certificate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "certificateId",
+        "queuePosition",
+        "cp16Index",
+        "sourceEntryKey",
+        "printedName",
+        "printedStartPage",
+        "reviewedSourcePages",
+        "originalFieldStates",
+        "publishedFacts",
+        "certifiedAttackGroupObservations",
+        "originalAttackGroupObservations",
+        "configurationRuleEvidence",
+        "discrepancyEvidence",
+        "cp19ReviewPointer",
+        "sourceSilenceRowScope",
+        "auditCorrectionIds",
+        "unresolvedRuleScopeEvidence",
+        "certificationState",
+        "physicalMountCertified",
+        "foundryStockAttackTrusted",
+        "productionHydrationPermitted"
+      ],
+      "properties": {
+        "certificateId": {
+          "type": "string",
+          "pattern": "^SOTG-SF-CP20-T04-[0-9]{3}$"
+        },
+        "queuePosition": {
+          "type": "integer",
+          "minimum": 61,
+          "maximum": 75
+        },
+        "cp16Index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 103
+        },
+        "sourceEntryKey": {
+          "type": "string",
+          "minLength": 8
+        },
+        "printedName": {
+          "type": "string"
+        },
+        "printedStartPage": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "reviewedSourcePages": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "originalFieldStates": {
+          "type": "object",
+          "minProperties": 19,
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "enum": [
+              "PDF_VERIFIED",
+              "SOURCE_SILENT_CONFIRMED"
+            ]
+          }
+        },
+        "publishedFacts": {
+          "type": "object",
+          "minProperties": 12
+        },
+        "certifiedAttackGroupObservations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "weaponLabel",
+              "station",
+              "attackBonus",
+              "damage",
+              "hardwareCount",
+              "firingArc"
+            ]
+          }
+        },
+        "originalAttackGroupObservations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "weaponLabel",
+              "station",
+              "attackBonus",
+              "damage",
+              "hardwareCount",
+              "firingArc"
+            ]
+          }
+        },
+        "configurationRuleEvidence": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "discrepancyEvidence": {
+          "type": [
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "cp19ReviewPointer": {
+          "type": "object",
+          "required": [
+            "sourceEntryKey",
+            "reviewDisposition",
+            "verifiedPdfPages"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "sourceEntryKey": {
+              "type": "string"
+            },
+            "reviewDisposition": {
+              "type": "string"
+            },
+            "verifiedPdfPages": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
+        },
+        "sourceSilenceRowScope": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rowPage"
+          }
+        },
+        "auditCorrectionIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^SOTG-CP20-C[0-9]{2}$"
+          }
+        },
+        "unresolvedRuleScopeEvidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "certificationState": {
+          "const": "SOURCE_FIDELITY_CERTIFIED_AUDIT_ONLY"
+        },
+        "physicalMountCertified": {
+          "const": false
+        },
+        "foundryStockAttackTrusted": {
+          "const": false
+        },
+        "productionHydrationPermitted": {
+          "const": false
+        }
+      }
+    }
+  }
+}

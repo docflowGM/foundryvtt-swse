@@ -245,6 +245,16 @@ export class DamageResolutionEngine {
     result.damageToHP = Math.max(0, Math.floor(hpDamageBeforeSpecial * hpDamageMultiplier));
     result.hpAfter = Math.max(0, result.hpBefore - result.damageToHP);
 
+    // ION (Core pp. 159-160, 161). The damage TYPE stays 'ion' for every target, so type-specific protections, reporting and
+    // effects keep seeing ion damage; the ion SPECIAL EFFECTS (the 2-step threshold move, the 5-step disable at 0 HP) apply only
+    // where the packet rules say the target is reached by them (`ionEffectsApply !== false`). Project interpretation V-P6C-04
+    // (PROJECT_INTERPRETATION, not a printed sequence): vulnerability -> shield rating -> damage reduction -> [full amount kept for
+    // the threshold] -> hit-point halving -> threshold comparison on the kept amount.
+    const ionEffects = damageType === 'ion' && options?.ionEffectsApply !== false;
+    if (ionEffects && (Number(mitigationResult.shield?.applied) > 0 || Number(mitigationResult.damageReduction?.applied) > 0)) {
+      (result.projectInterpretations ??= []).push('V-P6C-04:threshold-after-shield-and-damage-reduction');
+    }
+
     result.mitigation = {
       originalDamage: mitigationResult.originalDamage,
       shield: mitigationResult.shield,
@@ -285,15 +295,19 @@ export class DamageResolutionEngine {
       result.thresholdBreakdown = thresholdData.breakdown;
 
       const thresholdOverride = Number(options?.thresholdDamageOverride ?? options?.thresholdMeasuredDamage);
-      const thresholdDamage = Number.isFinite(thresholdOverride)
+      // Ion on an ordinary organic (Core p. 159): the creature is "singed... but suffers no other ill effects", so no threshold
+      // or condition-track effect is evaluated for that hit (only the halved hit-point loss applies).
+      const thresholdSuppressed = options?.thresholdEffectsSuppressed === true;
+      result.thresholdSuppressed = thresholdSuppressed;
+      const thresholdDamage = thresholdSuppressed ? 0 : (Number.isFinite(thresholdOverride)
         ? Math.max(0, thresholdOverride)
-        : (mitigationResult?.afterDR ?? mitigationResult?.hpDamage ?? damage);
+        : (mitigationResult?.afterDR ?? mitigationResult?.hpDamage ?? damage));
       result.thresholdMeasuredDamage = thresholdDamage;
       result.thresholdRuleResult = ThresholdEngine.evaluateThreshold({
         target: actor,
         damage: thresholdDamage,
         isStun: damageType === 'stun',
-        isIon: damageType === 'ion',
+        isIon: ionEffects,
         attacker: source,
         thresholdAdjustment: Number.isFinite(thresholdAdjustment) ? thresholdAdjustment : 0,
         eventThresholdBonus: thresholdData.eventThresholdBonus ?? 0
@@ -334,7 +348,7 @@ export class DamageResolutionEngine {
         }
       }
 
-      if (damageRules.capIonDamageCtToOneStep && damageType === 'ion') {
+      if (damageRules.capIonDamageCtToOneStep && ionEffects) {
         thresholdShift = Math.min(1, thresholdShift);
         result.ionShielding = { applied: true, cappedConditionShift: thresholdShift };
       }
@@ -408,6 +422,24 @@ export class DamageResolutionEngine {
         result.stunKnockout = true;
         result.unconscious = true;
         result.disabled = false;
+        result.dead = false;
+        result.destroyed = false;
+        result.forceRescueEligible = false;
+        return result;
+      }
+
+      // Ion (Core pp. 159-160): ion damage that reduces a susceptible target to 0 hit points moves it 5 steps down the condition
+      // track and DISABLES it (unconscious for a creature). It is one outcome: the 2-step threshold shift is not added on top.
+      // PROJECT_INTERPRETATION (V-P6C-04, specific over general): the generic 0-HP rule destroys a droid/object/vehicle (kills a
+      // creature) whose reducing damage also meets its threshold; the more specific ion rule says only "disabled", and for an
+      // ion-only hit that outcome governs, so no destruction is added.
+      if (ionEffects) {
+        const cap = ConditionTrackRules.getConditionStepCap();
+        const steps = Math.min(5, Math.max(0, cap - result.conditionBefore));
+        result.conditionDelta = steps;
+        result.conditionAfter = result.conditionBefore + steps;
+        result.ionDisabled = true;
+        if (result.thresholdExceeded) (result.projectInterpretations ??= []).push('V-P6C-04:zero-hit-points-specific-over-general');
         result.dead = false;
         result.destroyed = false;
         result.forceRescueEligible = false;

@@ -905,6 +905,109 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Options | None supported by a located source |
 | Recommended ruling | None |
 | Implementation impact | `equipment-state-coordinator.js` returns `DEFERRED_RULES_REVIEW` (decision id EQ-001) for any intent that changes a drawn weapon to another drawn configuration; nothing is written or spent. Stowing first and drawing again is the only supported path |
+## V-P2-01 — Spendable Emplacement Points of a canonical hull
+
+| Field | Content |
+|---|---|
+| Rules domain | Vehicle modification (Shipyard) |
+| Feature | Spendable Emplacement Points of a canonical hull |
+| Source | Published vehicle records `modifications.emplacementPointsTotal` (3 of 429: kotor-amalgamated-hyperdyne-578-r-space-transport = 4, kotor-arakyd-industries-lethisk-class-armed-freighter = 3, kotor-corellia-stardrive-quartermaster-class-supply-carrier = 2); special-rule text on unused/unspent Emplacement Points for sotg-corellian-yt-1300-transport, sotg-sorosuub-cutlass-9-patrol-fighter, sotg-kuat-systems-engineering-firespray-31-patrol-craft. |
+| Evidence | The other 426 records state no Emplacement Point figure. Three state a figure labelled a total. Three Starships of the Galaxy entries mention unused/unspent Emplacement Points in special-rule text. |
+| Confirmed behavior | A few hulls publish an EP figure or mention unused EP. |
+| Unresolved question | Whether a published `emplacementPointsTotal` is the points available to spend or the hull's total including stock equipment; how to treat the 426 hulls with no published figure. |
+| Options | None supported by certified evidence. |
+| Recommended ruling | None |
+| Implementation impact | `DEFAULT_VEHICLE_INSTALLATION_RULES.resolveEpBudget` denies every install (`EP_BUDGET_UNKNOWN`). No canonical hull can be modified until ruled. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Review classification | `PENDING_SOURCE_VERIFICATION` for the vehicle-modification rules text (EP formula by size) plus a policy question for hulls with no figure. |
+| Decision authority | Project owner |
+| Resolution | |
+
+## V-P2-02 — Provenance of data/vehicle-modifications catalog
+
+| Field | Content |
+|---|---|
+| Rules domain | Vehicle modification (Shipyard) |
+| Feature | Provenance of data/vehicle-modifications catalog |
+| Source | `data/vehicle-modifications/*.json` (187 rows: id, category, emplacementPoints, availability, sizeRestriction, cost, costType, effect text). |
+| Evidence | No row carries a book or printed page. Pricing includes `base`, `flat`, `multiplier` and `modifier` cost types; effects are free text. |
+| Confirmed behavior | Rows exist with EP, availability and size restrictions. |
+| Unresolved question | Which rows match a published source and are certified; how `base`/`multiplier`/`modifier` cost types resolve to credits; whether size restrictions such as bare 'Colossal' include frigate/cruiser/station hulls. |
+| Options | None supported by certified evidence. |
+| Recommended ruling | None |
+| Implementation impact | Planner requires a `certification` block (MECHANIC_SPECIFIED, book, page) on a row, accepts only `flat` costs, and returns SIZE_AMBIGUOUS for the bare-Colossal/subtype cases. No row currently qualifies. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Review classification | `PENDING_SOURCE_VERIFICATION` (row-by-row certification) and `DEFERRED_RULES_REVIEW` (size subtype and cost-type policy). |
+| Decision authority | Project owner |
+| Resolution | |
+
+## V-P2-03 — Removal refund, install procedure and stat effects
+
+| Field | Content |
+|---|---|
+| Rules domain | Vehicle modification (Shipyard) |
+| Feature | Removal refund, install procedure and stat effects |
+| Source | Legacy `vehicle-system-definitions.js` uses an uncertified 0.5 resale multiplier and fixed stat deltas; D-001 covers the install/removal procedure for items. |
+| Evidence | No certified source for vehicle resale value, install time/DC, or how a modification's effect stacks with printed values. |
+| Confirmed behavior | None. |
+| Unresolved question | Refund on uninstall; install time/DC/failure; stacking and bonus type for effects on defenses, speed, damage reduction and shields. |
+| Options | None supported by certified evidence. |
+| Recommended ruling | None |
+| Implementation impact | Uninstall moves no credits and reports `refundPolicyDecided:false`; effects are not applied to effective stats (only EP/cost are tracked). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Review classification | `PENDING_SOURCE_VERIFICATION`, linked to D-001. |
+| Decision authority | Project owner |
+| Resolution | |
+
+## V-P2-04 — Evidence required to certify a physical mount
+
+| Field | Content |
+|---|---|
+| Rules domain | Vehicle weapon installation |
+| Feature | Evidence required to certify a physical mount |
+| Source | Printed firing groups carry `mountKeys: []` and 'Physical mounting, weapon bindings and firing arcs NOT CERTIFIED'. |
+| Evidence | Stock weapon mount identity, arc, battery membership and operator are unpublished or unreviewed for these records. |
+| Confirmed behavior | Printed attack groups are reference-only. |
+| Unresolved question | What evidence suffices for a mount (the planner currently requires mountKey, arc, operatorRole and book/page evidence) and whether a purchased weapon may be executable at all. |
+| Options | None supported by certified evidence. |
+| Recommended ruling | None |
+| Implementation impact | Weapon installs are denied without mount evidence; even with it the ledger entry is `executable:false`. Enabling execution is P4-D. |
+| Status | `RESOLVED_OWNER_RULING` |
+| Review classification | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | Owner ruling 2026-11-02: a GM may certify the physical mount and assign the firing arc of a NEWLY INSTALLED starship weapon. The mount stores its identity, arc, operator, GM approval and audit provenance, and is recorded as GM-adjudicated (never as published/printed evidence). The weapon's mechanics (damage, EP, cost, availability, size) must still be independently source-verified. Existing stock attack groups remain reference-only and gain no authorization. A GM-approved mount is necessary but not sufficient: every other attack validation still applies. |
+
+## V-P4-01 — Vehicle size modifier on top of printed Initiative
+
+| Field | Content |
+|---|---|
+| Rules domain | Vehicle Initiative |
+| Feature | `SWSECombatDocument._getVehicleSizeModifier` (Colossal -10, Gargantuan -5, Huge -2, Large -1) added to a vehicle's Initiative formula |
+| Source | Published vehicle records `abilities.initiativePrinted` (all 429); the code table has no cited book/page |
+| Evidence | Every record prints an Initiative modifier (e.g. Incom T-65B X-wing, *Core Rulebook* p. 178: +7). The code adds a size modifier on top of the actor's Initiative skill total; its origin is not cited. |
+| Confirmed behavior | The printed Initiative is the vehicle's Initiative modifier. Implemented in P4-B: source-backed vehicles use it as the base in `SWSEInitiative` and `swse-combat`. |
+| Unresolved question | Whether a size modifier applies in addition to the printed Initiative, and if so which table is authoritative. |
+| Options | None supported by certified evidence. |
+| Recommended ruling | None |
+| Implementation impact | The existing size modifier is left unchanged and still applies to source-backed vehicles on top of the printed value. A ruling may remove or replace it. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Review classification | `PENDING_SOURCE_VERIFICATION` — examine the vehicle Initiative text in the Core Rulebook. |
+| Decision authority | Project owner |
+| Resolution | |
+
+## V-P5-01 — Emplacement point pool of a newly designed stock frame
+
+| Field | Content |
+|---|---|
+| Rules domain | Custom starship construction |
+| Feature | Emplacement point pool of a newly designed stock frame |
+| Source | *Starships of the Galaxy*, Stock Ships (printed pp. 53-54) |
+| Evidence | Each stock frame row lists an "Emplacement Points" figure (e.g. superiority fighter 5, frigate 50). The text uses that figure only in the rule for worsening a category (gain 10% of it per 25% worsened). |
+| Confirmed behavior | Frames and their statistics are published; systems are added with the modification rules. |
+| Unresolved question | Whether the frame figure is the pool available for added systems. |
+| Options | Stated in the question; neither is a recommendation. |
+| Recommended ruling | None |
+| Implementation impact | `DEFAULT_CONSTRUCTION_RULES.resolveFrameEpPool` returns unknown; a design cannot add systems until ruled (a bare frame validates). |
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |
@@ -922,6 +1025,19 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Options | None supported by a located source |
 | Recommended ruling | None |
 | Implementation impact | WP5 fails closed: `heldGroupOf` treats only the primary weapon as held and returns `member-not-equipped` for others; `heldTogetherOptions` offers no candidates. No grouped-hold bonus or penalty is computed from any inferred group. Held-together tests assert this documented fail-closed behavior |
+## V-P5-02 — Starship Designer design time rounding
+
+| Field | Content |
+|---|---|
+| Rules domain | Custom starship construction |
+| Feature | Starship Designer design time rounding |
+| Source | *Starships of the Galaxy*, feat "Starship Designer" |
+| Evidence | Minimum 30 days and DC 25, adding 1 to the DC and 1 day for every additional 100,000 credits of final cost beyond the first 100,000. |
+| Confirmed behavior | The 30-day/DC 25 base and the 100,000-credit step. |
+| Unresolved question | Whether "every additional 100,000" counts full or started increments. |
+| Options | Stated in the question; neither is a recommendation. |
+| Recommended ruling | None |
+| Implementation impact | `designTime` requires the rounding from the rules seam; without it the result is `DESIGN_TIME_ROUNDING_UNRULED`. |
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |
@@ -939,6 +1055,19 @@ Seeded 2026-10-14 from the modification-system work (Phases 0–1b, G1 and the V
 | Options | None supported by a located source |
 | Recommended ruling | None |
 | Implementation impact | WP5 fails closed: such weapons are not ready, so effects with `application: 'equipped'`, reactions, weapon-control maintenance and disarm-protection checks keyed to a ready weapon do not apply to them. The declarations themselves (e.g. `cannotBeDisarmed`) are unchanged data. Tests assert the fail-closed behavior |
+## V-P5-03 — Non-starship vehicles
+
+| Field | Content |
+|---|---|
+| Rules domain | Vehicle modification and construction |
+| Feature | Non-starship vehicles |
+| Source | Searched all 14 sourcebook texts |
+| Evidence | The modification chapter is for starships (cost modifiers start at Huge). One weapon (the discord missile launcher, *Threats of the Galaxy*) may be installed on "any vehicle or starship of Huge size or larger". No procedure for walkers, tanks or speeders was found. |
+| Confirmed behavior | Starship modification and construction rules. |
+| Unresolved question | Whether ground/air vehicles are supported at all, and if so only as GM homebrew. |
+| Options | Stated in the question; neither is a recommendation. |
+| Recommended ruling | None |
+| Implementation impact | Hulls without a published cost modifier are refused (`HULL_SIZE_HAS_NO_PUBLISHED_COST_MODIFIER`). |
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |
@@ -986,6 +1115,66 @@ All three are `SOURCE_VERIFIED` from the supplied sourcebook text extractions (n
 | Options | None supported by a located source |
 | Recommended ruling | None |
 | Implementation impact | WP5-C2 relabels the attack-gate result `vehicle-routed-weapon` with `certification: 'routing-only'`, requires the exact vehicle-owned Item (identity), a distinct non-vehicle gunner (or the vehicle itself for the explicit abstract-crew path), and adds no mount, installation or operator flag. Station-assignment or crew-eligibility enforcement is NOT implemented and is not claimed. Vehicle mounted/worn equipment certification (EQ-003) remains open |
+## V-P5-04 — Derived statistics that depend on crew quality
+
+| Field | Content |
+|---|---|
+| Rules domain | Custom starship construction |
+| Feature | Derived statistics that depend on crew quality |
+| Source | Core Rulebook "Crew Quality" sidebar (printed p. 174) |
+| Evidence | The sidebar text is not present in the OCR. *Starships of the Galaxy* says to determine Initiative, Perception, base attack, grapple, attacks, damage threshold and fighting space with the Core rules after choosing a crew quality, and gives no formula for Challenge Level. |
+| Confirmed behavior | Reflex Defense, Fortitude Defense and damage threshold formulas (verified against the printed X-wing and 390 other records). |
+| Unresolved question | Source gap, not a ruling: the crew-quality values must be read from the PDF. |
+| Options | Stated in the question; neither is a recommendation. |
+| Recommended ruling | None |
+| Implementation impact | `previewFrame` lists these statistics under `pending` and derives none of them. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## Source examination log (2026-10-30)
+
+Appended; no earlier entry was changed. Full evidence: `docs/audits/vehicles/universal-vehicle-p2-p5-rules-certification.md`. Pages are table-of-contents section ranges from the OCR text; the PDF is final authority.
+
+| ID | Examination result | Status after examination |
+|---|---|---|
+| V-P2-01 | Spendable EP = *unused* emplacement points (*Starships of the Galaxy* p. 39: stock designs generally 1, Corellian Engineering Corporation 5, Table 3-2 lists 15 designs). Records state a figure for only 3 hulls plus 3 KotOR statblock lines whose meaning the text does not give. Install beyond unused EP is permitted with published penalties (p. 38). | Source answers the formula; the default for hulls with no stated figure and the shortfall policy remain `DEFERRED_RULES_REVIEW` (Q1, Q2). One Table 3-2 cell (J-Type transports) needs the PDF. |
+| V-P2-02 | 187 catalog rows compared with the SotG movement/defense tables: 48 text-verified, 7 noisy, 1 differing (`armor-4`), 5 not in SotG tables, 126 in unparseable tables. Cost modifiers (Table 3-1) and the base/flat cost rule are published. | `PENDING_SOURCE_VERIFICATION` for 139 rows (PDF); certification threshold is Q3. |
+| V-P2-03 | Install time, Mechanics DC, work force, failure outcomes, removal (half time, free) are published (pp. 38-40). Resale is conditional on a buyer. Effects are prose per system. | Procedure answered; resale policy and workflow automation `DEFERRED_RULES_REVIEW` (Q4, Q5); effects are an implementation backlog. |
+| V-P2-04 | Damage/EP/availability/cost of installed weapons published; operator = pilot/copilot or a gunner (Core). No published firing-arc rule for installed weapons found in any searched book. | `DEFERRED_RULES_REVIEW` (Q6): the arc gate is a project policy. |
+| V-P4-01 | Size modifier applies to occupants' Initiative and Pilot checks; vehicle Initiative uses the pilot's modifier; crew modifiers are already in statblock statistics (Core). Whether the printed value already includes size is not stated. The code's size table omits the Colossal subtypes (Table 10-1 prints -10 for each). | `DEFERRED_RULES_REVIEW` (Q7). |
+
+## Source examination log, revision 6 (2026-10-30, PDF review and owner direction)
+
+Appended. Records the project owner's PDF readings (`data/audits/vehicles/swse-p2-pdf-review.json`) and directions given in conversation on 2026-10-30. Earlier entries are unchanged; the originals above remain the record of the questions.
+
+| ID | Addition |
+|---|---|
+| V-P2-01 | Owner direction: a standard stock design generally has 1 unused EP (exceptions apply); installs beyond the unused EP are permitted with the printed penalties. J-Type transports = 2 (Table 3-2, p. 39, PDF). Still open: the three KotOR statblock EP lines; the unmapped Table 3-2 names. |
+| V-P2-02 | 8 movement/defense cells read from the PDF (Tables 3-3 p. 41, 3-4 p. 43); `armor-4` size restriction corrected to Colossal (cruiser) or larger. Weapon and accessory tables not yet PDF-reviewed. |
+| V-P2-03 | Owner direction: implement the published installation and removal mechanics, and distinguish resale eligibility from a guaranteed refund. Implemented; the resale amount and whether play enforces the job procedure remain open. |
+| V-P4-01 | Owner direction: do not double-apply crew or size modifiers. Evidence: Initiative = Dex modifier + size modifier + crew check modifier fits 343 of 375 published vehicles. Source-backed vehicles no longer receive the extra size modifier. |
+| V-P5-01 | Owner direction: distinguish a frame's printed stock EP allocation from the unused EP of a constructed ship; a new design's spendable pool is the unused EP (general rule). |
+| V-P5-04 | Closed: Core Rulebook p. 174 Crew Quality table read from the PDF. |
+
+## Shipyard modification effects (2026-10-31)
+
+Appended. Owner authorization: implement unambiguous published effects first (movement/defense); defer ambiguity. 39 of 56 certified rows now have implemented effects (armor x4, shields x19, maneuvering jets x3, hyperdrives x11, atmospheric thrusters x2). The rest stay `SOURCE_VERIFIED` and cannot be installed.
+
+### V-P6-01 - Reinforced Bulkheads +10% / +20% / +30%
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6-01 |
+| Rules domain | Vehicle modifications |
+| Feature | Reinforced Bulkheads +10% / +20% / +30% |
+| Source | *Starships of the Galaxy*, Armor / Shields / Movement Systems sections and Tables 3-3 (p. 41) and 3-4 (p. 43) |
+| Evidence | Prints that the improvement increases the starship's hit points by 10%, 20% or 30%, and that these improvements do not stack. |
+| Confirmed behavior | A percentage increase; the three improvements do not stack with each other. |
+| Unresolved question | How the increased hit-point total is rounded; the printed text does not say. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | `reinforced-bulkheads-10/20/30` stay SOURCE_VERIFIED and uninstallable. |
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |
@@ -1051,6 +1240,251 @@ All three are `SOURCE_VERIFIED` from the supplied sourcebook text extractions (n
 | Decision authority | Project owner |
 | Resolution | |
 
+### V-P6-02 - Shield / hyperdrive / sublight drive on a hull that already has one
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6-02 |
+| Rules domain | Vehicle modifications |
+| Feature | Shield / hyperdrive / sublight drive on a hull that already has one |
+| Source | *Starships of the Galaxy*, Armor / Shields / Movement Systems sections and Tables 3-3 (p. 41) and 3-4 (p. 43) |
+| Evidence | The tables list shields, hyperdrives and sublight drives as systems with a rating, class or speed; the Shields text calls shields a popular addition for ships that lack them. |
+| Confirmed behavior | Installing shields on a hull printed with SR 0, or a hyperdrive on a hull printed without one, sets that value. |
+| Unresolved question | Whether a new shield generator, hyperdrive or sublight drive replaces, adds to, or is capped by the hull's printed system; and, for sublight drives, the 'only military vessels' restriction. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Planner denies with SHIELD_REPLACEMENT_OR_ADDITION_UNRULED / HYPERDRIVE_REPLACEMENT_UNRULED; `sublight-drive-*` stay SOURCE_VERIFIED. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6-03 - Stacking of two systems of the same kind (armor, maneuvering jets, shields, hyperdrive, atmospheric thrusters)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6-03 |
+| Rules domain | Vehicle modifications |
+| Feature | Stacking of two systems of the same kind (armor, maneuvering jets, shields, hyperdrive, atmospheric thrusters) |
+| Source | *Starships of the Galaxy*, Armor / Shields / Movement Systems sections and Tables 3-3 (p. 41) and 3-4 (p. 43); Core Rulebook equipment-bonus wording |
+| Evidence | Bulkhead improvements are stated not to stack; no stacking text was found for armor, jets or atmospheric thrusters. |
+| Confirmed behavior | Each system's own bonus when it is the only one of its kind. |
+| Unresolved question | Whether and how two equipment bonuses of the same kind combine on one starship. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Planner denies a second system of the same effect group (EFFECT_STACKING_UNRULED). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6-04 - Starship Armor versus the pilot character-level substitution
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6-04 |
+| Rules domain | Vehicle modifications |
+| Feature | Starship Armor versus the pilot character-level substitution |
+| Source | *Starships of the Galaxy*, Armor / Shields / Movement Systems sections and Tables 3-3 (p. 41) and 3-4 (p. 43), Armor |
+| Evidence | Armor is bought as an equipment bonus to the armor the ship adds to Reflex Defense; skilled pilots may use their character level in place of the ship's armor bonus. |
+| Confirmed behavior | The equipment bonus adds to the ship's armor bonus; the static Reflex Defense shown includes it. |
+| Unresolved question | Whether the equipment bonus still applies when a pilot substitutes character level for the ship's armor bonus. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | The sheet shows the static ship-armor-bonus basis only; no per-pilot substitution is applied. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6-05 - Effects needing roll or action integration (Jamming Suite/Array, Regenerating Shields, Combat Thrusters, Navicomputers, SLAM)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6-05 |
+| Rules domain | Vehicle modifications |
+| Feature | Effects needing roll or action integration (Jamming Suite/Array, Regenerating Shields, Combat Thrusters, Navicomputers, SLAM) |
+| Source | *Starships of the Galaxy*, Armor / Shields / Movement Systems sections and Tables 3-3 (p. 41) and 3-4 (p. 43) |
+| Evidence | The effects are bonuses or penalties to checks or actions rather than statistics. |
+| Confirmed behavior | The printed bonuses and penalties. |
+| Unresolved question | No rules question: engineering scope. The rows are not marked MECHANIC_SPECIFIED until roll/action integration exists. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Rows stay SOURCE_VERIFIED. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6-06 - Failed Starship Designer design check
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6-06 |
+| Rules domain | Vehicle construction |
+| Feature | Starship Designer (designing a starship from scratch) |
+| Source | *Starships of the Galaxy*, Starship Designer feat; Stock Ships section |
+| Evidence | Designing takes a minimum of 30 days and a DC 25 Mechanics check, +1 DC and +1 day per additional 100,000 credits beyond the first 100,000; others may aid the check. The custom-modification paragraph gives a failure rule (half again time and money, +2) for custom modifications only. The Stock Ships section says a designer normally needs the aid of a shipyard to build the ship. |
+| Confirmed behavior | Design time and design DC; aid another applies. |
+| Unresolved question | What happens when the design Mechanics check fails (retry cost/time, bonus, or loss), and whether any build time follows the design time. |
+| Options | None supported by the sources searched (the custom-modification failure rule is a different activity). |
+| Recommended ruling | None |
+| Implementation impact | A failed design check sets the project to CHECK_FAILED; no retry is automated; only a recorded GM adjudication delivers the ship. No build time beyond the design time is applied. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+Owner direction recorded 2026-10-31 (not a rules question): construction credits are charged when the GM approves and funds the project; approval does not complete construction.
+
+## P6A component census (2026-10-31)
+
+Appended. Evidence: `data/audits/vehicles/p6a/`.
+
+### V-P6A-01 - Triple cannons
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6A-01 |
+| Rules domain | Vehicle weapons |
+| Feature | Triple cannons |
+| Source | *Starships of the Galaxy*, Weapon Systems, Cannon, Double/Quad |
+| Evidence | Triple cannons are 'functionally identical to double cannons, using three cannons (with slightly less power individually)'. |
+| Confirmed behavior | Same game statistics as a double cannon. |
+| Unresolved question | Whether a triple cannon also uses the double cannon's cost multiplier and EP, or is only a description of an existing double cannon. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Recorded as an alias of `cannon-double`; no separate catalog row. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6A-02 - Armor-piercing concussion missiles
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6A-02 |
+| Rules domain | Vehicle weapons |
+| Feature | Armor-piercing concussion missiles |
+| Source | *Starships of the Galaxy*, Concussion Missiles |
+| Evidence | Penetration 10 and -5 to attack; no cost, availability or EP printed. |
+| Confirmed behavior | The effect. |
+| Unresolved question | Price, availability and whether the variant is bought per missile. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Recorded as MISSING_FROM_CATALOG; not added. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6A-03 - Launcher capacity expansions
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6A-03 |
+| Rules domain | Vehicle weapons |
+| Feature | Launcher capacity expansions |
+| Source | *Starships of the Galaxy* (concussion, proton, shieldbuster, mines); *Galaxy at War* (chaff gun) |
+| Evidence | Each additional missile/torpedo/mine/canister raises the launcher cost by 20% or 25% up to a maximum. |
+| Confirmed behavior | Cost increase and maximum. |
+| Unresolved question | Whether added capacity changes EP, and whether the percentage applies to the base or the size-modified launcher cost. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Recorded as MISSING_FROM_CATALOG; not added. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6A-04 - Galaxy at War weapons without availability
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6A-04 |
+| Rules domain | Vehicle weapons |
+| Feature | Galaxy at War weapons without availability |
+| Source | *Galaxy at War*, Vehicle and Starship Weapons |
+| Evidence | The table prints Damage, Emplacement Points and Cost only; the text says a GM can add these weapons without the SotG system. |
+| Confirmed behavior | EP and cost. |
+| Unresolved question | What availability applies (the catalog had Common/Illegal with no source; now unknown). |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Availability set to unknown; the planner reports AVAILABILITY_UNKNOWN. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## P6A PDF source authority (2026-11-01)
+
+Appended. Evidence: `data/audits/vehicles/p6a/print-verified-components-v2.json` (independent PDF review) and `pdf-reconciliation.json`.
+
+### V-P6A-05 - Unusual printed accessory prices (stygium cloaking device, hangar bay, concealed hangar bay)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6A-05 |
+| Rules domain | Vehicle modifications |
+| Feature | Unusual printed accessory prices (stygium cloaking device, hangar bay, concealed hangar bay) |
+| Source | *Starships of the Galaxy*, Table 3-7 Starship Accessories, p. 49 |
+| Evidence | Printed: cloaking device (stygium) 100,000,000 credits base; hangar bay 10 credits base; concealed hangar bay 1,000 credits base. The catalog has 100,000 / 10,000 / 100,000. |
+| Confirmed behavior | The printed cells (PDF visual review). |
+| Unresolved question | Whether to adopt the printed values as published or treat them as misprints awaiting errata (no errata source is in the repository). |
+| Options | (a) adopt the printed value; (b) keep the current catalog value pending published errata. Both are source-related; no recommendation. |
+| Recommended ruling | None |
+| Implementation impact | Reconciliation marks them ERRATA_CHECK_REQUIRED; catalog values unchanged; rows are not source-verified. |
+| Status | `RESOLVED` |
+| Decision authority | Project owner |
+| Resolution | Owner ruling 2026-11-01: adopt the printed prices (100,000,000 / 10 / 1,000 credits base) as published rules as written; previous catalog values kept in legacy.p6a and p6aHistory. Implemented in the P6A errata checkpoint (data/audits/vehicles/p6a/owner-rulings.json). |
+
+### V-P6A-06 - Emplacement-point accounting for ammunition printed with a dash
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6A-06 |
+| Rules domain | Vehicle modifications |
+| Feature | Ion bomb; gravity mines (standard, magnetic); glowing defoliator shell |
+| Source | *Starships of the Galaxy* Table 3-5 p. 47; *Legacy Era Campaign Guide* gravity-mine sidebar p. 191; *Galaxy at War* Table 2-7 p. 67 |
+| Evidence | These rows print a dash in the Emplacement Points column, while missiles, torpedoes and space mines print 0. |
+| Confirmed behavior | A dash is not a printed zero. |
+| Unresolved question | Whether dash-EP ammunition consumes no emplacement points (like printed-0 ammunition) or is not separately installable. |
+| Options | None supported by the sources searched. |
+| Recommended ruling | None |
+| Implementation impact | Catalog EP is null (unknown); the planner refuses them with EP_COST_UNKNOWN. |
+| Status | `RESOLVED` |
+| Decision authority | Project owner |
+| Resolution | Owner ruling 2026-11-01: a printed dash is not numeric zero; dash-EP ammunition is consumable ammunition loaded into a compatible launcher, not an installed modification. Catalog: installationKind consumable-ammunition, EP null; planner refuses with CONSUMABLE_AMMUNITION_NOT_AN_INSTALLATION. Launcher compatibility, loading and firing remain gated. |
+
+### V-P6A-07 - Scope of the gravity well area errata
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6A-07 |
+| Rules domain | Vehicle weapons |
+| Feature | Gravity well projector area |
+| Source | *Starships of the Galaxy* p. 45 (Gravity Well Projectors prose: 4x4-square area); p. 100 (Interdictor cruiser); Errata 1.0 (2008-01-29) |
+| Evidence | The errata correct the Interdictor cruiser's area to 3x3 squares (starship scale). The generic component prose on p. 45 says 4x4. |
+| Confirmed behavior | The Interdictor cruiser (p. 100) uses 3x3. |
+| Unresolved question | Whether the correction also applies to the gravity well projector component (catalog row `gravity-well-projector`) or only to the Interdictor statblock. |
+| Options | (a) Interdictor only (component keeps 4x4); (b) all gravity well projectors use 3x3. |
+| Recommended ruling | None |
+| Implementation impact | Catalog component text unchanged (4x4); the Interdictor publication-record change is recorded as a proposal, not applied. The component is not installable and not executable either way. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## P6A open vehicle rulings - blocker classification (2026-11-01)
+
+Appended; the entries above are unchanged. Blocker: SOURCE = published evidence missing; AMBIGUITY = the printed rule admits more than one reading; ENGINEERING = rule is clear, implementation incomplete (not a rules question).
+
+| ID | Topic | Blocker | Fail-closed behavior |
+|---|---|---|---|
+| V-P6-01 | Reinforced bulkheads HP rounding | AMBIGUITY | rows not installable |
+| V-P6-02 | Replacing an existing shield/hyperdrive/sublight drive | AMBIGUITY | planner denies replacement |
+| V-P6-03 | Stacking same-kind systems | AMBIGUITY | second system denied |
+| V-P6-04 | Armor vs pilot-level substitution | AMBIGUITY | static ship armor basis only |
+| V-P6-05 | Roll/action effects (jammers, regenerating shields, combat thrusters, navicomputers, SLAM) | ENGINEERING | rows not installable |
+| V-P6-06 | Failed design check | SOURCE | GM adjudication only |
+| V-P6A-01 | Triple cannon cost/EP | AMBIGUITY | alias only, no catalog row |
+| V-P6A-02 | Armor-piercing concussion missile price | SOURCE | not in catalog |
+| V-P6A-03 | Launcher capacity EP and cost basis | SOURCE / AMBIGUITY | not in catalog |
+| V-P6A-04 | Galaxy at War weapon availability | SOURCE | availability unknown |
+| V-P6A-07 | Gravity well errata scope | AMBIGUITY | generic component keeps 4x4 |
+| V-P2-04 | Installed-weapon firing arcs | SOURCE | no executable weapon |
+
 ---
 
 ## Revision log
@@ -1069,3 +1503,647 @@ All three are `SOURCE_VERIFIED` from the supplied sourcebook text extractions (n
 - **Revision 10 (2026-10-28, #1086):** appended an implementation row to D-016 (subtype recorded at damage-roll time, matched in the D4 applies-to stage; no weapon data or alias changed). No existing row changed; no recommended ruling was added.
 - **Revision 11 (2026-10-28, #1086):** appended to D-016 the owner's source-backed stacking ruling (Core p. 158: highest applicable DR; Armor Reinforcement competes, never adds) and its implementation. No existing row changed; no recommended ruling was added.
 - **Revision 12 (2026-10-28, #1086):** appended D-018 (Tremor Cell stun setting: range cap, hosts with an existing stun setting, switch-back cost). No existing entry was changed; no recommended ruling was added.
+
+- **Revision 3 (2026-10-29):** appended V-P2-01 to V-P2-04 (vehicle Shipyard EP budget, catalog provenance, refund/effects, mount certification). No existing entry changed.
+- **Revision 4 (2026-10-29):** appended V-P4-01 (vehicle size modifier vs printed Initiative). No existing entry changed.
+- **Revision 5 (2026-10-30):** appended the source examination log for V-P2-01..04 and V-P4-01 and new entries V-P5-01..04. No existing entry was changed.
+- **Revision 6 (2026-10-30):** appended PDF-review results and owner directions for V-P2-01/02/03, V-P4-01, V-P5-01 and V-P5-04. No existing entry was changed.
+- **Revision 7 (2026-10-31):** appended V-P6-01..05 (Shipyard modification effects). No existing entry changed.
+- **Revision 8 (2026-10-31):** appended V-P6-06 (failed design check) and the owner's construction-funding direction. No existing entry changed.
+- **Revision 9 (2026-10-31):** appended V-P6A-01..04 (component census). No existing entry changed.
+- **Revision 10 (2026-11-01):** appended V-P6A-05 and V-P6A-06 (PDF source authority). No existing entry changed.
+- **Revision 11 (2026-11-01):** recorded the owner's resolutions of V-P6A-05 and V-P6A-06 (status and Resolution fields only; questions unchanged).
+- **Revision 12 (2026-11-01):** appended V-P6A-07 (gravity well errata scope). No existing entry changed.
+- **Revision 13 (2026-11-01):** appended the P6A blocker classification table. No existing entry changed.
+
+## P6B vehicle rulings (2026-11-02)
+
+Appended; the entries above are unchanged.
+
+### V-P6B-01 - Limited navicomputer: astrogation bonus and third jump
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6B-01 |
+| Rules domain | Vehicle modifications |
+| Feature | Navicomputer, Limited |
+| Source | *Starships of the Galaxy*, Movement Systems, Navicomputer (p. 41) |
+| Evidence | The limited navicomputer stores only two jumps' worth of information: enough to reach a destination and return. The standard navicomputer grants +5 on Use Computer checks to astrogate; the advanced one +10. |
+| Confirmed behavior | Two stored jumps; 0 EP; 500 credits. |
+| Unresolved question | Does the limited navicomputer grant the navicomputer's +5 astrogation bonus (always, only for its two stored jumps, or never), and what happens when a third jump is attempted? |
+| Options | (a) storage limit only, no astrogation bonus; (b) +5 while astrogating one of its two stored jumps. |
+| Recommended ruling | None |
+| Implementation impact | `navicomputer-limited` stays SOURCE_VERIFIED and not installable (P6B-D-005). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### Engineering status note for V-P6-05 (not a ruling)
+
+V-P6-05 was engineering scope, not a rules question. P6B-1 delivered the runtime consumers for regenerating shields (recharge shields action restores 10), the SubLight Accelerator Motor (+5/+10 Pilot to increase speed) and the standard/advanced navicomputers (+5/+10 astrogation). Jamming suite/array and combat thrusters remain undelivered (P6B-D-003, P6B-D-004). The V-P6-05 entry above is unchanged.
+
+- **Revision 14 (2026-11-02):** appended V-P6B-01 and the V-P6-05 engineering status note. No existing entry changed.
+
+### V-P6B-02 - Unit conversions for capacity accessories (cargo pods, extended range, smuggler compartments)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6B-02 |
+| Rules domain | Vehicle modifications |
+| Feature | Cargo Pods; Extended Range; Smuggler Compartments |
+| Source | *Starships of the Galaxy*, Accessories (pp. 48-53) |
+| Evidence | Cargo pods add (cost modifier) x 1/5/10 tons of cargo. Extended range improves consumables by 10% of the original value, rounded down, minimum 1 day, per installation. Smuggler compartments hold (cost modifier) x 200 kg, and no more than 5% of the original cargo capacity may be hidden. |
+| Confirmed behavior | The arithmetic for hulls whose printed cargo is in tons and whose printed consumables are in days. |
+| Unresolved question | (1) For hulls printing cargo in kg, may tons and kg be combined at 1 ton = 1,000 kg? (2) For consumables printed in weeks, months or years, is the 10% rounded down in days (and what day length is a month/year) or in the printed unit? |
+| Options | (1) combine at 1,000 kg per ton / keep units separate and refuse; (2) convert to days then round down / round in the printed unit with a 1-day minimum. |
+| Recommended ruling | None |
+| Implementation impact | Planner refuses cargo pods on non-ton hulls (CARGO_UNIT_NOT_TONS) and extended range on non-day hulls (CONSUMABLES_UNIT_CONVERSION_UNRULED); smuggler compartments not installable (P6B-D-010). |
+| Status | `RESOLVED_OWNER_RULING` |
+| Decision authority | Project owner |
+| Resolution | Owner ruling 2026-11-02 (calculation policy): 1 metric ton = 1,000 kg; 1 week = 7 days. Project gameplay convention (NOT a published SWSE calendar rule): 1 month = 30 days, 1 year = 365 days, unless an authoritative source gives a specific duration. Extended Range: convert the ORIGINAL printed consumables to days, take 10%, round down in days, minimum 1 day, per installation, never compounded. Published values and units are preserved in source data. Unusual annotated cargo quantities are not guessed; they are deferred individually. |
+
+### V-P6B-03 - Slave circuits: rounding of the reduced crew requirement
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6B-03 |
+| Rules domain | Vehicle modifications |
+| Feature | Slave Circuits (basic, advanced) |
+| Source | *Starships of the Galaxy*, Accessories (pp. 48-53) |
+| Evidence | Basic slave circuits reduce the crew requirement by 1/3, advanced by 2/3, never below 1; crew quality is based on the remaining crew. |
+| Confirmed behavior | The fractions and the minimum of 1. |
+| Unresolved question | How is a fractional crew requirement rounded (e.g. crew 10 reduced by 1/3)? |
+| Options | Round the remaining crew up; round it down; round to nearest. |
+| Recommended ruling | None |
+| Implementation impact | Slave circuits not installable (P6B-D-013). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 15 (2026-11-02):** appended V-P6B-02 and V-P6B-03. No existing entry changed.
+
+- **Revision 16 (2026-11-02):** recorded the owner's resolutions of V-P2-04 (GM-certified mount and arc for newly installed weapons) and V-P6B-02 (unit conversion calculation policy) in their Status and Resolution fields only; questions unchanged.
+
+### V-P6B-04 - Damage type of starship laser cannons
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6B-04 |
+| Rules domain | Vehicle weapons |
+| Feature | Laser cannons (light, medium, heavy) |
+| Source | *Starships of the Galaxy*, Table 3-5 (p. 47); Core Rulebook, Vehicle Combat |
+| Evidence | Table 3-5 prints "(Ion)" for ion weapons and no type for laser cannons. The Core vehicle damage rule is weapon damage x multiplier. |
+| Confirmed behavior | Damage dice and multiplier. |
+| Unresolved question | Is starship laser cannon damage typed (e.g. energy) for damage reduction and resistances, or untyped? |
+| Options | Untyped (as printed); energy. |
+| Recommended ruling | None |
+| Implementation impact | Laser cannon damage is untyped (P6B-D-029). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 17 (2026-11-02):** appended V-P6B-04. No existing entry changed.
+
+### Narrowing note for V-P6A-03 (2026-11-02; not a ruling)
+
+The owner located the printed standard capacities (*Starships of the Galaxy* pp. 45-46): concussion missile launchers light 6 / medium 16 / heavy 30 (+20% cost per additional missile, up to double); proton torpedo launcher 3 (+25% per torpedo, up to 16); shieldbuster torpedo launcher 4 (+25%, up to 8); all mine launchers 6 (+25%, up to 12). These are recorded as source data in `scripts/domain/vehicles/vehicle-launcher-capacity.js`. What remains open in V-P6A-03 is only the optional EXPANSION: whether added capacity costs emplacement points and which cost the percentage applies to. The V-P6A-03 entry above is unchanged.
+
+- **Revision 18 (2026-11-02):** appended the V-P6A-03 narrowing note. No existing entry changed.
+
+### V-P6B-05 - Escape pod (lifeboat) size restriction: prose versus table
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6B-05 |
+| Rules domain | Vehicle modifications |
+| Feature | Escape pod, small lifeboat; Escape pod, large lifeboat |
+| Source | *Starships of the Galaxy*, Accessories (Escape Pods prose; accessories table) |
+| Evidence | Prose: small lifeboats "can be installed on ships of Colossal (frigate) size or larger", one bay holds (cost modifier)/50 lifeboats; large lifeboats "Colossal (cruiser) size or larger", (cost modifier)/100 per bay. The catalog's table size cells read Colossal or larger and Colossal (frigate) or larger, where the per-bay count is fractional (5/50, 50/100). |
+| Confirmed behavior | Capacity per bay, multiple bays allowed, life support figures. |
+| Unresolved question | Which size restriction governs: the prose or the table cell? |
+| Options | Prose (frigate+ / cruiser+); table (Colossal+ / frigate+, with a rounding rule for fractional bays). |
+| Recommended ruling | None |
+| Implementation impact | Escape pods not installable (P6B-D-011). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6B-06 - "Starship's size modifier" in Medical Suite and Passenger Conversion capacities
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6B-06 |
+| Rules domain | Vehicle modifications |
+| Feature | Medical suite; Passenger seating / quarters |
+| Source | *Starships of the Galaxy*, Accessories (Medical Suite; Passenger Conversion) |
+| Evidence | Printed: a medical suite "includes (starship's size modifier)/5 medical beds and (starship's size modifier)/50 bacta tanks"; one section of passenger space holds "a number of passengers equal to the ship's size modifier". A starship's size modifier is negative (e.g. Colossal -10), so the literal text yields no usable count. Neighbouring accessories use the starship's cost modifier in the same pattern. |
+| Confirmed behavior | Section/suite structure; steerage-quality accommodations; medical bed treated as medpac, medical kit and surgical kit. |
+| Unresolved question | Is "size modifier" to be read as the cost modifier (Table 3-1), as the absolute size modifier, or otherwise? |
+| Options | Cost modifier; absolute value of the size modifier. |
+| Recommended ruling | None |
+| Implementation impact | Medical suite and passenger rows not installable (P6B-D-012). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 19 (2026-11-02):** appended V-P6B-05 and V-P6B-06. No existing entry changed.
+
+### Engineering status note: capital-ship attack penalty and trained-Pilot bonus (2026-11-02; not a ruling)
+
+The project owner verified Core Rulebook printed p. 171 (PDF p. 172): a vehicle of Colossal (frigate) size or larger takes -20 on attack rolls against targets smaller than Colossal (point-defense weapons exempt), and a character trained in Pilot gains +2 on attacks with vehicle weapons crewed by the pilot. Both are published rules, implemented in the vehicle attack math (P6B-D-023, P6B-D-024). No decision register entry is affected.
+
+- **Revision 20 (2026-11-02):** appended this status note. No existing entry changed.
+
+## Published stock vehicle weapons (2026-11-02)
+
+### V-P6C-01 - Firing arcs of published stock vehicle weapons
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-01 |
+| Rules domain | Vehicle weapons (published stock) |
+| Feature | Firing arc of a published factory weapon group |
+| Source | Canonical vehicle records (`armament.firingArcs`: "not-stated" or "not-yet-reviewed"); register V-P2-04 (no published firing-arc rule for vehicle weapons found in any searched book) |
+| Evidence | Published statblocks do not state weapon firing arcs. The existing evidence policy (`vehicle-evidence-authority.js`) lets an arc-dependent attack proceed on a source-silent arc only with a per-attack GM adjudication and receipt. |
+| Confirmed behavior | Stock weapon damage, operator and attack total are established for the executable groups; the arc is unstated. |
+| Unresolved question | May a published stock weapon fire when the source states no arc? |
+| Options | (a) Keep per-attack GM adjudication (current default, fail-closed). (b) A source-silent arc imposes no restriction (no published rule restricts it); targets, crew station, permissions and every other check still apply. (c) A GM sets the arc once per vehicle. |
+| Recommended ruling | None |
+| Implementation impact | World setting `vehicleStockSilentArcPolicy` selects (a) or (b); (c) is not implemented. |
+| Status | `RESOLVED_OWNER_RULING` |
+| Decision authority | Project owner |
+| Resolution | Owner ruling 2026-11-03: approve (b) as the DEFAULT for source-verified stock weapons whose firing arc the source leaves unstated; an unstated arc is not a published 360-degree arc, it is the absence of a rule. Hierarchy: (1) a published arc the system understands is enforced; (2) a source-confirmed unstated arc imposes no automated restriction; (3) a published arc not yet interpreted is refused; (4) arc evidence not reviewed or contradictory stays refused; (5) certified aftermarket installations keep their certified mount and arc. Source evidence is never fabricated and canonical records are never rewritten. Implemented in `vehicle-stock-weapon-groups.js` (`determineStockArc`), `vehicle-stock-arc-policy.js` (default `unrestricted`; a world may choose `gm-per-attack`). The owner also noted that the statement "no sourcebook states firing-arc information" was too broad: Starships of the Galaxy p. 88 describes the Ghtroc 720's double laser cannon as fixed-forward rather than turret-mounted (enforced as a forward arc); five other groups state arcs the system cannot yet interpret (turret, articulated, axial, flank). |
+
+- **Revision 21 (2026-11-02):** appended V-P6C-01. No existing entry changed.
+
+- **Revision 22 (2026-11-03):** recorded the owner's resolution of V-P6C-01 (Status and Resolution fields only; the question is unchanged). Note: the V-P2-04 evidence line "no published firing-arc rule for installed weapons" remains true of installed weapons; stock groups can carry a published arc (see V-P6C-01).
+
+### Engineering status note: stock attack totals (2026-11-03; not a ruling)
+
+Investigation of the 564 groups whose printed attack total did not match crew Base Attack + vehicle Intelligence (P6B-D-033): a statblock's printed total is the generic crew's complete modifier, and its differences from the Core formula are explained by published rules in 274 executable groups (delta 0, or +2 on pilot-crewed groups = the Core p. 171 trained-Pilot bonus, owner-verified). Weapon batteries add +2 per gunner beyond the first (corroborated by the SotG fighter-group sentence); the Core p. 170 text is unreadable in the OCR. No register entry is affected and no rule was inferred beyond the owner-verified p. 171 bonus.
+
+- **Revision 23 (2026-11-03):** appended this status note. No existing entry changed.
+
+- **Revision 24 (2026-11-03):** correction to the revision 23 note: the executable count is 230 groups (laser, blaster and mass-driver cannons), not 274; finite-ammunition and ion-labelled groups were wrongly counted and are now denied. No existing entry changed.
+
+### Engineering status note: omitted multiplier and capital-scale damage (2026-11-03; not a new ruling)
+
+Owner ruling recorded in the P6C directive (no new register question): a published vehicle-weapon damage line with no
+multiplier is x1, because a vehicle weapon is not a personal weapon and no x2 is invented. Printed multipliers (x1, x2, x5, x10)
+are applied through the one damage authority as `(dice) * multiplier`; critical handling adds no second multiplier. The blanket
+refusal of capital-scale x5 groups is replaced by a consistency check that a size-dependent figure on a capital ship equals the
+printed figure minus the Core p. 171 -20 penalty. Result: 260 executable stock groups on 232 vehicles. No existing entry changed.
+
+- **Revision 25 (2026-11-03):** appended this status note. No existing entry changed.
+
+### V-P6C-02 - Number of identical weapons in a published weapon battery that prints only gunners
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-02 |
+| Rules domain | Vehicle weapons (weapon batteries) |
+| Feature | Participating weapons of a published weapon battery ("battery (N gunners)") |
+| Source | Core Rulebook, Vehicles, p. 170 (rule text verified by the project owner, 2026-11-03); Starships of the Galaxy battery statblocks (e.g. Krayt's Honor p. 91, Rendili Star Drive Light Corvette p. 102, Gamma-class Assault Shuttle p. 95); canonical vehicle records (`armament.firingGroups`, evidence key `hardwareCount`) |
+| Evidence | Core p. 170: a battery is up to six identical weapons; every 3 points by which the attack roll exceeds the target's Reflex Defense adds another weapon that hits, up to the identical weapons actually participating. The canonical records print 104 weapon-battery groups with a gunner count ("battery (N gunners)"). Two of them also print the number of weapons: Krayt's Honor turbolaser battery (3 gunners; p. 91 narrative: three turbolasers) and the Rendili Light Corvette double laser cannon battery (6 gunners; p. 102: six double laser cannon turrets). The other 102 print gunners only (the source is confirmed silent on the weapon count). The Gamma-class Assault Shuttle's turbolasers (not a battery) are "two gunners operate four weapons". Of the 116 groups that print a gunner count, 108 have a printed attack total exactly equal to crew Base Attack + vehicle Intelligence modifier + 2 per assisting gunner. |
+| Confirmed behavior | Assistance (+2 per assisting gunner), margin hits (1 per full 3 points over Reflex), the extra die per hit before the multiplier, the six-weapon limit and the rule that extra hits never exceed the participating weapons are implemented (`vehicle-weapon-battery.js`). A battery runs only when its gunner count and its weapon count are both printed and equal (2 groups; 1 passes every other gate). |
+| Unresolved question | How many identical weapons does a published battery have when the source prints only its gunners? Equivalently: may the participating weapons of such a battery be taken as the printed gunner count, which caps the margin hits? |
+| Options | (a) The weapon count equals the printed gunner count when only gunners are printed (both printed cases agree; the printed totals reflect the gunners). (b) The weapon count stays unestablished until a source prints it (current behavior; the gunners-versus-weapons mismatch of the Gamma-class shuttle shows the two are not always equal). |
+| Recommended ruling | None |
+| Implementation impact | 102 printed battery groups stay refused as `STOCK_BATTERY_WEAPON_COUNT_NOT_STATED`, many of which also carry other refusals (ion, point-defense, damage not printed). No code path infers the count. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6C-03 - Timing, duration and odd weapon counts of a battery aiding another battery
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-03 |
+| Rules domain | Vehicle weapons (weapon batteries) |
+| Feature | A battery assisting another battery |
+| Source | Core Rulebook, Vehicles, p. 170 (rule text verified by the project owner, 2026-11-03) |
+| Evidence | The assisting gunner makes an attack roll against Reflex Defense 10; on a success the assisted battery gains +2 per two weapons in the assisting battery; the assisting weapons generate no margin hits. |
+| Confirmed behavior | The arithmetic is implemented as a pure, tested function (`batteryAidsBattery`: success at 10 or more; +2 for each complete pair of weapons; no margin hits). It is not wired into any runtime. |
+| Unresolved question | (1) How long the bonus lasts and which attack of the assisted battery receives it. (2) Whether the bonus stacks with the gunner assistance and with a second assisting battery. (3) How an odd number of weapons is counted (the helper counts complete pairs only; this is an engineering placeholder, not a ruling). |
+| Options | None supported by the verified text. |
+| Recommended ruling | None |
+| Implementation impact | Battery-aids-battery is not offered at runtime (deferred item P6B-D-044). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 26 (2026-11-03):** appended V-P6C-02 and V-P6C-03. No existing entry changed.
+
+### Engineering status note: weapon batteries (2026-11-03; not a ruling)
+
+Core p. 170 (owner-verified) is implemented in `vehicle-weapon-battery.js` and wired into the stock gate, the attack roll and the damage authority. One published battery (Krayt's Honor turbolaser battery) is OFFLINE_EXECUTABLE; 102 printed batteries are refused until V-P6C-02 is ruled; named gunners on a battery are refused until a roster binding exists (P6B-D-043); the aid action is deferred (V-P6C-03). No existing entry changed.
+
+- **Revision 27 (2026-11-03):** appended this status note. No existing entry changed.
+
+### V-P6C-04 - Ion damage: ordering with shield rating and damage reduction, hit points 0, and ordinary organics
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-04 |
+| Rules domain | Combat (ion damage) |
+| Feature | Ion damage against droids, vehicles, electronic devices, cybernetic creatures and ordinary organics |
+| Source | Core Rulebook pp. 159-160 (rule text verified by the project owner, 2026-11-03) |
+| Evidence | Roll ion damage; subtract HALF from hit points; compare the FULL (unhalved) ion damage to the damage threshold; at or above the threshold the target moves 2 condition-track steps; if the damage reduces hit points to 0 the target moves 5 steps and is disabled (unconscious for a creature). The extra effects apply to droids, vehicles, electronic devices and cybernetic creatures; ordinary organics take only the half-damage HP effect. The existing engine halves HP damage for ion, compares `thresholdDamageOverride` (the full ROLLED amount, before shield rating and damage reduction) to the threshold for ion and stun, and measures ordinary damage AFTER shield rating and damage reduction. |
+| Confirmed behavior | Implemented on the existing authorities (`damage-packet-rules.js`, `damage-resolution-engine.js`, `threshold-engine.js`): half HP; full amount to the threshold; 2 steps at the threshold (`ION_THRESHOLD_CT_STEPS`); 5 steps and disabled at 0 HP as one outcome (not 5 + 2); ordinary organics half HP without the ion effects; the optional Ion Shielding cap of one step now has a two-step baseline to cap. |
+| Unresolved question | (1) Is the "full" amount compared to the threshold the rolled amount before shield rating and damage reduction (current ion behavior) or the amount after them (the ordinary behavior)? (2) May an ion hit that both reaches the threshold and reduces hit points to 0 also destroy the target, or is it only disabled (implemented as disabled only, per the verified outcome)? (3) What threshold basis does an ordinary organic's half-damage hit use (implemented as the half damage actually dealt, the ordinary rule)? (4) How does the two-step ion baseline combine with the optional double-threshold house rule (implemented as the larger of the two, not additive)? |
+| Options | None supported by the verified text beyond the readings named above. |
+| Recommended ruling | None |
+| Implementation impact | The 32 ion stock groups that pass every other gate are OFFLINE_EXECUTABLE with this ordering as implemented; a ruling on (1) or (2) may change results on shielded, damage-reduced or 0-HP targets (the p27 ORDERING and 0-HP tests pin today's behavior). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6C-05 - AAT-1 "takes double damage from ion weapons" and the R-28 ion naming
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-05 |
+| Rules domain | Vehicles (ion damage) |
+| Feature | AAT-1 Ion Vulnerability (Core Rulebook p. 176); R-28 Starfighter medium ion cannons (Legacy Era Campaign Guide p. 85) |
+| Source | Canonical records `core-aat-1` (`text.mechanicalNotes`) and `le-r-28-starfighter` |
+| Evidence | The AAT-1 record preserves "Ion Vulnerability: takes double damage from ion weapons." It is the only published vehicle record carrying ion vulnerability or immunity text. The R-28's weapon is named "medium ion cannons" while its printed damage line reads 6d10x2 with no ion type. |
+| Confirmed behavior | Neither is automated: no damage authority applies an ion vulnerability, and the R-28 weapon is refused (`STOCK_DAMAGE_ION_UNVERIFIED`). |
+| Unresolved question | What the AAT-1 vulnerability doubles (the rolled ion damage before halving, the damage to hit points, or the amount compared to the threshold) and how it combines with shield rating and damage reduction; whether the R-28's cannons deal ion damage. |
+| Options | None supported by the source text. |
+| Recommended ruling | None |
+| Implementation impact | AAT-1 receives no ion vulnerability; the R-28 ion cannons stay refused. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 28 (2026-11-03):** appended V-P6C-04 and V-P6C-05. No existing entry changed.
+
+### Owner direction on V-P6C-02, and findings on V-P6C-04 / V-P6C-05 (2026-11-03; appended, nothing above is rewritten)
+
+**V-P6C-02 - owner direction recorded.** The project owner directed that a battery's number of weapons must NOT be inferred from its number of gunners and that Core p. 170 establishes only "up to six identical weapons" (no equality with the gunners). The equality requirement written into the battery model in commit fc510fc was an invented restriction and is removed. Implemented: weapon quantities (total, available, participating) and gunner quantities are independent; FULL-BATTERY mode still requires a printed weapon count; INDEPENDENT-WEAPON mode (Core p. 170: a battery's weapons may fire independently without battery assistance) needs only the printed gunner count and removes exactly 2 x (gunners - 1) from the printed total when that arithmetic reconciles. The original question (how many weapons when only gunners are printed) is answered by the direction "do not guess; use independent firing". Status: `RESOLVED_OWNER_DIRECTION`. Implementation: `vehicle-weapon-battery.js`, `vehicle-stock-weapon-groups.js`, `vehicle-stock-weapon-items.js`; commit recorded in the revision note below.
+
+**V-P6C-04 - findings after tracing the published text (status unchanged: `DEFERRED_RULES_REVIEW`).** Core pp. 159-160 (read from the OCR): "first subtract half of the ion damage from the target's hit points. Creatures that do not have cybernetic prosthetics are singed by the ion energy but suffer no other ill effects. Droids, vehicles, electronic devices, and cybernetically enhanced creatures may suffer additional effects": 0 HP -> -5 steps and unconscious/disabled; ion damage (before being halved) at or above the damage threshold -> -2 steps. Cybernetic Prosthesis (p. 137): a creature with cybernetic prosthetics "takes full damage" from ion attacks. Shield rating (p. 161): "reduce the damage by the SR; remaining damage is dealt to hit points, applying damage reduction normally" (shields first, then damage reduction). Generic Hit Points 0 and Damage Threshold sections (Combat chapter; "Falling Unconscious" is on p. 147): a droid, object or vehicle reduced to 0 HP is disabled, "however, if the damage that reduced it to 0 hit points equals or exceeds its damage threshold, the droid, object, or vehicle is destroyed instead" (a creature is killed). Settled and implemented: the three target kinds above; shields before damage reduction; 2 steps; 5 steps/disabled. NOT settled (reported at runtime through `ionRuleDeferred`, the reversible outcome applied): (1) whether the full ion amount compared to the threshold is the rolled amount (current engine reading for ion and stun) or the amount after shield rating and damage reduction (the ordinary reading) - the two coincide when the target has neither; (2) whether the generic destroyed/killed rule governs an ion hit that reaches 0 HP and the threshold (implemented: disabled only); (3) whether a creature with prosthetics counts as the "cybernetically enhanced" creature of the ion paragraph (read as the same set - prosthetics get full HP damage and the extra effects); (4) the combination of the two-step ion baseline with the optional double-threshold house rule (the larger, not additive). Recognition of prosthetics uses the structured equipment tags `cybernetic` + `prosthesis`; a prosthesis the actor does not own as an item is invisible to the rule.
+
+**V-P6C-05 - findings (status unchanged: `DEFERRED_RULES_REVIEW`).** AAT-1 (Core p. 176): "Due to a design flaw, the AAT takes double damage from ion weapons." The source-backed vulnerability authority (`damage-vulnerability-authority.js`) reads this from the digest-verified record only and records it on the packet; it is NOT applied because the text does not order the doubling against ion halving, shield rating, damage reduction (the AAT-1 has DR 15 and no shield rating), the threshold comparison, the weapon multiplier or battery dice, and no combination is fully settled.
+
+- **Revision 29 (2026-11-03):** appended the owner direction on V-P6C-02 and the findings on V-P6C-04 and V-P6C-05. No existing text changed.
+
+### V-P6C-06 - Payload versus launcher capacity, and reloading, for vehicle launchers
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-06 |
+| Rules domain | Vehicle weapons (finite ammunition) |
+| Feature | Ammunition supply and reloading of vehicle missile, torpedo, rocket, mine and grenade launchers |
+| Source | Core Rulebook, Vehicles (statblock "Payload" line; Missiles and Torpedoes); Core Equipment (personal launchers: "holds four missiles... reloaded as a full-round action"); Starships of the Galaxy pp. 45-46 (launcher capacities) and Fire-Linked Weapons (ammunition consumption) |
+| Evidence | The Core defines the statblock Payload as the vehicle's complement of grenades, rockets, missiles and torpedoes ("if the vehicle has no payload, this line is absent"). Starships of the Galaxy prints launcher capacities as separate figures (light concussion missile launcher 6, medium 16, heavy 30, proton torpedo launcher 3, shieldbuster 4, mine launchers 6) and says fire-linked missiles and torpedoes consume one shot per fire-linked launcher. 169 stock groups are ammunition-limited; 24 print a payload count; 33 are refused for ammunition alone. |
+| Confirmed behavior | Nothing is enabled: a finite supply is never treated as unlimited. The existing `AmmoSystem` only tracks when the optional `trackBlasterCharges` house rule is on. |
+| Unresolved question | (1) How does the printed payload relate to the launchers' loaded capacity (is the loaded count a share of the payload)? (2) What action reloads a vehicle launcher from the payload, and what does it cost? (3) Does each attack always spend one unit per launcher, including for a missed lock-on follow-up attack? |
+| Options | None supported by the verified text beyond the figures above. |
+| Recommended ruling | None |
+| Implementation impact | The ammunition ledger (P6B-D-049) cannot be specified; area damage (P6B-D-048) and lock-on (P6B-D-047) are separate engineering items. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 30 (2026-11-04):** appended V-P6C-06. No existing entry changed.
+
+### Owner addendum 2026-11-04: V-P6C-03, V-P6C-04, V-P6C-05 (appended; nothing above is rewritten)
+
+**Decision hierarchy adopted by the owner:** A explicit published rule -> implement, no ruling; B existing system authority -> reuse; C explicit project interpretation -> implement and document as policy (not RAW); D genuine rules gap -> ask. Every decision is classified PUBLISHED_RULE / EXISTING_ENGINE_AUTHORITY / PROJECT_INTERPRETATION / SOURCE_UNRESOLVED.
+
+**V-P6C-03 (battery aiding battery) - resolved by PUBLISHED_RULE.** Core Rulebook p. 170 (Aid Another, read from the OCR): "As a standard action, you can aid an ally's next skill check, ability or attack roll... A gunner can grant a +2 bonus on another character's attack roll by making an attack against a Reflex Defense of 10." Timing is the ally's next attack roll; the bonus is consumed once; no end-of-round expiry. Multiple assisting batteries and unusual stacking remain SOURCE_UNRESOLVED and stay unavailable. Status: `RESOLVED_PUBLISHED_RULE` for the ordinary single-aid case.
+
+**V-P6C-04 (ion ordering) - resolved by PROJECT_INTERPRETATION.** Sequence: vulnerability -> shield rating -> damage reduction -> kept full amount -> hit-point halving -> threshold comparison on the kept amount; at 0 HP the specific ion disable (-5 steps, disabled/unconscious) governs the generic destroy rule for an ion-only hit, with no extra -2. The damage type stays ion for every target. Decision matrix: docs/audits/vehicles/ion-damage-decision-matrix.md. Status: `RESOLVED_PROJECT_INTERPRETATION`.
+
+**V-P6C-05 (AAT-1) - resolved by PROJECT_INTERPRETATION for the AAT-1; R-28 remains `SOURCE_UNRESOLVED`.** The published x2 applies to the incoming ion damage after the weapon's own calculation and before shield rating, damage reduction and halving (worked example: 40 -> 80 -> DR 15 -> 65; HP 32; 65 vs threshold 33). The R-28's medium ion cannons print no ion type on the damage line (the narrative calls them nonlethal ion munitions); the canonical evidence is not edited, so the group stays refused.
+
+**Starship-scale area attacks - PUBLISHED_RULE (Core, Vehicle Combat).** "Area attacks (including autofire, burst radius weapons, and splash weapons) are resolved as attacks on a single target in starship scale unless the weapon is specifically listed as having a starship-scale area attack." The encounter scale is character scale when characters on foot are involved and starship scale when the scene involves vehicles only (Core, Scale).
+
+**Guided missiles - PUBLISHED_RULE (Core, Missiles and Torpedoes).** Aiming locks the weapon on; a missed missile or torpedo attacks again on the next turn at the same bonus with -5 and no action, then self-destructs; Reflex Defense 30, 10 hit points; one launch is one unit of ammunition.
+
+**V-P6C-06 (ammunition) - partly PROJECT_INTERPRETATION.** Payload (the vehicle's complement), loaded ammunition, reserve and launcher capacity are separate quantities. Initial loading convention for a verified single-launcher configuration: loaded = min(payload, certified capacity), reserve = payload - loaded; not applied where the launcher allocation is ambiguous. Reload action costs are not inferred from personal launchers; a GM reload operation transfers reserve to loaded without creating ammunition.
+
+- **Revision 31 (2026-11-04):** appended the owner addendum. No existing text changed.
+
+### Engineering status note: ammunition ledger and guided projectiles (2026-11-04; implements the owner addendum, no new question)
+
+Implemented as PUBLISHED_RULE (lock-on, Reflex 30 / 10 HP / -5, no second charge, starship-scale single-target splash) and PROJECT_INTERPRETATION (initial loading min(payload, capacity); exact-designation launcher identity; GM reload that creates nothing). No published group is a complete launcher family (none has a verified single launcher); 18 wait for a GM-certified allocation. V-P6C-06 stays recorded as a project interpretation, with the reload action cost explicitly NOT inferred.
+
+- **Revision 32 (2026-11-04):** appended this status note. No existing entry changed.
+
+### Complete Weapon Ecosystem addendum (2026-11-04): newly recorded questions V-P6C-07 .. V-P6C-10 (appended; nothing above is rewritten)
+
+### V-P6C-07 - Miss damage of an area attack that resolves as a single-target attack at starship scale
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-07 |
+| Rules domain | Vehicle weapons (area attacks at starship scale) |
+| Feature | Miss damage of an area attack that resolves as a single-target attack at starship scale |
+| Source | Core Rulebook, Special Combat Rules: Area Attacks (p. 155) and Vehicle Combat: Scale; Rebellion Era Campaign Guide, Anti-Aircraft Flak Pod |
+| Evidence | Core Area Attacks: "Creatures you hit take full damage, and creatures you miss take half damage." Splash weapons: the primary target takes full damage on a hit and half if the attack misses. Core Scale: "area attacks (including autofire, burst radius weapons, and splash weapons) are resolved as attacks on a single target in starship scale unless the weapon is specifically listed as having a starship-scale area attack." The flak pod, which IS listed as a starship-scale area attack, prints half damage on a miss. |
+| Confirmed behavior | At starship scale an ordinary splash, burst or autofire attack is an attack on a single target (owner direction, PUBLISHED_RULE); the hit deals the ordinary damage. Implemented since P6C-3B. |
+| Unresolved question | Whether the single target of such an attack takes half damage when the attack misses (the area-attack miss rule), or nothing (an ordinary single-target miss). Implemented behaviour is the ordinary single-target miss (no damage); it is the absence of an effect, not a chosen reading. |
+| Options | Source text supports both: the area-attack miss rule (Area Attacks, splash weapons) and the single-target resolution (Scale). No other published text addresses it. |
+| Recommended ruling | None |
+| Implementation impact | Affects the 3 executable starship-scale-only stock groups, every future splash/torpedo/missile/ion-bomb group and starship-scale autofire. They stay OFFLINE_EXECUTABLE for the hit outcome; the miss outcome is pending this ruling. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6C-08 - Burst Fire feat on a vehicle weapon
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-08 |
+| Rules domain | Feats and vehicle weapons |
+| Feature | Burst Fire feat on a vehicle weapon |
+| Source | Core Rulebook, Feats (Burst Fire) and Special Combat Rules: Autofire |
+| Evidence | Burst Fire (Strength 13, Weapon Proficiency (heavy weapons), proficient with the weapon): when using a ranged weapon with autofire capability in autofire mode, fire a short burst as a single attack against a single target at -5 for +2 dice of damage; expends five shots; not an area attack. Starships of the Galaxy lists the autofire-capable vehicle weapons (double, quad and fire-linked blaster cannons, laser cannons, light ion cannons and light turbolasers). |
+| Confirmed behavior | Autofire is a swift-action mode of an autofire-capable vehicle weapon; Burst Fire is a feat of a character. |
+| Unresolved question | Whether the feat applies when the gunner or pilot fires a vehicle weapon (and whether the feat's prerequisites and heavy-weapon proficiency are evaluated for the operating character), and what shots a vehicle weapon expends. |
+| Options | None supported by the text. |
+| Recommended ruling | None |
+| Implementation impact | Burst Fire for vehicle weapons is not implemented (no automation is offered). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6C-09 - Whether an autoblaster has an autofire setting
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-09 |
+| Rules domain | Vehicle weapons (modifications) |
+| Feature | Whether an autoblaster has an autofire setting |
+| Source | Starships of the Galaxy, Weapon Systems: Autoblaster; Table 3-5 (p. 47) |
+| Evidence | "Blaster cannons can be designed with a higher cyclic firing rate so long as they have sufficient cooling systems to keep the firing elements from overheating. Only single-mounted blasters are generally made into autoblasters, however." Table 3-5 prints no damage, +0 EP, Restricted, cost x2. The text names the autofire-capable vehicle weapons in the Double/Quad and Fire-Linked paragraphs and does not name the autoblaster there. |
+| Confirmed behavior | Cost multiplier x2, availability Restricted, +0 emplacement points, applies to a single-mounted blaster cannon. |
+| Unresolved question | Whether the higher cyclic rate gives the weapon an autofire setting (and how it interacts with the autofire rules for double, quad and fire-linked weapons), or has a different effect. |
+| Options | None supported by the text. |
+| Recommended ruling | None |
+| Implementation impact | The autoblaster row stays SOURCE_VERIFIED and is not installable. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6C-10 - Combining double, quad, fire-linked and cannon-enhancement damage on one weapon
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-10 |
+| Rules domain | Vehicle weapons (configurations) |
+| Feature | Combining double, quad, fire-linked and cannon-enhancement damage on one weapon |
+| Source | Starships of the Galaxy, Weapon Systems: Cannon, Double/Quad; Cannon Enhancements; Fire-Linked Weapons; Table 3-5 (p. 47) |
+| Evidence | Each configuration prints its own damage increase (+1d10 / +2d10), emplacement points and cost multiplier. Fire-linked weapons: "Weapons of any type that deal damage can be fire-linked"; double and quad cannons are "reciprocating multibarrel weapons"; enhancements "boost the damage output" of a blaster, a laser (but not a turbolaser) or an ion cannon. |
+| Confirmed behavior | Each configuration individually; fire-linked turbolasers are not weapon batteries; triple cannons are functionally identical to double cannons. |
+| Unresolved question | Whether (and how) the damage increases combine when a weapon carries more than one configuration (for example a fire-linked double cannon with enhancements), and the cost and emplacement-point arithmetic of a combination. |
+| Options | None supported by the text. |
+| Recommended ruling | None |
+| Implementation impact | Combinations are refused when configurations are implemented; each configuration is applied alone. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 33 (2026-11-04):** appended V-P6C-07 .. V-P6C-10 (Complete Weapon Ecosystem addendum). No existing entry changed.
+
+### V-P6C-11 - What the "x2 / x3 / x4 / x5" cost entries of Table 3-5 multiply
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-11 |
+| Rules domain | Vehicle weapons (configurations and the autoblaster) |
+| Feature | Cost of the autoblaster (x2), double cannon (x3), quad cannon (x5), fire-linked weapon 2 (x2) and 4 (x4), cannon enhancements (x2) and advanced cannon enhancements (x5) |
+| Source | Starships of the Galaxy, Table 3-5 (p. 47) and Weapon Systems: Cannon, Double/Quad; Fire-Linked Weapons |
+| Evidence | The cost column prints a credit amount for most rows, "+4,000" / "+1,000" for the point-defense, docking-gun and optional fire-link rows (an explicit addition per weapon), and "x2", "x3", "x4", "x5" for the rows above. The Fire-Linked text says fire-linked weapons use up more space than a double or quad weapon "but costing less" (fire-linked 2 is x2 against x3 for double; fire-linked 4 is x4 against x5 for quad). The text does not define the multiplier. The repository has always refused these rows as COST_TYPE_NOT_RESOLVED_BY_PUBLISHED_RULES. |
+| Confirmed behavior | Damage, emplacement points, availability and the weapons each applies to are printed (see V-P6C-10). |
+| Unresolved question | Whether "xN" multiplies the cost of the base weapon to give the configured weapon's TOTAL cost (so retrofitting an installed weapon would cost the difference), or is a multiple charged IN ADDITION to the base weapon; and whether the multiplier applies before or after the nonstandard x5 modification. |
+| Options | Both readings are consistent with the cost ordering in the Fire-Linked text. |
+| Recommended ruling | None |
+| Implementation impact | The configuration rows (double, triple, quad, fire-linked, enhancements) and the autoblaster cannot be priced and stay not installable. Point defense (an explicit "+4,000 per weapon") is unaffected and implemented. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 34 (2026-11-04):** appended V-P6C-11. No existing entry changed.
+
+### V-P6C-12 - Range measurement convention and the Table 10-2 row of a stock group (implemented project convention, 2026-11-04)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-12 |
+| Rules domain | Vehicle weapons (range) |
+| Feature | How the distance between an attacking vehicle and its target is counted, and which Table 10-2 row a published stock group uses |
+| Source | Core Rulebook, Vehicles, Vehicle Combat: Range Modifier and Table 10-2: Vehicle Weapon Ranges |
+| Evidence | The Core gives the band penalties (point blank 0, short -2, medium -5, long -10) and the band limits per weapon type and scale, in squares. It does not define how squares are counted between tokens of different sizes, or how a statblock's weapon is matched to a table row. |
+| Confirmed behavior | Band limits and penalties are printed and implemented exactly (data/vehicle-weapon-ranges.json, getRangePenalty). |
+| Unresolved question | Not blocking: the implementation counts squares from the attacker's nearest square to the target's nearest square, diagonals as one square (Chebyshev), adjacent = 1, same square = 0, using each token's footprint; and it reads a stock group's row from the exact weapon words of its printed designation (laser cannon, blaster cannon, autoblaster, ion cannon, turbolaser, torpedo or missile, point-defense, tractor beam, gravity well), refusing a designation that names none or several. |
+| Options | Center-to-center counting; hex grids (refused as unsupported). |
+| Recommended ruling | None |
+| Implementation impact | Five stock groups with no Table 10-2 designation became non-executable. The convention can be overridden by a ruling without changing the data. |
+| Status | `IMPLEMENTED_PROJECT_CONVENTION` (owner may override) |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 35 (2026-11-04):** appended V-P6C-12. No existing entry changed.
+
+### Owner rulings 2026-11-04 (appended; nothing above is rewritten): V-P6C-07, V-P6C-08, V-P6C-09, V-P6C-10, V-P6C-11
+
+- **V-P6C-07 - `RESOLVED_PROJECT_INTERPRETATION`.** An ordinary splash or area weapon resolved against one target at starship scale keeps the Core area-attack miss rule (Core Special Combat Rules: Area Attacks, p. 155): a hit deals full damage, a miss deals HALF; Shield Rating, Damage Reduction and the other defenses apply afterwards through their existing authorities; starship scale restricts the NUMBER of targets, it does not replace the damage rule. Implemented: `ruleData.halfDamageOnMiss` is carried with the attack of every vehicle weapon that has a published ordinary area (aftermarket launchers and the executable stock splash groups); a natural 1 keeps the engine's existing no-damage rule; single-target weapons are unchanged; critical-hit doubling is unchanged (vehicle rule). Not implemented: the Vehicular Evasion talent and the character-scale multi-target area. Test: p36.
+- **V-P6C-08 - `RESOLVED_PUBLISHED_RULE`.** Starships of the Galaxy, Starship Feats, authorizes Burst Fire with autofire-capable vehicle weapons (the TIE fighter laser-cannon example adds the extra dice before the vehicle multiplier). To be implemented in WE-5 for the actual operating character with verified feat evidence.
+- **V-P6C-09 - `RESOLVED_PROJECT_INTERPRETATION`.** The autoblaster modification grants autofire capability to an eligible single-mounted blaster cannon (cost x2 total, +0 EP, Restricted); the base weapon's dice are unchanged; normal fire and autofire both remain available; no compatibility with double or quad configurations is inferred. To be implemented in WE-6.
+- **V-P6C-11 - `RESOLVED_OWNER_RULING`.** The "x2 / x3 / x4 / x5" entries of Table 3-5 are TOTAL-cost multipliers of the base weapon (a 1,200-credit blaster cannon as a double cannon costs 3,600), not surcharges; rows marked "+" (point defense, docking gun, optional fire link) are additions. Emplacement-point adjustments apply separately; availability is the more restrictive. Combinations need a separately validated composition rule. To be implemented in WE-4.
+- **V-P6C-10 - `RESOLVED_OWNER_RULING` (individual configurations).** Double (+1 die), triple (= double), quad (+2), fire-linked 2 (+1), fire-linked 4 (+2), cannon enhancement (+1) and advanced enhancement (+2) dice are added before the vehicle multiplier; double/triple/quad are alternatives, fire-linked 2/4 are alternatives, enhancements are alternatives, enhancements never apply to turbolasers, nothing stacks automatically; compatible combinations come later through a verified composition system.
+
+- **Revision 36 (2026-11-04):** recorded the owner rulings above. No earlier text changed; the original questions stay as written.
+
+### V-P6C-13 - Shieldbuster torpedoes: what "half damage against anything but shields" halves
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-13 |
+| Rules domain | Vehicle weapons (shieldbuster torpedoes) |
+| Feature | Shieldbuster torpedo (T-33 type) |
+| Source | Starships of the Galaxy, Weapon Systems: Shieldbuster Torpedoes |
+| Evidence | "Against anything but shields, shieldbusters deal half damage. If an attack from a shieldbuster torpedo exceeds a target's SR, the target loses 10 points from its SR (rather than the normal 5)." |
+| Confirmed behavior | The SR loss is 10 instead of 5 when the attack exceeds SR. A target with no shields takes half damage. |
+| Unresolved question | Against a shielded target, whether the full damage is first compared with and reduced by SR and only the damage that reaches Hull is halved, or the damage is halved before SR is applied (which also changes whether the attack "exceeds SR" for the -10 rule). |
+| Options | (a) SR is applied to the full damage, the remainder is halved. (b) The damage is halved, then SR is applied. Both readings are supported by the sentence. |
+| Recommended ruling | None |
+| Implementation impact | Shieldbuster torpedoes (aftermarket launcher row and stock launcher groups) stay unimplemented as a weapon family; the SR-loss amount is a one-line change once the ordering is ruled. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### V-P6C-14 - Gravity well projector: duration and removal of the interdiction field
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-14 |
+| Rules domain | Vehicle weapons (gravity well projectors) |
+| Feature | Gravity well projector |
+| Source | Starships of the Galaxy, Weapon Systems: Gravity Well Projectors |
+| Evidence | Treated as an area attack: the operator chooses a 4x4-square (starship scale) area within range and attacks Reflex Defense 10. On success a hyperspace interdiction field is created in those squares; a starship that starts its turn in a covered square may not activate its hyperdrive that turn. |
+| Confirmed behavior | Area size, the Reflex 10 attack, and the effect on a ship that starts its turn in the field. |
+| Unresolved question | How long the field lasts, whether it can be moved, dropped or stacked, and whether the projector must keep operating it. The text states none of these. |
+| Options | None supported by the text. |
+| Recommended ruling | None |
+| Implementation impact | Only the attack and the one-turn effect can be modelled; a persistent field object needs a duration. Not implemented. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 37 (2026-11-04):** appended V-P6C-13 and V-P6C-14. No existing entry changed.
+
+- **V-P6C-13 - `RESOLVED_PROJECT_INTERPRETATION` (owner, 2026-11-04).** A shieldbuster meets Shield Rating at full strength; if it exceeds SR the target loses 10 SR instead of 5; what reaches the hull is halved; Damage Reduction follows. Against a target with no shield it deals half damage. Printed rule: Starships of the Galaxy, Shieldbuster Torpedoes. Sequencing is the project interpretation. Implemented in `shield-mitigation-resolver.js` (isShieldbuster, SR -10) and `damage-mitigation-manager.js` (hull halving before DR), flagged by the weapon authority via `ruleData.shieldbuster`.
+- **Revision 38 (2026-11-04):** recorded the V-P6C-13 interpretation. The original question stays as written above.
+
+### V-P6C-15 - Noticing a space mine: how the Stealth +5 forms the Perception DC
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-15 |
+| Rules domain | Vehicle weapons (space mines) |
+| Feature | Space mine detection reaction |
+| Source | Starships of the Galaxy, Space Mines |
+| Evidence | "A space mine has a Stealth bonus of +5 (including size modifiers), which sets the DC to notice the space mine. Whenever a starship is about to enter the same square as a space mine, the pilot can make a Perception check as a reaction to notice the mine and choose a different square to move into instead. If the ship has a system operator, the system operator may make a Use Computer check as a reaction as well, using the ship's sensors to detect the mine." |
+| Confirmed behavior | Deployment (swift action), detonation on entry, area attack on all ships in the square, full on a hit and half on a miss, IFF exemption and command detonation, the +5 / 7d10x2 and heavy +5 / 6d10x5 (-20 against targets smaller than Colossal) statistics, six mines per launcher. |
+| Unresolved question | How a Stealth bonus of +5 becomes a DC (a fixed DC of 15, a Stealth check rolled by the mine's owner, or another formula), and whether a ship that has noticed a mine may be moved by the pilot mid-path by the system. |
+| Options | None supported by the text. |
+| Recommended ruling | None |
+| Implementation impact | Mines detonate on entry; the noticing reaction is not automated (a GM may remove or detonate a mine). The advanced mine (+10, 9d10x2) has no launcher row and is not offered. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 39 (2026-11-04):** appended V-P6C-15.
+
+### V-P6C-16 - Ion bombs: range and target of a dropped bomb
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-16 |
+| Rules domain | Vehicle weapons (ion bombs) |
+| Feature | Ion bomb / ion bomb rack |
+| Source | Starships of the Galaxy, Weapon Systems: Ion Bombs |
+| Evidence | "Because of their primitive fin-stabilized guidance system, the bombs are usable only in an atmosphere, and attacks with them take a -5 penalty. Ion bombs may target a square directly beneath the ship that deploys them. On impact, they create a strong ion field that deals 5d10 points of ion damage within a 10-square radius. Ion bomb racks can hold up to four ion bombs." |
+| Confirmed behavior | Atmosphere only (the repository already has the GM-set vehicle environment, which would be the gate), -5 attack, 5d10 ion damage, 10-square radius, rack capacity four. |
+| Unresolved question | Whether "may target a square directly beneath the ship" limits the bomb to that square or only permits it among other targets (Table 10-2 has no bomb row, so no range band exists), what Reflex Defense or area rule applies to creatures in a 10-square radius at character scale, and whether the rack's cost/expansion beyond four is defined. |
+| Options | None supported by the text. |
+| Recommended ruling | None |
+| Implementation impact | The ion bomb rack and stock "ion bomb" groups stay unimplemented; the shared launcher, ammunition, ion-damage and area machinery is ready once a range/target rule is ruled. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 40 (2026-11-04):** appended V-P6C-16.
+
+### V-P6C-15 - OWNER RULING (appended 2026-11-05; the question above is preserved)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-15 |
+| Status | `RESOLVED_PROJECT_INTERPRETATION` |
+| Resolution | The mine's printed Stealth bonus (+5, size included) forms its detection DC as a Stealth check `1d20 + 5`, rolled ONCE when the mine is deployed and persisted with the mine (never rerolled per observer). Before a ship enters the mined square its pilot may make a Perception check as a reaction and a system operator a Use Computer check as a reaction (using the ship's sensors); a success lets the pilot choose a different square, a failure leaves the normal trigger. Movement that cannot be intercepted before entry uses a GM-mediated reaction workflow: nothing detonates before the published reaction opportunity. Mine entry follows the move's RECORDED path (Foundry's movement data) when it establishes one; otherwise only the destination is tested and the GM records a crossing explicitly (P6B-D-073). |
+| Decision authority | Project owner |
+| Implementation | commit 705623c (`vehicle-space-mine.js`, `vehicle-mine-service.js`: `deploy`, `onTokenMoved`, `adjudicateEntry`, `attemptNotice`, `resolveEntry`; sheet mine panel; test p48) |
+| Engineering boundaries (not rules) | The reaction rolls use the existing skill-roll and sensor-check authorities and spend a reaction through ActionEconomyConsumption; there is no "system operator" crew station, so the operator is the crew actor the GM names (the selected token on the sheet); the recorded-path reader follows Foundry V13 movement data and is not live-verified. |
+
+- **Revision 41 (2026-11-05):** recorded the V-P6C-15 owner ruling.
+
+### V-P6C-16 - OWNER RULING (appended 2026-11-05; the question above is preserved)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-16 |
+| Status | `RESOLVED_PROJECT_INTERPRETATION` |
+| Resolution | An ion bomb may target the square directly beneath the deploying ship; this narrow reading is the project's ruling, not a rewrite of the printed rule. Atmosphere only, printed -5 attack, 5d10 ion damage, 10-square radius, four bombs per rack (the existing ammunition ledger), standard ion-damage and shared area-attack rules (full on a hit, half on a miss, existing Evasion interaction) for eligible targets. No Table 10-2 band, no distant or arbitrary target, no persistent field. If impact geometry cannot be established, the GM confirms an impact square inside the ship's footprint. |
+| Decision authority | Project owner |
+| Implementation | commit 705623c (`vehicle-ion-bomb.js`, `vehicle-ion-bomb-service.js`, `ion-bomb-rack` launcher; sheet panel; test p49) |
+| Engineering boundaries (not rules) | The 10 squares are counted in the Scene's grid squares with no scale conversion; the deploying ship is not a target of its own bomb; atmosphere is the existing GM-set vehicle environment (unknown never allows it). Stock statblock groups that print ion bombs are not wired to the service and stay refused. |
+
+- **Revision 42 (2026-11-05):** recorded the V-P6C-16 owner ruling.
+
+### V-P6C-17 - Autofire mode switch cost for double / quad / fire-linked cannons (OWNER CORRECTION)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-17 |
+| Rules domain | Vehicle weapons (autofire) |
+| Source | Starships of the Galaxy, printed p. 45 |
+| Confirmed behavior | A swift action is required to switch between normal and autofire modes for the listed double / quad and fire-linked cannons; the cost applies in both directions. |
+| Status | `RESOLVED_PUBLISHED_RULE` |
+| Resolution | The switch costs a swift action in both directions for aftermarket double / quad / fire-linked cannons, paid by the weapon's named operator; no other configuration is extended (an autoblaster and stock groups keep the one-way price of the Core "set to autofire"). Stock statblock groups are not classified by label as double/quad/fire-linked cannons. |
+| Implementation | commit 705623c (`VehicleFireModeService.setMode`, `autofireSwitchBothWays` on the weapon authority, test p38) |
+
+- **Revision 43 (2026-11-05):** recorded V-P6C-17.
+
+### V-P6C-18 - Initial vehicle ammunition and ammunition purchasing (OWNER-APPROVED PROJECT HOUSE RULE, 2026-11-05)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-18 |
+| Classification | Owner-approved project house rule, **not** an explicit universal RAW statement |
+| Status | `RESOLVED_PROJECT_HOUSE_RULE` |
+| Setting | World GM setting `initialVehicleAmmunitionIncluded` ("Initial Vehicle Ammunition Included"), default **On**, read only through `HouseRuleService` |
+| On (default) | A newly created stock vehicle's launchers start with the published payload at no charge (a one-time creation benefit, not a refill). |
+| Off | A new launcher starts empty; its initial ammunition is bought at the published per-round price. A GM may deliberately grant the published starting ammunition (no credit transaction, for example for an NPC vehicle), never above the published payload. |
+| Always | A GM-configured payload is the GM's own certified allocation (independent of the setting). Installing a launcher grants no ammunition. Reloads / replacement ordnance pay the published price. Resync, replacement, a deleted Item, reopening a sheet, changing crew, updating the vehicle, restarting Foundry and flipping the setting never refill or change an existing ledger. A missing published payload is never invented (the GM specifies it). |
+| Used vehicles | The GM determines the remaining ammunition (the GM grant tool and the GM-configuration tools). |
+| Implementation | commit 9aa8ea7 -- ledger policy (`vehicle-ammunition-ledger.js`: `initialStockLedger`, `purchasedInitialLedger`, `planStockPurchase`, `planGmGrant`), `vehicle-stock-weapon-items.js` (issued marker `initialAmmunitionIssued`), `VehicleInstallationService.syncWeaponItems`, `VehicleAmmunitionService.gmGrantStartingAmmunition` / `deliverPurchased`; tests p50 |
+| Engineering notes (not rules) | Today no published stock group carries a verified single launcher (all stock launchers are GM-configured), so the "included" payload applies to complete families and to future data; the rule is exercised on synthetic complete families in tests. The issued marker is backfilled for existing stock launchers on the first sync after this change. |
+
+- **Revision 44 (2026-11-05):** recorded V-P6C-18.
+
+### V-P6C-19 - Vehicle-sheet ammunition shortcuts and Party Fund purchases (OWNER-APPROVED WORKFLOW, 2026-11-05)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-19 |
+| Classification | Owner-approved project workflow (not RAW) |
+| Status | `RESOLVED_PROJECT_WORKFLOW` |
+| Resolution | The Combat tab's Buy Ammunition button and each finite-ammunition weapon's Buy Ammo button open the existing SWSE Store in a vehicle-ammunition context (the weapon button preselects its launcher). Payment is Personal Credits (the existing TransactionEngine purchase, immediate) or, only when the existing world setting `holonetPartyFundEnabled` is on, the Party Fund as a REQUEST in the existing GM approval queue (`pendingCustomPurchases`, approvalKind `vehicle-ammunition-party-fund`): nothing is deducted or delivered until a GM approves and the settlement succeeds. Only a GM approves; an owner can request but never approve. Purchased ammunition goes to the launcher RESERVE and is never auto-loaded. |
+| Integrity | Settlement: revalidate (fund enabled, requester still a recorded owner, launcher and published price unchanged, balance) -> persisted claim (pending -> settling) -> debit the Holonet Party Fund + ledger entry -> deliver through `VehicleAmmunitionService.deliverPurchased` -> approved. A failed delivery restores the fund (verified); an unprovable restore is preserved as `indeterminate` for GM reconciliation and never retried. Duplicate / concurrent approvals settle once. Disabled fund or insufficient balance leave the request pending. |
+| Implementation | commit 9aa8ea7 -- `vehicle-ammunition-shop.js`, `vehicle-ammunition-purchase-service.js`, `PartyFundAccess` (messenger service), `store-vehicle-ammunition.js`, sheet shortcuts, GM approvals surface; tests p51 / p52 / p53 |
+| Engineering notes (not rules) | A multi-line basket is bought line by line (each line atomic; checkout stops at the first refusal). There is no GM tool yet to resolve an `indeterminate` request beyond reconciling the fund ledger and the reserve by hand (P6B-D-074). |
+
+- **Revision 45 (2026-11-05):** recorded V-P6C-19.
+
+### V-P6C-20 - Ship logistics: fuel, consumables, docking, maintenance (OWNER-APPROVED INTERPRETATIONS AND PROJECT CONVENTIONS, 2026-11-05)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-20 |
+| Source | Starships of the Galaxy, printed pp. 10 and 14 |
+| Published (implemented as printed) | Fuel 50 cr per fuel-day for a Colossal or smaller starship, x100 per larger size (frigate 5,000; cruiser 500,000; station 50,000,000). One fuel-day is spent by a day of realspace or hyperspace travel, an hour of atmospheric flight or combat, or one jump to lightspeed. Restocking consumables costs 10 cr x living creatures aboard x days (droids are not living creatures for this formula). Docking about 20 cr/day, long-term storage 200 cr/month, routine maintenance (every 20 hyperspace jumps, four fuel-days) are reference prices. Simplified upkeep (p. 10) is an alternative method, never charged in addition. |
+| Owner interpretation | The printed Consumables value is the ship's MAXIMUM endurance (source data); the remaining supply is mutable play state; a ship cannot hold more than its maximum (plus certified modifications, the existing Extended Range computation). Fuel and consumables are separate resources. |
+| Project conventions | Calendar units use the existing V-P6B-02 policy (a month = 30 days, a year = 365); a fuel-tank capacity is not published, so it exists only as an explicit GM configuration (labeled GM_CONFIGURED) and is never derived from Consumables; consumables are initialized once at vehicle creation to the full printed endurance (an explicit project default, GM override); fuel is never invented (0 until the GM configures a tank); living occupants are the assigned living crew plus GM-recorded passengers, or a GM override -- none established means no purchase; the 10 cr/person/day price is applied at purchase time to the current occupants. |
+| Not authorized / not implemented | Automatic docking, maintenance or simplified-upkeep billing; maintenance readiness tracking (no reliable hyperjump record exists); automatic consumable depletion (no dependable campaign clock; the GM adjusts); crew wages (GM-defined contracts, no published formula). |
+| Status | `RESOLVED_PROJECT_INTERPRETATION` |
+| Implementation | commit 737ecd7 (corrected by the acceptance-corrections commit that follows it) -- `vehicle-logistics.js` (domain), `VehicleLogisticsService` (the only writer of the guarded flag `shipLogistics`), the logistics kind of the Party Fund workflow, store modes `fuel` / `supplies`, the Ship Logistics section of the V2 sheet; tests p54 |
+
+- **Revision 46 (2026-11-05):** recorded V-P6C-20.
+
+- **Acceptance corrections to V-P6C-20 (2026-11-05):** (1) paid resource delivery (`deliverPurchased`) requires a GM caller and the persisted settlement record of that very request (state `settling`, same vehicle, resource, days and price) -- a pending, mismatched or finished request authorizes nothing; initialization has no system bypass: only a GM, or the creating user for a just-created vehicle (`initializeOnCreate`), and only once; (2) the supplies price per day and the basket total are computed by the services; (3) fuel event ids are service-issued (`fe_<clock>_<rand>`) and idempotency is permanent: a bounded window of recent ids plus a floor (the newest dropped id time) refuses any replay, however old.
+- **Final integrity checks on V-P6C-20 (2026-11-05):** (a) a Party Fund settlement delivers fuel or consumables at most once, including repeated or concurrent calls while the request is still `settling`: the request id is recorded in the SAME write as the delivery (bounded window + floor by request time); (b) fuel-event idempotency, stated precisely: **no event id is ever processed twice**; ids are issued newer than everything the state has recorded (so a backward clock or the same millisecond never makes a new event look old); an id that was issued but never used is refused only if more than 200 later events have been processed since (reason `FUEL_EVENT_STALE_REISSUE`: issue a fresh id) -- it is never replayed and never a double spend.
+
+### V-P6C-21 - Stock launchers: does a printed Payload line alone establish a canonical ammunition pool? (QUESTION, 2026-11-05)
+
+| Field | Value |
+|---|---|
+| Decision ID | V-P6C-21 |
+| Rules domain | Vehicle weapons (finite ammunition, stock statblocks) |
+| Feature | Stock missile / torpedo / launcher groups with a printed Payload line |
+| Source | Core Rulebook and Starships of the Galaxy statblocks ("Payload 12 medium concussion missiles", recorded as `armament.carriedPayloads`); Starships of the Galaxy pp. 45-46 (launcher capacities) |
+| Evidence | The statblock prints how many missiles or torpedoes the vehicle carries (the Payload line) and names the ammunition. It prints NO launcher count and no magazine. The magazine sizes (for example a proton torpedo launcher holds three) are published as properties of the launchers a ship BUYS (SotG pp. 45-46); the stock statblocks do not state how many launchers a group has. |
+| Confirmed behavior | The Payload is printed. The launcher is identified by its exact printed designation for the groups listed below (payload and identity are now reconciled from the record: 63 groups on 63 vehicles; 52 of them are blocked by nothing else). |
+| Unresolved question | Whether a printed Payload alone defines the vehicle's ammunition pool for execution (every carried round may be launched, with no launcher count, magazine or reload step modeled), or whether the number of launchers must also be established before the ammunition ledger runs (the current behavior: a GM certifies the count, reported as GM_CONFIGURED_EXECUTABLE and never counted as canonical). |
+| Options | (1) The Payload is the pool; no magazine / reload modeling for stock groups. (2) The launcher count is required (a GM certifies it; or a source prints it). Both are supported by the evidence above; neither is chosen here. |
+| Recommended ruling | None |
+| Implementation impact | Option 1 would make up to 63 stock groups executable canonically (52 with no other blocker); option 2 keeps them GM-configured. No code path changes until a ruling. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 47 (2026-11-05):** appended V-P6C-21 (with the payload / designation reconciliation that narrowed it to the single launcher-count fact).
