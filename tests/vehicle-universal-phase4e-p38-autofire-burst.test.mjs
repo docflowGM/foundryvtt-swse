@@ -85,7 +85,7 @@ test('STOCK: a group is autofire-capable exactly when its record prints an autof
   const { assessStockWeaponGroups } = await import('../scripts/domain/vehicles/vehicle-stock-weapon-groups.js');
   let capable = 0, executableCapable = 0;
   for (const d of actors) for (const g of assessStockWeaponGroups(d.flags.swse.universalVehicleSource.source).groups) {
-    const v = g.evidence?.autofireAttackBonus ?? g.evidence?.autofireBonus;
+    const v = g.evidence?.autofireAttackBonus ?? g.evidence?.autofireBonus ?? g.damageLineAutofire;   // the third source (p58): the same figure written on the damage line, accepted only when it reconciles
     const expected = typeof v === 'number' && g.attackBonusPrinted !== null && g.attackBonusPrinted - v === 5 && !g.ammunition;
     assert.equal(g.autofireCapable === true, expected, g.groupKey);
     if (g.autofireCapable) { capable++; if (g.executable) executableCapable++; }

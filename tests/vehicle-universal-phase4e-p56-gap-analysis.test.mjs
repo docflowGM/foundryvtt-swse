@@ -24,7 +24,7 @@ test('REPRODUCIBLE: the builder reports the report and JSON up to date', () => {
   assert.equal(r.status, 0, r.stdout + r.stderr);
 });
 
-test('BASELINE: HEAD counts equal the committed coverage audit; the difference from the owner baseline is exactly the two documented groups', () => {
+test('BASELINE: HEAD counts equal the committed coverage audit; the difference from the owner baseline is exactly the fourteen documented groups', () => {
   const h = A.baseline.head;
   assert.equal(h.vehicles, 429); assert.equal(h.groups, 846); assert.equal(h.groups, allGroups.length);
   assert.equal(h.executableGroups, COV.totals.offlineExecutableGroups);
@@ -33,9 +33,9 @@ test('BASELINE: HEAD counts equal the committed coverage audit; the difference f
   assert.equal(h.vehiclesWithExecutableGroup, COV.totals.vehiclesWithOfflineExecutableGroup);
   assert.equal(h.vehiclesFullyExecutable, COV.totals.vehiclesAllGroupsExecutable);
   const diff = Object.fromEntries(A.baseline.differences.map(d => [d.metric, d.difference]));
-  assert.deepEqual(diff, { vehicles: 0, groups: 0, executableGroups: 2, blockedGroups: -2, vehiclesWithExecutableGroup: 1, vehiclesFullyExecutable: 1, aftermarketRows: 0, aftermarketInstallable: 0 });
+  assert.deepEqual(diff, { vehicles: 0, groups: 0, executableGroups: 14, blockedGroups: -14, vehiclesWithExecutableGroup: 4, vehiclesFullyExecutable: 8, aftermarketRows: 0, aftermarketInstallable: 0 });
   assert.equal(A.baseline.explanation.denominatorsChanged, false);
-  assert.equal(A.baseline.explanation.groups.length, 2);
+  assert.equal(A.baseline.explanation.groups.length, 14);
   for (const g of A.baseline.explanation.groups) { assert.ok(g.groupKey, 'the explaining group exists'); assert.equal(allGroups.find(x => x.groupKey === g.groupKey)?.offlineExecutable, true); }
   assert.equal(A.metrics.distinctions.liveVerifiedGroups, 0);
 });

@@ -132,7 +132,10 @@ export function parseStockFiringGroup(group, { gmWeaponCount = null, recordPaylo
   // A tractor beam deals no damage ("Instead of damaging a vehicle's hit points, tractor beams prevent a vehicle from escaping", Core, Tractor
   // Beams): a printed designation that names a tractor beam AND a damage line that prints none is the source stating there is no damage.
   const tractorDesignation = rangeSlugFromPrintedDesignation(group?.label) === 'tractor-beams';
-  const printsNoDamage = /(?:printed damage|published damage|damage)\s*:?\s*(?:—|–|none|n\/a)(?![\w])/i.test(notes) || (!/damage/i.test(notes));
+  // A tractor beam prints a grapple modifier where other weapons print dice. The records write that one fact in four spellings: "damage: — (grapple +N)",
+  // "damage - (grapple +N)" (ASCII hyphen), "damage grapple +N" and "damage: none". Only the DAMAGE TERM position is read, and only for a tractor designation
+  // (see tractorDesignation below); a hyphen that begins a number (a flat damage penalty) is not the dash.
+  const printsNoDamage = /(?:printed damage|published damage|damage)\s*:?\s*(?:—|–|-(?=\s|\()|none|n\/a|grapple\s*[+-]?\d+)(?![\w])/i.test(notes) || (!/damage/i.test(notes));
   if (!d && tractorDesignation && printsNoDamage) { out.damage = { dice: 0, die: 0, bonus: 0, multiplier: 1, formula: null, raw: '', suffix: '', none: true }; out.tractorBeam = true;
     const g = /grapple\s*([+-]\d+)/i.exec(notes); if (g) out.tractorGrapple = Number(g[1]); }
   else if (!d) reasons.push('STOCK_DAMAGE_NOT_PRINTED_IN_RECORD');
@@ -155,7 +158,13 @@ export function parseStockFiringGroup(group, { gmWeaponCount = null, recordPaylo
     if (suffixIon && evidenceType && evidenceType !== 'ion') reasons.push('STOCK_DAMAGE_TYPE_CONFLICT');
     if (evidenceType && evidenceType !== 'ion' && !suffixIon) reasons.push('STOCK_DAMAGE_TYPE_NOT_ORDINARY');
     const rest = afterArea.replace(/(^|[\s,])ion\b/, ' ').replace(/^[\s,]+|[\s,]+$/g, '');
-    if (rest && !/splash|burst|radius|area/.test(rest)) reasons.push('STOCK_DAMAGE_QUALIFIED');
+    // A printed autofire figure may sit on the damage line ("5d10, +4 autofire") instead of in the structured evidence. It is the same fact -- the attack figure
+    // when autofiring -- and is accepted ONLY when it reconciles with the printed total by the one calculated penalty (-5, WE-5); a figure that does not reconcile, or
+    // any other qualifier ("autofire only", "heavy concussion warhead"), still refuses the group exactly as before.
+    const afm = /^([+-]\d+)\s+autofire$/i.exec(rest);
+    const afReconciles = !!afm && finite(out.attackBonusPrinted) && out.attackBonusPrinted - Number(afm[1]) === 5;
+    if (afReconciles) out.damageLineAutofire = Number(afm[1]);
+    if (rest && !afReconciles && !/splash|burst|radius|area/.test(rest)) reasons.push('STOCK_DAMAGE_QUALIFIED');
     // Core: weapon damage x the listed multiplier. A plain expression (no multiplier) is simply the dice (x1; owner ruling
     // 2026-11-03: an omitted multiplier neither invalidates a vehicle weapon nor makes it a personal weapon); x2, x5, x10...
     // are applied exactly as printed. The multiplier is never guessed.
@@ -233,7 +242,7 @@ export function parseStockFiringGroup(group, { gmWeaponCount = null, recordPaylo
   // WE-5: a statblock that PRINTS an autofire attack figure for this weapon states that it can autofire (structured evidence, never the
   // name). The printed figure must equal the printed attack total less the autofire penalty (-5), so the one calculated penalty reproduces
   // the source; a different figure is not reconciled here and the weapon is simply not autofire-capable (single fire is unaffected).
-  const printedAutofire = out.evidence?.autofireAttackBonus ?? out.evidence?.autofireBonus;
+  const printedAutofire = out.evidence?.autofireAttackBonus ?? out.evidence?.autofireBonus ?? out.damageLineAutofire;
   out.autofireCapable = typeof printedAutofire === 'number' && out.attackBonusPrinted !== null && out.attackBonusPrinted - printedAutofire === 5 && !out.ammunition;
 
   // WE-2 (V-P6C-12): the Table 10-2 range row is the weapon's TYPE read from its printed designation (exact words of the table's own

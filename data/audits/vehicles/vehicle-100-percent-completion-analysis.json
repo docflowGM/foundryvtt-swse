@@ -36,10 +36,10 @@
   "head": {
    "vehicles": 429,
    "groups": 846,
-   "executableGroups": 530,
-   "blockedGroups": 316,
-   "vehiclesWithExecutableGroup": 332,
-   "vehiclesFullyExecutable": 170,
+   "executableGroups": 542,
+   "blockedGroups": 304,
+   "vehiclesWithExecutableGroup": 335,
+   "vehiclesFullyExecutable": 177,
    "aftermarketRows": 63,
    "aftermarketInstallable": 30
   },
@@ -59,26 +59,26 @@
    {
     "metric": "executableGroups",
     "ownerBaseline": 528,
-    "head": 530,
-    "difference": 2
+    "head": 542,
+    "difference": 14
    },
    {
     "metric": "blockedGroups",
     "ownerBaseline": 318,
-    "head": 316,
-    "difference": -2
+    "head": 304,
+    "difference": -14
    },
    {
     "metric": "vehiclesWithExecutableGroup",
     "ownerBaseline": 331,
-    "head": 332,
-    "difference": 1
+    "head": 335,
+    "difference": 4
    },
    {
     "metric": "vehiclesFullyExecutable",
     "ownerBaseline": 169,
-    "head": 170,
-    "difference": 1
+    "head": 177,
+    "difference": 8
    },
    {
     "metric": "aftermarketRows",
@@ -94,19 +94,91 @@
    }
   ],
   "explanation": {
-   "changedBy": "commit aeea5c4 (stock payload reconciliation): two stock launcher groups became canonical-executable because their records PRINT the launcher count and Payload",
+   "changedBy": "three reviewed batches after the owner baseline: aeea5c4 (two launcher groups whose records PRINT the launcher count and Payload), the tractor-beam notation batch (nine groups) and the damage-line autofire batch (three groups whose printed autofire figure reconciles with the printed total)",
    "groups": [
     {
      "groupKey": "sotg-mandalmotors-starviper-assault-fighter-group-2",
      "vehicleKey": "sotg-mandalmotors-starviper-assault-fighter",
      "label": "proton torpedo launcher",
-     "why": "Starviper proton torpedo launchers: the record prints 2 launchers (hardwareCount) and a Payload line of 6 proton torpedoes; designation reconciled by grammatical normalisation only."
+     "why": "Starviper proton torpedo launchers (commit aeea5c4): the record prints 2 launchers (hardwareCount) and a Payload line of 6 proton torpedoes; designation reconciled by grammatical normalisation only."
     },
     {
      "groupKey": "sotg-sorosuub-cutlass-9-patrol-fighter-group-2",
      "vehicleKey": "sotg-sorosuub-cutlass-9-patrol-fighter",
      "label": "medium concussion missile",
-     "why": "Cutlass-9 medium concussion missiles: the record prints 1 launcher and a Payload line of 8 medium concussion missiles."
+     "why": "Cutlass-9 medium concussion missiles (commit aeea5c4): the record prints 1 launcher and a Payload line of 8 medium concussion missiles."
+    },
+    {
+     "groupKey": "cw-grievous-wheel-bike-modified-tsmeu-6-source-attack-1",
+     "vehicleKey": "cw-grievous-wheel-bike-modified-tsmeu-6",
+     "label": "double laser cannon",
+     "why": "Damage-line autofire figure (feature/v2-vehicles-next): the record prints the autofire attack figure on the damage line; it is accepted only because it reconciles with the printed total by the -5 autofire penalty."
+    },
+    {
+     "groupKey": "cw-oevvaor-jet-catamaran-source-attack-1",
+     "vehicleKey": "cw-oevvaor-jet-catamaran",
+     "label": "blaster cannon",
+     "why": "Damage-line autofire figure (feature/v2-vehicles-next): the record prints the autofire attack figure on the damage line; it is accepted only because it reconciles with the printed total by the -5 autofire penalty."
+    },
+    {
+     "groupKey": "cw-raddaugh-gnasp-fluttercraft-source-attack-1",
+     "vehicleKey": "cw-raddaugh-gnasp-fluttercraft",
+     "label": "laser cannon tail-gun",
+     "why": "Damage-line autofire figure (feature/v2-vehicles-next): the record prints the autofire attack figure on the damage line; it is accepted only because it reconciles with the printed total by the -5 autofire penalty."
+    },
+    {
+     "groupKey": "fucg-neutron-star-bulk-cruiser-attack-2",
+     "vehicleKey": "fucg-neutron-star-bulk-cruiser",
+     "label": "tractor beam",
+     "why": "Tractor-beam notation (feature/v2-vehicles-next): the record prints the grapple modifier in a spelling the gate did not read (\"damage grapple +N\" / \"damage - (grapple +N)\"); the mechanic and every other gate are unchanged."
+    },
+    {
+     "groupKey": "fucg-venator-class-star-destroyer-attack-5",
+     "vehicleKey": "fucg-venator-class-star-destroyer",
+     "label": "tractor beam battery",
+     "why": "Tractor-beam notation (feature/v2-vehicles-next): the record prints the grapple modifier in a spelling the gate did not read (\"damage grapple +N\" / \"damage - (grapple +N)\"); the mechanic and every other gate are unchanged."
+    },
+    {
+     "groupKey": "gaw-corona-class-armed-transport-source-attack-4",
+     "vehicleKey": "gaw-corona-class-armed-transport",
+     "label": "tractor beam battery",
+     "why": "Tractor-beam notation (feature/v2-vehicles-next): the record prints the grapple modifier in a spelling the gate did not read (\"damage grapple +N\" / \"damage - (grapple +N)\"); the mechanic and every other gate are unchanged."
+    },
+    {
+     "groupKey": "gaw-koensayr-ilh-kk-citadel-class-cruiser-source-attack-4",
+     "vehicleKey": "gaw-koensayr-ilh-kk-citadel-class-cruiser",
+     "label": "tractor beam",
+     "why": "Tractor-beam notation (feature/v2-vehicles-next): the record prints the grapple modifier in a spelling the gate did not read (\"damage grapple +N\" / \"damage - (grapple +N)\"); the mechanic and every other gate are unchanged."
+    },
+    {
+     "groupKey": "sotg-eclipse-group-6",
+     "vehicleKey": "sotg-eclipse",
+     "label": "tractor beam battery",
+     "why": "Tractor-beam notation (feature/v2-vehicles-next): the record prints the grapple modifier in a spelling the gate did not read (\"damage grapple +N\" / \"damage - (grapple +N)\"); the mechanic and every other gate are unchanged."
+    },
+    {
+     "groupKey": "sotg-fondor-shipyards-super-star-destroyer-group-4",
+     "vehicleKey": "sotg-fondor-shipyards-super-star-destroyer",
+     "label": "tractor beam battery",
+     "why": "Tractor-beam notation (feature/v2-vehicles-next): the record prints the grapple modifier in a spelling the gate did not read (\"damage grapple +N\" / \"damage - (grapple +N)\"); the mechanic and every other gate are unchanged."
+    },
+    {
+     "groupKey": "sotg-kuat-drive-yards-nebulon-b-frigate-group-3",
+     "vehicleKey": "sotg-kuat-drive-yards-nebulon-b-frigate",
+     "label": "tractor beam",
+     "why": "Tractor-beam notation (feature/v2-vehicles-next): the record prints the grapple modifier in a spelling the gate did not read (\"damage grapple +N\" / \"damage - (grapple +N)\"); the mechanic and every other gate are unchanged."
+    },
+    {
+     "groupKey": "sotg-loronar-corporation-strike-class-medium-cruiser-group-4",
+     "vehicleKey": "sotg-loronar-corporation-strike-class-medium-cruiser",
+     "label": "tractor beam battery",
+     "why": "Tractor-beam notation (feature/v2-vehicles-next): the record prints the grapple modifier in a spelling the gate did not read (\"damage grapple +N\" / \"damage - (grapple +N)\"); the mechanic and every other gate are unchanged."
+    },
+    {
+     "groupKey": "sotg-lusankya-group-5",
+     "vehicleKey": "sotg-lusankya",
+     "label": "tractor beam battery",
+     "why": "Tractor-beam notation (feature/v2-vehicles-next): the record prints the grapple modifier in a spelling the gate did not read (\"damage grapple +N\" / \"damage - (grapple +N)\"); the mechanic and every other gate are unchanged."
     }
    ],
    "denominatorsChanged": false
@@ -116,29 +188,29 @@
   "vehicles": 429,
   "stockFiringGroups": 846,
   "distinctions": {
-   "sourceVerifiedGroups": 769,
-   "offlineExecutableGroups": 530,
+   "sourceVerifiedGroups": 781,
+   "offlineExecutableGroups": 542,
    "gmConfigurableGroupsCurrentlyBlocked": 102,
    "gmConfiguredGroups": "not countable offline: GM configuration lives on world Actors; the gate reports it as GM_CONFIGURED_EXECUTABLE and never as canonical",
    "liveVerifiedGroups": 0
   },
   "groupOutcomes": {
-   "SOURCE_EVIDENCE_REQUIRED": 95,
-   "CANONICAL_EXECUTABLE": 530,
-   "IMPLEMENTATION_REQUIRED": 164,
+   "SOURCE_EVIDENCE_REQUIRED": 86,
+   "CANONICAL_EXECUTABLE": 542,
+   "IMPLEMENTATION_REQUIRED": 161,
    "RULES_DECISION_REQUIRED": 57
   },
   "vehicles_": {
    "classCounts": {
-    "ARMED_ALL_GROUPS_BLOCKED": 55,
-    "ARMED_PARTIALLY_EXECUTABLE": 162,
-    "ARMED_FULLY_EXECUTABLE": 170,
+    "ARMED_ALL_GROUPS_BLOCKED": 52,
+    "ARMED_PARTIALLY_EXECUTABLE": 158,
+    "ARMED_FULLY_EXECUTABLE": 177,
     "UNARMED_CONFIRMED": 38,
     "ARMED_RECORD_GAP": 4
    },
    "armedVehicles": 391,
-   "armedWithAtLeastOneExecutableGroup": 332,
-   "armedFullyExecutable": 170
+   "armedWithAtLeastOneExecutableGroup": 335,
+   "armedFullyExecutable": 177
   },
   "aftermarket": {
    "catalogRows": 63,
@@ -154,9 +226,9 @@
   }
  },
  "vehicleClassCounts": {
-  "ARMED_ALL_GROUPS_BLOCKED": 55,
-  "ARMED_PARTIALLY_EXECUTABLE": 162,
-  "ARMED_FULLY_EXECUTABLE": 170,
+  "ARMED_ALL_GROUPS_BLOCKED": 52,
+  "ARMED_PARTIALLY_EXECUTABLE": 158,
+  "ARMED_FULLY_EXECUTABLE": 177,
   "UNARMED_CONFIRMED": 38,
   "ARMED_RECORD_GAP": 4
  },
@@ -660,10 +732,10 @@
    "page": 203,
    "category": "wheel-bike",
    "size": "Large",
-   "class": "ARMED_ALL_GROUPS_BLOCKED",
+   "class": "ARMED_FULLY_EXECUTABLE",
    "groups": 1,
-   "executableGroups": 0,
-   "blockedGroups": 1
+   "executableGroups": 1,
+   "blockedGroups": 0
   },
   {
    "sourceEntryKey": "cw-ground-armored-tank",
@@ -876,10 +948,10 @@
    "page": 219,
    "category": "water-speeder",
    "size": "Gargantuan",
-   "class": "ARMED_ALL_GROUPS_BLOCKED",
+   "class": "ARMED_FULLY_EXECUTABLE",
    "groups": 1,
-   "executableGroups": 0,
-   "blockedGroups": 1
+   "executableGroups": 1,
+   "blockedGroups": 0
   },
   {
    "sourceEntryKey": "cw-og-9-homing-spider-droid",
@@ -960,10 +1032,10 @@
    "page": 220,
    "category": "ornithopter",
    "size": "Huge",
-   "class": "ARMED_ALL_GROUPS_BLOCKED",
+   "class": "ARMED_FULLY_EXECUTABLE",
    "groups": 1,
-   "executableGroups": 0,
-   "blockedGroups": 1
+   "executableGroups": 1,
+   "blockedGroups": 0
   },
   {
    "sourceEntryKey": "cw-republic-troop-transport",
@@ -1416,10 +1488,10 @@
    "page": 121,
    "category": "capital-ship",
    "size": "Colossal (cruiser)",
-   "class": "ARMED_PARTIALLY_EXECUTABLE",
+   "class": "ARMED_FULLY_EXECUTABLE",
    "groups": 2,
-   "executableGroups": 1,
-   "blockedGroups": 1
+   "executableGroups": 2,
+   "blockedGroups": 0
   },
   {
    "sourceEntryKey": "fucg-novasword-space-superiority-fighter",
@@ -1538,8 +1610,8 @@
    "size": "Colossal (cruiser)",
    "class": "ARMED_PARTIALLY_EXECUTABLE",
    "groups": 6,
-   "executableGroups": 4,
-   "blockedGroups": 2
+   "executableGroups": 5,
+   "blockedGroups": 1
   },
   {
    "sourceEntryKey": "fucg-victory-i-class-star-destroyer",
@@ -1584,10 +1656,10 @@
    "page": 67,
    "category": "capital-ship",
    "size": "Colossal (frigate)",
-   "class": "ARMED_PARTIALLY_EXECUTABLE",
+   "class": "ARMED_FULLY_EXECUTABLE",
    "groups": 4,
-   "executableGroups": 3,
-   "blockedGroups": 1
+   "executableGroups": 4,
+   "blockedGroups": 0
   },
   {
    "sourceEntryKey": "gaw-drop-pod",
@@ -1646,8 +1718,8 @@
    "size": "Colossal",
    "class": "ARMED_PARTIALLY_EXECUTABLE",
    "groups": 4,
-   "executableGroups": 2,
-   "blockedGroups": 2
+   "executableGroups": 3,
+   "blockedGroups": 1
   },
   {
    "sourceEntryKey": "gaw-penumbra-class-attack-shuttle",
@@ -3938,8 +4010,8 @@
    "size": "Colossal (station)",
    "class": "ARMED_PARTIALLY_EXECUTABLE",
    "groups": 6,
-   "executableGroups": 4,
-   "blockedGroups": 2
+   "executableGroups": 5,
+   "blockedGroups": 1
   },
   {
    "sourceEntryKey": "sotg-escape-pod",
@@ -3974,8 +4046,8 @@
    "size": "Colossal (station)",
    "class": "ARMED_PARTIALLY_EXECUTABLE",
    "groups": 5,
-   "executableGroups": 3,
-   "blockedGroups": 2
+   "executableGroups": 4,
+   "blockedGroups": 1
   },
   {
    "sourceEntryKey": "sotg-freitek-inc-e-wing-starfighter-type-b",
@@ -4332,10 +4404,10 @@
    "page": 120,
    "category": "capital-ship",
    "size": "Colossal (frigate)",
-   "class": "ARMED_PARTIALLY_EXECUTABLE",
+   "class": "ARMED_FULLY_EXECUTABLE",
    "groups": 3,
-   "executableGroups": 2,
-   "blockedGroups": 1
+   "executableGroups": 3,
+   "blockedGroups": 0
   },
   {
    "sourceEntryKey": "sotg-kuat-drive-yards-pellaeon-class-star-destroyer",
@@ -4404,10 +4476,10 @@
    "page": 135,
    "category": "capital-ship",
    "size": "Colossal (frigate)",
-   "class": "ARMED_PARTIALLY_EXECUTABLE",
+   "class": "ARMED_FULLY_EXECUTABLE",
    "groups": 4,
-   "executableGroups": 3,
-   "blockedGroups": 1
+   "executableGroups": 4,
+   "blockedGroups": 0
   },
   {
    "sourceEntryKey": "sotg-lusankya",
@@ -4418,8 +4490,8 @@
    "size": "Colossal (station)",
    "class": "ARMED_PARTIALLY_EXECUTABLE",
    "groups": 6,
-   "executableGroups": 4,
-   "blockedGroups": 2
+   "executableGroups": 5,
+   "blockedGroups": 1
   },
   {
    "sourceEntryKey": "sotg-mandalmotors-starviper-assault-fighter",
@@ -8250,65 +8322,6 @@
    "primaryRootCause": "A"
   },
   {
-   "groupKey": "cw-grievous-wheel-bike-modified-tsmeu-6-source-attack-1",
-   "vehicleKey": "cw-grievous-wheel-bike-modified-tsmeu-6",
-   "vehicle": "Grievous's Wheel Bike (Modified Tsmeu-6)",
-   "book": "Clone Wars Campaign Guide",
-   "page": 203,
-   "label": "double laser cannon",
-   "family": "laser-cannons",
-   "executable": false,
-   "outcome": "IMPLEMENTATION_REQUIRED",
-   "printedOperator": "pilot",
-   "printedDamage": "5d10",
-   "printedAttackTotal": 9,
-   "payloadCount": null,
-   "refusalCodes": [
-    "STOCK_DAMAGE_QUALIFIED"
-   ],
-   "blockingCodes": [
-    "STOCK_DAMAGE_QUALIFIED"
-   ],
-   "nonBlockingModeReasons": [],
-   "causes": [
-    {
-     "code": "STOCK_DAMAGE_QUALIFIED",
-     "rootCause": "C",
-     "classes": [
-      "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
-      "SOURCE_RESEARCH_REQUIRED"
-     ],
-     "engine": "autofire attack-bonus reconciliation exists (printed bonus = total - 5); a damage-line qualifier \"autofire ...\" is not connected",
-     "sourceStatus": "SOURCE_NOT_YET_VERIFIED",
-     "rationale": "The damage line carries an autofire qualifier (+4) that reconciles with the printed total (9 - +4 = 5): the mechanic exists; the qualifier is only read from the structured autofireAttackBonus key.",
-     "repoMechanic": "EXISTS_NOT_CONNECTED",
-     "sourceContainsFact": "UNKNOWN (PDF check required)",
-     "whatWouldUnlockIt": "confirm the printed fact in the PDF and repair the record; engineering: connect the existing mechanic"
-    }
-   ],
-   "attackDelta": 2,
-   "gmConfigurable": false,
-   "gmBatteryConfigurable": false,
-   "sourceProbe": {
-    "located": false,
-    "line": null,
-    "ambiguous": false,
-    "seeBelow": null
-   },
-   "causeKeys": [
-    "STOCK_DAMAGE_QUALIFIED|C"
-   ],
-   "sourceStatus": "SOURCE_NOT_YET_VERIFIED",
-   "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
-    "SOURCE_RESEARCH_REQUIRED"
-   ],
-   "rootCauses": [
-    "C"
-   ],
-   "primaryRootCause": "C"
-  },
-  {
    "groupKey": "cw-ground-armored-tank-source-attack-2",
    "vehicleKey": "cw-ground-armored-tank",
    "vehicle": "Ground Armored Tank (GAT)",
@@ -9031,65 +9044,6 @@
    "primaryRootCause": "A"
   },
   {
-   "groupKey": "cw-oevvaor-jet-catamaran-source-attack-1",
-   "vehicleKey": "cw-oevvaor-jet-catamaran",
-   "vehicle": "Oevvaor Jet Catamaran",
-   "book": "Clone Wars Campaign Guide",
-   "page": 219,
-   "label": "blaster cannon",
-   "family": "blaster-cannons",
-   "executable": false,
-   "outcome": "IMPLEMENTATION_REQUIRED",
-   "printedOperator": "gunner",
-   "printedDamage": "3d10",
-   "printedAttackTotal": 2,
-   "payloadCount": null,
-   "refusalCodes": [
-    "STOCK_DAMAGE_QUALIFIED"
-   ],
-   "blockingCodes": [
-    "STOCK_DAMAGE_QUALIFIED"
-   ],
-   "nonBlockingModeReasons": [],
-   "causes": [
-    {
-     "code": "STOCK_DAMAGE_QUALIFIED",
-     "rootCause": "C",
-     "classes": [
-      "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
-      "SOURCE_RESEARCH_REQUIRED"
-     ],
-     "engine": "autofire attack-bonus reconciliation exists (printed bonus = total - 5); a damage-line qualifier \"autofire ...\" is not connected",
-     "sourceStatus": "SOURCE_NOT_YET_VERIFIED",
-     "rationale": "The damage line carries an autofire qualifier (-3) that reconciles with the printed total (2 - -3 = 5): the mechanic exists; the qualifier is only read from the structured autofireAttackBonus key.",
-     "repoMechanic": "EXISTS_NOT_CONNECTED",
-     "sourceContainsFact": "UNKNOWN (PDF check required)",
-     "whatWouldUnlockIt": "confirm the printed fact in the PDF and repair the record; engineering: connect the existing mechanic"
-    }
-   ],
-   "attackDelta": 0,
-   "gmConfigurable": false,
-   "gmBatteryConfigurable": false,
-   "sourceProbe": {
-    "located": true,
-    "line": 21509,
-    "ambiguous": false,
-    "seeBelow": true
-   },
-   "causeKeys": [
-    "STOCK_DAMAGE_QUALIFIED|C"
-   ],
-   "sourceStatus": "SOURCE_NOT_YET_VERIFIED",
-   "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
-    "SOURCE_RESEARCH_REQUIRED"
-   ],
-   "rootCauses": [
-    "C"
-   ],
-   "primaryRootCause": "C"
-  },
-  {
    "groupKey": "cw-og-9-homing-spider-droid-source-attack-2",
    "vehicleKey": "cw-og-9-homing-spider-droid",
    "vehicle": "OG-9 Homing Spider Droid",
@@ -9771,65 +9725,6 @@
     "D"
    ],
    "primaryRootCause": "A"
-  },
-  {
-   "groupKey": "cw-raddaugh-gnasp-fluttercraft-source-attack-1",
-   "vehicleKey": "cw-raddaugh-gnasp-fluttercraft",
-   "vehicle": "Raddaugh Gnasp Fluttercraft",
-   "book": "Clone Wars Campaign Guide",
-   "page": 220,
-   "label": "laser cannon tail-gun",
-   "family": "laser-cannons",
-   "executable": false,
-   "outcome": "IMPLEMENTATION_REQUIRED",
-   "printedOperator": "gunner",
-   "printedDamage": "4d10",
-   "printedAttackTotal": 5,
-   "payloadCount": null,
-   "refusalCodes": [
-    "STOCK_DAMAGE_QUALIFIED"
-   ],
-   "blockingCodes": [
-    "STOCK_DAMAGE_QUALIFIED"
-   ],
-   "nonBlockingModeReasons": [],
-   "causes": [
-    {
-     "code": "STOCK_DAMAGE_QUALIFIED",
-     "rootCause": "C",
-     "classes": [
-      "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
-      "SOURCE_RESEARCH_REQUIRED"
-     ],
-     "engine": "autofire attack-bonus reconciliation exists (printed bonus = total - 5); a damage-line qualifier \"autofire ...\" is not connected",
-     "sourceStatus": "SOURCE_NOT_YET_VERIFIED",
-     "rationale": "The damage line carries an autofire qualifier (+0) that reconciles with the printed total (5 - +0 = 5): the mechanic exists; the qualifier is only read from the structured autofireAttackBonus key.",
-     "repoMechanic": "EXISTS_NOT_CONNECTED",
-     "sourceContainsFact": "UNKNOWN (PDF check required)",
-     "whatWouldUnlockIt": "confirm the printed fact in the PDF and repair the record; engineering: connect the existing mechanic"
-    }
-   ],
-   "attackDelta": 0,
-   "gmConfigurable": false,
-   "gmBatteryConfigurable": false,
-   "sourceProbe": {
-    "located": true,
-    "line": 21583,
-    "ambiguous": false,
-    "seeBelow": true
-   },
-   "causeKeys": [
-    "STOCK_DAMAGE_QUALIFIED|C"
-   ],
-   "sourceStatus": "SOURCE_NOT_YET_VERIFIED",
-   "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
-    "SOURCE_RESEARCH_REQUIRED"
-   ],
-   "rootCauses": [
-    "C"
-   ],
-   "primaryRootCause": "C"
   },
   {
    "groupKey": "cw-republic-troop-transport-source-attack-2",
@@ -11882,35 +11777,20 @@
    "executable": false,
    "outcome": "IMPLEMENTATION_REQUIRED",
    "printedOperator": "gunner",
-   "printedDamage": null,
+   "printedDamage": "",
    "printedAttackTotal": 8,
    "payloadCount": null,
    "refusalCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
     "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
     "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
    ],
    "blockingCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
     "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
    ],
    "nonBlockingModeReasons": [
     "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
    ],
    "causes": [
-    {
-     "code": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-     "rootCause": "C",
-     "classes": [
-      "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-     ],
-     "engine": "tractor-beam opposed control exists and the gate already accepts \"damage —\" for tractor designations; this record writes the grapple figure in a notation variant (\"damage grapple +N\") the gate does not recognise",
-     "sourceStatus": "SOURCE_CONFIRMED",
-     "rationale": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-     "repoMechanic": "EXISTS_NOT_CONNECTED",
-     "sourceContainsFact": "YES",
-     "whatWouldUnlockIt": "engineering: connect the existing mechanic"
-    },
     {
      "code": "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA",
      "rootCause": "E",
@@ -11937,17 +11817,14 @@
     "seeBelow": true
    },
    "causeKeys": [
-    "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA|E",
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C"
+    "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA|E"
    ],
    "sourceStatus": "SOURCE_NOT_YET_VERIFIED",
    "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
     "OWNER_DECISION_REQUIRED",
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "rootCauses": [
-    "C",
     "E"
    ],
    "primaryRootCause": "E"
@@ -12012,63 +11889,6 @@
     "A"
    ],
    "primaryRootCause": "A"
-  },
-  {
-   "groupKey": "fucg-neutron-star-bulk-cruiser-attack-2",
-   "vehicleKey": "fucg-neutron-star-bulk-cruiser",
-   "vehicle": "Neutron Star Bulk Cruiser",
-   "book": "Force Unleashed Campaign Guide",
-   "page": 121,
-   "label": "tractor beam",
-   "family": "tractor-beams",
-   "executable": false,
-   "outcome": "SOURCE_EVIDENCE_REQUIRED",
-   "printedOperator": "gunner",
-   "printedDamage": null,
-   "printedAttackTotal": 4,
-   "payloadCount": null,
-   "refusalCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD"
-   ],
-   "blockingCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD"
-   ],
-   "nonBlockingModeReasons": [],
-   "causes": [
-    {
-     "code": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-     "rootCause": "C",
-     "classes": [
-      "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-     ],
-     "engine": "tractor-beam opposed control exists and the gate already accepts \"damage —\" for tractor designations; this record writes the grapple figure in a notation variant (\"damage grapple +N\") the gate does not recognise",
-     "sourceStatus": "SOURCE_CONFIRMED",
-     "rationale": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-     "repoMechanic": "EXISTS_NOT_CONNECTED",
-     "sourceContainsFact": "YES",
-     "whatWouldUnlockIt": "engineering: connect the existing mechanic"
-    }
-   ],
-   "attackDelta": 0,
-   "gmConfigurable": false,
-   "gmBatteryConfigurable": false,
-   "sourceProbe": {
-    "located": true,
-    "line": 11556,
-    "ambiguous": true,
-    "seeBelow": true
-   },
-   "causeKeys": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C"
-   ],
-   "sourceStatus": "SOURCE_CONFIRMED",
-   "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-   ],
-   "rootCauses": [
-    "C"
-   ],
-   "primaryRootCause": "C"
   },
   {
    "groupKey": "fucg-novasword-space-superiority-fighter-attack-2",
@@ -12512,66 +12332,6 @@
    "primaryRootCause": "B"
   },
   {
-   "groupKey": "fucg-venator-class-star-destroyer-attack-5",
-   "vehicleKey": "fucg-venator-class-star-destroyer",
-   "vehicle": "Venator-class Star Destroyer",
-   "book": "Force Unleashed Campaign Guide",
-   "page": 210,
-   "label": "tractor beam battery",
-   "family": "tractor-beams",
-   "executable": false,
-   "outcome": "SOURCE_EVIDENCE_REQUIRED",
-   "printedOperator": "gunner",
-   "printedDamage": null,
-   "printedAttackTotal": 9,
-   "payloadCount": null,
-   "refusalCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-    "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-   ],
-   "blockingCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD"
-   ],
-   "nonBlockingModeReasons": [
-    "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-   ],
-   "causes": [
-    {
-     "code": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-     "rootCause": "C",
-     "classes": [
-      "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-     ],
-     "engine": "tractor-beam opposed control exists and the gate already accepts \"damage —\" for tractor designations; this record writes the grapple figure in a notation variant (\"damage grapple +N\") the gate does not recognise",
-     "sourceStatus": "SOURCE_CONFIRMED",
-     "rationale": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-     "repoMechanic": "EXISTS_NOT_CONNECTED",
-     "sourceContainsFact": "YES",
-     "whatWouldUnlockIt": "engineering: connect the existing mechanic"
-    }
-   ],
-   "attackDelta": 4,
-   "gmConfigurable": false,
-   "gmBatteryConfigurable": true,
-   "sourceProbe": {
-    "located": true,
-    "line": 21269,
-    "ambiguous": false,
-    "seeBelow": true
-   },
-   "causeKeys": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C"
-   ],
-   "sourceStatus": "SOURCE_CONFIRMED",
-   "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-   ],
-   "rootCauses": [
-    "C"
-   ],
-   "primaryRootCause": "C"
-  },
-  {
    "groupKey": "fucg-venator-class-star-destroyer-attack-6",
    "vehicleKey": "fucg-venator-class-star-destroyer",
    "vehicle": "Venator-class Star Destroyer",
@@ -12721,35 +12481,20 @@
    "executable": false,
    "outcome": "IMPLEMENTATION_REQUIRED",
    "printedOperator": "gunner",
-   "printedDamage": null,
+   "printedDamage": "",
    "printedAttackTotal": 14,
    "payloadCount": null,
    "refusalCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
     "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
     "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
    ],
    "blockingCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
     "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
    ],
    "nonBlockingModeReasons": [
     "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
    ],
    "causes": [
-    {
-     "code": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-     "rootCause": "C",
-     "classes": [
-      "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-     ],
-     "engine": "tractor-beam opposed control exists and the gate already accepts \"damage —\" for tractor designations; this record writes the grapple figure in a notation variant (\"damage grapple +N\") the gate does not recognise",
-     "sourceStatus": "SOURCE_CONFIRMED",
-     "rationale": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-     "repoMechanic": "EXISTS_NOT_CONNECTED",
-     "sourceContainsFact": "YES",
-     "whatWouldUnlockIt": "engineering: connect the existing mechanic"
-    },
     {
      "code": "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA",
      "rootCause": "E",
@@ -12776,80 +12521,17 @@
     "seeBelow": true
    },
    "causeKeys": [
-    "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA|E",
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C"
+    "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA|E"
    ],
    "sourceStatus": "SOURCE_NOT_YET_VERIFIED",
    "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
     "OWNER_DECISION_REQUIRED",
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "rootCauses": [
-    "C",
     "E"
    ],
    "primaryRootCause": "E"
-  },
-  {
-   "groupKey": "gaw-corona-class-armed-transport-source-attack-4",
-   "vehicleKey": "gaw-corona-class-armed-transport",
-   "vehicle": "Corona-class Armed Transport",
-   "book": "Galaxy at War",
-   "page": 67,
-   "label": "tractor beam battery",
-   "family": "tractor-beams",
-   "executable": false,
-   "outcome": "SOURCE_EVIDENCE_REQUIRED",
-   "printedOperator": "gunner",
-   "printedDamage": null,
-   "printedAttackTotal": 10,
-   "payloadCount": null,
-   "refusalCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-    "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-   ],
-   "blockingCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD"
-   ],
-   "nonBlockingModeReasons": [
-    "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-   ],
-   "causes": [
-    {
-     "code": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-     "rootCause": "C",
-     "classes": [
-      "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-     ],
-     "engine": "tractor-beam opposed control exists and the gate already accepts \"damage —\" for tractor designations; this record writes the grapple figure in a notation variant (\"damage grapple +N\") the gate does not recognise",
-     "sourceStatus": "SOURCE_CONFIRMED",
-     "rationale": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-     "repoMechanic": "EXISTS_NOT_CONNECTED",
-     "sourceContainsFact": "YES",
-     "whatWouldUnlockIt": "engineering: connect the existing mechanic"
-    }
-   ],
-   "attackDelta": 6,
-   "gmConfigurable": false,
-   "gmBatteryConfigurable": true,
-   "sourceProbe": {
-    "located": true,
-    "line": 6687,
-    "ambiguous": false,
-    "seeBelow": true
-   },
-   "causeKeys": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C"
-   ],
-   "sourceStatus": "SOURCE_CONFIRMED",
-   "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-   ],
-   "rootCauses": [
-    "C"
-   ],
-   "primaryRootCause": "C"
   },
   {
    "groupKey": "gaw-ground-armored-tank-source-attack-2",
@@ -12986,63 +12668,6 @@
     "A"
    ],
    "primaryRootCause": "A"
-  },
-  {
-   "groupKey": "gaw-koensayr-ilh-kk-citadel-class-cruiser-source-attack-4",
-   "vehicleKey": "gaw-koensayr-ilh-kk-citadel-class-cruiser",
-   "vehicle": "Koensayr ILH-KK Citadel-class Cruiser",
-   "book": "Galaxy at War",
-   "page": 192,
-   "label": "tractor beam",
-   "family": "tractor-beams",
-   "executable": false,
-   "outcome": "SOURCE_EVIDENCE_REQUIRED",
-   "printedOperator": "pilot",
-   "printedDamage": null,
-   "printedAttackTotal": 1,
-   "payloadCount": null,
-   "refusalCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD"
-   ],
-   "blockingCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD"
-   ],
-   "nonBlockingModeReasons": [],
-   "causes": [
-    {
-     "code": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-     "rootCause": "C",
-     "classes": [
-      "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-     ],
-     "engine": "tractor-beam opposed control exists and the gate already accepts \"damage —\" for tractor designations; this record writes the grapple figure in a notation variant (\"damage grapple +N\") the gate does not recognise",
-     "sourceStatus": "SOURCE_CONFIRMED",
-     "rationale": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-     "repoMechanic": "EXISTS_NOT_CONNECTED",
-     "sourceContainsFact": "YES",
-     "whatWouldUnlockIt": "engineering: connect the existing mechanic"
-    }
-   ],
-   "attackDelta": 0,
-   "gmConfigurable": false,
-   "gmBatteryConfigurable": false,
-   "sourceProbe": {
-    "located": true,
-    "line": 18842,
-    "ambiguous": false,
-    "seeBelow": true
-   },
-   "causeKeys": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C"
-   ],
-   "sourceStatus": "SOURCE_CONFIRMED",
-   "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-   ],
-   "rootCauses": [
-    "C"
-   ],
-   "primaryRootCause": "C"
   },
   {
    "groupKey": "gaw-penumbra-class-attack-shuttle-source-attack-2",
@@ -13536,34 +13161,19 @@
    "executable": false,
    "outcome": "IMPLEMENTATION_REQUIRED",
    "printedOperator": null,
-   "printedDamage": null,
+   "printedDamage": "",
    "printedAttackTotal": 8,
    "payloadCount": null,
    "refusalCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
     "STOCK_OPERATOR_IS_A_STATION_BATTERY",
     "STOCK_GROUP_IS_A_WEAPON_BATTERY"
    ],
    "blockingCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
     "STOCK_OPERATOR_IS_A_STATION_BATTERY",
     "STOCK_GROUP_IS_A_WEAPON_BATTERY"
    ],
    "nonBlockingModeReasons": [],
    "causes": [
-    {
-     "code": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-     "rootCause": "C",
-     "classes": [
-      "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-     ],
-     "engine": "tractor-beam opposed control exists and the gate already accepts \"damage —\" for tractor designations; this record writes the grapple figure in a notation variant (\"damage grapple +N\") the gate does not recognise",
-     "sourceStatus": "SOURCE_CONFIRMED",
-     "rationale": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-     "repoMechanic": "EXISTS_NOT_CONNECTED",
-     "sourceContainsFact": "YES",
-     "whatWouldUnlockIt": "engineering: connect the existing mechanic"
-    },
     {
      "code": "STOCK_OPERATOR_IS_A_STATION_BATTERY",
      "rootCause": "C",
@@ -13602,13 +13212,11 @@
     "seeBelow": false
    },
    "causeKeys": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C",
     "STOCK_GROUP_IS_A_WEAPON_BATTERY|C",
     "STOCK_OPERATOR_IS_A_STATION_BATTERY|C"
    ],
    "sourceStatus": "SOURCE_NOT_YET_VERIFIED",
    "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
     "GM_CERTIFICATION_OPTION",
     "SOURCE_RESEARCH_REQUIRED"
    ],
@@ -22907,126 +22515,6 @@
    "primaryRootCause": "E"
   },
   {
-   "groupKey": "sotg-eclipse-group-6",
-   "vehicleKey": "sotg-eclipse",
-   "vehicle": "Eclipse",
-   "book": "Starships of the Galaxy",
-   "page": 139,
-   "label": "tractor beam battery",
-   "family": "tractor-beams",
-   "executable": false,
-   "outcome": "SOURCE_EVIDENCE_REQUIRED",
-   "printedOperator": "gunner",
-   "printedDamage": null,
-   "printedAttackTotal": 15,
-   "payloadCount": null,
-   "refusalCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-    "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-   ],
-   "blockingCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD"
-   ],
-   "nonBlockingModeReasons": [
-    "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-   ],
-   "causes": [
-    {
-     "code": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-     "rootCause": "C",
-     "classes": [
-      "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-     ],
-     "engine": "tractor-beam opposed control exists and the gate already accepts \"damage —\" for tractor designations; this record writes the grapple figure in a notation variant (\"damage grapple +N\") the gate does not recognise",
-     "sourceStatus": "SOURCE_CONFIRMED",
-     "rationale": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-     "repoMechanic": "EXISTS_NOT_CONNECTED",
-     "sourceContainsFact": "YES",
-     "whatWouldUnlockIt": "engineering: connect the existing mechanic"
-    }
-   ],
-   "attackDelta": 8,
-   "gmConfigurable": false,
-   "gmBatteryConfigurable": true,
-   "sourceProbe": {
-    "located": true,
-    "line": 13057,
-    "ambiguous": true,
-    "seeBelow": true
-   },
-   "causeKeys": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C"
-   ],
-   "sourceStatus": "SOURCE_CONFIRMED",
-   "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-   ],
-   "rootCauses": [
-    "C"
-   ],
-   "primaryRootCause": "C"
-  },
-  {
-   "groupKey": "sotg-fondor-shipyards-super-star-destroyer-group-4",
-   "vehicleKey": "sotg-fondor-shipyards-super-star-destroyer",
-   "vehicle": "Fondor Shipyards Super Star Destroyer",
-   "book": "Starships of the Galaxy",
-   "page": 136,
-   "label": "tractor beam battery",
-   "family": "tractor-beams",
-   "executable": false,
-   "outcome": "SOURCE_EVIDENCE_REQUIRED",
-   "printedOperator": "gunner",
-   "printedDamage": null,
-   "printedAttackTotal": 15,
-   "payloadCount": null,
-   "refusalCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-    "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-   ],
-   "blockingCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD"
-   ],
-   "nonBlockingModeReasons": [
-    "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-   ],
-   "causes": [
-    {
-     "code": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-     "rootCause": "C",
-     "classes": [
-      "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-     ],
-     "engine": "tractor-beam opposed control exists and the gate already accepts \"damage —\" for tractor designations; this record writes the grapple figure in a notation variant (\"damage grapple +N\") the gate does not recognise",
-     "sourceStatus": "SOURCE_CONFIRMED",
-     "rationale": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-     "repoMechanic": "EXISTS_NOT_CONNECTED",
-     "sourceContainsFact": "YES",
-     "whatWouldUnlockIt": "engineering: connect the existing mechanic"
-    }
-   ],
-   "attackDelta": 8,
-   "gmConfigurable": false,
-   "gmBatteryConfigurable": true,
-   "sourceProbe": {
-    "located": true,
-    "line": 12795,
-    "ambiguous": false,
-    "seeBelow": true
-   },
-   "causeKeys": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C"
-   ],
-   "sourceStatus": "SOURCE_CONFIRMED",
-   "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-   ],
-   "rootCauses": [
-    "C"
-   ],
-   "primaryRootCause": "C"
-  },
-  {
    "groupKey": "sotg-fondor-shipyards-super-star-destroyer-group-5",
    "vehicleKey": "sotg-fondor-shipyards-super-star-destroyer",
    "vehicle": "Fondor Shipyards Super Star Destroyer",
@@ -24457,63 +23945,6 @@
    "primaryRootCause": "A"
   },
   {
-   "groupKey": "sotg-kuat-drive-yards-nebulon-b-frigate-group-3",
-   "vehicleKey": "sotg-kuat-drive-yards-nebulon-b-frigate",
-   "vehicle": "Kuat Drive Yards Nebulon-B Frigate",
-   "book": "Starships of the Galaxy",
-   "page": 120,
-   "label": "tractor beam",
-   "family": "tractor-beams",
-   "executable": false,
-   "outcome": "SOURCE_EVIDENCE_REQUIRED",
-   "printedOperator": "gunner",
-   "printedDamage": null,
-   "printedAttackTotal": 4,
-   "payloadCount": null,
-   "refusalCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD"
-   ],
-   "blockingCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD"
-   ],
-   "nonBlockingModeReasons": [],
-   "causes": [
-    {
-     "code": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-     "rootCause": "C",
-     "classes": [
-      "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-     ],
-     "engine": "tractor-beam opposed control exists and the gate already accepts \"damage —\" for tractor designations; this record writes the grapple figure in a notation variant (\"damage grapple +N\") the gate does not recognise",
-     "sourceStatus": "SOURCE_CONFIRMED",
-     "rationale": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-     "repoMechanic": "EXISTS_NOT_CONNECTED",
-     "sourceContainsFact": "YES",
-     "whatWouldUnlockIt": "engineering: connect the existing mechanic"
-    }
-   ],
-   "attackDelta": 0,
-   "gmConfigurable": false,
-   "gmBatteryConfigurable": false,
-   "sourceProbe": {
-    "located": true,
-    "line": 11225,
-    "ambiguous": false,
-    "seeBelow": true
-   },
-   "causeKeys": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C"
-   ],
-   "sourceStatus": "SOURCE_CONFIRMED",
-   "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-   ],
-   "rootCauses": [
-    "C"
-   ],
-   "primaryRootCause": "C"
-  },
-  {
    "groupKey": "sotg-kuat-drive-yards-pellaeon-class-star-destroyer-group-5",
    "vehicleKey": "sotg-kuat-drive-yards-pellaeon-class-star-destroyer",
    "vehicle": "Kuat Drive Yards Pellaeon-class Star Destroyer",
@@ -24634,126 +24065,6 @@
     "A"
    ],
    "primaryRootCause": "A"
-  },
-  {
-   "groupKey": "sotg-loronar-corporation-strike-class-medium-cruiser-group-4",
-   "vehicleKey": "sotg-loronar-corporation-strike-class-medium-cruiser",
-   "vehicle": "Loronar Corporation Strike-class Medium Cruiser",
-   "book": "Starships of the Galaxy",
-   "page": 135,
-   "label": "tractor beam battery",
-   "family": "tractor-beams",
-   "executable": false,
-   "outcome": "SOURCE_EVIDENCE_REQUIRED",
-   "printedOperator": "gunner",
-   "printedDamage": null,
-   "printedAttackTotal": 13,
-   "payloadCount": null,
-   "refusalCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-    "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-   ],
-   "blockingCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD"
-   ],
-   "nonBlockingModeReasons": [
-    "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-   ],
-   "causes": [
-    {
-     "code": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-     "rootCause": "C",
-     "classes": [
-      "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-     ],
-     "engine": "tractor-beam opposed control exists and the gate already accepts \"damage —\" for tractor designations; this record writes the grapple figure in a notation variant (\"damage grapple +N\") the gate does not recognise",
-     "sourceStatus": "SOURCE_CONFIRMED",
-     "rationale": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-     "repoMechanic": "EXISTS_NOT_CONNECTED",
-     "sourceContainsFact": "YES",
-     "whatWouldUnlockIt": "engineering: connect the existing mechanic"
-    }
-   ],
-   "attackDelta": 8,
-   "gmConfigurable": false,
-   "gmBatteryConfigurable": true,
-   "sourceProbe": {
-    "located": true,
-    "line": 12673,
-    "ambiguous": false,
-    "seeBelow": true
-   },
-   "causeKeys": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C"
-   ],
-   "sourceStatus": "SOURCE_CONFIRMED",
-   "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-   ],
-   "rootCauses": [
-    "C"
-   ],
-   "primaryRootCause": "C"
-  },
-  {
-   "groupKey": "sotg-lusankya-group-5",
-   "vehicleKey": "sotg-lusankya",
-   "vehicle": "Lusankya",
-   "book": "Starships of the Galaxy",
-   "page": 138,
-   "label": "tractor beam battery",
-   "family": "tractor-beams",
-   "executable": false,
-   "outcome": "SOURCE_EVIDENCE_REQUIRED",
-   "printedOperator": "gunner",
-   "printedDamage": null,
-   "printedAttackTotal": 15,
-   "payloadCount": null,
-   "refusalCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-    "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-   ],
-   "blockingCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD"
-   ],
-   "nonBlockingModeReasons": [
-    "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
-   ],
-   "causes": [
-    {
-     "code": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-     "rootCause": "C",
-     "classes": [
-      "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-     ],
-     "engine": "tractor-beam opposed control exists and the gate already accepts \"damage —\" for tractor designations; this record writes the grapple figure in a notation variant (\"damage grapple +N\") the gate does not recognise",
-     "sourceStatus": "SOURCE_CONFIRMED",
-     "rationale": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-     "repoMechanic": "EXISTS_NOT_CONNECTED",
-     "sourceContainsFact": "YES",
-     "whatWouldUnlockIt": "engineering: connect the existing mechanic"
-    }
-   ],
-   "attackDelta": 8,
-   "gmConfigurable": false,
-   "gmBatteryConfigurable": true,
-   "sourceProbe": {
-    "located": true,
-    "line": 12964,
-    "ambiguous": true,
-    "seeBelow": true
-   },
-   "causeKeys": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C"
-   ],
-   "sourceStatus": "SOURCE_CONFIRMED",
-   "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-   ],
-   "rootCauses": [
-    "C"
-   ],
-   "primaryRootCause": "C"
   },
   {
    "groupKey": "sotg-lusankya-group-6",
@@ -25257,35 +24568,20 @@
    "executable": false,
    "outcome": "IMPLEMENTATION_REQUIRED",
    "printedOperator": "gunner",
-   "printedDamage": null,
+   "printedDamage": "",
    "printedAttackTotal": 16,
    "payloadCount": null,
    "refusalCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
     "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
     "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
    ],
    "blockingCodes": [
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
     "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
    ],
    "nonBlockingModeReasons": [
     "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
    ],
    "causes": [
-    {
-     "code": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-     "rootCause": "C",
-     "classes": [
-      "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-     ],
-     "engine": "tractor-beam opposed control exists and the gate already accepts \"damage —\" for tractor designations; this record writes the grapple figure in a notation variant (\"damage grapple +N\") the gate does not recognise",
-     "sourceStatus": "SOURCE_CONFIRMED",
-     "rationale": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-     "repoMechanic": "EXISTS_NOT_CONNECTED",
-     "sourceContainsFact": "YES",
-     "whatWouldUnlockIt": "engineering: connect the existing mechanic"
-    },
     {
      "code": "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA",
      "rootCause": "E",
@@ -25312,17 +24608,14 @@
     "seeBelow": true
    },
    "causeKeys": [
-    "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA|E",
-    "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C"
+    "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA|E"
    ],
    "sourceStatus": "SOURCE_NOT_YET_VERIFIED",
    "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
     "OWNER_DECISION_REQUIRED",
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "rootCauses": [
-    "C",
     "E"
    ],
    "primaryRootCause": "E"
@@ -28303,34 +27596,34 @@
   }
  ],
  "causeStatusTally": {
-  "SOURCE_NOT_YET_VERIFIED": 446,
+  "SOURCE_NOT_YET_VERIFIED": 443,
   "SOURCE_INCOMPLETE": 52,
-  "SOURCE_CONFIRMED": 28,
+  "SOURCE_CONFIRMED": 15,
   "SOURCE_CONTRADICTORY": 1
  },
  "groupSourceStatus": {
-  "SOURCE_NOT_YET_VERIFIED": 249,
+  "SOURCE_NOT_YET_VERIFIED": 246,
   "SOURCE_INCOMPLETE": 51,
-  "SOURCE_CONFIRMED": 15,
+  "SOURCE_CONFIRMED": 6,
   "SOURCE_CONTRADICTORY": 1
  },
  "groupClassCombos": {
   "SOURCE_RESEARCH_REQUIRED": 75,
-  "ENGINEERING_WORK — NO OWNER RULING REQUIRED + SOURCE_RESEARCH_REQUIRED": 54,
-  "GM_CERTIFICATION_OPTION + SOURCE_RESEARCH_REQUIRED": 21,
-  "ENGINEERING_WORK — NO OWNER RULING REQUIRED + OWNER_DECISION_REQUIRED + SOURCE_RESEARCH_REQUIRED": 33,
-  "OWNER_DECISION_REQUIRED + SOURCE_RESEARCH_REQUIRED": 41,
+  "ENGINEERING_WORK — NO OWNER RULING REQUIRED + SOURCE_RESEARCH_REQUIRED": 51,
+  "GM_CERTIFICATION_OPTION + SOURCE_RESEARCH_REQUIRED": 22,
+  "ENGINEERING_WORK — NO OWNER RULING REQUIRED + OWNER_DECISION_REQUIRED + SOURCE_RESEARCH_REQUIRED": 30,
+  "OWNER_DECISION_REQUIRED + SOURCE_RESEARCH_REQUIRED": 44,
   "GM_CERTIFICATION_OPTION + OWNER_DECISION_REQUIRED": 57,
   "ENGINEERING_WORK — NO OWNER RULING REQUIRED + GM_CERTIFICATION_OPTION": 2,
-  "ENGINEERING_WORK — NO OWNER RULING REQUIRED + GM_CERTIFICATION_OPTION + SOURCE_RESEARCH_REQUIRED": 7,
-  "ENGINEERING_WORK — NO OWNER RULING REQUIRED": 13,
+  "ENGINEERING_WORK — NO OWNER RULING REQUIRED + GM_CERTIFICATION_OPTION + SOURCE_RESEARCH_REQUIRED": 6,
+  "ENGINEERING_WORK — NO OWNER RULING REQUIRED": 4,
   "ENGINEERING_WORK — NO OWNER RULING REQUIRED + GM_CERTIFICATION_OPTION + OWNER_DECISION_REQUIRED + SOURCE_RESEARCH_REQUIRED": 12,
   "GM_CERTIFICATION_OPTION + OWNER_DECISION_REQUIRED + SOURCE_RESEARCH_REQUIRED": 1
  },
  "primaryRootCauseGroups": {
   "B": 42,
   "A": 175,
-  "C": 31,
+  "C": 19,
   "D": 32,
   "F": 2,
   "E": 34
@@ -28381,7 +27674,7 @@
    "immediatelyUnlockedGroups": 57,
    "vehiclesGainingAnyGroup": 57,
    "vehiclesGainingFirstExecutableGroup": 3,
-   "vehiclesBecomingFullyExecutable": 50,
+   "vehiclesBecomingFullyExecutable": 52,
    "rationale": "Payload and launcher identity are reconciled for this group; the statblock prints no launcher count. Whether a printed Payload alone defines a canonical pool is the open owner question (V-P6C-21)."
   },
   {
@@ -28404,7 +27697,7 @@
    "immediatelyUnlockedGroups": 6,
    "vehiclesGainingAnyGroup": 6,
    "vehiclesGainingFirstExecutableGroup": 0,
-   "vehiclesBecomingFullyExecutable": 2,
+   "vehiclesBecomingFullyExecutable": 4,
    "rationale": "The printed label does not name a certified launcher (generic \"missile launcher\"/\"launcher\" wording); the book may name the missile elsewhere in the entry. No identity is inferred from the vehicle or lore."
   },
   {
@@ -28447,10 +27740,10 @@
    },
    "grossGroups": 29,
    "grossVehicles": 10,
-   "soleBlockerGroups": 18,
+   "soleBlockerGroups": 21,
    "grossAffectedGroups": 29,
-   "immediatelyUnlockedGroups": 18,
-   "vehiclesGainingAnyGroup": 7,
+   "immediatelyUnlockedGroups": 21,
+   "vehiclesGainingAnyGroup": 8,
    "vehiclesGainingFirstExecutableGroup": 4,
    "vehiclesBecomingFullyExecutable": 2,
    "rationale": "The printed attack total differs from Base Attack + Intelligence modifier by 7 with no published rule that explains it (delta recorded per group). Confirm the printed figure in the PDF first; only a confirmed, unexplained printed figure is an owner question."
@@ -28597,29 +27890,6 @@
    "vehiclesGainingFirstExecutableGroup": 4,
    "vehiclesBecomingFullyExecutable": 3,
    "rationale": "The operator is \"N gunners\" but the record's group kind does not mark a printed weapon battery, so the battery path is not entered. Gunner count is not weapon count; marking it a battery is a record reconciliation."
-  },
-  {
-   "causeKey": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C",
-   "code": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-   "rootCause": "C",
-   "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-   ],
-   "existingEngine": "tractor-beam opposed control exists and the gate already accepts \"damage —\" for tractor designations; this record writes the grapple figure in a notation variant (\"damage grapple +N\") the gate does not recognise",
-   "ownerDecision": "no",
-   "docket": null,
-   "sourceEvidenceStatus": {
-    "SOURCE_CONFIRMED": 16
-   },
-   "grossGroups": 16,
-   "grossVehicles": 16,
-   "soleBlockerGroups": 9,
-   "grossAffectedGroups": 16,
-   "immediatelyUnlockedGroups": 9,
-   "vehiclesGainingAnyGroup": 9,
-   "vehiclesGainingFirstExecutableGroup": 0,
-   "vehiclesBecomingFullyExecutable": 4,
-   "rationale": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread."
   },
   {
    "causeKey": "STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER|D",
@@ -28810,30 +28080,6 @@
    "rationale": "The source states a qualitative arc (\"SOURCE_SILENT_CONFIRMED\") that is not a defined geometry; whether it restricts fire, and how, is not printed."
   },
   {
-   "causeKey": "STOCK_DAMAGE_QUALIFIED|C",
-   "code": "STOCK_DAMAGE_QUALIFIED",
-   "rootCause": "C",
-   "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
-    "SOURCE_RESEARCH_REQUIRED"
-   ],
-   "existingEngine": "autofire attack-bonus reconciliation exists (printed bonus = total - 5); a damage-line qualifier \"autofire ...\" is not connected",
-   "ownerDecision": "no",
-   "docket": null,
-   "sourceEvidenceStatus": {
-    "SOURCE_NOT_YET_VERIFIED": 5
-   },
-   "grossGroups": 5,
-   "grossVehicles": 5,
-   "soleBlockerGroups": 3,
-   "grossAffectedGroups": 5,
-   "immediatelyUnlockedGroups": 3,
-   "vehiclesGainingAnyGroup": 3,
-   "vehiclesGainingFirstExecutableGroup": 3,
-   "vehiclesBecomingFullyExecutable": 3,
-   "rationale": "The damage line carries an autofire qualifier (+4) that reconciles with the printed total (9 - +4 = 5): the mechanic exists; the qualifier is only read from the structured autofireAttackBonus key."
-  },
-  {
    "causeKey": "STOCK_DAMAGE_AREA_OR_SPLASH|D",
    "code": "STOCK_DAMAGE_AREA_OR_SPLASH",
    "rootCause": "D",
@@ -28951,6 +28197,29 @@
    "rationale": "The record prints no attack total for the group; the statblock must be read."
   },
   {
+   "causeKey": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C",
+   "code": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
+   "rootCause": "C",
+   "classes": [
+    "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
+   ],
+   "existingEngine": "tractor-beam opposed control exists and the gate already accepts \"damage —\" for tractor designations; this record writes the grapple figure in a notation variant (\"damage grapple +N\") the gate does not recognise",
+   "ownerDecision": "no",
+   "docket": null,
+   "sourceEvidenceStatus": {
+    "SOURCE_CONFIRMED": 3
+   },
+   "grossGroups": 3,
+   "grossVehicles": 3,
+   "soleBlockerGroups": 0,
+   "grossAffectedGroups": 3,
+   "immediatelyUnlockedGroups": 0,
+   "vehiclesGainingAnyGroup": 0,
+   "vehiclesGainingFirstExecutableGroup": 0,
+   "vehiclesBecomingFullyExecutable": 0,
+   "rationale": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread."
+  },
+  {
    "causeKey": "STOCK_DAMAGE_ION_UNVERIFIED|B",
    "code": "STOCK_DAMAGE_ION_UNVERIFIED",
    "rootCause": "B",
@@ -28972,6 +28241,30 @@
    "vehiclesGainingFirstExecutableGroup": 0,
    "vehiclesBecomingFullyExecutable": 1,
    "rationale": "The label says \"ion\" but the record does not type the damage as ion; the printed damage line must be read."
+  },
+  {
+   "causeKey": "STOCK_DAMAGE_QUALIFIED|C",
+   "code": "STOCK_DAMAGE_QUALIFIED",
+   "rootCause": "C",
+   "classes": [
+    "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
+    "SOURCE_RESEARCH_REQUIRED"
+   ],
+   "existingEngine": "autofire attack-bonus reconciliation exists (printed bonus = total - 5); a damage-line qualifier \"autofire ...\" is not connected",
+   "ownerDecision": "no",
+   "docket": null,
+   "sourceEvidenceStatus": {
+    "SOURCE_NOT_YET_VERIFIED": 2
+   },
+   "grossGroups": 2,
+   "grossVehicles": 2,
+   "soleBlockerGroups": 0,
+   "grossAffectedGroups": 2,
+   "immediatelyUnlockedGroups": 0,
+   "vehiclesGainingAnyGroup": 0,
+   "vehiclesGainingFirstExecutableGroup": 0,
+   "vehiclesBecomingFullyExecutable": 0,
+   "rationale": "The damage line carries an autofire qualifier without a numeric figure (\"autofire only\"); autofire exists as a mechanic, the qualifier is not read."
   },
   {
    "causeKey": "STOCK_POSSIBLE_AREA_WEAPON_UNVERIFIED|A",
@@ -29116,11 +28409,11 @@
     "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT|C"
    ],
    "result": {
-    "grossAffectedGroups": 25,
-    "immediatelyUnlockedGroups": 13,
-    "vehiclesGainingAnyGroup": 11,
+    "grossAffectedGroups": 12,
+    "immediatelyUnlockedGroups": 4,
+    "vehiclesGainingAnyGroup": 2,
     "vehiclesGainingFirstExecutableGroup": 1,
-    "vehiclesBecomingFullyExecutable": 4
+    "vehiclesBecomingFullyExecutable": 0
    }
   },
   {
@@ -29151,11 +28444,11 @@
     "STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED|D"
    ],
    "result": {
-    "grossAffectedGroups": 213,
-    "immediatelyUnlockedGroups": 142,
-    "vehiclesGainingAnyGroup": 108,
-    "vehiclesGainingFirstExecutableGroup": 33,
-    "vehiclesBecomingFullyExecutable": 79
+    "grossAffectedGroups": 198,
+    "immediatelyUnlockedGroups": 130,
+    "vehiclesGainingAnyGroup": 98,
+    "vehiclesGainingFirstExecutableGroup": 30,
+    "vehiclesBecomingFullyExecutable": 72
    }
   },
   {
@@ -29191,7 +28484,7 @@
     "immediatelyUnlockedGroups": 57,
     "vehiclesGainingAnyGroup": 57,
     "vehiclesGainingFirstExecutableGroup": 3,
-    "vehiclesBecomingFullyExecutable": 50
+    "vehiclesBecomingFullyExecutable": 52
    }
   },
   {
@@ -29219,8 +28512,8 @@
    ],
    "result": {
     "grossAffectedGroups": 30,
-    "immediatelyUnlockedGroups": 18,
-    "vehiclesGainingAnyGroup": 7,
+    "immediatelyUnlockedGroups": 21,
+    "vehiclesGainingAnyGroup": 8,
     "vehiclesGainingFirstExecutableGroup": 4,
     "vehiclesBecomingFullyExecutable": 2
    }
@@ -29288,11 +28581,11 @@
     "STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED|D"
    ],
    "result": {
-    "grossAffectedGroups": 301,
-    "immediatelyUnlockedGroups": 273,
-    "vehiclesGainingAnyGroup": 187,
-    "vehiclesGainingFirstExecutableGroup": 46,
-    "vehiclesBecomingFullyExecutable": 179
+    "grossAffectedGroups": 289,
+    "immediatelyUnlockedGroups": 261,
+    "vehiclesGainingAnyGroup": 180,
+    "vehiclesGainingFirstExecutableGroup": 43,
+    "vehiclesBecomingFullyExecutable": 172
    }
   }
  ],
@@ -29306,7 +28599,7 @@
    ],
    "marginalGroups": 57,
    "cumulativeGroups": 57,
-   "cumulativeVehiclesFullyExecutable": 50
+   "cumulativeVehiclesFullyExecutable": 52
   },
   {
    "step": 2,
@@ -29315,9 +28608,9 @@
     "SOURCE_RESEARCH_REQUIRED",
     "OWNER_DECISION_REQUIRED"
    ],
-   "marginalGroups": 18,
-   "cumulativeGroups": 75,
-   "cumulativeVehiclesFullyExecutable": 52
+   "marginalGroups": 21,
+   "cumulativeGroups": 78,
+   "cumulativeVehiclesFullyExecutable": 54
   },
   {
    "step": 3,
@@ -29327,8 +28620,8 @@
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "marginalGroups": 16,
-   "cumulativeGroups": 91,
-   "cumulativeVehiclesFullyExecutable": 60
+   "cumulativeGroups": 94,
+   "cumulativeVehiclesFullyExecutable": 62
   },
   {
    "step": 4,
@@ -29337,8 +28630,8 @@
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "marginalGroups": 14,
-   "cumulativeGroups": 105,
-   "cumulativeVehiclesFullyExecutable": 70
+   "cumulativeGroups": 108,
+   "cumulativeVehiclesFullyExecutable": 72
   },
   {
    "step": 5,
@@ -29347,8 +28640,8 @@
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "marginalGroups": 40,
-   "cumulativeGroups": 145,
-   "cumulativeVehiclesFullyExecutable": 96
+   "cumulativeGroups": 148,
+   "cumulativeVehiclesFullyExecutable": 103
   },
   {
    "step": 6,
@@ -29358,209 +28651,209 @@
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "marginalGroups": 16,
-   "cumulativeGroups": 161,
-   "cumulativeVehiclesFullyExecutable": 104
+   "cumulativeGroups": 164,
+   "cumulativeVehiclesFullyExecutable": 111
   },
   {
    "step": 7,
-   "add": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C",
-   "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
-   ],
-   "marginalGroups": 12,
-   "cumulativeGroups": 173,
-   "cumulativeVehiclesFullyExecutable": 115
-  },
-  {
-   "step": 8,
    "add": "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED|A",
    "classes": [
     "SOURCE_RESEARCH_REQUIRED",
     "GM_CERTIFICATION_OPTION"
    ],
    "marginalGroups": 10,
-   "cumulativeGroups": 183,
-   "cumulativeVehiclesFullyExecutable": 125
+   "cumulativeGroups": 174,
+   "cumulativeVehiclesFullyExecutable": 121
   },
   {
-   "step": 9,
+   "step": 8,
    "add": "STOCK_OPERATOR_IS_A_STATION_BATTERY|C",
    "classes": [
     "GM_CERTIFICATION_OPTION",
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "marginalGroups": 10,
-   "cumulativeGroups": 193,
-   "cumulativeVehiclesFullyExecutable": 133
+   "cumulativeGroups": 184,
+   "cumulativeVehiclesFullyExecutable": 129
   },
   {
-   "step": 10,
+   "step": 9,
    "add": "STOCK_RANGE_TABLE_NOT_IDENTIFIED|A",
    "classes": [
     "SOURCE_RESEARCH_REQUIRED",
     "OWNER_DECISION_REQUIRED"
    ],
    "marginalGroups": 9,
-   "cumulativeGroups": 202,
-   "cumulativeVehiclesFullyExecutable": 137
+   "cumulativeGroups": 193,
+   "cumulativeVehiclesFullyExecutable": 133
   },
   {
-   "step": 11,
+   "step": 10,
    "add": "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED|D",
    "classes": [
     "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "marginalGroups": 11,
-   "cumulativeGroups": 213,
-   "cumulativeVehiclesFullyExecutable": 144
+   "cumulativeGroups": 204,
+   "cumulativeVehiclesFullyExecutable": 140
   },
   {
-   "step": 12,
+   "step": 11,
    "add": "STOCK_FIRING_ARC_NOT_REVIEWED|B",
    "classes": [
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "marginalGroups": 11,
-   "cumulativeGroups": 224,
-   "cumulativeVehiclesFullyExecutable": 147
+   "cumulativeGroups": 215,
+   "cumulativeVehiclesFullyExecutable": 143
   },
   {
-   "step": 13,
+   "step": 12,
    "add": "STOCK_DAMAGE_QUALIFIED|D",
    "classes": [
     "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "marginalGroups": 10,
-   "cumulativeGroups": 234,
-   "cumulativeVehiclesFullyExecutable": 156
+   "cumulativeGroups": 225,
+   "cumulativeVehiclesFullyExecutable": 152
   },
   {
-   "step": 14,
+   "step": 13,
    "add": "STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER|D",
    "classes": [
     "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "marginalGroups": 11,
-   "cumulativeGroups": 245,
-   "cumulativeVehiclesFullyExecutable": 164
+   "cumulativeGroups": 236,
+   "cumulativeVehiclesFullyExecutable": 160
   },
   {
-   "step": 15,
+   "step": 14,
    "add": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|B",
    "classes": [
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "marginalGroups": 10,
-   "cumulativeGroups": 255,
-   "cumulativeVehiclesFullyExecutable": 172
+   "cumulativeGroups": 246,
+   "cumulativeVehiclesFullyExecutable": 168
   },
   {
-   "step": 16,
+   "step": 15,
    "add": "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT|C",
    "classes": [
     "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
    ],
    "marginalGroups": 9,
-   "cumulativeGroups": 264,
-   "cumulativeVehiclesFullyExecutable": 176
+   "cumulativeGroups": 255,
+   "cumulativeVehiclesFullyExecutable": 172
   },
   {
-   "step": 17,
+   "step": 16,
    "add": "STOCK_OPERATOR_NOT_PRINTED|A",
    "classes": [
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "marginalGroups": 8,
-   "cumulativeGroups": 272,
-   "cumulativeVehiclesFullyExecutable": 181
+   "cumulativeGroups": 263,
+   "cumulativeVehiclesFullyExecutable": 177
   },
   {
-   "step": 18,
+   "step": 17,
    "add": "STOCK_GROUP_IS_A_WEAPON_BATTERY|C",
    "classes": [
     "SOURCE_RESEARCH_REQUIRED"
    ],
-   "marginalGroups": 9,
-   "cumulativeGroups": 281,
-   "cumulativeVehiclesFullyExecutable": 189
+   "marginalGroups": 6,
+   "cumulativeGroups": 269,
+   "cumulativeVehiclesFullyExecutable": 182
   },
   {
-   "step": 19,
+   "step": 18,
    "add": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|D",
    "classes": [
     "OWNER_DECISION_REQUIRED",
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "marginalGroups": 5,
-   "cumulativeGroups": 286,
-   "cumulativeVehiclesFullyExecutable": 194
+   "cumulativeGroups": 274,
+   "cumulativeVehiclesFullyExecutable": 187
   },
   {
-   "step": 20,
-   "add": "STOCK_DAMAGE_QUALIFIED|C",
-   "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
-    "SOURCE_RESEARCH_REQUIRED"
-   ],
-   "marginalGroups": 5,
-   "cumulativeGroups": 291,
-   "cumulativeVehiclesFullyExecutable": 198
-  },
-  {
-   "step": 21,
+   "step": 19,
    "add": "STOCK_DAMAGE_AREA_OR_SPLASH|D",
    "classes": [
     "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "marginalGroups": 5,
-   "cumulativeGroups": 296,
-   "cumulativeVehiclesFullyExecutable": 202
+   "cumulativeGroups": 279,
+   "cumulativeVehiclesFullyExecutable": 190
   },
   {
-   "step": 22,
+   "step": 20,
    "add": "STOCK_FIRING_ARC_STATED_UNPARSED|E",
    "classes": [
     "SOURCE_RESEARCH_REQUIRED",
     "OWNER_DECISION_REQUIRED"
    ],
    "marginalGroups": 4,
-   "cumulativeGroups": 300,
-   "cumulativeVehiclesFullyExecutable": 206
+   "cumulativeGroups": 283,
+   "cumulativeVehiclesFullyExecutable": 194
   },
   {
-   "step": 23,
+   "step": 21,
    "add": "STOCK_ATTACK_TOTAL_NOT_PRINTED|A",
    "classes": [
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "marginalGroups": 3,
-   "cumulativeGroups": 303,
-   "cumulativeVehiclesFullyExecutable": 209
+   "cumulativeGroups": 286,
+   "cumulativeVehiclesFullyExecutable": 197
   },
   {
-   "step": 24,
+   "step": 22,
+   "add": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C",
+   "classes": [
+    "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
+   ],
+   "marginalGroups": 3,
+   "cumulativeGroups": 289,
+   "cumulativeVehiclesFullyExecutable": 200
+  },
+  {
+   "step": 23,
    "add": "STOCK_VARIANT_SPECIFIC_GROUP_UNMODELED|F",
    "classes": [
     "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
     "GM_CERTIFICATION_OPTION"
    ],
    "marginalGroups": 3,
-   "cumulativeGroups": 306,
-   "cumulativeVehiclesFullyExecutable": 210
+   "cumulativeGroups": 292,
+   "cumulativeVehiclesFullyExecutable": 201
   },
   {
-   "step": 25,
+   "step": 24,
    "add": "STOCK_DAMAGE_ION_UNVERIFIED|B",
    "classes": [
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "marginalGroups": 2,
-   "cumulativeGroups": 308,
-   "cumulativeVehiclesFullyExecutable": 212
+   "cumulativeGroups": 294,
+   "cumulativeVehiclesFullyExecutable": 203
+  },
+  {
+   "step": 25,
+   "add": "STOCK_DAMAGE_QUALIFIED|C",
+   "classes": [
+    "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
+    "SOURCE_RESEARCH_REQUIRED"
+   ],
+   "marginalGroups": 2,
+   "cumulativeGroups": 296,
+   "cumulativeVehiclesFullyExecutable": 205
   },
   {
    "step": 26,
@@ -29569,8 +28862,8 @@
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "marginalGroups": 2,
-   "cumulativeGroups": 310,
-   "cumulativeVehiclesFullyExecutable": 214
+   "cumulativeGroups": 298,
+   "cumulativeVehiclesFullyExecutable": 207
   },
   {
    "step": 27,
@@ -29580,8 +28873,8 @@
     "OWNER_DECISION_REQUIRED"
    ],
    "marginalGroups": 1,
-   "cumulativeGroups": 311,
-   "cumulativeVehiclesFullyExecutable": 215
+   "cumulativeGroups": 299,
+   "cumulativeVehiclesFullyExecutable": 208
   },
   {
    "note": "remaining blocked groups after the greedy path",
@@ -29597,8 +28890,8 @@
    "sourceCertification": "MECHANIC_SPECIFIED",
    "isPartitionOwner": true,
    "stockGroups": 336,
-   "stockExecutable": 294,
-   "stockBlocked": 42,
+   "stockExecutable": 296,
+   "stockBlocked": 40,
    "stockVehicles": 299,
    "stockBasis": "partition (first matching family owns a group)",
    "mechanicImplemented": "OFFLINE_TESTED",
@@ -29656,8 +28949,8 @@
    "sourceCertification": "MECHANIC_SPECIFIED",
    "isPartitionOwner": true,
    "stockGroups": 61,
-   "stockExecutable": 43,
-   "stockBlocked": 18,
+   "stockExecutable": 44,
+   "stockBlocked": 17,
    "stockVehicles": 54,
    "stockBasis": "partition (first matching family owns a group)",
    "mechanicImplemented": "OFFLINE_TESTED",
@@ -30197,8 +29490,8 @@
    "sourceCertification": "MECHANIC_SPECIFIED",
    "isPartitionOwner": true,
    "stockGroups": 58,
-   "stockExecutable": 28,
-   "stockBlocked": 30,
+   "stockExecutable": 37,
+   "stockBlocked": 21,
    "stockVehicles": 58,
    "stockBasis": "partition (first matching family owns a group)",
    "mechanicImplemented": "OFFLINE_TESTED",
@@ -30213,10 +29506,6 @@
    ],
    "overall": "NOT_FULLY_OPERATIONAL",
    "sharedStockBlockers": [
-    {
-     "causeKey": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C",
-     "groups": 16
-    },
     {
      "causeKey": "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA|E",
      "groups": 7
@@ -30235,6 +29524,10 @@
     },
     {
      "causeKey": "STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED|D",
+     "groups": 3
+    },
+    {
+     "causeKey": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C",
      "groups": 3
     }
    ],
@@ -30840,7 +30133,7 @@
    "sourceCertification": "MECHANIC_SPECIFIED",
    "isPartitionOwner": false,
    "stockGroups": 80,
-   "stockExecutable": 67,
+   "stockExecutable": 68,
    "stockBlocked": null,
    "stockVehicles": 74,
    "stockBasis": "overlay (a configuration/attack mode; not additive with partition families)",
@@ -30990,7 +30283,7 @@
    "sourceCertification": "NO_CATALOG_ROW",
    "isPartitionOwner": false,
    "stockGroups": 283,
-   "stockExecutable": 202,
+   "stockExecutable": 208,
    "stockBlocked": null,
    "stockVehicles": 102,
    "stockBasis": "overlay (a configuration/attack mode; not additive with partition families)",
@@ -33343,7 +32636,7 @@
      "immediatelyUnlockedGroups": 57,
      "vehiclesGainingAnyGroup": 57,
      "vehiclesGainingFirstExecutableGroup": 3,
-     "vehiclesBecomingFullyExecutable": 50,
+     "vehiclesBecomingFullyExecutable": 52,
      "label": "CONDITIONAL on the ruling and on no other blocker remaining"
     },
     {
@@ -33542,8 +32835,8 @@
     {
      "option": 2,
      "grossAffectedGroups": 30,
-     "immediatelyUnlockedGroups": 18,
-     "vehiclesGainingAnyGroup": 7,
+     "immediatelyUnlockedGroups": 21,
+     "vehiclesGainingAnyGroup": 8,
      "vehiclesGainingFirstExecutableGroup": 4,
      "vehiclesBecomingFullyExecutable": 2,
      "label": "CONDITIONAL on the ruling and on no other blocker remaining"
@@ -33679,32 +32972,32 @@
  "forecast": {
   "note": "Upper bounds under stated conditions. They are NOT promises: a SOURCE_RESEARCH item may end SOURCE_INCOMPLETE; an OWNER_DECISION item may be ruled \"refuse\"; a GM_CERTIFICATION_OPTION is never canonical.",
   "canonicalExecutableNow": {
-   "groups": 530,
+   "groups": 542,
    "of": 846,
-   "pct": 62.6
+   "pct": 64.1
   },
   "afterEngineeringOnly": {
-   "grossAffectedGroups": 25,
-   "immediatelyUnlockedGroups": 13,
-   "vehiclesGainingAnyGroup": 11,
+   "grossAffectedGroups": 12,
+   "immediatelyUnlockedGroups": 4,
+   "vehiclesGainingAnyGroup": 2,
    "vehiclesGainingFirstExecutableGroup": 1,
-   "vehiclesBecomingFullyExecutable": 4,
-   "cumulativeGroups": 543
+   "vehiclesBecomingFullyExecutable": 0,
+   "cumulativeGroups": 546
   },
   "afterEngineeringAndSourceResearch_upperBound": {
-   "grossAffectedGroups": 213,
-   "immediatelyUnlockedGroups": 142,
-   "vehiclesGainingAnyGroup": 108,
-   "vehiclesGainingFirstExecutableGroup": 33,
-   "vehiclesBecomingFullyExecutable": 79,
+   "grossAffectedGroups": 198,
+   "immediatelyUnlockedGroups": 130,
+   "vehiclesGainingAnyGroup": 98,
+   "vehiclesGainingFirstExecutableGroup": 30,
+   "vehiclesBecomingFullyExecutable": 72,
    "cumulativeGroups": 672
   },
   "afterOwnerRulingsToo_upperBound": {
-   "grossAffectedGroups": 301,
-   "immediatelyUnlockedGroups": 273,
-   "vehiclesGainingAnyGroup": 187,
-   "vehiclesGainingFirstExecutableGroup": 46,
-   "vehiclesBecomingFullyExecutable": 179,
+   "grossAffectedGroups": 289,
+   "immediatelyUnlockedGroups": 261,
+   "vehiclesGainingAnyGroup": 180,
+   "vehiclesGainingFirstExecutableGroup": 43,
+   "vehiclesBecomingFullyExecutable": 172,
    "cumulativeGroups": 803
   },
   "gmCertificationOnly_notCanonical": {
