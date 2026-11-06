@@ -68,3 +68,29 @@ test('CONSERVATION: tractor groups that stay refused keep their other, unrelated
     if (g.reasons.includes('STOCK_DAMAGE_NOT_PRINTED_IN_RECORD')) assert.ok(g.reasons.length > 1, g.groupKey);
   }
 });
+
+test('AUTOFIRE ON THE DAMAGE LINE: accepted only when it reconciles with the printed total by the -5 autofire penalty; every other qualifier still refuses', () => {
+  const at = (total, notes, label = 'laser cannon') => parseStockFiringGroup({ groupKey: 'g', label, attackBonusPrinted: total, specialNotes: notes });
+  // total 9, "+4 autofire": 9 - 4 = 5 (reconciles) -> no qualifier refusal, and the weapon is autofire-capable
+  const ok = at(9, 'Published damage: 5d10, +4 autofire. Operator: pilot.');
+  assert.ok(!ok.reasons.includes('STOCK_DAMAGE_QUALIFIED')); assert.equal(ok.damageLineAutofire, 4); assert.equal(ok.autofireCapable, true);
+  assert.ok(!at(2, 'Published damage: 3d10, -3 autofire. Operator: gunner.').reasons.includes('STOCK_DAMAGE_QUALIFIED'));
+  assert.ok(!at(5, 'Published damage: 4d10, +0 autofire. Operator: gunner.').reasons.includes('STOCK_DAMAGE_QUALIFIED'));
+  // a figure that does NOT reconcile is not "corrected": the group stays refused
+  const bad = at(9, 'Published damage: 5d10, +3 autofire. Operator: pilot.');
+  assert.ok(bad.reasons.includes('STOCK_DAMAGE_QUALIFIED')); assert.equal(bad.damageLineAutofire, undefined); assert.ok(!bad.autofireCapable);
+  // other qualifiers, and "autofire only" (no figure), stay refused
+  assert.ok(at(9, 'Published damage: 3d10, autofire only. Operator: pilot.').reasons.includes('STOCK_DAMAGE_QUALIFIED'));
+  assert.ok(at(7, 'Published damage: 5d10x5, heavy concussion warhead. Operator: gunner.').reasons.includes('STOCK_DAMAGE_QUALIFIED'));
+  assert.ok(at(9, 'Published damage: 5d10, +4 autofire and stun. Operator: pilot.').reasons.includes('STOCK_DAMAGE_QUALIFIED'));
+});
+
+test('CORPUS: exactly three groups became executable through the damage-line autofire figure', () => {
+  const got = [];
+  for (const l of readFileSync('data/canonical/vehicles/vehicles.json', 'utf8').trim().split('\n')) {
+    const r = JSON.parse(l);
+    for (const g of assessStockWeaponGroups(r).groups) if (g.damageLineAutofire !== undefined) got.push([g.groupKey, g.executable, g.autofireCapable]);
+  }
+  assert.deepEqual(got.map(x => x[0]).sort(), ['cw-grievous-wheel-bike-modified-tsmeu-6-source-attack-1', 'cw-oevvaor-jet-catamaran-source-attack-1', 'cw-raddaugh-gnasp-fluttercraft-source-attack-1']);
+  assert.ok(got.every(x => x[1] === true && x[2] === true));
+});

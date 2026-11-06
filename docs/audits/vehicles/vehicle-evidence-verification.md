@@ -20,7 +20,7 @@ Table 10-2 itself is an image in the corpus, so V100-02 could not be advanced fr
 
 ### Defects that need no ruling
 
-The text pass found **121 blocked groups with an extraction or integration defect** (arc silent in text: 12; payload line in text not in record: 11; label embeds printed line: 16; existing mechanic not connected: 43; payload present but not attributable: 66). If every proposed correction were confirmed in the PDF and nothing else remained, **32 groups** would run (16 vehicles gain a first executable weapon; 15 become fully executable). Conditional; no record was changed.
+The text pass found **118 blocked groups with an extraction or integration defect** (arc silent in text: 12; payload line in text not in record: 11; label embeds printed line: 16; existing mechanic not connected: 40; payload present but not attributable: 66). If every proposed correction were confirmed in the PDF and nothing else remained, **29 groups** would run (13 vehicles gain a first executable weapon; 12 become fully executable). Conditional; no record was changed.
 
 Wider record-vs-text scan of 319 located statblocks: Base Atk differs on **8** vehicles and Intelligence on **10**. A difference can be an OCR error in the text as easily as a record error (for example Int 4 vs 14), so each is a PDF check, not a correction:
 
@@ -401,7 +401,7 @@ Residual = printed delta minus battery assistance 2(N-1). "With text values" rep
 - arc silent in text: 12
 - payload line in text not in record: 11
 - label embeds printed line: 16
-- existing mechanic not connected: 43
+- existing mechanic not connected: 40
 - payload present but not attributable: 66
 
 The proposed correction for each is in the JSON (`extractionDefects.defects[]`). The mechanically parsed label decompositions:

@@ -5,20 +5,20 @@
   "vehicles": 429,
   "groups": 846,
   "sourceVerifiedGroups": 781,
-  "offlineExecutableGroups": 539,
-  "vehiclesWithOfflineExecutableGroup": 332,
-  "vehiclesAllGroupsExecutable": 174,
+  "offlineExecutableGroups": 542,
+  "vehiclesWithOfflineExecutableGroup": 335,
+  "vehiclesAllGroupsExecutable": 177,
   "outcomes": {
    "SOURCE_EVIDENCE_REQUIRED": 86,
-   "CANONICAL_EXECUTABLE": 539,
-   "IMPLEMENTATION_REQUIRED": 164,
+   "CANONICAL_EXECUTABLE": 542,
+   "IMPLEMENTATION_REQUIRED": 161,
    "RULES_DECISION_REQUIRED": 57
   },
   "unarmedCertifiedVehicles": 38,
   "armedRecordGapVehicles": 4,
   "armedVehicles": 391,
-  "armedVehiclesWithExecutableGroup": 332,
-  "armedVehiclesFullyExecutable": 174,
+  "armedVehiclesWithExecutableGroup": 335,
+  "armedVehiclesFullyExecutable": 177,
   "gmConfigurableGroups": 102,
   "gmBatteryConfigurableGroups": 207,
   "liveVerifiedVehicles": 0
@@ -84,8 +84,8 @@
   "STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED": 22,
   "STOCK_OPERATOR_NOT_PRINTED": 17,
   "STOCK_OPERATOR_IS_A_STATION_BATTERY": 17,
-  "STOCK_DAMAGE_QUALIFIED": 17,
   "STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER": 15,
+  "STOCK_DAMAGE_QUALIFIED": 14,
   "STOCK_FIRING_ARC_NOT_REVIEWED": 12,
   "STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT": 10,
   "STOCK_GROUP_IS_A_WEAPON_BATTERY": 9,
@@ -106,8 +106,8 @@
   "Clone Wars Campaign Guide": {
    "vehicles": 67,
    "groups": 124,
-   "executableGroups": 71,
-   "vehiclesWithExecutable": 50
+   "executableGroups": 74,
+   "vehiclesWithExecutable": 53
   },
   "Force Unleashed Campaign Guide": {
    "vehicles": 34,
@@ -217,7 +217,7 @@
   },
   "wheel-bike": {
    "vehicles": 2,
-   "vehiclesWithExecutable": 0
+   "vehiclesWithExecutable": 1
   },
   "wheeled-tank": {
    "vehicles": 1,
@@ -229,7 +229,7 @@
   },
   "water-speeder": {
    "vehicles": 2,
-   "vehiclesWithExecutable": 1
+   "vehiclesWithExecutable": 2
   },
   "tracked-vehicle": {
    "vehicles": 10,
@@ -237,7 +237,7 @@
   },
   "ornithopter": {
    "vehicles": 1,
-   "vehiclesWithExecutable": 0
+   "vehiclesWithExecutable": 1
   },
   "heavy-ground-speeder": {
    "vehicles": 2,
@@ -3138,8 +3138,8 @@
    "size": "Large",
    "groupCount": 1,
    "sourceVerifiedGroups": 1,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -3155,18 +3155,18 @@
      "area": null,
      "operator": "pilot",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
-     "executableModes": [],
-     "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_QUALIFIED"
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "pilot station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
+     "executableModes": [
+      "single"
      ],
-     "outcome": "IMPLEMENTATION_REQUIRED"
+     "capitalShipPenaltyApplies": false,
+     "refusals": [],
+     "outcome": "CANONICAL_EXECUTABLE"
     }
    ]
   },
@@ -4410,8 +4410,8 @@
    "size": "Gargantuan",
    "groupCount": 1,
    "sourceVerifiedGroups": 1,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -4427,18 +4427,18 @@
      "area": null,
      "operator": "gunner",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
-     "executableModes": [],
-     "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_QUALIFIED"
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "gunner station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
+     "executableModes": [
+      "single"
      ],
-     "outcome": "IMPLEMENTATION_REQUIRED"
+     "capitalShipPenaltyApplies": false,
+     "refusals": [],
+     "outcome": "CANONICAL_EXECUTABLE"
     }
    ]
   },
@@ -5047,8 +5047,8 @@
    "size": "Huge",
    "groupCount": 1,
    "sourceVerifiedGroups": 1,
-   "offlineExecutableGroups": 0,
-   "status": "NO_EXECUTABLE_STOCK_GROUP",
+   "offlineExecutableGroups": 1,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -5064,18 +5064,18 @@
      "area": null,
      "operator": "gunner",
      "sourceVerified": true,
-     "offlineExecutable": false,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
-     "executableModes": [],
-     "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_QUALIFIED"
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "gunner station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
+     "executableModes": [
+      "single"
      ],
-     "outcome": "IMPLEMENTATION_REQUIRED"
+     "capitalShipPenaltyApplies": false,
+     "refusals": [],
+     "outcome": "CANONICAL_EXECUTABLE"
     }
    ]
   },

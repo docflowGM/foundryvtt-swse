@@ -14,17 +14,20 @@
 |---|---|---|---|
 | vehicles | 429 | 429 | 0 |
 | groups | 846 | 846 | 0 |
-| executableGroups | 528 | 539 | +11 |
-| blockedGroups | 318 | 307 | -11 |
-| vehiclesWithExecutableGroup | 331 | 332 | +1 |
-| vehiclesFullyExecutable | 169 | 174 | +5 |
+| executableGroups | 528 | 542 | +14 |
+| blockedGroups | 318 | 304 | -14 |
+| vehiclesWithExecutableGroup | 331 | 335 | +4 |
+| vehiclesFullyExecutable | 169 | 177 | +8 |
 | aftermarketRows | 63 | 63 | 0 |
 | aftermarketInstallable | 30 | 30 | 0 |
 
-**Why the numbers moved.** Denominators did not change (429 vehicles, 846 groups, 63 aftermarket rows). 11 stock groups became canonical-executable after the owner baseline was taken, in reviewed batches (two reviewed batches after the owner baseline: aeea5c4 (two launcher groups whose records PRINT the launcher count and Payload) and the tractor-beam notation batch (nine groups whose records print the grapple modifier in a spelling the gate did not read)); each passes the unchanged gate on facts its own record prints (nothing was inferred):
+**Why the numbers moved.** Denominators did not change (429 vehicles, 846 groups, 63 aftermarket rows). 14 stock groups became canonical-executable after the owner baseline was taken, in reviewed batches (three reviewed batches after the owner baseline: aeea5c4 (two launcher groups whose records PRINT the launcher count and Payload), the tractor-beam notation batch (nine groups) and the damage-line autofire batch (three groups whose printed autofire figure reconciles with the printed total)); each passes the unchanged gate on facts its own record prints (nothing was inferred):
 
 - `sotg-mandalmotors-starviper-assault-fighter-group-2` (proton torpedo launcher): Starviper proton torpedo launchers (commit aeea5c4): the record prints 2 launchers (hardwareCount) and a Payload line of 6 proton torpedoes; designation reconciled by grammatical normalisation only.
 - `sotg-sorosuub-cutlass-9-patrol-fighter-group-2` (medium concussion missile): Cutlass-9 medium concussion missiles (commit aeea5c4): the record prints 1 launcher and a Payload line of 8 medium concussion missiles.
+- `cw-grievous-wheel-bike-modified-tsmeu-6-source-attack-1` (double laser cannon): Damage-line autofire figure (feature/v2-vehicles-next): the record prints the autofire attack figure on the damage line; it is accepted only because it reconciles with the printed total by the -5 autofire penalty.
+- `cw-oevvaor-jet-catamaran-source-attack-1` (blaster cannon): Damage-line autofire figure (feature/v2-vehicles-next): the record prints the autofire attack figure on the damage line; it is accepted only because it reconciles with the printed total by the -5 autofire penalty.
+- `cw-raddaugh-gnasp-fluttercraft-source-attack-1` (laser cannon tail-gun): Damage-line autofire figure (feature/v2-vehicles-next): the record prints the autofire attack figure on the damage line; it is accepted only because it reconciles with the printed total by the -5 autofire penalty.
 - `fucg-neutron-star-bulk-cruiser-attack-2` (tractor beam): Tractor-beam notation (feature/v2-vehicles-next): the record prints the grapple modifier in a spelling the gate did not read ("damage grapple +N" / "damage - (grapple +N)"); the mechanic and every other gate are unchanged.
 - `fucg-venator-class-star-destroyer-attack-5` (tractor beam battery): Tractor-beam notation (feature/v2-vehicles-next): the record prints the grapple modifier in a spelling the gate did not read ("damage grapple +N" / "damage - (grapple +N)"); the mechanic and every other gate are unchanged.
 - `gaw-corona-class-armed-transport-source-attack-4` (tractor beam battery): Tractor-beam notation (feature/v2-vehicles-next): the record prints the grapple modifier in a spelling the gate did not read ("damage grapple +N" / "damage - (grapple +N)"); the mechanic and every other gate are unchanged.
@@ -35,7 +38,7 @@
 - `sotg-loronar-corporation-strike-class-medium-cruiser-group-4` (tractor beam battery): Tractor-beam notation (feature/v2-vehicles-next): the record prints the grapple modifier in a spelling the gate did not read ("damage grapple +N" / "damage - (grapple +N)"); the mechanic and every other gate are unchanged.
 - `sotg-lusankya-group-5` (tractor beam battery): Tractor-beam notation (feature/v2-vehicles-next): the record prints the grapple modifier in a spelling the gate did not read ("damage grapple +N" / "damage - (grapple +N)"); the mechanic and every other gate are unchanged.
 
-Net effect on the headline counts: +1 vehicle with at least one executable group (331 -> 332), +5 fully executable vehicle (169 -> 174), blocked groups 318 -> 307. This report analyses the 307 groups blocked at HEAD.
+Net effect on the headline counts: +4 vehicle with at least one executable group (331 -> 335), +8 fully executable vehicle (169 -> 177), blocked groups 318 -> 304. This report analyses the 304 groups blocked at HEAD.
 
 ### I.2 The five claims, never conflated
 
@@ -43,7 +46,7 @@ Net effect on the headline counts: +1 vehicle with at least one executable group
 |---|---|---|
 | SOURCE_VERIFIED | 781 | damage, operator and attack total are printed and readable in the record |
 | MECHANIC_SPECIFIED | see Part IV | a published mechanic exists for the weapon family (per family, not per group) |
-| OFFLINE_EXECUTABLE (canonical) | 539 | 63.7% of 846; driven arm -> attack -> damage by the corpus test |
+| OFFLINE_EXECUTABLE (canonical) | 542 | 64.1% of 846; driven arm -> attack -> damage by the corpus test |
 | GM_CONFIGURABLE (not canonical) | 102 | blocked ONLY by the four ammunition facts; a GM configuration would run them and report GM_CONFIGURED_EXECUTABLE |
 | LIVE_VERIFIED | 0 | no Foundry V13 runtime testing has been done |
 
@@ -53,20 +56,20 @@ Net effect on the headline counts: +1 vehicle with at least one executable group
 |---|---|---|
 | UNARMED_CONFIRMED | 38 | statblock prints no Ranged/Melee line; excluded from the armed denominator, never counted as missing support |
 | ARMED_RECORD_GAP | 4 | statblock prints an attack the record has no group for (data repair, kept in the armed denominator) |
-| ARMED_FULLY_EXECUTABLE | 174 | every printed group is canonical-executable |
+| ARMED_FULLY_EXECUTABLE | 177 | every printed group is canonical-executable |
 | ARMED_PARTIALLY_EXECUTABLE | 158 | at least one executable and at least one blocked group |
-| ARMED_ALL_GROUPS_BLOCKED | 55 | every printed group is blocked |
+| ARMED_ALL_GROUPS_BLOCKED | 52 | every printed group is blocked |
 | Total | 429 |  |
 
-Armed denominator: **391** (38 unarmed excluded). Armed vehicles with at least one executable group: **332 (84.9%)**; fully executable: **174 (44.5%)**. Against all 429: 332 (77.4%) and 174 (40.6%).
+Armed denominator: **391** (38 unarmed excluded). Armed vehicles with at least one executable group: **335 (85.7%)**; fully executable: **177 (45.3%)**. Against all 429: 335 (78.1%) and 177 (41.3%).
 
 ### I.4 Certified outcome of every stock group
 
 | Outcome | Groups |
 |---|---|
 | SOURCE_EVIDENCE_REQUIRED | 86 |
-| CANONICAL_EXECUTABLE | 539 |
-| IMPLEMENTATION_REQUIRED | 164 |
+| CANONICAL_EXECUTABLE | 542 |
+| IMPLEMENTATION_REQUIRED | 161 |
 | RULES_DECISION_REQUIRED | 57 |
 
 ### I.5 Aftermarket catalog (63 rows are not 63 components)
@@ -82,7 +85,7 @@ The 63 rows are **49 weapon / launcher / device rows** and **14 ammunition rows*
 
 ## Part II - Blocked stock-group census
 
-Every one of the 307 blocked groups appears exactly once in the table below and in the companion JSON (`blockedGroups[]`, with per-cause rationale, mechanic status, source status and what would unlock it). **Blocking codes** are the refusal codes that actually block the group: the umbrella `STOCK_AMMUNITION_LIMITED_UNTRACKED` is not an independent blocker (it always accompanies the specific ammunition codes), and a printed battery's mode-level reasons (for example `STOCK_BATTERY_WEAPON_COUNT_NOT_STATED`) block only when neither battery mode can run. Multiple blockers per group are preserved.
+Every one of the 304 blocked groups appears exactly once in the table below and in the companion JSON (`blockedGroups[]`, with per-cause rationale, mechanic status, source status and what would unlock it). **Blocking codes** are the refusal codes that actually block the group: the umbrella `STOCK_AMMUNITION_LIMITED_UNTRACKED` is not an independent blocker (it always accompanies the specific ammunition codes), and a printed battery's mode-level reasons (for example `STOCK_BATTERY_WEAPON_COUNT_NOT_STATED`) block only when neither battery mode can run. Multiple blockers per group are preserved.
 
 ### II.1 Root-cause taxonomy
 
@@ -102,7 +105,7 @@ Every one of the 307 blocked groups appears exactly once in the table below and 
 |---|---|
 | A - source evidence missing | 175 |
 | B - evidence exists in a source/record but is not extracted or reconciled | 42 |
-| C - an existing mechanic is not connected | 22 |
+| C - an existing mechanic is not connected | 19 |
 | D - a mechanical implementation is missing | 32 |
 | E - a genuine printed-rule ambiguity (only after the source is examined) | 34 |
 | F - GM configuration required | 2 |
@@ -111,7 +114,7 @@ Every one of the 307 blocked groups appears exactly once in the table below and 
 
 | Status | Groups |
 |---|---|
-| SOURCE_NOT_YET_VERIFIED | 249 |
+| SOURCE_NOT_YET_VERIFIED | 246 |
 | SOURCE_INCOMPLETE | 51 |
 | SOURCE_CONFIRMED | 6 |
 | SOURCE_CONTRADICTORY | 1 |
@@ -124,7 +127,7 @@ Every one of the 307 blocked groups appears exactly once in the table below and 
 |---|---|
 | SOURCE_RESEARCH | 75 |
 | GM_OPTION + OWNER_DECISION | 57 |
-| ENGINEERING_WORK + SOURCE_RESEARCH | 54 |
+| ENGINEERING_WORK + SOURCE_RESEARCH | 51 |
 | OWNER_DECISION + SOURCE_RESEARCH | 44 |
 | ENGINEERING_WORK + OWNER_DECISION + SOURCE_RESEARCH | 30 |
 | GM_OPTION + SOURCE_RESEARCH | 22 |
@@ -136,7 +139,7 @@ Every one of the 307 blocked groups appears exactly once in the table below and 
 
 ### II.5 The census
 
-#### Clone Wars Campaign Guide (53)
+#### Clone Wars Campaign Guide (50)
 
 | Vehicle (page) | Group | Blocking codes | Root | Action | Source | GM opt. |
 |---|---|---|---|---|---|---|
@@ -152,7 +155,6 @@ Every one of the 307 blocked groups appears exactly once in the table below and 
 | Consular-class Cruiser (Charger c70 Retrofit) (p.170) | light turbolaser cannon battery | OPERATOR_IS_A_STATION_BATTERY, GROUP_IS_A_WEAPON_BATTERY | C | GM_OPTION + SOURCE_RESEARCH | NOT_YET_VERIFIED |  |
 | Droch-class Boarding Ship (p.207) | boarding drill | EVIDENCE_UNMODELED, DAMAGE_NOT_PRINTED_IN_RECORD, RANGE_TABLE_NOT_IDENTIFIED | AD | ENGINEERING_WORK + OWNER_DECISION + SOURCE_RESEARCH | NOT_YET_VERIFIED |  |
 | Freefall-class Starfighter (p.82) | bomb chute | OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER, AMMUNITION_PAYLOAD_NOT_PRINTED, LAUNCHER_IDENTITY_NOT_ESTABLISHED, RANGE_TABLE_NOT_IDENTIFIED | ABD | ENGINEERING_WORK + OWNER_DECISION + SOURCE_RESEARCH | NOT_YET_VERIFIED |  |
-| Grievous's Wheel Bike (Modified Tsmeu-6) (p.203) | double laser cannon | DAMAGE_QUALIFIED | C | ENGINEERING_WORK + SOURCE_RESEARCH | NOT_YET_VERIFIED |  |
 | Ground Armored Tank (GAT) (p.198) | missile launchers | AMMUNITION_PAYLOAD_NOT_PRINTED, LAUNCHER_IDENTITY_NOT_ESTABLISHED | AB | SOURCE_RESEARCH | NOT_YET_VERIFIED | ammo |
 | Hyena-class Bomber (p.208) | proton torpedoes | AMMUNITION_PAYLOAD_NOT_PRINTED | B | SOURCE_RESEARCH | NOT_YET_VERIFIED | ammo |
 | Hyena-class Bomber (p.208) | light concussion missiles | AMMUNITION_PAYLOAD_NOT_PRINTED | B | SOURCE_RESEARCH | NOT_YET_VERIFIED | ammo |
@@ -163,7 +165,6 @@ Every one of the 307 blocked groups appears exactly once in the table below and 
 | Koensayr BTL-S1 Y-wing (p.173) | proton torpedoes | LAUNCHER_ALLOCATION_NOT_CERTIFIED | A | GM_OPTION + OWNER_DECISION | INCOMPLETE | ammo |
 | Manta Droid Subfighter (p.200) | torpedo launchers | AMMUNITION_PAYLOAD_NOT_PRINTED, LAUNCHER_IDENTITY_NOT_ESTABLISHED | AB | SOURCE_RESEARCH | NOT_YET_VERIFIED | ammo |
 | MorningStar-A Assault Starfighter (p.83) | concussion missile launcher | AMMUNITION_PAYLOAD_NOT_PRINTED, LAUNCHER_IDENTITY_NOT_ESTABLISHED | AB | SOURCE_RESEARCH | NOT_YET_VERIFIED | ammo |
-| Oevvaor Jet Catamaran (p.219) | blaster cannon | DAMAGE_QUALIFIED | C | ENGINEERING_WORK + SOURCE_RESEARCH | NOT_YET_VERIFIED |  |
 | OG-9 Homing Spider Droid (p.201) | heavy repeating blaster | DAMAGE_QUALIFIED, RANGE_TABLE_NOT_IDENTIFIED | AC | ENGINEERING_WORK + OWNER_DECISION + SOURCE_RESEARCH | NOT_YET_VERIFIED |  |
 | Persuader-class Droid Enforcer (p.201) | heavy repeating blaster | DAMAGE_QUALIFIED, RANGE_TABLE_NOT_IDENTIFIED | AC | ENGINEERING_WORK + OWNER_DECISION + SOURCE_RESEARCH | NOT_YET_VERIFIED |  |
 | Persuader-class Droid Enforcer (p.201) | missile launcher | DAMAGE_AREA_OR_SPLASH, AMMUNITION_PAYLOAD_NOT_PRINTED, LAUNCHER_IDENTITY_NOT_ESTABLISHED | ABD | ENGINEERING_WORK + SOURCE_RESEARCH | NOT_YET_VERIFIED |  |
@@ -172,7 +173,6 @@ Every one of the 307 blocked groups appears exactly once in the table below and 
 | Providence-class Destroyer (p.210) | point-defense ion cannon battery | EVIDENCE_UNMODELED, ATTACK_TOTAL_UNEXPLAINED_DELTA | DE | ENGINEERING_WORK + OWNER_DECISION + SOURCE_RESEARCH | NOT_YET_VERIFIED | battery |
 | Providence-class Destroyer (p.210) | proton torpedo launcher batteries | EVIDENCE_UNMODELED, AMMUNITION_PAYLOAD_NOT_PRINTED, LAUNCHER_IDENTITY_NOT_ESTABLISHED, ATTACK_TOTAL_UNEXPLAINED_DELTA | ABDE | ENGINEERING_WORK + OWNER_DECISION + SOURCE_RESEARCH | NOT_YET_VERIFIED | battery |
 | Punworcca 116-class Sloop (p.209) | microtractor-pressor | EVIDENCE_UNMODELED, DAMAGE_NOT_PRINTED_IN_RECORD, RANGE_TABLE_NOT_IDENTIFIED | AD | ENGINEERING_WORK + OWNER_DECISION + SOURCE_RESEARCH | NOT_YET_VERIFIED |  |
-| Raddaugh Gnasp Fluttercraft (p.220) | laser cannon tail-gun | DAMAGE_QUALIFIED | C | ENGINEERING_WORK + SOURCE_RESEARCH | NOT_YET_VERIFIED |  |
 | Republic Troop Transport (p.168) | missile launcher | AMMUNITION_PAYLOAD_NOT_PRINTED, LAUNCHER_IDENTITY_NOT_ESTABLISHED | AB | SOURCE_RESEARCH | NOT_YET_VERIFIED | ammo |
 | Sabaoth Destroyer (p.220) | point-defense heavy laser cannon batteries | EVIDENCE_UNMODELED | D | ENGINEERING_WORK + SOURCE_RESEARCH | NOT_YET_VERIFIED | battery |
 | Scurrg H-6 Prototype Bomber (p.85) | forward-mounted laser cannons | FIRING_ARC_STATED_UNPARSED | E | OWNER_DECISION + SOURCE_RESEARCH | INCOMPLETE |  |
@@ -515,7 +515,7 @@ Every one of the 307 blocked groups appears exactly once in the table below and 
 
 ### II.6 Vehicle identities with no executable group
 
-55 armed vehicles have every group blocked, 4 have a record gap and 38 are certified unarmed. The unarmed vehicles are **not** missing support. The record gaps:
+52 armed vehicles have every group blocked, 4 have a record gap and 38 are certified unarmed. The unarmed vehicles are **not** missing support. The record gaps:
 
 | Vehicle | Publication (page) | Printed attack line the record lacks |
 |---|---|---|
@@ -549,7 +549,6 @@ A **cause key** is `refusal code | root cause` (the same code can have different
 | GROUP_IS_A_WEAPON_BATTERY / C | C | 9 | 8 | 1 | 1 | 0 | 1 | weapon-battery establishment exists | NOT_YET_VERIFIED:9 | no |
 | DAMAGE_NOT_PRINTED_IN_RECORD / D | D | 6 | 6 | 0 | 0 | 0 | 0 | none: a non-damage special device (harpoon, boarding drill, marker, ... | NOT_YET_VERIFIED:6 | V100-05 |
 | FIRING_ARC_STATED_UNPARSED / E | E | 5 | 5 | 4 | 4 | 2 | 2 | only an explicit fixed-forward / forward-firing arc is interpreted (... | INCOMPLETE:5 | V100-04 |
-| DAMAGE_QUALIFIED / C | C | 5 | 5 | 3 | 3 | 3 | 3 | autofire attack-bonus reconciliation exists (printed bonus = total -... | NOT_YET_VERIFIED:5 | no |
 | DAMAGE_AREA_OR_SPLASH / D | D | 5 | 4 | 1 | 1 | 1 | 0 | starship-scale single-target area (P6C-3B) and area-miss half damage... | NOT_YET_VERIFIED:5 | no |
 | ATTACK_TOTAL_NOT_PRINTED / B | B | 5 | 2 | 0 | 0 | 0 | 0 | attack-total reconciliation exists | NOT_YET_VERIFIED:5 | no |
 | OPERATOR_NOT_PRINTED / B | B | 5 | 2 | 0 | 0 | 0 | 0 | operator parsing exists | NOT_YET_VERIFIED:5 | no |
@@ -557,6 +556,7 @@ A **cause key** is `refusal code | root cause` (the same code can have different
 | ATTACK_TOTAL_NOT_PRINTED / A | A | 3 | 3 | 0 | 0 | 0 | 0 | attack-total reconciliation exists | NOT_YET_VERIFIED:3 | no |
 | DAMAGE_NOT_PRINTED_IN_RECORD / C | C | 3 | 3 | 0 | 0 | 0 | 0 | tractor-beam opposed control exists and the gate already accepts "da... | CONFIRMED:3 | no |
 | DAMAGE_ION_UNVERIFIED / B | B | 2 | 2 | 1 | 1 | 0 | 1 | ion lifecycle exists (P6C-2C); type is taken only from printed text | NOT_YET_VERIFIED:2 | no |
+| DAMAGE_QUALIFIED / C | C | 2 | 2 | 0 | 0 | 0 | 0 | autofire attack-bonus reconciliation exists (printed bonus = total -... | NOT_YET_VERIFIED:2 | no |
 | POSSIBLE_AREA_WEAPON_UNVERIFIED / A | A | 2 | 2 | 0 | 0 | 0 | 0 | area mechanics exist; the label only denies | NOT_YET_VERIFIED:2 | no |
 | RANGE_TABLE_NOT_IDENTIFIED / B | B | 1 | 1 | 0 | 0 | 0 | 0 | range lookup (rangeSlugFromPrintedDesignation) exists | NOT_YET_VERIFIED:1 | no |
 | SIZE_DEPENDENT_ATTACK_ADJUSTMENT / E | E | 1 | 1 | 0 | 0 | 0 | 0 | capital-ship -20 attack component exists (W3) | CONTRADICTORY:1 | V100-03 |
@@ -584,7 +584,6 @@ A **cause key** is `refusal code | root cause` (the same code can have different
 | GROUP_IS_A_WEAPON_BATTERY / C | SOURCE_RESEARCH | The record marks the group a weapon battery but the printed operator line does not match the battery form the gate understands ("N gunners" / "battery (N gunners)"). |
 | DAMAGE_NOT_PRINTED_IN_RECORD / D | OWNER_DECISION + SOURCE_RESEARCH | The statblock prints no damage ("—", grapple modifier, special effect): the weapon is not an ordinary damage attack and its effect text must be read before any mechanic can be specified (a mechanic is a rules specification, not an engineering choice). |
 | FIRING_ARC_STATED_UNPARSED / E | SOURCE_RESEARCH + OWNER_DECISION | The source states a qualitative arc ("SOURCE_SILENT_CONFIRMED") that is not a defined geometry; whether it restricts fire, and how, is not printed. |
-| DAMAGE_QUALIFIED / C | ENGINEERING_WORK + SOURCE_RESEARCH | The damage line carries an autofire qualifier (+4) that reconciles with the printed total (9 - +4 = 5): the mechanic exists; the qualifier is only read from the structured autofireAttackBonus key. |
 | DAMAGE_AREA_OR_SPLASH / D | ENGINEERING_WORK + SOURCE_RESEARCH | The printed damage names an area/burst/splash shape that the existing area mechanic does not cover (character-scale splash with a radius, multi-mode damage, or radius area on a ship). |
 | ATTACK_TOTAL_NOT_PRINTED / B | SOURCE_RESEARCH | The printed attack total is inside the un-decomposed group label; the record has not extracted it. |
 | OPERATOR_NOT_PRINTED / B | SOURCE_RESEARCH | The operator is inside the un-decomposed group label ("(gunner)"): the record has not extracted it. |
@@ -592,6 +591,7 @@ A **cause key** is `refusal code | root cause` (the same code can have different
 | ATTACK_TOTAL_NOT_PRINTED / A | SOURCE_RESEARCH | The record prints no attack total for the group; the statblock must be read. |
 | DAMAGE_NOT_PRINTED_IN_RECORD / C | ENGINEERING_WORK | A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread. |
 | DAMAGE_ION_UNVERIFIED / B | SOURCE_RESEARCH | The label says "ion" but the record does not type the damage as ion; the printed damage line must be read. |
+| DAMAGE_QUALIFIED / C | ENGINEERING_WORK + SOURCE_RESEARCH | The damage line carries an autofire qualifier without a numeric figure ("autofire only"); autofire exists as a mechanic, the qualifier is not read. |
 | POSSIBLE_AREA_WEAPON_UNVERIFIED / A | SOURCE_RESEARCH | A weapon name suggests an area effect the record does not state; the printed weapon text decides. |
 | RANGE_TABLE_NOT_IDENTIFIED / B | SOURCE_RESEARCH | The group label carries the whole printed attack line ("... (gunner): Atk +7, Dmg ..."): the record has not decomposed it into label / operator / total / damage. |
 | SIZE_DEPENDENT_ATTACK_ADJUSTMENT / E | SOURCE_RESEARCH + OWNER_DECISION | The record documents a source conflict (Ranged header +7; weapon row +15). |
@@ -628,8 +628,8 @@ Stock groups are assigned to a family by printed label (reporting only; the firs
 
 | Family | Kind | Stock groups (exec / total) | Blocked | Mechanic (attack / effect) | Aftermarket (installable / weapon rows) | Resources | Configurations | Top shared stock blockers | Inventory blockers |
 |---|---|---|---|---|---|---|---|---|---|
-| Laser cannons: light, medium, heavy | base-weapon | 294 / 336 | 42 | OFFLINE_TESTED / OFFLINE_TESTED:ORDINARY_DAMAGE | 3 / 3 | NOT_APPLICABLE | double, triple, quad, fire-linked, cannon-enhancements, point-defense, autofire | DAMAGE_NOT_PRINTED_IN_RECORD/B:7; SPECIAL_ATTACK_NOTATION_UNMODELED/D:6; FIRING_ARC_NOT_REVIEWED/B:5; EVIDENCE_UNMODELED/D:5; FIRING_ARC_STATED_UNPARSED/E:4; RANGE_TABLE_NOT_IDENTIFIED/A:3 | APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED |
-| Blaster cannons: light, medium, heavy | base-weapon | 43 / 61 | 18 | OFFLINE_TESTED / OFFLINE_TESTED:ORDINARY_DAMAGE | 3 / 3 | NOT_APPLICABLE | double, triple, quad, fire-linked, cannon-enhancements, point-defense, autofire, autoblaster | DAMAGE_NOT_PRINTED_IN_RECORD/B:5; OPERATOR_NOT_PRINTED/A:4; FIRING_ARC_NOT_REVIEWED/B:3; ATTACK_TOTAL_NOT_PRINTED/B:3; OPERATOR_NOT_PRINTED/B:3; OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER/D:3 | APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED |
+| Laser cannons: light, medium, heavy | base-weapon | 296 / 336 | 40 | OFFLINE_TESTED / OFFLINE_TESTED:ORDINARY_DAMAGE | 3 / 3 | NOT_APPLICABLE | double, triple, quad, fire-linked, cannon-enhancements, point-defense, autofire | DAMAGE_NOT_PRINTED_IN_RECORD/B:7; SPECIAL_ATTACK_NOTATION_UNMODELED/D:6; FIRING_ARC_NOT_REVIEWED/B:5; EVIDENCE_UNMODELED/D:5; FIRING_ARC_STATED_UNPARSED/E:4; RANGE_TABLE_NOT_IDENTIFIED/A:3 | APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED |
+| Blaster cannons: light, medium, heavy | base-weapon | 44 / 61 | 17 | OFFLINE_TESTED / OFFLINE_TESTED:ORDINARY_DAMAGE | 3 / 3 | NOT_APPLICABLE | double, triple, quad, fire-linked, cannon-enhancements, point-defense, autofire, autoblaster | DAMAGE_NOT_PRINTED_IN_RECORD/B:5; OPERATOR_NOT_PRINTED/A:4; FIRING_ARC_NOT_REVIEWED/B:3; ATTACK_TOTAL_NOT_PRINTED/B:3; OPERATOR_NOT_PRINTED/B:3; OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER/D:3 | APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED |
 | Autoblaster (modification of a single-mounted blaster cannon) | modification | 1 / 1 | 0 | OFFLINE_TESTED / OFFLINE_TESTED:AUTOFIRE_CAPABILITY_GRANT | 1 / 1 | NOT_APPLICABLE | - | - | - |
 | Turbolasers: light, medium, heavy | base-weapon | 103 / 127 | 24 | OFFLINE_TESTED / OFFLINE_TESTED:ORDINARY_DAMAGE | 3 / 3 | NOT_APPLICABLE | double, triple, quad, fire-linked, autofire | ATTACK_TOTAL_UNEXPLAINED_DELTA/E:11; SPECIAL_ATTACK_NOTATION_UNMODELED/D:5; SIZE_DEPENDENT_ATTACK_ADJUSTMENT/C:4; OPERATOR_IS_A_STATION_BATTERY/C:3; GROUP_IS_A_WEAPON_BATTERY/C:2; OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER/D:2 | APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED |
 | Ion cannons: light, medium, heavy | base-weapon | 59 / 68 | 9 | OFFLINE_TESTED / OFFLINE_TESTED:ION_LIFECYCLE | 3 / 3 | NOT_APPLICABLE | double, triple, quad, fire-linked, cannon-enhancements, point-defense | ATTACK_TOTAL_UNEXPLAINED_DELTA/E:4; EVIDENCE_UNMODELED/D:2; DAMAGE_ION_UNVERIFIED/B:2; SPECIAL_ATTACK_NOTATION_UNMODELED/D:1; SIZE_DEPENDENT_ATTACK_ADJUSTMENT/C:1; DAMAGE_NOT_PRINTED_IN_RECORD/B:1 | APPLICABLE_CONFIGURATIONS_NOT_IMPLEMENTED |
@@ -658,7 +658,7 @@ Stock groups are assigned to a family by printed label (reporting only; the firs
 | Microtractor-pressor | source-specific | 0 / 1 | 1 | NOT_IMPLEMENTED / NOT_IMPLEMENTED | 0 / 1 | NOT_APPLICABLE | - | DAMAGE_NOT_PRINTED_IN_RECORD/D:1; EVIDENCE_UNMODELED/D:1; RANGE_TABLE_NOT_IDENTIFIED/A:1 | STATBLOCK_EQUIPMENT_ONLY, SPECIAL_WEAPON_NOT_INDIVIDUALLY_VERIFIED |
 | Anti-aircraft flak pod | source-specific | 0 / 1 | 1 | NOT_IMPLEMENTED / NOT_IMPLEMENTED | 0 / 1 | NOT_APPLICABLE | - | POSSIBLE_AREA_WEAPON_UNVERIFIED/A:1; RANGE_TABLE_NOT_IDENTIFIED/A:1 | SOURCE_ROW_NOT_RECONCILED, SPECIAL_WEAPON_NOT_INDIVIDUALLY_VERIFIED |
 | Proton grenade launcher and grenade | source-specific | 0 / 1 | 1 | NOT_IMPLEMENTED / NOT_IMPLEMENTED | 0 / 1 | NOT_APPLICABLE | - | AMMUNITION_PAYLOAD_NOT_PRINTED/B:1; LAUNCHER_IDENTITY_NOT_ESTABLISHED/D:1; RANGE_TABLE_NOT_IDENTIFIED/A:1 | SOURCE_ROW_NOT_RECONCILED, SPECIAL_WEAPON_NOT_INDIVIDUALLY_VERIFIED, LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE |
-| Cannon, double | configuration | 67 / 80 (overlay) | - | OFFLINE_TESTED / OFFLINE_TESTED:CONFIGURATION | 1 / 1 | NOT_APPLICABLE | - | - | - |
+| Cannon, double | configuration | 68 / 80 (overlay) | - | OFFLINE_TESTED / OFFLINE_TESTED:CONFIGURATION | 1 / 1 | NOT_APPLICABLE | - | - | - |
 | Cannon, triple | configuration | 6 / 10 (overlay) | - | STOCK_PRINTED_VALUES_ONLY / STOCK_PRINTED_VALUES_ONLY:CONFIGURATION | 0 / 0 | NOT_APPLICABLE | - | - | CONFIGURATION_NOT_IMPLEMENTED |
 | Cannon, quad | configuration | 29 / 33 (overlay) | - | OFFLINE_TESTED / OFFLINE_TESTED:CONFIGURATION | 1 / 1 | NOT_APPLICABLE | - | - | - |
 | Fire-linked weapons (2 and 4) | configuration | 6 / 6 (overlay) | - | OFFLINE_TESTED / OFFLINE_TESTED:CONFIGURATION | 2 / 2 | NOT_APPLICABLE | - | - | FIRE_LINKED_LAUNCHERS_BUCKETED |
@@ -789,14 +789,14 @@ Every figure is **CONDITIONAL**: it assumes the listed causes are fully resolved
 | Package | What it resolves | Immediately unlocked | Vehicles gaining first weapon | Vehicles becoming fully executable | Gross groups touched |
 |---|---|---|---|---|---|
 | PKG-A | Engineering only: connect or build mechanics whose source facts are already printed (no ruling, no new research) - cause keys whose only class is ENGINEERING_WORK (2 cause keys) | 4 | 1 | 0 | 12 |
-| PKG-B | Engineering + source research: PKG-A plus every cause that needs only PDF confirmation or record repair - cause keys whose classes are within {ENGINEERING_WORK, SOURCE_RESEARCH_REQUIRED} (21 cause keys) | 133 | 33 | 75 | 201 |
+| PKG-B | Engineering + source research: PKG-A plus every cause that needs only PDF confirmation or record repair - cause keys whose classes are within {ENGINEERING_WORK, SOURCE_RESEARCH_REQUIRED} (21 cause keys) | 130 | 30 | 72 | 198 |
 | PKG-C | Record reconciliation (root cause B): evidence already exists in the record or the book and only needs extraction/repair - all cause keys with root cause B (7 cause keys) | 32 | 10 | 17 | 104 |
 | PKG-D | V100-01 option 1 (printed Payload defines the pool) - clears STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED (1 cause keys) | 57 | 3 | 52 | 64 |
 | PKG-E | Arc review of never-reviewed arcs (record + PDF; V-P6C-01 already treats a confirmed-silent arc as unrestricted) - clears STOCK_FIRING_ARC_NOT_REVIEWED (1 cause keys) | 7 | 4 | 1 | 12 |
 | PKG-F | V100-03 option "printed total is authoritative" (unexplained deltas, one source conflict) - clears STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA and the contradictory size row (2 cause keys) | 21 | 4 | 2 | 30 |
 | PKG-G | V100-04 option "qualitative arcs impose no restriction" - clears STOCK_FIRING_ARC_STATED_UNPARSED (1 cause keys) | 4 | 2 | 2 | 5 |
 | PKG-H | V100-02 option "GM-certified range band for weapon types outside Table 10-2" - clears STOCK_RANGE_TABLE_NOT_IDENTIFIED (root cause A) (1 cause keys) | 7 | 3 | 3 | 46 |
-| PKG-I | Everything that needs no owner ruling and no GM configuration (PKG-B), then V100-01..04 options above - union of PKG-B, PKG-D, PKG-F, PKG-G, PKG-H (26 cause keys) | 264 | 46 | 175 | 292 |
+| PKG-I | Everything that needs no owner ruling and no GM configuration (PKG-B), then V100-01..04 options above - union of PKG-B, PKG-D, PKG-F, PKG-G, PKG-H (26 cause keys) | 261 | 43 | 172 | 289 |
 
 ### V.1 Greedy marginal path
 
@@ -822,15 +822,15 @@ Each step adds the single cause that unlocks the most additional groups. This sh
 | 16 | OPERATOR_NOT_PRINTED / A | SOURCE_RESEARCH | 8 | 263 | 177 |
 | 17 | GROUP_IS_A_WEAPON_BATTERY / C | SOURCE_RESEARCH | 6 | 269 | 182 |
 | 18 | DAMAGE_NOT_PRINTED_IN_RECORD / D | OWNER_DECISION + SOURCE_RESEARCH | 5 | 274 | 187 |
-| 19 | DAMAGE_QUALIFIED / C | ENGINEERING_WORK + SOURCE_RESEARCH | 5 | 279 | 191 |
-| 20 | DAMAGE_AREA_OR_SPLASH / D | ENGINEERING_WORK + SOURCE_RESEARCH | 5 | 284 | 195 |
-| 21 | FIRING_ARC_STATED_UNPARSED / E | SOURCE_RESEARCH + OWNER_DECISION | 4 | 288 | 199 |
-| 22 | ATTACK_TOTAL_NOT_PRINTED / A | SOURCE_RESEARCH | 3 | 291 | 202 |
-| 23 | DAMAGE_NOT_PRINTED_IN_RECORD / C | ENGINEERING_WORK | 3 | 294 | 205 |
-| 24 | VARIANT_SPECIFIC_GROUP_UNMODELED / F | ENGINEERING_WORK + GM_OPTION | 3 | 297 | 206 |
-| 25 | DAMAGE_ION_UNVERIFIED / B | SOURCE_RESEARCH | 2 | 299 | 208 |
-| 26 | POSSIBLE_AREA_WEAPON_UNVERIFIED / A | SOURCE_RESEARCH | 2 | 301 | 210 |
-| 27 | SIZE_DEPENDENT_ATTACK_ADJUSTMENT / E | SOURCE_RESEARCH + OWNER_DECISION | 1 | 302 | 211 |
+| 19 | DAMAGE_AREA_OR_SPLASH / D | ENGINEERING_WORK + SOURCE_RESEARCH | 5 | 279 | 190 |
+| 20 | FIRING_ARC_STATED_UNPARSED / E | SOURCE_RESEARCH + OWNER_DECISION | 4 | 283 | 194 |
+| 21 | ATTACK_TOTAL_NOT_PRINTED / A | SOURCE_RESEARCH | 3 | 286 | 197 |
+| 22 | DAMAGE_NOT_PRINTED_IN_RECORD / C | ENGINEERING_WORK | 3 | 289 | 200 |
+| 23 | VARIANT_SPECIFIC_GROUP_UNMODELED / F | ENGINEERING_WORK + GM_OPTION | 3 | 292 | 201 |
+| 24 | DAMAGE_ION_UNVERIFIED / B | SOURCE_RESEARCH | 2 | 294 | 203 |
+| 25 | DAMAGE_QUALIFIED / C | ENGINEERING_WORK + SOURCE_RESEARCH | 2 | 296 | 205 |
+| 26 | POSSIBLE_AREA_WEAPON_UNVERIFIED / A | SOURCE_RESEARCH | 2 | 298 | 207 |
+| 27 | SIZE_DEPENDENT_ATTACK_ADJUSTMENT / E | SOURCE_RESEARCH + OWNER_DECISION | 1 | 299 | 208 |
 
 After the greedy path 5 groups remain blocked by combinations of causes none of which unlocks a group alone.
 
@@ -838,7 +838,7 @@ After the greedy path 5 groups remain blocked by combinations of causes none of 
 
 | Source status of a cause | Cause instances |
 |---|---|
-| SOURCE_NOT_YET_VERIFIED | 446 |
+| SOURCE_NOT_YET_VERIFIED | 443 |
 | SOURCE_INCOMPLETE | 52 |
 | SOURCE_CONFIRMED | 15 |
 | SOURCE_CONTRADICTORY | 1 |
@@ -987,7 +987,7 @@ PROPOSED for the owner to accept, reorder or reject. Nothing below has been star
 | 1 | Record reconciliation and PDF confirmation for root-cause-B items (arc review, label decomposition, payload extraction); repair of the 4 armed-record-gap vehicles | SOURCE_RESEARCH_REQUIRED | PKG-C: 32 groups; 10 vehicles gain their first executable weapon; 17 vehicles become fully executable; PKG-E: 7 groups; 4 vehicles gain their first executable weapon; 1 vehicle becomes fully executable |
 | 2 | Connect existing mechanics whose source facts are printed: tractor-notation variant, printed per-weapon size figures, autofire qualifiers that reconcile, battery marking | ENGINEERING_WORK | PKG-A: 4 groups; 1 vehicle gains their first executable weapon; 0 vehicles become fully executable |
 | 3 | Owner rulings V100-01..05 | OWNER_DECISION_REQUIRED | PKG-D: 57 groups; 3 vehicles gain their first executable weapon; 52 vehicles become fully executable; PKG-F: 21 groups; 4 vehicles gain their first executable weapon; 2 vehicles become fully executable; PKG-G: 4 groups; 2 vehicles gain their first executable weapon; 2 vehicles become fully executable; PKG-H: 7 groups; 3 vehicles gain their first executable weapon; 3 vehicles become fully executable |
-| 4 | Build missing mechanics only after their source text is confirmed (unmodelled evidence keys, notations, operators, area shapes) | ENGINEERING_WORK + SOURCE_RESEARCH_REQUIRED | PKG-B (waves 1+2+4 combined): 133 groups; 33 vehicles gain their first executable weapon; 75 vehicles become fully executable |
+| 4 | Build missing mechanics only after their source text is confirmed (unmodelled evidence keys, notations, operators, area shapes) | ENGINEERING_WORK + SOURCE_RESEARCH_REQUIRED | PKG-B (waves 1+2+4 combined): 130 groups; 30 vehicles gain their first executable weapon; 72 vehicles become fully executable |
 | 5 | GM certification for what remains (ammunition and battery facts the book leaves open), reported as GM_CONFIGURED_EXECUTABLE | GM_CERTIFICATION_OPTION | 102 groups are already GM-configurable; never canonical |
 | 6 | Live Foundry V13 verification (separate acceptance milestone) | n/a | 0 verified today |
 
@@ -997,10 +997,10 @@ PROPOSED for the owner to accept, reorder or reject. Nothing below has been star
 
 | Scenario | Canonical-executable groups | Of 846 | Additional vehicles fully executable vs HEAD |
 |---|---|---|---|
-| HEAD (canonical-certified today) | 539 | 63.7% | 174 (all armed) |
-| + engineering only (no ruling, no research) | 543 | 64.2% | +0 |
-| + engineering and source research (upper bound: every item confirmed in the PDF) | 672 | 79.4% | +75 |
-| + owner rulings V100-01..04 favourable (upper bound) | 803 | 94.9% | +175 |
+| HEAD (canonical-certified today) | 542 | 64.1% | 177 (all armed) |
+| + engineering only (no ruling, no research) | 546 | 64.5% | +0 |
+| + engineering and source research (upper bound: every item confirmed in the PDF) | 672 | 79.4% | +72 |
+| + owner rulings V100-01..04 favourable (upper bound) | 803 | 94.9% | +172 |
 
 **Four different 100% claims, kept apart:**
 

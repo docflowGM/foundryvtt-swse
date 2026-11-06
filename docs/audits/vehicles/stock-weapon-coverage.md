@@ -9,19 +9,19 @@ Three claims are kept apart: **SOURCE_VERIFIED** (the published configuration is
 | Published vehicles | 429 |
 | Published attack groups | 846 |
 | Groups SOURCE_VERIFIED | 781 (92.3%) |
-| Groups OFFLINE_EXECUTABLE | 539 (63.7%) |
-| Vehicles with at least one OFFLINE_EXECUTABLE group | 332 (77.4%) |
-| Vehicles with every group executable | 174 |
+| Groups OFFLINE_EXECUTABLE | 542 (64.1%) |
+| Vehicles with at least one OFFLINE_EXECUTABLE group | 335 (78.1%) |
+| Vehicles with every group executable | 177 |
 | Vehicles certified UNARMED from the printed statblock (excluded from the armed denominator) | 38 |
 | Armed vehicles (published vehicles minus certified unarmed) | 391 |
 | Armed vehicles whose statblock prints an attack the record lacks (data defect) | 4 |
-| Armed vehicles with at least one OFFLINE_EXECUTABLE group | 332 (84.9%) |
-| Armed vehicles with EVERY group executable | 174 (44.5%) |
+| Armed vehicles with at least one OFFLINE_EXECUTABLE group | 335 (85.7%) |
+| Armed vehicles with EVERY group executable | 177 (45.3%) |
 | Groups GM-configurable (missing ammunition facts only; not counted above) | 102 |
 | Printed batteries a GM can certify for full-battery mode (already executable independently; not counted above) | 207 |
 | Vehicles LIVE_VERIFIED | 0 |
 
-**Certified outcome of every group (each group in exactly one):** SOURCE_EVIDENCE_REQUIRED 86 · CANONICAL_EXECUTABLE 539 · IMPLEMENTATION_REQUIRED 164 · RULES_DECISION_REQUIRED 57
+**Certified outcome of every group (each group in exactly one):** SOURCE_EVIDENCE_REQUIRED 86 · CANONICAL_EXECUTABLE 542 · IMPLEMENTATION_REQUIRED 161 · RULES_DECISION_REQUIRED 57
 
 ## Weapon batteries (Core p. 170)
 
@@ -97,8 +97,8 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED | 22 |
 | STOCK_OPERATOR_NOT_PRINTED | 17 |
 | STOCK_OPERATOR_IS_A_STATION_BATTERY | 17 |
-| STOCK_DAMAGE_QUALIFIED | 17 |
 | STOCK_OPERATOR_NOT_A_SINGLE_PILOT_OR_GUNNER | 15 |
+| STOCK_DAMAGE_QUALIFIED | 14 |
 | STOCK_FIRING_ARC_NOT_REVIEWED | 12 |
 | STOCK_SIZE_DEPENDENT_ATTACK_ADJUSTMENT | 10 |
 | STOCK_GROUP_IS_A_WEAPON_BATTERY | 9 |
@@ -114,7 +114,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Book | Vehicles | Groups | Executable groups | Vehicles with an executable group |
 |---|---|---|---|---|
 | Core Rulebook | 17 | 39 | 16 | 10 |
-| Clone Wars Campaign Guide | 67 | 124 | 71 | 50 |
+| Clone Wars Campaign Guide | 67 | 124 | 74 | 53 |
 | Force Unleashed Campaign Guide | 34 | 58 | 39 | 29 |
 | Galaxy at War | 11 | 17 | 13 | 7 |
 | Galaxy of Intrigue | 8 | 9 | 4 | 3 |
@@ -145,13 +145,13 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | landspeeder | 7 | 2 |
 | ground-speeder-bike | 4 | 1 |
 | wheeled-vehicle | 3 | 0 |
-| wheel-bike | 2 | 0 |
-| water-speeder | 2 | 1 |
+| wheel-bike | 2 | 1 |
+| water-speeder | 2 | 2 |
 | heavy-ground-speeder | 2 | 1 |
 | air-speeder-bike | 2 | 0 |
 | speeder | 1 | 0 |
 | wheeled-tank | 1 | 1 |
-| ornithopter | 1 | 0 |
+| ornithopter | 1 | 1 |
 | wheeled-assault-vehicle | 1 | 1 |
 | wheeled-groundcar | 1 | 1 |
 | command-speeder | 1 | 1 |
@@ -198,6 +198,7 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | Eta-2 Actis Interceptor (High-Maneuver Variant) | Clone Wars Campaign Guide p. 139 | 2 / 2 | laser cannons (4d10x2, pilot, +14); ion cannons (4d10x2, pilot, +14) |
 | Freefall-class Starfighter | Clone Wars Campaign Guide p. 82 | 1 / 2 | laser cannons (6d10x2, gunner, +1) |
 | G9 Rigger | Clone Wars Campaign Guide p. 76 | 2 / 2 | double light laser cannons (4d10x2, pilot, +3); light laser cannons (3d10x2, copilot, +1) |
+| Grievous's Wheel Bike (Modified Tsmeu-6) | Clone Wars Campaign Guide p. 203 | 1 / 1 | double laser cannon (5d10, pilot, +9) |
 | Ground Armored Tank (GAT) | Clone Wars Campaign Guide p. 198 | 1 / 2 | medium laser cannons (4d10x2, pilot, +6) |
 | GS-100 Salvage Ship | Clone Wars Campaign Guide p. 78 | 1 / 1 | medium laser cannons (4d10x2, gunner, +2) |
 | Hardcell-class Transport | Clone Wars Campaign Guide p. 207 | 1 / 1 | laser cannon batteries (4d10x2, gunner, +16) |
@@ -214,11 +215,13 @@ A weapon name alone never types damage as ion: a group named "ion" whose printed
 | MorningStar-A Assault Starfighter | Clone Wars Campaign Guide p. 83 | 1 / 2 | light laser cannons (5d10x2, pilot, +3) |
 | Multi-Troop Transport (MTT) | Clone Wars Campaign Guide p. 200 | 1 / 1 | twin blaster cannons (3d10x2, gunner, +2) |
 | Nu-class Attack Shuttle | Clone Wars Campaign Guide p. 172 | 2 / 2 | medium laser cannons (4d10x2, pilot, +9); double light laser cannons (4d10x2, copilot, +7) |
+| Oevvaor Jet Catamaran | Clone Wars Campaign Guide p. 219 | 1 / 1 | blaster cannon (3d10, gunner, +2) |
 | OG-9 Homing Spider Droid | Clone Wars Campaign Guide p. 201 | 1 / 2 | laser cannon (5d10, pilot, +6) |
 | Pelta-class Medical Frigate | Clone Wars Campaign Guide p. 172 | 3 / 3 | light turbolaser battery (3d10x5, gunner, +17); point-defense light laser cannon battery (4d10x2, gunner, +17); tractor beam battery (, gunner, +11) |
 | Persuader-class Droid Enforcer | Clone Wars Campaign Guide p. 201 | 1 / 3 | ion cannons (4d10x2, pilot, +5) |
 | Providence-class Destroyer | Clone Wars Campaign Guide p. 210 | 1 / 5 | heavy ion cannons (3d10x5, gunner, +8) |
 | Pursuer-class Enforcement Ship | Clone Wars Campaign Guide p. 80 | 2 / 2 | twin blaster cannons (5d10x2, pilot, +5); ion cannons (4d10x2, pilot, +5) |
+| Raddaugh Gnasp Fluttercraft | Clone Wars Campaign Guide p. 220 | 1 / 1 | laser cannon tail-gun (4d10, gunner, +5) |
 | Republic Troop Transport | Clone Wars Campaign Guide p. 168 | 1 / 2 | laser cannons (4d10, pilot, +10) |
 | S40K Phoenix Hawk-class Light Pinnace | Clone Wars Campaign Guide p. 84 | 2 / 2 | heavy blaster cannons (6d10x2, pilot, +3); light ion cannons (3d10x2, pilot, +3) |
 | Sabaoth Destroyer | Clone Wars Campaign Guide p. 220 | 1 / 2 | light turbolaser batteries (2d10x5, gunner, +9) |

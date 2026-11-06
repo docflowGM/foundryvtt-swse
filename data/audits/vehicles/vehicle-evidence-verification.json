@@ -5417,15 +5417,15 @@
    "ARC_SILENT_IN_TEXT": 12,
    "PAYLOAD_LINE_IN_TEXT_NOT_IN_RECORD": 11,
    "LABEL_EMBEDS_PRINTED_LINE": 16,
-   "EXISTING_MECHANIC_NOT_CONNECTED": 43,
+   "EXISTING_MECHANIC_NOT_CONNECTED": 40,
    "PAYLOAD_PRESENT_BUT_NOT_ATTRIBUTABLE": 66
   },
-  "groupsAffected": 121,
+  "groupsAffected": 118,
   "wouldRunIfRepairedAndNothingElseRemained": {
-   "groups": 32,
-   "vehiclesGainingAnyGroup": 25,
-   "vehiclesGainingFirstExecutableGroup": 16,
-   "vehiclesBecomingFullyExecutable": 15,
+   "groups": 29,
+   "vehiclesGainingAnyGroup": 22,
+   "vehiclesGainingFirstExecutableGroup": 13,
+   "vehiclesBecomingFullyExecutable": 12,
    "note": "conditional on the PDF confirming each proposed correction"
   },
   "defects": [
@@ -5892,17 +5892,6 @@
     "proposedCorrection": "attribute the entry to the group only if the book prints which launcher uses it; otherwise leave for a ruling or GM allocation"
    },
    {
-    "kind": "EXISTING_MECHANIC_NOT_CONNECTED",
-    "groupKey": "cw-grievous-wheel-bike-modified-tsmeu-6-source-attack-1",
-    "vehicleKey": "cw-grievous-wheel-bike-modified-tsmeu-6",
-    "vehicle": "Grievous's Wheel Bike (Modified Tsmeu-6)",
-    "book": "Clone Wars Campaign Guide",
-    "printedPage": 203,
-    "label": "double laser cannon",
-    "finding": "The damage line carries an autofire qualifier (+4) that reconciles with the printed total (9 - +4 = 5): the mechanic exists; the qualifier is only read from the structured autofireAttackBonus key.",
-    "proposedCorrection": "confirm the printed fact in the PDF and repair the record; engineering: connect the existing mechanic"
-   },
-   {
     "kind": "PAYLOAD_PRESENT_BUT_NOT_ATTRIBUTABLE",
     "groupKey": "cw-ground-armored-tank-source-attack-2",
     "vehicleKey": "cw-ground-armored-tank",
@@ -5981,17 +5970,6 @@
    },
    {
     "kind": "EXISTING_MECHANIC_NOT_CONNECTED",
-    "groupKey": "cw-oevvaor-jet-catamaran-source-attack-1",
-    "vehicleKey": "cw-oevvaor-jet-catamaran",
-    "vehicle": "Oevvaor Jet Catamaran",
-    "book": "Clone Wars Campaign Guide",
-    "printedPage": 219,
-    "label": "blaster cannon",
-    "finding": "The damage line carries an autofire qualifier (-3) that reconciles with the printed total (2 - -3 = 5): the mechanic exists; the qualifier is only read from the structured autofireAttackBonus key.",
-    "proposedCorrection": "confirm the printed fact in the PDF and repair the record; engineering: connect the existing mechanic"
-   },
-   {
-    "kind": "EXISTING_MECHANIC_NOT_CONNECTED",
     "groupKey": "cw-og-9-homing-spider-droid-source-attack-2",
     "vehicleKey": "cw-og-9-homing-spider-droid",
     "vehicle": "OG-9 Homing Spider Droid",
@@ -6033,17 +6011,6 @@
     "label": "proton torpedo launcher batteries",
     "finding": "record carries 2,800 proton torpedoes; the group label (\"proton torpedo launcher batteries\") is not matched by exactly one entry",
     "proposedCorrection": "attribute the entry to the group only if the book prints which launcher uses it; otherwise leave for a ruling or GM allocation"
-   },
-   {
-    "kind": "EXISTING_MECHANIC_NOT_CONNECTED",
-    "groupKey": "cw-raddaugh-gnasp-fluttercraft-source-attack-1",
-    "vehicleKey": "cw-raddaugh-gnasp-fluttercraft",
-    "vehicle": "Raddaugh Gnasp Fluttercraft",
-    "book": "Clone Wars Campaign Guide",
-    "printedPage": 220,
-    "label": "laser cannon tail-gun",
-    "finding": "The damage line carries an autofire qualifier (+0) that reconciles with the printed total (5 - +0 = 5): the mechanic exists; the qualifier is only read from the structured autofireAttackBonus key.",
-    "proposedCorrection": "confirm the printed fact in the PDF and repair the record; engineering: connect the existing mechanic"
    },
    {
     "kind": "PAYLOAD_PRESENT_BUT_NOT_ATTRIBUTABLE",

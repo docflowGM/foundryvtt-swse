@@ -36,10 +36,10 @@
   "head": {
    "vehicles": 429,
    "groups": 846,
-   "executableGroups": 539,
-   "blockedGroups": 307,
-   "vehiclesWithExecutableGroup": 332,
-   "vehiclesFullyExecutable": 174,
+   "executableGroups": 542,
+   "blockedGroups": 304,
+   "vehiclesWithExecutableGroup": 335,
+   "vehiclesFullyExecutable": 177,
    "aftermarketRows": 63,
    "aftermarketInstallable": 30
   },
@@ -59,26 +59,26 @@
    {
     "metric": "executableGroups",
     "ownerBaseline": 528,
-    "head": 539,
-    "difference": 11
+    "head": 542,
+    "difference": 14
    },
    {
     "metric": "blockedGroups",
     "ownerBaseline": 318,
-    "head": 307,
-    "difference": -11
+    "head": 304,
+    "difference": -14
    },
    {
     "metric": "vehiclesWithExecutableGroup",
     "ownerBaseline": 331,
-    "head": 332,
-    "difference": 1
+    "head": 335,
+    "difference": 4
    },
    {
     "metric": "vehiclesFullyExecutable",
     "ownerBaseline": 169,
-    "head": 174,
-    "difference": 5
+    "head": 177,
+    "difference": 8
    },
    {
     "metric": "aftermarketRows",
@@ -94,7 +94,7 @@
    }
   ],
   "explanation": {
-   "changedBy": "two reviewed batches after the owner baseline: aeea5c4 (two launcher groups whose records PRINT the launcher count and Payload) and the tractor-beam notation batch (nine groups whose records print the grapple modifier in a spelling the gate did not read)",
+   "changedBy": "three reviewed batches after the owner baseline: aeea5c4 (two launcher groups whose records PRINT the launcher count and Payload), the tractor-beam notation batch (nine groups) and the damage-line autofire batch (three groups whose printed autofire figure reconciles with the printed total)",
    "groups": [
     {
      "groupKey": "sotg-mandalmotors-starviper-assault-fighter-group-2",
@@ -107,6 +107,24 @@
      "vehicleKey": "sotg-sorosuub-cutlass-9-patrol-fighter",
      "label": "medium concussion missile",
      "why": "Cutlass-9 medium concussion missiles (commit aeea5c4): the record prints 1 launcher and a Payload line of 8 medium concussion missiles."
+    },
+    {
+     "groupKey": "cw-grievous-wheel-bike-modified-tsmeu-6-source-attack-1",
+     "vehicleKey": "cw-grievous-wheel-bike-modified-tsmeu-6",
+     "label": "double laser cannon",
+     "why": "Damage-line autofire figure (feature/v2-vehicles-next): the record prints the autofire attack figure on the damage line; it is accepted only because it reconciles with the printed total by the -5 autofire penalty."
+    },
+    {
+     "groupKey": "cw-oevvaor-jet-catamaran-source-attack-1",
+     "vehicleKey": "cw-oevvaor-jet-catamaran",
+     "label": "blaster cannon",
+     "why": "Damage-line autofire figure (feature/v2-vehicles-next): the record prints the autofire attack figure on the damage line; it is accepted only because it reconciles with the printed total by the -5 autofire penalty."
+    },
+    {
+     "groupKey": "cw-raddaugh-gnasp-fluttercraft-source-attack-1",
+     "vehicleKey": "cw-raddaugh-gnasp-fluttercraft",
+     "label": "laser cannon tail-gun",
+     "why": "Damage-line autofire figure (feature/v2-vehicles-next): the record prints the autofire attack figure on the damage line; it is accepted only because it reconciles with the printed total by the -5 autofire penalty."
     },
     {
      "groupKey": "fucg-neutron-star-bulk-cruiser-attack-2",
@@ -171,28 +189,28 @@
   "stockFiringGroups": 846,
   "distinctions": {
    "sourceVerifiedGroups": 781,
-   "offlineExecutableGroups": 539,
+   "offlineExecutableGroups": 542,
    "gmConfigurableGroupsCurrentlyBlocked": 102,
    "gmConfiguredGroups": "not countable offline: GM configuration lives on world Actors; the gate reports it as GM_CONFIGURED_EXECUTABLE and never as canonical",
    "liveVerifiedGroups": 0
   },
   "groupOutcomes": {
    "SOURCE_EVIDENCE_REQUIRED": 86,
-   "CANONICAL_EXECUTABLE": 539,
-   "IMPLEMENTATION_REQUIRED": 164,
+   "CANONICAL_EXECUTABLE": 542,
+   "IMPLEMENTATION_REQUIRED": 161,
    "RULES_DECISION_REQUIRED": 57
   },
   "vehicles_": {
    "classCounts": {
-    "ARMED_ALL_GROUPS_BLOCKED": 55,
+    "ARMED_ALL_GROUPS_BLOCKED": 52,
     "ARMED_PARTIALLY_EXECUTABLE": 158,
-    "ARMED_FULLY_EXECUTABLE": 174,
+    "ARMED_FULLY_EXECUTABLE": 177,
     "UNARMED_CONFIRMED": 38,
     "ARMED_RECORD_GAP": 4
    },
    "armedVehicles": 391,
-   "armedWithAtLeastOneExecutableGroup": 332,
-   "armedFullyExecutable": 174
+   "armedWithAtLeastOneExecutableGroup": 335,
+   "armedFullyExecutable": 177
   },
   "aftermarket": {
    "catalogRows": 63,
@@ -208,9 +226,9 @@
   }
  },
  "vehicleClassCounts": {
-  "ARMED_ALL_GROUPS_BLOCKED": 55,
+  "ARMED_ALL_GROUPS_BLOCKED": 52,
   "ARMED_PARTIALLY_EXECUTABLE": 158,
-  "ARMED_FULLY_EXECUTABLE": 174,
+  "ARMED_FULLY_EXECUTABLE": 177,
   "UNARMED_CONFIRMED": 38,
   "ARMED_RECORD_GAP": 4
  },
@@ -714,10 +732,10 @@
    "page": 203,
    "category": "wheel-bike",
    "size": "Large",
-   "class": "ARMED_ALL_GROUPS_BLOCKED",
+   "class": "ARMED_FULLY_EXECUTABLE",
    "groups": 1,
-   "executableGroups": 0,
-   "blockedGroups": 1
+   "executableGroups": 1,
+   "blockedGroups": 0
   },
   {
    "sourceEntryKey": "cw-ground-armored-tank",
@@ -930,10 +948,10 @@
    "page": 219,
    "category": "water-speeder",
    "size": "Gargantuan",
-   "class": "ARMED_ALL_GROUPS_BLOCKED",
+   "class": "ARMED_FULLY_EXECUTABLE",
    "groups": 1,
-   "executableGroups": 0,
-   "blockedGroups": 1
+   "executableGroups": 1,
+   "blockedGroups": 0
   },
   {
    "sourceEntryKey": "cw-og-9-homing-spider-droid",
@@ -1014,10 +1032,10 @@
    "page": 220,
    "category": "ornithopter",
    "size": "Huge",
-   "class": "ARMED_ALL_GROUPS_BLOCKED",
+   "class": "ARMED_FULLY_EXECUTABLE",
    "groups": 1,
-   "executableGroups": 0,
-   "blockedGroups": 1
+   "executableGroups": 1,
+   "blockedGroups": 0
   },
   {
    "sourceEntryKey": "cw-republic-troop-transport",
@@ -8304,65 +8322,6 @@
    "primaryRootCause": "A"
   },
   {
-   "groupKey": "cw-grievous-wheel-bike-modified-tsmeu-6-source-attack-1",
-   "vehicleKey": "cw-grievous-wheel-bike-modified-tsmeu-6",
-   "vehicle": "Grievous's Wheel Bike (Modified Tsmeu-6)",
-   "book": "Clone Wars Campaign Guide",
-   "page": 203,
-   "label": "double laser cannon",
-   "family": "laser-cannons",
-   "executable": false,
-   "outcome": "IMPLEMENTATION_REQUIRED",
-   "printedOperator": "pilot",
-   "printedDamage": "5d10",
-   "printedAttackTotal": 9,
-   "payloadCount": null,
-   "refusalCodes": [
-    "STOCK_DAMAGE_QUALIFIED"
-   ],
-   "blockingCodes": [
-    "STOCK_DAMAGE_QUALIFIED"
-   ],
-   "nonBlockingModeReasons": [],
-   "causes": [
-    {
-     "code": "STOCK_DAMAGE_QUALIFIED",
-     "rootCause": "C",
-     "classes": [
-      "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
-      "SOURCE_RESEARCH_REQUIRED"
-     ],
-     "engine": "autofire attack-bonus reconciliation exists (printed bonus = total - 5); a damage-line qualifier \"autofire ...\" is not connected",
-     "sourceStatus": "SOURCE_NOT_YET_VERIFIED",
-     "rationale": "The damage line carries an autofire qualifier (+4) that reconciles with the printed total (9 - +4 = 5): the mechanic exists; the qualifier is only read from the structured autofireAttackBonus key.",
-     "repoMechanic": "EXISTS_NOT_CONNECTED",
-     "sourceContainsFact": "UNKNOWN (PDF check required)",
-     "whatWouldUnlockIt": "confirm the printed fact in the PDF and repair the record; engineering: connect the existing mechanic"
-    }
-   ],
-   "attackDelta": 2,
-   "gmConfigurable": false,
-   "gmBatteryConfigurable": false,
-   "sourceProbe": {
-    "located": false,
-    "line": null,
-    "ambiguous": false,
-    "seeBelow": null
-   },
-   "causeKeys": [
-    "STOCK_DAMAGE_QUALIFIED|C"
-   ],
-   "sourceStatus": "SOURCE_NOT_YET_VERIFIED",
-   "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
-    "SOURCE_RESEARCH_REQUIRED"
-   ],
-   "rootCauses": [
-    "C"
-   ],
-   "primaryRootCause": "C"
-  },
-  {
    "groupKey": "cw-ground-armored-tank-source-attack-2",
    "vehicleKey": "cw-ground-armored-tank",
    "vehicle": "Ground Armored Tank (GAT)",
@@ -9085,65 +9044,6 @@
    "primaryRootCause": "A"
   },
   {
-   "groupKey": "cw-oevvaor-jet-catamaran-source-attack-1",
-   "vehicleKey": "cw-oevvaor-jet-catamaran",
-   "vehicle": "Oevvaor Jet Catamaran",
-   "book": "Clone Wars Campaign Guide",
-   "page": 219,
-   "label": "blaster cannon",
-   "family": "blaster-cannons",
-   "executable": false,
-   "outcome": "IMPLEMENTATION_REQUIRED",
-   "printedOperator": "gunner",
-   "printedDamage": "3d10",
-   "printedAttackTotal": 2,
-   "payloadCount": null,
-   "refusalCodes": [
-    "STOCK_DAMAGE_QUALIFIED"
-   ],
-   "blockingCodes": [
-    "STOCK_DAMAGE_QUALIFIED"
-   ],
-   "nonBlockingModeReasons": [],
-   "causes": [
-    {
-     "code": "STOCK_DAMAGE_QUALIFIED",
-     "rootCause": "C",
-     "classes": [
-      "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
-      "SOURCE_RESEARCH_REQUIRED"
-     ],
-     "engine": "autofire attack-bonus reconciliation exists (printed bonus = total - 5); a damage-line qualifier \"autofire ...\" is not connected",
-     "sourceStatus": "SOURCE_NOT_YET_VERIFIED",
-     "rationale": "The damage line carries an autofire qualifier (-3) that reconciles with the printed total (2 - -3 = 5): the mechanic exists; the qualifier is only read from the structured autofireAttackBonus key.",
-     "repoMechanic": "EXISTS_NOT_CONNECTED",
-     "sourceContainsFact": "UNKNOWN (PDF check required)",
-     "whatWouldUnlockIt": "confirm the printed fact in the PDF and repair the record; engineering: connect the existing mechanic"
-    }
-   ],
-   "attackDelta": 0,
-   "gmConfigurable": false,
-   "gmBatteryConfigurable": false,
-   "sourceProbe": {
-    "located": true,
-    "line": 21509,
-    "ambiguous": false,
-    "seeBelow": true
-   },
-   "causeKeys": [
-    "STOCK_DAMAGE_QUALIFIED|C"
-   ],
-   "sourceStatus": "SOURCE_NOT_YET_VERIFIED",
-   "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
-    "SOURCE_RESEARCH_REQUIRED"
-   ],
-   "rootCauses": [
-    "C"
-   ],
-   "primaryRootCause": "C"
-  },
-  {
    "groupKey": "cw-og-9-homing-spider-droid-source-attack-2",
    "vehicleKey": "cw-og-9-homing-spider-droid",
    "vehicle": "OG-9 Homing Spider Droid",
@@ -9825,65 +9725,6 @@
     "D"
    ],
    "primaryRootCause": "A"
-  },
-  {
-   "groupKey": "cw-raddaugh-gnasp-fluttercraft-source-attack-1",
-   "vehicleKey": "cw-raddaugh-gnasp-fluttercraft",
-   "vehicle": "Raddaugh Gnasp Fluttercraft",
-   "book": "Clone Wars Campaign Guide",
-   "page": 220,
-   "label": "laser cannon tail-gun",
-   "family": "laser-cannons",
-   "executable": false,
-   "outcome": "IMPLEMENTATION_REQUIRED",
-   "printedOperator": "gunner",
-   "printedDamage": "4d10",
-   "printedAttackTotal": 5,
-   "payloadCount": null,
-   "refusalCodes": [
-    "STOCK_DAMAGE_QUALIFIED"
-   ],
-   "blockingCodes": [
-    "STOCK_DAMAGE_QUALIFIED"
-   ],
-   "nonBlockingModeReasons": [],
-   "causes": [
-    {
-     "code": "STOCK_DAMAGE_QUALIFIED",
-     "rootCause": "C",
-     "classes": [
-      "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
-      "SOURCE_RESEARCH_REQUIRED"
-     ],
-     "engine": "autofire attack-bonus reconciliation exists (printed bonus = total - 5); a damage-line qualifier \"autofire ...\" is not connected",
-     "sourceStatus": "SOURCE_NOT_YET_VERIFIED",
-     "rationale": "The damage line carries an autofire qualifier (+0) that reconciles with the printed total (5 - +0 = 5): the mechanic exists; the qualifier is only read from the structured autofireAttackBonus key.",
-     "repoMechanic": "EXISTS_NOT_CONNECTED",
-     "sourceContainsFact": "UNKNOWN (PDF check required)",
-     "whatWouldUnlockIt": "confirm the printed fact in the PDF and repair the record; engineering: connect the existing mechanic"
-    }
-   ],
-   "attackDelta": 0,
-   "gmConfigurable": false,
-   "gmBatteryConfigurable": false,
-   "sourceProbe": {
-    "located": true,
-    "line": 21583,
-    "ambiguous": false,
-    "seeBelow": true
-   },
-   "causeKeys": [
-    "STOCK_DAMAGE_QUALIFIED|C"
-   ],
-   "sourceStatus": "SOURCE_NOT_YET_VERIFIED",
-   "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
-    "SOURCE_RESEARCH_REQUIRED"
-   ],
-   "rootCauses": [
-    "C"
-   ],
-   "primaryRootCause": "C"
   },
   {
    "groupKey": "cw-republic-troop-transport-source-attack-2",
@@ -27755,20 +27596,20 @@
   }
  ],
  "causeStatusTally": {
-  "SOURCE_NOT_YET_VERIFIED": 446,
+  "SOURCE_NOT_YET_VERIFIED": 443,
   "SOURCE_INCOMPLETE": 52,
   "SOURCE_CONFIRMED": 15,
   "SOURCE_CONTRADICTORY": 1
  },
  "groupSourceStatus": {
-  "SOURCE_NOT_YET_VERIFIED": 249,
+  "SOURCE_NOT_YET_VERIFIED": 246,
   "SOURCE_INCOMPLETE": 51,
   "SOURCE_CONFIRMED": 6,
   "SOURCE_CONTRADICTORY": 1
  },
  "groupClassCombos": {
   "SOURCE_RESEARCH_REQUIRED": 75,
-  "ENGINEERING_WORK — NO OWNER RULING REQUIRED + SOURCE_RESEARCH_REQUIRED": 54,
+  "ENGINEERING_WORK — NO OWNER RULING REQUIRED + SOURCE_RESEARCH_REQUIRED": 51,
   "GM_CERTIFICATION_OPTION + SOURCE_RESEARCH_REQUIRED": 22,
   "ENGINEERING_WORK — NO OWNER RULING REQUIRED + OWNER_DECISION_REQUIRED + SOURCE_RESEARCH_REQUIRED": 30,
   "OWNER_DECISION_REQUIRED + SOURCE_RESEARCH_REQUIRED": 44,
@@ -27782,7 +27623,7 @@
  "primaryRootCauseGroups": {
   "B": 42,
   "A": 175,
-  "C": 22,
+  "C": 19,
   "D": 32,
   "F": 2,
   "E": 34
@@ -28239,30 +28080,6 @@
    "rationale": "The source states a qualitative arc (\"SOURCE_SILENT_CONFIRMED\") that is not a defined geometry; whether it restricts fire, and how, is not printed."
   },
   {
-   "causeKey": "STOCK_DAMAGE_QUALIFIED|C",
-   "code": "STOCK_DAMAGE_QUALIFIED",
-   "rootCause": "C",
-   "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
-    "SOURCE_RESEARCH_REQUIRED"
-   ],
-   "existingEngine": "autofire attack-bonus reconciliation exists (printed bonus = total - 5); a damage-line qualifier \"autofire ...\" is not connected",
-   "ownerDecision": "no",
-   "docket": null,
-   "sourceEvidenceStatus": {
-    "SOURCE_NOT_YET_VERIFIED": 5
-   },
-   "grossGroups": 5,
-   "grossVehicles": 5,
-   "soleBlockerGroups": 3,
-   "grossAffectedGroups": 5,
-   "immediatelyUnlockedGroups": 3,
-   "vehiclesGainingAnyGroup": 3,
-   "vehiclesGainingFirstExecutableGroup": 3,
-   "vehiclesBecomingFullyExecutable": 3,
-   "rationale": "The damage line carries an autofire qualifier (+4) that reconciles with the printed total (9 - +4 = 5): the mechanic exists; the qualifier is only read from the structured autofireAttackBonus key."
-  },
-  {
    "causeKey": "STOCK_DAMAGE_AREA_OR_SPLASH|D",
    "code": "STOCK_DAMAGE_AREA_OR_SPLASH",
    "rootCause": "D",
@@ -28424,6 +28241,30 @@
    "vehiclesGainingFirstExecutableGroup": 0,
    "vehiclesBecomingFullyExecutable": 1,
    "rationale": "The label says \"ion\" but the record does not type the damage as ion; the printed damage line must be read."
+  },
+  {
+   "causeKey": "STOCK_DAMAGE_QUALIFIED|C",
+   "code": "STOCK_DAMAGE_QUALIFIED",
+   "rootCause": "C",
+   "classes": [
+    "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
+    "SOURCE_RESEARCH_REQUIRED"
+   ],
+   "existingEngine": "autofire attack-bonus reconciliation exists (printed bonus = total - 5); a damage-line qualifier \"autofire ...\" is not connected",
+   "ownerDecision": "no",
+   "docket": null,
+   "sourceEvidenceStatus": {
+    "SOURCE_NOT_YET_VERIFIED": 2
+   },
+   "grossGroups": 2,
+   "grossVehicles": 2,
+   "soleBlockerGroups": 0,
+   "grossAffectedGroups": 2,
+   "immediatelyUnlockedGroups": 0,
+   "vehiclesGainingAnyGroup": 0,
+   "vehiclesGainingFirstExecutableGroup": 0,
+   "vehiclesBecomingFullyExecutable": 0,
+   "rationale": "The damage line carries an autofire qualifier without a numeric figure (\"autofire only\"); autofire exists as a mechanic, the qualifier is not read."
   },
   {
    "causeKey": "STOCK_POSSIBLE_AREA_WEAPON_UNVERIFIED|A",
@@ -28603,11 +28444,11 @@
     "STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED|D"
    ],
    "result": {
-    "grossAffectedGroups": 201,
-    "immediatelyUnlockedGroups": 133,
-    "vehiclesGainingAnyGroup": 101,
-    "vehiclesGainingFirstExecutableGroup": 33,
-    "vehiclesBecomingFullyExecutable": 75
+    "grossAffectedGroups": 198,
+    "immediatelyUnlockedGroups": 130,
+    "vehiclesGainingAnyGroup": 98,
+    "vehiclesGainingFirstExecutableGroup": 30,
+    "vehiclesBecomingFullyExecutable": 72
    }
   },
   {
@@ -28740,11 +28581,11 @@
     "STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED|D"
    ],
    "result": {
-    "grossAffectedGroups": 292,
-    "immediatelyUnlockedGroups": 264,
-    "vehiclesGainingAnyGroup": 183,
-    "vehiclesGainingFirstExecutableGroup": 46,
-    "vehiclesBecomingFullyExecutable": 175
+    "grossAffectedGroups": 289,
+    "immediatelyUnlockedGroups": 261,
+    "vehiclesGainingAnyGroup": 180,
+    "vehiclesGainingFirstExecutableGroup": 43,
+    "vehiclesBecomingFullyExecutable": 172
    }
   }
  ],
@@ -28942,77 +28783,77 @@
   },
   {
    "step": 19,
-   "add": "STOCK_DAMAGE_QUALIFIED|C",
-   "classes": [
-    "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
-    "SOURCE_RESEARCH_REQUIRED"
-   ],
-   "marginalGroups": 5,
-   "cumulativeGroups": 279,
-   "cumulativeVehiclesFullyExecutable": 191
-  },
-  {
-   "step": 20,
    "add": "STOCK_DAMAGE_AREA_OR_SPLASH|D",
    "classes": [
     "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "marginalGroups": 5,
-   "cumulativeGroups": 284,
-   "cumulativeVehiclesFullyExecutable": 195
+   "cumulativeGroups": 279,
+   "cumulativeVehiclesFullyExecutable": 190
   },
   {
-   "step": 21,
+   "step": 20,
    "add": "STOCK_FIRING_ARC_STATED_UNPARSED|E",
    "classes": [
     "SOURCE_RESEARCH_REQUIRED",
     "OWNER_DECISION_REQUIRED"
    ],
    "marginalGroups": 4,
-   "cumulativeGroups": 288,
-   "cumulativeVehiclesFullyExecutable": 199
+   "cumulativeGroups": 283,
+   "cumulativeVehiclesFullyExecutable": 194
   },
   {
-   "step": 22,
+   "step": 21,
    "add": "STOCK_ATTACK_TOTAL_NOT_PRINTED|A",
    "classes": [
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "marginalGroups": 3,
-   "cumulativeGroups": 291,
-   "cumulativeVehiclesFullyExecutable": 202
+   "cumulativeGroups": 286,
+   "cumulativeVehiclesFullyExecutable": 197
   },
   {
-   "step": 23,
+   "step": 22,
    "add": "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C",
    "classes": [
     "ENGINEERING_WORK — NO OWNER RULING REQUIRED"
    ],
    "marginalGroups": 3,
-   "cumulativeGroups": 294,
-   "cumulativeVehiclesFullyExecutable": 205
+   "cumulativeGroups": 289,
+   "cumulativeVehiclesFullyExecutable": 200
   },
   {
-   "step": 24,
+   "step": 23,
    "add": "STOCK_VARIANT_SPECIFIC_GROUP_UNMODELED|F",
    "classes": [
     "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
     "GM_CERTIFICATION_OPTION"
    ],
    "marginalGroups": 3,
-   "cumulativeGroups": 297,
-   "cumulativeVehiclesFullyExecutable": 206
+   "cumulativeGroups": 292,
+   "cumulativeVehiclesFullyExecutable": 201
   },
   {
-   "step": 25,
+   "step": 24,
    "add": "STOCK_DAMAGE_ION_UNVERIFIED|B",
    "classes": [
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "marginalGroups": 2,
-   "cumulativeGroups": 299,
-   "cumulativeVehiclesFullyExecutable": 208
+   "cumulativeGroups": 294,
+   "cumulativeVehiclesFullyExecutable": 203
+  },
+  {
+   "step": 25,
+   "add": "STOCK_DAMAGE_QUALIFIED|C",
+   "classes": [
+    "ENGINEERING_WORK — NO OWNER RULING REQUIRED",
+    "SOURCE_RESEARCH_REQUIRED"
+   ],
+   "marginalGroups": 2,
+   "cumulativeGroups": 296,
+   "cumulativeVehiclesFullyExecutable": 205
   },
   {
    "step": 26,
@@ -29021,8 +28862,8 @@
     "SOURCE_RESEARCH_REQUIRED"
    ],
    "marginalGroups": 2,
-   "cumulativeGroups": 301,
-   "cumulativeVehiclesFullyExecutable": 210
+   "cumulativeGroups": 298,
+   "cumulativeVehiclesFullyExecutable": 207
   },
   {
    "step": 27,
@@ -29032,8 +28873,8 @@
     "OWNER_DECISION_REQUIRED"
    ],
    "marginalGroups": 1,
-   "cumulativeGroups": 302,
-   "cumulativeVehiclesFullyExecutable": 211
+   "cumulativeGroups": 299,
+   "cumulativeVehiclesFullyExecutable": 208
   },
   {
    "note": "remaining blocked groups after the greedy path",
@@ -29049,8 +28890,8 @@
    "sourceCertification": "MECHANIC_SPECIFIED",
    "isPartitionOwner": true,
    "stockGroups": 336,
-   "stockExecutable": 294,
-   "stockBlocked": 42,
+   "stockExecutable": 296,
+   "stockBlocked": 40,
    "stockVehicles": 299,
    "stockBasis": "partition (first matching family owns a group)",
    "mechanicImplemented": "OFFLINE_TESTED",
@@ -29108,8 +28949,8 @@
    "sourceCertification": "MECHANIC_SPECIFIED",
    "isPartitionOwner": true,
    "stockGroups": 61,
-   "stockExecutable": 43,
-   "stockBlocked": 18,
+   "stockExecutable": 44,
+   "stockBlocked": 17,
    "stockVehicles": 54,
    "stockBasis": "partition (first matching family owns a group)",
    "mechanicImplemented": "OFFLINE_TESTED",
@@ -30292,7 +30133,7 @@
    "sourceCertification": "MECHANIC_SPECIFIED",
    "isPartitionOwner": false,
    "stockGroups": 80,
-   "stockExecutable": 67,
+   "stockExecutable": 68,
    "stockBlocked": null,
    "stockVehicles": 74,
    "stockBasis": "overlay (a configuration/attack mode; not additive with partition families)",
@@ -33131,9 +32972,9 @@
  "forecast": {
   "note": "Upper bounds under stated conditions. They are NOT promises: a SOURCE_RESEARCH item may end SOURCE_INCOMPLETE; an OWNER_DECISION item may be ruled \"refuse\"; a GM_CERTIFICATION_OPTION is never canonical.",
   "canonicalExecutableNow": {
-   "groups": 539,
+   "groups": 542,
    "of": 846,
-   "pct": 63.7
+   "pct": 64.1
   },
   "afterEngineeringOnly": {
    "grossAffectedGroups": 12,
@@ -33141,22 +32982,22 @@
    "vehiclesGainingAnyGroup": 2,
    "vehiclesGainingFirstExecutableGroup": 1,
    "vehiclesBecomingFullyExecutable": 0,
-   "cumulativeGroups": 543
+   "cumulativeGroups": 546
   },
   "afterEngineeringAndSourceResearch_upperBound": {
-   "grossAffectedGroups": 201,
-   "immediatelyUnlockedGroups": 133,
-   "vehiclesGainingAnyGroup": 101,
-   "vehiclesGainingFirstExecutableGroup": 33,
-   "vehiclesBecomingFullyExecutable": 75,
+   "grossAffectedGroups": 198,
+   "immediatelyUnlockedGroups": 130,
+   "vehiclesGainingAnyGroup": 98,
+   "vehiclesGainingFirstExecutableGroup": 30,
+   "vehiclesBecomingFullyExecutable": 72,
    "cumulativeGroups": 672
   },
   "afterOwnerRulingsToo_upperBound": {
-   "grossAffectedGroups": 292,
-   "immediatelyUnlockedGroups": 264,
-   "vehiclesGainingAnyGroup": 183,
-   "vehiclesGainingFirstExecutableGroup": 46,
-   "vehiclesBecomingFullyExecutable": 175,
+   "grossAffectedGroups": 289,
+   "immediatelyUnlockedGroups": 261,
+   "vehiclesGainingAnyGroup": 180,
+   "vehiclesGainingFirstExecutableGroup": 43,
+   "vehiclesBecomingFullyExecutable": 172,
    "cumulativeGroups": 803
   },
   "gmCertificationOnly_notCanonical": {
