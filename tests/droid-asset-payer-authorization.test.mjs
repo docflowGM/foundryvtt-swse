@@ -21,10 +21,10 @@ const bad = own.resolveAssetOwner({ system: { ownedByActorId: 'a', npcProfile: {
 assert.equal(bad.status, 'CONTRADICTORY'); assert.deepEqual(bad.ownerIds.sort(), ['a', 'b']);
 assert.equal(own.resolveAssetOwner({ system: { ownedByActorId: 'gone' } }, { getActor: () => null }).status, 'MISSING_ACTOR');
 assert.equal(own.resolveAssetOwnerId({ system: { ownedByActorId: 'a', npcProfile: { owner: { actorId: 'b' } } } }), null, 'contradiction never yields an id');
-// every record the Vehicle service recognized is still recognized (parity), plus co-owners
+// current primary owner and EXPLICIT (shared) co-owners are recognized by both the resolver and the Vehicle service
 const rec = (system, flags) => ({ system, flags });
-for (const a of [rec({ ownedByActorId: 'x' }), rec({ storeAcquisition: { ownerActorId: 'x' } }), rec({ assetOwnership: { primaryOwnerActorId: 'x' } }),
-  rec({}, { [SYSTEM_ID]: { storeAcquisition: { ownerActorId: 'x' } } }), rec({ assetOwnership: { ownerActorIds: ['y', 'x'] } })]) {
+for (const a of [rec({ ownedByActorId: 'x' }), rec({ assetOwnership: { primaryOwnerActorId: 'x' } }),
+  rec({ assetOwnership: { shared: true, ownerActorIds: ['y', 'x'] } })]) {
   assert.equal(own.isRecordedOwnerId(a, 'x'), true);
   assert.equal(VehicleInstallationService.isRecordedOwner({ id: 'x' }, a), true, 'VehicleInstallationService uses the shared definition');
   assert.equal(own.isRecordedOwnerId(a, 'z'), false);
@@ -76,6 +76,10 @@ const cost = (droid) => computeDroidPartCost(droid, { id: PART });
   const s = setup({ isGM: true, droidSystem: { ownedByActorId: 'owner' } });
   const r = await DroidCustomizationEngine.applyDroidCustomization(s.droid, { add: [PART] }, { walletActor: s.other });
   assert.equal(r.success, true, r.error); assert.equal(s.other.system.credits, 9000 - cost(s.droid));
+  const records = Object.values(s.other.flags?.[SYSTEM_ID]?.transactions ?? {});
+  assert.equal(records.length, 1, 'the GM-funded customization is in the credit audit trail');
+  assert.equal(records[0].audit.payerAuthorization.gmOverride, true, 'the GM override is explicit in the audit record');
+  assert.equal(records[0].audit.payerAuthorization.basis, 'GM_OVERRIDE');
 }
 { // contradictory records: refused for everyone, preview included; nothing written
   const s = setup({ isGM: true, droidSystem: { ownedByActorId: 'owner', npcProfile: { owner: { actorId: 'other' } } } });
@@ -98,13 +102,28 @@ const cost = (droid) => computeDroidPartCost(droid, { id: PART });
   assert.equal(own.authorizePayer(clash, { id: 'a' }).ok, false);
   assert.equal(own.isRecordedOwnerId(clash, 'a'), false, 'no id is "the" owner when current-ownership records disagree');
   assert.equal(own.isRecordedOwnerId(clash, 'b'), false);
-  // the original acquirer is a recorded owner but is NOT a contradiction with the current owner (transfers)
-  const transferred = { id: 'v', system: { ownedByActorId: 'new', storeAcquisition: { ownerActorId: 'buyer' } }, flags: {} };
-  assert.equal(own.resolveAssetOwner(transferred).status, 'RESOLVED');
+  // historical acquisition provenance is NOT authority: after a transfer the original purchaser cannot spend or receive resale
+  const transferred = { id: 'v', system: { ownedByActorId: 'new', storeAcquisition: { ownerActorId: 'buyer' } }, flags: { [SYSTEM_ID]: { storeAcquisition: { ownerActorId: 'buyer' } } } };
+  assert.equal(own.resolveAssetOwner(transferred).status, 'RESOLVED', 'a differing purchaser is not a contradiction');
   assert.equal(own.resolveAssetOwner(transferred).ownerId, 'new');
   assert.equal(own.isRecordedOwnerId(transferred, 'new'), true);
-  assert.equal(own.isRecordedOwnerId(transferred, 'buyer'), true, 'previous behavior preserved for the acquirer');
-  assert.equal(own.isRecordedOwnerId(transferred, 'stranger'), false);
+  assert.equal(own.isRecordedOwnerId(transferred, 'buyer'), false, 'the original purchaser loses spending authority');
+  assert.deepEqual(own.listAcquisitionProvenanceIds(transferred), ['buyer'], 'the purchase record is still kept as evidence');
+  assert.equal(own.authorizePayer(transferred, { id: 'buyer' }).ok, false);
+  assert.equal(own.authorizePayer(transferred, { id: 'buyer' }, { isGM: true }).gmOverride, true, 'GM override stays explicit');
+  // access permission is not ownership; an UNSHARED owner list is residue, not authority
+  const accessOnly = { id: 'v', system: { ownedByActorId: 'o', assetOwnership: { accessActorIds: ['viewer'], ownerActorIds: ['old'], shared: false } }, flags: { [SYSTEM_ID]: { assetGrant: { recipientActorIds: ['viewer'] } } } };
+  assert.equal(own.isRecordedOwnerId(accessOnly, 'viewer'), false, 'access grant does not confer spending');
+  assert.equal(own.isRecordedOwnerId(accessOnly, 'old'), false, 'unshared residual owner list is not authority');
+  assert.equal(own.isRecordedOwnerId({ ...accessOnly, system: { ...accessOnly.system, assetOwnership: { ...accessOnly.system.assetOwnership, shared: true } } }, 'old'), true, 'an explicitly shared co-owner is authority');
+  // resale credit recipients: a former owner / purchaser / viewer cannot be the payer-receiver
+  for (const who of ['buyer', 'viewer', 'old']) assert.equal(own.authorizePayer(accessOnly, { id: who }).ok, false, `${who} cannot receive resale`);
+  // audit record
+  assert.equal(own.payerAuditRecord(accessOnly, { id: 'o' }, { isGM: false }).basis, 'RECORDED_OWNER');
+  assert.equal(own.payerAuditRecord(accessOnly, { id: 'v' }, { isGM: false }).basis, 'SELF_FUNDED');
+  const g = own.payerAuditRecord(accessOnly, { id: 'viewer' }, { isGM: true, userId: 'gm-1' });
+  assert.equal(g.basis, 'GM_OVERRIDE'); assert.equal(g.gmOverride, true); assert.equal(g.authorizedByUserId, 'gm-1');
+  assert.equal(own.payerAuditRecord(accessOnly, { id: 'viewer' }, { isGM: false }).basis, 'REFUSED');
   // agreeing primary + assignment records are fine
   assert.equal(own.resolveAssetOwner({ system: { ownedByActorId: 'a', assetOwnership: { primaryOwnerActorId: 'a' } } }).status, 'RESOLVED');
   // the Vehicle service applies the same rule: contradiction blocks even a GM from the owner-association gate
@@ -114,5 +133,33 @@ const cost = (droid) => computeDroidPartCost(droid, { id: PART });
   assert.equal(VehicleInstallationService.isRecordedOwner({ id: 'new' }, veh({ ownedByActorId: 'new' })), true);
   const src = (await import('node:fs')).readFileSync('scripts/engine/vehicles/vehicle-installation-service.js', 'utf8');
   assert.match(src.slice(src.indexOf('static #ownerAssociated'), src.indexOf('static #ownerAssociated') + 500), /CONTRADICTORY'\) return false;[\s\S]*isGM === true\) return true/, 'contradiction is checked before the GM allowance');
+}
+// ---- AssetGrantService: a transfer replaces the primary owner, it does not keep them as a co-owner ------------------------
+{
+  const { AssetGrantService } = await import('../scripts/engine/assets/AssetGrantService.js');
+  const actor = (id, extra = {}) => ({ id, name: id, type: extra.type ?? 'character', uuid: `Actor.${id}`, img: '', ownership: {}, flags: {}, system: extra.system ?? {}, items: [], effects: [], getFlag() { return undefined; } });
+  const asset = () => { const a = actor('d1', { type: 'droid', system: { ownedByActorId: 'A', assetOwnership: { primaryOwnerActorId: 'A', ownerActorIds: ['A', 'D'], shared: true, accessActorIds: ['A'] }, storeAcquisition: { ownerActorId: 'A' } } }); return a; };
+  const A = actor('A'), B = actor('B'), C = actor('C');
+  installFoundryShimGlobals({ game: { user: { isGM: true, id: 'gm' }, actors: { get: () => null }, users: [] } });
+  // unshared transfer A -> B
+  const d1 = asset();
+  await AssetGrantService.grantAssetAccess({ assetActor: d1, recipientActors: [B], primaryOwnerActor: B, shared: false, updateDocumentOwnership: false });
+  const o1 = d1.system.assetOwnership;
+  assert.equal(d1.system.ownedByActorId, 'B'); assert.equal(o1.primaryOwnerActorId, 'B');
+  assert.equal(o1.ownerActorIds.includes('A'), false, 'the previous primary owner is not retained as a co-owner');
+  assert.equal(o1.ownerActorIds.includes('D'), true, 'an unrelated explicit co-owner is retained');
+  assert.equal(own.authorizePayer(d1, { id: 'A' }).ok, false, 'previous owner / original purchaser can no longer fund or receive resale');
+  assert.equal(own.authorizePayer(d1, { id: 'B' }).ok, true);
+  assert.equal(own.authorizePayer(d1, { id: 'D' }).ok, o1.shared === true, 'co-owner authority follows the explicit shared flag');
+  // shared grant to B and C keeps both as co-owners, still not A
+  const d2 = asset();
+  await AssetGrantService.grantAssetAccess({ assetActor: d2, recipientActors: [B, C], primaryOwnerActor: B, shared: true, updateDocumentOwnership: false });
+  assert.deepEqual([...d2.system.assetOwnership.ownerActorIds].sort(), ['B', 'C', 'D']);
+  assert.equal(own.authorizePayer(d2, { id: 'C' }).ok, true, 'explicit co-owner');
+  assert.equal(own.authorizePayer(d2, { id: 'A' }).ok, false);
+  // re-granting the previous primary explicitly (shared) restores them deliberately
+  const d3 = asset();
+  await AssetGrantService.grantAssetAccess({ assetActor: d3, recipientActors: [B, A], primaryOwnerActor: B, shared: true, updateDocumentOwnership: false });
+  assert.equal(own.authorizePayer(d3, { id: 'A' }).ok, true, 'a deliberate shared re-grant keeps them');
 }
 console.log('Droid asset payer-authorization tests passed.');

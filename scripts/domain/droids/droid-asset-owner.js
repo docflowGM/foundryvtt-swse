@@ -1,9 +1,8 @@
 /**
  * Recorded ownership of a droid/vehicle asset, and who may pay for changes to it (pure; no Foundry globals).
  *
- * ONE definition of "who owns this asset" for wallet resolution and payer authorization. It reads every
- * ownership record the Store/assignment/follower flows write (the same set VehicleInstallationService.isRecordedOwner
- * uses). Records that name DIFFERENT single owners are a contradiction and fail closed. A payer is authorized only if
+ * ONE definition of "who may spend on this asset" for wallet resolution and payer authorization (also used by
+ * VehicleInstallationService.isRecordedOwner). See listRecordedOwnerIds for the four relations it separates. Records that name DIFFERENT single owners are a contradiction and fail closed. A payer is authorized only if
  * it is the asset itself (self-funded), a recorded owner, or - explicitly - a GM. There is no fallback to "whichever
  * character the user controls".
  */
@@ -12,10 +11,15 @@ const SYSTEM_ID = 'foundryvtt-swse';
 const clean = value => (typeof value === 'string' ? value.trim() : '');
 
 /**
- * `single`: CURRENT-ownership records (assignment, follower and primary-owner links); two different ids here are a
- * contradiction. `co`: additional recorded owners - co-owner lists and the ORIGINAL acquirer in `storeAcquisition`
- * (a purchase record that may legitimately differ from the current owner after a transfer, so it is accepted as a
- * recorded owner but never counts as a contradiction).
+ * Four DIFFERENT relations to an asset, kept apart (only the first two carry spending authority):
+ *   current primary owner   `single`  ownedByActorId, assetOwnership.primaryOwnerActorId, follower owner link.
+ *                                     Two different ids here are a contradiction (fail closed).
+ *   explicit co-owners      `co`      assetOwnership.ownerActorIds, ONLY while assetOwnership.shared === true (a
+ *                                     GM shared grant). An unshared list is residue of earlier grants, not authority.
+ *   historical provenance   (none)    storeAcquisition.ownerActorId / flags - who BOUGHT it. Evidence only: after a
+ *                                     transfer the original purchaser keeps no authority to spend or receive resale.
+ *   access / visibility     (none)    assetOwnership.accessActorIds, assetGrant.recipientActorIds, document ownership:
+ *                                     permission to open or see the asset, never to fund it.
  */
 export function listRecordedOwnerIds(actor) {
   if (!actor) return { single: [], co: [] };
@@ -25,11 +29,16 @@ export function listRecordedOwnerIds(actor) {
     s.assetOwnership?.primaryOwnerActorId,
     s.npcProfile?.owner?.actorId, actor.flags?.swse?.follower?.ownerId
   ].map(clean).filter(Boolean);
-  const co = [
-    ...(Array.isArray(s.assetOwnership?.ownerActorIds) ? s.assetOwnership.ownerActorIds : []),
-    s.storeAcquisition?.ownerActorId, actor.flags?.[SYSTEM_ID]?.storeAcquisition?.ownerActorId
-  ].map(clean).filter(Boolean);
+  const co = s.assetOwnership?.shared === true
+    ? (Array.isArray(s.assetOwnership?.ownerActorIds) ? s.assetOwnership.ownerActorIds : []).map(clean).filter(Boolean)
+    : [];
   return { single: [...new Set(single)], co: [...new Set(co)] };
+}
+
+/** Historical acquirer ids (evidence only; carries NO authority). */
+export function listAcquisitionProvenanceIds(actor) {
+  const s = actor?.system ?? {};
+  return [...new Set([s.storeAcquisition?.ownerActorId, actor?.flags?.[SYSTEM_ID]?.storeAcquisition?.ownerActorId].map(clean).filter(Boolean))];
 }
 
 /**
@@ -80,4 +89,17 @@ export function authorizePayer(asset, wallet, { isGM = false } = {}) {
   if (isRecordedOwnerId(asset, wallet.id)) return { ok: true };
   if (isGM) return { ok: true, gmOverride: true };
   return { ok: false, reason: 'The selected payer is not a recorded owner of this asset.' };
+}
+
+/**
+ * Audit record for a payer decision, written into the transaction's audit trail. A GM override is explicit and
+ * attributable (who, and that the payer was not a recorded owner); ordinary owner/self funding is recorded as such.
+ */
+export function payerAuditRecord(asset, wallet, { isGM = Boolean(globalThis.game?.user?.isGM), userId = globalThis.game?.user?.id ?? null } = {}) {
+  const verdict = authorizePayer(asset, wallet, { isGM });
+  return {
+    payerActorId: wallet?.id ?? null,
+    basis: !verdict.ok ? 'REFUSED' : verdict.gmOverride ? 'GM_OVERRIDE' : (asset?.id && wallet?.id === asset.id ? 'SELF_FUNDED' : 'RECORDED_OWNER'),
+    ...(verdict.gmOverride ? { gmOverride: true, authorizedByUserId: userId } : {})
+  };
 }

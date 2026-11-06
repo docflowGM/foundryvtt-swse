@@ -24,7 +24,7 @@
  * This avoids parallel truth and keeps compatibility with existing vehicle systems.
  */
 
-import { authorizePayer } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-asset-owner.js';
+import { authorizePayer, payerAuditRecord } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-asset-owner.js';
 import { verifyStoredPaths } from '/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-postcondition.js';
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/core/logger.js';
 import { VEHICLE_SYSTEM_DEFINITIONS } from '/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-system-definitions.js';
@@ -318,7 +318,8 @@ export class VehicleCustomizationEngine {
         verifyAsset: verifyStoredPaths({ 'system.installedSystems': installedSystems }),
         audit: {
           source: 'vehicle-customization',
-          assetActorId: actor.id
+          assetActorId: actor.id,
+          payerAuthorization: payerAuditRecord(actor, walletActor)
         }
       }, { source: 'VehicleCustomizationEngine.applyVehicleCustomization', validate: true, rederive: true });
 

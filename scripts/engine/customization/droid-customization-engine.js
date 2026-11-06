@@ -25,7 +25,7 @@ import { SWSELogger } from '/systems/foundryvtt-swse/scripts/core/logger.js';
 import { DROID_SYSTEMS } from '/systems/foundryvtt-swse/scripts/data/droid-systems.js';
 import { computeDroidPartCost, getAllDroidPartDefinitions, getDroidCostFactor, getDroidPartDefinition, hydrateDroidPart, normalizeDroidPartId, resolveDroidPartQuoteDetailed, collectInstalledComponentEvidence, findConfirmedHostInstance } from '/systems/foundryvtt-swse/scripts/data/droid-part-schema.js';
 import { verifyDroidLedgerMatchesIntent, verifyItemsDeleted } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installation-postcondition.js';
-import { authorizePayer } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-asset-owner.js';
+import { authorizePayer, payerAuditRecord } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-asset-owner.js';
 import { followsDroidRules } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-rules-profile.js';
 import { evaluateInstallationEligibility } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installation-eligibility.js';
 import { resolveInstalledDroidComponents } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js';
@@ -740,7 +740,8 @@ export class DroidCustomizationEngine {
           systemsAdded: appliedAdded,
           systemsRemoved: preview.preview.systemsRemoved,
           itemsDeleted: itemIdsToDelete,
-          assetActorId: actor.id
+          assetActorId: actor.id,
+          payerAuthorization: payerAuditRecord(actor, walletActor)
         }
       }, { source: 'DroidCustomizationEngine.applyDroidCustomization', validate: true, rederive: true });
 

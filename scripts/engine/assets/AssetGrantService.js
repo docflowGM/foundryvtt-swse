@@ -216,8 +216,14 @@ export class AssetGrantService {
     const existingOwnership = assetActor.system?.assetOwnership && typeof assetActor.system.assetOwnership === 'object'
       ? clone(assetActor.system.assetOwnership)
       : {};
+    // A previous PRIMARY owner is replaced, not retained: leaving them in ownerActorIds would silently keep their
+    // authority to fund the asset and receive its resale after the transfer. Explicit co-owners and anyone
+    // re-granted in this call (shared) are kept.
+    const previousPrimaryId = String(existingOwnership.primaryOwnerActorId || assetActor.system?.ownedByActorId || '').trim();
+    const retainedCoOwners = asArray(existingOwnership.ownerActorIds).map(String)
+      .filter(id => !(previousPrimaryId && id === previousPrimaryId && id !== primary.id));
     const ownerActorIds = Array.from(new Set([
-      ...asArray(existingOwnership.ownerActorIds).map(String),
+      ...retainedCoOwners,
       primary.id,
       ...(shared ? recipientIds : [])
     ].filter(Boolean)));

@@ -152,7 +152,7 @@ function service(tx) {
     VEHICLE_INSTALLATION_JOBS_FLAG: J.VEHICLE_INSTALLATION_JOBS_FLAG, VEHICLE_INSTALLATION_JOBS_FLAG_PATH: J.VEHICLE_INSTALLATION_JOBS_FLAG_PATH,
     readJobs: J.readJobs, planJobStart: J.planJobStart, planJobCheck: J.planJobCheck, planJobRetry: J.planJobRetry, planLogWorkDays: J.planLogWorkDays,
     planGmCompleteJob: J.planGmCompleteJob, planGmInstantInstall: J.planGmInstantInstall,
-    resolveAssetOwner: OWNER.resolveAssetOwner, isRecordedOwnerId: OWNER.isRecordedOwnerId,
+    resolveAssetOwner: OWNER.resolveAssetOwner, isRecordedOwnerId: OWNER.isRecordedOwnerId, payerAuditRecord: OWNER.payerAuditRecord,
     verifyStoredPaths: POST.verifyStoredPaths, verifyEmbeddedItemFlag: POST.verifyEmbeddedItemFlag,
     game: { user: { id: 'gm1', isGM: true } },
     LedgerService: { getCurrentCredits: a => a.credits },
