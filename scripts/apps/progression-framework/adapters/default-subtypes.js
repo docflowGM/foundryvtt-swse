@@ -263,7 +263,7 @@ export class DroidSubtypeAdapter extends ProgressionSubtypeAdapter {
     // to a source-cleared canonical component aborts finalization here, before
     // anything is committed. A droid in stock-statblock mode is never seeded.
     applyInitialInstallationToPlan(mutationPlan, {
-      actor, seed: actor?.id ?? session?.id ?? session?.sessionId, droidSystems: droidBuild.droidSystems ?? null
+      actor, seed: actor?.id ?? session?.id ?? session?.sessionId, droidSystems: droidBuild.droidSystems ?? null, size
     });
     mutationPlan.set['system.droidCredits'] = droidBuild.droidCredits ?? null;
 

@@ -39,3 +39,28 @@ Creation is therefore a one-time writer of the build draft; only the ledger was 
 - Typed fittings (e.g. climbing claws) have no initial-build host mapping and therefore fail closed; they are also source-HOLD today.
 - Embedded-Item integrated equipment is not reconciled into the ledger (separate task).
 - Not done here: Garage instance picker (C-3B), dead-module removal (C-3C), Foundry V13 acceptance. No source HOLD promoted; DROID-RD-001..003 and SGD-HOST-002 untouched; no vehicle code touched.
+
+## Independent-review corrections (PR #1115 head `46d40c7`)
+
+Exact-head CI was green on `46d40c7` (Rolling 620 passed / 0 failed / 5 excluded; Droid targeted success). Review found creation-state boundary gaps that CI did not exercise. Each was **reproduced first** on the `46d40c7` core, then fixed:
+
+| # | Reproduced on `46d40c7` | Fix |
+|---|---|---|
+| A | Two draft rows with the same `instanceId` -> zero errors, ONE ledger entry (the second overwrote the first) and a duplicated mirror identity | Duplicate or malformed supplied `instanceId`, and duplicate or non-token supplied `locationId`, are refused (`DUPLICATE_INSTANCE_ID`, `CONFLICTING_LOCATION`, `MALFORMED_SUPPLIED_IDENTITY`) before anything is written. Distinct supplied identities of one kind stay legal and are honored; derived locations never reuse a supplied token. A supplied id that belongs to a different existing component is a conflict (no impersonation). |
+| B | A ledger holding a different physical appendage made the approved appendages silently "skipped": no error, build and ledger disagreed | An EXACT repeat (same count, kinds, identities, locations) is accepted and reuses the records. Anything else is `EXISTING_APPENDAGES_CONFLICT`. A disabled (`installed`/`enabled` false), malformed, or different singleton under the component's id is `EXISTING_COMPONENT_CONFLICT`; a malformed existing instance record is `MALFORMED_EXISTING_RECORD`. A valid existing singleton is preserved verbatim. Nothing is overwritten. |
+| C | A locomotion row marked `restricted: true` still reached the source-review gate as `restrictedLocomotion: false` | The constant is gone. The first-unrestricted fact is the builder's OWN acceptance of the primary locomotion (see below); an explicit restriction marker other than `false` is `RESTRICTION_UNVERIFIED`; any other slot has no such fact. The five HOLD locomotions still pass only as the builder-accepted first locomotion; none is promoted. |
+| D | Follower fixtures were `type: 'droid'` | New fixtures match `follower-mutation-planning.js`: `type: 'npc'`, `system.isDroid: true`. |
+
+**All-or-nothing:** on any unresolved condition the returned ledger and mirror are exactly the inputs (asserted over four failure shapes).
+
+### Acceptance boundary (where validation is guaranteed)
+A selection is installed only if the builder's own initial-build workflow accepts it. `acceptWithBuilderWorkflow` (droid-initial-installation-service.js) calls `quoteDroidBuilderSelection` with `operationPhase: 'INITIAL_BUILD'` - the single builder quote consumer that DroidBuilderStep uses at selection time. That consumer applies the published-source review, the typed prerequisites (draft mode) and an exact quote. It is asked only "would the builder accept this?"; no price is used and no pricing rule is duplicated. It also supplies the locomotion speed from the row and requires a published `variant` where the source demands one. With no workflow supplied nothing is accepted. Fields the builder does not produce (`sensors`, `weapons`, `integratedSystems`, `processorEnhancements`, `locomotionSystems`, `secondaryLocomotion`) have no validated acceptance path and are refused when non-empty (`UNVALIDATED_SELECTION`); so are definitions with no builder quotation path. Reasons name the real cause (for example a missing locomotion speed is reported as such, not as a source HOLD).
+
+### NPC-shaped droid followers - audit findings (no authority changed)
+- `resolveDroidCalculationMode` returns playable-derived for any actor whose type is not `droid` (reason `not-a-droid-actor`), so an NPC-typed follower is never in stock-statblock mode and is seeded. Stock imports are `droid` actors, so the stock protection is unaffected.
+- `ModifierEngine._getDroidModModifiers` returns early for `actor.type !== 'droid'`, so NPC-typed droid followers collect no droid-part modifiers at all - seeding neither applies nor double-counts any. **Observation for the owner (existing behavior, not changed):** droid-part modifiers therefore do not apply to NPC-typed droid followers today.
+- The Garage engine rejects non-`droid` actors, which is why creation seeding is a separate path rather than a call into it.
+- Organic NPC followers have no droid build and are untouched.
+
+### Verification of these corrections
+Tests: 18 groups (was 12), including duplicate / conflicting / malformed identities, the existing-ledger conflict matrix, the restricted-locomotion cases, the acceptance boundary, all-or-nothing, and NPC-shaped followers. Eleven mutations (duplicate ids, duplicate locations, tolerated differing ledger, tolerated disabled singleton, restricted constant, ignored restriction claim, no-workflow accept, ignored acceptance failure, builder-foreign fields, made-up speed, partial output) are each caught; two initially survived and exposed test gaps that were closed. All four strict guards and phase-5c pass; the related droid / follower / chargen / transaction / calculation-mode sweep passes. Rolling and CI results are recorded on the PR.
