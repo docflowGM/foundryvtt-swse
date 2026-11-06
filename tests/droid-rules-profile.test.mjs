@@ -60,8 +60,6 @@ console.log('Droid rules profile tests passed.');
   assert.match(me, /_followsDroidRules\(actor\)/);
   assert.doesNotMatch(me.slice(me.indexOf('Source 7: Droid'), me.indexOf('Source 7b')), /actor\.type === 'droid'/, 'Source 7 must not gate on actor.type');
   assert.match(me, /componentMayContributeDroidModifiers\(actor, component, rulesProfile\)/);
-  const hot = fs.readFileSync('scripts/patches/follower-droid-garage-hotfix.js', 'utf8');
-  assert.match(hot, /resolveDroidRulesProfile\(actor\)/);
-  assert.doesNotMatch(hot, /actor\.system\?\.isDroid === true/, 'hotfix must not carry its own droid-signal list');
+  assert.equal(fs.existsSync('scripts/patches/follower-droid-garage-hotfix.js'), false, 'the follower garage hotfix stays retired (payer/asset are explicit)');
 }
 console.log('Droid rules profile structural checks passed.');

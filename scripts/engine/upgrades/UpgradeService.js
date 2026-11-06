@@ -8,6 +8,7 @@
  * - No direct item/actor mutation — mutations go through UpgradeCommands
  */
 
+import { resolveAssetOwnerId } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-asset-owner.js';
 import { followsDroidRules } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-rules-profile.js';
 import { CustomizationWorkflow } from '/systems/foundryvtt-swse/scripts/engine/customization/customization-workflow.js';
 import { DroidCustomizationEngine } from '/systems/foundryvtt-swse/scripts/engine/customization/droid-customization-engine.js';
@@ -612,6 +613,16 @@ export class UpgradeService {
 
   // ─── Mutations (routed through ActorEngine) ───────────────────────────────────
 
+  /**
+   * Explicit payer for a droid asset: its owner (purchase/assignment link or follower owner)
+   * when one resolves to a real actor, otherwise the droid itself (unchanged default).
+   */
+  static #walletOptions(actor) {
+    const ownerId = resolveAssetOwnerId(actor);
+    const owner = ownerId && ownerId !== actor?.id ? game.actors?.get?.(ownerId) : null;
+    return owner ? { walletActor: owner } : {};
+  }
+
   static async applyUpgrade({ actor, itemId, upgradeId }) {
     // Droid actor upgrade — PHASE 2 (Droid Authority Consolidation): route
     // through DroidCustomizationEngine, the same authority the Garage uses,
@@ -621,7 +632,7 @@ export class UpgradeService {
     // system.droidSystems mirror other consumers read. See
     // docs/audits/droid-authority-consolidation-phase-2.md.
     if (itemId?.startsWith('droid-actor-')) {
-      const result = await DroidCustomizationEngine.applyDroidCustomization(actor, { add: [upgradeId] });
+      const result = await DroidCustomizationEngine.applyDroidCustomization(actor, { add: [upgradeId] }, this.#walletOptions(actor));
       if (!result.success) throw new Error(result.error || `Failed to install ${upgradeId}`);
       return { success: true };
     }
@@ -722,7 +733,7 @@ export class UpgradeService {
         ? { id: targetEntry.id, instanceId: targetEntry.instanceId }
         : null;
 
-      const result = await DroidCustomizationEngine.applyDroidCustomization(actor, { remove: [identified ?? targetId] });
+      const result = await DroidCustomizationEngine.applyDroidCustomization(actor, { remove: [identified ?? targetId] }, this.#walletOptions(actor));
       if (result.success) return { success: true };
       throw new Error(result.error || `Failed to remove ${identified?.id ?? targetId}`);
     }

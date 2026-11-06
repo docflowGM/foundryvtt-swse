@@ -1,11 +1,11 @@
-# SWSE V2 - Step 1A: Verified Mutation-Authority Register (keep / merge / redirect / delete)
+# SWSE V2 Step 1 - Authority and Consumer Register (keep / merge / redirect / delete)
 
 | | |
 |---|---|
 | **Repo / branch** | `docflowGM/foundryvtt-swse`, branch `feature/v2-vehicle-upgrade-writer-closure`, based on `7e1a753d60891c5d0080b1f678df8f755db9cc81` (PR #1117 head) |
 | **Date** | 2026-11-06 UTC |
 | **Evidence** | `CODE_VERIFIED` = read at this SHA; reachability = **static** (targeted greps over `scripts/ tests/ tools/ system.json index.js`); dynamic/computed loading is not ruled out. Nothing Foundry-tested. |
-| **Related** | [Architecture Map](SWSE_V2_SSOT_Master_Architecture_Map.md), [Ledger](SWSE_V2_SSOT_5_Category_Consumer_Ledger.md), [Roadmap](SWSE_V2_SSOT_Convergence_Roadmap_for_Claude.md) |
+| **Related** | [Architecture Map](../audits/SWSE_V2_SSOT_Master_Architecture_Map.md), [Ledger](../audits/SWSE_V2_SSOT_5_Category_Consumer_Ledger.md), [Roadmap](../audits/SWSE_V2_SSOT_Convergence_Roadmap_for_Claude.md) |
 
 Three things are kept distinct below: **exists**, **wired into production**, **enforces the contract its docs describe**.
 
@@ -30,7 +30,7 @@ Three things are kept distinct below: **exists**, **wired into production**, **e
 | DroidCustomizationEngine | `scripts/engine/customization/droid-customization-engine.js` | yes | yes | confirmed-ledger removal; independent revalidation in `apply` | Preserve | **KEEP** |
 | VehicleInstallationService | `scripts/engine/vehicles/vehicle-installation-service.js` | yes | yes (sheet Shipyard actions) | sealed ledger, job, EP, price | Preserve | **KEEP** (single Vehicle installation authority) |
 | VehicleCustomizationEngine | `scripts/engine/customization/vehicle-customization-engine.js` | yes | yes via `CustomizationBayApp` Shipyard mode | charges via TransactionEngine; `canonicalBlock` refuses published hulls; writes legacy `system.installedSystems` | Consolidate and retire | **MERGE/REDIRECT then retire** - blocked on the owner's custom-hull ruling (Roadmap W3) |
-| Follower wallet Proxy/hotfix | `scripts/patches/follower-droid-garage-hotfix.js` | yes | yes (registered `runtime-bugfix-hotfixes-init.js:38`) | wallet-view only | Replace and remove | **REDIRECT then DELETE** (Step 1C/1D); Workshop's `applyDroidCustomization(actor, {add})` call passes **no `walletActor`** (verified), so removal also needs the Workshop to pass the owner wallet explicitly |
+| Follower wallet Proxy/hotfix | `scripts/patches/follower-droid-garage-hotfix.js` (**deleted in this branch**) | was yes | was registered `runtime-bugfix-hotfixes-init.js:38` | wallet-view only | Replace and remove | **DELETED (Stage 2).** Replacement: one owner definition `scripts/domain/droids/droid-asset-owner.js` `resolveAssetOwnerId` (purchase links + follower links), used by `tech-specialist-modification-service.js` `resolveWalletActor` (Bay) and by `UpgradeService.#walletOptions` (Workshop, which previously passed no `walletActor`). Engine and TransactionEngine already took explicit `walletActor`/`assetActor`. |
 
 ## 2. Corrections to the architecture review's premises (verified)
 
@@ -39,11 +39,13 @@ Three things are kept distinct below: **exists**, **wired into production**, **e
 - `UpdatePipeline` has no live consumer chain (its two importers are themselves unreferenced), so "redirect consumers" is moot: it can be deleted.
 - `ActorEngine` `transactional` defaults to `false`, as stated; `ProgressionFinalizer` is not its only transactional caller.
 
-## 3. This branch (Step 1C, first logical change)
+## 3. Implemented so far in this branch (see the implementation log for SHAs)
 
 `feature/v2-vehicle-upgrade-writer-closure` closes the unpaid Vehicle write only:
 - `UpgradeService.collectOwnedUpgradeRecords` no longer offers the vehicle; `applyUpgrade`/`removeUpgrade` throw `VEHICLE_WORKSHOP_REFUSAL`.
 - `tests/vehicle-upgrade-writer-closure.test.mjs` (apply, remove, record absent, Droid delegation intact; mutation-verified: restoring the raw write fails it).
+
+**Done in Stage 2 (see implementation log):** follower wallet bridge removed; Workshop pays from the owner for follower droids.
 
 **Deliberately not done yet:** (a) a "Shipyard job adapter" inside the Upgrade App (needs `VehicleInstallationService`'s job API contract and a UI decision; the Shipyard on the vehicle sheet already exposes it); (b) a `preUpdateActor` guard on raw `system.installedSystems` for vehicles, because the legacy paid `VehicleCustomizationEngine` lane (non-canonical hulls) legitimately writes that field until the custom-hull ruling.
 
@@ -52,6 +54,6 @@ Three things are kept distinct below: **exists**, **wired into production**, **e
 | Step | Work | Gate |
 |---|---|---|
 | 1B | Extract anything useful from `MutationAdapter`, shell `MutationCoordinator`, `StoreTransactionEngine`, `VehicleTransactionService` (none found yet) into the live authorities | owner review of the register |
-| 1C | Workshop passes explicit `walletActor`; remove follower proxy; route Bay Shipyard mode to the sheet Shipyard; static `droid-rules-profile` import in `ModifierEngine` (Roadmap W2) | custom-hull ruling for the Bay lane; v13 for the proxy removal |
+| 1C | (Workshop wallet + follower proxy removal: DONE, Stage 2.) Route Bay Shipyard mode to the sheet Shipyard; static `droid-rules-profile` import in `ModifierEngine` (Roadmap W2) | custom-hull ruling for the Bay lane; v13 for the proxy removal |
 | 1D | Delete: `mutation-gateway.js`, `mutation-router.js`, shell coordinator/plan, `UpdatePipeline` chain, `store-transaction-engine.js`, `vehicle-transaction-service.js`, `vehicle-modification-manager.js` (+ its pinning test), `assets-hooks.js`; add a retired-surface scanner test | static re-grep + Foundry startup smoke |
 | 1E | Domain postcondition checks; MutationInterceptor behavior test; full regression; live Foundry v13 acceptance | v13 world |

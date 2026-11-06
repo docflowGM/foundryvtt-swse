@@ -13,7 +13,6 @@ import { registerFollowerNpcSheetParityHotfix } from '/systems/foundryvtt-swse/s
 import { registerFollowerProgressionLiveStateHotfix } from '/systems/foundryvtt-swse/scripts/patches/follower-progression-live-state-hotfix.js';
 import { registerFollowerOrphanTransferHotfix } from '/systems/foundryvtt-swse/scripts/patches/follower-orphan-transfer-hotfix.js';
 import { registerFollowerRepeatableEntitlementHotfix } from '/systems/foundryvtt-swse/scripts/patches/follower-repeatable-entitlement-hotfix.js';
-import { registerFollowerDroidGarageHotfix } from '/systems/foundryvtt-swse/scripts/patches/follower-droid-garage-hotfix.js';
 import { registerCanonicalAbilityPrerequisiteHotfix } from '/systems/foundryvtt-swse/scripts/patches/canonical-ability-prerequisite-hotfix.js';
 import { registerCombatFeaturesPanelRenderer } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-panel-renderer.js';
 import { registerCombatFeatureActionRouter } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-action-router.js';
@@ -35,7 +34,6 @@ registerFollowerNpcSheetParityHotfix();
 registerFollowerProgressionLiveStateHotfix();
 registerFollowerOrphanTransferHotfix();
 registerFollowerRepeatableEntitlementHotfix();
-registerFollowerDroidGarageHotfix();
 registerCanonicalAbilityPrerequisiteHotfix();
 registerCombatFeaturesPanelRenderer();
 registerCombatFeatureActionRouter();

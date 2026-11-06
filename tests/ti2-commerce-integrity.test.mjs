@@ -175,8 +175,7 @@ const run = (cost = 100) => TransactionEngine.executeMutationTransaction({ actor
   globalThis.localStorage ??= { getItem: () => null, setItem: () => {}, removeItem: () => {} };
   globalThis.foundry.applications = globalThis.foundry.applications ?? {};
   globalThis.foundry.applications.api = globalThis.foundry.applications.api ?? { ApplicationV2: class {}, HandlebarsApplicationV2: class {}, HandlebarsApplicationMixin: (B) => class extends B {} };
-  const { registerFollowerDroidGarageHotfix } = await import('/systems/foundryvtt-swse/scripts/patches/follower-droid-garage-hotfix.js');
-  registerFollowerDroidGarageHotfix();   // production registers this at init (runtime-bugfix-hotfixes-init.js); it REPLACES executeAssetCustomizationTransaction for follower droids
+  // The follower-droid garage hotfix was retired: TransactionEngine natively separates payer (owner wallet) from asset (follower droid).
   const mkWallet = (credits = 1000) => { const a = { id: 'owner', name: 'Owner', type: 'character', isOwner: true, system: { credits }, flags: {}, items: [], getFlag(sc, k) { return this.flags?.[sc]?.[k]; }, toObject() { return JSON.parse(JSON.stringify({ system: this.system, items: this.items })); } }; a.items.get = () => null; return a; };
   const mkDroid = (id, follower) => { const a = { id, name: 'Droid', type: follower ? 'npc' : 'droid', isOwner: true, system: { credits: 0, marker: null, ...(follower ? { isFollower: true, isDroid: true, npcProfile: { owner: { actorId: 'owner' } } } : {}) }, flags: {}, items: [], getFlag(sc, k) { return this.flags?.[sc]?.[k]; }, toObject() { return JSON.parse(JSON.stringify({ system: this.system, items: this.items })); } }; a.items.get = () => null; return a; };
   let wallet; let droid; let failAsset = false;
@@ -190,7 +189,7 @@ const run = (cost = 100) => TransactionEngine.executeMutationTransaction({ actor
   const setup = (follower, credits = 1000) => { reset(); failAsset = false; world.clear(); wallet = mkWallet(credits); droid = mkDroid(follower ? 'fdroid' : 'vdroid', follower); world.set('owner', wallet); world.set(droid.id, droid); };
   const customize = () => silent(() => TransactionEngine.executeAssetCustomizationTransaction({ actor: wallet, assetActor: droid, assetMutationPlan: { set: { 'system.marker': 'done' } }, cost: 200, transactionContext: 'owned-customization', audit: {} }, { source: 'ti2', validate: true, rederive: false }));
   for (const follower of [false, true]) {
-    const who = follower ? 'follower droid (runtime-patched path)' : 'droid/vehicle asset';
+    const who = follower ? 'follower droid (native payer/asset path)' : 'droid/vehicle asset';
     // success: charged once, asset changed once
     setup(follower); let r = await customize(); assert.equal(r.success, true, who); assert.equal(wallet.system.credits, 800); assert.equal(droid.system.marker, 'done');
     // recovery cannot be established -> refused, nothing changed (D1)
@@ -202,7 +201,7 @@ const run = (cost = 100) => TransactionEngine.executeMutationTransaction({ actor
     // the balance is read after the snapshot: a concurrent grant survives
     setup(follower); snapMode.onCreate = async (a) => { if (a.id === 'owner') a.system.credits += 500; }; r = await customize(); assert.equal(r.success, true, who); assert.equal(wallet.system.credits, 1300, `${who}: 1500 - 200`);
   }
-  ok('TI-2.4 (TX-08 + parallel follower path): asset customization is refused without recovery, reports a failed restore, reads the balance after the snapshot and verifies the charge — identically for droid/vehicle assets and for follower droids (whose runtime patch no longer carries its own commerce implementation)');
+  ok('TI-2.4 (TX-08 + parallel follower path): asset customization is refused without recovery, reports a failed restore, reads the balance after the snapshot and verifies the charge — identically for droid/vehicle assets and for follower droids (through the native payer/asset separation; the runtime patch was retired)');
   ActorEngine.applyMutationPlan = realApplyForAsset;
 }
 

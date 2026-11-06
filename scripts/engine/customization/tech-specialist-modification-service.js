@@ -1,3 +1,4 @@
+import { resolveAssetOwnerId } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-asset-owner.js';
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
@@ -137,7 +138,7 @@ function isTrainedMechanics(actor) {
 
 function resolveWalletActor(subjectActor, explicitWallet = null) {
   if (explicitWallet) return game?.actors?.get?.(explicitWallet.id) || explicitWallet;
-  const ownerId = subjectActor?.system?.ownedByActorId || subjectActor?.flags?.swse?.ownedByActorId || subjectActor?.flags?.[SYSTEM_ID]?.ownedByActorId;
+  const ownerId = resolveAssetOwnerId(subjectActor);
   if (ownerId && game?.actors?.get?.(ownerId)) return game.actors.get(ownerId);
   const userCharacter = game?.user?.character;
   if (userCharacter && userCharacter.isOwner !== false) return userCharacter;

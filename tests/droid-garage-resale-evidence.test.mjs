@@ -102,8 +102,7 @@ for (const [label, make, message] of REFUSED) {
   const notDroid = droid({}); notDroid.type = 'npc';
   assert.equal(DroidCustomizationEngine.previewDroidCustomization(notDroid, { add: [PART] }).success, false, 'a non-droid npc is not customizable as a droid');
   const fs = await import('node:fs');
-  const hot = fs.readFileSync('scripts/patches/follower-droid-garage-hotfix.js', 'utf8');
-  assert.doesNotMatch(hot, /property === 'type'/, 'the follower hotfix no longer impersonates actor.type');
+  assert.equal(fs.existsSync('scripts/patches/follower-droid-garage-hotfix.js'), false, 'no follower type-impersonation patch exists');
   const eng = fs.readFileSync('scripts/engine/customization/droid-customization-engine.js', 'utf8');
   assert.doesNotMatch(eng, /actor\.type !== 'droid'/, 'the engine gates on the shared profile');
 }
