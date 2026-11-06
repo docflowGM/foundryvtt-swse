@@ -200,6 +200,81 @@ No merge, no `main`, no ActorEngine / TransactionEngine change, no new component
 - Legacy pack (`packs/droids.db`): 194 records; 171 `droidSystems`; 0 `installedSystems`; 0 `droidCalculationMode`; 0 `stockDroidImport`; 194 `type: droid`.
 - Line-level reads: `ModifierEngine.js:340-346,1655-1660`; `domain/droids/droid-part-schema.js:643-715`; `data/prerequisite-checker.js:77`; `damage-resolution-engine.js:412-470`; `damage-packet-rules.js:170-178`; `droid-factory.js:56-131`; `store-checkout.js:140-180,425-455`; `stock-droid-normalizer.js:185-200`; `follower-droid-garage-hotfix.js:1-123`; `customization-bay-app.js:346`; `follower-mutation-planning.js:222-262`.
 
-## Appendix: pre-existing guard failure observed during U-0 (not changed)
+## Addendum (independent-review round 1): F7, guard disposition, revised U-1 contract
 
-`node tools/check-droid-customization-validation-authority.mjs --strict` exits 1 on the U-0 base (b76c55d) and without the U-0 files (verified by stashing them): check "5: installed-state verification" expects `normalizeDroidCustomizationChangeSet()` to call `collectInstalledDroidPartIds()`. This guard is **not** one of the five guards run by `.github/workflows/droid-v2-gate-a.yml`, so CI does not cover it. Whether the guard is stale or the normalizer lost its check is **UNVERIFIED**; U-0 is read-only and does not change either. Recommended for U-1 review: read the normalizer and decide whether to repair the guard or add it to CI.
+Status of everything below: **READ-ONLY.** No production code changed. The only new file besides this text is the report-only probe `tools/probes/probe-droid-garage-resale-evidence.mjs`.
+
+### A. F7 - Garage removal/resale accepts unconfirmed installed hardware (REPRODUCED offline)
+
+**Authority boundary.** `system.installedSystems` is the post-creation installation ledger. `DroidCustomizationEngine.normalizeDroidCustomizationChangeSet()` decides removability for a bare part id from `collectInstalledComponents(actor)` = `resolveInstalledDroidComponents()` filtered by `installed`. That resolver sets `installed: true` for every mirror (`system.droidSystems`) record, every embedded Item with droid-part metadata, and every legacy mod (`droid-installed-component-resolver.js`, candidate construction). `installed` therefore means "some source mentions it", not "confirmed in the ledger". (`primarySource.kind` records which source decided; the normalizer ignores it.) Preview and apply both call the normalizer, so both accept the request; apply then pays `resale` through the existing transaction and `delete installedSystems[id]` (a no-op for a never-recorded key).
+
+**Reproduction.** `node tools/probes/probe-droid-garage-resale-evidence.mjs` runs the real engine (`plasteel-shell`, a certified priced part; fake ActorEngine from the Foundry shim; wallet 10000):
+
+| # | Evidence held | Preview | Apply wallet delta | Ledger after | Repeat removal |
+|---|---|---|---|---|---|
+| 1 | mirror only (`droidSystems.armor`), empty ledger | success, resale 200 | **+200** | [] | refused |
+| 2 | embedded Item only, empty ledger | success, resale 200 | **+200** | [] | refused |
+| 3a | ledger `installed:false` | refused ("not currently installed") | 0 | unchanged | refused |
+| 3b | ledger entry malformed (string) | refused | 0 | unchanged | refused |
+| 4 | valid confirmed ledger entry (control) | success, resale 200 | +200 | [] | refused |
+| 5 | ledger `installed:false` + mirror says installed | refused | 0 | unchanged | refused |
+| 6 | repeated removal | second request refused in every case (first one already consumed the evidence) | - | - | - |
+| 7 | `droidCalculationMode: stock-statblock`, display-only factory mirror, empty ledger | success, resale 200 | **+200** | [] | refused |
+
+So: **cases 1, 2 and 7 pay resale for hardware with no confirmed ledger record; 3a, 3b and 5 are correctly refused.** Offline caveats: the wallet figure comes from the shim's fake ActorEngine applying the transaction's mutation, not from live Foundry; the embedded-Item metadata shape was taken from the resolver's `itemHasCredibleDroidPartMetadata`; the Item-delete side of apply was not separately asserted. The credit movement in the fake is the same net-cost value the real `TransactionEngine` would be handed.
+
+**Severity (my assessment, not a ruling).** Credit-integrity defect, reachable by a player removing mirror-only or Item-only hardware. Case 7 matters most: a stock-statblock droid's published factory equipment is display-only by design, so selling it converts statblock text into credits.
+**Pre-existing, not introduced by this stack.** The resolver-based `installed` set predates Gate C-1 (`PHASE 1` comment on `collectInstalledComponents`). Existing exploit tests (`tests/droid-customization-exploit.test.mjs`, 10 groups) cover genuinely-installed parts and total absence, never the middle case, so no current test would catch it.
+**Open question I cannot settle from code:** whether selling mirror-only legacy hardware is *intended* for historical droids (e.g. pre-ledger droids). That is a product/rules-adjacent policy call for the project owner; the probe only shows current behavior. It is not recorded as a rules decision (no printed-rule question) but should be confirmed before the P0 fix refuses it.
+
+**Proposed P0 correction wave (not implemented).** In the normalizer, removal targets must resolve to a confirmed ledger record (`findInstance` / `instancesOfPart` against `installedSystems`, `installed !== false`, well-formed), using the existing ledger helpers; mirror/Item-only evidence is a different, explicit outcome ("present, not confirmed - reconcile first"), never a sale. Files: `scripts/engine/customization/droid-customization-engine.js` only for the guard; tests: extend a new `tests/droid-garage-resale-evidence.test.mjs` with the probe cases as assertions (preview AND apply wallet), plus mutation checks (revert to resolver `installed` -> cases 1/2/7 must fail; allow `installed:false` -> 3a must fail; drop the stock check -> 7 must fail). Wallet-credit assertions must run through the real transaction path where the harness allows. Add the corrected guard to CI only after its assertion is behavioral (below).
+
+### B. Strict guard `check-droid-customization-validation-authority.mjs` - disposition
+
+- **Cause of the red guard (my change).** Gate C-1 (30f588317) replaced `collectInstalledDroidPartIds(actor)` inside the normalizer with `collectInstalledComponents(actor)`; the guard's check 5 still searches for the old name. The guard was not in `.github/workflows/droid-v2-gate-a.yml`, so CI never ran it. I earlier called it "stale" - that was premature; it is a regression I introduced and did not catch.
+- **Is the function-name assertion stale?** Yes in spelling. **Does the underlying guarantee hold?** No - see F7: both the old helper (same resolver) and the new one accept mirror/Item-only evidence. The guard's regex only proves *a* resolver call exists, not that evidence is confirmed, so it would also have passed on a vulnerable engine.
+- **Would current tests catch mirror/Item-only resale?** No (section A).
+- **Recommendation:** do not rename the regex. Replace check 5 with a structural assertion that removal authorization reads confirmed ledger records (or the resolver's primary source kind), and pair it with the behavioral tests above. Add it to CI only when valid.
+
+### C. Revised U-1 identity contract (supersedes 6.1's single `kind`)
+
+`resolveDroidRulesProfile(actor, { pending })` returns **independent dimensions**, none derived from another:
+
+```
+{
+  foundryType,                 // actor.type, verbatim
+  droidRules: { isDroid, evidence: [{source, value}], conflicting: [{source, value}] },
+  follower:   { isFollower, evidence: [...] },
+  calculationMode,             // from the existing resolveDroidCalculationMode, never recomputed
+  progressionAuthority,        // 'chargen' | 'follower-creation' | 'stock-import' | 'none' (read from existing provenance only)
+  provenance,                  // flags/importMode as found
+  confidence                   // 'EXPLICIT' | 'INFERRED' | 'CONTRADICTORY'
+}
+```
+
+Rules: pure; reads existing signals only; contradictory signals (e.g. `type:'droid'` with `isDroid:false`, or a name-regex hit with no flag) fail closed to `isDroid:false` with `confidence:'CONTRADICTORY'` and the conflict listed - they never activate modifiers. Name/species heuristics are recorded as evidence but never sufficient. No `kind` enum.
+
+`shouldCollectDroidComponentModifiers(actor)` is a **conjunction**: droid-rules identity is explicit AND calculation mode is `playable-derived` AND the component comes from a **confirmed ledger record** (`resolveInstalledDroidComponents` primary source = `installedLedger`). Mirror-only, Item-only, legacy-mod and stock-statblock components never gain mechanical installation through the new profile. Retains stock-statblock suppression. Required fixtures: (i) NPC-type droid follower with a valid ledger -> modifiers collected; (ii) NPC-type droid follower whose identical component exists only in `droidSystems` -> **no** modifiers; (iii) stock-statblock droid; (iv) PC droid parity; (v) contradictory-signal actor -> fail closed.
+**Interaction with F7:** U-1 must not ship before the P0 resale fix, because widening which actors reach Garage/ModifierEngine paths widens exposure to the same mirror-evidence leniency.
+
+### D. F3 (follower 0-HP outcome) - explicitly deferred out of U-1
+
+No change to zero-HP outcomes in U-1. A separate impact specification is required first, covering `damage-resolution-engine.js`, `damage-packet-rules.js`, the condition track, ion/stun damage, Force Point rescue, death/destruction and downstream hooks, with published-rule evidence. Per the standing rules this is a combat-semantics question; nothing is decided here.
+
+### E. Census interpretation
+
+The 530-site figure is a source-line regex heuristic, not 530 defects and not 530 decision points; it includes local `isDroid` variables and display code. It stays a diagnostic. U-1 must *not* use a falling raw TYPE_ONLY count as its success measure. Instead each production change lists its exact call sites and the approved behavior, and any CI ratchet is scoped to the specific RULES call sites U-1 touches (named file:line anchors that must route through the profile), not a global count.
+
+### F. Prioritized sequence and first-wave file list
+
+1. **P0 (if the owner confirms the F7 policy):** Garage confirmed-ledger removal authority. Files: `scripts/engine/customization/droid-customization-engine.js`, `tools/check-droid-customization-validation-authority.mjs` (rewrite check 5), new `tests/droid-garage-resale-evidence.test.mjs`, `.github/workflows/droid-v2-gate-a.yml` (add guard once valid).
+2. **U-1:** `scripts/domain/droids/droid-rules-profile.js` (new, pure), `scripts/engine/ModifierEngine.js` (two gate sites), follower-garage hotfix delegation, `tests/droid-rules-profile.test.mjs`. F1 conditional on confirmed-ledger hardware, canonical stacking, no double count.
+3. **U-2..U-6:** unchanged from section 7, still plan-only; F3 gets its own bounded review.
+
+### G. Verification status at this push
+
+Local checks run: `node --check` on both tools; probe executed (results above). Full rolling suite and exact-head CI for the new head are reported in the PR description once complete. Not Foundry-tested.
+
+### H. Known limits of this addendum
+
+The probe uses the shim's fake ActorEngine, so wallet deltas prove the engine's returned mutation and net cost, not a live Foundry wallet. Case 6 (repeat) is shown as the second request on the same actor. Legacy `droidSystems.mods` and malformed mirror variants were not probed.
