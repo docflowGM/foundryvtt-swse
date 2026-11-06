@@ -313,7 +313,6 @@ export function observeAllShellResponsive(root = document) {
     .application:has(.swse-stock-droid-wizard),
     .application:has(.droid-results),
     .application:has(.stock-droid-comparison-dialog),
-    .application:has(.stock-droid-conversion-dialog),
     .application:has(.atlas-surface),
     .application:has(.games-surface),
     .application:has(.hacking-surface),

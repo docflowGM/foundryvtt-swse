@@ -75,16 +75,14 @@ export function followsDroidRules(actor) {
 /**
  * May this resolved component contribute Droid-component modifiers?
  *
- * - The actor must follow Droid rules.
- * - An actor that is a droid by type keeps the existing resolver semantics (its
- *   stock-statblock suppression is applied separately by the caller).
- * - An actor that is a droid only by profile (e.g. an `npc` follower) may be
- *   credited ONLY for hardware CONFIRMED in `system.installedSystems`: a
- *   mirror-only, Item-only or legacy-mod component is never mechanically
- *   installed just because the profile now recognizes the follower.
+ * One rule for every actor that follows Droid rules (PC droid, NPC droid,
+ * follower): only hardware CONFIRMED in `system.installedSystems` is
+ * mechanically installed. Mirror-only (`droidSystems`), embedded-Item and
+ * legacy-mod components are present, never installed. Stock-statblock
+ * suppression (published totals already include factory equipment) is applied
+ * separately by the caller and is unchanged.
  */
 export function componentMayContributeDroidModifiers(actor, component, profile = resolveDroidRulesProfile(actor)) {
   if (!profile.droidRules.isDroid) return false;
-  if (profile.foundryType === 'droid') return true;
   return component?.primarySource?.kind === 'installedLedger' && component?.installed === true;
 }

@@ -46,7 +46,9 @@ assert.equal(componentMayContributeDroidModifiers(follower(), mirrorComp), false
 assert.equal(componentMayContributeDroidModifiers(follower(), itemComp), false, 'NPC follower + Item-only -> NO modifiers');
 assert.equal(componentMayContributeDroidModifiers({ type: 'npc', system: {}, flags: {} }, ledgerComp), false, 'non-droid never');
 assert.equal(componentMayContributeDroidModifiers({ type: 'droid', system: { isDroid: false }, flags: {} }, ledgerComp), false, 'contradictory fails closed');
-assert.equal(componentMayContributeDroidModifiers(pcDroid, mirrorComp), true, 'type-droid keeps resolver semantics (stock suppression applied by caller)');
+assert.equal(componentMayContributeDroidModifiers(pcDroid, mirrorComp), false, 'PC droid: mirror-only is not installed hardware');
+assert.equal(componentMayContributeDroidModifiers(pcDroid, itemComp), false, 'PC droid: Item-only is not installed hardware');
+assert.equal(componentMayContributeDroidModifiers(pcDroid, ledgerComp), true, 'PC droid: confirmed ledger hardware');
 
 console.log('Droid rules profile tests passed.');
 
