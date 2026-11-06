@@ -78,4 +78,5 @@ jobs:
           node tests/droid-garage-resale-evidence.test.mjs
           node tests/droid-rules-profile.test.mjs
           node tests/droid-prerequisite-evidence.test.mjs
+          node tests/droid-factory-stock-contract.test.mjs
           node tests/follower-mutation-transaction.test.mjs
