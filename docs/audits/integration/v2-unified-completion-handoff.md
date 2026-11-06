@@ -141,3 +141,13 @@ Reuse first: `assessStockWeaponGroups`, the coverage/readiness/analysis builders
 1. `git checkout feature/v2-unified-completion`; run `node tools/run-rolling-tests.mjs` (expect 613/0/5 excluded) and the `--check` of every builder in `tools/audits/vehicles/` and `tools/build-droid-component-source-status.mjs`.
 2. Ask the owner for rulings/PDFs before any item in §C; start with §F.1(a) which needs neither.
 3. Work in small PRs targeting `feature/v2-unified-completion` (or the integration branch as the owner directs); after every batch regenerate coverage, run the rolling suite, verify exact-head CI, keep PRs draft.
+
+---
+
+## Status addendum (2026-11-06, new session) - appended, nothing above was edited
+
+- **Repository state changed after this document was written.** The owner merged PR #1110, #1111 and #1109 into `main` (merge commit `de196e5`); `main` and `feature/v2-unified-completion` (`968b257`) are tree-identical, so section A's "main unchanged at `c367552`" no longer holds. The documented integration SHA `14572e1` is an ancestor of `main`. Wave work continues on `feature/v2-unified-wave-1` with a draft PR into `integration/v2-vehicles-droids-2026-11`; nothing was merged to `main` by this session.
+- **Baseline independently re-verified:** rolling suite 613 passed / 0 failed / 5 excluded; every vehicle `--check` builder and the droid source-status check are current and reproduce sections B-D exactly (542/846, 177/391, 335/391, 30/49, 99 PASS / 23 HOLD).
+- **Finding:** the four "engineering-only" blocked vehicle groups in the 100%-analysis (PKG-A) are exactly the four size-dependent groups section C reclassifies as needing a ruling (V100-06). Vehicle canonical coverage therefore cannot advance on engineering alone; every remaining step needs PDFs or a ruling.
+- **Finding:** `droid-actor-sheet.js` is the live registered droid sheet (`index.js`), so the two droid strict guards that flag it pin a stale approved-call-site path (`character-sheet.js`); their closure is a guard-path question to verify against the explicit-action handlers, not a sheet defect.
+- **Wave 1 (Droid Gate C-1)** delivered: see `docs/audits/droids/droid-v2-gate-c1-appendage-identity.md`.

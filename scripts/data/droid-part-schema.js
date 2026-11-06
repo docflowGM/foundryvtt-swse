@@ -661,7 +661,10 @@ export function getSelfDestructBurstSquares(size, { miniaturized = false } = {})
 export function hydrateDroidPart(part = {}, options = {}) {
   const def = getDroidPartDefinition(part.id ?? part.name ?? part.system?.droidPartId ?? part.flags?.swse?.droidPartId);
   const id = normalizeDroidPartId(part.id ?? part.name ?? def?.id ?? 'droid-part');
-  const installedIds = new Set((options.installedIds ?? []).map(normalizeDroidPartId));
+  // Callers pass either an array (Garage / ModifierEngine) or a Set (the V2 droid
+  // sheet resolver); both are an iterable of ids. `.map` on a Set threw, which
+  // broke the Systems tab for any droid with a builder-configured part.
+  const installedIds = new Set(Array.from(options.installedIds ?? [], (id) => normalizeDroidPartId(id)));
   const size = getActorDroidSize(options.actor ?? null, options.size ?? null);
   const hardened = hardenedSystemSourceModifiers(def?.source, size, installedIds);
   const modifiers = (hardened !== null ? hardened : (def?.modifiers ?? [])).map(mod => ({
